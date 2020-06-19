@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="ViewState.fs" />
+    <Compile Include="Command.fs" />
+    <Compile Include="Utility.fs" />
+    <Compile Include="AtSea.fs" />
+    <Compile Include="ConfirmQuit.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Splorr.Seafarers.Controllers\Splorr.Seafarers.Controllers.fsproj" />
+  </ItemGroup>
+
+</Project>
