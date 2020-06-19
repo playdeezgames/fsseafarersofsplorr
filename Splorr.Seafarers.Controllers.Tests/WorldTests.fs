@@ -1,7 +1,8 @@
-﻿module Splorr.Seafarers.Controllers.Tests.World
+﻿module WorldTests
 
 open NUnit.Framework
 open Splorr.Seafarers.Controllers
+open Splorr.Seafarers.Models
 
 [<Test>]
 let ``Create function.Creates a new blank world.`` () =
@@ -62,3 +63,16 @@ let ``SetSpeed function.Zero sets all stop.`` () =
         World.Create()
         |> World.SetSpeed (0.0)
     Assert.AreEqual(0.0, actual.Avatar.Speed)
+
+[<Test>]
+let ``SetHeading function.Sets a new heading.`` () =
+    let heading = 
+        {
+            Degrees = 1
+            Minutes = 2
+            Seconds = 3.0
+        }
+    let actual =
+        World.Create()
+        |> World.SetHeading heading
+    Assert.AreEqual(heading |> Dms.ToFloat, actual.Avatar.Heading)

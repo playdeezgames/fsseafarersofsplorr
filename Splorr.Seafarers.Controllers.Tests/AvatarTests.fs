@@ -1,7 +1,8 @@
-﻿module Splorr.Seafarers.Controllers.Tests.Avatar
+﻿module AvatarTests
 
 open NUnit.Framework
 open Splorr.Seafarers.Controllers
+open Splorr.Seafarers.Models
 
 [<Test>]
 let ``Create function.Creates a blank avatar.`` () =
@@ -47,3 +48,16 @@ let ``SetSpeed function.Zero sets all stop.`` () =
         Avatar.Create()
         |> Avatar.SetSpeed (0.0)
     Assert.AreEqual(0.0, actual.Speed)
+
+[<Test>]
+let ``SetHeading function.Sets a new heading.`` () =
+    let heading = 
+        {
+            Degrees = 1
+            Minutes = 2
+            Seconds = 3.0
+        }
+    let actual =
+        Avatar.Create()
+        |> Avatar.SetHeading heading
+    Assert.AreEqual(heading |> Dms.ToFloat, actual.Heading)

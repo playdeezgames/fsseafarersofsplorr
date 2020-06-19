@@ -17,4 +17,7 @@ module Avatar =
             | x when x > 1.0 -> 1.0
             | x -> x
         {avatar with Speed = clampedSpeed}
+
+    let SetHeading (heading:Dms) (avatar:Avatar) : Avatar =
+        {avatar with Heading = heading |> Dms.ToFloat}
         

@@ -1,4 +1,4 @@
-module Splorr.Seafarers.Controllers.Tests.Dms
+module DmsTests
 
 open NUnit.Framework
 open Splorr.Seafarers.Models
