@@ -26,4 +26,4 @@ let ``Run function.When Set Speed command, return AtSea with new speed`` () =
     let actual =
         world
         |> AtSea.Run (fun()->newSpeed |> SetCommand.Speed |> Command.Set |> Some) (fun _->())
-    Assert.AreEqual({world with Avatar = { world.Avatar with Speed=newSpeed} }|> AtSea |> Some, actual)
+    Assert.AreEqual({world with Avatar = { world.Avatar with Speed=newSpeed}; Messages=["You set your speed to 0.500000."] }|> AtSea |> Some, actual)

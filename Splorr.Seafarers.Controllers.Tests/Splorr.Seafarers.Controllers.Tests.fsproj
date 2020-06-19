@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="AvatarTests.fs" />
     <Compile Include="WorldTests.fs" />
     <Compile Include="DmsTests.fs" />
     <Compile Include="Program.fs" />

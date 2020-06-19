@@ -5,13 +5,7 @@ module World =
     let Create() : World =
         {
             Messages = []
-            Avatar =
-                {
-                   X = 0.0
-                   Y = 0.0
-                   Heading = 0.0
-                   Speed = 1.0
-                }
+            Avatar = Avatar.Create()
         }
 
     let ClearMessages(world:World) : World =
@@ -21,4 +15,9 @@ module World =
         {world with Messages = List.append world.Messages messages}
 
     let SetSpeed (speed:float) (world:World) : World = 
-        raise (System.NotImplementedException "No Unit Tests")
+        let updatedAvatar =
+            world.Avatar
+            |> Avatar.SetSpeed speed
+        let message = updatedAvatar.Speed |> sprintf "You set your speed to %f."
+        {world with Avatar = updatedAvatar}
+        |> AddMessages [ message ]
