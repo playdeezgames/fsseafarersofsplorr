@@ -12,6 +12,7 @@ module AtSea =
             world
             |> World.ClearMessages
         "At Sea:" |> sink
+        world.Turn |> sprintf "Turn: %u" |> sink
         world.Avatar.X |> sprintf "X: %f" |> sink
         world.Avatar.Y |> sprintf "Y: %f" |> sink
         world.Avatar.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "Heading: %s" |> sink

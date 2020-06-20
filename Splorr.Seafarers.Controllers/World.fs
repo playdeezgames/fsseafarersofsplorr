@@ -4,6 +4,7 @@ open Splorr.Seafarers.Models
 module World =
     let Create() : World =
         {
+            Turn = 0u
             Messages = []
             Avatar = Avatar.Create()
         }
@@ -27,5 +28,9 @@ module World =
         |> AddMessages [ heading |> Dms.ToString |> sprintf "You set your heading to %s." ]
 
     let Move(world:World) :World =
-        {world with Avatar = world.Avatar |> Avatar.Move}
+        {
+            world with 
+                Avatar = world.Avatar |> Avatar.Move
+                Turn = world.Turn + 1u
+        }
         |> AddMessages [ "Steady as she goes." ]

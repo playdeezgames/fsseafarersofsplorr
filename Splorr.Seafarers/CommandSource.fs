@@ -59,6 +59,9 @@ module CommandSource=
         | "set" :: tail ->
             tail
             |> ParseSet
+        | [ "move" ] ->
+            Move
+            |> Some
         | _ -> 
             None
 
