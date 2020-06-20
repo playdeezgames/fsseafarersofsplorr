@@ -4,8 +4,7 @@ open Splorr.Seafarers.Models
 module Avatar =
     let Create(): Avatar =
         {
-            X = 0.0
-            Y = 0.0
+            Position = (0.0, 0.0)
             Speed = 1.0
             Heading = 0.0
         }
@@ -24,7 +23,6 @@ module Avatar =
     let Move(avatar: Avatar) : Avatar =
         {
             avatar with 
-                X = avatar.X + System.Math.Cos(avatar.Heading) * avatar.Speed
-                Y = avatar.Y + System.Math.Sin(avatar.Heading) * avatar.Speed
+                Position = ((avatar.Position |> fst) + System.Math.Cos(avatar.Heading) * avatar.Speed, (avatar.Position |> snd) + System.Math.Sin(avatar.Heading) * avatar.Speed)
         }
         

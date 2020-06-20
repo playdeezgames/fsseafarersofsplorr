@@ -8,8 +8,7 @@ open Splorr.Seafarers.Models
 let ``Create.It creates a new world.`` () =
     let actual = World.Create()
     Assert.AreEqual(0.0, actual.Avatar.Heading)
-    Assert.AreEqual(0.0, actual.Avatar.X)
-    Assert.AreEqual(0.0, actual.Avatar.Y)
+    Assert.AreEqual((0.0,0.0), actual.Avatar.Position)
     Assert.AreEqual(1.0, actual.Avatar.Speed)
 
 [<Test>]
@@ -82,5 +81,4 @@ let ``Move.It moves the avatar.`` () =
     let actual =
         World.Create()
         |> World.Move
-    Assert.AreEqual(1.0, actual.Avatar.X)
-    Assert.AreEqual(0.0, actual.Avatar.Y)
+    Assert.AreEqual((1.0,0.0), actual.Avatar.Position)

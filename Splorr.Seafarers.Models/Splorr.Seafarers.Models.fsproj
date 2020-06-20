@@ -3,7 +3,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Location.fs" />
     <Compile Include="Dms.fs" />
+    <Compile Include="Island.fs" />
     <Compile Include="Avatar.fs" />
     <Compile Include="World.fs" />
   </ItemGroup>

@@ -2,8 +2,7 @@ namespace Splorr.Seafarers.Models
 
 type Avatar =
     {
-        X: float
-        Y: float
+        Position: Location
         Heading: float
         Speed: float
     }

@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Dms.fs" />
+    <Compile Include="Island.fs" />
     <Compile Include="Avatar.fs" />
     <Compile Include="World.fs" />
   </ItemGroup>

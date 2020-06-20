@@ -48,7 +48,7 @@ let ``Run.It moves the avatar when given Move command.`` () =
     let actual =
         world
         |> AtSea.Run (fun()->Move |> Some) sink
-    Assert.AreEqual({world with Avatar = {world.Avatar with X=1.0}; Messages=["Steady as she goes."]; Turn=1u} |> AtSea |> Some, actual)
+    Assert.AreEqual({world with Avatar = {world.Avatar with Position=(1.0,0.0)}; Messages=["Steady as she goes."]; Turn=1u} |> AtSea |> Some, actual)
 
 [<Test>]
 let ``Run.It returns At Sea Help when given the Help command.`` () =
