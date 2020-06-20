@@ -9,6 +9,7 @@ module Runner =
             match viewState with
             | AtSea world -> AtSea.Run source sink world
             | ConfirmQuit state -> ConfirmQuit.Run source sink state
+            | Help state -> Help.Run sink state
         match nextViewState with
         | Some state ->
             Loop source sink state

@@ -44,6 +44,7 @@ module AtSea =
             |> ConfirmQuit
             |> Some
         | _ ->
+            "Maybe try 'help'?" |> sink
             world
             |> AtSea
             |> Some

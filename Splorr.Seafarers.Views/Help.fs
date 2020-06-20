@@ -9,8 +9,8 @@ module Help =
             "At Sea Commands:"
             "\tquit - quits the game"
             "\tset heading (degrees) [(minutes) [(seconds)]] - sets a new heading"
-            "\tset speed (speed)"
-            "\tmove"
+            "\tset speed (speed) - sets a new speed"
+            "\tmove - moves for one turn"
         ]
         |> List.iter sink
 

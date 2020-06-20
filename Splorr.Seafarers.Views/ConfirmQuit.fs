@@ -20,6 +20,7 @@ module ConfirmQuit =
             |> Some
 
         | _ -> 
+            "Maybe try 'help'?" |> sink
             state 
             |> ConfirmQuit 
             |> Some
