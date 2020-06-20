@@ -10,6 +10,7 @@ module Runner =
             | AtSea world -> AtSea.Run source sink world
             | ConfirmQuit state -> ConfirmQuit.Run source sink state
             | Help state -> Help.Run sink state
+            | MainMenu world -> MainMenu.Run source sink world
         match nextViewState with
         | Some state ->
             Loop source sink state
@@ -17,6 +18,6 @@ module Runner =
             ()
     
     let Run () : unit =
-        World.Create()
-        |> AtSea
+        None
+        |> MainMenu
         |> Loop CommandSource.Read System.Console.WriteLine

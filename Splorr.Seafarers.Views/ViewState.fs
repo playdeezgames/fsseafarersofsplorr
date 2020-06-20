@@ -6,3 +6,4 @@ type ViewState =
     | AtSea of World
     | ConfirmQuit of ViewState
     | Help of ViewState
+    | MainMenu of World option
