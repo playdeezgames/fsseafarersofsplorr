@@ -29,3 +29,10 @@ let ``Run function.When invalid command passed, return ConfirmQuit.`` () =
         |> ConfirmQuit.Run (None |> makeSource) sink 
     Assert.AreEqual(previousState |> ConfirmQuit |> Some, actual)
 
+
+[<Test>]
+let ``Run.It initiates Confirm Quit Help when given the Help command.`` () =
+    let actual =
+        previousState
+        |> ConfirmQuit.Run  (fun()->Command.Help |> Some) sink
+    Assert.AreEqual(previousState |> ConfirmQuit |> Help |> Some, actual)

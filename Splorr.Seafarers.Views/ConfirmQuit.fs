@@ -4,8 +4,23 @@ module ConfirmQuit =
     let Run (source:CommandSource) (sink:MessageSink) (state:ViewState) : ViewState option =
         "" |> sink
         "Are you sure you want to quit?" |> sink
+
         match source() with
-        | Some Yes -> None
-        | Some No -> state |> Some
-        | _ -> state |> ConfirmQuit |> Some
+        | Some Help -> 
+            state 
+            |> ConfirmQuit 
+            |> ViewState.Help 
+            |> Some
+
+        | Some Yes -> 
+            None
+
+        | Some No -> 
+            state 
+            |> Some
+
+        | _ -> 
+            state 
+            |> ConfirmQuit 
+            |> Some
 

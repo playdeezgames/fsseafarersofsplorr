@@ -12,6 +12,7 @@ type Command =
     | No
     | Set of SetCommand
     | Move
+    | Help
 
 type CommandSource = unit -> (Command option)
 

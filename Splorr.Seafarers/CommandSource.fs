@@ -45,7 +45,7 @@ module CommandSource=
             |> ParseSetHeading
         | _ -> None
 
-    let private Parse(tokens:string list) : Command option =
+    let Parse(tokens:string list) : Command option =
         match tokens with
         | [ "quit" ] -> 
             Quit 
@@ -61,6 +61,9 @@ module CommandSource=
             |> ParseSet
         | [ "move" ] ->
             Move
+            |> Some
+        | [ "help" ] ->
+            Command.Help
             |> Some
         | _ -> 
             None

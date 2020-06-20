@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Controllers
 
 module AtSea =
-    let rec Run (source:CommandSource) (sink:MessageSink) (world:World) : ViewState option =
+    let Run (source:CommandSource) (sink:MessageSink) (world:World) : ViewState option =
         "" |> sink
         world.Messages
         |> Utility.DumpMessages sink
@@ -18,6 +18,11 @@ module AtSea =
         world.Avatar.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "Heading: %s" |> sink
         world.Avatar.Speed |> sprintf "Speed: %f" |> sink
         match source() with
+        | Some Help ->
+            world
+            |> AtSea
+            |> ViewState.Help
+            |> Some
         | Some Move ->
             world
             |> World.Move
