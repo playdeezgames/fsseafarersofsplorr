@@ -11,6 +11,7 @@ type Command =
     | Yes
     | No
     | Set of SetCommand
+    | Move
 
 type CommandSource = unit -> (Command option)
 

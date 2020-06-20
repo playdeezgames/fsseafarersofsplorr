@@ -1,4 +1,4 @@
-﻿module Splorr.Seafarers.Views.Tests.UtilityTests
+﻿module UtilityTests
 
 open NUnit.Framework
 open Splorr.Seafarers.Views
@@ -8,7 +8,7 @@ let private sink(message:string) : unit =
     sunkMessages <- List.append sunkMessages [message]
 
 [<Test>]
-let ``DumpMessages function.Sends all messages to the sink.`` () =
+let ``DumpMessages.It sends all messages to the sink.`` () =
     sunkMessages<-[]
     let messages = ["one"; "two"; "three"]
     Utility.DumpMessages sink messages

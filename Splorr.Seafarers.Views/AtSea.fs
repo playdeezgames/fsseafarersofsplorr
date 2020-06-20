@@ -17,6 +17,11 @@ module AtSea =
         world.Avatar.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "Heading: %s" |> sink
         world.Avatar.Speed |> sprintf "Speed: %f" |> sink
         match source() with
+        | Some Move ->
+            world
+            |> World.Move
+            |> AtSea
+            |> Some
         | Some (Set (Heading heading)) ->
             world
             |> World.SetHeading heading

@@ -20,4 +20,11 @@ module Avatar =
 
     let SetHeading (heading:Dms) (avatar:Avatar) : Avatar =
         {avatar with Heading = heading |> Dms.ToFloat}
+
+    let Move(avatar: Avatar) : Avatar =
+        {
+            avatar with 
+                X = avatar.X + System.Math.Cos(avatar.Heading) * avatar.Speed
+                Y = avatar.Y + System.Math.Sin(avatar.Heading) * avatar.Speed
+        }
         

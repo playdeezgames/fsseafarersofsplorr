@@ -5,7 +5,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Controllers
 
 [<Test>]
-let ``ToFloat function.Zeros returns 0 radians.`` () =
+let ``ToFloat.It returns 0 when given zeros.`` () =
     let dms: Dms = 
         {
             Degrees = 0
@@ -18,7 +18,7 @@ let ``ToFloat function.Zeros returns 0 radians.`` () =
     Assert.AreEqual(0.0, actual)
     
 [<Test>]
-let ``ToFloat function.90 degrees returns pi/2 radians.`` () =
+let ``ToFloat.It returns half pi when given ninety degrees.`` () =
     let dms: Dms = 
         {
             Degrees = 90
@@ -32,7 +32,7 @@ let ``ToFloat function.90 degrees returns pi/2 radians.`` () =
 
 
 [<Test>]
-let ``ToFloat function.180 degrees returns pi radians.`` () =
+let ``ToFloat.It returns pi when given one hundred eighty degrees.`` () =
     let dms: Dms = 
         {
             Degrees = 180
@@ -46,7 +46,7 @@ let ``ToFloat function.180 degrees returns pi radians.`` () =
 
 
 [<Test>]
-let ``ToFloat function.270 degrees returns 3pi/2 radians.`` () =
+let ``ToFloat.It returns three halves pi when given two hundred seventy degrees.`` () =
     let dms: Dms = 
         {
             Degrees = 270
@@ -59,7 +59,7 @@ let ``ToFloat function.270 degrees returns 3pi/2 radians.`` () =
     Assert.AreEqual(3.0 * System.Math.PI/2.0, actual)
     
 [<Test>]
-let ``ToDms function.Zero maps to all zeros.`` () =
+let ``ToDms.It return all zero when given zero.`` () =
     let radians: float = 0.0
     let actual = radians |> Dms.ToDms
     Assert.AreEqual(0, actual.Degrees)
@@ -67,7 +67,7 @@ let ``ToDms function.Zero maps to all zeros.`` () =
     Assert.AreEqual(0.0,actual.Seconds)
 
 [<Test>]
-let ``ToDms function.PI/2 to 90 degrees.`` () =
+let ``ToDms.It returns ninety degrees when given half pi.`` () =
     let radians: float = System.Math.PI/2.0
     let actual = radians |> Dms.ToDms
     Assert.AreEqual(90, actual.Degrees)
@@ -75,7 +75,7 @@ let ``ToDms function.PI/2 to 90 degrees.`` () =
     Assert.AreEqual(0.0,actual.Seconds)
 
 [<Test>]
-let ``ToDms function.PI to 180 degrees.`` () =
+let ``ToDms.It returns one hundred eighty degrees when given pi.`` () =
     let radians: float = -System.Math.PI
     let actual = radians |> Dms.ToDms
     Assert.AreEqual(180, actual.Degrees)
@@ -83,7 +83,7 @@ let ``ToDms function.PI to 180 degrees.`` () =
     Assert.AreEqual(0.0,actual.Seconds)
 
 [<Test>]
-let ``ToDms function.-PI/2 to 270 degrees.`` () =
+let ``ToDms.It return two hundred seventy degrees when give three halves pi.`` () =
     let radians: float = -System.Math.PI/2.0
     let actual = radians |> Dms.ToDms
     Assert.AreEqual(270, actual.Degrees)
@@ -91,7 +91,7 @@ let ``ToDms function.-PI/2 to 270 degrees.`` () =
     Assert.AreEqual(0.0,actual.Seconds)
 
 [<Test>]
-let ``ToString function.Zeros yields zeros with punctuation marks.``()=
+let ``ToString.It formats degrees minutes and seconds.``()=
     let expected = "1\u00b02'3.000000\""
     let actual = 
         {

@@ -25,3 +25,7 @@ module World =
     let SetHeading (heading:Dms) (world:World) : World =
         {world with Avatar = world.Avatar |> Avatar.SetHeading heading}
         |> AddMessages [ heading |> Dms.ToString |> sprintf "You set your heading to %s." ]
+
+    let Move(world:World) :World =
+        {world with Avatar = world.Avatar |> Avatar.Move}
+        |> AddMessages [ "Steady as she goes." ]

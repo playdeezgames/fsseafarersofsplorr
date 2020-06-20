@@ -1,4 +1,4 @@
-﻿module Splorr.Seafarers.Views.Tests.ConfirmQuitTests
+﻿module ConfirmQuitTests
 
 open NUnit.Framework
 open Splorr.Seafarers.Controllers

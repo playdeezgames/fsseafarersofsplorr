@@ -1,4 +1,4 @@
-module Splorr.Seafarers.Views.Tests.AtSea
+module AtSeaTests
 
 open NUnit.Framework
 open Splorr.Seafarers.Models
@@ -8,21 +8,21 @@ open Splorr.Seafarers.Views
 let world = World.Create()
 
 [<Test>]
-let ``Run function.When Quit command, return ConfirmQuit`` () =
+let ``Run.It returns ConfirmQuit when given Quit command.`` () =
     let actual = 
         world
         |> AtSea.Run (fun ()->Some Quit) (fun _->())
     Assert.AreEqual(world |> AtSea |> ConfirmQuit |> Some, actual)
 
 [<Test>]
-let ``Run function.When invalid command, return AtSea`` () =
+let ``Run.It returns AtSea when given invalid command.`` () =
     let actual =
         world
         |> AtSea.Run (fun()->None) (fun _->())
     Assert.AreEqual(world |> AtSea |> Some, actual)
 
 [<Test>]
-let ``Run function.When Set Speed command, return AtSea with new speed.`` () =
+let ``Run.It returns AtSea with new speed when given Set Speed command.`` () =
     let newSpeed = 0.5
     let actual =
         world
@@ -30,7 +30,7 @@ let ``Run function.When Set Speed command, return AtSea with new speed.`` () =
     Assert.AreEqual({world with Avatar = { world.Avatar with Speed=newSpeed}; Messages=["You set your speed to 0.500000."] }|> AtSea |> Some, actual)
 
 [<Test>]
-let ``Run function.When Set Heading command, return AtSea with new heading.`` () =
+let ``Run.It returns AtSea with new heading when given Set Heading command.`` () =
     let newHeading = 
         {
             Degrees = 1
@@ -41,4 +41,11 @@ let ``Run function.When Set Heading command, return AtSea with new heading.`` ()
         world
         |> AtSea.Run (fun()->newHeading |> SetCommand.Heading |> Command.Set |> Some) (fun _->())
     Assert.AreEqual({world with Avatar = { world.Avatar with Heading = newHeading |> Dms.ToFloat}; Messages=["You set your heading to 1\u00b02'3.000000\"."] }|> AtSea |> Some, actual)
+
+[<Test>]
+let ``Run.It moves the avatar when given Move command.`` () =
+    let actual =
+        world
+        |> AtSea.Run (fun()->Move |> Some) (fun _->())
+    Assert.AreEqual({world with Avatar = {world.Avatar with X=1.0}; Messages=["Steady as she goes."]} |> AtSea |> Some, actual)
 
