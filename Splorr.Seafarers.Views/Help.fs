@@ -11,6 +11,7 @@ module Help =
             "\tset heading (degrees) [(minutes) [(seconds)]] - sets a new heading"
             "\tset speed (speed) - sets a new speed"
             "\tmove - moves for one turn"
+            "\tmenu - brings up the main menu"
         ]
         |> List.iter sink
 

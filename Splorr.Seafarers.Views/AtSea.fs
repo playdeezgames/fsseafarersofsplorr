@@ -18,6 +18,11 @@ module AtSea =
         world.Avatar.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "Heading: %s" |> sink
         world.Avatar.Speed |> sprintf "Speed: %f" |> sink
         match source() with
+        | Some Menu ->
+            world
+            |> Some
+            |> MainMenu
+            |> Some
         | Some Help ->
             world
             |> AtSea

@@ -47,6 +47,12 @@ module CommandSource=
 
     let Parse(tokens:string list) : Command option =
         match tokens with
+        | [ "resume" ] -> 
+            Resume 
+            |> Some
+        | [ "abandon" ] -> 
+            Abandon 
+            |> Some
         | [ "quit" ] -> 
             Quit 
             |> Some
@@ -64,6 +70,12 @@ module CommandSource=
             |> Some
         | [ "help" ] ->
             Command.Help
+            |> Some
+        | [ "start" ] ->
+            Start
+            |> Some
+        | [ "menu" ] ->
+            Menu
             |> Some
         | _ -> 
             None

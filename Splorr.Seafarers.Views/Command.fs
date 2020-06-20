@@ -13,6 +13,10 @@ type Command =
     | Set of SetCommand
     | Move
     | Help
+    | Start
+    | Menu
+    | Resume
+    | Abandon
 
 type CommandSource = unit -> (Command option)
 
