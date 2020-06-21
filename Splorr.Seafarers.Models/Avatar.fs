@@ -5,4 +5,5 @@ type Avatar =
         Position: Location
         Heading: float
         Speed: float
+        ViewDistance: float
     }

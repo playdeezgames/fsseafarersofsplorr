@@ -2,11 +2,12 @@
 open Splorr.Seafarers.Models
 
 module Avatar =
-    let Create(): Avatar =
+    let Create(position:Location): Avatar =
         {
-            Position = (0.0, 0.0)
+            Position = position
             Speed = 1.0
             Heading = 0.0
+            ViewDistance = 10.0 //TODO: have this come from some sort of configuration, not be hard coded
         }
 
     let SetSpeed (speed:float) (avatar:Avatar) : Avatar =

@@ -4,7 +4,10 @@ open NUnit.Framework
 open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Views
 
-let private previousState = World.Create() |> AtSea
+let configuration: WorldGenerationConfiguration ={WorldSize=(10.0, 10.0); MinimumIslandDistance=30.0; MaximumGenerationTries=10u}
+let private previousState = 
+    World.Create configuration (System.Random())
+    |> AtSea
 let private sink (_:string) : unit = ()
 let private makeSource (command:Command option) = fun () -> command
 

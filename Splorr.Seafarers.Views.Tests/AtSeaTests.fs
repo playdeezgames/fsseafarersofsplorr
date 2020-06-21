@@ -5,8 +5,9 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Views
 
-let world = World.Create()
-let sink(_:string) : unit = ()
+let private configuration: WorldGenerationConfiguration ={WorldSize=(10.0, 10.0); MinimumIslandDistance=30.0; MaximumGenerationTries=10u}
+let private world = World.Create configuration (System.Random())
+let private sink(_:string) : unit = ()
 
 [<Test>]
 let ``Run.It returns ConfirmQuit when given Quit command.`` () =
@@ -48,7 +49,7 @@ let ``Run.It moves the avatar when given Move command.`` () =
     let actual =
         world
         |> AtSea.Run (fun()->Move |> Some) sink
-    Assert.AreEqual({world with Avatar = {world.Avatar with Position=(1.0,0.0)}; Messages=["Steady as she goes."]; Turn=1u} |> AtSea |> Some, actual)
+    Assert.AreEqual({world with Avatar = {world.Avatar with Position=(6.0,5.0)}; Messages=["Steady as she goes."]; Turn=1u} |> AtSea |> Some, actual)
 
 [<Test>]
 let ``Run.It returns At Sea Help when given the Help command.`` () =

@@ -1,13 +1,32 @@
 ﻿namespace Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
 
+type WorldGenerationConfiguration =
+    {
+        WorldSize: Location
+        MinimumIslandDistance: float
+        MaximumGenerationTries: uint32
+    }
+
 module World =
-    let Create() : World =
+    let rec private GenerateIslands (configuration:WorldGenerationConfiguration) (random:System.Random) (currentTry:uint32) (world: World) : World =
+        if currentTry>=configuration.MaximumGenerationTries then
+            world
+        else
+            let candidateLocation = (random.NextDouble() * (configuration.WorldSize |> fst), random.NextDouble() * (configuration.WorldSize |> snd))
+            if world.Islands |> Map.exists(fun k _ ->(Location.DistanceTo candidateLocation k) < configuration.MinimumIslandDistance) then
+                GenerateIslands configuration random (currentTry+1u) world
+            else
+                GenerateIslands configuration random 0u {world with Islands = world.Islands |> Map.add candidateLocation (Island.Create())}
+
+    let Create (configuration:WorldGenerationConfiguration) (random:System.Random) : World =
         {
             Turn = 0u
             Messages = []
-            Avatar = Avatar.Create()
+            Avatar = Avatar.Create(configuration.WorldSize |> Location.ScaleBy 0.5)
+            Islands = Map.empty
         }
+        |> GenerateIslands configuration random 0u
 
     let ClearMessages(world:World) : World =
         {world with Messages=[]}
@@ -34,3 +53,10 @@ module World =
                 Turn = world.Turn + 1u
         }
         |> AddMessages [ "Steady as she goes." ]
+
+    let GetNearbyLocations (from:Location) (maximumDistance:float) (world:World) : Location list =
+        world.Islands
+        |> Map.toList
+        |> List.map fst
+        |> List.filter (fun i -> Location.DistanceTo from i <= maximumDistance)
+

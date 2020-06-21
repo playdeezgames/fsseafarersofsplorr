@@ -13,10 +13,23 @@ module AtSea =
             |> World.ClearMessages
         "At Sea:" |> sink
         world.Turn |> sprintf "Turn: %u" |> sink
-        world.Avatar.Position |> fst |> sprintf "X: %f" |> sink
-        world.Avatar.Position |> snd |> sprintf "Y: %f" |> sink
         world.Avatar.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "Heading: %s" |> sink
         world.Avatar.Speed |> sprintf "Speed: %f" |> sink
+
+
+        "Nearby:" |> sink
+        world
+        |> World.GetNearbyLocations world.Avatar.Position world.Avatar.ViewDistance
+        |> List.map
+            (fun i -> 
+                (Location.HeadingTo world.Avatar.Position i |> Dms.ToDms |> Dms.ToString, Location.DistanceTo world.Avatar.Position i, world.Islands.[i].Name))
+        |> List.sortBy (fun (_,d,_)->d)
+        |> List.iter
+            (fun (heading, distance, name) -> 
+                ((if name="" then "????" else name), heading, distance)
+                |||> sprintf "Name: %s Heading: %s Distance: %f"
+                |> sink)
+
         match source() with
         | Some Menu ->
             world

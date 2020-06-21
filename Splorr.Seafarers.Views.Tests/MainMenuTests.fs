@@ -1,11 +1,11 @@
 ﻿module MainMenuTests
 
 open NUnit.Framework
-open Splorr.Seafarers.Models
 open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Views
 
-let private world = World.Create()
+let private configuration: WorldGenerationConfiguration ={WorldSize=(10.0, 10.0); MinimumIslandDistance=30.0; MaximumGenerationTries=10u}
+let private world = World.Create configuration (System.Random())
 let private sink(_:string) : unit = ()
 
 [<Test>]
