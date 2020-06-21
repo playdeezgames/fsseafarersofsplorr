@@ -27,7 +27,7 @@ module AtSea =
         |> List.iter
             (fun (heading, distance, name) -> 
                 ((if name="" then "????" else name), heading, distance)
-                |||> sprintf "Name: %s Heading: %s Distance: %f"
+                |||> sprintf "Name: %s Bearing: %s Distance: %f"
                 |> sink)
 
         match source() with
