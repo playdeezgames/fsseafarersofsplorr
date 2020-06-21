@@ -9,6 +9,52 @@ type WorldGenerationConfiguration =
     }
 
 module World =
+    let private GenerateIslandName (random:System.Random) : string =
+        let consonants = [| "h"; "k"; "l"; "m"; "p" |]
+        let vowels = [| "a"; "e"; "i"; "o"; "u" |]
+        let vowel = random.Next(2)>0
+        let nameLength = random.Next(3) + random.Next(3) + random.Next(3) + 3
+        [1..(nameLength)]
+        |> List.map 
+            (fun i -> i % 2 = (if vowel then 1 else 0))
+        |> List.map
+            (fun v -> 
+                if v then
+                    vowels.[random.Next(vowels.Length)]
+                else
+                    consonants.[random.Next(consonants.Length)])
+        |> List.reduce (+)
+
+    let rec private GenerateIslandNames (random:System.Random) (nameCount:int) (names: Set<string>) : List<string> =
+        if names.Count>=nameCount then
+            names
+            |> Set.toList
+        else
+            names
+            |> Set.add (GenerateIslandName random)
+            |> GenerateIslandNames random nameCount
+
+    let SetIsland (location:Location) (island:Island option) (world:World) : World =
+        match island with 
+        | Some i ->
+            {world with Islands = world.Islands |> Map.add location i}
+        | None ->
+            {world with Islands = world.Islands |> Map.remove location}
+            
+
+    let TransformIsland (location: Location) (transform: Island->Island option) (world:World) : World =
+        (world.Islands
+        |> Map.tryFind location
+        |> Option.bind transform
+        |> SetIsland location) world
+
+    let private NameIslands (random:System.Random) (world:World) : World =
+        GenerateIslandNames random (world.Islands.Count) (Set.empty)
+        |> List.sortBy (fun _ -> random.Next())
+        |> List.zip (world.Islands |> Map.toList |> List.map fst)
+        |> List.fold
+            (fun w (l,n) -> w |> TransformIsland l (Island.SetName n >> Some)) world
+
     let rec private GenerateIslands (configuration:WorldGenerationConfiguration) (random:System.Random) (currentTry:uint32) (world: World) : World =
         if currentTry>=configuration.MaximumGenerationTries then
             world
@@ -27,6 +73,7 @@ module World =
             Islands = Map.empty
         }
         |> GenerateIslands configuration random 0u
+        |> NameIslands random
 
     let ClearMessages(world:World) : World =
         {world with Messages=[]}

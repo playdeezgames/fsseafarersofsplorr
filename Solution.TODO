@@ -1,8 +1,17 @@
-Basic Avatar/World Functionality:
-    ✔ set heading @started(20-06-19 07:19) @done(20-06-19 23:14) @lasted(15h55m11s)
-    ✔ move @done(20-06-19 23:14)
-    ☐ account for turns
-Krassjam:
-    ✘ A horror game where you poison detectives to unlock achievements. @cancelled(20-06-19 08:01)
-    ✔ A ______ game where you ride horses with thugs to make a name for yourself. @done(20-06-19 23:14)
-    ✘ A god game where you raise charts to become successful. @cancelled(20-06-19 08:13)
+Basic Gameplay:
+    Dock:
+        ☐ dock parsing
+        ☐ undock parsing
+        ☐ dock command processor
+        ☐ dock proximity
+        ☐ undock command
+        ☐ dock command
+        ☐ docked viewstate
+        ☐ docked view handler
+Archive:
+  ✔ set heading @started(20-06-19 07:19) @done(20-06-19 23:14) @lasted(15h55m11s) @project(Basic Avatar/World Functionality)
+  ✔ move @done(20-06-19 23:14) @project(Basic Avatar/World Functionality)
+  ✔ account for turns @done(20-06-21 11:46) @project(Basic Avatar/World Functionality)
+  ✘ A horror game where you poison detectives to unlock achievements. @cancelled(20-06-19 08:01) @project(Krassjam)
+  ✔ A ______ game where you ride horses with thugs to make a name for yourself. @done(20-06-19 23:14) @project(Krassjam)
+  ✘ A god game where you raise charts to become successful. @cancelled(20-06-19 08:13) @project(Krassjam)

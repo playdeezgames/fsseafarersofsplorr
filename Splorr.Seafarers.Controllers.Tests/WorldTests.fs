@@ -14,6 +14,7 @@ let ``Create.It creates a new world.`` () =
     Assert.AreEqual((5.0,5.0), actual.Avatar.Position)
     Assert.AreEqual(1.0, actual.Avatar.Speed)
     Assert.AreEqual(1, actual.Islands.Count)
+    Assert.AreNotEqual("", (actual.Islands |> Map.toList |> List.map snd |> List.head).Name)
 
 [<Test>]
 let ``ClearMessages.It removes any messages from the world.`` () =
@@ -61,7 +62,7 @@ let ``SetSpeed.It produces full speed when one is passed.`` () =
     Assert.AreEqual(1.0, actual.Avatar.Speed)
 
 [<Test>]
-let ``SetSpeed function.It sets all stop when given zero`` () =
+let ``SetSpeed.It sets all stop when given zero`` () =
     let actual =
         world
         |> World.SetSpeed (0.0)
@@ -129,3 +130,65 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
     Assert.IsFalse (actual |> List.exists(fun i -> i=( 0.0, 10.0)))
     Assert.IsTrue  (actual |> List.exists(fun i -> i=( 5.0, 10.0)))
     Assert.IsFalse (actual |> List.exists(fun i -> i=(10.0, 10.0)))
+
+let private zeroIslandWorld = 
+    {
+        Messages=[]
+        Avatar = 
+            {
+                Position = (0.0,0.0)
+                Heading = 0.0
+                Speed = 1.0
+                ViewDistance = 10.0
+            }
+        Islands = Map.empty
+        Turn = 0u
+    }
+let private oneIslandWorld = 
+    zeroIslandWorld
+    |> World.SetIsland(0.0,0.0) (Island.Create() |> Island.SetName "Uno" |> Some)
+
+[<Test>]
+let ``SetIsland.It adds an island to a world when given an island where there was none.`` () =
+    let actual = 
+        zeroIslandWorld
+        |> World.SetIsland (0.0,0.0) (Island.Create() |> Island.SetName "Uno" |> Some)
+    Assert.AreEqual(1, actual.Islands.Count)
+    Assert.AreEqual("Uno", actual.Islands.[(0.0,0.0)].Name)
+
+[<Test>]
+let ``SetIsland.It replaces an island to a world when given an island where there was one before.`` () =
+    let actual =
+        oneIslandWorld
+        |> World.SetIsland (0.0,0.0) (Island.Create() |> Island.SetName "Dos" |> Some)
+    Assert.AreEqual(1, actual.Islands.Count)
+    Assert.AreEqual("Dos", actual.Islands.[(0.0,0.0)].Name)
+
+[<Test>]
+let ``SetIsland.It removes an island to a world when given none where there was one before.`` () =
+    let actual = 
+        oneIslandWorld
+        |> World.SetIsland (0.0,0.0) (None)
+    Assert.AreEqual(0, actual.Islands.Count)
+
+[<Test>]
+let ``TransformIsland.It applies a transform function to an existing island and updates the island to the transformed value.`` () =
+    let actual =
+        oneIslandWorld
+        |> World.TransformIsland (0.0,0.0) (Island.SetName "Dos" >> Some)
+    Assert.AreEqual(1, actual.Islands.Count)
+    Assert.AreEqual("Dos", actual.Islands.[(0.0,0.0)].Name)
+
+[<Test>]
+let ``TransformIsland.It applies a transform function to an existing island and removes the island when the transformer returns None.`` () =
+    let actual =
+        oneIslandWorld
+        |> World.TransformIsland (0.0,0.0) (fun _ -> None)
+    Assert.AreEqual(0, actual.Islands.Count)
+
+[<Test>]
+let ``TransformIsland.It does nothing when the location given does not have an existing island.`` () =
+    let actual =
+        zeroIslandWorld
+        |> World.TransformIsland (0.0, 0.0) (fun _-> Island.Create() |> Island.SetName "Uno" |> Some)
+    Assert.AreEqual(0, actual.Islands.Count)

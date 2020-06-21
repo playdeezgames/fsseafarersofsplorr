@@ -9,3 +9,9 @@ let ``Create.It returns a new island.`` () =
     let actual = Island.Create()
     Assert.AreEqual("", actual.Name)
 
+[<Test>]
+let ``SetName.It sets the name of a given island to a given name.`` () =
+    let name = "Uno"
+    let actual = Island.Create() |> Island.SetName name
+    Assert.AreEqual(name, actual.Name)
+
