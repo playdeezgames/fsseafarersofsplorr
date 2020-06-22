@@ -85,4 +85,5 @@ let ``Run.It returns Docked when given the Dock command and there is a near enou
     let actual =
         dockWorld
         |> AtSea.Run (fun()->Command.Dock |> Some) sink
-    Assert.AreEqual(((0.0,0.0),{dockWorld with Messages = ["You dock."] })|>Docked|>Some, actual)
+    let updatedIsland = dockWorld.Islands.[(0.0, 0.0)] |> Island.AddVisit dockWorld.Turn
+    Assert.AreEqual(((0.0,0.0),{dockWorld with Messages = ["You dock."]; Islands = dockWorld.Islands |> Map.add (0.0,0.0) updatedIsland })|>Docked|>Some, actual)

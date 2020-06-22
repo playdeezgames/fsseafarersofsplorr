@@ -93,6 +93,8 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
     let blankIsland =
         {
             Name = ""
+            LastVisit = None
+            VisitCount = None
         }
     let world =
         {
@@ -194,3 +196,19 @@ let ``TransformIsland.It does nothing when the location given does not have an e
         zeroIslandWorld
         |> World.TransformIsland (0.0, 0.0) (fun _-> Island.Create() |> Island.SetName "Uno" |> Some)
     Assert.AreEqual(0, actual.Islands.Count)
+
+[<Test>]
+let ``Dock.It adds a message when the given location has no island.`` () =
+    let actual = 
+        zeroIslandWorld
+        |> World.Dock (0.0, 0.0)
+    Assert.AreEqual({zeroIslandWorld with Messages = [ "There is no place to dock there." ]}, actual)
+
+[<Test>]
+let ``Dock.It updates the island's visit count and last visit when the given location has an island.`` () =
+    let actual = 
+        oneIslandWorld
+        |> World.Dock (0.0, 0.0)
+    let updatedIsland = 
+        oneIslandWorld.Islands.[(0.0, 0.0)] |> Island.AddVisit oneIslandWorld.Turn
+    Assert.AreEqual({oneIslandWorld with Messages = [ "You dock." ]; Islands = oneIslandWorld.Islands |> Map.add (0.0, 0.0) updatedIsland}, actual)

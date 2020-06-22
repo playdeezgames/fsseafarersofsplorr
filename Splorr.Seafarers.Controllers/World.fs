@@ -107,3 +107,13 @@ module World =
         |> List.map fst
         |> List.filter (fun i -> Location.DistanceTo from i <= maximumDistance)
 
+    let Dock (location: Location) (world:World) : World =
+        match world.Islands |> Map.tryFind location with
+        | Some island ->
+            world
+            |> TransformIsland location (Island.AddVisit world.Turn >> Some)
+            |> AddMessages [ "You dock." ]
+        | _ -> 
+            world
+            |> AddMessages [ "There is no place to dock there." ]
+

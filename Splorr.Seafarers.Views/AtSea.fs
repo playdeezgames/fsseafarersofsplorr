@@ -22,7 +22,7 @@ module AtSea =
             |> World.GetNearbyLocations world.Avatar.Position world.Avatar.ViewDistance
             |> List.map
                 (fun location -> 
-                    (location, Location.HeadingTo world.Avatar.Position location |> Dms.ToDms |> Dms.ToString, Location.DistanceTo world.Avatar.Position location, world.Islands.[location].Name))
+                    (location, Location.HeadingTo world.Avatar.Position location |> Dms.ToDms |> Dms.ToString, Location.DistanceTo world.Avatar.Position location, (world.Islands.[location] |> Island.GetDisplayName)))
             |> List.sortBy (fun (_,_,d,_)->d)
             |> List.fold
                 (fun target (location, heading, distance, name) -> 
@@ -34,7 +34,7 @@ module AtSea =
         | Some Dock ->
             match dockTarget with
             | Some location ->
-                (location, world |> World.AddMessages [ "You dock." ])
+                (location, world |> World.Dock location)
                 |> Docked
                 |> Some
             | None ->

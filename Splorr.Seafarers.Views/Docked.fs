@@ -7,6 +7,7 @@ module Docked =
     let private RunWithIsland  (source:CommandSource) (sink:MessageSink) (location:Location) (island:Island) (world: World) : ViewState option =
         [
             sprintf "You are docked at '%s'" island.Name
+            sprintf "You have visited %u times." (island.VisitCount |> Option.defaultValue 0u)
         ]
         |> List.append
             world.Messages
