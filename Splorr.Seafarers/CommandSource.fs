@@ -74,6 +74,12 @@ module CommandSource=
         | [ "start" ] ->
             Start
             |> Some
+        | [ "dock" ] ->
+            Dock
+            |> Some
+        | [ "undock" ] ->
+            Undock
+            |> Some
         | [ "menu" ] ->
             Menu
             |> Some

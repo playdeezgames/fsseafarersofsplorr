@@ -6,4 +6,5 @@ type Avatar =
         Heading: float
         Speed: float
         ViewDistance: float
+        DockDistance: float
     }

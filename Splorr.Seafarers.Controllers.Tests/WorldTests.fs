@@ -102,6 +102,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                     Speed=1.0
                     Heading=0.0
                     ViewDistance = 5.0
+                    DockDistance = 1.0
                 }
             Turn = 0u
             Messages = []
@@ -140,6 +141,7 @@ let private zeroIslandWorld =
                 Heading = 0.0
                 Speed = 1.0
                 ViewDistance = 10.0
+                DockDistance = 1.0
             }
         Islands = Map.empty
         Turn = 0u

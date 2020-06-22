@@ -65,3 +65,24 @@ let ``Run.It returns Main Menu when given the Menu command.`` () =
         world
         |> AtSea.Run (fun()->Command.Menu |> Some) sink
     Assert.AreEqual(world |> Some |> MainMenu |> Some, actual)
+
+
+let private emptyWorldconfiguration: WorldGenerationConfiguration ={WorldSize=(1.0, 1.0); MinimumIslandDistance=30.0; MaximumGenerationTries=0u}
+let private emptyWorld = World.Create emptyWorldconfiguration (System.Random())
+
+[<Test>]
+let ``Run.It returns AtSea when given the Dock command and there is no near enough island.`` () =
+    let actual =
+        emptyWorld
+        |> AtSea.Run (fun()->Command.Dock |> Some) sink
+    Assert.AreEqual({emptyWorld with Messages=["There is no place to dock."]}|>AtSea|>Some, actual)
+
+let private dockWorldconfiguration: WorldGenerationConfiguration ={WorldSize=(0.0, 0.0); MinimumIslandDistance=30.0; MaximumGenerationTries=1u}
+let private dockWorld = World.Create dockWorldconfiguration (System.Random())
+
+[<Test>]
+let ``Run.It returns Docked when given the Dock command and there is a near enough island.`` () =
+    let actual =
+        dockWorld
+        |> AtSea.Run (fun()->Command.Dock |> Some) sink
+    Assert.AreEqual(((0.0,0.0),{dockWorld with Messages = ["You dock."] })|>Docked|>Some, actual)

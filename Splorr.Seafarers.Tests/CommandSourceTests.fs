@@ -217,7 +217,7 @@ let ``Parse.It returns invalid command when given ["abandon";"foo"]`` () =
     Assert.AreEqual(None, actual)
 
 [<Test>]
-let ``Parse.It returns Menu command when given ["resume"]`` () =
+let ``Parse.It returns Resume command when given ["resume"]`` () =
     let actual =
         [ "resume"]
         |> CommandSource.Parse
@@ -226,7 +226,35 @@ let ``Parse.It returns Menu command when given ["resume"]`` () =
 [<Test>]
 let ``Parse.It returns invalid command when given ["resume";"foo"]`` () =
     let actual =
-        [ "menu";"foo"]
+        [ "resume";"foo"]
+        |> CommandSource.Parse
+    Assert.AreEqual(None, actual)
+
+[<Test>]
+let ``Parse.It returns Dock command when given ["dock"]`` () =
+    let actual =
+        [ "dock"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Dock|>Some, actual)
+
+[<Test>]
+let ``Parse.It returns invalid command when given ["dock";"foo"]`` () =
+    let actual =
+        [ "dock";"foo"]
+        |> CommandSource.Parse
+    Assert.AreEqual(None, actual)
+
+[<Test>]
+let ``Parse.It returns Undock command when given ["undock"]`` () =
+    let actual =
+        [ "undock"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Undock|>Some, actual)
+
+[<Test>]
+let ``Parse.It returns invalid command when given ["undock";"foo"]`` () =
+    let actual =
+        [ "undock";"foo"]
         |> CommandSource.Parse
     Assert.AreEqual(None, actual)
     

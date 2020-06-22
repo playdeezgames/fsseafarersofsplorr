@@ -17,6 +17,8 @@ type Command =
     | Menu
     | Resume
     | Abandon
+    | Dock
+    | Undock
 
 type CommandSource = unit -> (Command option)
 

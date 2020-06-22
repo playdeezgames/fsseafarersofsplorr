@@ -19,13 +19,22 @@ let ``Run.It returns the given AtSea ViewState`` () =
         |> Help.Run sink
     Assert.AreEqual(originalState |> Some, actual)
 
-
 [<Test>]
 let ``Run.It returns the given ConfirmQuit ViewState`` () =
     let originalState = 
         world
         |> AtSea
         |> ConfirmQuit
+    let actual = 
+        originalState
+        |> Help.Run sink
+    Assert.AreEqual(originalState |> Some, actual)
+
+[<Test>]
+let ``Run.It returns the given Docked ViewState`` () =
+    let originalState = 
+        ((0.0, 0.0), world)
+        |> Docked
     let actual = 
         originalState
         |> Help.Run sink

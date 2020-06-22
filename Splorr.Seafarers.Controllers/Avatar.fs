@@ -7,7 +7,8 @@ module Avatar =
             Position = position
             Speed = 1.0
             Heading = 0.0
-            ViewDistance = 10.0 //TODO: have this come from some sort of configuration, not be hard coded
+            ViewDistance = 10.0
+            DockDistance = 1.0
         }
 
     let SetSpeed (speed:float) (avatar:Avatar) : Avatar =

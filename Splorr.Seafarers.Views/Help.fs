@@ -12,6 +12,7 @@ module Help =
             "\tset speed (speed) - sets a new speed"
             "\tmove - moves for one turn"
             "\tmenu - brings up the main menu"
+            "\tdock - docks at an island, if one is close enough"
         ]
         |> List.iter sink
 
@@ -24,12 +25,23 @@ module Help =
         ]
         |> List.iter sink
 
+    let private Docked (sink:MessageSink) : unit =
+        [
+            ""
+            "Docked Commands:"
+            "\tundock - undocks from the island"
+            "\tquit - quits the game"
+        ]
+        |> List.iter sink
+
     let Run (sink:MessageSink) (viewState:ViewState) : ViewState option =
         match viewState with
         | AtSea _ ->
             sink |> AtSea    
         | ConfirmQuit _ ->
             sink |> ConfirmQuit
+        | Docked _ ->
+            sink |> Docked
         | _ ->
             ()
         viewState

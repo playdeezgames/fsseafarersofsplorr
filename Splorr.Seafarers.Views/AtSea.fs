@@ -16,21 +16,32 @@ module AtSea =
         world.Avatar.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "Heading: %s" |> sink
         world.Avatar.Speed |> sprintf "Speed: %f" |> sink
 
-
         "Nearby:" |> sink
-        world
-        |> World.GetNearbyLocations world.Avatar.Position world.Avatar.ViewDistance
-        |> List.map
-            (fun i -> 
-                (Location.HeadingTo world.Avatar.Position i |> Dms.ToDms |> Dms.ToString, Location.DistanceTo world.Avatar.Position i, world.Islands.[i].Name))
-        |> List.sortBy (fun (_,d,_)->d)
-        |> List.iter
-            (fun (heading, distance, name) -> 
-                ((if name="" then "????" else name), heading, distance)
-                |||> sprintf "Name: %s Bearing: %s Distance: %f"
-                |> sink)
+        let dockTarget = 
+            world
+            |> World.GetNearbyLocations world.Avatar.Position world.Avatar.ViewDistance
+            |> List.map
+                (fun location -> 
+                    (location, Location.HeadingTo world.Avatar.Position location |> Dms.ToDms |> Dms.ToString, Location.DistanceTo world.Avatar.Position location, world.Islands.[location].Name))
+            |> List.sortBy (fun (_,_,d,_)->d)
+            |> List.fold
+                (fun target (location, heading, distance, name) -> 
+                    sprintf "Name: %s Bearing: %s Distance: %f%s" (if name="" then "????" else name) heading distance (if distance<world.Avatar.DockDistance then " (Can Dock)" else "")
+                    |> sink
+                    (if distance<world.Avatar.DockDistance then (Some location) else target)) None
 
         match source() with
+        | Some Dock ->
+            match dockTarget with
+            | Some location ->
+                (location, world |> World.AddMessages [ "You dock." ])
+                |> Docked
+                |> Some
+            | None ->
+                world
+                |> World.AddMessages [ "There is no place to dock." ]
+                |> AtSea
+                |> Some
         | Some Menu ->
             world
             |> Some

@@ -17,6 +17,7 @@
     <Compile Include="ConfirmQuitTests.fs" />
     <Compile Include="UtilityTests.fs" />
     <Compile Include="AtSeaTests.fs" />
+    <Compile Include="DockedTests.fs" />
     <Compile Include="HelpTests.fs" />
     <Compile Include="MainMenuTests.fs" />
     <Compile Include="Program.fs" />

@@ -1,13 +1,25 @@
+Help State:
+    ✔ Docked help @done(20-06-22 06:37)
 Basic Gameplay:
     Dock:
-        ☐ dock parsing
-        ☐ undock parsing
-        ☐ dock command processor
-        ☐ dock proximity
-        ☐ undock command
-        ☐ dock command
-        ☐ docked viewstate
-        ☐ docked view handler
+        ✔ dock parsing @started(20-06-21 16:11) @done(20-06-21 16:16) @lasted(5m37s)
+        ✔ undock parsing @started(20-06-21 16:11) @done(20-06-21 16:16) @lasted(5m39s)
+        ✔ dock command processor in atsea @done(20-06-22 05:51)
+        ✔ dock proximity @done(20-06-22 05:51)
+        ✔ undock command @started(20-06-21 16:11) @done(20-06-21 16:16) @lasted(5m40s)
+        ✔ dock command @started(20-06-21 16:11) @done(20-06-21 16:16) @lasted(5m40s)
+        ✔ docked viewstate @done(20-06-21 17:48)
+        Docked View Handler:
+            ✔ undock command @done(20-06-22 06:24)
+            ✔ help command @done(20-06-22 06:24)
+            ✘ menu command @cancelled(20-06-22 05:58)
+            ✔ quit command @done(20-06-22 06:24)
+Eliminate Hardcoded Values:
+    ☐ Avatar.ViewDistance
+    ☐ Avatar.DockDistance
+Weird Edge Case Behavior:
+    ☐ When AtSea, docking will happen with the "furthest" of all of the dockable islands. because of how the world is generated, there "should not" be more than one. however, this is not technically so.
+    ✔ When docked, the location in the view state may not correspond to an actual island location @done(20-06-22 06:20)
 Archive:
   ✔ set heading @started(20-06-19 07:19) @done(20-06-19 23:14) @lasted(15h55m11s) @project(Basic Avatar/World Functionality)
   ✔ move @done(20-06-19 23:14) @project(Basic Avatar/World Functionality)
