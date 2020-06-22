@@ -1,10 +1,10 @@
-﻿namespace Splorr.Seafarers.Views
+﻿namespace Splorr.Seafarers.Controllers
 
 open Splorr.Seafarers.Models
-open Splorr.Seafarers.Controllers
+open Splorr.Seafarers.Services
 
 module MainMenu =
-    let Run (source:CommandSource) (sink:MessageSink) (world:World option) : ViewState option =
+    let Run (source:CommandSource) (sink:MessageSink) (world:World option) : Gamestate option =
         [
             ""
             "Main Menu Commands:"

@@ -1,6 +1,6 @@
 ﻿namespace Splorr.Seafarers
 
-open Splorr.Seafarers.Views
+open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
 
 module CommandSource=
@@ -45,6 +45,17 @@ module CommandSource=
             |> ParseSetHeading
         | _ -> None
 
+    let private ParseIslands(tokens: string list) : Command option =
+        match tokens with
+        | [] -> 0u |> Islands |> Some
+        | [ token ] ->
+            match System.UInt32.TryParse token with
+            | true, page when page > 0u ->
+                (page - 1u) |> Islands |> Some
+            | _ -> None
+        | _ -> None
+
+
     let Parse(tokens:string list) : Command option =
         match tokens with
         | [ "resume" ] -> 
@@ -83,6 +94,9 @@ module CommandSource=
         | [ "menu" ] ->
             Menu
             |> Some
+        | "islands" :: tail ->
+            tail
+            |> ParseIslands
         | _ -> 
             None
 

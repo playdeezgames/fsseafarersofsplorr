@@ -1,4 +1,4 @@
-﻿namespace Splorr.Seafarers.Views
+﻿namespace Splorr.Seafarers.Controllers
 
 open Splorr.Seafarers.Models
 
@@ -19,6 +19,7 @@ type Command =
     | Abandon
     | Dock
     | Undock
+    | Islands of uint32
 
 type CommandSource = unit -> (Command option)
 

@@ -14,17 +14,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="ConfirmQuitTests.fs" />
-    <Compile Include="UtilityTests.fs" />
-    <Compile Include="AtSeaTests.fs" />
-    <Compile Include="DockedTests.fs" />
-    <Compile Include="HelpTests.fs" />
-    <Compile Include="MainMenuTests.fs" />
+    <Compile Include="AvatarTests.fs" />
+    <Compile Include="IslandTests.fs" />
+    <Compile Include="WorldTests.fs" />
+    <Compile Include="LocationTests.fs" />
+    <Compile Include="DmsTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Splorr.Seafarers.Views\Splorr.Seafarers.Views.fsproj" />
+    <ProjectReference Include="..\Splorr.Seafarers.Services\Splorr.Seafarers.Services.fsproj" />
   </ItemGroup>
 
 </Project>

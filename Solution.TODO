@@ -1,5 +1,8 @@
 Help State:
     ✔ Docked help @done(20-06-22 06:37)
+Island Notes:
+    ☐ Add island note command
+    ☐ List item notes command
 Basic Gameplay:
     Known and Unknown Islands:
         ✔ Each island has a visit count that is a uint32 option @done(20-06-22 06:45)
@@ -9,11 +12,12 @@ Basic Gameplay:
         ✔ In the docked state, the status shows how many times you have visited @done(20-06-22 06:48)
         ✔ Docking with an island will increase the visit count, but only if the turn is different from the last visit @done(20-06-22 16:18)
         Known Islands List:
-            ☐ A command is needed to list known islands. this command needs to be paged sections of 20
-                'known island [page]'
-            ☐ KnownIsland parsing
-            ☐ AtSea Parsing KnownIsland command
-            ☐ KnownIsland View Handler
+            ✔ A command is needed to list known islands. this command needs to be paged sections of 20 @done(20-06-22 16:58)
+                'islands [page]'
+            ✔ Islands parsing @done(20-06-22 16:58)
+            ☐ AtSea Parsing Islands command
+            ☐ IslandList Gamestate
+            ☐ IslandList View Handler
         Head For Known Island:
             ☐ A command is needed to head for a known island based on the island's name
                 'head for [island]'
@@ -24,7 +28,7 @@ Basic Gameplay:
         ✔ dock proximity @done(20-06-22 05:51)
         ✔ undock command @started(20-06-21 16:11) @done(20-06-21 16:16) @lasted(5m40s)
         ✔ dock command @started(20-06-21 16:11) @done(20-06-21 16:16) @lasted(5m40s)
-        ✔ docked viewstate @done(20-06-21 17:48)
+        ✔ docked Gamestate @done(20-06-21 17:48)
         Docked View Handler:
             ✔ undock command @done(20-06-22 06:24)
             ✔ help command @done(20-06-22 06:24)
@@ -34,7 +38,7 @@ Eliminate Hardcoded Values:
     ☐ Avatar.ViewDistance
     ☐ Avatar.DockDistance
 Weird Edge Case Behavior:
-    ☐ Should I be testing the output of the views? Or does that make the tests too brittle?
+    ☐ Should I be testing the output of the Controllers? Or does that make the tests too brittle?
     ☐ When AtSea, docking will happen with the "furthest" of all of the dockable islands. because of how the world is generated, there "should not" be more than one. however, this is not technically so.
     ✔ When docked, the location in the view state may not correspond to an actual island location @done(20-06-22 06:20)
 Archive:

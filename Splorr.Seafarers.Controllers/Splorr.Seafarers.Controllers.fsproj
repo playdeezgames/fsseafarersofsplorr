@@ -5,15 +5,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Dms.fs" />
-    <Compile Include="Island.fs" />
-    <Compile Include="Location.fs" />
-    <Compile Include="Avatar.fs" />
-    <Compile Include="World.fs" />
+    <Compile Include="Gamestate.fs" />
+    <Compile Include="Command.fs" />
+    <Compile Include="Utility.fs" />
+    <Compile Include="AtSea.fs" />
+    <Compile Include="Docked.fs" />
+    <Compile Include="ConfirmQuit.fs" />
+    <Compile Include="Help.fs" />
+    <Compile Include="MainMenu.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Splorr.Seafarers.Models\Splorr.Seafarers.Models.fsproj" />
+    <ProjectReference Include="..\Splorr.Seafarers.Services\Splorr.Seafarers.Services.fsproj" />
   </ItemGroup>
 
 </Project>

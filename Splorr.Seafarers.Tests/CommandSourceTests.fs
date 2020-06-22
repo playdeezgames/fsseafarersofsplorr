@@ -2,7 +2,7 @@ module CommandSourceTests
 
 open NUnit.Framework
 open Splorr.Seafarers
-open Splorr.Seafarers.Views
+open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
 
 [<Test>]
@@ -69,7 +69,7 @@ let ``Parse.It returns invalid command when given ["no";"foo"]`` () =
     Assert.AreEqual(None, actual)
 
 [<Test>]
-let ``Parse.It returns Yes command when given ["move"]`` () =
+let ``Parse.It returns Move command when given ["move"]`` () =
     let actual =
         [ "move" ]
         |> CommandSource.Parse
@@ -257,4 +257,33 @@ let ``Parse.It returns invalid command when given ["undock";"foo"]`` () =
         [ "undock";"foo"]
         |> CommandSource.Parse
     Assert.AreEqual(None, actual)
+
+[<Test>]
+let ``Parse.It returns invalid command when given ["islands";"foo"]`` () =
+    let actual =
+        [ "islands";"foo"]
+        |> CommandSource.Parse
+    Assert.AreEqual(None, actual)
+
+[<Test>]
+let ``Parse.It returns Islands 0 command when given ["islands"]`` () =
+    let actual =
+        [ "islands"]
+        |> CommandSource.Parse
+    Assert.AreEqual(0u |> Islands |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Islands 0 command when given ["islands";"1"]`` () =
+    let actual =
+        [ "islands";"1"]
+        |> CommandSource.Parse
+    Assert.AreEqual(0u |> Islands |> Some, actual)
+
+
+[<Test>]
+let ``Parse.It returns Islands 1 command when given ["islands";"2"]`` () =
+    let actual =
+        [ "islands";"2"]
+        |> CommandSource.Parse
+    Assert.AreEqual(1u |> Islands |> Some, actual)
     

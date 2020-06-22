@@ -5,13 +5,13 @@ VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Splorr.Seafarers.Models", "Splorr.Seafarers.Models\Splorr.Seafarers.Models.fsproj", "{CDE4E5D1-970F-4B95-B15D-8859A6E8F637}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Splorr.Seafarers.Controllers", "Splorr.Seafarers.Controllers\Splorr.Seafarers.Controllers.fsproj", "{A7548CAE-A3C8-4453-8F7A-8B41D45234AE}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Splorr.Seafarers.Services", "Splorr.Seafarers.Services\Splorr.Seafarers.Services.fsproj", "{A7548CAE-A3C8-4453-8F7A-8B41D45234AE}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Splorr.Seafarers.Controllers.Tests", "Splorr.Seafarers.Controllers.Tests\Splorr.Seafarers.Controllers.Tests.fsproj", "{02E14E91-03F9-4A12-BBF8-AC164DB79168}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Splorr.Seafarers.Services.Tests", "Splorr.Seafarers.Services.Tests\Splorr.Seafarers.Services.Tests.fsproj", "{02E14E91-03F9-4A12-BBF8-AC164DB79168}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Splorr.Seafarers.Views", "Splorr.Seafarers.Views\Splorr.Seafarers.Views.fsproj", "{E4213FC3-51A5-4C1F-A38B-D7F07E90C8E0}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Splorr.Seafarers.Controllers", "Splorr.Seafarers.Controllers\Splorr.Seafarers.Controllers.fsproj", "{E4213FC3-51A5-4C1F-A38B-D7F07E90C8E0}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Splorr.Seafarers.Views.Tests", "Splorr.Seafarers.Views.Tests\Splorr.Seafarers.Views.Tests.fsproj", "{82AEE901-7A36-4E49-8EB4-BF1589442D82}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Splorr.Seafarers.Controllers.Tests", "Splorr.Seafarers.Controllers.Tests\Splorr.Seafarers.Controllers.Tests.fsproj", "{82AEE901-7A36-4E49-8EB4-BF1589442D82}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Splorr.Seafarers", "Splorr.Seafarers\Splorr.Seafarers.fsproj", "{79B1AC02-4C41-4287-9131-E6D1140150F4}"
 EndProject

@@ -1,4 +1,4 @@
-﻿namespace Splorr.Seafarers.Views
+﻿namespace Splorr.Seafarers.Controllers
 
 open Splorr.Seafarers.Models
 
@@ -34,8 +34,8 @@ module Help =
         ]
         |> List.iter sink
 
-    let Run (sink:MessageSink) (viewState:ViewState) : ViewState option =
-        match viewState with
+    let Run (sink:MessageSink) (Gamestate:Gamestate) : Gamestate option =
+        match Gamestate with
         | AtSea _ ->
             sink |> AtSea    
         | ConfirmQuit _ ->
@@ -44,6 +44,6 @@ module Help =
             sink |> Docked
         | _ ->
             ()
-        viewState
+        Gamestate
         |> Some
 

@@ -2,8 +2,8 @@
 
 open NUnit.Framework
 open Splorr.Seafarers.Models
+open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
-open Splorr.Seafarers.Views
 
 let private dockWorldconfiguration: WorldGenerationConfiguration ={WorldSize=(0.0, 0.0); MinimumIslandDistance=30.0; MaximumGenerationTries=1u}
 let private dockWorld = World.Create dockWorldconfiguration (System.Random())

@@ -1,7 +1,7 @@
-﻿namespace Splorr.Seafarers.Views
+﻿namespace Splorr.Seafarers.Controllers
 
 module ConfirmQuit = 
-    let Run (source:CommandSource) (sink:MessageSink) (state:ViewState) : ViewState option =
+    let Run (source:CommandSource) (sink:MessageSink) (state:Gamestate) : Gamestate option =
         "" |> sink
         "Are you sure you want to quit?" |> sink
 
@@ -9,7 +9,7 @@ module ConfirmQuit =
         | Some Help -> 
             state 
             |> ConfirmQuit 
-            |> ViewState.Help 
+            |> Gamestate.Help 
             |> Some
 
         | Some Yes -> 

@@ -1,8 +1,8 @@
 ﻿module ConfirmQuitTests
 
 open NUnit.Framework
+open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
-open Splorr.Seafarers.Views
 
 let configuration: WorldGenerationConfiguration ={WorldSize=(10.0, 10.0); MinimumIslandDistance=30.0; MaximumGenerationTries=10u}
 let private previousState = 

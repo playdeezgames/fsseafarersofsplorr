@@ -1,4 +1,4 @@
-﻿namespace Splorr.Seafarers.Controllers
+﻿namespace Splorr.Seafarers.Services
 
 open Splorr.Seafarers.Models
 open System

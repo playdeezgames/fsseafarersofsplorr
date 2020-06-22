@@ -1,7 +1,7 @@
 ﻿module LocationTests
 
 open NUnit.Framework
-open Splorr.Seafarers.Controllers
+open Splorr.Seafarers.Services
 
 [<Test>]
 let ``DistanceTo.It returns the distance between two given locations.`` () =

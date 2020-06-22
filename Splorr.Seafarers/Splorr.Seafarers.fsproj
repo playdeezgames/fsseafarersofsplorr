@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Splorr.Seafarers.Views\Splorr.Seafarers.Views.fsproj" />
+    <ProjectReference Include="..\Splorr.Seafarers.Controllers\Splorr.Seafarers.Controllers.fsproj" />
   </ItemGroup>
 
 </Project>

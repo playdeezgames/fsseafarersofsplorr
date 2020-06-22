@@ -1,7 +1,7 @@
 ﻿module WorldTests
 
 open NUnit.Framework
-open Splorr.Seafarers.Controllers
+open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
 let configuration: WorldGenerationConfiguration ={WorldSize=(10.0, 10.0); MinimumIslandDistance=30.0; MaximumGenerationTries=10u}

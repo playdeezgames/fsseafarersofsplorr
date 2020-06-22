@@ -1,10 +1,10 @@
-﻿namespace Splorr.Seafarers.Views
+﻿namespace Splorr.Seafarers.Controllers
 
 open Splorr.Seafarers.Models
-open Splorr.Seafarers.Controllers
+open Splorr.Seafarers.Services
 
 module AtSea =
-    let Run (source:CommandSource) (sink:MessageSink) (world:World) : ViewState option =
+    let Run (source:CommandSource) (sink:MessageSink) (world:World) : Gamestate option =
         "" |> sink
         world.Messages
         |> Utility.DumpMessages sink
@@ -50,7 +50,7 @@ module AtSea =
         | Some Help ->
             world
             |> AtSea
-            |> ViewState.Help
+            |> Gamestate.Help
             |> Some
         | Some Move ->
             world

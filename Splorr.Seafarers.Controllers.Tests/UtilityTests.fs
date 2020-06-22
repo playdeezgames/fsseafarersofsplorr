@@ -1,7 +1,7 @@
 ﻿module UtilityTests
 
 open NUnit.Framework
-open Splorr.Seafarers.Views
+open Splorr.Seafarers.Controllers
 
 let mutable private sunkMessages: string list = []
 let private sink(message:string) : unit =

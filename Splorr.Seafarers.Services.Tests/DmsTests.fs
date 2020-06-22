@@ -2,7 +2,7 @@ module DmsTests
 
 open NUnit.Framework
 open Splorr.Seafarers.Models
-open Splorr.Seafarers.Controllers
+open Splorr.Seafarers.Services
 
 [<Test>]
 let ``ToFloat.It returns 0 when given zeros.`` () =

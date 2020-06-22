@@ -1,7 +1,7 @@
 ﻿module AvatarTests
 
 open NUnit.Framework
-open Splorr.Seafarers.Controllers
+open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
 let private avatar =
