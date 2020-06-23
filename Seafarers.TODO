@@ -1,49 +1,42 @@
-Help State:
-    ✔ Docked help @done(20-06-22 06:37)
 Island Notes:
     ☐ Add island note command
     ☐ List island notes command
-Basic Gameplay:
-    Known and Unknown Islands:
-        ✔ Each island has a visit count that is a uint32 option @done(20-06-22 06:45)
-        ✔ Each island has a last visited count indicating the turn that the island was visited on @done(20-06-22 06:45)
-        ✔ Islands on the at sea screen show ???? when visit count is None @done(20-06-22 16:18)
-        ✔ Islands on the at sea screen show the name when visit count is Some @done(20-06-22 16:18)
-        ✔ In the docked state, the status shows how many times you have visited @done(20-06-22 06:48)
-        ✔ Docking with an island will increase the visit count, but only if the turn is different from the last visit @done(20-06-22 16:18)
-        Known Islands List:
-            ✔ A command is needed to list known islands. this command needs to be paged sections of 20 @done(20-06-22 16:58)
-                'islands [page]'
-            ✔ Islands parsing @done(20-06-22 16:58)
-            ✔ AtSea Parsing Islands command @done(20-06-23 04:59)
-            ✔ IslandList Gamestate @done(20-06-23 04:59)
-            ✔ IslandList View Handler @done(20-06-23 04:59)
-        Head For Known Island:
-            ☐ A command is needed to head for a known island based on the island's name
-                'head for [island]'
-            ☐ HeadFor parsing
-            ☐ HeadFor processing in World Service
-    Dock:
-        ✔ dock parsing @started(20-06-21 16:11) @done(20-06-21 16:16) @lasted(5m37s)
-        ✔ undock parsing @started(20-06-21 16:11) @done(20-06-21 16:16) @lasted(5m39s)
-        ✔ dock command processor in atsea @done(20-06-22 05:51)
-        ✔ dock proximity @done(20-06-22 05:51)
-        ✔ undock command @started(20-06-21 16:11) @done(20-06-21 16:16) @lasted(5m40s)
-        ✔ dock command @started(20-06-21 16:11) @done(20-06-21 16:16) @lasted(5m40s)
-        ✔ docked Gamestate @done(20-06-21 17:48)
-        Docked View Handler:
-            ✔ undock command @done(20-06-22 06:24)
-            ✔ help command @done(20-06-22 06:24)
-            ✘ menu command @cancelled(20-06-22 05:58)
-            ✔ quit command @done(20-06-22 06:24)
 Eliminate Hardcoded Values:
     ☐ Avatar.ViewDistance
     ☐ Avatar.DockDistance
 Weird Edge Case Behavior:
     ☐ Should I be testing the output of the Controllers? Or does that make the tests too brittle?
     ☐ When AtSea, docking will happen with the "furthest" of all of the dockable islands. because of how the world is generated, there "should not" be more than one. however, this is not technically so.
-    ✔ When docked, the location in the view state may not correspond to an actual island location @done(20-06-22 06:20)
 Archive:
+  ✔ Docked help @done(20-06-22 06:37) @project(Help State)
+  ✔ Each island has a visit count that is a uint32 option @done(20-06-22 06:45) @project(Basic Gameplay.Known and Unknown Islands)
+  ✔ Each island has a last visited count indicating the turn that the island was visited on @done(20-06-22 06:45) @project(Basic Gameplay.Known and Unknown Islands)
+  ✔ Islands on the at sea screen show ???? when visit count is None @done(20-06-22 16:18) @project(Basic Gameplay.Known and Unknown Islands)
+  ✔ Islands on the at sea screen show the name when visit count is Some @done(20-06-22 16:18) @project(Basic Gameplay.Known and Unknown Islands)
+  ✔ In the docked state, the status shows how many times you have visited @done(20-06-22 06:48) @project(Basic Gameplay.Known and Unknown Islands)
+  ✔ Docking with an island will increase the visit count, but only if the turn is different from the last visit @done(20-06-22 16:18) @project(Basic Gameplay.Known and Unknown Islands)
+  ✔ A command is needed to list known islands. this command needs to be paged sections of 20 @done(20-06-22 16:58) @project(Basic Gameplay.Known and Unknown Islands.Known Islands List)
+    'islands [page]'
+  ✔ Islands parsing @done(20-06-22 16:58) @project(Basic Gameplay.Known and Unknown Islands.Known Islands List)
+  ✔ AtSea Parsing Islands command @done(20-06-23 04:59) @project(Basic Gameplay.Known and Unknown Islands.Known Islands List)
+  ✔ IslandList Gamestate @done(20-06-23 04:59) @project(Basic Gameplay.Known and Unknown Islands.Known Islands List)
+  ✔ IslandList View Handler @done(20-06-23 04:59) @project(Basic Gameplay.Known and Unknown Islands.Known Islands List)
+  ✔ A command is needed to head for a known island based on the island's name @done(20-06-23 06:19) @project(Basic Gameplay.Known and Unknown Islands.Head For Known Island)
+    'head for [island]'
+  ✔ HeadFor parsing @done(20-06-23 06:19) @project(Basic Gameplay.Known and Unknown Islands.Head For Known Island)
+  ✔ HeadFor processing in World Service @done(20-06-23 06:19) @project(Basic Gameplay.Known and Unknown Islands.Head For Known Island)
+  ✔ dock parsing @started(20-06-21 16:11) @done(20-06-21 16:16) @lasted(5m37s) @project(Basic Gameplay.Dock)
+  ✔ undock parsing @started(20-06-21 16:11) @done(20-06-21 16:16) @lasted(5m39s) @project(Basic Gameplay.Dock)
+  ✔ dock command processor in atsea @done(20-06-22 05:51) @project(Basic Gameplay.Dock)
+  ✔ dock proximity @done(20-06-22 05:51) @project(Basic Gameplay.Dock)
+  ✔ undock command @started(20-06-21 16:11) @done(20-06-21 16:16) @lasted(5m40s) @project(Basic Gameplay.Dock)
+  ✔ dock command @started(20-06-21 16:11) @done(20-06-21 16:16) @lasted(5m40s) @project(Basic Gameplay.Dock)
+  ✔ docked Gamestate @done(20-06-21 17:48) @project(Basic Gameplay.Dock)
+  ✔ undock command @done(20-06-22 06:24) @project(Basic Gameplay.Dock.Docked View Handler)
+  ✔ help command @done(20-06-22 06:24) @project(Basic Gameplay.Dock.Docked View Handler)
+  ✘ menu command @cancelled(20-06-22 05:58) @project(Basic Gameplay.Dock.Docked View Handler)
+  ✔ quit command @done(20-06-22 06:24) @project(Basic Gameplay.Dock.Docked View Handler)
+  ✔ When docked, the location in the view state may not correspond to an actual island location @done(20-06-22 06:20) @project(Weird Edge Case Behavior)
   ✔ set heading @started(20-06-19 07:19) @done(20-06-19 23:14) @lasted(15h55m11s) @project(Basic Avatar/World Functionality)
   ✔ move @done(20-06-19 23:14) @project(Basic Avatar/World Functionality)
   ✔ account for turns @done(20-06-21 11:46) @project(Basic Avatar/World Functionality)

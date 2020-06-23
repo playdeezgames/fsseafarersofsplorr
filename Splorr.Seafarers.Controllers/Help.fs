@@ -7,13 +7,14 @@ module Help =
         [
             ""
             "At Sea Commands:"
+            "\tdock - docks at an island, if one is close enough"
+            "\thead for (island name) - heads for an island if it exists and is known"
+            "\tislands [page] - lists known island names, direction and distances"
+            "\tmenu - brings up the main menu"
+            "\tmove - moves for one turn"
             "\tquit - quits the game"
             "\tset heading (degrees) [(minutes) [(seconds)]] - sets a new heading"
             "\tset speed (speed) - sets a new speed"
-            "\tmove - moves for one turn"
-            "\tmenu - brings up the main menu"
-            "\tdock - docks at an island, if one is close enough"
-            "\tislands [page] - lists known island names, direction and distances"
         ]
         |> List.iter sink
 
@@ -21,8 +22,8 @@ module Help =
         [
             ""
             "Confirm Quit Commands:"
-            "\tyes - confirms that you want to quit"
             "\tno - cancels quitting and returns you to the game"
+            "\tyes - confirms that you want to quit"
         ]
         |> List.iter sink
 
@@ -30,8 +31,8 @@ module Help =
         [
             ""
             "Docked Commands:"
-            "\tundock - undocks from the island"
             "\tquit - quits the game"
+            "\tundock - undocks from the island"
         ]
         |> List.iter sink
 
