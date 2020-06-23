@@ -2,7 +2,7 @@ Help State:
     ✔ Docked help @done(20-06-22 06:37)
 Island Notes:
     ☐ Add island note command
-    ☐ List item notes command
+    ☐ List island notes command
 Basic Gameplay:
     Known and Unknown Islands:
         ✔ Each island has a visit count that is a uint32 option @done(20-06-22 06:45)

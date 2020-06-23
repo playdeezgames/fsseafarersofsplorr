@@ -13,6 +13,7 @@ module Help =
             "\tmove - moves for one turn"
             "\tmenu - brings up the main menu"
             "\tdock - docks at an island, if one is close enough"
+            "\tislands [page] - lists known island names, direction and distances"
         ]
         |> List.iter sink
 

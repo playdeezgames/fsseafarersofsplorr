@@ -15,9 +15,8 @@ module IslandList =
         let knownIslands =
             world.Islands
             |> Map.toList
-            |> List.map snd
-            |> List.filter(fun x -> x.VisitCount.IsSome)
-            |> List.sortBy(fun x->x.Name)
+            |> List.filter(fun (_,x) -> x.VisitCount.IsSome)
+            |> List.sortBy(fun (_,x)->x.Name)
         let totalItems = knownIslands |> List.length |> uint32
         let totalPages = (totalItems + (pageSize-1u)) / pageSize
         let skippedItems = page * pageSize
@@ -26,7 +25,15 @@ module IslandList =
             knownIslands
             |> List.skip (skippedItems |> int)
             |> List.take ((lesser pageSize (totalItems-skippedItems)) |> int)
-            |> List.iter (fun i -> i.Name |> sink)
+            |> List.iter (fun (location, island) -> 
+                let distance =
+                    Location.DistanceTo world.Avatar.Position location
+                let bearing =
+                    Location.HeadingTo world.Avatar.Position location
+                    |> Dms.ToDms
+                    |> Dms.ToString
+                sprintf "%s Bearing:%s Distance:%f" island.Name bearing distance
+                |> sink)
         else
             "(end of list)" |> sink
     
