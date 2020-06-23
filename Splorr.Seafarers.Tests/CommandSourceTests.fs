@@ -124,11 +124,17 @@ let ``Parse.It returns Islands 0 command when given ["islands";"1"]`` () =
         |> CommandSource.Parse
     Assert.AreEqual(0u |> Islands |> Some, actual)
 
-
 [<Test>]
 let ``Parse.It returns Islands 1 command when given ["islands";"2"]`` () =
     let actual =
         [ "islands";"2"]
         |> CommandSource.Parse
     Assert.AreEqual(1u |> Islands |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Head For Foo command when given ["head";"for";"foo"]`` () =
+    let actual =
+        [ "head";"for";"foo"]
+        |> CommandSource.Parse
+    Assert.AreEqual("foo" |> HeadFor |> Some, actual)
     

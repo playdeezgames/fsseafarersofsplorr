@@ -55,6 +55,13 @@ module CommandSource=
             | _ -> None
         | _ -> None
 
+    let ParseHead (tokens:string list) : Command option =
+        match tokens with
+        | "for" :: [ name ] ->
+            name
+            |> HeadFor
+            |> Some
+        | _ -> None
 
     let Parse(tokens:string list) : Command option =
         match tokens with
@@ -97,6 +104,9 @@ module CommandSource=
         | "islands" :: tail ->
             tail
             |> ParseIslands
+        | "head" :: tail ->
+            tail
+            |> ParseHead
         | _ -> 
             None
 

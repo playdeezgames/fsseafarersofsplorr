@@ -95,3 +95,32 @@ let ``Run.It returns Docked when given the Dock command and there is a near enou
         |> AtSea.Run (fun()->Command.Dock |> Some) sink
     let updatedIsland = dockWorld.Islands.[(0.0, 0.0)] |> Island.AddVisit dockWorld.Turn
     Assert.AreEqual(((0.0,0.0),{dockWorld with Messages = ["You dock."]; Islands = dockWorld.Islands |> Map.add (0.0,0.0) updatedIsland })|>Docked|>Some, actual)
+
+let private headForWorldUnvisited = 
+    World.Create dockWorldconfiguration (System.Random())
+    |> World.TransformIsland (0.0,0.0) (Island.SetName "yermom" >> Some)
+    |> World.Move
+let private headForWorldVisited = 
+    headForWorldUnvisited
+    |> World.Dock (0.0, 0.0)
+
+[<Test>]
+let ``Run.It gives a message when given a Head For command and the given island does not exist.`` () =
+    let actual = 
+        headForWorldUnvisited
+        |> AtSea.Run (fun () -> "foo" |> HeadFor |> Some) sink
+    Assert.AreEqual({headForWorldUnvisited with Messages=["I don't know how to get to `foo`."]} |> AtSea |> Some, actual)
+
+[<Test>]
+let ``Run.It gives a message when given a Head For command and the given island exists but is not known.`` () =
+    let actual = 
+        headForWorldUnvisited
+        |> AtSea.Run (fun () -> "yermom" |> HeadFor |> Some) sink
+    Assert.AreEqual({headForWorldUnvisited with Messages=["I don't know how to get to `yermom`."]} |> AtSea |> Some, actual)
+
+[<Test>]
+let ``Run.It gives a message and changes heading when given a Head For command and the given island exists and is known.`` () =
+    let actual = 
+        headForWorldVisited
+        |> AtSea.Run (fun () -> "yermom" |> HeadFor |> Some) sink
+    Assert.AreEqual({headForWorldVisited with Messages=["You set your heading to 180\u00b00'0.000000\"."; "You head for `yermom`."]; Avatar={headForWorldVisited.Avatar with Heading = System.Math.PI}} |> AtSea |> Some, actual)

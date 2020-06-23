@@ -212,3 +212,30 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
     let updatedIsland = 
         oneIslandWorld.Islands.[(0.0, 0.0)] |> Island.AddVisit oneIslandWorld.Turn
     Assert.AreEqual({oneIslandWorld with Messages = [ "You dock." ]; Islands = oneIslandWorld.Islands |> Map.add (0.0, 0.0) updatedIsland}, actual)
+
+let private headForWorld =
+    {oneIslandWorld with Avatar = {oneIslandWorld.Avatar with Position = (1.0,0.0)}}
+
+[<Test>]
+let ``HeadFor.It adds a message when the island name does not exist.`` () =
+    let actual =
+        headForWorld
+        |> World.HeadFor "yermom"
+    Assert.AreEqual({headForWorld with Messages=[ "I don't know how to get to `yermom`." ]}, actual)
+
+[<Test>]
+let ``HeadFor.It adds a message when the island name exists but is not known.`` () =
+    let actual =
+        headForWorld
+        |> World.HeadFor "Uno"
+    Assert.AreEqual({headForWorld with Messages=[ "I don't know how to get to `Uno`." ]}, actual)
+
+[<Test>]
+let ``HeadFor.It sets the heading when the island name exists and is known.`` () =
+    let modifiedWorld =
+        headForWorld
+        |> World.TransformIsland (0.0,0.0) (Island.AddVisit headForWorld.Turn >> Some)
+    let actual =
+        modifiedWorld
+        |> World.HeadFor "Uno"
+    Assert.AreEqual({modifiedWorld with Messages=[ "You set your heading to 180°0'0.000000\"."; "You head for `Uno`." ]; Avatar = {modifiedWorld.Avatar with Heading=System.Math.PI}}, actual)

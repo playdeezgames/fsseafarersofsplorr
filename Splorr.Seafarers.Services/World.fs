@@ -117,3 +117,20 @@ module World =
             world
             |> AddMessages [ "There is no place to dock there." ]
 
+    let HeadFor (islandName: string) (world:World) : World =
+        let location =
+            world.Islands
+            |> Map.tryPick 
+                (fun k v -> 
+                    if v.Name = islandName && v.VisitCount.IsSome then
+                        Some k
+                    else
+                        None)
+        match location with
+        | Some l ->
+            world
+            |> SetHeading (Location.HeadingTo world.Avatar.Position l |> Dms.ToDms)
+            |> AddMessages [ islandName |> sprintf "You head for `%s`." ]
+        | _ ->
+            world
+            |> AddMessages [ islandName |> sprintf "I don't know how to get to `%s`." ]
