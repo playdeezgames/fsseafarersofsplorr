@@ -9,6 +9,7 @@ type Gamestate =
     | Help of Gamestate
     | MainMenu of World option
     | IslandList of uint32 * Gamestate
+    | Status of Gamestate
 
 module Gamestate =
     let rec GetWorld (gamestate:Gamestate) : World option =
@@ -19,3 +20,4 @@ module Gamestate =
         | ConfirmQuit g -> GetWorld g
         | Help g -> GetWorld g
         | IslandList (_,g) -> GetWorld g
+        | Status g -> GetWorld g

@@ -111,6 +111,13 @@ let ``Parse.It returns Undock command when given ["undock"]`` () =
     Assert.AreEqual(Undock|>Some, actual)
 
 [<Test>]
+let ``Parse.It returns Status command when given ["status"]`` () =
+    let actual =
+        [ "status"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Command.Status|>Some, actual)
+
+[<Test>]
 let ``Parse.It returns Islands 0 command when given ["islands"]`` () =
     let actual =
         [ "islands"]

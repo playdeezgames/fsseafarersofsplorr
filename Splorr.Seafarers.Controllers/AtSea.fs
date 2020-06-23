@@ -31,6 +31,11 @@ module AtSea =
                     (if distance<world.Avatar.DockDistance then (Some location) else target)) None
 
         match source() with
+        | Some Command.Status ->
+            world 
+            |> AtSea
+            |> Gamestate.Status
+            |> Some
         | Some (HeadFor name) ->
             world
             |> World.HeadFor name

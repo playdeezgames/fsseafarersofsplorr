@@ -1,7 +1,6 @@
 ﻿namespace Splorr.Seafarers
 
 open Splorr.Seafarers.Controllers
-open Splorr.Seafarers.Services
 
 module Runner =
     let rec private Loop (source:CommandSource) (sink:MessageSink) (gamestate: Gamestate) : unit =
@@ -13,6 +12,7 @@ module Runner =
             | MainMenu world -> MainMenu.Run source sink world
             | Docked (location, world) -> Docked.Run source sink location world
             | IslandList (page, state) -> IslandList.Run sink page state
+            | Status state -> Status.Run sink state
         match nextGamestate with
         | Some state ->
             Loop source sink state

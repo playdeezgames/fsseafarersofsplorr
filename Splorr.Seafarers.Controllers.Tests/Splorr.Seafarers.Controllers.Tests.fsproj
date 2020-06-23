@@ -19,6 +19,7 @@
     <Compile Include="AtSeaTests.fs" />
     <Compile Include="DockedTests.fs" />
     <Compile Include="HelpTests.fs" />
+    <Compile Include="StatusTests.fs" />
     <Compile Include="MainMenuTests.fs" />
     <Compile Include="GamestateTests.fs" />
     <Compile Include="IslandListTests.fs" />

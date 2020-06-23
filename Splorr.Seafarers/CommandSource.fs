@@ -98,6 +98,9 @@ module CommandSource=
         | [ "undock" ] ->
             Undock
             |> Some
+        | [ "status" ] ->
+            Command.Status
+            |> Some
         | [ "menu" ] ->
             Menu
             |> Some

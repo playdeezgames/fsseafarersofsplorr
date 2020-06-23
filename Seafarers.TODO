@@ -1,3 +1,28 @@
+Persistence:
+    ☐ save the game
+    ☐ load the game
+    ☐ permadeath?
+        permadeath means that the file loaded is deleted 
+    ☐ autosave?
+Quests:
+    ✔ avatars have money @done(20-06-23 07:04)
+    ✔ avatars have reputation @done(20-06-23 07:04)
+    Status:
+        ✔ status command @done(20-06-23 06:44)
+        ✔ status command parser @done(20-06-23 06:44)
+        ✔ status controller reporting gamestate that shows things like money and reputation @done(20-06-23 07:03)
+        ✔ status can be called from AtSea or Docked @done(20-06-23 07:03)
+    ☐ avatars have quests
+        an avatar can have up to one quest at a time
+    a quest is a "delivery" to another island
+    there is a given amount of pay for making the delivery
+    the avatar gets reputation based on successful delivery
+    the avatar loses reputation if he abandons a quest early
+    "early" delivery == higher pay?
+    late delivery == less reputation?
+    what does reputation help with? (more high paid jobs in the future?)
+    an island has... a number of jobs
+    jobs have tiers...
 Island Notes:
     ☐ Add island note command
     ☐ List island notes command

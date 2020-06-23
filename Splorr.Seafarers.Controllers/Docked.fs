@@ -22,6 +22,12 @@ module Docked =
             |> World.ClearMessages
 
         match source() with
+        | Some Status ->
+            (location, world)
+            |> Docked
+            |> Gamestate.Status
+            |> Some
+
         | Some Undock ->
             world 
             |> World.AddMessages [ "You undock." ]

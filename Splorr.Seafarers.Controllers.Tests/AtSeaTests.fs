@@ -124,3 +124,10 @@ let ``Run.It gives a message and changes heading when given a Head For command a
         headForWorldVisited
         |> AtSea.Run (fun () -> "yermom" |> HeadFor |> Some) sink
     Assert.AreEqual({headForWorldVisited with Messages=["You set your heading to 180\u00b00'0.000000\"."; "You head for `yermom`."]; Avatar={headForWorldVisited.Avatar with Heading = System.Math.PI}} |> AtSea |> Some, actual)
+
+[<Test>]
+let ``Run.It returns Status when given the command Status.`` () =
+    let actual =
+        world
+        |> AtSea.Run (fun () -> Command.Status |> Some) sink
+    Assert.AreEqual(world |> AtSea |> Status |> Some, actual)

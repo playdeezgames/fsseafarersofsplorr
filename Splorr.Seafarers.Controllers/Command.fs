@@ -21,6 +21,7 @@ type Command =
     | Undock
     | Islands of uint32
     | HeadFor of string
+    | Status
 
 type CommandSource = unit -> (Command option)
 

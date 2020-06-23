@@ -52,6 +52,12 @@ let ``Run.It returns AtSea when given invalid docked location.`` () =
     Assert.AreEqual(dockWorld |> AtSea |> Some,actual)
     Assert.IsFalse(called)
 
+[<Test>]
+let ``Run.It returns Status when given the command Status.`` () =
+    let actual =
+        (dockLocation, dockWorld)
+        ||> Docked.Run (fun _ -> Command.Status |> Some) sink 
+    Assert.AreEqual((dockLocation, dockWorld) |> Docked |> Status |> Some, actual)
 
 //[<Test>]
 //let ``Run.It .`` () =

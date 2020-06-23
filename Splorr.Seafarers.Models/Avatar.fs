@@ -7,4 +7,6 @@ type Avatar =
         Speed: float
         ViewDistance: float
         DockDistance: float
+        Money: float
+        Reputation: float
     }

@@ -9,6 +9,8 @@ module Avatar =
             Heading = 0.0
             ViewDistance = 10.0
             DockDistance = 1.0
+            Money = 0.0
+            Reputation = 0.0
         }
 
     let SetSpeed (speed:float) (avatar:Avatar) : Avatar =

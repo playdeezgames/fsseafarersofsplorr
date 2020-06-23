@@ -15,6 +15,7 @@ module Help =
             "\tquit - quits the game"
             "\tset heading (degrees) [(minutes) [(seconds)]] - sets a new heading"
             "\tset speed (speed) - sets a new speed"
+            "\tstatus - shows the avatar's status"
         ]
         |> List.iter sink
 
@@ -32,6 +33,7 @@ module Help =
             ""
             "Docked Commands:"
             "\tquit - quits the game"
+            "\tstatus - shows the avatar's status"
             "\tundock - undocks from the island"
         ]
         |> List.iter sink
