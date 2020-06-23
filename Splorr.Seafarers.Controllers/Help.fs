@@ -34,8 +34,8 @@ module Help =
         ]
         |> List.iter sink
 
-    let Run (sink:MessageSink) (Gamestate:Gamestate) : Gamestate option =
-        match Gamestate with
+    let Run (sink:MessageSink) (gamestate:Gamestate) : Gamestate option =
+        match gamestate with
         | AtSea _ ->
             sink |> AtSea    
         | ConfirmQuit _ ->
@@ -44,6 +44,6 @@ module Help =
             sink |> Docked
         | _ ->
             ()
-        Gamestate
+        gamestate
         |> Some
 

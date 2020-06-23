@@ -42,6 +42,10 @@ module AtSea =
                 |> World.AddMessages [ "There is no place to dock." ]
                 |> AtSea
                 |> Some
+        | Some (Islands page) ->
+            (page, world |> AtSea)
+            |> IslandList
+            |> Some
         | Some Menu ->
             world
             |> Some

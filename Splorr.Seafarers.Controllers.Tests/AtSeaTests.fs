@@ -67,6 +67,14 @@ let ``Run.It returns Main Menu when given the Menu command.`` () =
     Assert.AreEqual(world |> Some |> MainMenu |> Some, actual)
 
 
+[<Test>]
+let ``Run.It returns Island List when given the Islands command.`` () =
+    let actual =
+        world
+        |> AtSea.Run (fun()->0u |> Command.Islands |> Some) sink
+    Assert.AreEqual((0u, world |> AtSea) |> IslandList |> Some, actual)
+
+
 let private emptyWorldconfiguration: WorldGenerationConfiguration ={WorldSize=(1.0, 1.0); MinimumIslandDistance=30.0; MaximumGenerationTries=0u}
 let private emptyWorld = World.Create emptyWorldconfiguration (System.Random())
 
