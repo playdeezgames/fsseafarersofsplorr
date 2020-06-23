@@ -15,12 +15,14 @@ Basic Gameplay:
             ✔ A command is needed to list known islands. this command needs to be paged sections of 20 @done(20-06-22 16:58)
                 'islands [page]'
             ✔ Islands parsing @done(20-06-22 16:58)
-            ☐ AtSea Parsing Islands command
-            ☐ IslandList Gamestate
-            ☐ IslandList View Handler
+            ✔ AtSea Parsing Islands command @done(20-06-23 04:59)
+            ✔ IslandList Gamestate @done(20-06-23 04:59)
+            ✔ IslandList View Handler @done(20-06-23 04:59)
         Head For Known Island:
             ☐ A command is needed to head for a known island based on the island's name
                 'head for [island]'
+            ☐ HeadFor parsing
+            ☐ HeadFor processing in World Service
     Dock:
         ✔ dock parsing @started(20-06-21 16:11) @done(20-06-21 16:16) @lasted(5m37s)
         ✔ undock parsing @started(20-06-21 16:11) @done(20-06-21 16:16) @lasted(5m39s)

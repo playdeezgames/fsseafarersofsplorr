@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="ParseInvalidCommandTests.fs" />
     <Compile Include="CommandSourceTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

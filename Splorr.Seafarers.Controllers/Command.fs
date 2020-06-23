@@ -20,6 +20,7 @@ type Command =
     | Dock
     | Undock
     | Islands of uint32
+    | HeadFor of string
 
 type CommandSource = unit -> (Command option)
 

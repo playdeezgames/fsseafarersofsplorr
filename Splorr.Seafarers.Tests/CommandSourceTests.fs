@@ -13,32 +13,11 @@ let ``Parse.It returns Quit command when given ["quit"]`` () =
     Assert.AreEqual(Quit |> Some, actual)
 
 [<Test>]
-let ``Parse.It returns invalid command when given ["quit";"foo"]`` () =
-    let actual =
-        [ "quit"; "foo"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
-
-[<Test>]
-let ``Parse.It returns invalid command when given []`` () =
-    let actual =
-        [ ]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
-
-[<Test>]
 let ``Parse.It returns Help command when given ["help"]`` () =
     let actual =
         [ "help" ]
         |> CommandSource.Parse
     Assert.AreEqual(Command.Help |> Some, actual)
-
-[<Test>]
-let ``Parse.It returns invalid command when given ["help";"foo"]`` () =
-    let actual =
-        [ "help"; "foo"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
 
 [<Test>]
 let ``Parse.It returns Yes command when given ["yes"]`` () =
@@ -48,25 +27,11 @@ let ``Parse.It returns Yes command when given ["yes"]`` () =
     Assert.AreEqual(Yes |> Some, actual)
 
 [<Test>]
-let ``Parse.It returns invalid command when given ["yes";"foo"]`` () =
-    let actual =
-        [ "yes"; "foo"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
-
-[<Test>]
 let ``Parse.It returns Yes command when given ["no"]`` () =
     let actual =
         [ "no" ]
         |> CommandSource.Parse
     Assert.AreEqual(No |> Some, actual)
-
-[<Test>]
-let ``Parse.It returns invalid command when given ["no";"foo"]`` () =
-    let actual =
-        [ "no"; "foo"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
 
 [<Test>]
 let ``Parse.It returns Move command when given ["move"]`` () =
@@ -76,53 +41,11 @@ let ``Parse.It returns Move command when given ["move"]`` () =
     Assert.AreEqual(Move |> Some, actual)
 
 [<Test>]
-let ``Parse.It returns invalid command when given ["move";"foo"]`` () =
-    let actual =
-        [ "move"; "foo"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
-
-[<Test>]
-let ``Parse.It returns invalid command when given ["set"]`` () =
-    let actual =
-        [ "set"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
-
-[<Test>]
-let ``Parse.It returns invalid command when given ["set";"foo"]`` () =
-    let actual =
-        [ "set"; "foo"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
-
-[<Test>]
-let ``Parse.It returns invalid command when given ["set";"heading"]`` () =
-    let actual =
-        [ "set"; "heading"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
-
-[<Test>]
-let ``Parse.It returns invalid command when given ["set";"heading";"foo"]`` () =
-    let actual =
-        [ "set"; "heading"; "foo"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
-
-[<Test>]
 let ``Parse.It returns Set Heading command when given ["set";"heading";"1"]`` () =
     let actual =
         [ "set"; "heading"; "1"]
         |> CommandSource.Parse
     Assert.AreEqual({Degrees=1;Minutes=0;Seconds=0.0} |> Heading |> Set |> Some, actual)
-
-[<Test>]
-let ``Parse.It returns invalid command when given ["set";"heading";"1";"foo"]`` () =
-    let actual =
-        [ "set"; "heading"; "1";"foo"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
 
 [<Test>]
 let ``Parse.It returns Set Heading command when given ["set";"heading";"1","2"]`` () =
@@ -132,43 +55,14 @@ let ``Parse.It returns Set Heading command when given ["set";"heading";"1","2"]`
     Assert.AreEqual({Degrees=1;Minutes=2;Seconds=0.0} |> Heading |> Set |> Some, actual)
 
 [<Test>]
-let ``Parse.It returns invalid command when given ["set";"heading";"1";"2";"foo"]`` () =
-    let actual =
-        [ "set"; "heading"; "1";"2";"foo"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
-
-[<Test>]
 let ``Parse.It returns Set Heading command when given ["set";"heading";"1","2","3"]`` () =
     let actual =
         [ "set"; "heading"; "1"; "2"; "3"]
         |> CommandSource.Parse
     Assert.AreEqual({Degrees=1;Minutes=2;Seconds=3.0} |> Heading |> Set |> Some, actual)
 
-
 [<Test>]
-let ``Parse.It returns invalid command when given ["set";"heading";"1";"2";"3";"foo"]`` () =
-    let actual =
-        [ "set"; "heading"; "1";"2";"3";"foo"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
-
-[<Test>]
-let ``Parse.It returns invalid command when given ["set";"speed"]`` () =
-    let actual =
-        [ "set"; "speed"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
-
-[<Test>]
-let ``Parse.It returns invalid command when given ["set";"speed";"foo"]`` () =
-    let actual =
-        [ "set"; "speed"; "foo"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
-
-[<Test>]
-let ``Parse.It returns invalid command when given ["set";"speed";"1"]`` () =
+let ``Parse.It returns Set Speed 1 command when given ["set";"speed";"1"]`` () =
     let actual =
         [ "set"; "speed"; "1"]
         |> CommandSource.Parse
@@ -182,25 +76,11 @@ let ``Parse.It returns Start command when given ["start"]`` () =
     Assert.AreEqual(Start|>Some, actual)
 
 [<Test>]
-let ``Parse.It returns invalid command when given ["start";"foo"]`` () =
-    let actual =
-        [ "start";"foo"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
-
-[<Test>]
 let ``Parse.It returns Menu command when given ["menu"]`` () =
     let actual =
         [ "menu"]
         |> CommandSource.Parse
     Assert.AreEqual(Menu|>Some, actual)
-
-[<Test>]
-let ``Parse.It returns invalid command when given ["menu";"foo"]`` () =
-    let actual =
-        [ "menu";"foo"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
 
 [<Test>]
 let ``Parse.It returns Abandon command when given ["abandon"]`` () =
@@ -210,25 +90,11 @@ let ``Parse.It returns Abandon command when given ["abandon"]`` () =
     Assert.AreEqual(Abandon|>Some, actual)
 
 [<Test>]
-let ``Parse.It returns invalid command when given ["abandon";"foo"]`` () =
-    let actual =
-        [ "abandon";"foo"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
-
-[<Test>]
 let ``Parse.It returns Resume command when given ["resume"]`` () =
     let actual =
         [ "resume"]
         |> CommandSource.Parse
     Assert.AreEqual(Resume|>Some, actual)
-
-[<Test>]
-let ``Parse.It returns invalid command when given ["resume";"foo"]`` () =
-    let actual =
-        [ "resume";"foo"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
 
 [<Test>]
 let ``Parse.It returns Dock command when given ["dock"]`` () =
@@ -238,32 +104,11 @@ let ``Parse.It returns Dock command when given ["dock"]`` () =
     Assert.AreEqual(Dock|>Some, actual)
 
 [<Test>]
-let ``Parse.It returns invalid command when given ["dock";"foo"]`` () =
-    let actual =
-        [ "dock";"foo"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
-
-[<Test>]
 let ``Parse.It returns Undock command when given ["undock"]`` () =
     let actual =
         [ "undock"]
         |> CommandSource.Parse
     Assert.AreEqual(Undock|>Some, actual)
-
-[<Test>]
-let ``Parse.It returns invalid command when given ["undock";"foo"]`` () =
-    let actual =
-        [ "undock";"foo"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
-
-[<Test>]
-let ``Parse.It returns invalid command when given ["islands";"foo"]`` () =
-    let actual =
-        [ "islands";"foo"]
-        |> CommandSource.Parse
-    Assert.AreEqual(None, actual)
 
 [<Test>]
 let ``Parse.It returns Islands 0 command when given ["islands"]`` () =
