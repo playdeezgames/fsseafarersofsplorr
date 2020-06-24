@@ -4,7 +4,13 @@ open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 
-let configuration: WorldGenerationConfiguration ={WorldSize=(10.0, 10.0); MinimumIslandDistance=30.0; MaximumGenerationTries=10u}
+let configuration: WorldGenerationConfiguration =
+    {
+        WorldSize=(10.0, 10.0)
+        MinimumIslandDistance=30.0
+        MaximumGenerationTries=10u
+        RewardRange = (1.0,10.0)
+    }
 let private previousState = 
     World.Create configuration (System.Random())
     |> AtSea

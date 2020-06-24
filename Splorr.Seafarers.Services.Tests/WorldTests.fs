@@ -4,7 +4,13 @@ open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
-let configuration: WorldGenerationConfiguration ={WorldSize=(10.0, 10.0); MinimumIslandDistance=30.0; MaximumGenerationTries=10u}
+let configuration: WorldGenerationConfiguration =
+    {
+        WorldSize=(10.0, 10.0)
+        MinimumIslandDistance=30.0 
+        MaximumGenerationTries=10u
+        RewardRange=(1.0,10.0)
+    }
 let world = World.Create configuration (System.Random())
 
 [<Test>]
@@ -95,9 +101,11 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
             Name = ""
             LastVisit = None
             VisitCount = None
+            Jobs = []
         }
     let world =
         {
+            RewardRange = (1.0,10.0)
             Avatar = 
                 {
                     Position=(5.0, 5.0)
@@ -107,6 +115,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                     DockDistance = 1.0
                     Money = 0.0
                     Reputation = 0.0
+                    Job = None
                 }
             Turn = 0u
             Messages = []
@@ -138,6 +147,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
 
 let private zeroIslandWorld = 
     {
+        RewardRange = (1.0,10.0)
         Messages=[]
         Avatar = 
             {
@@ -148,13 +158,18 @@ let private zeroIslandWorld =
                 DockDistance = 1.0
                 Money = 0.0
                 Reputation = 0.0
+                Job = None
             }
         Islands = Map.empty
         Turn = 0u
     }
+let private random = System.Random()
+let private rewardRange = (1.0,10.)
+let private fakeDestinations = [(0.0, 0.0)] |> Set.ofList
 let private oneIslandWorld = 
     zeroIslandWorld
-    |> World.SetIsland(0.0,0.0) (Island.Create() |> Island.SetName "Uno" |> Some)
+    |> World.SetIsland (0.0,0.0) (Island.Create() |> Island.SetName "Uno" |> Some)
+    |> World.TransformIsland  (0.0,0.0) (fun i -> {i with Jobs = [ Job.Create random rewardRange fakeDestinations ]} |> Some)
 
 [<Test>]
 let ``SetIsland.It adds an island to a world when given an island where there was none.`` () =
@@ -205,14 +220,14 @@ let ``TransformIsland.It does nothing when the location given does not have an e
 let ``Dock.It adds a message when the given location has no island.`` () =
     let actual = 
         zeroIslandWorld
-        |> World.Dock (0.0, 0.0)
+        |> World.Dock random (0.0, 0.0)
     Assert.AreEqual({zeroIslandWorld with Messages = [ "There is no place to dock there." ]}, actual)
 
 [<Test>]
 let ``Dock.It updates the island's visit count and last visit when the given location has an island.`` () =
     let actual = 
         oneIslandWorld
-        |> World.Dock (0.0, 0.0)
+        |> World.Dock random (0.0, 0.0)
     let updatedIsland = 
         oneIslandWorld.Islands.[(0.0, 0.0)] |> Island.AddVisit oneIslandWorld.Turn
     Assert.AreEqual({oneIslandWorld with Messages = [ "You dock." ]; Islands = oneIslandWorld.Islands |> Map.add (0.0, 0.0) updatedIsland}, actual)

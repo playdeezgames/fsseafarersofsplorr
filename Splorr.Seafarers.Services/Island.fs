@@ -7,6 +7,7 @@ module Island =
             Name = ""
             LastVisit = None
             VisitCount = None
+            Jobs = []
         }
 
     let SetName (name:string) (island:Island) : Island =
@@ -34,3 +35,9 @@ module Island =
                 VisitCount = Some (x+1u)
                 LastVisit = Some turn}
         | _ -> island
+
+    let GenerateJobs (random:System.Random) (rewardRange:float*float) (destinations:Set<Location>) (island:Island) : Island =
+        if island.Jobs.IsEmpty && not destinations.IsEmpty then
+            {island with Jobs = [Job.Create random rewardRange destinations] |> List.append island.Jobs}
+        else
+            island

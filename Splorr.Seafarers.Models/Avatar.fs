@@ -9,4 +9,5 @@ type Avatar =
         DockDistance: float
         Money: float
         Reputation: float
+        Job: Job option
     }

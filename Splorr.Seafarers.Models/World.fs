@@ -6,4 +6,5 @@ type World =
         Messages: string list
         Avatar: Avatar
         Islands: Map<Location, Island>
+        RewardRange: float * float
     }

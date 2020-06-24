@@ -4,7 +4,13 @@ open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 
-let private configuration :WorldGenerationConfiguration = {WorldSize = (0.0,0.0);MaximumGenerationTries=1u; MinimumIslandDistance=1.0}
+let private configuration :WorldGenerationConfiguration = 
+    {
+        WorldSize = (0.0,0.0)
+        MaximumGenerationTries=1u
+        MinimumIslandDistance=1.0
+        RewardRange = (1.0, 10.0)
+    }
 let private world = World.Create configuration (System.Random())
 
 [<Test>]

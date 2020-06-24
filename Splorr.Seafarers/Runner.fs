@@ -3,10 +3,10 @@
 open Splorr.Seafarers.Controllers
 
 module Runner =
-    let rec private Loop (source:CommandSource) (sink:MessageSink) (gamestate: Gamestate) : unit =
+    let rec private Loop (random:System.Random) (source:CommandSource) (sink:MessageSink) (gamestate: Gamestate) : unit =
         let nextGamestate : Gamestate option = 
             match gamestate with
-            | AtSea world -> AtSea.Run source sink world
+            | AtSea world -> AtSea.Run random source sink world
             | ConfirmQuit state -> ConfirmQuit.Run source sink state
             | Help state -> Help.Run sink state
             | MainMenu world -> MainMenu.Run source sink world
@@ -15,11 +15,11 @@ module Runner =
             | Status state -> Status.Run sink state
         match nextGamestate with
         | Some state ->
-            Loop source sink state
+            Loop random source sink state
         | None ->
             ()
     
     let Run () : unit =
         None
         |> MainMenu
-        |> Loop CommandSource.Read System.Console.WriteLine
+        |> Loop (System.Random()) CommandSource.Read System.Console.WriteLine

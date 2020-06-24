@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Dms.fs" />
+    <Compile Include="Job.fs" />
     <Compile Include="Island.fs" />
     <Compile Include="Location.fs" />
     <Compile Include="Avatar.fs" />

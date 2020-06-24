@@ -31,7 +31,13 @@ module MainMenu =
             |> MainMenu
             |> Some
         | None, Some Start ->
-            World.Create {MinimumIslandDistance=10.0; WorldSize=(100.0,100.0); MaximumGenerationTries=500u} (System.Random())//TODO: still hard coded!
+            World.Create 
+                {
+                    MinimumIslandDistance=10.0
+                    WorldSize=(100.0,100.0)
+                    MaximumGenerationTries=500u
+                    RewardRange=(0.0,0.0)
+                } (System.Random())//TODO: still hard coded!
             |> AtSea
             |> Some
         | None, Some Quit ->

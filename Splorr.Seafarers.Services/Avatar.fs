@@ -11,6 +11,7 @@ module Avatar =
             DockDistance = 1.0
             Money = 0.0
             Reputation = 0.0
+            Job = None
         }
 
     let SetSpeed (speed:float) (avatar:Avatar) : Avatar =

@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module AtSea =
-    let Run (source:CommandSource) (sink:MessageSink) (world:World) : Gamestate option =
+    let Run (random:System.Random) (source:CommandSource) (sink:MessageSink) (world:World) : Gamestate option =
         "" |> sink
         world.Messages
         |> Utility.DumpMessages sink
@@ -44,7 +44,7 @@ module AtSea =
         | Some Dock ->
             match dockTarget with
             | Some location ->
-                (location, world |> World.Dock location)
+                (location, world |> World.Dock random location)
                 |> Docked
                 |> Some
             | None ->

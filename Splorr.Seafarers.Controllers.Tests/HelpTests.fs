@@ -6,7 +6,13 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 
 let private sink(_:string) : unit = ()
-let private configuration: WorldGenerationConfiguration ={WorldSize=(10.0, 10.0); MinimumIslandDistance=30.0; MaximumGenerationTries=10u}
+let private configuration: WorldGenerationConfiguration =
+    {
+        WorldSize=(10.0, 10.0)
+        MinimumIslandDistance=30.0
+        MaximumGenerationTries=10u
+        RewardRange = (1.0, 10.0)
+    }
 let private world =  World.Create configuration (System.Random())
 
 [<Test>]

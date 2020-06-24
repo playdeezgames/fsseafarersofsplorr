@@ -12,17 +12,34 @@ Quests:
         ✔ status command parser @done(20-06-23 06:44)
         ✔ status controller reporting gamestate that shows things like money and reputation @done(20-06-23 07:03)
         ✔ status can be called from AtSea or Docked @done(20-06-23 07:03)
-    ☐ avatars have quests
+    ✔ avatars have jobs @done(20-06-24 06:00)
         an avatar can have up to one quest at a time
-    a quest is a "delivery" to another island
-    there is a given amount of pay for making the delivery
-    the avatar gets reputation based on successful delivery
-    the avatar loses reputation if he abandons a quest early
-    "early" delivery == higher pay?
-    late delivery == less reputation?
-    what does reputation help with? (more high paid jobs in the future?)
-    an island has... a number of jobs
-    jobs have tiers...
+    ☐ a quest is a "delivery" to another island
+        there is a given amount of pay for making the delivery
+    ☐ completing a quest upon docking
+        the avatar gets reputation based on successful delivery
+        ontime delivery for full reward, late reward for late delivery
+        late delivery == no reputation gain
+    ☐ able to abandon quest
+        the avatar loses reputation if he abandons a quest early
+    ✔ multiple jobs can be available on an island @done(20-06-24 06:00)
+        what does reputation help with? (more high paid jobs in the future?)
+        an island has... a number of jobs
+    ☐ some jobs have a minimum reputation requirement
+    ☐ command to show availabe jobs in islands?
+    ✔ how are jobs generated in islands? @done(20-06-24 05:59)
+        when docking
+    ☐ show current job, if any on the status screen
+    ☐ abandon job command
+        while docked or at sea
+    ☐ confirm abandoning job, kinda like confirm quit
+    ☐ jobs command while at dock
+        shows available jobs, but only ones that the avatar qualifies for
+    ☐ accept job command
+        in order to differentiate, we need a way to identify jobs in the island list
+    ☐ accepting job makes destination known (0 visit count)
+    ☐ job flavor text
+        "please delivery this (adverb) (adjective) (noun) to (name) the (profession) on the island of (island name)"
 Island Notes:
     ☐ Add island note command
     ☐ List island notes command

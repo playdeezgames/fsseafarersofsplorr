@@ -6,6 +6,7 @@ type WorldGenerationConfiguration =
         WorldSize: Location
         MinimumIslandDistance: float
         MaximumGenerationTries: uint32
+        RewardRange: float * float
     }
 
 module World =
@@ -71,6 +72,7 @@ module World =
             Messages = []
             Avatar = Avatar.Create(configuration.WorldSize |> Location.ScaleBy 0.5)
             Islands = Map.empty
+            RewardRange = configuration.RewardRange
         }
         |> GenerateIslands configuration random 0u
         |> NameIslands random
@@ -107,11 +109,18 @@ module World =
         |> List.map fst
         |> List.filter (fun i -> Location.DistanceTo from i <= maximumDistance)
 
-    let Dock (location: Location) (world:World) : World =
+    let Dock (random:System.Random) (location: Location) (world:World) : World =
         match world.Islands |> Map.tryFind location with
         | Some island ->
+            let destinations =
+                world.Islands
+                |> Map.toList
+                |> List.map fst
+                |> Set.ofList
+                |> Set.remove location
             world
             |> TransformIsland location (Island.AddVisit world.Turn >> Some)
+            |> TransformIsland location (Island.GenerateJobs random world.RewardRange destinations >> Some)
             |> AddMessages [ "You dock." ]
         | _ -> 
             world

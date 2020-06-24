@@ -5,7 +5,13 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 
-let private dockWorldconfiguration: WorldGenerationConfiguration ={WorldSize=(0.0, 0.0); MinimumIslandDistance=30.0; MaximumGenerationTries=1u}
+let private dockWorldconfiguration: WorldGenerationConfiguration =
+    {
+        WorldSize=(0.0, 0.0)
+        MinimumIslandDistance=30.0
+        MaximumGenerationTries=1u
+        RewardRange = (1.0, 10.0)
+    }
 let private dockWorld = World.Create dockWorldconfiguration (System.Random())
 let private dockLocation = (0.0, 0.0)
 let private sink (_:string) : unit = ()
