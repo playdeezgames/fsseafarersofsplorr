@@ -9,6 +9,7 @@
     <Compile Include="Command.fs" />
     <Compile Include="Utility.fs" />
     <Compile Include="AtSea.fs" />
+    <Compile Include="Jobs.fs" />
     <Compile Include="Docked.fs" />
     <Compile Include="ConfirmQuit.fs" />
     <Compile Include="Help.fs" />

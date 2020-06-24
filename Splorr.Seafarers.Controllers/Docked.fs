@@ -22,33 +22,38 @@ module Docked =
             |> World.ClearMessages
 
         match source() with
-        | Some Status ->
+        | Some Command.Jobs ->
             (location, world)
-            |> Docked
+            |> Gamestate.Jobs
+            |> Some
+
+        | Some Command.Status ->
+            (location, world)
+            |> Gamestate.Docked
             |> Gamestate.Status
             |> Some
 
-        | Some Undock ->
+        | Some Command.Undock ->
             world 
             |> World.AddMessages [ "You undock." ]
-            |> AtSea 
+            |> Gamestate.AtSea 
             |> Some
 
-        | Some Quit ->
+        | Some Command.Quit ->
             (location, world) 
-            |> Docked 
-            |> ConfirmQuit 
+            |> Gamestate.Docked 
+            |> Gamestate.ConfirmQuit 
             |> Some
 
-        | Some Help ->
+        | Some Command.Help ->
             (location, world) 
-            |> Docked 
+            |> Gamestate.Docked 
             |> Gamestate.Help 
             |> Some
 
         | _ -> 
             (location, world) 
-            |> Docked 
+            |> Gamestate.Docked 
             |> Some
 
     let Run (source:CommandSource) (sink:MessageSink) (location:Location) (world: World) : Gamestate option =
@@ -57,5 +62,5 @@ module Docked =
             RunWithIsland source sink location island world
         | None ->
             world
-            |> AtSea
+            |> Gamestate.AtSea
             |> Some

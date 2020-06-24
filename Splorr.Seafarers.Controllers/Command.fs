@@ -6,6 +6,7 @@ type SetCommand =
     | Speed of float
     | Heading of Dms
 
+[<RequireQualifiedAccess>]
 type Command =
     | Quit
     | Yes
@@ -22,6 +23,7 @@ type Command =
     | Islands of uint32
     | HeadFor of string
     | Status
+    | Jobs
 
 type CommandSource = unit -> (Command option)
 

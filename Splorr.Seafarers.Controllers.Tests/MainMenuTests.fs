@@ -18,23 +18,23 @@ let private sink(_:string) : unit = ()
 let ``Run.It returns Confirm Quit when given Quit command and there is no world.`` () =
     let actual =
         None
-        |> MainMenu.Run (fun()->Quit |> Some) sink 
-    Assert.AreEqual(None |> MainMenu |> ConfirmQuit |> Some, actual)
+        |> MainMenu.Run (fun()->Command.Quit |> Some) sink 
+    Assert.AreEqual(None |> Gamestate.MainMenu |> Gamestate.ConfirmQuit |> Some, actual)
 
 [<Test>]
 let ``Run.It returns Main Menu when given Quit command and there is a world.`` () =
     let actual =
         world
         |> Some
-        |> MainMenu.Run (fun()->Quit |> Some) sink 
-    Assert.AreEqual(world |> Some |> MainMenu |> Some, actual)
+        |> MainMenu.Run (fun()->Command.Quit |> Some) sink 
+    Assert.AreEqual(world |> Some |> Gamestate.MainMenu |> Some, actual)
 
 [<Test>]
 let ``Run.It returns Main Menu when given invalid command and there is no world.`` () =
     let actual =
         None
         |> MainMenu.Run (fun()->None) sink 
-    Assert.AreEqual(None |> MainMenu |> Some, actual)
+    Assert.AreEqual(None |> Gamestate.MainMenu |> Some, actual)
 
 [<Test>]
 let ``Run.It returns Main Menu when given invalid command and there is a world.`` () =
@@ -42,15 +42,15 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
         world
         |> Some
         |> MainMenu.Run (fun()->None) sink 
-    Assert.AreEqual(world |> Some |> MainMenu |> Some, actual)
+    Assert.AreEqual(world |> Some |> Gamestate.MainMenu |> Some, actual)
 
 [<Test>]
 let ``Run.It returns At Sea when given Start command and there is no world.`` () =
     let actual =
         None
-        |> MainMenu.Run (fun()->Start |> Some) sink 
+        |> MainMenu.Run (fun()->Command.Start |> Some) sink 
     match actual with
-    | Some (AtSea _) -> true
+    | Some (Gamestate.AtSea _) -> true
     | _ -> false
     |> Assert.True
 
@@ -60,24 +60,24 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
     let actual =
         world
         |> Some
-        |> MainMenu.Run (fun()->Start |> Some) sink 
-    Assert.AreEqual(world |> Some |> MainMenu |> Some, actual)
+        |> MainMenu.Run (fun()->Command.Start |> Some) sink 
+    Assert.AreEqual(world |> Some |> Gamestate.MainMenu |> Some, actual)
 
 [<Test>]
 let ``Run.It returns Main Menu with no world when given Abandon command and there is a world.`` () =
     let actual =
         world
         |> Some
-        |> MainMenu.Run (fun()->Abandon |> Some) sink 
-    Assert.AreEqual(None |> MainMenu |> Some, actual)
+        |> MainMenu.Run (fun()->Command.Abandon |> Some) sink 
+    Assert.AreEqual(None |> Gamestate.MainMenu |> Some, actual)
 
 
 [<Test>]
 let ``Run.It returns Main Menu with no world when given Abandon command and there is no world.`` () =
     let actual =
         None
-        |> MainMenu.Run (fun()->Abandon |> Some) sink 
-    Assert.AreEqual(None |> MainMenu |> Some, actual)
+        |> MainMenu.Run (fun()->Command.Abandon |> Some) sink 
+    Assert.AreEqual(None |> Gamestate.MainMenu |> Some, actual)
 
 
 [<Test>]
@@ -85,16 +85,16 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
     let actual =
         world
         |> Some
-        |> MainMenu.Run (fun()->Resume |> Some) sink 
-    Assert.AreEqual(world |> AtSea |> Some, actual)
+        |> MainMenu.Run (fun()->Command.Resume |> Some) sink 
+    Assert.AreEqual(world |> Gamestate.AtSea |> Some, actual)
 
 
 [<Test>]
 let ``Run.It returns Main Menu with no world when given Resume command and there is no world.`` () =
     let actual =
         None
-        |> MainMenu.Run (fun()->Resume |> Some) sink 
-    Assert.AreEqual(None |> MainMenu |> Some, actual)
+        |> MainMenu.Run (fun()->Command.Resume |> Some) sink 
+    Assert.AreEqual(None |> Gamestate.MainMenu |> Some, actual)
 
 //[<Test>]
 //let ``Run.It returns YYYY when given XXXX command.`` () =

@@ -22,15 +22,15 @@ module MainMenu =
             ]
         |> List.iter sink
         match world, source() with
-        | Some w, Some Resume ->
+        | Some w, Some Command.Resume ->
             w
-            |> AtSea
+            |> Gamestate.AtSea
             |> Some
-        | Some w, Some Abandon ->
+        | Some w, Some Command.Abandon ->
             None
-            |> MainMenu
+            |> Gamestate.MainMenu
             |> Some
-        | None, Some Start ->
+        | None, Some Command.Start ->
             World.Create 
                 {
                     MinimumIslandDistance=10.0
@@ -38,16 +38,16 @@ module MainMenu =
                     MaximumGenerationTries=500u
                     RewardRange=(0.0,0.0)
                 } (System.Random())//TODO: still hard coded!
-            |> AtSea
+            |> Gamestate.AtSea
             |> Some
-        | None, Some Quit ->
+        | None, Some Command.Quit ->
             world
-            |> MainMenu
-            |> ConfirmQuit
+            |> Gamestate.MainMenu
+            |> Gamestate.ConfirmQuit
             |> Some
         | _ ->
             world
-            |> MainMenu
+            |> Gamestate.MainMenu
             |> Some
 
 

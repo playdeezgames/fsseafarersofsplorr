@@ -13,7 +13,7 @@ let configuration: WorldGenerationConfiguration =
     }
 let private previousState = 
     World.Create configuration (System.Random())
-    |> AtSea
+    |> Gamestate.AtSea
 let private sink (_:string) : unit = ()
 let private makeSource (command:Command option) = fun () -> command
 
@@ -21,14 +21,14 @@ let private makeSource (command:Command option) = fun () -> command
 let ``Run function.When Yes command passed, return None.`` () =
     let actual = 
         previousState
-        |> ConfirmQuit.Run (Yes |> Some |> makeSource) sink 
+        |> ConfirmQuit.Run (Command.Yes |> Some |> makeSource) sink 
     Assert.AreEqual(None, actual)
 
 [<Test>]
 let ``Run function.When No command passed, return previous State.`` () =
     let actual = 
         previousState
-        |> ConfirmQuit.Run (No |> Some |> makeSource) sink 
+        |> ConfirmQuit.Run (Command.No |> Some |> makeSource) sink 
     Assert.AreEqual(previousState |> Some, actual)
     
 [<Test>]
@@ -36,7 +36,7 @@ let ``Run function.When invalid command passed, return ConfirmQuit.`` () =
     let actual = 
         previousState
         |> ConfirmQuit.Run (None |> makeSource) sink 
-    Assert.AreEqual(previousState |> ConfirmQuit |> Some, actual)
+    Assert.AreEqual(previousState |> Gamestate.ConfirmQuit |> Some, actual)
 
 
 [<Test>]
@@ -44,4 +44,4 @@ let ``Run.It initiates Confirm Quit Help when given the Help command.`` () =
     let actual =
         previousState
         |> ConfirmQuit.Run  (fun()->Command.Help |> Some) sink
-    Assert.AreEqual(previousState |> ConfirmQuit |> Help |> Some, actual)
+    Assert.AreEqual(previousState |> Gamestate.ConfirmQuit |> Gamestate.Help |> Some, actual)

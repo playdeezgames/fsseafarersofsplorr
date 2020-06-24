@@ -6,22 +6,22 @@ module ConfirmQuit =
         "Are you sure you want to quit?" |> sink
 
         match source() with
-        | Some Help -> 
+        | Some Command.Help -> 
             state 
-            |> ConfirmQuit 
+            |> Gamestate.ConfirmQuit 
             |> Gamestate.Help 
             |> Some
 
-        | Some Yes -> 
+        | Some Command.Yes -> 
             None
 
-        | Some No -> 
+        | Some Command.No -> 
             state 
             |> Some
 
         | _ -> 
             "Maybe try 'help'?" |> sink
             state 
-            |> ConfirmQuit 
+            |> Gamestate.ConfirmQuit 
             |> Some
 

@@ -20,29 +20,29 @@ let private sink (_:string) : unit = ()
 let ``Run.It returns AtSea when given Undock Command.`` () =
     let actual =
         (dockLocation, dockWorld)
-        ||> Docked.Run (fun _ -> Undock |> Some) sink 
-    Assert.AreEqual({dockWorld with Messages = ["You undock."]} |> AtSea |> Some,actual)
+        ||> Docked.Run (fun _ -> Command.Undock |> Some) sink 
+    Assert.AreEqual({dockWorld with Messages = ["You undock."]} |> Gamestate.AtSea |> Some,actual)
 
 [<Test>]
 let ``Run.It returns ConfirmQuit when given Quit Command.`` () =
     let actual =
         (dockLocation, dockWorld)
-        ||> Docked.Run (fun _ -> Quit |> Some) sink 
-    Assert.AreEqual((dockLocation, dockWorld) |> Docked |> ConfirmQuit |> Some,actual)
+        ||> Docked.Run (fun _ -> Command.Quit |> Some) sink 
+    Assert.AreEqual((dockLocation, dockWorld) |> Gamestate.Docked |> Gamestate.ConfirmQuit |> Some,actual)
 
 [<Test>]
 let ``Run.It returns Help when given Help Command.`` () =
     let actual =
         (dockLocation, dockWorld)
         ||> Docked.Run (fun _ -> Command.Help |> Some) sink 
-    Assert.AreEqual((dockLocation, dockWorld) |> Docked |> Help |> Some,actual)
+    Assert.AreEqual((dockLocation, dockWorld) |> Gamestate.Docked |> Gamestate.Help |> Some,actual)
 
 [<Test>]
 let ``Run.It returns Docked when given invalid Command.`` () =
     let actual =
         (dockLocation, dockWorld)
         ||> Docked.Run (fun _ -> None) sink 
-    Assert.AreEqual((dockLocation, dockWorld) |> Docked |> Some,actual)
+    Assert.AreEqual((dockLocation, dockWorld) |> Gamestate.Docked |> Some,actual)
 
 
 [<Test>]
@@ -55,7 +55,7 @@ let ``Run.It returns AtSea when given invalid docked location.`` () =
                 called <- true
                 Command.Help 
                 |> Some) sink 
-    Assert.AreEqual(dockWorld |> AtSea |> Some,actual)
+    Assert.AreEqual(dockWorld |> Gamestate.AtSea |> Some,actual)
     Assert.IsFalse(called)
 
 [<Test>]
@@ -63,7 +63,15 @@ let ``Run.It returns Status when given the command Status.`` () =
     let actual =
         (dockLocation, dockWorld)
         ||> Docked.Run (fun _ -> Command.Status |> Some) sink 
-    Assert.AreEqual((dockLocation, dockWorld) |> Docked |> Status |> Some, actual)
+    Assert.AreEqual((dockLocation, dockWorld) |> Gamestate.Docked |> Gamestate.Status |> Some, actual)
+
+
+[<Test>]
+let ``Run.It returns Jobs gamestate when given the command Jobs.`` () =
+    let actual =
+        (dockLocation, dockWorld)
+        ||> Docked.Run (fun _ -> Command.Jobs |> Some) sink 
+    Assert.AreEqual((dockLocation, dockWorld) |> Gamestate.Jobs |> Some, actual)
 
 //[<Test>]
 //let ``Run.It .`` () =

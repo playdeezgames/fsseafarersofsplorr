@@ -19,7 +19,7 @@ let private world =  World.Create configuration (System.Random())
 let ``Run.It returns the given AtSea Gamestate`` () =
     let originalState = 
         world
-        |> AtSea
+        |> Gamestate.AtSea
     let actual = 
         originalState
         |> Help.Run sink
@@ -29,8 +29,8 @@ let ``Run.It returns the given AtSea Gamestate`` () =
 let ``Run.It returns the given ConfirmQuit Gamestate`` () =
     let originalState = 
         world
-        |> AtSea
-        |> ConfirmQuit
+        |> Gamestate.AtSea
+        |> Gamestate.ConfirmQuit
     let actual = 
         originalState
         |> Help.Run sink
@@ -40,7 +40,7 @@ let ``Run.It returns the given ConfirmQuit Gamestate`` () =
 let ``Run.It returns the given Docked Gamestate`` () =
     let originalState = 
         ((0.0, 0.0), world)
-        |> Docked
+        |> Gamestate.Docked
     let actual = 
         originalState
         |> Help.Run sink

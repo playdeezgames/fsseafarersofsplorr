@@ -5,7 +5,7 @@ open Splorr.Seafarers.Controllers
 
 let private previousGameState =
     None
-    |> MainMenu
+    |> Gamestate.MainMenu
 let private sink(_:string) : unit = ()
 
 [<Test>]

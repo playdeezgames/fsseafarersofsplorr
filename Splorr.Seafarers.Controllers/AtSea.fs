@@ -33,62 +33,62 @@ module AtSea =
         match source() with
         | Some Command.Status ->
             world 
-            |> AtSea
+            |> Gamestate.AtSea
             |> Gamestate.Status
             |> Some
-        | Some (HeadFor name) ->
+        | Some (Command.HeadFor name) ->
             world
             |> World.HeadFor name
-            |> AtSea
+            |> Gamestate.AtSea
             |> Some
-        | Some Dock ->
+        | Some Command.Dock ->
             match dockTarget with
             | Some location ->
                 (location, world |> World.Dock random location)
-                |> Docked
+                |> Gamestate.Docked
                 |> Some
             | None ->
                 world
                 |> World.AddMessages [ "There is no place to dock." ]
-                |> AtSea
+                |> Gamestate.AtSea
                 |> Some
-        | Some (Islands page) ->
-            (page, world |> AtSea)
-            |> IslandList
+        | Some (Command.Islands page) ->
+            (page, world |> Gamestate.AtSea)
+            |> Gamestate.IslandList
             |> Some
-        | Some Menu ->
+        | Some Command.Menu ->
             world
             |> Some
-            |> MainMenu
+            |> Gamestate.MainMenu
             |> Some
-        | Some Help ->
+        | Some Command.Help ->
             world
-            |> AtSea
+            |> Gamestate.AtSea
             |> Gamestate.Help
             |> Some
-        | Some Move ->
+        | Some Command.Move ->
             world
             |> World.Move
-            |> AtSea
+            |> Gamestate.AtSea
             |> Some
-        | Some (Set (Heading heading)) ->
+        | Some (Command.Set (Heading heading)) ->
             world
             |> World.SetHeading heading
-            |> AtSea
+            |> Gamestate.AtSea
             |> Some
-        | Some (Set (Speed speed)) ->
+        | Some (Command.Set (Speed speed)) ->
             world
             |> World.SetSpeed speed
-            |> AtSea
+            |> Gamestate.AtSea
             |> Some
-        | Some Quit -> 
+        | Some Command.Quit -> 
             world
-            |> AtSea
-            |> ConfirmQuit
+            |> Gamestate.AtSea
+            |> Gamestate.ConfirmQuit
             |> Some
         | _ ->
             "Maybe try 'help'?" |> sink
             world
-            |> AtSea
+            |> Gamestate.AtSea
             |> Some
 

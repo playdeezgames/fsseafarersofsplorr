@@ -9,7 +9,7 @@ module CommandSource=
         | [ x ] ->
             match System.Double.TryParse x with
             | true, v ->
-                v |> Speed |> Set |> Some
+                v |> Speed |> Command.Set |> Some
             | _ -> None
         | _ -> None
 
@@ -33,7 +33,7 @@ module CommandSource=
         | [degrees] ->
             ParseDms(degrees,"0","0.0")
         | _ -> None)
-        |> Option.map(fun x -> x |> Heading |> Set)
+        |> Option.map(fun x -> x |> Heading |> Command.Set)
 
     let private ParseSet(tokens: string list) : Command option =
         match tokens with
@@ -47,11 +47,11 @@ module CommandSource=
 
     let private ParseIslands(tokens: string list) : Command option =
         match tokens with
-        | [] -> 0u |> Islands |> Some
+        | [] -> 0u |> Command.Islands |> Some
         | [ token ] ->
             match System.UInt32.TryParse token with
             | true, page when page > 0u ->
-                (page - 1u) |> Islands |> Some
+                (page - 1u) |> Command.Islands |> Some
             | _ -> None
         | _ -> None
 
@@ -59,50 +59,53 @@ module CommandSource=
         match tokens with
         | "for" :: [ name ] ->
             name
-            |> HeadFor
+            |> Command.HeadFor
             |> Some
         | _ -> None
 
     let Parse(tokens:string list) : Command option =
         match tokens with
         | [ "resume" ] -> 
-            Resume 
+            Command.Resume 
             |> Some
         | [ "abandon" ] -> 
-            Abandon 
+            Command.Abandon 
             |> Some
         | [ "quit" ] -> 
-            Quit 
+            Command.Quit 
             |> Some
         | [ "yes" ] ->
-            Yes
+            Command.Yes
             |> Some
         | [ "no" ] ->
-            No
+            Command.No
             |> Some
         | "set" :: tail ->
             tail
             |> ParseSet
         | [ "move" ] ->
-            Move
+            Command.Move
             |> Some
         | [ "help" ] ->
             Command.Help
             |> Some
         | [ "start" ] ->
-            Start
+            Command.Start
             |> Some
         | [ "dock" ] ->
-            Dock
+            Command.Dock
+            |> Some
+        | [ "jobs" ] ->
+            Command.Jobs
             |> Some
         | [ "undock" ] ->
-            Undock
+            Command.Undock
             |> Some
         | [ "status" ] ->
             Command.Status
             |> Some
         | [ "menu" ] ->
-            Menu
+            Command.Menu
             |> Some
         | "islands" :: tail ->
             tail

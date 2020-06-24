@@ -40,11 +40,11 @@ module Help =
 
     let Run (sink:MessageSink) (gamestate:Gamestate) : Gamestate option =
         match gamestate with
-        | AtSea _ ->
+        | Gamestate.AtSea _ ->
             sink |> AtSea    
-        | ConfirmQuit _ ->
+        | Gamestate.ConfirmQuit _ ->
             sink |> ConfirmQuit
-        | Docked _ ->
+        | Gamestate.Docked _ ->
             sink |> Docked
         | _ ->
             ()
