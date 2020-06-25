@@ -13,6 +13,7 @@ module Runner =
             | Gamestate.Docked (location, world) -> Docked.Run source sink location world
             | Gamestate.IslandList (page, state) -> IslandList.Run sink page state
             | Gamestate.Status state -> Status.Run sink state
+            | Gamestate.Jobs (location, world) -> Jobs.Run sink (location, world)
         match nextGamestate with
         | Some state ->
             Loop random source sink state

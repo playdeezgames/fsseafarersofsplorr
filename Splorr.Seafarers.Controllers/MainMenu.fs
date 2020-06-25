@@ -36,7 +36,7 @@ module MainMenu =
                     MinimumIslandDistance=10.0
                     WorldSize=(100.0,100.0)
                     MaximumGenerationTries=500u
-                    RewardRange=(0.0,0.0)
+                    RewardRange=(1.0,10.0)
                 } (System.Random())//TODO: still hard coded!
             |> Gamestate.AtSea
             |> Some
