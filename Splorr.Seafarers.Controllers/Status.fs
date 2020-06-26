@@ -12,6 +12,17 @@ module Status =
             world.Avatar.Reputation |> sprintf "\tReputation: %f"
         ]
         |> List.iter sink
+        world.Avatar.Job
+        |> Option.iter
+            (fun job ->
+                let island = 
+                    world.Islands.[job.Destination]
+                [
+                    "Current Job:"
+                    island.Name |> sprintf "Destination: %s"
+                    job.Reward |> sprintf "Reward: %f"
+                ]
+                |> List.iter sink)
 
     let Run (sink:MessageSink) (gamestate:Gamestate) : Gamestate option =
         gamestate

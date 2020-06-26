@@ -16,11 +16,11 @@ Quests:
         an avatar can have up to one quest at a time
     ✔ a quest is a "delivery" to another island @done(20-06-25 04:53)
         there is a given amount of pay for making the delivery
-    ☐ completing a quest upon docking
+    ☐ completing a job upon docking
         the avatar gets reputation based on successful delivery
         ontime delivery for full reward, late reward for late delivery
         late delivery == no reputation gain
-    ☐ able to abandon quest
+    ☐ able to abandon job
         the avatar loses reputation if he abandons a quest early
     ✔ multiple jobs can be available on an island @done(20-06-24 06:00)
         what does reputation help with? (more high paid jobs in the future?)
@@ -29,7 +29,7 @@ Quests:
     ✔ command to show availabe jobs in islands? @done(20-06-25 04:51)
     ✔ how are jobs generated in islands? @done(20-06-24 05:59)
         when docking
-    ☐ show current job, if any on the status screen
+    ✔ show current job, if any on the status screen @done(20-06-26 06:50)
     ☐ abandon job command
         while docked or at sea
     ☐ confirm abandoning job, kinda like confirm quit
@@ -37,7 +37,7 @@ Quests:
         shows available jobs, but only ones that the avatar qualifies for
     ✔ accept job command @done(20-06-26 06:24)
         in order to differentiate, we need a way to identify jobs in the island list
-    ☐ accepting job makes destination known (0 visit count)
+    ✔ accepting job makes destination known (0 visit count) @done(20-06-26 06:46)
     ✔ accepting job removes job from island @done(20-06-26 06:24)
     ✔ accepting job add job to avatar @done(20-06-26 06:24)
     ☐ avatar may not accept a job if he already has one accepted
