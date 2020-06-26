@@ -22,6 +22,11 @@ module Docked =
             |> World.ClearMessages
 
         match source() with
+        | Some (Command.AcceptJob index) ->
+            (location, world |> World.AcceptJob index location)
+            |> Gamestate.Docked
+            |> Some
+
         | Some Command.Jobs ->
             (location, world)
             |> Gamestate.Jobs

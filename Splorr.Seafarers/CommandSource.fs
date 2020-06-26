@@ -55,12 +55,21 @@ module CommandSource=
             | _ -> None
         | _ -> None
 
-    let ParseHead (tokens:string list) : Command option =
+    let private ParseHead (tokens:string list) : Command option =
         match tokens with
         | "for" :: [ name ] ->
             name
             |> Command.HeadFor
             |> Some
+        | _ -> None
+
+    let private ParseAccept (tokens:string list) : Command option =
+        match tokens with
+        | "job" :: [ number ] ->
+            match System.UInt32.TryParse(number) with
+            | true, value -> 
+                value |> Command.AcceptJob |> Some
+            | _ -> None
         | _ -> None
 
     let Parse(tokens:string list) : Command option =
@@ -113,6 +122,9 @@ module CommandSource=
         | "head" :: tail ->
             tail
             |> ParseHead
+        | "accept" :: tail ->
+            tail
+            |> ParseAccept
         | _ -> 
             None
 

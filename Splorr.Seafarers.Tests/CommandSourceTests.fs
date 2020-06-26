@@ -151,4 +151,11 @@ let ``Parse.It returns Head For Foo command when given ["head";"for";"foo"]`` ()
         [ "head";"for";"foo"]
         |> CommandSource.Parse
     Assert.AreEqual("foo" |> Command.HeadFor |> Some, actual)
-    
+   
+[<Test>]
+let ``Parse.It returns Accept Job 1 command when given ["accept";"job";"1"]`` () =
+    let actual =
+        [ "accept";"job";"1"]
+        |> CommandSource.Parse
+    Assert.AreEqual(1u |> Command.AcceptJob |> Some, actual)
+ 

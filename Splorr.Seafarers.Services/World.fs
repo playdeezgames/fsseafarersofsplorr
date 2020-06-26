@@ -143,3 +143,26 @@ module World =
         | _ ->
             world
             |> AddMessages [ islandName |> sprintf "I don't know how to get to `%s`." ]
+
+    let TransformAvatar (transform:Avatar -> Avatar) (world:World) : World =
+        {world with Avatar = world.Avatar |> transform}
+
+    let AcceptJob (jobIndex:uint32) (location:Location) (world:World) : World =
+        match jobIndex, world.Islands |> Map.tryFind location, world.Avatar.Job with
+        | 0u, _, _ ->
+            world
+            |> AddMessages [ "That job is currently unavailable." ]
+        | _, Some island, None ->
+            match island |> Island.RemoveJob jobIndex with
+            | isle, Some job ->
+                world
+                |> SetIsland location (isle |> Some)
+                |> TransformAvatar (Avatar.SetJob job)
+                |> AddMessages [ "You accepted the job!" ]
+            | _ ->
+                world
+                |> AddMessages [ "That job is currently unavailable." ]
+        | _, Some island, Some job ->
+            raise (System.NotImplementedException "World.AcceptJob - No Unit Tests")
+        | _ -> 
+            world

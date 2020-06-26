@@ -4,18 +4,9 @@ open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
-let configuration: WorldGenerationConfiguration =
-    {
-        WorldSize=(10.0, 10.0)
-        MinimumIslandDistance=30.0 
-        MaximumGenerationTries=10u
-        RewardRange=(1.0,10.0)
-    }
-let world = World.Create configuration (System.Random())
-
 [<Test>]
 let ``Create.It creates a new world.`` () =
-    let actual = world
+    let actual = WorldTestFixtures.soloIslandWorld
     Assert.AreEqual(0.0, actual.Avatar.Heading)
     Assert.AreEqual((5.0,5.0), actual.Avatar.Position)
     Assert.AreEqual(1.0, actual.Avatar.Speed)
@@ -25,7 +16,7 @@ let ``Create.It creates a new world.`` () =
 [<Test>]
 let ``ClearMessages.It removes any messages from the world.`` () =
     let actual =
-        {world with Messages = ["test"]}
+        {WorldTestFixtures.soloIslandWorld with Messages = ["test"]}
         |> World.ClearMessages
     Assert.AreEqual([], actual.Messages)
 
@@ -35,42 +26,42 @@ let ``AddMessages.It appends new messages to previously existing messages in the
     let newMessages = [ "three"; "four"]
     let allMessages = List.append oldMessages newMessages
     let actual = 
-        {world with Messages = oldMessages}
+        {WorldTestFixtures.soloIslandWorld with Messages = oldMessages}
         |> World.AddMessages newMessages
     Assert.AreEqual(allMessages, actual.Messages)
 
 [<Test>]
 let ``SetSpeed.It produces all stop in the avatar when less than zero is passed.`` () =
     let actual =
-        world
+        WorldTestFixtures.soloIslandWorld
         |> World.SetSpeed (-1.0)
     Assert.AreEqual(0.0, actual.Avatar.Speed)
 
 [<Test>]
 let ``SetSpeed.It produces full speed when greater than one is passed.`` () =
     let actual =
-        world
+        WorldTestFixtures.soloIslandWorld
         |> World.SetSpeed (2.0)
     Assert.AreEqual(1.0, actual.Avatar.Speed)
 
 [<Test>]
 let ``SetSpeed.It produces half speed when one half is passed.`` () =
     let actual =
-        world
+        WorldTestFixtures.soloIslandWorld
         |> World.SetSpeed (0.5)
     Assert.AreEqual(0.5, actual.Avatar.Speed)
 
 [<Test>]
 let ``SetSpeed.It produces full speed when one is passed.`` () =
     let actual =
-        world
+        WorldTestFixtures.soloIslandWorld
         |> World.SetSpeed (1.0)
     Assert.AreEqual(1.0, actual.Avatar.Speed)
 
 [<Test>]
 let ``SetSpeed.It sets all stop when given zero`` () =
     let actual =
-        world
+        WorldTestFixtures.soloIslandWorld
         |> World.SetSpeed (0.0)
     Assert.AreEqual(0.0, actual.Avatar.Speed)
 
@@ -83,14 +74,14 @@ let ``SetHeading.It sets a new heading.`` () =
             Seconds = 3.0
         }
     let actual =
-        world
+        WorldTestFixtures.soloIslandWorld
         |> World.SetHeading heading
     Assert.AreEqual(heading |> Dms.ToFloat, actual.Avatar.Heading)
 
 [<Test>]
 let ``Move.It moves the avatar.`` () =
     let actual =
-        world
+        WorldTestFixtures.soloIslandWorld
         |> World.Move
     Assert.AreEqual((6.0,5.0), actual.Avatar.Position)
 
@@ -145,36 +136,10 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
     Assert.IsTrue  (actual |> List.exists(fun i -> i=( 5.0, 10.0)))
     Assert.IsFalse (actual |> List.exists(fun i -> i=(10.0, 10.0)))
 
-let private zeroIslandWorld = 
-    {
-        RewardRange = (1.0,10.0)
-        Messages=[]
-        Avatar = 
-            {
-                Position = (0.0,0.0)
-                Heading = 0.0
-                Speed = 1.0
-                ViewDistance = 10.0
-                DockDistance = 1.0
-                Money = 0.0
-                Reputation = 0.0
-                Job = None
-            }
-        Islands = Map.empty
-        Turn = 0u
-    }
-let private random = System.Random()
-let private rewardRange = (1.0,10.)
-let private fakeDestinations = [(0.0, 0.0)] |> Set.ofList
-let private oneIslandWorld = 
-    zeroIslandWorld
-    |> World.SetIsland (0.0,0.0) (Island.Create() |> Island.SetName "Uno" |> Some)
-    |> World.TransformIsland  (0.0,0.0) (fun i -> {i with Jobs = [ Job.Create random rewardRange fakeDestinations ]} |> Some)
-
 [<Test>]
 let ``SetIsland.It adds an island to a world when given an island where there was none.`` () =
     let actual = 
-        zeroIslandWorld
+        WorldTestFixtures.emptyWorld
         |> World.SetIsland (0.0,0.0) (Island.Create() |> Island.SetName "Uno" |> Some)
     Assert.AreEqual(1, actual.Islands.Count)
     Assert.AreEqual("Uno", actual.Islands.[(0.0,0.0)].Name)
@@ -182,7 +147,7 @@ let ``SetIsland.It adds an island to a world when given an island where there wa
 [<Test>]
 let ``SetIsland.It replaces an island to a world when given an island where there was one before.`` () =
     let actual =
-        oneIslandWorld
+        WorldTestFixtures.oneIslandWorld
         |> World.SetIsland (0.0,0.0) (Island.Create() |> Island.SetName "Dos" |> Some)
     Assert.AreEqual(1, actual.Islands.Count)
     Assert.AreEqual("Dos", actual.Islands.[(0.0,0.0)].Name)
@@ -190,14 +155,14 @@ let ``SetIsland.It replaces an island to a world when given an island where ther
 [<Test>]
 let ``SetIsland.It removes an island to a world when given none where there was one before.`` () =
     let actual = 
-        oneIslandWorld
+        WorldTestFixtures.oneIslandWorld
         |> World.SetIsland (0.0,0.0) (None)
     Assert.AreEqual(0, actual.Islands.Count)
 
 [<Test>]
 let ``TransformIsland.It applies a transform function to an existing island and updates the island to the transformed value.`` () =
     let actual =
-        oneIslandWorld
+        WorldTestFixtures.oneIslandWorld
         |> World.TransformIsland (0.0,0.0) (Island.SetName "Dos" >> Some)
     Assert.AreEqual(1, actual.Islands.Count)
     Assert.AreEqual("Dos", actual.Islands.[(0.0,0.0)].Name)
@@ -205,35 +170,35 @@ let ``TransformIsland.It applies a transform function to an existing island and 
 [<Test>]
 let ``TransformIsland.It applies a transform function to an existing island and removes the island when the transformer returns None.`` () =
     let actual =
-        oneIslandWorld
+        WorldTestFixtures.oneIslandWorld
         |> World.TransformIsland (0.0,0.0) (fun _ -> None)
     Assert.AreEqual(0, actual.Islands.Count)
 
 [<Test>]
 let ``TransformIsland.It does nothing when the location given does not have an existing island.`` () =
     let actual =
-        zeroIslandWorld
+        WorldTestFixtures.emptyWorld
         |> World.TransformIsland (0.0, 0.0) (fun _-> Island.Create() |> Island.SetName "Uno" |> Some)
     Assert.AreEqual(0, actual.Islands.Count)
 
 [<Test>]
 let ``Dock.It adds a message when the given location has no island.`` () =
     let actual = 
-        zeroIslandWorld
-        |> World.Dock random (0.0, 0.0)
-    Assert.AreEqual({zeroIslandWorld with Messages = [ "There is no place to dock there." ]}, actual)
+        WorldTestFixtures.emptyWorld
+        |> World.Dock WorldTestFixtures.random (0.0, 0.0)
+    Assert.AreEqual({WorldTestFixtures.emptyWorld with Messages = [ "There is no place to dock there." ]}, actual)
 
 [<Test>]
 let ``Dock.It updates the island's visit count and last visit when the given location has an island.`` () =
     let actual = 
-        oneIslandWorld
-        |> World.Dock random (0.0, 0.0)
+        WorldTestFixtures.oneIslandWorld
+        |> World.Dock WorldTestFixtures.random (0.0, 0.0)
     let updatedIsland = 
-        oneIslandWorld.Islands.[(0.0, 0.0)] |> Island.AddVisit oneIslandWorld.Turn
-    Assert.AreEqual({oneIslandWorld with Messages = [ "You dock." ]; Islands = oneIslandWorld.Islands |> Map.add (0.0, 0.0) updatedIsland}, actual)
+        WorldTestFixtures.oneIslandWorld.Islands.[(0.0, 0.0)] |> Island.AddVisit WorldTestFixtures.oneIslandWorld.Turn
+    Assert.AreEqual({WorldTestFixtures.oneIslandWorld with Messages = [ "You dock." ]; Islands = WorldTestFixtures.oneIslandWorld.Islands |> Map.add (0.0, 0.0) updatedIsland}, actual)
 
 let private headForWorld =
-    {oneIslandWorld with Avatar = {oneIslandWorld.Avatar with Position = (1.0,0.0)}}
+    {WorldTestFixtures.oneIslandWorld with Avatar = {WorldTestFixtures.oneIslandWorld.Avatar with Position = (1.0,0.0)}}
 
 [<Test>]
 let ``HeadFor.It adds a message when the island name does not exist.`` () =
@@ -258,3 +223,53 @@ let ``HeadFor.It sets the heading when the island name exists and is known.`` ()
         modifiedWorld
         |> World.HeadFor "Uno"
     Assert.AreEqual({modifiedWorld with Messages=[ "You set your heading to 180°0'0.000000\"."; "You head for `Uno`." ]; Avatar = {modifiedWorld.Avatar with Heading=System.Math.PI}}, actual)
+
+[<Test>]
+let ``AcceptJob.It does nothing when given an invalid island location.`` () =
+    let actual =
+        WorldTestFixtures.genericDockedWorld
+        |> World.AcceptJob 1u WorldTestFixtures.genericWorldInvalidIslandLocation
+    Assert.AreEqual (WorldTestFixtures.genericDockedWorld, actual)
+
+[<Test>]
+let ``AcceptJob.It adds a message to the world when given an 0 job index for the given valid island location.`` () =
+    let actual =
+        WorldTestFixtures.genericDockedWorld
+        |> World.AcceptJob 0u WorldTestFixtures.genericWorldIslandLocation
+    Assert.AreEqual ({WorldTestFixtures.genericDockedWorld with Messages = [ "That job is currently unavailable." ]}, actual)
+
+[<Test>]
+let ``AcceptJob.It adds a message to the world when given an invalid job index for the given valid island location.`` () =
+    let actual =
+        WorldTestFixtures.genericDockedWorld
+        |> World.AcceptJob 0xFFFFFFFFu WorldTestFixtures.genericWorldIslandLocation
+    Assert.AreEqual ({WorldTestFixtures.genericDockedWorld with Messages = [ "That job is currently unavailable." ]}, actual)
+
+[<Test>]
+let ``AcceptJob.It adds the given job to the avatar and eliminates it from the island's job list when given a valid island location and a valid job index and the avatar has no current job.`` () =
+    let subjectWorld = WorldTestFixtures.genericDockedWorld
+    let subjectLocation = WorldTestFixtures.genericWorldIslandLocation
+    let expectedAvatar = 
+        subjectWorld.Avatar
+        |> Avatar.SetJob subjectWorld.Islands.[subjectLocation].Jobs.Head
+    let expectedIsland = 
+        { subjectWorld.Islands.[subjectLocation] with Jobs = []}
+    let actual =
+        subjectWorld
+        |> World.AcceptJob 1u subjectLocation
+    Assert.AreEqual( "You accepted the job!", actual.Messages.Head)
+    Assert.AreEqual(1, actual.Messages.Length)
+    Assert.AreEqual(expectedAvatar, actual.Avatar)
+    Assert.AreEqual(expectedIsland, actual.Islands.[subjectLocation])
+
+[<Test>]
+let ``TransformAvatar.It transforms the avatar within the given world.`` () =
+    let expectedAvatar = WorldTestFixtures.genericWorld.Avatar |> Avatar.Move
+    let actual =
+        WorldTestFixtures.genericWorld
+        |> World.TransformAvatar (Avatar.Move)
+    Assert.AreEqual(expectedAvatar,actual.Avatar)
+
+//[<Test>]
+//let ``FunctionName.It returns a SOMETHING when given SOMETHINGELSE.`` () =
+//    raise (System.NotImplementedException "Not Implemented")

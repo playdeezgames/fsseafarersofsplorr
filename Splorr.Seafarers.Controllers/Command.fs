@@ -24,6 +24,7 @@ type Command =
     | HeadFor of string
     | Status
     | Jobs
+    | AcceptJob of uint32
 
 type CommandSource = unit -> (Command option)
 

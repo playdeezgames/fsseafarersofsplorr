@@ -14,7 +14,7 @@ Quests:
         ✔ status can be called from AtSea or Docked @done(20-06-23 07:03)
     ✔ avatars have jobs @done(20-06-24 06:00)
         an avatar can have up to one quest at a time
-    ☐ a quest is a "delivery" to another island
+    ✔ a quest is a "delivery" to another island @done(20-06-25 04:53)
         there is a given amount of pay for making the delivery
     ☐ completing a quest upon docking
         the avatar gets reputation based on successful delivery
@@ -26,18 +26,21 @@ Quests:
         what does reputation help with? (more high paid jobs in the future?)
         an island has... a number of jobs
     ☐ some jobs have a minimum reputation requirement
-    ☐ command to show availabe jobs in islands?
+    ✔ command to show availabe jobs in islands? @done(20-06-25 04:51)
     ✔ how are jobs generated in islands? @done(20-06-24 05:59)
         when docking
     ☐ show current job, if any on the status screen
     ☐ abandon job command
         while docked or at sea
     ☐ confirm abandoning job, kinda like confirm quit
-    ☐ jobs command while at dock
+    ✔ jobs command while at dock @done(20-06-25 04:53)
         shows available jobs, but only ones that the avatar qualifies for
     ☐ accept job command
         in order to differentiate, we need a way to identify jobs in the island list
     ☐ accepting job makes destination known (0 visit count)
+    ☐ accepting job removes job from island
+    ☐ accepting job add job to avatar
+    ☐ avatar may not accept a job if he already has one accepted
     ☐ job flavor text
         "please delivery this (adverb) (adjective) (noun) to (name) the (profession) on the island of (island name)"
 Island Notes:
@@ -47,7 +50,7 @@ Eliminate Hardcoded Values:
     ☐ Avatar.ViewDistance
     ☐ Avatar.DockDistance
 Weird Edge Case Behavior:
-    ☐ Should I be testing the output of the Controllers? Or does that make the tests too brittle?
+    ✘ Should I be testing the output of the Controllers? Or does that make the tests too brittle? @cancelled(20-06-25 04:53)
     ☐ When AtSea, docking will happen with the "furthest" of all of the dockable islands. because of how the world is generated, there "should not" be more than one. however, this is not technically so.
 Archive:
   ✔ Docked help @done(20-06-22 06:37) @project(Help State)

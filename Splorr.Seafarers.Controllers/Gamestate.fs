@@ -24,4 +24,5 @@ module Gamestate =
         | Gamestate.IslandList (_,g) -> GetWorld g
         | Gamestate.Status g -> GetWorld g
         | Gamestate.Jobs (_,w) -> w |> Some
+        //| _ -> raise (System.NotImplementedException "Not Implemented")
 

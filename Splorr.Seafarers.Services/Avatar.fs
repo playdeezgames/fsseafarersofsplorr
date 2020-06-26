@@ -30,4 +30,8 @@ module Avatar =
             avatar with 
                 Position = ((avatar.Position |> fst) + System.Math.Cos(avatar.Heading) * avatar.Speed, (avatar.Position |> snd) + System.Math.Sin(avatar.Heading) * avatar.Speed)
         }
+
+    let SetJob (job: Job) (avatar:Avatar) : Avatar =
+        {avatar with Job = job |> Some}
+
         

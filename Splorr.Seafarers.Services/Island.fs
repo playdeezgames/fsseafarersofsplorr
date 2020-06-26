@@ -41,3 +41,11 @@ module Island =
             {island with Jobs = [Job.Create random rewardRange destinations] |> List.append island.Jobs}
         else
             island
+
+    let RemoveJob (index:uint32) (island:Island) : Island * (Job option) =
+        let taken, left =
+            island.Jobs
+            |> List.zip [1u..(island.Jobs.Length |> uint32)]
+            |> List.partition 
+                (fun (idx, _)->idx=index)
+        {island with Jobs = left |> List.map snd}, taken |> List.map snd |> List.tryHead
