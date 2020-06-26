@@ -164,6 +164,7 @@ module World =
                 world
                 |> AddMessages [ "That job is currently unavailable." ]
         | _, Some island, Some job ->
-            raise (System.NotImplementedException "World.AcceptJob - No Unit Tests")
+            world
+            |> AddMessages [ "You must complete or abandon your current job before taking on a new one." ]
         | _ -> 
             world

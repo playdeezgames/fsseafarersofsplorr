@@ -19,8 +19,8 @@ module Status =
                     world.Islands.[job.Destination]
                 [
                     "Current Job:"
-                    island.Name |> sprintf "Destination: %s"
-                    job.Reward |> sprintf "Reward: %f"
+                    island.Name |> sprintf "\tDestination: %s"
+                    job.Reward |> sprintf "\tReward: %f"
                 ]
                 |> List.iter sink)
 

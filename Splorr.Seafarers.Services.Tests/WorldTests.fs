@@ -246,6 +246,18 @@ let ``AcceptJob.It adds a message to the world when given an invalid job index f
     Assert.AreEqual ({WorldTestFixtures.genericDockedWorld with Messages = [ "That job is currently unavailable." ]}, actual)
 
 [<Test>]
+let ``AcceptJob.It adds a message to the world when the job is valid but the avatar already has a job.`` () =
+    let subjectWorld = 
+        WorldTestFixtures.genericDockedWorld
+        |> World.TransformAvatar
+            (fun avatar -> {avatar with Job =Some {Destination=(0.0,0.0); Reward=0.0}})
+    let actual =
+        subjectWorld
+        |> World.AcceptJob 1u WorldTestFixtures.genericWorldIslandLocation
+    Assert.AreEqual ({subjectWorld with Messages = [ "You must complete or abandon your current job before taking on a new one." ]}, actual)
+
+
+[<Test>]
 let ``AcceptJob.It adds the given job to the avatar and eliminates it from the island's job list when given a valid island location and a valid job index and the avatar has no current job.`` () =
     let subjectWorld = WorldTestFixtures.genericDockedWorld
     let subjectLocation = WorldTestFixtures.genericWorldIslandLocation
