@@ -157,6 +157,7 @@ module World =
             | isle, Some job ->
                 world
                 |> SetIsland location (isle |> Some)
+                |> TransformIsland job.Destination (Island.MakeKnown >> Some)
                 |> TransformAvatar (Avatar.SetJob job)
                 |> AddMessages [ "You accepted the job!" ]
             | _ ->

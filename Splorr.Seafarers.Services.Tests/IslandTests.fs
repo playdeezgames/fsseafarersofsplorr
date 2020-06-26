@@ -104,6 +104,26 @@ let ``RemoveJob.It returns the modified island and the indicated job when the gi
         |> Island.RemoveJob 1u
     Assert.AreEqual(({IslandTestFixtures.jobAvailableIsland with Jobs = []},Some IslandTestFixtures.jobAvailableIsland.Jobs.Head),actual)
 
+[<Test>]
+let ``MakeKnown.It does nothing when the given island is already known.`` () =
+    let subject = IslandTestFixtures.visitedIsland
+    let actual =
+        subject
+        |> Island.MakeKnown
+    Assert.AreEqual(subject.VisitCount, actual.VisitCount)
+    Assert.AreEqual(subject.LastVisit, actual.LastVisit)
+
+
+[<Test>]
+let ``MakeKnown.It mutates the island's visit count to Some 0 when the given island is not known.`` () =
+    let subject = IslandTestFixtures.unvisitedIsland
+    let actual =
+        subject
+        |> Island.MakeKnown
+    Assert.AreEqual(Some 0u, actual.VisitCount)
+    Assert.AreEqual(subject.LastVisit, actual.LastVisit)
+
+
 //[<Test>]
 //let ``AddVisit..`` () =
 //    raise (System.NotImplementedException "Not Implemented")

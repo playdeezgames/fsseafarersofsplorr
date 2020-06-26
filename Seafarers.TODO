@@ -35,11 +35,11 @@ Quests:
     ☐ confirm abandoning job, kinda like confirm quit
     ✔ jobs command while at dock @done(20-06-25 04:53)
         shows available jobs, but only ones that the avatar qualifies for
-    ☐ accept job command
+    ✔ accept job command @done(20-06-26 06:24)
         in order to differentiate, we need a way to identify jobs in the island list
     ☐ accepting job makes destination known (0 visit count)
-    ☐ accepting job removes job from island
-    ☐ accepting job add job to avatar
+    ✔ accepting job removes job from island @done(20-06-26 06:24)
+    ✔ accepting job add job to avatar @done(20-06-26 06:24)
     ☐ avatar may not accept a job if he already has one accepted
     ☐ job flavor text
         "please delivery this (adverb) (adjective) (noun) to (name) the (profession) on the island of (island name)"

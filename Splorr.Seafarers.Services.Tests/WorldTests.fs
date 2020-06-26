@@ -249,11 +249,15 @@ let ``AcceptJob.It adds a message to the world when given an invalid job index f
 let ``AcceptJob.It adds the given job to the avatar and eliminates it from the island's job list when given a valid island location and a valid job index and the avatar has no current job.`` () =
     let subjectWorld = WorldTestFixtures.genericDockedWorld
     let subjectLocation = WorldTestFixtures.genericWorldIslandLocation
+    let subjectJob = subjectWorld.Islands.[subjectLocation].Jobs.Head
+    let subjectDestination = subjectWorld.Islands.[subjectJob.Destination]
     let expectedAvatar = 
         subjectWorld.Avatar
-        |> Avatar.SetJob subjectWorld.Islands.[subjectLocation].Jobs.Head
+        |> Avatar.SetJob subjectJob
     let expectedIsland = 
-        { subjectWorld.Islands.[subjectLocation] with Jobs = []}
+        {subjectWorld.Islands.[subjectLocation] with Jobs = []}
+    let expectedDestination =
+        {subjectDestination with VisitCount=Some 0u}
     let actual =
         subjectWorld
         |> World.AcceptJob 1u subjectLocation
@@ -261,6 +265,7 @@ let ``AcceptJob.It adds the given job to the avatar and eliminates it from the i
     Assert.AreEqual(1, actual.Messages.Length)
     Assert.AreEqual(expectedAvatar, actual.Avatar)
     Assert.AreEqual(expectedIsland, actual.Islands.[subjectLocation])
+    Assert.AreEqual(expectedDestination, actual.Islands.[subjectJob.Destination])
 
 [<Test>]
 let ``TransformAvatar.It transforms the avatar within the given world.`` () =

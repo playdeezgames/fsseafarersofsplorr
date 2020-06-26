@@ -49,3 +49,9 @@ module Island =
             |> List.partition 
                 (fun (idx, _)->idx=index)
         {island with Jobs = left |> List.map snd}, taken |> List.map snd |> List.tryHead
+
+    let MakeKnown (island:Island) : Island =
+        match island.VisitCount with
+        | None ->
+            {island with VisitCount=Some 0u}
+        | _ -> island
