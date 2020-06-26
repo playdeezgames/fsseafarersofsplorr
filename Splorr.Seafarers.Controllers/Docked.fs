@@ -57,6 +57,7 @@ module Docked =
             |> Some
 
         | _ -> 
+            "Maybe try 'help'?" |> sink
             (location, world) 
             |> Gamestate.Docked 
             |> Some

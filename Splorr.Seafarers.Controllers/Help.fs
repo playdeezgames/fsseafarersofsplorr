@@ -32,7 +32,8 @@ module Help =
         [
             ""
             "Docked Commands:"
-            "\tquit - quits the game"
+            "\taccept job (number) - accepts the offered job"
+            "\tjobs - lists job offers"
             "\tstatus - shows the avatar's status"
             "\tundock - undocks from the island"
         ]
