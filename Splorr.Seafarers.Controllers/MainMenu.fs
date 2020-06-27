@@ -13,7 +13,7 @@ module MainMenu =
         if world.IsSome then
             [
                 "\tresume - resume game"
-                "\tabandon - abandon game"
+                "\tabandon game - abandon game"
             ]
         else
             [

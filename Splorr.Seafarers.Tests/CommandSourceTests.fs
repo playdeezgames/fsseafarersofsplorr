@@ -83,11 +83,19 @@ let ``Parse.It returns Menu command when given ["menu"]`` () =
     Assert.AreEqual(Command.Menu|>Some, actual)
 
 [<Test>]
-let ``Parse.It returns Abandon command when given ["abandon"]`` () =
+let ``Parse.It returns Abandon Game command when given ["abandon"; "game"]`` () =
     let actual =
-        [ "abandon"]
+        [ "abandon"; "game"]
         |> CommandSource.Parse
-    Assert.AreEqual(Command.Abandon|>Some, actual)
+    Assert.AreEqual(Game |> Command.Abandon|>Some, actual)
+
+[<Test>]
+let ``Parse.It returns Abandon Job command when given ["abandon"; "job"]`` () =
+    let actual =
+        [ "abandon"; "job"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Job |> Command.Abandon|>Some, actual)
+
 
 [<Test>]
 let ``Parse.It returns Resume command when given ["resume"]`` () =

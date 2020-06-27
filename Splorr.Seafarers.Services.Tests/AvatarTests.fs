@@ -4,10 +4,12 @@ open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
+open AvatarTestFixtures
+
 [<Test>]
 let ``Create.It creates an avatar.`` () =
     let actual =
-        AvatarTestFixtures.avatar
+        avatar
     Assert.AreEqual((0.0,0.0), actual.Position)
     Assert.AreEqual(1.0, actual.Speed)
     Assert.AreEqual(0.0, actual.Heading)
@@ -16,35 +18,35 @@ let ``Create.It creates an avatar.`` () =
 [<Test>]
 let ``SetSpeed.It sets all stop when given less than zero.`` () =
     let actual =
-        AvatarTestFixtures.avatar
+        avatar
         |> Avatar.SetSpeed (-1.0)
     Assert.AreEqual(0.0, actual.Speed)
 
 [<Test>]
 let ``SetSpeed.It sets full speed when gives more than one.`` () =
     let actual =
-        AvatarTestFixtures.avatar
+        avatar
         |> Avatar.SetSpeed (2.0)
     Assert.AreEqual(1.0, actual.Speed)
 
 [<Test>]
 let ``SetSpeed.It sets half speed when given half speed.`` () =
     let actual =
-        AvatarTestFixtures.avatar
+        avatar
         |> Avatar.SetSpeed (0.5)
     Assert.AreEqual(0.5, actual.Speed)
 
 [<Test>]
 let ``SetSpeed.It sets full speed when given one.`` () =
     let actual =
-        AvatarTestFixtures.avatar
+        avatar
         |> Avatar.SetSpeed (1.0)
     Assert.AreEqual(1.0, actual.Speed)
 
 [<Test>]
 let ``SetSpeed.It sets all stop when given zero.`` () =
     let actual =
-        AvatarTestFixtures.avatar
+        avatar
         |> Avatar.SetSpeed (0.0)
     Assert.AreEqual(0.0, actual.Speed)
 
@@ -57,20 +59,39 @@ let ``SetHeading.It sets a given heading.`` () =
             Seconds = 3.0
         }
     let actual =
-        AvatarTestFixtures.avatar
+        avatar
         |> Avatar.SetHeading heading
     Assert.AreEqual(heading |> Dms.ToFloat, actual.Heading)
 
 [<Test>]
 let ``Move.It moves the avatar.`` () =
     let actual =
-        AvatarTestFixtures.avatar
+        avatar
         |> Avatar.Move
     Assert.AreEqual((1.0,0.0), actual.Position)
 
 [<Test>]
 let ``SetJob.It sets the job of the given avatar.`` () =
     let actual =
-        AvatarTestFixtures.avatar
-        |> Avatar.SetJob AvatarTestFixtures.job
-    Assert.AreEqual(AvatarTestFixtures.job |> Some, actual.Job)
+        avatar
+        |> Avatar.SetJob job
+    Assert.AreEqual(job |> Some, actual.Job)
+
+[<Test>]
+let ``AbandonJob.It does nothing when the given avatar has no job.`` () =
+    let subject = avatar
+    let expected = subject
+    let actual =
+        subject
+        |> Avatar.AbandonJob
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``AbandonJob.It set job to None when the given avatar has a job.`` () =
+    let subject = employedAvatar
+    let expected = {subject with Job=None; Reputation = subject.Reputation - 1.0}
+    let actual =
+        subject
+        |> Avatar.AbandonJob
+    Assert.AreEqual(expected, actual)
+    

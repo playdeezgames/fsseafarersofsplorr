@@ -72,14 +72,26 @@ module CommandSource=
             | _ -> None
         | _ -> None
 
+    let private ParseAbandon (tokens:string list) : Command option =
+        match tokens with 
+        | [ "game" ] -> 
+            Game
+            |> Command.Abandon
+            |> Some
+        | [ "job" ] -> 
+            Job
+            |> Command.Abandon
+            |> Some
+        | _ -> None
+
     let Parse(tokens:string list) : Command option =
         match tokens with
         | [ "resume" ] -> 
             Command.Resume 
             |> Some
-        | [ "abandon" ] -> 
-            Command.Abandon 
-            |> Some
+        | "abandon" :: tail -> 
+            tail
+            |> ParseAbandon
         | [ "quit" ] -> 
             Command.Quit 
             |> Some

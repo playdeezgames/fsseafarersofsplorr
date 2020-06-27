@@ -6,6 +6,10 @@ type SetCommand =
     | Speed of float
     | Heading of Dms
 
+type AbandonCommand =
+    | Game
+    | Job
+
 [<RequireQualifiedAccess>]
 type Command =
     | Quit
@@ -17,7 +21,7 @@ type Command =
     | Start
     | Menu
     | Resume
-    | Abandon
+    | Abandon of AbandonCommand
     | Dock
     | Undock
     | Islands of uint32

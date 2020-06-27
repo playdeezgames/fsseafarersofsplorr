@@ -34,4 +34,7 @@ module Avatar =
     let SetJob (job: Job) (avatar:Avatar) : Avatar =
         {avatar with Job = job |> Some}
 
-        
+    let AbandonJob (avatar:Avatar) : Avatar =
+        avatar.Job
+        |> Option.fold 
+            (fun a _ -> {a with Job = None; Reputation = a.Reputation - 1.0}) avatar

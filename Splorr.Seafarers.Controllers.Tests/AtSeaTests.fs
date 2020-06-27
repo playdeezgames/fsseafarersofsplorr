@@ -5,16 +5,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 
-let private configuration: WorldGenerationConfiguration =
-    {
-        WorldSize=(10.0, 10.0)
-        MinimumIslandDistance=30.0
-        MaximumGenerationTries=10u
-        RewardRange = (1.0, 10.0)
-    }
-let private world = World.Create configuration (System.Random())
-let private sink(_:string) : unit = ()
-let private random = System.Random()
+open AtSeaTestFixtures
 
 [<Test>]
 let ``Run.It returns ConfirmQuit when given Quit command.`` () =
@@ -81,31 +72,12 @@ let ``Run.It returns Island List when given the Islands command.`` () =
         |> AtSea.Run random (fun()->0u |> Command.Islands |> Some) sink
     Assert.AreEqual((0u, world |> Gamestate.AtSea) |> Gamestate.IslandList |> Some, actual)
 
-
-let private emptyWorldconfiguration: WorldGenerationConfiguration =
-    {
-        WorldSize=(1.0, 1.0)
-        MinimumIslandDistance=30.0
-        MaximumGenerationTries=0u
-        RewardRange = (1.0, 10.0)
-    }
-let private emptyWorld = World.Create emptyWorldconfiguration (System.Random())
-
 [<Test>]
 let ``Run.It returns AtSea when given the Dock command and there is no near enough island.`` () =
     let actual =
         emptyWorld
         |> AtSea.Run random (fun()->Command.Dock |> Some) sink
     Assert.AreEqual({emptyWorld with Messages=["There is no place to dock."]}|>Gamestate.AtSea|>Some, actual)
-
-let private dockWorldconfiguration: WorldGenerationConfiguration =
-    {
-        WorldSize=(0.0, 0.0)
-        MinimumIslandDistance=30.0
-        MaximumGenerationTries=1u
-        RewardRange = (1.0, 10.0)
-    }
-let private dockWorld = World.Create dockWorldconfiguration (System.Random())
 
 [<Test>]
 let ``Run.It returns Docked when given the Dock command and there is a near enough island.`` () =
@@ -114,14 +86,6 @@ let ``Run.It returns Docked when given the Dock command and there is a near enou
         |> AtSea.Run random (fun()->Command.Dock |> Some) sink
     let updatedIsland = dockWorld.Islands.[(0.0, 0.0)] |> Island.AddVisit dockWorld.Turn
     Assert.AreEqual(((0.0,0.0),{dockWorld with Messages = ["You dock."]; Islands = dockWorld.Islands |> Map.add (0.0,0.0) updatedIsland })|>Gamestate.Docked|>Some, actual)
-
-let private headForWorldUnvisited = 
-    World.Create dockWorldconfiguration (System.Random())
-    |> World.TransformIsland (0.0,0.0) (Island.SetName "yermom" >> Some)
-    |> World.Move
-let private headForWorldVisited = 
-    headForWorldUnvisited
-    |> World.Dock random (0.0, 0.0)
 
 [<Test>]
 let ``Run.It gives a message when given a Head For command and the given island does not exist.`` () =
@@ -150,3 +114,21 @@ let ``Run.It returns Status when given the command Status.`` () =
         world
         |> AtSea.Run random (fun () -> Command.Status |> Some) sink
     Assert.AreEqual(world |> Gamestate.AtSea |> Gamestate.Status |> Some, actual)
+
+[<Test>]
+let ``Run.It gives a message when given the command Abandon Job and the avatar has no current job.`` () =
+    let subject = dockWorld
+    let expected = {subject with Messages = ["You have no job to abandon."]} |> Gamestate.AtSea |> Some
+    let actual =
+        subject
+        |> AtSea.Run random (fun () -> Job |> Command.Abandon |> Some) sink
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``Run.It gives a message and abandons the job when given the command Abandon Job and the avatar has a current job.`` () =
+    let subject = abandonJobWorld
+    let expected = {subject with Messages = ["You abandon your job."]; Avatar={subject.Avatar with Job=None; Reputation = subject.Avatar.Reputation - 1.0}} |> Gamestate.AtSea |> Some
+    let actual =
+        subject
+        |> AtSea.Run random (fun () -> Job |> Command.Abandon |> Some) sink
+    Assert.AreEqual(expected, actual)

@@ -9,3 +9,5 @@ let internal avatar =
     Avatar.Create(0.0,0.0)
 let internal job =
     Job.Create random rewardRange singleLocation
+let internal employedAvatar =
+    {avatar with Job = job |> Some}

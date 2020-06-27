@@ -38,6 +38,11 @@ module Docked =
             |> Gamestate.Status
             |> Some
 
+        | Some (Command.Abandon Job) ->
+            (location, world |> World.AbandonJob)
+            |> Gamestate.Docked
+            |> Some
+
         | Some Command.Undock ->
             world 
             |> World.AddMessages [ "You undock." ]

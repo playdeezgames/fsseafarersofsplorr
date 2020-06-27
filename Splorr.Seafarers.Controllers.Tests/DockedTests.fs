@@ -2,20 +2,8 @@
 
 open NUnit.Framework
 open Splorr.Seafarers.Models
-open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
-
-let private random = System.Random()
-let private dockWorldconfiguration: WorldGenerationConfiguration =
-    {
-        WorldSize=(0.0, 0.0)
-        MinimumIslandDistance=30.0
-        MaximumGenerationTries=1u
-        RewardRange = (1.0, 10.0)
-    }
-let private dockWorld = World.Create dockWorldconfiguration random
-let private dockLocation = (0.0, 0.0)
-let private sink (_:string) : unit = ()
+open DockedTestFixtures
 
 [<Test>]
 let ``Run.It returns AtSea when given Undock Command.`` () =
@@ -74,23 +62,30 @@ let ``Run.It returns Jobs gamestate when given the command Jobs.`` () =
         ||> Docked.Run (fun _ -> Command.Jobs |> Some) sink 
     Assert.AreEqual((dockLocation, dockWorld) |> Gamestate.Jobs |> Some, actual)
 
-let private smallWorldconfiguration: WorldGenerationConfiguration =
-    {
-        WorldSize=(11.0, 11.0)
-        MinimumIslandDistance=5.0
-        MaximumGenerationTries=500u
-        RewardRange = (1.0, 10.0)
-    }
-let private smallWorld = World.Create smallWorldconfiguration random
-let private smallWorldIslandLocation = smallWorld.Islands |> Map.toList |> List.map fst |> List.head
-let private smallWorldDocked = smallWorld |> World.Dock random smallWorldIslandLocation
-
 [<Test>]
 let ``Run.It gives a message when given the Accept Job command and the given job number does not exist.`` () =
     let actual =
         smallWorldDocked
         |> Docked.Run (fun () -> 0u |> Command.AcceptJob |> Some) sink smallWorldIslandLocation
     Assert.AreEqual((smallWorldIslandLocation, {smallWorldDocked with Messages = [ "That job is currently unavailable." ] } ) |> Gamestate.Docked |> Some, actual)
+
+[<Test>]
+let ``Run.It gives a message when given the command Abandon Job and the avatar has no current job.`` () =
+    let subject = dockWorld
+    let expected = (dockLocation, {subject with Messages = ["You have no job to abandon."]}) |> Gamestate.Docked |> Some
+    let actual =
+        subject
+        |> Docked.Run (fun () -> Job |> Command.Abandon |> Some) sink dockLocation
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``Run.It gives a message and abandons the job when given the command Abandon Job and the avatar has a current job.`` () =
+    let subject = abandonJobWorld
+    let expected = (dockLocation, {subject with Messages = ["You abandon your job."]; Avatar={subject.Avatar with Job=None; Reputation = subject.Avatar.Reputation-1.0}}) |> Gamestate.Docked |> Some
+    let actual =
+        subject
+        |> Docked.Run (fun () -> Job |> Command.Abandon |> Some) sink dockLocation
+    Assert.AreEqual(expected, actual)
 
 //[<Test>]
 //let ``Run.It .`` () =

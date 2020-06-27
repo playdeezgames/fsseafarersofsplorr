@@ -16,7 +16,9 @@
   <ItemGroup>
     <Compile Include="ConfirmQuitTests.fs" />
     <Compile Include="UtilityTests.fs" />
+    <Compile Include="AtSeaTestFixtures.fs" />
     <Compile Include="AtSeaTests.fs" />
+    <Compile Include="DockedTestFixtures.fs" />
     <Compile Include="DockedTests.fs" />
     <Compile Include="HelpTests.fs" />
     <Compile Include="JobsTest.fs" />

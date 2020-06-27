@@ -64,19 +64,19 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
     Assert.AreEqual(world |> Some |> Gamestate.MainMenu |> Some, actual)
 
 [<Test>]
-let ``Run.It returns Main Menu with no world when given Abandon command and there is a world.`` () =
+let ``Run.It returns Main Menu with no world when given Abandon Game command and there is a world.`` () =
     let actual =
         world
         |> Some
-        |> MainMenu.Run (fun()->Command.Abandon |> Some) sink 
+        |> MainMenu.Run (fun()->Game |> Command.Abandon |> Some) sink 
     Assert.AreEqual(None |> Gamestate.MainMenu |> Some, actual)
 
 
 [<Test>]
-let ``Run.It returns Main Menu with no world when given Abandon command and there is no world.`` () =
+let ``Run.It returns Main Menu with no world when given Abandon Game command and there is no world.`` () =
     let actual =
         None
-        |> MainMenu.Run (fun()->Command.Abandon |> Some) sink 
+        |> MainMenu.Run (fun()->Game |> Command.Abandon |> Some) sink 
     Assert.AreEqual(None |> Gamestate.MainMenu |> Some, actual)
 
 

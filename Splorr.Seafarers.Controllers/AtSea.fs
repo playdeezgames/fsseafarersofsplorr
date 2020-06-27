@@ -56,6 +56,13 @@ module AtSea =
             (page, world |> Gamestate.AtSea)
             |> Gamestate.IslandList
             |> Some
+
+        | Some (Command.Abandon Job) ->
+            world
+            |> World.AbandonJob
+            |> Gamestate.AtSea
+            |> Some
+
         | Some Command.Menu ->
             world
             |> Some

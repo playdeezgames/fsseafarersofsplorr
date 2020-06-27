@@ -50,3 +50,5 @@ let internal genericWorldIslandLocation = genericWorld.Islands |> Map.toList |> 
 let internal genericWorldInvalidIslandLocation = ((genericWorldIslandLocation |> fst) + 1.0, genericWorldIslandLocation |> snd)
 let internal genericDockedWorld = World.Dock random genericWorldIslandLocation genericWorld |> World.ClearMessages
 
+let internal jobWorld = genericDockedWorld |> World.AcceptJob 1u genericWorldIslandLocation |> World.ClearMessages
+

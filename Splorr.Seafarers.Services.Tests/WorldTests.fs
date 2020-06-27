@@ -4,6 +4,8 @@ open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
+open WorldTestFixtures
+
 [<Test>]
 let ``Create.It creates a new world.`` () =
     let actual = WorldTestFixtures.soloIslandWorld
@@ -286,6 +288,24 @@ let ``TransformAvatar.It transforms the avatar within the given world.`` () =
         WorldTestFixtures.genericWorld
         |> World.TransformAvatar (Avatar.Move)
     Assert.AreEqual(expectedAvatar,actual.Avatar)
+
+[<Test>]
+let ``AbandonJob.It adds a message when the avatar has no job.`` () =
+    let subject = genericDockedWorld
+    let expected = {subject with Messages=["You have no job to abandon."]}
+    let actual = 
+        subject
+        |> World.AbandonJob
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a job`` () =
+    let subject = jobWorld
+    let expected = {subject with Messages=["You abandon your job."]; Avatar = {subject.Avatar with Job = None; Reputation = subject.Avatar.Reputation - 1.0}}
+    let actual = 
+        subject
+        |> World.AbandonJob
+    Assert.AreEqual(expected, actual)
 
 //[<Test>]
 //let ``FunctionName.It returns a SOMETHING when given SOMETHINGELSE.`` () =

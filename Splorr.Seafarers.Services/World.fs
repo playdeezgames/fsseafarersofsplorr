@@ -168,3 +168,13 @@ module World =
             |> AddMessages [ "You must complete or abandon your current job before taking on a new one." ]
         | _ -> 
             world
+
+    let AbandonJob (world:World) : World =
+        match world.Avatar.Job with
+        | Some _ ->
+            world
+            |> AddMessages [ "You abandon your job." ]
+            |> TransformAvatar (Avatar.AbandonJob)
+        | _ ->
+            world
+            |> AddMessages [ "You have no job to abandon." ]

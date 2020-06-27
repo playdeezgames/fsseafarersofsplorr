@@ -7,6 +7,7 @@ module Help =
         [
             ""
             "At Sea Commands:"
+            "\tabandon job - abandons your current job, if you have one"
             "\tdock - docks at an island, if one is close enough"
             "\thead for (island name) - heads for an island if it exists and is known"
             "\tislands [page] - lists known island names, direction and distances"
@@ -32,6 +33,7 @@ module Help =
         [
             ""
             "Docked Commands:"
+            "\tabandon job - abandons your current job, if you have one"
             "\taccept job (number) - accepts the offered job"
             "\tjobs - lists job offers"
             "\tstatus - shows the avatar's status"
