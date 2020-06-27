@@ -109,6 +109,18 @@ module World =
         |> List.map fst
         |> List.filter (fun i -> Location.DistanceTo from i <= maximumDistance)
 
+    let TransformAvatar (transform:Avatar -> Avatar) (world:World) : World =
+        {world with Avatar = world.Avatar |> transform}
+
+
+    let private DoJobCompletion (location:Location) (job:Job) (world:World) : World = 
+        if location = job.Destination then
+            world
+            |> AddMessages [ "You complete your job." ]
+            |> TransformAvatar Avatar.CompleteJob
+        else
+            world
+
     let Dock (random:System.Random) (location: Location) (world:World) : World =
         match world.Islands |> Map.tryFind location with
         | Some island ->
@@ -121,6 +133,7 @@ module World =
             world
             |> TransformIsland location (Island.AddVisit world.Turn >> Some)
             |> TransformIsland location (Island.GenerateJobs random world.RewardRange destinations >> Some)
+            |> Option.foldBack (DoJobCompletion location) world.Avatar.Job
             |> AddMessages [ "You dock." ]
         | _ -> 
             world
@@ -143,9 +156,6 @@ module World =
         | _ ->
             world
             |> AddMessages [ islandName |> sprintf "I don't know how to get to `%s`." ]
-
-    let TransformAvatar (transform:Avatar -> Avatar) (world:World) : World =
-        {world with Avatar = world.Avatar |> transform}
 
     let AcceptJob (jobIndex:uint32) (location:Location) (world:World) : World =
         match jobIndex, world.Islands |> Map.tryFind location, world.Avatar.Job with

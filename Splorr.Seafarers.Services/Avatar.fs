@@ -38,3 +38,12 @@ module Avatar =
         avatar.Job
         |> Option.fold 
             (fun a _ -> {a with Job = None; Reputation = a.Reputation - 1.0}) avatar
+
+    let CompleteJob (avatar:Avatar) : Avatar =
+        match avatar.Job with
+        | Some job ->
+            {avatar with 
+                Job = None
+                Money = avatar.Money + job.Reward
+                Reputation = avatar.Reputation + 1.0}
+        | _ -> avatar

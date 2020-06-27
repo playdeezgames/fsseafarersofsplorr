@@ -51,4 +51,8 @@ let internal genericWorldInvalidIslandLocation = ((genericWorldIslandLocation |>
 let internal genericDockedWorld = World.Dock random genericWorldIslandLocation genericWorld |> World.ClearMessages
 
 let internal jobWorld = genericDockedWorld |> World.AcceptJob 1u genericWorldIslandLocation |> World.ClearMessages
+let internal jobLocation = jobWorld.Avatar.Job.Value.Destination
+
+let internal headForWorld =
+    {oneIslandWorld with Avatar = {oneIslandWorld.Avatar with Position = (1.0,0.0)}}
 
