@@ -6,9 +6,6 @@ Persistence:
     ☐ autosave?
 Quests:
     ☐ some jobs have a minimum reputation requirement
-    ✘ confirm abandoning job, kinda like confirm quit @cancelled(20-06-27 07:29)
-    ✔ job flavor text @done(20-06-27 08:06)
-        "please deliver this (adverb) (adjective) (noun) to (name) the (profession) on the island of (island name)"
 Island Notes:
     ☐ Add island note command
     ☐ List island notes command
@@ -18,6 +15,9 @@ Eliminate Hardcoded Values:
 Weird Edge Case Behavior:
     ☐ When AtSea, docking will happen with the "furthest" of all of the dockable islands. because of how the world is generated, there "should not" be more than one. however, this is not technically so.
 Archive:
+  ✘ confirm abandoning job, kinda like confirm quit @cancelled(20-06-27 07:29) @project(Quests)
+  ✔ job flavor text @done(20-06-27 08:06) @project(Quests)
+    "please deliver this (adverb) (adjective) (noun) to (name) the (profession) on the island of (island name)"
   ✔ avatars have money @done(20-06-23 07:04) @project(Quests)
   ✔ avatars have reputation @done(20-06-23 07:04) @project(Quests)
   ✔ status command @done(20-06-23 06:44) @project(Quests.Status)
