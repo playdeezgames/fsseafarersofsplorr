@@ -12,7 +12,7 @@ module Help =
             "\thead for (island name) - heads for an island if it exists and is known"
             "\tislands [page] - lists known island names, direction and distances"
             "\tmenu - brings up the main menu"
-            "\tmove - moves for one turn"
+            "\tmove (turns)- moves for the given number of turns, with a default of 1 turn"
             "\tquit - quits the game"
             "\tset heading (degrees) [(minutes) [(seconds)]] - sets a new heading"
             "\tset speed (speed) - sets a new speed"
