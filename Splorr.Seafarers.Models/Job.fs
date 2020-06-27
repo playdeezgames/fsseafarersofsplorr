@@ -2,6 +2,7 @@
 
 type Job =
     {
+        FlavorText: string
         Destination: Location
         Reward: float
     }

@@ -19,6 +19,7 @@ module Status =
                     world.Islands.[job.Destination]
                 [
                     "Current Job:"
+                    job.FlavorText |> sprintf "\tDescription: %s"
                     island.Name |> sprintf "\tDestination: %s"
                     job.Reward |> sprintf "\tReward: %f"
                 ]

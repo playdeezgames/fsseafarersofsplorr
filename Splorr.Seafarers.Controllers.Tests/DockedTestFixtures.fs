@@ -28,7 +28,7 @@ let internal smallWorldDocked = smallWorld |> World.Dock random smallWorldIsland
 
 let internal abandonJobWorld =
     dockWorld
-    |> World.TransformAvatar (fun avatar -> {avatar with Job=Some { Reward=0.0; Destination=(0.0,0.0)}})
+    |> World.TransformAvatar (fun avatar -> {avatar with Job=Some { FlavorText="";Reward=0.0; Destination=(0.0,0.0)}})
 
 
 

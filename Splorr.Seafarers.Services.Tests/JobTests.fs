@@ -17,6 +17,7 @@ let ``Create.It generates a job.`` () =
     Assert.AreEqual((0.0,0.0), actual.Destination)
     Assert.GreaterOrEqual(actual.Reward,rewardRange |> fst);
     Assert.LessOrEqual(actual.Reward,rewardRange |> snd);
+    Assert.AreNotEqual("", actual.FlavorText)
 
 
 [<Test>]

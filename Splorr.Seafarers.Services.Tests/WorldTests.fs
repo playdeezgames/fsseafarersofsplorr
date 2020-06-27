@@ -255,7 +255,7 @@ let ``AcceptJob.It adds a message to the world when the job is valid but the ava
     let subjectWorld = 
         genericDockedWorld
         |> World.TransformAvatar
-            (fun avatar -> {avatar with Job =Some {Destination=(0.0,0.0); Reward=0.0}})
+            (fun avatar -> {avatar with Job =Some {FlavorText="";Destination=(0.0,0.0); Reward=0.0}})
     let actual =
         subjectWorld
         |> World.AcceptJob 1u genericWorldIslandLocation

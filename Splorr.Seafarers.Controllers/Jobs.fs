@@ -21,7 +21,7 @@ module Jobs =
                     |> Dms.ToString
                 let distance = 
                     Location.DistanceTo location job.Destination
-                sprintf "%d. %s Bearing:%s Distance:%f Reward:%f" index island.Name bearing distance job.Reward |> sink)
+                sprintf "%d. %s Bearing:%s Distance:%f Reward:%f\n\t'%s'" index island.Name bearing distance job.Reward job.FlavorText |> sink)
         if island.Jobs.IsEmpty then
             "(none available)" |> sink
 
