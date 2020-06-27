@@ -10,4 +10,4 @@ let internal avatar =
 let internal job =
     Job.Create random rewardRange singleLocation
 let internal employedAvatar =
-    {avatar with Job = job |> Some}
+    {avatar with Job = job |> Some; Money=10.0; Reputation=(-5.0)}
