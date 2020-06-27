@@ -41,8 +41,8 @@ Quests:
     ✔ accepting job removes job from island @done(20-06-26 06:24)
     ✔ accepting job add job to avatar @done(20-06-26 06:24)
     ✔ avatar may not accept a job if he already has one accepted @done(20-06-26 06:59)
-    ☐ make a "head for job" command
-    ☐ add a distance parameter to the move command
+    ✔ make a "head for job" command @done(20-06-27 06:56)
+    ✔ add a distance parameter to the move command @done(20-06-27 07:08)
     ☐ job flavor text
         "please delivery this (adverb) (adjective) (noun) to (name) the (profession) on the island of (island name)"
 Island Notes:

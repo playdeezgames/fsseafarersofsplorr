@@ -95,13 +95,18 @@ module World =
         {world with Avatar = world.Avatar |> Avatar.SetHeading heading}
         |> AddMessages [ heading |> Dms.ToString |> sprintf "You set your heading to %s." ]
 
-    let Move(world:World) :World =
-        {
-            world with 
-                Avatar = world.Avatar |> Avatar.Move
-                Turn = world.Turn + 1u
-        }
-        |> AddMessages [ "Steady as she goes." ]
+    let rec Move (distance:uint32) (world:World) :World =
+        match distance with
+        | 0u -> world
+        | x ->
+            let steppedWorld = 
+                {
+                    world with 
+                        Avatar = world.Avatar |> Avatar.Move
+                        Turn = world.Turn + 1u
+                }
+                |> AddMessages [ "Steady as she goes." ]
+            Move (x-1u) steppedWorld
 
     let GetNearbyLocations (from:Location) (maximumDistance:float) (world:World) : Location list =
         world.Islands

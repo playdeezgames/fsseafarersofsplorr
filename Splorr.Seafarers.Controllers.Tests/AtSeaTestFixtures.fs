@@ -37,7 +37,7 @@ let internal dockWorld = World.Create dockWorldconfiguration (System.Random())
 let internal headForWorldUnvisited = 
     World.Create dockWorldconfiguration (System.Random())
     |> World.TransformIsland (0.0,0.0) (Island.SetName "yermom" >> Some)
-    |> World.Move
+    |> World.Move 1u
 let internal headForWorldVisited = 
     headForWorldUnvisited
     |> World.Dock random (0.0, 0.0)

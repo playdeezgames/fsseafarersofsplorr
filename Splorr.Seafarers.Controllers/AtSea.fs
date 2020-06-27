@@ -73,9 +73,9 @@ module AtSea =
             |> Gamestate.AtSea
             |> Gamestate.Help
             |> Some
-        | Some Command.Move ->
+        | Some (Command.Move distance)->
             world
-            |> World.Move
+            |> World.Move distance
             |> Gamestate.AtSea
             |> Some
         | Some (Command.Set (Heading heading)) ->

@@ -84,6 +84,22 @@ module CommandSource=
             |> Some
         | _ -> None
 
+    let private ParseMove (tokens:string list) : Command option =
+        match tokens with
+        | [ "0" ] -> 
+            None
+        | [ number ] ->
+            match System.UInt32.TryParse(number) with
+            | true, distance ->
+                distance
+                |> Command.Move
+                |> Some
+            | _ -> None
+        | _ -> 
+            1u 
+            |> Command.Move 
+            |> Some
+
     let Parse(tokens:string list) : Command option =
         match tokens with
         | [ "resume" ] -> 
@@ -104,9 +120,9 @@ module CommandSource=
         | "set" :: tail ->
             tail
             |> ParseSet
-        | [ "move" ] ->
-            Command.Move
-            |> Some
+        | "move" :: tail ->
+            tail
+            |> ParseMove
         | [ "help" ] ->
             Command.Help
             |> Some

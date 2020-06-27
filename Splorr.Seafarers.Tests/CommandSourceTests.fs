@@ -34,11 +34,19 @@ let ``Parse.It returns Yes command when given ["no"]`` () =
     Assert.AreEqual(Command.No |> Some, actual)
 
 [<Test>]
-let ``Parse.It returns Move command when given ["move"]`` () =
+let ``Parse.It returns Move 1u command when given ["move"]`` () =
     let actual =
         [ "move" ]
         |> CommandSource.Parse
-    Assert.AreEqual(Command.Move |> Some, actual)
+    Assert.AreEqual(1u |> Command.Move |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Move 2u command when given ["move";"2"]`` () =
+    let actual =
+        [ "move"; "2" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(2u |> Command.Move |> Some, actual)
+
 
 [<Test>]
 let ``Parse.It returns Set Heading command when given ["set";"heading";"1"]`` () =

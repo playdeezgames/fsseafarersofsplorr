@@ -46,7 +46,7 @@ let ``Run.It returns AtSea with new heading when given Set Heading command.`` ()
 let ``Run.It moves the avatar when given Move command.`` () =
     let actual =
         world
-        |> AtSea.Run random (fun()->Command.Move |> Some) sink
+        |> AtSea.Run random (fun()->1u |> Command.Move |> Some) sink
     Assert.AreEqual({world with Avatar = {world.Avatar with Position=(6.0,5.0)}; Messages=["Steady as she goes."]; Turn=1u} |> Gamestate.AtSea |> Some, actual)
 
 [<Test>]

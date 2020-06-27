@@ -16,7 +16,7 @@ type Command =
     | Yes
     | No
     | Set of SetCommand
-    | Move
+    | Move of uint32
     | Help
     | Start
     | Menu

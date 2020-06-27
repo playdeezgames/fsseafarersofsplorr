@@ -80,11 +80,18 @@ let ``SetHeading.It sets a new heading.`` () =
     Assert.AreEqual(heading |> Dms.ToFloat, actual.Avatar.Heading)
 
 [<Test>]
-let ``Move.It moves the avatar.`` () =
+let ``Move.It moves the avatar one unit when give 1u for distance.`` () =
     let actual =
         soloIslandWorld
-        |> World.Move
+        |> World.Move 1u
     Assert.AreEqual((6.0,5.0), actual.Avatar.Position)
+
+[<Test>]
+let ``Move.It moves the avatar two units when give 2u for distance.`` () =
+    let actual =
+        soloIslandWorld
+        |> World.Move 2u
+    Assert.AreEqual((7.0,5.0), actual.Avatar.Position)
 
 [<Test>]
 let ``GetNearbyLocations.It returns locations within a given distance from another given location.`` () =
