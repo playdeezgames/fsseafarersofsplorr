@@ -15,7 +15,7 @@ Commodities:
     ✔ there is a small chance per island that a commodities is not traded @done(20-06-28 04:42)
     ☐ there is a prices command
     ☐ the prices command shows the different per unit prices of commodities on the island
-    ☐ supply and demand for commodities is calculated at first dock?
+    ✔ supply and demand for commodities is calculated at first dock? @done(20-06-28 05:41)
 Items:
     ☐ items consist of different commodity amount and are priced accordingly
 Satiety/Health:

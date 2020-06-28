@@ -34,3 +34,12 @@ let internal singleDestination = [(0.0, 0.0)] |> Set.ofList
 
 let internal jobAvailableIsland = 
     {visitedIsland with Jobs =[ Job.Create random rewardRange singleDestination ]}
+
+let internal noCommodityIsland = visitedIsland
+let internal commodityIsland = 
+    {noCommodityIsland with
+        Markets = [(Grain, {Supply=1.0; Demand=1.0; Traded=true})] |> Map.ofList}
+let internal commodities = 
+    [(Grain, {Name="grain"; PurchaseFactor=0.0; SaleFactor=0.0; Occurrence=1.0; Discount=0.0; BasePrice=1.0})]
+    |> Map.ofList
+

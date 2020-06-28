@@ -5,8 +5,8 @@ type CommodityDescriptor =
         Name: string
         BasePrice: float
         PurchaseFactor: float
-        SupplyFactory: float
-        MarkUp: float
+        SaleFactor: float
+        Discount: float
         Occurrence: float
     }
 

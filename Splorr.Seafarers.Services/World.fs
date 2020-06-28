@@ -138,8 +138,11 @@ module World =
                 |> Set.ofList
                 |> Set.remove location
             world
-            |> TransformIsland location (Island.AddVisit world.Turn >> Some)
-            |> TransformIsland location (Island.GenerateJobs random world.RewardRange destinations >> Some)
+            |> TransformIsland location 
+                (Island.AddVisit world.Turn 
+                >> Island.GenerateJobs random world.RewardRange destinations 
+                >> Island.GenerateCommodities random world.Commodities
+                >> Some)
             |> Option.foldBack (DoJobCompletion location) world.Avatar.Job
             |> AddMessages [ "You dock." ]
         | _ -> 

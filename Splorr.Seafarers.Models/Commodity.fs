@@ -2,10 +2,10 @@
 
 type Commodity =
     | Grain
-    | Meat
-    | Wood
-    | Stone
-    | Ore
-    | Metal
+    //| Meat
+    //| Wood
+    //| Stone
+    //| Ore
+    //| Metal
 
 

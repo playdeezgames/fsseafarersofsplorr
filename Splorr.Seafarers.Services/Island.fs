@@ -56,3 +56,25 @@ module Island =
         | None ->
             {island with VisitCount=Some 0u}
         | _ -> island
+
+    let private SupplyDemandGenerator (random:System.Random) : float =
+        (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + 3.0
+
+    let GenerateCommodities (random:System.Random) (commodities:Map<Commodity, CommodityDescriptor>) (island:Island) : Island =
+        if island.Markets.IsEmpty then
+            commodities
+            |> Map.fold
+                (fun isle commodity descriptor->
+                    let market = 
+                        {
+                            Supply=random |> SupplyDemandGenerator
+                            Demand=random |> SupplyDemandGenerator
+                            Traded = (random.NextDouble())<descriptor.Occurrence
+                        }
+                    {isle with
+                        Markets = 
+                            isle.Markets 
+                            |> Map.add commodity market}
+                    ) island
+        else
+            island
