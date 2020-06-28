@@ -6,6 +6,9 @@
     <Compile Include="Location.fs" />
     <Compile Include="Dms.fs" />
     <Compile Include="Job.fs" />
+    <Compile Include="Commodity.fs" />
+    <Compile Include="CommodityDescriptor.fs" />
+    <Compile Include="Market.fs" />
     <Compile Include="Island.fs" />
     <Compile Include="Avatar.fs" />
     <Compile Include="World.fs" />

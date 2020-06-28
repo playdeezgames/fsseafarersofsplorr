@@ -10,6 +10,7 @@ let internal soloIslandWorldConfiguration: WorldGenerationConfiguration =
         MinimumIslandDistance=30.0 
         MaximumGenerationTries=10u
         RewardRange=(1.0,10.0)
+        Commodities = Map.empty
     }
 let internal soloIslandWorld = World.Create soloIslandWorldConfiguration random
 
@@ -30,6 +31,7 @@ let internal emptyWorld =
             }
         Islands = Map.empty
         Turn = 0u
+        Commodities = Map.empty
     }
 let internal defaultRewardrange = (1.0,10.0)
 let internal fabricatedDestinationList = [(0.0, 0.0)] |> Set.ofList
@@ -44,6 +46,7 @@ let internal genericWorldConfiguration: WorldGenerationConfiguration =
         MinimumIslandDistance=5.0 
         MaximumGenerationTries=500u
         RewardRange=(1.0,10.0)
+        Commodities = Map.empty
     }
 let internal genericWorld = World.Create genericWorldConfiguration random
 let internal genericWorldIslandLocation = genericWorld.Islands |> Map.toList |> List.map fst |> List.head

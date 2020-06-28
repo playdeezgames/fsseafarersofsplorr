@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module MainMenu =
-    let Run (source:CommandSource) (sink:MessageSink) (world:World option) : Gamestate option =
+    let Run (configuration:WorldGenerationConfiguration) (source:CommandSource) (sink:MessageSink) (world:World option) : Gamestate option =
         [
             ""
             "Main Menu Commands:"
@@ -32,12 +32,8 @@ module MainMenu =
             |> Some
         | None, Some Command.Start ->
             World.Create 
-                {
-                    MinimumIslandDistance=10.0
-                    WorldSize=(100.0,100.0)
-                    MaximumGenerationTries=500u
-                    RewardRange=(1.0,10.0)
-                } (System.Random())//TODO: still hard coded!
+                configuration
+                (System.Random())//TODO: still hard coded!
             |> Gamestate.AtSea
             |> Some
         | None, Some Command.Quit ->

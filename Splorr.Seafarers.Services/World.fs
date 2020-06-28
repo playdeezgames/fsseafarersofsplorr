@@ -7,6 +7,7 @@ type WorldGenerationConfiguration =
         MinimumIslandDistance: float
         MaximumGenerationTries: uint32
         RewardRange: float * float
+        Commodities: Map<Commodity, CommodityDescriptor>
     }
 
 module World =
@@ -73,6 +74,7 @@ module World =
             Avatar = Avatar.Create(configuration.WorldSize |> Location.ScaleBy 0.5)
             Islands = Map.empty
             RewardRange = configuration.RewardRange
+            Commodities = configuration.Commodities
         }
         |> GenerateIslands configuration random 0u
         |> NameIslands random

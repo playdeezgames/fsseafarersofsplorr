@@ -101,6 +101,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
             LastVisit = None
             VisitCount = None
             Jobs = []
+            Markets = Map.empty
         }
     let world =
         {
@@ -117,6 +118,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                     Job = None
                 }
             Turn = 0u
+            Commodities = Map.empty
             Messages = []
             Islands=
                 Map.empty

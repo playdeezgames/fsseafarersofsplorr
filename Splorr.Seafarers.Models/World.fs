@@ -7,4 +7,5 @@ type World =
         Avatar: Avatar
         Islands: Map<Location, Island>
         RewardRange: float * float
+        Commodities: Map<Commodity, CommodityDescriptor>
     }

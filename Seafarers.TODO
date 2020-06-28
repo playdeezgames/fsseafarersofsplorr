@@ -4,7 +4,35 @@ Persistence:
     ☐ permadeath?
         permadeath means that the file loaded is deleted 
     ☐ autosave?
-Quests:
+Commodities:
+    ✔ commodities have a base price(exist per world) @done(20-06-28 04:40)
+    ✔ commodities have a name @done(20-06-28 04:40)
+    ✔ commodities have a supply factor for each unit sold(exist per world) @done(20-06-28 04:40)
+    ✔ commodities have a demand factor for each unit bought(exist per world) @done(20-06-28 04:40)
+    ✔ commodities have a markup @done(20-06-28 04:40)
+    ✔ commodities have a different demand for each island (3d6) @done(20-06-28 04:43)
+    ✔ commodities have a different supply for each island (3d6) @done(20-06-28 04:43)
+    ✔ there is a small chance per island that a commodities is not traded @done(20-06-28 04:42)
+    ☐ there is a prices command
+    ☐ the prices command shows the different per unit prices of commodities on the island
+    ☐ supply and demand for commodities is calculated at first dock?
+Items:
+    ☐ items consist of different commodity amount and are priced accordingly
+Satiety/Health:
+    ☐ the avatar has a satiety stat
+    ☐ the avatar has a health stat
+    ☐ avatars hunger and health stats show up in the status command
+    ☐ the avatar may buy rations at islands
+    ☐ the avatar eats one ration per turn
+    ☐ if there is no ration, satiety goes down by one
+    ☐ if there is a ration, satieity goes up by one
+    ☐ there is a maximum satiety
+    ☐ there is a maximum health
+    ☐ there is a minimum satieity
+    ☐ when satiety is at its minimum and there is hunger, health goes down by 1
+    ☐ when health is at its minimu and there is hunger, the avatar dies
+    ☐ rations are items made of grain
+Quests/Jobs:
     ☐ some jobs have a minimum reputation requirement
 Island Notes:
     ☐ Add island note command

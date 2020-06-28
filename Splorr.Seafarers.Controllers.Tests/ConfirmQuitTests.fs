@@ -10,6 +10,7 @@ let configuration: WorldGenerationConfiguration =
         MinimumIslandDistance=30.0
         MaximumGenerationTries=10u
         RewardRange = (1.0,10.0)
+        Commodities = Map.empty
     }
 let private previousState = 
     World.Create configuration (System.Random())

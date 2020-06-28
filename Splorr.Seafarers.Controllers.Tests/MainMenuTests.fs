@@ -10,6 +10,7 @@ let private configuration: WorldGenerationConfiguration =
         MinimumIslandDistance=30.0
         MaximumGenerationTries=10u
         RewardRange = (1.0, 10.0)
+        Commodities = Map.empty
     }
 let private world = World.Create configuration (System.Random())
 let private sink(_:string) : unit = ()
@@ -18,7 +19,7 @@ let private sink(_:string) : unit = ()
 let ``Run.It returns Confirm Quit when given Quit command and there is no world.`` () =
     let actual =
         None
-        |> MainMenu.Run (fun()->Command.Quit |> Some) sink 
+        |> MainMenu.Run configuration (fun()->Command.Quit |> Some) sink 
     Assert.AreEqual(None |> Gamestate.MainMenu |> Gamestate.ConfirmQuit |> Some, actual)
 
 [<Test>]
@@ -26,14 +27,14 @@ let ``Run.It returns Main Menu when given Quit command and there is a world.`` (
     let actual =
         world
         |> Some
-        |> MainMenu.Run (fun()->Command.Quit |> Some) sink 
+        |> MainMenu.Run configuration (fun()->Command.Quit |> Some) sink 
     Assert.AreEqual(world |> Some |> Gamestate.MainMenu |> Some, actual)
 
 [<Test>]
 let ``Run.It returns Main Menu when given invalid command and there is no world.`` () =
     let actual =
         None
-        |> MainMenu.Run (fun()->None) sink 
+        |> MainMenu.Run configuration (fun()->None) sink 
     Assert.AreEqual(None |> Gamestate.MainMenu |> Some, actual)
 
 [<Test>]
@@ -41,14 +42,14 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
     let actual =
         world
         |> Some
-        |> MainMenu.Run (fun()->None) sink 
+        |> MainMenu.Run configuration (fun()->None) sink 
     Assert.AreEqual(world |> Some |> Gamestate.MainMenu |> Some, actual)
 
 [<Test>]
 let ``Run.It returns At Sea when given Start command and there is no world.`` () =
     let actual =
         None
-        |> MainMenu.Run (fun()->Command.Start |> Some) sink 
+        |> MainMenu.Run configuration (fun()->Command.Start |> Some) sink 
     match actual with
     | Some (Gamestate.AtSea _) -> true
     | _ -> false
@@ -60,7 +61,7 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
     let actual =
         world
         |> Some
-        |> MainMenu.Run (fun()->Command.Start |> Some) sink 
+        |> MainMenu.Run configuration (fun()->Command.Start |> Some) sink 
     Assert.AreEqual(world |> Some |> Gamestate.MainMenu |> Some, actual)
 
 [<Test>]
@@ -68,7 +69,7 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
     let actual =
         world
         |> Some
-        |> MainMenu.Run (fun()->Game |> Command.Abandon |> Some) sink 
+        |> MainMenu.Run configuration (fun()->Game |> Command.Abandon |> Some) sink 
     Assert.AreEqual(None |> Gamestate.MainMenu |> Some, actual)
 
 
@@ -76,7 +77,7 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
 let ``Run.It returns Main Menu with no world when given Abandon Game command and there is no world.`` () =
     let actual =
         None
-        |> MainMenu.Run (fun()->Game |> Command.Abandon |> Some) sink 
+        |> MainMenu.Run configuration (fun()->Game |> Command.Abandon |> Some) sink 
     Assert.AreEqual(None |> Gamestate.MainMenu |> Some, actual)
 
 
@@ -85,7 +86,7 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
     let actual =
         world
         |> Some
-        |> MainMenu.Run (fun()->Command.Resume |> Some) sink 
+        |> MainMenu.Run configuration (fun()->Command.Resume |> Some) sink 
     Assert.AreEqual(world |> Gamestate.AtSea |> Some, actual)
 
 
@@ -93,7 +94,7 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
 let ``Run.It returns Main Menu with no world when given Resume command and there is no world.`` () =
     let actual =
         None
-        |> MainMenu.Run (fun()->Command.Resume |> Some) sink 
+        |> MainMenu.Run configuration (fun()->Command.Resume |> Some) sink 
     Assert.AreEqual(None |> Gamestate.MainMenu |> Some, actual)
 
 //[<Test>]
