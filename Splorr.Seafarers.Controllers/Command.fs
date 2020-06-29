@@ -30,6 +30,7 @@ type Command =
     | Jobs
     | AcceptJob of uint32
     | Prices
+    | Shop
 
 type CommandSource = unit -> (Command option)
 

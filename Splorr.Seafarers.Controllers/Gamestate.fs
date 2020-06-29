@@ -7,6 +7,7 @@ type Gamestate =
     | AtSea of World
     | Docked of Location *  World
     | PriceList of Location *  World
+    | Shop of Location * World
     | ConfirmQuit of Gamestate
     | Help of Gamestate
     | MainMenu of World option
@@ -26,5 +27,6 @@ module Gamestate =
         | Gamestate.IslandList (_,g) -> GetWorld g
         | Gamestate.Status g -> GetWorld g
         | Gamestate.Jobs (_,w) -> w |> Some
+        | Gamestate.Shop (_,w) -> w |> Some
         //| _ -> raise (System.NotImplementedException "Not Implemented")
 

@@ -37,8 +37,19 @@ module Help =
             "\taccept job (number) - accepts the offered job"
             "\tjobs - lists job offers"
             "\tprices - lists traded commodity prices for the island"
+            "\tshop - goes to the shop where items may be bought and sold"
             "\tstatus - shows the avatar's status"
             "\tundock - undocks from the island"
+        ]
+        |> List.iter sink
+
+    let private Docked (sink:MessageSink) : unit =
+        [
+            ""
+            "Shop Commands:"
+            "\tdock - returns to the dock"
+            "\tstatus - shows the avatar's status"
+            
         ]
         |> List.iter sink
 
@@ -50,6 +61,8 @@ module Help =
             sink |> ConfirmQuit
         | Gamestate.Docked _ ->
             sink |> Docked
+        | Gamestate.Shop _ ->
+            sink |> Shop
         | _ ->
             ()
         gamestate

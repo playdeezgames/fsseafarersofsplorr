@@ -11,6 +11,7 @@ let internal configuration: WorldGenerationConfiguration =
         MaximumGenerationTries=10u
         RewardRange = (1.0, 10.0)
         Commodities = Map.empty
+        Items = Map.empty
     }
 let internal world = World.Create configuration (System.Random())
 let internal sink(_:string) : unit = ()
@@ -24,6 +25,7 @@ let internal emptyWorldconfiguration: WorldGenerationConfiguration =
         MaximumGenerationTries=0u
         RewardRange = (1.0, 10.0)
         Commodities = Map.empty
+        Items = Map.empty
     }
 let internal emptyWorld = World.Create emptyWorldconfiguration (System.Random())
 
@@ -34,6 +36,7 @@ let internal dockWorldconfiguration: WorldGenerationConfiguration =
         MaximumGenerationTries=1u
         RewardRange = (1.0, 10.0)
         Commodities = Map.empty
+        Items = Map.empty
     }
 let internal dockWorld = World.Create dockWorldconfiguration (System.Random())
 

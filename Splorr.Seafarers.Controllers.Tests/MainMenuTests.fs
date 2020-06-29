@@ -11,6 +11,7 @@ let private configuration: WorldGenerationConfiguration =
         MaximumGenerationTries=10u
         RewardRange = (1.0, 10.0)
         Commodities = Map.empty
+        Items = Map.empty
     }
 let private world = World.Create configuration (System.Random())
 let private sink(_:string) : unit = ()

@@ -11,6 +11,7 @@ let private configuration :WorldGenerationConfiguration =
         MinimumIslandDistance=1.0
         RewardRange = (1.0, 10.0)
         Commodities = Map.empty
+        Items = Map.empty
     }
 let private world = World.Create configuration (System.Random())
 
@@ -62,5 +63,13 @@ let ``GetWorld.It returns world from the given Jobs Gamestate.`` () =
     let actual =
         ((0.0, 0.0),world)
         |> Gamestate.Jobs
+        |> Gamestate.GetWorld
+    Assert.AreEqual(world |> Some, actual)
+
+[<Test>]
+let ``GetWorld.It returns world from the given Shop Gamestate.`` () =
+    let actual =
+        ((0.0, 0.0),world)
+        |> Gamestate.Shop
         |> Gamestate.GetWorld
     Assert.AreEqual(world |> Some, actual)

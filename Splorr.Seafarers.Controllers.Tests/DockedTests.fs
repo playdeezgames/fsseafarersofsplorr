@@ -96,6 +96,16 @@ let ``Run.It returns the PriceList state when given the Prices command.`` () =
         |> Docked.Run (fun () -> Command.Prices |> Some) sink dockLocation
     Assert.AreEqual(expected, actual)
 
+
+[<Test>]
+let ``Run.It returns the Shop state when given the Shop command.`` () =
+    let subject = dockWorld
+    let expected = (dockLocation, dockWorld) |> Gamestate.Shop |> Some
+    let actual =
+        subject
+        |> Docked.Run (fun () -> Command.Shop |> Some) sink dockLocation
+    Assert.AreEqual(expected, actual)
+
 //[<Test>]
 //let ``Run.It .`` () =
 //    raise (System.NotImplementedException "Not Implemented")

@@ -75,6 +75,7 @@ module Job =
             "Percival"
             "Sally"
             "Susan"
+            "Muffin"
         ]
     let private professions = 
         [
@@ -90,6 +91,7 @@ module Job =
             "miller"
             "abbot"
             "grump"
+            "hamster"
         ]
     let private ChooseRandomTerm (random:System.Random) (terms:string list) : string =
         terms

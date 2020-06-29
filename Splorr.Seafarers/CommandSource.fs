@@ -108,6 +108,9 @@ module CommandSource=
         | "abandon" :: tail -> 
             tail
             |> ParseAbandon
+        | [ "shop" ] -> 
+            Command.Shop 
+            |> Some
         | [ "quit" ] -> 
             Command.Quit 
             |> Some

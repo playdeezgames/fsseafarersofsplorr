@@ -12,6 +12,7 @@ module Avatar =
             Money = 0.0
             Reputation = 0.0
             Job = None
+            Inventory = Map.empty
         }
 
     let SetSpeed (speed:float) (avatar:Avatar) : Avatar =

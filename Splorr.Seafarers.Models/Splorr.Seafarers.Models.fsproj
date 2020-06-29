@@ -9,6 +9,8 @@
     <Compile Include="Commodity.fs" />
     <Compile Include="CommodityDescriptor.fs" />
     <Compile Include="Market.fs" />
+    <Compile Include="Item.fs" />
+    <Compile Include="ItemDescriptor.fs" />
     <Compile Include="Island.fs" />
     <Compile Include="Avatar.fs" />
     <Compile Include="World.fs" />

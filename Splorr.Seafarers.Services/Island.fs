@@ -9,6 +9,7 @@ module Island =
             VisitCount = None
             Jobs = []
             Markets = Map.empty
+            Items = Set.empty
         }
 
     let SetName (name:string) (island:Island) : Island =

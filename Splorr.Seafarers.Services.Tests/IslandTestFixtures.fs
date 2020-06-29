@@ -10,6 +10,7 @@ let internal unvisitedIsland =
         VisitCount = None
         Jobs = []
         Markets = Map.empty
+        Items = Set.empty
     }
 let internal visitedIslandNoLastVisit = 
     {
@@ -18,6 +19,7 @@ let internal visitedIslandNoLastVisit =
         VisitCount = Some 0u
         Jobs = []
         Markets = Map.empty
+        Items = Set.empty
     }
 let internal visitedIsland =
     {
@@ -26,6 +28,7 @@ let internal visitedIsland =
         VisitCount = Some 1u
         Jobs = []
         Markets = Map.empty
+        Items = Set.empty
     }
 
 let internal random = System.Random()

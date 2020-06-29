@@ -27,6 +27,11 @@ module Docked =
             |> Gamestate.Docked
             |> Some
 
+        | Some Command.Shop ->
+            (location, world)
+            |> Gamestate.Shop
+            |> Some
+
         | Some Command.Jobs ->
             (location, world)
             |> Gamestate.Jobs

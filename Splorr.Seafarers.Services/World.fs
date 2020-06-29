@@ -8,6 +8,7 @@ type WorldGenerationConfiguration =
         MaximumGenerationTries: uint32
         RewardRange: float * float
         Commodities: Map<Commodity, CommodityDescriptor>
+        Items: Map<Item, ItemDescriptor>
     }
 
 module World =
@@ -75,6 +76,7 @@ module World =
             Islands = Map.empty
             RewardRange = configuration.RewardRange
             Commodities = configuration.Commodities
+            Items = configuration.Items
         }
         |> GenerateIslands configuration random 0u
         |> NameIslands random

@@ -102,6 +102,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
             VisitCount = None
             Jobs = []
             Markets = Map.empty
+            Items = Set.empty
         }
     let world =
         {
@@ -116,10 +117,12 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                     Money = 0.0
                     Reputation = 0.0
                     Job = None
+                    Inventory = Map.empty
                 }
             Turn = 0u
             Commodities = Map.empty
             Messages = []
+            Items = Map.empty
             Islands=
                 Map.empty
                 |> Map.add ( 0.0,  0.0) blankIsland

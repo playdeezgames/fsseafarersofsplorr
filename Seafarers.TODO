@@ -13,12 +13,28 @@ Commodities:
     ✔ commodities have a different demand for each island (3d6) @done(20-06-28 04:43)
     ✔ commodities have a different supply for each island (3d6) @done(20-06-28 04:43)
     ✔ there is a small chance per island that a commodities is not traded @done(20-06-28 04:42)
-    ☐ there is a prices command
-    ☐ prices command only works when docked
-    ☐ the prices command shows the different per unit prices of commodities on the island
+    ✔ there is a prices command @done(20-06-29 04:55)
+    ✔ prices command only works when docked @done(20-06-29 04:55)
+    ✔ the prices command shows the different per unit prices of commodities on the island @done(20-06-29 04:55)
     ✔ supply and demand for commodities is calculated at first dock? @done(20-06-28 05:41)
+    ☐ trading raw commodities takes place at the "exchange" 
 Items:
     ☐ items consist of different commodity amount and are priced accordingly
+    ☐ items can be bought and sold
+    ☐ the item prices are based on the commodity prices
+    ☐ items are held in an inventory
+    ☐ there is an inventory command
+    ☐ inventory list may be viewed from atsea, docked, and shop
+    ☐ there is a "shop" to buy and sell inventory items
+    ☐ an item has a particular chance of being bought/sold at a given island
+    ☐ there is a buy command
+    ☐ at a shop, the buy command buys items
+    ☐ there is a sell command
+    ☐ at a shop, the sell command sells items
+    ☐ the item shop is determined when first docking
+    ☐ there is a shop command
+    ☐ there is an items command
+    ☐ when at the shop the items command shows a list of items for sale at that island and their prices
 Satiety/Health:
     ☐ the avatar has a satiety stat
     ☐ the avatar has a health stat
@@ -38,6 +54,10 @@ Quests/Jobs:
 Island Notes:
     ☐ Add island note command
     ☐ List island notes command
+Refactor "Opportunities":
+    ☐ Prices command may be better named commodities
+    ☐ commodity price list may need to be accessible from multiple locations
+    ☐ split out the view portion of the game state handler from the command handling portion
 Eliminate Hardcoded Values:
     ☐ Avatar.ViewDistance
     ☐ Avatar.DockDistance

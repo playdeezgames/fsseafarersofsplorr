@@ -11,6 +11,7 @@ let private dockWorldconfiguration: WorldGenerationConfiguration =
         MaximumGenerationTries=1u
         RewardRange = (1.0, 10.0)
         Commodities = Map.empty
+        Items = Map.empty
     }
 let private dockWorld = World.Create dockWorldconfiguration (System.Random())
 let private dockLocation = (0.0, 0.0)

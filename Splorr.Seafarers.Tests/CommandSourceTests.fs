@@ -20,6 +20,13 @@ let ``Parse.It returns Help command when given ["help"]`` () =
     Assert.AreEqual(Command.Help |> Some, actual)
 
 [<Test>]
+let ``Parse.It returns Shop command when given ["shop"]`` () =
+    let actual =
+        [ "shop" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(Command.Shop |> Some, actual)
+
+[<Test>]
 let ``Parse.It returns Yes command when given ["yes"]`` () =
     let actual =
         [ "yes" ]
