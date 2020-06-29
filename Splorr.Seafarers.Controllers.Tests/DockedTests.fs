@@ -87,6 +87,15 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
         |> Docked.Run (fun () -> Job |> Command.Abandon |> Some) sink dockLocation
     Assert.AreEqual(expected, actual)
 
+[<Test>]
+let ``Run.It returns the PriceList state when given the Prices command.`` () =
+    let subject = dockWorld
+    let expected = (dockLocation, dockWorld) |> Gamestate.PriceList |> Some
+    let actual =
+        subject
+        |> Docked.Run (fun () -> Command.Prices |> Some) sink dockLocation
+    Assert.AreEqual(expected, actual)
+
 //[<Test>]
 //let ``Run.It .`` () =
 //    raise (System.NotImplementedException "Not Implemented")

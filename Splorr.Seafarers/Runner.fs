@@ -15,6 +15,7 @@ module Runner =
             | Gamestate.IslandList (page, state) -> IslandList.Run sink page state
             | Gamestate.Status state -> Status.Run sink state
             | Gamestate.Jobs (location, world) -> Jobs.Run sink (location, world)
+            | Gamestate.PriceList (location, world) -> PriceList.Run sink location world
         match nextGamestate with
         | Some state ->
             Loop random configuration source sink state

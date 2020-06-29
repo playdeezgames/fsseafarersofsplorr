@@ -11,6 +11,7 @@
     <Compile Include="AtSea.fs" />
     <Compile Include="Jobs.fs" />
     <Compile Include="Docked.fs" />
+    <Compile Include="PriceList.fs" />
     <Compile Include="ConfirmQuit.fs" />
     <Compile Include="Help.fs" />
     <Compile Include="MainMenu.fs" />

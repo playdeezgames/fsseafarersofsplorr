@@ -14,6 +14,7 @@ Commodities:
     ✔ commodities have a different supply for each island (3d6) @done(20-06-28 04:43)
     ✔ there is a small chance per island that a commodities is not traded @done(20-06-28 04:42)
     ☐ there is a prices command
+    ☐ prices command only works when docked
     ☐ the prices command shows the different per unit prices of commodities on the island
     ✔ supply and demand for commodities is calculated at first dock? @done(20-06-28 05:41)
 Items:
@@ -117,3 +118,4 @@ Archive:
   ✘ A horror game where you poison detectives to unlock achievements. @cancelled(20-06-19 08:01) @project(Krassjam)
   ✔ A ______ game where you ride horses with thugs to make a name for yourself. @done(20-06-19 23:14) @project(Krassjam)
   ✘ A god game where you raise charts to become successful. @cancelled(20-06-19 08:13) @project(Krassjam)
+    Test Driven Devlopment in F# of a Text-Based Seaborne Trading Simulation Game

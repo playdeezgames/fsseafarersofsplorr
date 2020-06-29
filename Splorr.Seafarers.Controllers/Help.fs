@@ -36,6 +36,7 @@ module Help =
             "\tabandon job - abandons your current job, if you have one"
             "\taccept job (number) - accepts the offered job"
             "\tjobs - lists job offers"
+            "\tprices - lists traded commodity prices for the island"
             "\tstatus - shows the avatar's status"
             "\tundock - undocks from the island"
         ]

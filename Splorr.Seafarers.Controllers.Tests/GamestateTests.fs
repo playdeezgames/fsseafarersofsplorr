@@ -30,6 +30,16 @@ let ``GetWorld.It returns the world embedded within the given Docked Gamestate.`
         |> Gamestate.GetWorld
     Assert.AreEqual(world |> Some, actual)
 
+
+[<Test>]
+let ``GetWorld.It returns the world embedded within the given PriceList Gamestate.`` () =
+    let actual = 
+        ((0.0,0.0), world)
+        |> Gamestate.PriceList 
+        |> Gamestate.GetWorld
+    Assert.AreEqual(world |> Some, actual)
+
+
 [<Test>]
 let ``GetWorld.It returns the world embedded within the given MainMenu Gamestate when a world is present.`` () =
     let actual = 

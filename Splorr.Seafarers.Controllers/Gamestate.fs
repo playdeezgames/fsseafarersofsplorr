@@ -6,6 +6,7 @@ open Splorr.Seafarers.Models
 type Gamestate = 
     | AtSea of World
     | Docked of Location *  World
+    | PriceList of Location *  World
     | ConfirmQuit of Gamestate
     | Help of Gamestate
     | MainMenu of World option
@@ -18,6 +19,7 @@ module Gamestate =
         match gamestate with
         | Gamestate.AtSea w -> w |> Some
         | Gamestate.Docked (_,w) -> w |> Some
+        | Gamestate.PriceList (_,w) -> w |> Some
         | Gamestate.MainMenu w -> w
         | Gamestate.ConfirmQuit g -> GetWorld g
         | Gamestate.Help g -> GetWorld g

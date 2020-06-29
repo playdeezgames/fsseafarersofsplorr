@@ -141,6 +141,9 @@ module CommandSource=
         | [ "status" ] ->
             Command.Status
             |> Some
+        | [ "prices" ] ->
+            Command.Prices
+            |> Some
         | [ "menu" ] ->
             Command.Menu
             |> Some

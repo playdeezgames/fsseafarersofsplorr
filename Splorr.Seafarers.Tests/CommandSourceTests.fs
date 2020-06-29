@@ -147,6 +147,14 @@ let ``Parse.It returns Islands 0 command when given ["islands"]`` () =
         |> CommandSource.Parse
     Assert.AreEqual(0u |> Command.Islands |> Some, actual)
 
+
+[<Test>]
+let ``Parse.It returns Prices command when given ["prices"]`` () =
+    let actual =
+        [ "prices"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Command.Prices |> Some, actual)
+
 [<Test>]
 let ``Parse.It returns Islands 0 command when given ["islands";"1"]`` () =
     let actual =
