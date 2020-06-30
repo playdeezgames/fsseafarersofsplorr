@@ -30,7 +30,7 @@ module Jobs =
         world.Islands 
         |> Map.tryFind location
         |> Option.iter (RunIsland sink location world.Islands)
-        (location, world)
+        (Dock, location, world)
         |> Gamestate.Docked
         |> Some
 

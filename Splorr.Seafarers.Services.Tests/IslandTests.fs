@@ -141,6 +141,25 @@ let ``GenerateCommodities.It generates commodities when the given island has no 
         |> Island.GenerateCommodities random commodities
     Assert.AreEqual(commodities.Count, actual.Markets.Count)
 
+[<Test>]
+let ``GenerateItems.It has no effect when the given island already has items in the shop.`` () =
+    let subject = shopIsland
+    let expected = shopIsland
+    let actual = 
+        subject
+        |> Island.GenerateItems random items
+    Assert.AreEqual(expected, actual)
+
+
+[<Test>]
+let ``GenerateItems.It generates the shop when the given island has not items in the shop.`` () =
+    let subject = noShopIsland
+    let expected = {noShopIsland with Items = noShopIsland.Items |> Set.add Ration}
+    let actual = 
+        subject
+        |> Island.GenerateItems random items
+    Assert.AreEqual(expected, actual)
+
 //[<Test>]
 //let ``AddVisit..`` () =
 //    raise (System.NotImplementedException "Not Implemented")

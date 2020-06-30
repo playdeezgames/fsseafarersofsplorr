@@ -22,5 +22,5 @@ let ``Run.It returns Docked with the given location and world.`` () =
     let actual =
         (dockLocation, dockWorld)
         |> Jobs.Run sink
-    Assert.AreEqual((dockLocation, dockWorld) |> Gamestate.Docked |> Some, actual)
+    Assert.AreEqual((Dock, dockLocation, dockWorld) |> Gamestate.Docked |> Some, actual)
 

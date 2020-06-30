@@ -11,12 +11,13 @@ module Runner =
             | Gamestate.ConfirmQuit state -> ConfirmQuit.Run source sink state
             | Gamestate.Help state -> Help.Run sink state
             | Gamestate.MainMenu world -> MainMenu.Run configuration source sink world
-            | Gamestate.Docked (location, world) -> Docked.Run source sink location world
+            | Gamestate.Docked (Dock, location, world) -> Docked.Run source sink location world
             | Gamestate.IslandList (page, state) -> IslandList.Run sink page state
             | Gamestate.Status state -> Status.Run sink state
-            | Gamestate.Jobs (location, world) -> Jobs.Run sink (location, world)
-            | Gamestate.PriceList (location, world) -> PriceList.Run sink location world
-            | Gamestate.Shop (location, world) -> Shop.Run source sink location world
+            | Gamestate.Docked (Jobs, location, world) -> Jobs.Run sink (location, world)
+            | Gamestate.Docked (PriceList, location, world) -> PriceList.Run sink location world
+            | Gamestate.Docked (Shop, location, world) -> Shop.Run source sink location world
+            | Gamestate.Docked (ItemList, location, world) -> ItemList.Run sink location world
         match nextGamestate with
         | Some state ->
             Loop random configuration source sink state

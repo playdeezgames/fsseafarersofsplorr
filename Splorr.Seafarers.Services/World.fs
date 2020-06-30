@@ -144,6 +144,7 @@ module World =
                 (Island.AddVisit world.Turn 
                 >> Island.GenerateJobs random world.RewardRange destinations 
                 >> Island.GenerateCommodities random world.Commodities
+                >> Island.GenerateItems random world.Items
                 >> Some)
             |> Option.foldBack (DoJobCompletion location) world.Avatar.Job
             |> AddMessages [ "You dock." ]

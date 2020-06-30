@@ -114,6 +114,9 @@ module CommandSource=
         | [ "quit" ] -> 
             Command.Quit 
             |> Some
+        | [ "items" ] ->
+            Command.Items
+            |> Some
         | [ "yes" ] ->
             Command.Yes
             |> Some

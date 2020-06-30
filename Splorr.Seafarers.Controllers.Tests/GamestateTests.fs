@@ -24,19 +24,19 @@ let ``GetWorld.It returns the world embedded within the given AtSea Gamestate.``
     Assert.AreEqual(world |> Some, actual)
 
 [<Test>]
-let ``GetWorld.It returns the world embedded within the given Docked Gamestate.`` () =
+let ``GetWorld.It returns the world embedded within the given Docked (at Dock) Gamestate.`` () =
     let actual = 
-        ((0.0,0.0), world)
+        (Dock, (0.0,0.0), world)
         |> Gamestate.Docked 
         |> Gamestate.GetWorld
     Assert.AreEqual(world |> Some, actual)
 
 
 [<Test>]
-let ``GetWorld.It returns the world embedded within the given PriceList Gamestate.`` () =
+let ``GetWorld.It returns the world embedded within the given Docked (at PriceList) Gamestate.`` () =
     let actual = 
-        ((0.0,0.0), world)
-        |> Gamestate.PriceList 
+        (PriceList, (0.0,0.0), world)
+        |> Gamestate.Docked 
         |> Gamestate.GetWorld
     Assert.AreEqual(world |> Some, actual)
 
@@ -59,17 +59,25 @@ let ``GetWorld.It returns None from the given MainMenu Gamestate when no world i
     Assert.AreEqual(None, actual)
 
 [<Test>]
-let ``GetWorld.It returns world from the given Jobs Gamestate.`` () =
+let ``GetWorld.It returns world from the given Docked (at Jobs) Gamestate.`` () =
     let actual =
-        ((0.0, 0.0),world)
-        |> Gamestate.Jobs
+        (Jobs, (0.0, 0.0),world)
+        |> Gamestate.Docked
         |> Gamestate.GetWorld
     Assert.AreEqual(world |> Some, actual)
 
 [<Test>]
-let ``GetWorld.It returns world from the given Shop Gamestate.`` () =
+let ``GetWorld.It returns world from the given Docked (at Shop) Gamestate.`` () =
     let actual =
-        ((0.0, 0.0),world)
-        |> Gamestate.Shop
+        (Shop, (0.0, 0.0),world)
+        |> Gamestate.Docked
+        |> Gamestate.GetWorld
+    Assert.AreEqual(world |> Some, actual)
+
+[<Test>]
+let ``GetWorld.It returns world from the given ItemList Gamestate.`` () =
+    let actual =
+        (ItemList, (0.0, 0.0),world)
+        |> Gamestate.Docked
         |> Gamestate.GetWorld
     Assert.AreEqual(world |> Some, actual)

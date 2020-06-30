@@ -91,6 +91,13 @@ let ``Parse.It returns Start command when given ["start"]`` () =
     Assert.AreEqual(Command.Start|>Some, actual)
 
 [<Test>]
+let ``Parse.It returns Items command when given ["items"]`` () =
+    let actual =
+        [ "items"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Command.Items|>Some, actual)
+
+[<Test>]
 let ``Parse.It returns Menu command when given ["menu"]`` () =
     let actual =
         [ "menu"]

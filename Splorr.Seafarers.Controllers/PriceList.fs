@@ -26,7 +26,7 @@ module PriceList =
         |> Map.tryFind location
         |> Option.iter (fun island ->
             RunWithIsland sink island world)
-        (location, world)
+        (Dock, location, world)
         |> Gamestate.Docked
         |> Some
 

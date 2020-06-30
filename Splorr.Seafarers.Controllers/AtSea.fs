@@ -44,7 +44,7 @@ module AtSea =
         | Some Command.Dock ->
             match dockTarget with
             | Some location ->
-                (location, world |> World.Dock random location)
+                (Dock, location, world |> World.Dock random location)
                 |> Gamestate.Docked
                 |> Some
             | None ->

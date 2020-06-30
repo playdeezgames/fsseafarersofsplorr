@@ -9,8 +9,9 @@
     <Compile Include="Command.fs" />
     <Compile Include="Utility.fs" />
     <Compile Include="AtSea.fs" />
-    <Compile Include="Jobs.fs" />
     <Compile Include="Docked.fs" />
+    <Compile Include="Jobs.fs" />
+    <Compile Include="ItemList.fs" />
     <Compile Include="PriceList.fs" />
     <Compile Include="Shop.fs" />
     <Compile Include="ConfirmQuit.fs" />

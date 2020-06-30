@@ -79,3 +79,15 @@ module Island =
                     ) island
         else
             island
+
+    let GenerateItems (random:System.Random) (items:Map<Item, ItemDescriptor>) (island:Island) : Island =
+        if island.Items.IsEmpty then
+            items
+            |> Map.fold 
+                (fun a k v -> 
+                    if random.NextDouble() < v.Occurence then
+                        {a with Items = a.Items |> Set.add k}
+                    else
+                        a) island
+        else
+            island

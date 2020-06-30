@@ -45,4 +45,9 @@ let internal commodityIsland =
 let internal commodities = 
     [(Grain, {Name="grain"; PurchaseFactor=0.0; SaleFactor=0.0; Occurrence=1.0; Discount=0.0; BasePrice=1.0})]
     |> Map.ofList
+let internal items =
+    [(Ration, {Commodities=[(Grain, 1.0)]|>Map.ofList; Occurence=1.0})]
+    |> Map.ofList
+let shopIsland = {commodityIsland with Items = commodityIsland.Items |> Set.add Ration}
+let noShopIsland = commodityIsland
 

@@ -5,35 +5,19 @@ Persistence:
         permadeath means that the file loaded is deleted 
     ☐ autosave?
 Commodities:
-    ✔ commodities have a base price(exist per world) @done(20-06-28 04:40)
-    ✔ commodities have a name @done(20-06-28 04:40)
-    ✔ commodities have a supply factor for each unit sold(exist per world) @done(20-06-28 04:40)
-    ✔ commodities have a demand factor for each unit bought(exist per world) @done(20-06-28 04:40)
-    ✔ commodities have a markup @done(20-06-28 04:40)
-    ✔ commodities have a different demand for each island (3d6) @done(20-06-28 04:43)
-    ✔ commodities have a different supply for each island (3d6) @done(20-06-28 04:43)
-    ✔ there is a small chance per island that a commodities is not traded @done(20-06-28 04:42)
-    ✔ there is a prices command @done(20-06-29 04:55)
-    ✔ prices command only works when docked @done(20-06-29 04:55)
-    ✔ the prices command shows the different per unit prices of commodities on the island @done(20-06-29 04:55)
-    ✔ supply and demand for commodities is calculated at first dock? @done(20-06-28 05:41)
     ☐ trading raw commodities takes place at the "exchange" 
 Items:
-    ☐ items consist of different commodity amount and are priced accordingly
     ☐ items can be bought and sold
     ☐ the item prices are based on the commodity prices
     ☐ items are held in an inventory
     ☐ there is an inventory command
     ☐ inventory list may be viewed from atsea, docked, and shop
-    ☐ there is a "shop" to buy and sell inventory items
-    ☐ an item has a particular chance of being bought/sold at a given island
     ☐ there is a buy command
     ☐ at a shop, the buy command buys items
     ☐ there is a sell command
     ☐ at a shop, the sell command sells items
     ☐ the item shop is determined when first docking
     ☐ there is a shop command
-    ☐ there is an items command
     ☐ when at the shop the items command shows a list of items for sale at that island and their prices
 Satiety/Health:
     ☐ the avatar has a satiety stat
@@ -55,15 +39,34 @@ Island Notes:
     ☐ Add island note command
     ☐ List island notes command
 Refactor "Opportunities":
+    ☐ on the islands list, indicate visually the destination of the current job
     ☐ Prices command may be better named commodities
     ☐ commodity price list may need to be accessible from multiple locations
     ☐ split out the view portion of the game state handler from the command handling portion
+        first, based on gamestate, show the view, and the view indicates whether or not there needs to be command input prior to the next game state
+        second, when indicated by the view, collect a command from the source, and apply it 
 Eliminate Hardcoded Values:
     ☐ Avatar.ViewDistance
     ☐ Avatar.DockDistance
 Weird Edge Case Behavior:
     ☐ When AtSea, docking will happen with the "furthest" of all of the dockable islands. because of how the world is generated, there "should not" be more than one. however, this is not technically so.
 Archive:
+  ✔ commodities have a base price(exist per world) @done(20-06-28 04:40) @project(Commodities)
+  ✔ commodities have a name @done(20-06-28 04:40) @project(Commodities)
+  ✔ commodities have a supply factor for each unit sold(exist per world) @done(20-06-28 04:40) @project(Commodities)
+  ✔ commodities have a demand factor for each unit bought(exist per world) @done(20-06-28 04:40) @project(Commodities)
+  ✔ commodities have a markup @done(20-06-28 04:40) @project(Commodities)
+  ✔ commodities have a different demand for each island (3d6) @done(20-06-28 04:43) @project(Commodities)
+  ✔ commodities have a different supply for each island (3d6) @done(20-06-28 04:43) @project(Commodities)
+  ✔ there is a small chance per island that a commodities is not traded @done(20-06-28 04:42) @project(Commodities)
+  ✔ there is a prices command @done(20-06-29 04:55) @project(Commodities)
+  ✔ prices command only works when docked @done(20-06-29 04:55) @project(Commodities)
+  ✔ the prices command shows the different per unit prices of commodities on the island @done(20-06-29 04:55) @project(Commodities)
+  ✔ supply and demand for commodities is calculated at first dock? @done(20-06-28 05:41) @project(Commodities)
+  ✔ items consist of different commodity amount and are priced accordingly @done(20-06-30 06:15) @project(Items)
+  ✔ there is a "shop" to buy and sell inventory items @done(20-06-30 06:15) @project(Items)
+  ✔ an item has a particular chance of being bought/sold at a given island @done(20-06-30 06:15) @project(Items)
+  ✔ there is an items command @done(20-06-30 06:15) @project(Items)
   ✘ confirm abandoning job, kinda like confirm quit @cancelled(20-06-27 07:29) @project(Quests)
   ✔ job flavor text @done(20-06-27 08:06) @project(Quests)
     "please deliver this (adverb) (adjective) (noun) to (name) the (profession) on the island of (island name)"

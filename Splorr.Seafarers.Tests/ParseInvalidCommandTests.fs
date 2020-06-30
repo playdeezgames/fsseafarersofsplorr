@@ -34,6 +34,13 @@ let ``Parse.It returns invalid command when given ["yes";"foo"]`` () =
     Assert.AreEqual(None, actual)
 
 [<Test>]
+let ``Parse.It returns invalid command when given ["items";"foo"]`` () =
+    let actual =
+        [ "items"; "foo"]
+        |> CommandSource.Parse
+    Assert.AreEqual(None, actual)
+
+[<Test>]
 let ``Parse.It returns invalid command when given ["no";"foo"]`` () =
     let actual =
         [ "no"; "foo"]

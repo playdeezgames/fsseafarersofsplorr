@@ -43,11 +43,13 @@ module Help =
         ]
         |> List.iter sink
 
-    let private Docked (sink:MessageSink) : unit =
+    let private Shop (sink:MessageSink) : unit =
         [
             ""
             "Shop Commands:"
             "\tdock - returns to the dock"
+            "\titems - lists prices of items"
+            "\tquit - quits the game"
             "\tstatus - shows the avatar's status"
             
         ]
@@ -59,9 +61,9 @@ module Help =
             sink |> AtSea    
         | Gamestate.ConfirmQuit _ ->
             sink |> ConfirmQuit
-        | Gamestate.Docked _ ->
+        | Gamestate.Docked (Dock, _, _) ->
             sink |> Docked
-        | Gamestate.Shop _ ->
+        | Gamestate.Docked (Shop, _, _) ->
             sink |> Shop
         | _ ->
             ()
