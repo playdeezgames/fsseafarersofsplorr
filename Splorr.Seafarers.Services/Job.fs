@@ -33,9 +33,13 @@ module Job =
             "bloody"
             "gnarly"
             "oaken"
+            "turgid"
+            "swollen"
+            "incridible"
         ]
     let private objectNames = 
         [
+            "'stuff'"
             "widget"
             "orb"
             "macguffin"

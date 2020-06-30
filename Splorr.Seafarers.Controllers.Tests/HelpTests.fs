@@ -39,9 +39,9 @@ let ``Run.It returns the given ConfirmQuit Gamestate`` () =
     Assert.AreEqual(originalState |> Some, actual)
 
 [<Test>]
-let ``Run.It returns the given Docked Gamestate`` () =
+let ``Run.It returns the given Docked (at Dock) Gamestate`` () =
     let originalState = 
-        ((0.0, 0.0), world)
+        (Dock, (0.0, 0.0), world)
         |> Gamestate.Docked
     let actual = 
         originalState

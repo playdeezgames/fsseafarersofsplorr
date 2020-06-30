@@ -23,28 +23,28 @@ module Docked =
 
         match source() with
         | Some (Command.AcceptJob index) ->
-            (location, world |> World.AcceptJob index location)
+            (Dock, location, world |> World.AcceptJob index location)
             |> Gamestate.Docked
             |> Some
 
         | Some Command.Shop ->
-            (location, world)
-            |> Gamestate.Shop
+            (Shop, location, world)
+            |> Gamestate.Docked
             |> Some
 
         | Some Command.Jobs ->
-            (location, world)
-            |> Gamestate.Jobs
+            (Jobs, location, world)
+            |> Gamestate.Docked
             |> Some
 
         | Some Command.Status ->
-            (location, world)
+            (Dock, location, world)
             |> Gamestate.Docked
             |> Gamestate.Status
             |> Some
 
         | Some (Command.Abandon Job) ->
-            (location, world |> World.AbandonJob)
+            (Dock, location, world |> World.AbandonJob)
             |> Gamestate.Docked
             |> Some
 
@@ -55,33 +55,36 @@ module Docked =
             |> Some
 
         | Some Command.Quit ->
-            (location, world) 
+            (Dock, location, world) 
             |> Gamestate.Docked 
             |> Gamestate.ConfirmQuit 
             |> Some
 
         | Some Command.Prices ->
-            (location, world) 
-            |> Gamestate.PriceList
+            (PriceList, location, world) 
+            |> Gamestate.Docked
             |> Some
 
         | Some Command.Help ->
-            (location, world) 
+            (Dock, location, world) 
             |> Gamestate.Docked 
             |> Gamestate.Help 
             |> Some
 
         | _ -> 
             "Maybe try 'help'?" |> sink
-            (location, world) 
+            (Dock, location, world) 
             |> Gamestate.Docked 
             |> Some
 
-    let Run (source:CommandSource) (sink:MessageSink) (location:Location) (world: World) : Gamestate option =
+    let internal RunBoilerplate (func:Location -> Island -> World->(Gamestate option)) (location:Location) (world: World) : Gamestate option =
         match world.Islands |> Map.tryFind location with
         | Some island ->
-            RunWithIsland source sink location island world
+            func location island world
         | None ->
             world
             |> Gamestate.AtSea
             |> Some
+
+    let Run (source:CommandSource) (sink:MessageSink) =
+        RunBoilerplate (RunWithIsland source sink)

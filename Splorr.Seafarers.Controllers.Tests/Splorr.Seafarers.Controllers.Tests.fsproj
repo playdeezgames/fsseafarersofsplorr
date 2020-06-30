@@ -20,6 +20,7 @@
     <Compile Include="AtSeaTests.fs" />
     <Compile Include="DockedTestFixtures.fs" />
     <Compile Include="DockedTests.fs" />
+    <Compile Include="ItemListTests.fs" />
     <Compile Include="PriceListTests.fs" />
     <Compile Include="ShopTests.fs" />
     <Compile Include="HelpTests.fs" />

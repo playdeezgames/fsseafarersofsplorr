@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module Shop = 
-    let Run (source:CommandSource) (sink:MessageSink) (location:Location) (world: World) : Gamestate option =
+    let private RunWithIsland (source:CommandSource) (sink:MessageSink) (location:Location) (island:Island) (world: World) : Gamestate option =
         [
             ""
             "You are at the shop."
@@ -12,30 +12,43 @@ module Shop =
         |> List.iter sink
         match source() with
         | Some Command.Dock ->
-            (location, world) 
+            (Dock, location, world) 
+            |> Gamestate.Docked
+            |> Some
+
+        | Some Command.Items ->
+            (ItemList, location, world) 
             |> Gamestate.Docked
             |> Some
 
         | Some Command.Status ->
-            (location, world) 
-            |> Gamestate.Shop
+            (Shop, location, world) 
+            |> Gamestate.Docked
             |> Gamestate.Status
             |> Some
 
         | Some Command.Quit ->
-            (location, world) 
-            |> Gamestate.Shop
+            (Shop, location, world) 
+            |> Gamestate.Docked
             |> Gamestate.ConfirmQuit
             |> Some
 
         | Some Command.Help ->
-            (location, world) 
-            |> Gamestate.Shop
+            (Shop, location, world) 
+            |> Gamestate.Docked
             |> Gamestate.Help
             |> Some
 
         | _ -> 
-            (location, world |> World.AddMessages ["Maybe try 'help'?"]) 
-            |> Gamestate.Shop 
+            (Shop, location, world |> World.AddMessages ["Maybe try 'help'?"]) 
+            |> Gamestate.Docked
             |> Some
 
+    let Run (source:CommandSource) (sink:MessageSink) (location:Location) (world: World) : Gamestate option =
+        match world.Islands |> Map.tryFind location with
+        | Some island ->
+            RunWithIsland source sink location island world
+        | None ->
+            world
+            |> Gamestate.AtSea
+            |> Some
