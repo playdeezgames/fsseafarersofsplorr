@@ -2,9 +2,8 @@
 
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
-open Splorr.Seafarers.Controllers
+open CommonTestFixtures
 
-let internal random = System.Random()
 let internal dockWorldconfiguration: WorldGenerationConfiguration =
     {
         WorldSize=(0.0, 0.0)
@@ -16,7 +15,6 @@ let internal dockWorldconfiguration: WorldGenerationConfiguration =
     }
 let internal dockWorld = World.Create dockWorldconfiguration random
 let internal dockLocation = (0.0, 0.0)
-let internal sink (_:string) : unit = ()
 let internal smallWorldconfiguration: WorldGenerationConfiguration =
     {
         WorldSize=(11.0, 11.0)

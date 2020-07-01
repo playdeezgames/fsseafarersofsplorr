@@ -2,7 +2,7 @@
 
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
-open Splorr.Seafarers.Controllers
+open CommonTestFixtures
 
 let internal configuration: WorldGenerationConfiguration =
     {
@@ -14,8 +14,6 @@ let internal configuration: WorldGenerationConfiguration =
         Items = Map.empty
     }
 let internal world = World.Create configuration (System.Random())
-let internal sink(_:string) : unit = ()
-let internal random = System.Random()
 
 
 let internal emptyWorldconfiguration: WorldGenerationConfiguration =

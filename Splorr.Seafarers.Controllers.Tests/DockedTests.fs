@@ -3,107 +3,222 @@
 open NUnit.Framework
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Controllers
+open CommonTestFixtures
 open DockedTestFixtures
 
 [<Test>]
 let ``Run.It returns AtSea when given Undock Command.`` () =
+    let input = dockWorld
+    let inputLocation= dockLocation
+    let inputSource = Command.Undock |> Some |> toSource
+    let expectedMessages = ["You undock."]
+    let expected = 
+        {input with 
+            Messages = expectedMessages} 
+        |> Gamestate.AtSea 
+        |> Some
     let actual =
-        (dockLocation, dockWorld)
-        ||> Docked.Run (fun _ -> Command.Undock |> Some) sink 
-    Assert.AreEqual({dockWorld with Messages = ["You undock."]} |> Gamestate.AtSea |> Some,actual)
+        (inputLocation, input)
+        ||> Docked.Run inputSource sinkStub 
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It returns ConfirmQuit when given Quit Command.`` () =
+    let input =dockWorld
+    let inputLocation = dockLocation
+    let inputSource = Command.Quit |> Some |> toSource
+    let expected =
+        (Dock, inputLocation, input) 
+        |> Gamestate.Docked 
+        |> Gamestate.ConfirmQuit 
+        |> Some
     let actual =
-        (dockLocation, dockWorld)
-        ||> Docked.Run (fun _ -> Command.Quit |> Some) sink 
-    Assert.AreEqual((Dock, dockLocation, dockWorld) |> Gamestate.Docked |> Gamestate.ConfirmQuit |> Some,actual)
+        (inputLocation, input)
+        ||> Docked.Run inputSource sinkStub 
+    Assert.AreEqual(expected,actual)
 
 [<Test>]
 let ``Run.It returns Help when given Help Command.`` () =
+    let input =dockWorld
+    let inputLocation = dockLocation
+    let inputSource = 
+        Command.Help 
+        |> Some 
+        |> toSource
+    let expected = 
+        (Dock, inputLocation, input) 
+        |> Gamestate.Docked 
+        |> Gamestate.Help 
+        |> Some
     let actual =
-        (dockLocation, dockWorld)
-        ||> Docked.Run (fun _ -> Command.Help |> Some) sink 
-    Assert.AreEqual((Dock, dockLocation, dockWorld) |> Gamestate.Docked |> Gamestate.Help |> Some,actual)
+        (inputLocation, input)
+        ||> Docked.Run inputSource sinkStub 
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It returns Docked when given invalid Command.`` () =
+    let input =dockWorld
+    let inputLocation = dockLocation
+    let inputSource =
+        None 
+        |> toSource
+    let expected = 
+        (Dock, inputLocation, input) 
+        |> Gamestate.Docked 
+        |> Some
     let actual =
-        (dockLocation, dockWorld)
-        ||> Docked.Run (fun _ -> None) sink 
-    Assert.AreEqual((Dock, dockLocation, dockWorld) |> Gamestate.Docked |> Some,actual)
+        (inputLocation, input)
+        ||> Docked.Run inputSource sinkStub 
+    Assert.AreEqual(expected, actual)
 
 
 [<Test>]
 let ``Run.It returns AtSea when given invalid docked location.`` () =
-    let mutable called:bool = false
+    let mutable sourceCalled:bool = false
+    let input = dockWorld
+    let inputLocation = (1.0, 1.0)
+    let inputSource () = 
+        sourceCalled <- true
+        Command.Help 
+        |> Some
+    let expected = 
+        input 
+        |> Gamestate.AtSea 
+        |> Some
     let actual =
-        ((1.0,1.0), dockWorld)
-        ||> Docked.Run 
-            (fun _ -> 
-                called <- true
-                Command.Help 
-                |> Some) sink 
-    Assert.AreEqual(dockWorld |> Gamestate.AtSea |> Some,actual)
-    Assert.IsFalse(called)
+        (inputLocation, input)
+        ||> Docked.Run inputSource sinkStub 
+    Assert.AreEqual(expected,actual)
+    Assert.IsFalse(sourceCalled)
 
 [<Test>]
 let ``Run.It returns Status when given the command Status.`` () =
+    let input = dockWorld
+    let inputLocation = dockLocation
+    let inputSource = 
+        Command.Status 
+        |> Some 
+        |> toSource
+    let expected = 
+        (Dock, inputLocation, input) 
+        |> Gamestate.Docked 
+        |> Gamestate.Status 
+        |> Some
     let actual =
-        (dockLocation, dockWorld)
-        ||> Docked.Run (fun _ -> Command.Status |> Some) sink 
-    Assert.AreEqual((Dock, dockLocation, dockWorld) |> Gamestate.Docked |> Gamestate.Status |> Some, actual)
+        (inputLocation, input)
+        ||> Docked.Run inputSource sinkStub 
+    Assert.AreEqual(expected, actual)
 
 
 [<Test>]
 let ``Run.It returns Docked (at Jobs) gamestate when given the command Jobs.`` () =
+    let input = dockWorld
+    let inputLocation = dockLocation
+    let inputSource = 
+        Command.Jobs 
+        |> Some 
+        |> toSource
+    let expected = 
+        (Jobs, inputLocation, input) 
+        |> Gamestate.Docked 
+        |> Some
     let actual =
-        (dockLocation, dockWorld)
-        ||> Docked.Run (fun _ -> Command.Jobs |> Some) sink 
-    Assert.AreEqual((Jobs, dockLocation, dockWorld) |> Gamestate.Docked |> Some, actual)
+        (inputLocation, input)
+        ||> Docked.Run inputSource sinkStub 
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It gives a message when given the Accept Job command and the given job number does not exist.`` () =
+    let input = smallWorldDocked
+    let inputLocation = smallWorldIslandLocation
+    let inputSource = 0u |> Command.AcceptJob |> Some |> toSource
+    let expectedMessages = [ "That job is currently unavailable." ]
+    let expectedWorld = 
+        {input with 
+            Messages = expectedMessages}
+    let expected = 
+        (Dock, inputLocation,  expectedWorld) 
+        |> Gamestate.Docked 
+        |> Some
     let actual =
-        smallWorldDocked
-        |> Docked.Run (fun () -> 0u |> Command.AcceptJob |> Some) sink smallWorldIslandLocation
-    Assert.AreEqual((Dock, smallWorldIslandLocation, {smallWorldDocked with Messages = [ "That job is currently unavailable." ] } ) |> Gamestate.Docked |> Some, actual)
+        input
+        |> Docked.Run inputSource sinkStub inputLocation
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It gives a message when given the command Abandon Job and the avatar has no current job.`` () =
-    let subject = dockWorld
-    let expected = (Dock, dockLocation, {subject with Messages = ["You have no job to abandon."]}) |> Gamestate.Docked |> Some
+    let input = dockWorld
+    let inputLocation = dockLocation
+    let inputSource = 
+        Job 
+        |> Command.Abandon 
+        |> Some 
+        |> toSource
+    let expected = 
+        (Dock, inputLocation, {input with Messages = ["You have no job to abandon."]}) 
+        |> Gamestate.Docked 
+        |> Some
     let actual =
-        subject
-        |> Docked.Run (fun () -> Job |> Command.Abandon |> Some) sink dockLocation
+        input
+        |> Docked.Run inputSource sinkStub inputLocation
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It gives a message and abandons the job when given the command Abandon Job and the avatar has a current job.`` () =
-    let subject = abandonJobWorld
-    let expected = (Dock, dockLocation, {subject with Messages = ["You abandon your job."]; Avatar={subject.Avatar with Job=None; Reputation = subject.Avatar.Reputation-1.0}}) |> Gamestate.Docked |> Some
+    let input = abandonJobWorld
+    let inputLocation = dockLocation
+    let inputSource = Job |> Command.Abandon |> Some |> toSource
+    let expectedMessages = ["You abandon your job."]
+    let expectedAvatar = 
+        {input.Avatar with 
+            Job=None
+            Reputation = input.Avatar.Reputation-1.0}
+    let expectedWorld = 
+        {input with 
+            Messages = expectedMessages
+            Avatar= expectedAvatar}
+    let expected = 
+        (Dock, inputLocation, expectedWorld) 
+        |> Gamestate.Docked 
+        |> Some
     let actual =
-        subject
-        |> Docked.Run (fun () -> Job |> Command.Abandon |> Some) sink dockLocation
+        input
+        |> Docked.Run inputSource sinkStub inputLocation
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It returns the Docked (at PriceList) gamestate when given the Prices command.`` () =
-    let subject = dockWorld
-    let expected = (PriceList, dockLocation, dockWorld) |> Gamestate.Docked |> Some
+    let input = dockWorld
+    let inputLocation = dockLocation
+    let inputSource = 
+        Command.Prices 
+        |> Some 
+        |> toSource
+    let expected = 
+        (PriceList, inputLocation, input) 
+        |> Gamestate.Docked 
+        |> Some
     let actual =
-        subject
-        |> Docked.Run (fun () -> Command.Prices |> Some) sink dockLocation
+        input
+        |> Docked.Run inputSource sinkStub inputLocation
     Assert.AreEqual(expected, actual)
 
 
 [<Test>]
 let ``Run.It returns the Docked (at Shop) gamestate when given the Shop command.`` () =
-    let subject = dockWorld
-    let expected = (Shop, dockLocation, dockWorld) |> Gamestate.Docked |> Some
+    let input = dockWorld
+    let inputLocation = dockLocation
+    let inputSource =  
+        Command.Shop 
+        |> Some 
+        |> toSource
+    let expected = 
+        (Shop, inputLocation, dockWorld) 
+        |> Gamestate.Docked 
+        |> Some
     let actual =
-        subject
-        |> Docked.Run (fun () -> Command.Shop |> Some) sink dockLocation
+        input
+        |> Docked.Run inputSource sinkStub inputLocation
     Assert.AreEqual(expected, actual)
 
 //[<Test>]

@@ -3,6 +3,7 @@
 open NUnit.Framework
 open Splorr.Seafarers.Controllers
 open DockedTestFixtures
+open CommonTestFixtures
 
 [<Test>]
 let ``Run.It returns Docked (at Shop) gamestate.`` () =
@@ -12,5 +13,5 @@ let ``Run.It returns Docked (at Shop) gamestate.`` () =
     let expected = subjects |> Gamestate.Docked |> Some
     let actual = 
         (subjectLocation, subjectWorld)
-        ||> ItemList.Run sink
+        ||> ItemList.Run sinkStub
     Assert.AreEqual(expected, actual)

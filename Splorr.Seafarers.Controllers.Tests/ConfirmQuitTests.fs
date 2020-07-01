@@ -1,49 +1,67 @@
 ﻿module ConfirmQuitTests
 
 open NUnit.Framework
-open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
-
-let configuration: WorldGenerationConfiguration =
-    {
-        WorldSize=(10.0, 10.0)
-        MinimumIslandDistance=30.0
-        MaximumGenerationTries=10u
-        RewardRange = (1.0,10.0)
-        Commodities = Map.empty
-        Items = Map.empty
-    }
-let private previousState = 
-    World.Create configuration (System.Random())
-    |> Gamestate.AtSea
-let private sink (_:string) : unit = ()
-let private makeSource (command:Command option) = fun () -> command
+open CommonTestFixtures
+open ConfirmQuitTestFixtures
 
 [<Test>]
 let ``Run function.When Yes command passed, return None.`` () =
+    let input = previousState
+    let inputSource = 
+        Command.Yes 
+        |> Some 
+        |> toSource
+    let expected = None
     let actual = 
-        previousState
-        |> ConfirmQuit.Run (Command.Yes |> Some |> makeSource) sink 
-    Assert.AreEqual(None, actual)
+        input
+        |> ConfirmQuit.Run inputSource sinkStub 
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run function.When No command passed, return previous State.`` () =
+    let input = previousState
+    let inputSource = 
+        Command.No 
+        |> Some 
+        |> toSource
+    let expected = 
+        input 
+        |> Some
     let actual = 
-        previousState
-        |> ConfirmQuit.Run (Command.No |> Some |> makeSource) sink 
-    Assert.AreEqual(previousState |> Some, actual)
+        input
+        |> ConfirmQuit.Run inputSource sinkStub 
+    Assert.AreEqual(expected, actual)
     
 [<Test>]
 let ``Run function.When invalid command passed, return ConfirmQuit.`` () =
+    let input = previousState
+    let inputSource = 
+        None 
+        |> toSource
+    let expected = 
+        input 
+        |> Gamestate.ConfirmQuit 
+        |> Some
     let actual = 
-        previousState
-        |> ConfirmQuit.Run (None |> makeSource) sink 
-    Assert.AreEqual(previousState |> Gamestate.ConfirmQuit |> Some, actual)
+        input
+        |> ConfirmQuit.Run inputSource sinkStub 
+    Assert.AreEqual(expected, actual)
 
 
 [<Test>]
 let ``Run.It initiates Confirm Quit Help when given the Help command.`` () =
+    let input = previousState
+    let inputSource = 
+        Command.Help 
+        |> Some 
+        |> toSource
+    let expected = 
+        input 
+        |> Gamestate.ConfirmQuit 
+        |> Gamestate.Help 
+        |> Some
     let actual =
-        previousState
-        |> ConfirmQuit.Run  (fun()->Command.Help |> Some) sink
-    Assert.AreEqual(previousState |> Gamestate.ConfirmQuit |> Gamestate.Help |> Some, actual)
+        input
+        |> ConfirmQuit.Run  inputSource sinkStub
+    Assert.AreEqual(expected, actual)
