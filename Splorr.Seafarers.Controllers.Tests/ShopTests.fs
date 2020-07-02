@@ -8,95 +8,102 @@ open CommonTestFixtures
 
 [<Test>]
 let ``Run.It adds a message and returns Docked (at Shop) gamestate when given an invalid command.`` () =
-    let subjectLocation = dockLocation
-    let subjectWorld = dockWorld
+    let inputLocation = dockLocation
+    let inputWorld = dockWorld
     let input =
-        (subjectLocation, subjectWorld)
+        (inputLocation, inputWorld)
+    let inputSource = 
+        None 
+        |> toSource
+    let expectedWorld = 
+        inputWorld 
+        |> World.AddMessages ["Maybe try 'help'?"]
     let expected = 
-        (Shop, subjectLocation, subjectWorld |> World.AddMessages ["Maybe try 'help'?"])
+        (Shop, inputLocation, expectedWorld)
         |> Gamestate.Docked
         |> Some
     let actual =
         input
-        ||> Shop.Run (fun ()->None) (sinkStub)
+        ||> Shop.Run inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It returns Docked (at Dock) gamestate when given the Dock command.`` () =
-    let subjectLocation = dockLocation
-    let subjectWorld = dockWorld
-    let input =
-        (Dock, subjectLocation, subjectWorld)
+    let inputLocation = dockLocation
+    let inputWorld = dockWorld
+    let inputSource = 
+        Command.Dock 
+        |> Some 
+        |> toSource
     let expected = 
-        input
+        (Dock, inputLocation, inputWorld)
         |> Gamestate.Docked
         |> Some
     let actual =
-        (subjectLocation, subjectWorld)
-        ||> Shop.Run (fun ()->Command.Dock |> Some) (sinkStub)
+        (inputLocation, inputWorld)
+        ||> Shop.Run inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It returns Docked (at ItemList) gamestate when given the Items command.`` () =
-    let subjectLocation = dockLocation
-    let subjectWorld = dockWorld
-    let input =
-        (ItemList, subjectLocation, subjectWorld)
+    let inputLocation = dockLocation
+    let inputWorld = dockWorld
+    let inputSource = 
+        Command.Items 
+        |> Some 
+        |> toSource
     let expected = 
-        input
+        (ItemList, inputLocation, inputWorld)
         |> Gamestate.Docked
         |> Some
     let actual =
-        (subjectLocation, subjectWorld)
-        ||> Shop.Run (fun ()->Command.Items |> Some) (sinkStub)
+        (inputLocation, inputWorld)
+        ||> Shop.Run inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It returns Help gamestate when given the Help command.`` () =
-    let subjectLocation = dockLocation
-    let subjectWorld = dockWorld
-    let input =
-        (Shop, subjectLocation, subjectWorld)
+    let inputLocation = dockLocation
+    let inputWorld = dockWorld
+    let inputSource = Command.Help |> Some |> toSource
     let expected = 
-        input
+        (Shop, inputLocation, inputWorld)
         |> Gamestate.Docked
         |> Gamestate.Help
         |> Some
     let actual =
-        (subjectLocation, subjectWorld)
-        ||> Shop.Run (fun ()->Command.Help |> Some) (sinkStub)
+        (inputLocation, inputWorld)
+        ||> Shop.Run inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It returns Status gamestate when given the Status command.`` () =
-    let subjectLocation = dockLocation
-    let subjectWorld = dockWorld
-    let input =
-        (Shop, subjectLocation, subjectWorld)
+    let inputLocation = dockLocation
+    let inputWorld = dockWorld
+    let inputSource = Command.Status |> Some |> toSource
     let expected = 
-        input
+        (Shop, inputLocation, inputWorld)
         |> Gamestate.Docked
         |> Gamestate.Status
         |> Some
     let actual =
-        (subjectLocation, subjectWorld)
-        ||> Shop.Run (fun ()->Command.Status |> Some) (sinkStub)
+        (inputLocation, inputWorld)
+        ||> Shop.Run inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It returns ConfirmQuit gamestate when given the Quit command.`` () =
-    let subjectLocation = dockLocation
-    let subjectWorld = dockWorld
-    let input =
-        (Shop, subjectLocation, subjectWorld)
+    let inputLocation = dockLocation
+    let inputWorld = dockWorld
+    let inputSource = Command.Quit |> Some |> toSource
     let expected = 
-        input
+        (Shop, inputLocation, inputWorld)
         |> Gamestate.Docked
         |> Gamestate.ConfirmQuit
         |> Some
     let actual =
-        (subjectLocation, subjectWorld)
-        ||> Shop.Run (fun ()->Command.Quit |> Some) (sinkStub)
+        (inputLocation, inputWorld)
+        ||> Shop.Run inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 

@@ -85,7 +85,7 @@ module Island =
             items
             |> Map.fold 
                 (fun a k v -> 
-                    if random.NextDouble() < v.Occurence then
+                    if random.NextDouble() < v.Occurrence then
                         {a with Items = a.Items |> Set.add k}
                     else
                         a) island

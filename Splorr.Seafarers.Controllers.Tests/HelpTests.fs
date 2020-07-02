@@ -19,32 +19,41 @@ let private world =  World.Create configuration (System.Random())
 
 [<Test>]
 let ``Run.It returns the given AtSea Gamestate`` () =
-    let originalState = 
+    let input = 
         world
         |> Gamestate.AtSea
+    let expected = 
+        input
+        |> Some
     let actual = 
-        originalState
+        input
         |> Help.Run sink
-    Assert.AreEqual(originalState |> Some, actual)
+    Assert.AreEqual(input |> Some, actual)
 
 [<Test>]
 let ``Run.It returns the given ConfirmQuit Gamestate`` () =
-    let originalState = 
+    let input = 
         world
         |> Gamestate.AtSea
         |> Gamestate.ConfirmQuit
+    let expected = 
+        input
+        |> Some
     let actual = 
-        originalState
+        input
         |> Help.Run sink
-    Assert.AreEqual(originalState |> Some, actual)
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It returns the given Docked (at Dock) Gamestate`` () =
-    let originalState = 
+    let input = 
         (Dock, (0.0, 0.0), world)
         |> Gamestate.Docked
+    let expected = 
+        input
+        |> Some
     let actual = 
-        originalState
+        input
         |> Help.Run sink
-    Assert.AreEqual(originalState |> Some, actual)
+    Assert.AreEqual(expected, actual)
 

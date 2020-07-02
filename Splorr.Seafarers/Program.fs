@@ -9,10 +9,11 @@ let commodities :Map<Commodity, CommodityDescriptor> =
 let items: Map<Item, ItemDescriptor> =
     [(Ration, 
         {
+            DisplayName = "rations"
             Commodities = 
                 [(Grain, 0.01)]
                 |> Map.ofList
-            Occurence = 1.0
+            Occurrence = 1.0
         })]
     |> Map.ofList
 [<EntryPoint>]
@@ -23,7 +24,7 @@ let main argv =
         MaximumGenerationTries=500u
         RewardRange=(1.0,10.0)
         Commodities = commodities
-        Items = Map.empty
+        Items = items
     }
     |> Runner.Run
     0

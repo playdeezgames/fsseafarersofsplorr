@@ -8,6 +8,7 @@
     <Compile Include="Market.fs" />
     <Compile Include="Dms.fs" />
     <Compile Include="Job.fs" />
+    <Compile Include="Item.fs" />
     <Compile Include="Island.fs" />
     <Compile Include="Location.fs" />
     <Compile Include="Avatar.fs" />
