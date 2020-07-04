@@ -43,7 +43,7 @@ let internal commodityIsland =
     {noCommodityIsland with
         Markets = [(Grain, {Supply=1.0; Demand=1.0; Traded=true})] |> Map.ofList}
 let internal commodities = 
-    [(Grain, {Name="grain"; PurchaseFactor=0.0; SaleFactor=0.0; Occurrence=1.0; Discount=0.0; BasePrice=1.0})]
+    [(Grain, {Name="grain"; PurchaseFactor=1.0; SaleFactor=1.0; Occurrence=1.0; Discount=0.5; BasePrice=1.0})]
     |> Map.ofList
 let internal items =
     [(Ration, 

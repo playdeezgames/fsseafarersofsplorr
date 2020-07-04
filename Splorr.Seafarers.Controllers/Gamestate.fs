@@ -18,6 +18,7 @@ type Gamestate =
     | IslandList of uint32 * Gamestate
     | MainMenu of World option
     | Status of Gamestate
+    | Inventory of Gamestate
 
 module Gamestate =
     let rec GetWorld (gamestate:Gamestate) : World option =
@@ -29,5 +30,6 @@ module Gamestate =
         | Gamestate.Help g -> GetWorld g
         | Gamestate.IslandList (_,g) -> GetWorld g
         | Gamestate.Status g -> GetWorld g
+        | Gamestate.Inventory g -> GetWorld g
         //| _ -> raise (System.NotImplementedException "Not Implemented")
 

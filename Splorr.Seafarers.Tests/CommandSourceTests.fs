@@ -161,13 +161,19 @@ let ``Parse.It returns Islands 0 command when given ["islands"]`` () =
         |> CommandSource.Parse
     Assert.AreEqual(0u |> Command.Islands |> Some, actual)
 
-
 [<Test>]
 let ``Parse.It returns Prices command when given ["prices"]`` () =
     let actual =
         [ "prices"]
         |> CommandSource.Parse
     Assert.AreEqual(Command.Prices |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Inventory command when given ["inventory"]`` () =
+    let actual =
+        [ "inventory"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Command.Inventory |> Some, actual)
 
 [<Test>]
 let ``Parse.It returns Islands 0 command when given ["islands";"1"]`` () =
@@ -196,4 +202,31 @@ let ``Parse.It returns Accept Job 1 command when given ["accept";"job";"1"]`` ()
         [ "accept";"job";"1"]
         |> CommandSource.Parse
     Assert.AreEqual(1u |> Command.AcceptJob |> Some, actual)
- 
+
+[<Test>]
+let ``Parse.It returns Buy (3,"foo") command when given ["buy";"3";"foo"]`` () =
+    let actual =
+        [ "buy";"3";"foo"]
+        |> CommandSource.Parse
+    Assert.AreEqual((3u, "foo") |> Command.Buy |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Buy (3,"foo bar") command when given ["buy";"3";"foo";"bar"]`` () =
+    let actual =
+        [ "buy";"3";"foo bar"]
+        |> CommandSource.Parse
+    Assert.AreEqual((3u, "foo bar") |> Command.Buy |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Sell (3,"foo") command when given ["sell";"3";"foo"]`` () =
+    let actual =
+        [ "sell";"3";"foo"]
+        |> CommandSource.Parse
+    Assert.AreEqual((3u, "foo") |> Command.Sell |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Sell (3,"foo bar") command when given ["sell";"3";"foo";"bar"]`` () =
+    let actual =
+        [ "sell";"3";"foo bar"]
+        |> CommandSource.Parse
+    Assert.AreEqual((3u, "foo bar") |> Command.Sell |> Some, actual)

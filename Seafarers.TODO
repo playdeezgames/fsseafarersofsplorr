@@ -7,18 +7,20 @@ Persistence:
 Commodities:
     ☐ trading raw commodities takes place at the "exchange" 
 Items:
-    ☐ items can be bought and sold
-    ☐ the item prices are based on the commodity prices
-    ☐ items are held in an inventory
-    ☐ there is an inventory command
-    ☐ inventory list may be viewed from atsea, docked, and shop
-    ☐ there is a buy command
+    ✘ items can be bought and sold @cancelled(20-07-02 06:39)
+    ✔ the item prices are based on the commodity prices @done(20-07-02 06:38)
+    ✔ items are held in an inventory @done(20-07-02 06:38)
+    ✔ there is an inventory command @done(20-07-02 06:38)
+    ✔ inventory list may be viewed from atsea, docked, and shop @done(20-07-02 06:38)
+    ✔ there is a buy command for purchasing items @done(20-07-02 06:34)
+      looks like - buy (quantity) (item name)
     ☐ at a shop, the buy command buys items
-    ☐ there is a sell command
+    ✔ there is a sell command for selling items @done(20-07-02 06:38)
+      looks like - sell (quantity) (item name)
     ☐ at a shop, the sell command sells items
-    ☐ the item shop is determined when first docking
-    ☐ there is a shop command
-    ☐ when at the shop the items command shows a list of items for sale at that island and their prices
+    ✔ the item shop is determined when first docking @done(20-07-02 04:42)
+    ✔ there is a shop command @done(20-07-02 04:42)
+    ✔ when at the shop the items command shows a list of items for sale at that island and their prices @done(20-07-02 04:42)
 Satiety/Health:
     ☐ the avatar has a satiety stat
     ☐ the avatar has a health stat

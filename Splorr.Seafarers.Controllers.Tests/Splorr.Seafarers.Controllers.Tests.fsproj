@@ -28,6 +28,7 @@
     <Compile Include="HelpTests.fs" />
     <Compile Include="JobsTest.fs" />
     <Compile Include="StatusTests.fs" />
+    <Compile Include="InventoryTests.fs" />
     <Compile Include="MainMenuTests.fs" />
     <Compile Include="GamestateTests.fs" />
     <Compile Include="IslandListTests.fs" />

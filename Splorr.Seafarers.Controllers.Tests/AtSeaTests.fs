@@ -140,6 +140,23 @@ let ``Run.It returns At Sea Help when given the Help command.`` () =
 
 
 [<Test>]
+let ``Run.It returns At Sea Inventory when given the Inventory command.`` () =
+    let input = world
+    let inputSource = 
+        Command.Inventory 
+        |> Some 
+        |> toSource
+    let expected = 
+        input 
+        |> Gamestate.AtSea 
+        |> Gamestate.Inventory 
+        |> Some
+    let actual =
+        input
+        |> AtSea.Run random inputSource sinkStub
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
 let ``Run.It returns Main Menu when given the Menu command.`` () =
     let input = world
     let inputSource = 

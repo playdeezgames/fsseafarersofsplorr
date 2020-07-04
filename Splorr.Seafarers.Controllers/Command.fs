@@ -32,6 +32,9 @@ type Command =
     | Prices
     | Shop
     | Items
+    | Inventory
+    | Buy of uint32 * string
+    | Sell of uint32 * string
 
 type CommandSource = unit -> (Command option)
 

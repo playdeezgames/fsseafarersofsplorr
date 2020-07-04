@@ -60,6 +60,12 @@ module Docked =
             |> Gamestate.ConfirmQuit 
             |> Some
 
+        | Some Command.Inventory ->
+            (Dock, location, world) 
+            |> Gamestate.Docked 
+            |> Gamestate.Inventory 
+            |> Some
+
         | Some Command.Prices ->
             (PriceList, location, world) 
             |> Gamestate.Docked

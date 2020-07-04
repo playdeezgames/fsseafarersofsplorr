@@ -19,6 +19,7 @@
     <Compile Include="MainMenu.fs" />
     <Compile Include="IslandList.fs" />
     <Compile Include="Status.fs" />
+    <Compile Include="Inventory.fs" />
   </ItemGroup>
 
   <ItemGroup>

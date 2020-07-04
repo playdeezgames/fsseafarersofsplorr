@@ -257,37 +257,37 @@ let ``AcceptJob.It adds a message to the world when given an invalid job index f
 
 [<Test>]
 let ``AcceptJob.It adds a message to the world when the job is valid but the avatar already has a job.`` () =
-    let subjectWorld = 
+    let inputWorld = 
         genericDockedWorld
         |> World.TransformAvatar
             (fun avatar -> {avatar with Job =Some {FlavorText="";Destination=(0.0,0.0); Reward=0.0}})
     let actual =
-        subjectWorld
+        inputWorld
         |> World.AcceptJob 1u genericWorldIslandLocation
-    Assert.AreEqual ({subjectWorld with Messages = [ "You must complete or abandon your current job before taking on a new one." ]}, actual)
+    Assert.AreEqual ({inputWorld with Messages = [ "You must complete or abandon your current job before taking on a new one." ]}, actual)
 
 
 [<Test>]
 let ``AcceptJob.It adds the given job to the avatar and eliminates it from the island's job list when given a valid island location and a valid job index and the avatar has no current job.`` () =
-    let subjectWorld = genericDockedWorld
-    let subjectLocation = genericWorldIslandLocation
-    let subjectJob = subjectWorld.Islands.[subjectLocation].Jobs.Head
-    let subjectDestination = subjectWorld.Islands.[subjectJob.Destination]
+    let inputWorld = genericDockedWorld
+    let inputLocation = genericWorldIslandLocation
+    let inputJob = inputWorld.Islands.[inputLocation].Jobs.Head
+    let inputDestination = inputWorld.Islands.[inputJob.Destination]
     let expectedAvatar = 
-        subjectWorld.Avatar
-        |> Avatar.SetJob subjectJob
+        inputWorld.Avatar
+        |> Avatar.SetJob inputJob
     let expectedIsland = 
-        {subjectWorld.Islands.[subjectLocation] with Jobs = []}
+        {inputWorld.Islands.[inputLocation] with Jobs = []}
     let expectedDestination =
-        {subjectDestination with VisitCount=Some 0u}
+        {inputDestination with VisitCount=Some 0u}
     let actual =
-        subjectWorld
-        |> World.AcceptJob 1u subjectLocation
+        inputWorld
+        |> World.AcceptJob 1u inputLocation
     Assert.AreEqual( "You accepted the job!", actual.Messages.Head)
     Assert.AreEqual(1, actual.Messages.Length)
     Assert.AreEqual(expectedAvatar, actual.Avatar)
-    Assert.AreEqual(expectedIsland, actual.Islands.[subjectLocation])
-    Assert.AreEqual(expectedDestination, actual.Islands.[subjectJob.Destination])
+    Assert.AreEqual(expectedIsland, actual.Islands.[inputLocation])
+    Assert.AreEqual(expectedDestination, actual.Islands.[inputJob.Destination])
 
 [<Test>]
 let ``TransformAvatar.It transforms the avatar within the given world.`` () =
@@ -299,46 +299,183 @@ let ``TransformAvatar.It transforms the avatar within the given world.`` () =
 
 [<Test>]
 let ``AbandonJob.It adds a message when the avatar has no job.`` () =
-    let subject = genericDockedWorld
-    let expected = {subject with Messages=["You have no job to abandon."]}
+    let input = genericDockedWorld
+    let expected = {input with Messages=["You have no job to abandon."]}
     let actual = 
-        subject
+        input
         |> World.AbandonJob
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a job`` () =
-    let subject = jobWorld
-    let expected = {subject with Messages=["You abandon your job."]; Avatar = {subject.Avatar with Job = None; Reputation = subject.Avatar.Reputation - 1.0}}
+    let input = jobWorld
+    let expected = {input with Messages=["You abandon your job."]; Avatar = {input.Avatar with Job = None; Reputation = input.Avatar.Reputation - 1.0}}
     let actual = 
-        subject
+        input
         |> World.AbandonJob
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Dock.It does not modify avatar when given avatar has a job for a different destination.`` () =
-    let subject = jobWorld
+    let input = jobWorld
     let actual = 
         jobWorld
         |> World.Dock random genericWorldIslandLocation
-    Assert.AreEqual(subject.Avatar, actual.Avatar)
+    Assert.AreEqual(input.Avatar, actual.Avatar)
 
 [<Test>]
 let ``Dock.It adds a message and completes the job when given avatar has a job for this location.`` () =
-    let subject = jobWorld
-    let subjectJob = jobWorld.Avatar.Job.Value
-    let subjectIsland = subject.Islands.[jobLocation]
+    let input = jobWorld
+    let inputJob = jobWorld.Avatar.Job.Value
     let expectedAvatar = 
-        {subject.Avatar with 
+        {input.Avatar with 
             Job = None;
-            Money = subject.Avatar.Money + subjectJob.Reward;
-            Reputation = subject.Avatar.Reputation + 1.0}
+            Money = input.Avatar.Money + inputJob.Reward;
+            Reputation = input.Avatar.Reputation + 1.0}
     let expectedMessages = ["You complete your job."; "You dock."]
     let actual = 
         jobWorld
         |> World.Dock random jobLocation
     Assert.AreEqual(expectedAvatar, actual.Avatar)
     Assert.AreEqual(expectedMessages, actual.Messages)
+
+[<Test>]
+let ``BuyItems.It gives a message when given a bogus island location.`` () =
+    let input = shopWorld
+    let inputLocation = shopWorldBogusLocation
+    let inputQuantity = 2u
+    let inputItemName = "item under test"
+    let expected =
+        input
+        |> World.AddMessages ["You cannot buy items here."]
+    let actual = 
+        input 
+        |> World.BuyItems inputLocation inputQuantity inputItemName
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``BuyItems.It gives a message when given a valid island location and a bogus item to buy.`` () =
+    let input = shopWorld
+    let inputLocation = shopWorldLocation
+    let inputQuantity = 2u
+    let inputItemName = "bogus item"
+    let expected =
+        input
+        |> World.AddMessages ["Round these parts, we don't sell things like that."]
+    let actual = 
+        input 
+        |> World.BuyItems inputLocation inputQuantity inputItemName
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``BuyItems.It gives a message when the avatar has insufficient funds.`` () =
+    let input = shopWorld
+    let inputLocation = shopWorldLocation
+    let inputQuantity = 2u
+    let inputItemName = "item under test"
+    let expected =
+        input
+        |> World.AddMessages ["You don't have enough money to buy those."]
+    let actual = 
+        input 
+        |> World.BuyItems inputLocation inputQuantity inputItemName
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``BuyItems.It gives a message and completes the purchase when the avatar has sufficient funds.`` () =
+    let inputAvatar = {shopWorld.Avatar with Money = 1000000.0}
+    let input = {shopWorld with Avatar = inputAvatar}
+    let inputLocation = shopWorldLocation
+    let inputQuantity = 2u
+    let inputItemName = "item under test"
+    let expectedMarket =
+        {input.Islands.[inputLocation].Markets.[Grain] with
+            Demand = 7.0}
+    let expectedIsland = 
+        {input.Islands.[inputLocation] with
+            Markets = input.Islands.[inputLocation].Markets |> Map.add Grain expectedMarket}
+    let expectedAvatar = 
+        {input.Avatar with
+            Money = 999998.0
+            Inventory = Map.empty |> Map.add Ration 2u}
+    let expected =
+        {input with
+            Avatar = expectedAvatar
+            Islands = input.Islands |> Map.add inputLocation expectedIsland}
+        |> World.AddMessages ["You complete the purchase."]
+    let actual = 
+        input 
+        |> World.BuyItems inputLocation inputQuantity inputItemName
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``SellItems.It gives a message when given a bogus island location.`` () =
+    let input = shopWorld
+    let inputLocation = shopWorldBogusLocation
+    let inputQuantity = 2u
+    let inputItemName = "item under test"
+    let expected =
+        input
+        |> World.AddMessages ["You cannot sell items here."]
+    let actual = 
+        input 
+        |> World.SellItems inputLocation inputQuantity inputItemName
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``SellItems.It gives a message when given a valid island location and bogus item to buy.`` () =
+    let input = shopWorld
+    let inputLocation = shopWorldLocation
+    let inputQuantity = 2u
+    let inputItemName = "bogus item"
+    let expected =
+        input
+        |> World.AddMessages ["Round these parts, we don't buy things like that."]
+    let actual = 
+        input 
+        |> World.SellItems inputLocation inputQuantity inputItemName
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``SellItems.It gives a message when the avatar has insufficient items in inventory.`` () =
+    let input = shopWorld
+    let inputLocation = shopWorldLocation
+    let inputQuantity = 2u
+    let inputItemName = "item under test"
+    let expected =
+        input
+        |> World.AddMessages ["You don't have enough of those to sell."]
+    let actual = 
+        input 
+        |> World.SellItems inputLocation inputQuantity inputItemName
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``SellItems.It gives a message and completes the purchase when the avatar has sufficient funds.`` () =
+    let inputAvatar = {shopWorld.Avatar with Inventory = Map.empty |> Map.add Ration 2u}
+    let input = {shopWorld with Avatar = inputAvatar}
+    let inputLocation = shopWorldLocation
+    let inputQuantity = 2u
+    let inputItemName = "item under test"
+    let expectedMarket =
+        {input.Islands.[inputLocation].Markets.[Grain] with
+            Supply = 7.0}
+    let expectedIsland = 
+        {input.Islands.[inputLocation] with
+            Markets = input.Islands.[inputLocation].Markets |> Map.add Grain expectedMarket}
+    let expectedAvatar = 
+        {input.Avatar with
+            Money = 1.0
+            Inventory = Map.empty}
+    let expected =
+        {input with
+            Avatar = expectedAvatar
+            Islands = input.Islands |> Map.add inputLocation expectedIsland}
+        |> World.AddMessages ["You complete the sale."]
+    let actual = 
+        input 
+        |> World.SellItems inputLocation inputQuantity inputItemName
+    Assert.AreEqual(expected, actual)
 
 //[<Test>]
 //let ``FunctionName.It returns a SOMETHING when given SOMETHINGELSE.`` () =

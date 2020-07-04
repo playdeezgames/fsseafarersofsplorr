@@ -56,6 +56,24 @@ let ``Run.It returns Help when given Help Command.`` () =
     Assert.AreEqual(expected, actual)
 
 [<Test>]
+let ``Run.It returns Inventory when given Inventory Command.`` () =
+    let input =dockWorld
+    let inputLocation = dockLocation
+    let inputSource = 
+        Command.Inventory 
+        |> Some 
+        |> toSource
+    let expected = 
+        (Dock, inputLocation, input) 
+        |> Gamestate.Docked 
+        |> Gamestate.Inventory 
+        |> Some
+    let actual =
+        (inputLocation, input)
+        ||> Docked.Run inputSource sinkStub 
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
 let ``Run.It returns Docked when given invalid Command.`` () =
     let input =dockWorld
     let inputLocation = dockLocation

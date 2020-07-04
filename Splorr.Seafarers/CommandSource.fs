@@ -100,6 +100,38 @@ module CommandSource=
             |> Command.Move 
             |> Some
 
+    let ParseBuy (tokens:string list) : Command option =
+        match tokens with
+        | [ _ ] ->
+            None
+        | "0" :: tail ->
+            None
+        | number :: tail ->
+            match System.UInt32.TryParse(number) with
+            | true, quantity ->
+                let itemName = System.String.Join(" ", tail)
+                (quantity, itemName)
+                |> Command.Buy
+                |> Some
+            | _ -> None
+        | _ -> None
+
+    let ParseSell (tokens:string list) : Command option =
+        match tokens with
+        | [ _ ] ->
+            None
+        | "0" :: tail ->
+            None
+        | number :: tail ->
+            match System.UInt32.TryParse(number) with
+            | true, quantity ->
+                let itemName = System.String.Join(" ", tail)
+                (quantity, itemName)
+                |> Command.Sell
+                |> Some
+            | _ -> None
+        | _ -> None
+
     let Parse(tokens:string list) : Command option =
         match tokens with
         | [ "resume" ] -> 
@@ -147,6 +179,9 @@ module CommandSource=
         | [ "status" ] ->
             Command.Status
             |> Some
+        | [ "inventory" ] ->
+            Command.Inventory
+            |> Some
         | [ "prices" ] ->
             Command.Prices
             |> Some
@@ -162,6 +197,12 @@ module CommandSource=
         | "accept" :: tail ->
             tail
             |> ParseAccept
+        | "buy" :: tail ->
+            tail
+            |> ParseBuy
+        | "sell" :: tail ->
+            tail
+            |> ParseSell
         | _ -> 
             None
 
