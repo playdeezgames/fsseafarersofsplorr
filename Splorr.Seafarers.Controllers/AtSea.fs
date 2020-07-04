@@ -36,11 +36,13 @@ module AtSea =
             |> Gamestate.AtSea
             |> Gamestate.Status
             |> Some
+
         | Some (Command.HeadFor name) ->
             world
             |> World.HeadFor name
             |> Gamestate.AtSea
             |> Some
+
         | Some Command.Dock ->
             match dockTarget with
             | Some location ->
@@ -52,6 +54,7 @@ module AtSea =
                 |> World.AddMessages [ "There is no place to dock." ]
                 |> Gamestate.AtSea
                 |> Some
+
         | Some (Command.Islands page) ->
             (page, world |> Gamestate.AtSea)
             |> Gamestate.IslandList
@@ -68,31 +71,43 @@ module AtSea =
             |> Some
             |> Gamestate.MainMenu
             |> Some
+
         | Some Command.Help ->
             world
             |> Gamestate.AtSea
             |> Gamestate.Help
             |> Some
+
         | Some (Command.Move distance)->
             world
             |> World.Move distance
             |> Gamestate.AtSea
             |> Some
+
         | Some (Command.Set (Heading heading)) ->
             world
             |> World.SetHeading heading
             |> Gamestate.AtSea
             |> Some
+
         | Some (Command.Set (Speed speed)) ->
             world
             |> World.SetSpeed speed
             |> Gamestate.AtSea
             |> Some
+
         | Some Command.Quit -> 
             world
             |> Gamestate.AtSea
             |> Gamestate.ConfirmQuit
             |> Some
+
+        | Some Command.Inventory -> 
+            world
+            |> Gamestate.AtSea
+            |> Gamestate.Inventory
+            |> Some
+
         | _ ->
             "Maybe try 'help'?" |> sink
             world

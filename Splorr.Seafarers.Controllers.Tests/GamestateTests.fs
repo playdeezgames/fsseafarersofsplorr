@@ -81,3 +81,13 @@ let ``GetWorld.It returns world from the given ItemList Gamestate.`` () =
         |> Gamestate.Docked
         |> Gamestate.GetWorld
     Assert.AreEqual(world |> Some, actual)
+
+
+[<Test>]
+let ``GetWorld.It returns world from the given Inventory Gamestate.`` () =
+    let actual =
+        (ItemList, (0.0, 0.0),world)
+        |> Gamestate.Docked
+        |> Gamestate.Inventory
+        |> Gamestate.GetWorld
+    Assert.AreEqual(world |> Some, actual)

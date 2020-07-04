@@ -18,6 +18,7 @@ module Runner =
             | Gamestate.Docked (PriceList, location, world) -> PriceList.Run sink location world
             | Gamestate.Docked (Shop, location, world) -> Shop.Run source sink location world
             | Gamestate.Docked (ItemList, location, world) -> ItemList.Run sink location world
+            | Gamestate.Inventory gameState -> Inventory.Run sink gameState
         match nextGamestate with
         | Some state ->
             Loop random configuration source sink state

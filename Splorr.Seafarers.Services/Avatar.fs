@@ -48,3 +48,40 @@ module Avatar =
                 Money = avatar.Money + job.Reward
                 Reputation = avatar.Reputation + 1.0}
         | _ -> avatar
+
+    let private SetMoney (amount:float) (avatar:Avatar) : Avatar =
+        {avatar with Money = if amount < 0.0 then 0.0 else amount}
+
+    let EarnMoney (amount:float) (avatar:Avatar) : Avatar =
+        if amount <= 0.0 then
+            avatar
+        else
+            avatar |> SetMoney (avatar.Money + amount)
+
+    let SpendMoney (amount:float) (avatar:Avatar) : Avatar =
+        if amount < 0.0 then
+            avatar
+        else
+            avatar |> SetMoney (avatar.Money - amount)
+
+    let GetItemCount (item:Item) (avatar:Avatar) : uint32 =
+        match avatar.Inventory.TryFind item with
+        | Some x -> x
+        | None -> 0u
+
+    let AddInventory (item:Item) (quantity:uint32) (avatar:Avatar) : Avatar =
+        let newQuantity = (avatar |> GetItemCount item) + quantity
+        {avatar with Inventory = avatar.Inventory |> Map.add item newQuantity}
+
+    let RemoveInventory (item:Item) (quantity:uint32) (avatar:Avatar) : Avatar =
+        if quantity>0u then
+            match avatar.Inventory.TryFind item with
+            | Some count ->
+                if count > quantity then
+                    {avatar with Inventory = avatar.Inventory |> Map.add item (count-quantity)}
+                else
+                    {avatar with Inventory = avatar.Inventory |> Map.remove item}
+            | None ->
+                avatar
+        else
+            avatar

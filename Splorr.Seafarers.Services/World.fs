@@ -201,3 +201,51 @@ module World =
         | _ ->
             world
             |> AddMessages [ "You have no job to abandon." ]
+
+    let private FindItemByName (itemName:string) (world:World) : (Item * ItemDescriptor) option =
+        world.Items
+        |> Map.tryPick (fun k v -> if v.DisplayName = itemName then Some (k,v) else None)
+
+    let BuyItems (location:Location) (quantity:uint32) (itemName:string) (world:World) : World =
+        match world |> FindItemByName itemName, world.Islands |> Map.tryFind location with
+        | Some (item, descriptor) , Some island->
+            let unitPrice = 
+                Item.DetermineSalePrice world.Commodities island.Markets descriptor 
+            let price = (quantity |> float) * unitPrice
+            if price > world.Avatar.Money then
+                world
+                |> AddMessages ["You don't have enough money to buy those."]
+            else
+                world
+                |> AddMessages ["You complete the purchase."]
+                |> TransformAvatar (Avatar.SpendMoney price)
+                |> TransformAvatar (Avatar.AddInventory item quantity)
+                |> TransformIsland location (Island.UpdateMarketForItemSale world.Commodities descriptor quantity >> Some)
+        | None, Some island ->
+            world
+            |> AddMessages ["Round these parts, we don't sell things like that."]
+        | _ ->
+            world
+            |> AddMessages ["You cannot buy items here."]
+
+    let SellItems (location:Location) (quantity:uint32) (itemName:string) (world:World) : World =
+        match world |> FindItemByName itemName, world.Islands |> Map.tryFind location with
+        | Some (item, descriptor), Some island ->
+            if quantity > (world.Avatar |> Avatar.GetItemCount item) then
+                world
+                |> AddMessages ["You don't have enough of those to sell."]
+            else
+                let unitPrice = 
+                    Item.DeterminePurchasePrice world.Commodities island.Markets descriptor 
+                let price = (quantity |> float) * unitPrice
+                world
+                |> AddMessages ["You complete the sale."]
+                |> TransformAvatar (Avatar.EarnMoney price)
+                |> TransformAvatar (Avatar.RemoveInventory item quantity)
+                |> TransformIsland location (Island.UpdateMarketForItemPurchase world.Commodities descriptor quantity >> Some)
+        | None, Some island ->
+            world
+            |> AddMessages ["Round these parts, we don't buy things like that."]
+        | _ ->
+            world
+            |> AddMessages ["You cannot sell items here."]

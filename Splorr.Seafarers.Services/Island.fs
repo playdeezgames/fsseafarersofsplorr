@@ -91,3 +91,23 @@ module Island =
                         a) island
         else
             island
+
+    let private ChangeMarketDemand (commodity:Commodity) (value:float) (island:Island) : Island =
+        let market = island.Markets.[commodity]
+        let updatedMarket = {market with Demand = market.Demand + value}
+        {island with Markets = island.Markets |> Map.add commodity updatedMarket}
+
+    let private ChangeMarketSupply (commodity:Commodity) (value:float) (island:Island) : Island =
+        let market = island.Markets.[commodity]
+        let updatedMarket = {market with Supply = market.Supply + value}
+        {island with Markets = island.Markets |> Map.add commodity updatedMarket}
+
+    let UpdateMarketForItemSale (commodities:Map<Commodity,CommodityDescriptor>) (descriptor:ItemDescriptor) (quantity:uint32) (island:Island) : Island =
+        descriptor.Commodities
+        |> Map.map (fun k v -> v * (quantity |> float) * commodities.[k].SaleFactor)
+        |> Map.fold (fun i k v -> i |> ChangeMarketDemand k v) island
+
+    let UpdateMarketForItemPurchase (commodities:Map<Commodity,CommodityDescriptor>) (descriptor:ItemDescriptor) (quantity:uint32) (island:Island) : Island =
+        descriptor.Commodities
+        |> Map.map (fun k v -> v * (quantity |> float) * commodities.[k].PurchaseFactor)
+        |> Map.fold (fun i k v -> i |> ChangeMarketSupply k v) island

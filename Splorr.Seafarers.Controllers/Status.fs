@@ -1,10 +1,9 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
 open Splorr.Seafarers.Models
-open Splorr.Seafarers.Services
 
 module Status =
-    let private RunWorld  (sink:MessageSink) (world:World) : unit =
+    let private RunWorld (sink:MessageSink) (world:World) : unit =
         [
             ""
             "Status:"

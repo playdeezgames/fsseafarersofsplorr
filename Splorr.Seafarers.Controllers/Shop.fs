@@ -11,6 +11,16 @@ module Shop =
         ]
         |> List.iter sink
         match source() with
+        | Some (Command.Buy (quantity, itemName))->
+            (Shop, location, world |> World.BuyItems location quantity itemName) 
+            |> Gamestate.Docked
+            |> Some            
+
+        | Some (Command.Sell (quantity, itemName))->
+            (Shop, location, world |> World.SellItems location quantity itemName) 
+            |> Gamestate.Docked
+            |> Some            
+
         | Some Command.Dock ->
             (Dock, location, world) 
             |> Gamestate.Docked
@@ -31,6 +41,12 @@ module Shop =
             (Shop, location, world) 
             |> Gamestate.Docked
             |> Gamestate.ConfirmQuit
+            |> Some
+
+        | Some Command.Inventory ->
+            (Shop, location, world) 
+            |> Gamestate.Docked
+            |> Gamestate.Inventory
             |> Some
 
         | Some Command.Help ->

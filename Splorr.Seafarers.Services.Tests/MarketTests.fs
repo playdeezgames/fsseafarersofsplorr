@@ -23,18 +23,18 @@ let private descriptor =
 
 [<Test>]
 let ``DetermineSalePrice.It calculates the selling price for the the described commodity in the given market.`` () =
-    let subject = market
+    let input = market
     let expected = descriptor.BasePrice * market.Demand / market.Supply
     let actual =
-        subject
+        input
         |> Market.DetermineSalePrice descriptor
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``DeterminePurchasePrice.It calculates the buying price for the described commodity in the given market.`` () =
-    let subject = market
+    let input = market
     let expected = descriptor.BasePrice * market.Demand / market.Supply * (1.0 - descriptor.Discount)
     let actual =
-        subject
+        input
         |> Market.DeterminePurchasePrice descriptor
     Assert.AreEqual(expected, actual)

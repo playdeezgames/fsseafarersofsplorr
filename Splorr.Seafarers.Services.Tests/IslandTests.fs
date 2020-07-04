@@ -107,57 +107,102 @@ let ``RemoveJob.It returns the modified island and the indicated job when the gi
 
 [<Test>]
 let ``MakeKnown.It does nothing when the given island is already known.`` () =
-    let subject = visitedIsland
+    let input = visitedIsland
     let actual =
-        subject
+        input
         |> Island.MakeKnown
-    Assert.AreEqual(subject.VisitCount, actual.VisitCount)
-    Assert.AreEqual(subject.LastVisit, actual.LastVisit)
+    Assert.AreEqual(input.VisitCount, actual.VisitCount)
+    Assert.AreEqual(input.LastVisit, actual.LastVisit)
 
 
 [<Test>]
 let ``MakeKnown.It mutates the island's visit count to Some 0 when the given island is not known.`` () =
-    let subject = unvisitedIsland
+    let input = unvisitedIsland
     let actual =
-        subject
+        input
         |> Island.MakeKnown
     Assert.AreEqual(Some 0u, actual.VisitCount)
-    Assert.AreEqual(subject.LastVisit, actual.LastVisit)
+    Assert.AreEqual(input.LastVisit, actual.LastVisit)
 
 [<Test>]
 let ``GenerateCommodities.It does nothing when commodities already exists for the given island.`` () =
-    let subject = commodityIsland
-    let expected = subject
+    let input = commodityIsland
+    let expected = input
     let actual = 
-        subject
+        input
         |> Island.GenerateCommodities random commodities
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``GenerateCommodities.It generates commodities when the given island has no commodities.`` () =
-    let subject = noCommodityIsland
+    let input = noCommodityIsland
     let actual = 
-        subject
+        input
         |> Island.GenerateCommodities random commodities
     Assert.AreEqual(commodities.Count, actual.Markets.Count)
 
 [<Test>]
 let ``GenerateItems.It has no effect when the given island already has items in the shop.`` () =
-    let subject = shopIsland
+    let input = shopIsland
     let expected = shopIsland
     let actual = 
-        subject
+        input
         |> Island.GenerateItems random items
     Assert.AreEqual(expected, actual)
 
 
 [<Test>]
 let ``GenerateItems.It generates the shop when the given island has not items in the shop.`` () =
-    let subject = noShopIsland
+    let input = noShopIsland
     let expected = {noShopIsland with Items = noShopIsland.Items |> Set.add Ration}
     let actual = 
-        subject
+        input
         |> Island.GenerateItems random items
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``UpdateMarketForItemSale.It updates market commodity demands based on the given number of units sold.`` () =
+    let input = shopIsland
+    let inputQuantity = 1u
+    let inputDescriptor = items.[Ration]
+
+    let expectedMarket = 
+        {input.Markets.[Grain] with
+            Demand = 2.0}
+    let expectedMarkets = 
+        input.Markets
+        |> Map.add Grain expectedMarket
+    let expected = 
+        {input with
+            Markets = expectedMarkets}
+
+    let actual = 
+        input
+        |> Island.UpdateMarketForItemSale commodities inputDescriptor inputQuantity
+
+    Assert.AreEqual(expected, actual)
+
+
+[<Test>]
+let ``UpdateMarketForItemPurchase.It updates market commodity supply based on the given number of units purchased.`` () =
+    let input = shopIsland
+    let inputQuantity = 1u
+    let inputDescriptor = items.[Ration]
+
+    let expectedMarket = 
+        {input.Markets.[Grain] with
+            Supply = 2.0}
+    let expectedMarkets = 
+        input.Markets
+        |> Map.add Grain expectedMarket
+    let expected = 
+        {input with
+            Markets = expectedMarkets}
+
+    let actual = 
+        input
+        |> Island.UpdateMarketForItemPurchase commodities inputDescriptor inputQuantity
+
     Assert.AreEqual(expected, actual)
 
 //[<Test>]
