@@ -13,16 +13,16 @@ module MainMenu =
         if world.IsSome then
             [
                 (Label, "resume" |> Text) |> Hued
-                " - resume game" |> Line
+                (Usage, " - resume game" |> Line) |> Hued
                 (Label, "abandon game" |> Text) |> Hued
-                " - abandon game" |> Line
+                (Usage, " - abandon game" |> Line) |> Hued
             ]
         else
             [
                 (Label, "start" |> Text) |> Hued
-                " - starts a new world" |> Line
+                (Usage, " - starts a new world" |> Line) |> Hued
                 (Label, "quit" |> Text) |> Hued
-                " - quits the game" |> Line
+                (Usage, " - quits the game" |> Line) |> Hued
             ]
         |> List.iter sink
         match world, source() with

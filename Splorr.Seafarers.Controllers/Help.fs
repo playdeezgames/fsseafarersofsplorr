@@ -7,16 +7,26 @@ module Help =
         [
             "" |> Line
             (Heading, "At Sea Commands:" |> Line) |> Hued
-            "\tabandon job - abandons your current job, if you have one" |> Line
-            "\tdock - docks at an island, if one is close enough" |> Line
-            "\thead for (island name) - heads for an island if it exists and is known" |> Line
-            "\tislands [page] - lists known island names, direction and distances" |> Line
-            "\tmenu - brings up the main menu" |> Line
-            "\tmove (turns)- moves for the given number of turns, with a default of 1 turn" |> Line
-            "\tquit - quits the game" |> Line
-            "\tset heading (degrees) [(minutes) [(seconds)]] - sets a new heading" |> Line
-            "\tset speed (speed) - sets a new speed" |> Line
-            "\tstatus - shows the avatar's status" |> Line
+            (Label, "abandon job" |> Text) |> Hued
+            (Usage, " - abandons your current job, if you have one" |> Line) |> Hued
+            (Label, "dock" |> Text) |> Hued
+            (Usage, " - docks at an island, if one is close enough" |> Line) |> Hued
+            (Label, "head for (island name)" |> Text) |> Hued
+            (Usage, " - heads for an island if it exists and is known" |> Line) |> Hued
+            (Label, "islands [page]" |> Text) |> Hued
+            (Usage, " - lists known island names, direction and distances" |> Line) |> Hued
+            (Label, "menu" |> Text) |> Hued
+            (Usage, " - brings up the main menu" |> Line) |> Hued
+            (Label, "move (turns)" |> Text) |> Hued
+            (Usage, " - moves for the given number of turns, with a default of 1 turn" |> Line) |> Hued
+            (Label, "quit" |> Text) |> Hued
+            (Usage, " - quits the game" |> Line) |> Hued
+            (Label, "set heading (degrees) [(minutes) [(seconds)]]" |> Text) |> Hued
+            (Usage, " - sets a new heading" |> Line) |> Hued
+            (Label, "set speed (speed)" |> Text) |> Hued
+            (Usage, " - sets a new speed" |> Line) |> Hued
+            (Label, "status" |> Text) |> Hued
+            (Usage, " - shows the avatar's status" |> Line) |> Hued
         ]
         |> List.iter sink
 

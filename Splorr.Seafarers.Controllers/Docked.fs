@@ -5,17 +5,13 @@ open Splorr.Seafarers.Services
 
 module Docked = 
     let private RunWithIsland  (source:CommandSource) (sink:MessageSink) (location:Location) (island:Island) (world: World) : Gamestate option =
+        "" |> Line |> sink
+        world.Messages
+        |> Utility.DumpMessages sink
         [
             (Heading, sprintf "You are docked at '%s'" island.Name |> Line) |> Hued
-            sprintf "You have visited %u times." (island.VisitCount |> Option.defaultValue 0u) |> Line
+            (Flavor, sprintf "You have visited %u times." (island.VisitCount |> Option.defaultValue 0u) |> Line) |> Hued
         ]
-        |> List.append
-            (world.Messages
-            |> List.map Line)
-            |> List.append 
-                [
-                    "" |> Line
-                ]
         |> List.iter sink
 
         let world =
