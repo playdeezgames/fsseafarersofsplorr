@@ -2,8 +2,8 @@
 
 module ConfirmQuit = 
     let Run (source:CommandSource) (sink:MessageSink) (state:Gamestate) : Gamestate option =
-        "" |> sink
-        "Are you sure you want to quit?" |> sink
+        "" |> Line |> sink
+        (Heading, "Are you sure you want to quit?" |> Line) |> Hued |> sink
 
         match source() with
         | Some Command.Help -> 
@@ -20,7 +20,7 @@ module ConfirmQuit =
             |> Some
 
         | _ -> 
-            "Maybe try 'help'?" |> sink
+            "Maybe try 'help'?" |> Line |> sink
             state 
             |> Gamestate.ConfirmQuit 
             |> Some

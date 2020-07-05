@@ -6,7 +6,7 @@ open Splorr.Seafarers.Controllers
 let private previousGameState =
     None
     |> Gamestate.MainMenu
-let private sink(_:string) : unit = ()
+let private sink(_:Message) : unit = ()
 
 [<Test>]
 let ``Run.It returns the given gamestate.`` () =

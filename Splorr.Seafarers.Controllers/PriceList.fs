@@ -6,8 +6,8 @@ open Splorr.Seafarers.Services
 module PriceList =
     let private RunWithIsland (sink:MessageSink) (island:Island) (world: World) : unit =
         [
-            ""
-            "Commodity Prices:"
+            "" |> Line
+            (Heading, "Commodity Prices:" |> Line) |> Hued
         ]
         |> List.iter sink
         island.Markets
@@ -19,6 +19,7 @@ module PriceList =
                 |> Option.iter
                     (fun descriptor ->
                         sprintf "\t%s Sells at:%f Bought for:%f" descriptor.Name (market |> Market.DetermineSalePrice descriptor) (market |> Market.DeterminePurchasePrice descriptor)
+                        |> Line
                         |> sink))
 
     let Run (sink:MessageSink) (location:Location) (world: World) : Gamestate option =

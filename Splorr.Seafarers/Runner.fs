@@ -26,6 +26,9 @@ module Runner =
             ()
     
     let Run (configuration:WorldGenerationConfiguration) : unit =
+        let old = System.Console.ForegroundColor
+        System.Console.ForegroundColor <- System.ConsoleColor.Gray
         None
         |> Gamestate.MainMenu
-        |> Loop (System.Random()) configuration CommandSource.Read System.Console.WriteLine
+        |> Loop (System.Random()) configuration CommandSource.Read MessageSink.Write
+        System.Console.ForegroundColor <- old

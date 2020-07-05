@@ -5,10 +5,10 @@ open Splorr.Seafarers.Models
 module Status =
     let private RunWorld (sink:MessageSink) (world:World) : unit =
         [
-            ""
-            "Status:"
-            world.Avatar.Money |> sprintf "\tMoney: %f"
-            world.Avatar.Reputation |> sprintf "\tReputation: %f"
+            "" |> Line
+            (Heading, "Status:" |> Line) |> Hued
+            world.Avatar.Money |> sprintf "\tMoney: %f" |> Line
+            world.Avatar.Reputation |> sprintf "\tReputation: %f" |> Line
         ]
         |> List.iter sink
         world.Avatar.Job
@@ -17,10 +17,10 @@ module Status =
                 let island = 
                     world.Islands.[job.Destination]
                 [
-                    "Current Job:"
-                    job.FlavorText |> sprintf "\tDescription: %s"
-                    island.Name |> sprintf "\tDestination: %s"
-                    job.Reward |> sprintf "\tReward: %f"
+                    "Current Job:" |> Line
+                    job.FlavorText |> sprintf "\tDescription: %s" |> Line
+                    island.Name |> sprintf "\tDestination: %s" |> Line
+                    job.Reward |> sprintf "\tReward: %f" |> Line
                 ]
                 |> List.iter sink)
 

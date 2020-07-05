@@ -14,7 +14,7 @@ let private configuration: WorldGenerationConfiguration =
         Items = Map.empty
     }
 let private world = World.Create configuration (System.Random())
-let private sink(_:string) : unit = ()
+let private sink(_:Message) : unit = ()
 
 [<Test>]
 let ``Run.It returns Confirm Quit when given Quit command and there is no world.`` () =

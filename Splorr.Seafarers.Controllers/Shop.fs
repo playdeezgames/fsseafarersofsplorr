@@ -5,13 +5,13 @@ open Splorr.Seafarers.Services
 
 module Shop = 
     let private RunWithIsland (source:CommandSource) (sink:MessageSink) (location:Location) (island:Island) (world: World) : Gamestate option =
-        "" |> sink
+        "" |> Line |> sink
         world.Messages
         |> Utility.DumpMessages sink
         let world =
             world
             |> World.ClearMessages
-        island.Name |> sprintf "You are at the shop on the island of '%s'." |> sink
+        (Heading, island.Name |> sprintf "You are at the shop on the island of '%s'." |> Line) |> Hued |> sink
         match source() with
         | Some (Command.Buy (quantity, itemName))->
             (Shop, location, world |> World.BuyItems location quantity itemName) 

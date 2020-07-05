@@ -6,14 +6,15 @@ open Splorr.Seafarers.Services
 module Docked = 
     let private RunWithIsland  (source:CommandSource) (sink:MessageSink) (location:Location) (island:Island) (world: World) : Gamestate option =
         [
-            sprintf "You are docked at '%s'" island.Name
-            sprintf "You have visited %u times." (island.VisitCount |> Option.defaultValue 0u)
+            (Heading, sprintf "You are docked at '%s'" island.Name |> Line) |> Hued
+            sprintf "You have visited %u times." (island.VisitCount |> Option.defaultValue 0u) |> Line
         ]
         |> List.append
-            world.Messages
+            (world.Messages
+            |> List.map Line)
             |> List.append 
                 [
-                    ""
+                    "" |> Line
                 ]
         |> List.iter sink
 
@@ -78,7 +79,7 @@ module Docked =
             |> Some
 
         | _ -> 
-            "Maybe try 'help'?" |> sink
+            "Maybe try 'help'?" |> Line |> sink
             (Dock, location, world) 
             |> Gamestate.Docked 
             |> Some

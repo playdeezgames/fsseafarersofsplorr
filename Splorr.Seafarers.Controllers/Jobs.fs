@@ -6,8 +6,8 @@ open Splorr.Seafarers.Services
 module Jobs = 
     let private RunIsland (sink:MessageSink) (location:Location) (islands:Map<Location,Island>) (island:Island) : unit =
         [
-            ""
-            "Jobs Available:"
+            "" |> Line
+            (Heading, "Jobs Available:" |> Line) |> Hued
         ]
         |> List.iter sink
         island.Jobs
@@ -21,9 +21,9 @@ module Jobs =
                     |> Dms.ToString
                 let distance = 
                     Location.DistanceTo location job.Destination
-                sprintf "%d. %s Bearing:%s Distance:%f Reward:%f\n\t'%s'" index island.Name bearing distance job.Reward job.FlavorText |> sink)
+                sprintf "%d. %s Bearing:%s Distance:%f Reward:%f\n\t'%s'" index island.Name bearing distance job.Reward job.FlavorText |> Line |> sink)
         if island.Jobs.IsEmpty then
-            "(none available)" |> sink
+            "(none available)" |> Line |> sink
 
         
     let Run  (sink:MessageSink) (location:Location, world: World) : Gamestate option =

@@ -33,7 +33,7 @@ module CommandSource=
         | [degrees] ->
             ParseDms(degrees,"0","0.0")
         | _ -> None)
-        |> Option.map(fun x -> x |> Heading |> Command.Set)
+        |> Option.map(fun x -> x |> SetCommand.Heading |> Command.Set)
 
     let private ParseSet(tokens: string list) : Command option =
         match tokens with

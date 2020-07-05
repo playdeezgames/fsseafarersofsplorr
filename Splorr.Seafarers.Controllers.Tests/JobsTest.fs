@@ -15,7 +15,7 @@ let private dockWorldconfiguration: WorldGenerationConfiguration =
     }
 let private dockWorld = World.Create dockWorldconfiguration (System.Random())
 let private dockLocation = (0.0, 0.0)
-let private sink (_:string) : unit = ()
+let private sink (_:Message) : unit = ()
 
 [<Test>]
 let ``Run.It returns Docked with the given location and world.`` () =

@@ -5,52 +5,52 @@ open Splorr.Seafarers.Models
 module Help =
     let private AtSea (sink:MessageSink) : unit =
         [
-            ""
-            "At Sea Commands:"
-            "\tabandon job - abandons your current job, if you have one"
-            "\tdock - docks at an island, if one is close enough"
-            "\thead for (island name) - heads for an island if it exists and is known"
-            "\tislands [page] - lists known island names, direction and distances"
-            "\tmenu - brings up the main menu"
-            "\tmove (turns)- moves for the given number of turns, with a default of 1 turn"
-            "\tquit - quits the game"
-            "\tset heading (degrees) [(minutes) [(seconds)]] - sets a new heading"
-            "\tset speed (speed) - sets a new speed"
-            "\tstatus - shows the avatar's status"
+            "" |> Line
+            (Heading, "At Sea Commands:" |> Line) |> Hued
+            "\tabandon job - abandons your current job, if you have one" |> Line
+            "\tdock - docks at an island, if one is close enough" |> Line
+            "\thead for (island name) - heads for an island if it exists and is known" |> Line
+            "\tislands [page] - lists known island names, direction and distances" |> Line
+            "\tmenu - brings up the main menu" |> Line
+            "\tmove (turns)- moves for the given number of turns, with a default of 1 turn" |> Line
+            "\tquit - quits the game" |> Line
+            "\tset heading (degrees) [(minutes) [(seconds)]] - sets a new heading" |> Line
+            "\tset speed (speed) - sets a new speed" |> Line
+            "\tstatus - shows the avatar's status" |> Line
         ]
         |> List.iter sink
 
     let private ConfirmQuit (sink:MessageSink) : unit =
         [
-            ""
-            "Confirm Quit Commands:"
-            "\tno - cancels quitting and returns you to the game"
-            "\tyes - confirms that you want to quit"
+            "" |> Line
+            (Heading, "Confirm Quit Commands:" |> Line) |> Hued
+            "\tno - cancels quitting and returns you to the game" |> Line
+            "\tyes - confirms that you want to quit" |> Line
         ]
         |> List.iter sink
 
     let private Docked (sink:MessageSink) : unit =
         [
-            ""
-            "Docked Commands:"
-            "\tabandon job - abandons your current job, if you have one"
-            "\taccept job (number) - accepts the offered job"
-            "\tjobs - lists job offers"
-            "\tprices - lists traded commodity prices for the island"
-            "\tshop - goes to the shop where items may be bought and sold"
-            "\tstatus - shows the avatar's status"
-            "\tundock - undocks from the island"
+            "" |> Line
+            (Heading, "Docked Commands:" |> Line) |> Hued
+            "\tabandon job - abandons your current job, if you have one" |> Line
+            "\taccept job (number) - accepts the offered job" |> Line
+            "\tjobs - lists job offers" |> Line
+            "\tprices - lists traded commodity prices for the island" |> Line
+            "\tshop - goes to the shop where items may be bought and sold" |> Line
+            "\tstatus - shows the avatar's status" |> Line
+            "\tundock - undocks from the island" |> Line
         ]
         |> List.iter sink
 
     let private Shop (sink:MessageSink) : unit =
         [
-            ""
-            "Shop Commands:"
-            "\tdock - returns to the dock"
-            "\titems - lists prices of items"
-            "\tquit - quits the game"
-            "\tstatus - shows the avatar's status"
+            "" |> Line
+            (Heading, "Shop Commands:" |> Line) |> Hued
+            "\tdock - returns to the dock" |> Line
+            "\titems - lists prices of items" |> Line
+            "\tquit - quits the game" |> Line
+            "\tstatus - shows the avatar's status" |> Line
             
         ]
         |> List.iter sink

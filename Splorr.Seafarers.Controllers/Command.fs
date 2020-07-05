@@ -38,4 +38,18 @@ type Command =
 
 type CommandSource = unit -> (Command option)
 
-type MessageSink = string -> unit
+type Hue =
+    | Heading
+    | Subheading
+    | Label
+    | Sublabel
+    | Value
+    | Flavor
+    | Usage
+
+type Message =
+    | Line of string
+    | Hued of Hue * Message
+    | Text of string
+
+type MessageSink = Message -> unit

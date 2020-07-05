@@ -5,18 +5,21 @@ open Splorr.Seafarers.Services
 
 module AtSea =
     let Run (random:System.Random) (source:CommandSource) (sink:MessageSink) (world:World) : Gamestate option =
-        "" |> sink
+        "" |> Line |> sink
         world.Messages
         |> Utility.DumpMessages sink
         let world =
             world
             |> World.ClearMessages
-        "At Sea:" |> sink
-        world.Turn |> sprintf "Turn: %u" |> sink
-        world.Avatar.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "Heading: %s" |> sink
-        world.Avatar.Speed |> sprintf "Speed: %f" |> sink
+        (Heading, "At Sea:" |> Line) |> Hued |> sink
+        (Label, "Turn: " |> Text) |> Hued |> sink
+        world.Turn |> sprintf "%u" |> Line |> sink
+        (Label, "Heading: " |> Text) |> Hued |> sink
+        world.Avatar.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "%s" |> Line |> sink
+        (Label, "Speed: " |> Text) |> Hued |> sink
+        world.Avatar.Speed |> sprintf "%f" |> Line |> sink
 
-        "Nearby:" |> sink
+        (Subheading, "Nearby:" |> Line) |> Hued |> sink
         let dockTarget = 
             world
             |> World.GetNearbyLocations world.Avatar.Position world.Avatar.ViewDistance
@@ -26,8 +29,13 @@ module AtSea =
             |> List.sortBy (fun (_,_,d,_)->d)
             |> List.fold
                 (fun target (location, heading, distance, name) -> 
-                    sprintf "Name: %s Bearing: %s Distance: %f%s" (if name="" then "????" else name) heading distance (if distance<world.Avatar.DockDistance then " (Can Dock)" else "")
-                    |> sink
+                    (Sublabel, "Name: " |> Text) |> Hued |> sink
+                    (Value, sprintf "%s " (if name="" then "????" else name) |> Text) |> Hued |> sink
+                    (Sublabel, "Bearing: " |> Text) |> Hued |> sink
+                    (Value, sprintf "%s " heading |> Text) |> Hued |> sink
+                    (Sublabel, "Distance: " |> Text) |> Hued |> sink
+                    (Value, sprintf "%f" distance |> Text) |> Hued |> sink
+                    (Flavor, sprintf "%s" (if distance<world.Avatar.DockDistance then " (Can Dock)" else "") |> Line) |> Hued |> sink
                     (if distance<world.Avatar.DockDistance then (Some location) else target)) None
 
         match source() with
@@ -84,7 +92,7 @@ module AtSea =
             |> Gamestate.AtSea
             |> Some
 
-        | Some (Command.Set (Heading heading)) ->
+        | Some (Command.Set (SetCommand.Heading heading)) ->
             world
             |> World.SetHeading heading
             |> Gamestate.AtSea
@@ -109,7 +117,7 @@ module AtSea =
             |> Some
 
         | _ ->
-            "Maybe try 'help'?" |> sink
+            "Maybe try 'help'?" |> Line |> sink
             world
             |> Gamestate.AtSea
             |> Some

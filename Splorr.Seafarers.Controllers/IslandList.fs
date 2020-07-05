@@ -8,8 +8,8 @@ module IslandList =
 
     let private RunWorld (sink:MessageSink) (page:uint32) (pageSize:uint32) (world:World) : unit = 
         [
-            ""
-            "Known Islands:"
+            "" |> Line
+            (Heading, "Known Islands:" |> Line) |> Hued
         ]
         |> List.iter sink
         let knownIslands =
@@ -20,7 +20,7 @@ module IslandList =
         let totalItems = knownIslands |> List.length |> uint32
         let totalPages = (totalItems + (pageSize-1u)) / pageSize
         let skippedItems = page * pageSize
-        ((page+1u), totalPages) ||> sprintf "Page %u of %u" |> sink
+        ((page+1u), totalPages) ||> sprintf "Page %u of %u" |> Line |> sink
         if page < totalPages then
             knownIslands
             |> List.skip (skippedItems |> int)
@@ -32,10 +32,10 @@ module IslandList =
                     Location.HeadingTo world.Avatar.Position location
                     |> Dms.ToDms
                     |> Dms.ToString
-                sprintf "%s Bearing:%s Distance:%f" island.Name bearing distance
+                sprintf "%s Bearing:%s Distance:%f" island.Name bearing distance |> Line
                 |> sink)
         else
-            "(end of list)" |> sink
+            "(end of list)" |> Line |> sink
     
     let private pageSize = 20u
 

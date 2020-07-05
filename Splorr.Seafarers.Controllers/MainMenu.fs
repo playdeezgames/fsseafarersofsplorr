@@ -6,19 +6,23 @@ open Splorr.Seafarers.Services
 module MainMenu =
     let Run (configuration:WorldGenerationConfiguration) (source:CommandSource) (sink:MessageSink) (world:World option) : Gamestate option =
         [
-            ""
-            "Main Menu Commands:"
+            "" |> Line
+            (Heading, "Main Menu Commands:" |> Line) |> Hued
         ]
         |> List.iter sink
         if world.IsSome then
             [
-                "\tresume - resume game"
-                "\tabandon game - abandon game"
+                (Label, "resume" |> Text) |> Hued
+                " - resume game" |> Line
+                (Label, "abandon game" |> Text) |> Hued
+                " - abandon game" |> Line
             ]
         else
             [
-                "\tstart - starts a new world"
-                "\tquit - quits the game"
+                (Label, "start" |> Text) |> Hued
+                " - starts a new world" |> Line
+                (Label, "quit" |> Text) |> Hued
+                " - quits the game" |> Line
             ]
         |> List.iter sink
         match world, source() with

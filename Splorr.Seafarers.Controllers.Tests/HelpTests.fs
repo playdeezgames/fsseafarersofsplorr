@@ -5,7 +5,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 
-let private sink(_:string) : unit = ()
+let private sink(_:Message) : unit = ()
 let private configuration: WorldGenerationConfiguration =
     {
         WorldSize=(10.0, 10.0)
