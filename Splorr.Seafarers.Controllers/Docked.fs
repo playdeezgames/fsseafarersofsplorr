@@ -81,13 +81,20 @@ module Docked =
             |> Some
 
     let internal RunBoilerplate (func:Location -> Island -> World->(Gamestate option)) (location:Location) (world: World) : Gamestate option =
-        match world.Islands |> Map.tryFind location with
-        | Some island ->
-            func location island world
-        | None ->
-            world
-            |> Gamestate.AtSea
+        match world with
+        | World.AVATAR_ALIVE ->
+            match world.Islands |> Map.tryFind location with
+            | Some island ->
+                func location island world
+            | None ->
+                world
+                |> Gamestate.AtSea
+                |> Some
+        | _ ->
+            world.Messages
+            |> Gamestate.GameOver
             |> Some
 
     let Run (source:CommandSource) (sink:MessageSink) =
         RunBoilerplate (RunWithIsland source sink)
+

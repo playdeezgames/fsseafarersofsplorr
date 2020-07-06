@@ -15,6 +15,9 @@ let internal dockWorldconfiguration: WorldGenerationConfiguration =
     }
 let internal dockWorld = World.Create dockWorldconfiguration random
 let internal dockLocation = (0.0, 0.0)
+let internal deadDockWorld =
+    {dockWorld with Avatar = {dockWorld.Avatar with Health={dockWorld.Avatar.Health with CurrentValue=dockWorld.Avatar.Health.MinimumValue}}}
+let internal deadDockLocation = dockLocation
 let internal smallWorldCommodities:Map<Commodity, CommodityDescriptor> = 
     [(Grain, {Name="commodity under test";BasePrice=1.0;PurchaseFactor=1.0;SaleFactor=1.0;Discount=0.5;Occurrence=1.0})] |> Map.ofList
 let internal smallWorldItems:Map<Item, ItemDescriptor> =

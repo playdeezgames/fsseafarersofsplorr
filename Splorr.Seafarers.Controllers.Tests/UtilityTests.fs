@@ -3,7 +3,6 @@
 open NUnit.Framework
 open Splorr.Seafarers.Controllers
 
-
 [<Test>]
 let ``DumpMessages.It sends all messages to the sink.`` () =
     let mutable actual: Message list = []

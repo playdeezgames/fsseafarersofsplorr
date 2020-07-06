@@ -82,7 +82,6 @@ let ``GetWorld.It returns world from the given ItemList Gamestate.`` () =
         |> Gamestate.GetWorld
     Assert.AreEqual(world |> Some, actual)
 
-
 [<Test>]
 let ``GetWorld.It returns world from the given Inventory Gamestate.`` () =
     let actual =
@@ -91,3 +90,12 @@ let ``GetWorld.It returns world from the given Inventory Gamestate.`` () =
         |> Gamestate.Inventory
         |> Gamestate.GetWorld
     Assert.AreEqual(world |> Some, actual)
+
+[<Test>]
+let ``GetWorld.It returns None from the given GameOver Gamestate.`` () =
+    let input = Gamestate.GameOver []
+    let expected = None
+    let actual =
+        input
+        |> Gamestate.GetWorld
+    Assert.AreEqual(expected, actual)

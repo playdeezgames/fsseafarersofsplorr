@@ -14,6 +14,12 @@ let internal configuration: WorldGenerationConfiguration =
         Items = Map.empty
     }
 let internal world = World.Create configuration (System.Random())
+let internal deadWorld =
+    world
+    |> World.TransformAvatar 
+        (fun a -> {a with Health = {a.Health with CurrentValue = a.Health.MinimumValue}})
+    |> World.ClearMessages
+    |> World.AddMessages ["Yer ded."]
 
 
 let internal emptyWorldconfiguration: WorldGenerationConfiguration =

@@ -479,6 +479,18 @@ let ``SellItems.It gives a message and completes the purchase when the avatar ha
         |> World.SellItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
+[<Test>]
+let ``AVATAR_ALIVE/AVATAR_DEAD.It returns a AVATAR_ALIVE when given a world with an avatar with above minimum health.`` () =
+    match genericWorld with
+    | World.AVATAR_ALIVE -> Assert.Pass("It detected that the avatar is alive")
+    | _ -> Assert.Fail("It detected that the avatar is not alive")
+
+[<Test>]
+let ``AVATAR_ALIVE/AVATAR_DEAD.It returns a AVATAR_DEAD when given a world with an avatar minimum health (zero).`` () =
+    match deadWorld with
+    | World.AVATAR_DEAD -> Assert.Pass("It detected that the avatar is dead")
+    | _ -> Assert.Fail("It detected that the avatar is not dead")
+
 //[<Test>]
 //let ``FunctionName.It returns a SOMETHING when given SOMETHINGELSE.`` () =
 //    raise (System.NotImplementedException "Not Implemented")

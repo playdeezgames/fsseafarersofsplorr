@@ -99,6 +99,11 @@ module World =
         {world with Avatar = world.Avatar |> Avatar.SetHeading heading}
         |> AddMessages [ heading |> Dms.ToString |> sprintf "You set your heading to %s." ]
 
+    let (|AVATAR_ALIVE|AVATAR_DEAD|) (world:World) =
+        match world.Avatar with
+        | Avatar.ALIVE -> AVATAR_ALIVE
+        | _ -> AVATAR_DEAD
+
     let rec Move (distance:uint32) (world:World) :World =
         match distance with
         | 0u -> world
@@ -110,7 +115,12 @@ module World =
                         Turn = world.Turn + 1u
                 }
                 |> AddMessages [ "Steady as she goes." ]
-            Move (x-1u) steppedWorld
+            match steppedWorld with
+            | AVATAR_DEAD ->
+                steppedWorld
+                |> AddMessages [ "You starve to death!" ]
+            | _ ->
+                Move (x-1u) steppedWorld
 
     let GetNearbyLocations (from:Location) (maximumDistance:float) (world:World) : Location list =
         world.Islands

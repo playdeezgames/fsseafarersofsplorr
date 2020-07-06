@@ -9,16 +9,17 @@ module Runner =
             match gamestate with
             | Gamestate.AtSea world -> AtSea.Run random source sink world
             | Gamestate.ConfirmQuit state -> ConfirmQuit.Run source sink state
-            | Gamestate.Help state -> Help.Run sink state
-            | Gamestate.MainMenu world -> MainMenu.Run configuration source sink world
             | Gamestate.Docked (Dock, location, world) -> Docked.Run source sink location world
-            | Gamestate.IslandList (page, state) -> IslandList.Run sink page state
-            | Gamestate.Status state -> Status.Run sink state
+            | Gamestate.Docked (ItemList, location, world) -> ItemList.Run sink location world
             | Gamestate.Docked (Jobs, location, world) -> Jobs.Run sink (location, world)
             | Gamestate.Docked (PriceList, location, world) -> PriceList.Run sink location world
             | Gamestate.Docked (Shop, location, world) -> Shop.Run source sink location world
-            | Gamestate.Docked (ItemList, location, world) -> ItemList.Run sink location world
+            | Gamestate.GameOver messages -> messages |> GameOver.Run sink
+            | Gamestate.Help state -> Help.Run sink state
             | Gamestate.Inventory gameState -> Inventory.Run sink gameState
+            | Gamestate.IslandList (page, state) -> IslandList.Run sink page state
+            | Gamestate.MainMenu world -> MainMenu.Run configuration source sink world
+            | Gamestate.Status state -> Status.Run sink state
         match nextGamestate with
         | Some state ->
             Loop random configuration source sink state

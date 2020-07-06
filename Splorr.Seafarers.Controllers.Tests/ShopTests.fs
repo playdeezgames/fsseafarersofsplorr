@@ -8,6 +8,22 @@ open DockedTestFixtures
 open CommonTestFixtures
 
 [<Test>]
+let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
+    let input = deadDockWorld   
+    let inputLocation= deadDockLocation
+    let inputSource(): Command option =
+        Assert.Fail("It will not reach for user input because the avatar is dead.")
+        None
+    let expected =
+        input.Messages
+        |> Gamestate.GameOver
+        |> Some
+    let actual =
+        (inputLocation, input)
+        ||> Shop.Run inputSource sinkStub 
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
 let ``Run.It adds a message and returns Docked (at Shop) gamestate when given an invalid command.`` () =
     let inputLocation = dockLocation
     let inputWorld = dockWorld
