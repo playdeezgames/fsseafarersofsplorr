@@ -9,8 +9,8 @@ module Docked =
         world.Messages
         |> Utility.DumpMessages sink
         [
-            (Heading, sprintf "You are docked at '%s'" island.Name |> Line) |> Hued
             (Flavor, sprintf "You have visited %u times." (island.VisitCount |> Option.defaultValue 0u) |> Line) |> Hued
+            (Heading, sprintf "You are docked at '%s'" island.Name |> Line) |> Hued
         ]
         |> List.iter sink
 

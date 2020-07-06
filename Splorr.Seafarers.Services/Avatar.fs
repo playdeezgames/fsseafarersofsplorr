@@ -13,6 +13,8 @@ module Avatar =
             Reputation = 0.0
             Job = None
             Inventory = Map.empty
+            Satiety = Statistic.Create (0.0, 100.0) 100.0
+            Health = Statistic.Create (0.0, 100.0) 100.0
         }
 
     let SetSpeed (speed:float) (avatar:Avatar) : Avatar =
@@ -26,11 +28,45 @@ module Avatar =
     let SetHeading (heading:Dms) (avatar:Avatar) : Avatar =
         {avatar with Heading = heading |> Dms.ToFloat}
 
+    let RemoveInventory (item:Item) (quantity:uint32) (avatar:Avatar) : Avatar =
+        if quantity>0u then
+            match avatar.Inventory.TryFind item with
+            | Some count ->
+                if count > quantity then
+                    {avatar with Inventory = avatar.Inventory |> Map.add item (count-quantity)}
+                else
+                    {avatar with Inventory = avatar.Inventory |> Map.remove item}
+            | None ->
+                avatar
+        else
+            avatar
+
+    let private TransformSatiety (transform:Statistic -> Statistic) (avatar:Avatar) : Avatar =
+        {avatar with Satiety = avatar.Satiety |> transform}
+
+    let private TransformHealth (transform:Statistic -> Statistic) (avatar:Avatar) : Avatar =
+        {avatar with Health = avatar.Health |> transform}
+
+    let private Eat (avatar:Avatar) : Avatar =
+        match avatar.Inventory.TryFind Ration with
+        | Some count when count > 0u ->
+            avatar
+            |> RemoveInventory Ration 1u
+            |> TransformSatiety (Statistic.ChangeBy 1.0)
+        | _ ->
+            if avatar.Satiety.CurrentValue > avatar.Satiety.MinimumValue then
+                avatar
+                |> TransformSatiety (Statistic.ChangeBy (-1.0))
+            else
+                avatar
+                |> TransformHealth (Statistic.ChangeBy (-1.0))
+
     let Move(avatar: Avatar) : Avatar =
         {
             avatar with 
                 Position = ((avatar.Position |> fst) + System.Math.Cos(avatar.Heading) * avatar.Speed, (avatar.Position |> snd) + System.Math.Sin(avatar.Heading) * avatar.Speed)
         }
+        |> Eat
 
     let SetJob (job: Job) (avatar:Avatar) : Avatar =
         {avatar with Job = job |> Some}
@@ -73,15 +109,3 @@ module Avatar =
         let newQuantity = (avatar |> GetItemCount item) + quantity
         {avatar with Inventory = avatar.Inventory |> Map.add item newQuantity}
 
-    let RemoveInventory (item:Item) (quantity:uint32) (avatar:Avatar) : Avatar =
-        if quantity>0u then
-            match avatar.Inventory.TryFind item with
-            | Some count ->
-                if count > quantity then
-                    {avatar with Inventory = avatar.Inventory |> Map.add item (count-quantity)}
-                else
-                    {avatar with Inventory = avatar.Inventory |> Map.remove item}
-            | None ->
-                avatar
-        else
-            avatar

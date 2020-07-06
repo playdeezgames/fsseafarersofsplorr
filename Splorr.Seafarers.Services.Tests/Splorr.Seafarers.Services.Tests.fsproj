@@ -14,17 +14,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="JobTests.fs" />
     <Compile Include="AvatarTestFixtures.fs" />
-    <Compile Include="AvatarTests.fs" />
-    <Compile Include="ItemTests.fs" />
     <Compile Include="IslandTestFixtures.fs" />
-    <Compile Include="IslandTests.fs" />
     <Compile Include="WorldTestFixtures.fs" />
-    <Compile Include="WorldTests.fs" />
+    <Compile Include="AvatarTests.fs" />
+    <Compile Include="DmsTests.fs" />
+    <Compile Include="IslandTests.fs" />
+    <Compile Include="ItemTests.fs" />
+    <Compile Include="JobTests.fs" />
     <Compile Include="LocationTests.fs" />
     <Compile Include="MarketTests.fs" />
-    <Compile Include="DmsTests.fs" />
+    <Compile Include="StatisticTest.fs" />
+    <Compile Include="WorldTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

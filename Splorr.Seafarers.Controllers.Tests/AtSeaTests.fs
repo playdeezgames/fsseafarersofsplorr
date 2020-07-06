@@ -106,7 +106,8 @@ let ``Run.It moves the avatar when given Move command.`` () =
         |> toSource
     let expectedAvatar =
         {input.Avatar with 
-            Position=(6.0,5.0)}
+            Position=(6.0,5.0)
+            Satiety = {input.Avatar.Satiety with CurrentValue=99.0}}
     let expectedMessages = ["Steady as she goes."]
     let expectedTurn = input.Turn + 1u
     let expected = 
