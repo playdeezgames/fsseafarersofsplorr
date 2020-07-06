@@ -16,6 +16,7 @@
     <Compile Include="Shop.fs" />
     <Compile Include="ConfirmQuit.fs" />
     <Compile Include="Help.fs" />
+    <Compile Include="GameOver.fs" />
     <Compile Include="MainMenu.fs" />
     <Compile Include="IslandList.fs" />
     <Compile Include="Status.fs" />

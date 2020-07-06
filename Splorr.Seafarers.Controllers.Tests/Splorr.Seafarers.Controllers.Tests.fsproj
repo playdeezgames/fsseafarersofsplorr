@@ -15,23 +15,24 @@
 
   <ItemGroup>
     <Compile Include="CommonTestFixtures.fs" />
-    <Compile Include="ConfirmQuitTestFixtures.fs" />
-    <Compile Include="ConfirmQuitTests.fs" />
-    <Compile Include="UtilityTests.fs" />
     <Compile Include="AtSeaTestFixtures.fs" />
-    <Compile Include="AtSeaTests.fs" />
     <Compile Include="DockedTestFixtures.fs" />
+    <Compile Include="ConfirmQuitTestFixtures.fs" />
+    <Compile Include="AtSeaTests.fs" />
     <Compile Include="DockedTests.fs" />
+    <Compile Include="ConfirmQuitTests.fs" />
+    <Compile Include="GameOverTests.fs" />
+    <Compile Include="GamestateTests.fs" />
+    <Compile Include="HelpTests.fs" />
+    <Compile Include="InventoryTests.fs" />
     <Compile Include="ItemListTests.fs" />
+    <Compile Include="IslandListTests.fs" />
+    <Compile Include="JobsTest.fs" />
+    <Compile Include="MainMenuTests.fs" />
     <Compile Include="PriceListTests.fs" />
     <Compile Include="ShopTests.fs" />
-    <Compile Include="HelpTests.fs" />
-    <Compile Include="JobsTest.fs" />
     <Compile Include="StatusTests.fs" />
-    <Compile Include="InventoryTests.fs" />
-    <Compile Include="MainMenuTests.fs" />
-    <Compile Include="GamestateTests.fs" />
-    <Compile Include="IslandListTests.fs" />
+    <Compile Include="UtilityTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

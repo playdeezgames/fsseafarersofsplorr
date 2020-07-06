@@ -109,3 +109,8 @@ module Avatar =
         let newQuantity = (avatar |> GetItemCount item) + quantity
         {avatar with Inventory = avatar.Inventory |> Map.add item newQuantity}
 
+    let (|ALIVE|DEAD|) (avatar:Avatar) =
+        if avatar.Health.CurrentValue <= avatar.Health.MinimumValue then
+            DEAD    
+        else
+            ALIVE

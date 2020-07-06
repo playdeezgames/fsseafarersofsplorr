@@ -73,6 +73,9 @@ let internal genericWorldConfiguration: WorldGenerationConfiguration =
         Items = genericWorldItems
     }
 let internal genericWorld = World.Create genericWorldConfiguration random
+let internal deadWorld =
+    {genericWorld with Avatar = {genericWorld.Avatar with Health ={genericWorld.Avatar.Health with CurrentValue = genericWorld.Avatar.Health.MinimumValue}}}
+
 let internal genericWorldIslandLocation = genericWorld.Islands |> Map.toList |> List.map fst |> List.head
 let internal genericWorldInvalidIslandLocation = ((genericWorldIslandLocation |> fst) + 1.0, genericWorldIslandLocation |> snd)
 let internal genericDockedWorld = World.Dock random genericWorldIslandLocation genericWorld |> World.ClearMessages

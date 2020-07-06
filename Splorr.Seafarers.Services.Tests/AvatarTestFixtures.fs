@@ -8,6 +8,8 @@ let internal rewardRange = (1.0,10.0)
 let internal singleLocation = [(0.0, 0.0)] |> Set.ofList
 let internal avatar =
     Avatar.Create(0.0,0.0)
+let internal deadAvatar =
+    {avatar with Health = {avatar.Health with CurrentValue = avatar.Health.MinimumValue}}
 let internal job =
     Job.Create random rewardRange singleLocation
 let internal employedAvatar =

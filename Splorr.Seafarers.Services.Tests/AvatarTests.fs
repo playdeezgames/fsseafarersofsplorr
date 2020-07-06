@@ -298,3 +298,16 @@ let ``RemoveInventory.It reduces the given avatar's inventory by the given amoun
         input
         |> Avatar.RemoveInventory inputItem inputQuantity
     Assert.AreEqual(expected, actual)
+
+
+[<Test>]
+let ``ALIVE/DEAD.It returns a ALIVE when given an avatar with above minimum health.`` () =
+    match avatar with
+    | Avatar.ALIVE -> Assert.Pass("It detected that the avatar is alive")
+    | _ -> Assert.Fail("It detected that the avatar is not alive")
+
+[<Test>]
+let ``ALIVE/DEAD.It returns a DEAD when given an avatar minimum health (zero).`` () =
+    match deadAvatar with
+    | Avatar.DEAD -> Assert.Pass("It detected that the avatar is dead")
+    | _ -> Assert.Fail("It detected that the avatar is not dead")

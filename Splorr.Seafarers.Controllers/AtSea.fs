@@ -4,7 +4,8 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module AtSea =
-    let Run (random:System.Random) (source:CommandSource) (sink:MessageSink) (world:World) : Gamestate option =
+    let private RunAlive (random:System.Random) (source:CommandSource) (sink:MessageSink) (world:World) : Gamestate option =
+
         "" |> Line |> sink
         world.Messages
         |> Utility.DumpMessages sink
@@ -125,3 +126,11 @@ module AtSea =
             |> Gamestate.AtSea
             |> Some
 
+    let Run (random:System.Random) (source:CommandSource) (sink:MessageSink) (world:World) : Gamestate option =
+        match world with
+        | World.AVATAR_ALIVE ->
+            RunAlive random source sink world
+        | _ ->
+            world.Messages
+            |> Gamestate.GameOver
+            |> Some
