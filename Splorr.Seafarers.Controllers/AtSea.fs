@@ -11,15 +11,18 @@ module AtSea =
         let world =
             world
             |> World.ClearMessages
-        (Heading, "At Sea:" |> Line) |> Hued |> sink
-        (Label, "Turn: " |> Text) |> Hued |> sink
-        world.Turn |> sprintf "%u" |> Line |> sink
-        (Label, "Heading: " |> Text) |> Hued |> sink
-        world.Avatar.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "%s" |> Line |> sink
-        (Label, "Speed: " |> Text) |> Hued |> sink
-        world.Avatar.Speed |> sprintf "%f" |> Line |> sink
+        [
+            (Heading, "At Sea:" |> Line) |> Hued
+            (Label, "Turn: " |> Text) |> Hued
+            (Value, world.Turn |> sprintf "%u" |> Line) |> Hued
+            (Label, "Heading: " |> Text) |> Hued
+            (Value, world.Avatar.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "%s" |> Line) |> Hued
+            (Label, "Speed: " |> Text) |> Hued
+            (Value, world.Avatar.Speed |> sprintf "%f" |> Line) |> Hued
+            (Subheading, "Nearby:" |> Line) |> Hued
+        ]
+        |> List.iter sink
 
-        (Subheading, "Nearby:" |> Line) |> Hued |> sink
         let dockTarget = 
             world
             |> World.GetNearbyLocations world.Avatar.Position world.Avatar.ViewDistance

@@ -7,8 +7,14 @@ module Status =
         [
             "" |> Line
             (Heading, "Status:" |> Line) |> Hued
-            world.Avatar.Money |> sprintf "\tMoney: %f" |> Line
-            world.Avatar.Reputation |> sprintf "\tReputation: %f" |> Line
+            (Label, "Money: " |> Text) |> Hued
+            (Value, world.Avatar.Money |> sprintf "%f" |> Line) |> Hued
+            (Label, "Reputation: " |> Text) |> Hued
+            (Value, world.Avatar.Reputation |> sprintf "%f" |> Line) |> Hued
+            (Label, "Satiety: " |> Text) |> Hued
+            (Value, (world.Avatar.Satiety.CurrentValue, world.Avatar.Satiety.MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
+            (Label, "Health: " |> Text) |> Hued
+            (Value, (world.Avatar.Health.CurrentValue, world.Avatar.Health.MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
         ]
         |> List.iter sink
         world.Avatar.Job
@@ -17,10 +23,13 @@ module Status =
                 let island = 
                     world.Islands.[job.Destination]
                 [
-                    "Current Job:" |> Line
-                    job.FlavorText |> sprintf "\tDescription: %s" |> Line
-                    island.Name |> sprintf "\tDestination: %s" |> Line
-                    job.Reward |> sprintf "\tReward: %f" |> Line
+                    (Subheading, "Current Job:" |> Line) |> Hued
+                    (Sublabel, "Description: " |> Text) |> Hued
+                    (Flavor, job.FlavorText |> sprintf "%s" |> Line) |> Hued
+                    (Sublabel, "Destination: " |> Text) |> Hued
+                    (Value, island.Name |> sprintf "%s" |> Line) |> Hued
+                    (Sublabel, "Reward: " |> Text) |> Hued
+                    (Value, job.Reward |> sprintf "%f" |> Line) |> Hued
                 ]
                 |> List.iter sink)
 

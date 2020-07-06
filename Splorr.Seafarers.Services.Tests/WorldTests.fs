@@ -118,6 +118,8 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                     Reputation = 0.0
                     Job = None
                     Inventory = Map.empty
+                    Satiety = Statistic.Create (0.0, 100.0) (100.0)
+                    Health = Statistic.Create (0.0, 100.0) (100.0)
                 }
             Turn = 0u
             Commodities = Map.empty

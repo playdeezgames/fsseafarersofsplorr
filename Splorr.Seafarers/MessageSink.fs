@@ -19,7 +19,7 @@ module MessageSink =
             | Value ->
                 System.Console.ForegroundColor <- System.ConsoleColor.Green
             | Flavor ->
-                System.Console.ForegroundColor <- System.ConsoleColor.DarkGreen
+                System.Console.ForegroundColor <- System.ConsoleColor.DarkYellow
             | Usage ->
                 System.Console.ForegroundColor <- System.ConsoleColor.DarkGray
             message |> Write

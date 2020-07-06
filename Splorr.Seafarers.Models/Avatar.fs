@@ -11,4 +11,6 @@ type Avatar =
         Reputation: float
         Job: Job option
         Inventory: Map<Item, uint32>
+        Satiety: Statistic
+        Health: Statistic
     }

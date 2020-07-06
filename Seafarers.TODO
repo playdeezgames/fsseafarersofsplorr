@@ -7,19 +7,19 @@ Persistence:
 Commodities:
     ☐ trading raw commodities takes place at the "exchange" 
 Satiety/Health:
-    ☐ the avatar has a satiety stat
-    ☐ the avatar has a health stat
-    ☐ avatars hunger and health stats show up in the status command
-    ☐ the avatar may buy rations at islands
-    ☐ the avatar eats one ration per turn
-    ☐ if there is no ration, satiety goes down by one
-    ☐ if there is a ration, satieity goes up by one
-    ☐ there is a maximum satiety
-    ☐ there is a maximum health
-    ☐ there is a minimum satieity
-    ☐ when satiety is at its minimum and there is hunger, health goes down by 1
+    ✔ the avatar has a satiety stat @done(20-07-05 05:29)
+    ✔ the avatar has a health stat @done(20-07-05 05:29)
+    ✔ avatars hunger and health stats show up in the status command @done(20-07-05 05:53)
+    ✔ the avatar may buy rations at islands @done(20-07-05 05:53)
+    ✔ the avatar eats one ration per turn @done(20-07-06 04:18)
+    ✔ if there is no ration, satiety goes down by one @done(20-07-06 04:18)
+    ✔ if there is a ration, satieity goes up by one @done(20-07-06 04:18)
+    ✔ there is a maximum satiety @done(20-07-05 05:54)
+    ✔ there is a maximum health @done(20-07-05 05:54)
+    ✔ there is a minimum satieity @done(20-07-05 05:54)
+    ✔ when satiety is at its minimum and there is hunger, health goes down by 1 @done(20-07-06 04:18)
     ☐ when health is at its minimu and there is hunger, the avatar dies
-    ☐ rations are items made of grain
+    ✔ rations are items made of grain @done(20-07-05 05:54)
 Quests/Jobs:
     ☐ some jobs have a minimum reputation requirement
 Island Notes:
@@ -36,6 +36,7 @@ Eliminate Hardcoded Values:
     ☐ Avatar.ViewDistance
     ☐ Avatar.DockDistance
 Weird Edge Case Behavior:
+    ☐ how do we increase health?
     ☐ When AtSea, docking will happen with the "furthest" of all of the dockable islands. because of how the world is generated, there "should not" be more than one. however, this is not technically so.
 Archive:
   ✘ items can be bought and sold @cancelled(20-07-02 06:39) @project(Items)

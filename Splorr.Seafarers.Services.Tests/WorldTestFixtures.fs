@@ -30,6 +30,8 @@ let internal emptyWorld =
                 Reputation = 0.0
                 Job = None
                 Inventory = Map.empty
+                Satiety = Statistic.Create (0.0, 100.0) (100.0)
+                Health = Statistic.Create (0.0, 100.0) (100.0)
             }
         Islands = Map.empty
         Turn = 0u

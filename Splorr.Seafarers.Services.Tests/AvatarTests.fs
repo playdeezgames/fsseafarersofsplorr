@@ -65,10 +65,65 @@ let ``SetHeading.It sets a given heading.`` () =
 
 [<Test>]
 let ``Move.It moves the avatar.`` () =
+    let input = avatar
+    let expectedPosition = (1.0,0.0)
     let actual =
-        avatar
+        input
         |> Avatar.Move
-    Assert.AreEqual((1.0,0.0), actual.Position)
+    Assert.AreEqual(expectedPosition, actual.Position)
+
+[<Test>]
+let ``Move.It removes a ration when the given avatar has rations and full satiety and full health.`` () =
+    let input = 
+        {avatar with 
+            Inventory = Map.empty |> Map.add Ration 2u}
+    let expectedSatiety = input.Satiety.CurrentValue
+    let expectedHealth = input.Health.CurrentValue
+    let expectedInventory = Map.empty |> Map.add Ration 1u
+    let actual =
+        input
+        |> Avatar.Move
+    Assert.AreEqual(expectedInventory, actual.Inventory)
+    Assert.AreEqual(expectedSatiety, actual.Satiety.CurrentValue)
+    Assert.AreEqual(expectedHealth, actual.Health.CurrentValue)
+
+[<Test>]
+let ``Move.It removes a ration and increases satiety when the given avatar has rations and less than full satiety.`` () =
+    let input = 
+        {avatar with 
+            Inventory = Map.empty |> Map.add Ration 2u
+            Satiety = {avatar.Satiety with CurrentValue=0.0}}
+    let expectedSatiety = input.Satiety.CurrentValue + 1.0
+    let expectedHealth = input.Health.CurrentValue
+    let expectedInventory = Map.empty |> Map.add Ration 1u
+    let actual =
+        input
+        |> Avatar.Move
+    Assert.AreEqual(expectedInventory, actual.Inventory)
+    Assert.AreEqual(expectedSatiety, actual.Satiety.CurrentValue)
+    Assert.AreEqual(expectedHealth, actual.Health.CurrentValue)
+
+[<Test>]
+let ``Move.It lowers the avatar's satiety but not health when the given avatar has no rations.`` () =
+    let input = {avatar with Inventory = Map.empty}
+    let expectedSatiety = input.Satiety.CurrentValue - 1.0
+    let expectedHealth = input.Health.CurrentValue
+    let actual =
+        input
+        |> Avatar.Move
+    Assert.AreEqual(expectedSatiety, actual.Satiety.CurrentValue)
+    Assert.AreEqual(expectedHealth, actual.Health.CurrentValue)
+
+[<Test>]
+let ``Move.It lowers the avatar's health when the given avatar has no rations and minimum satiety.`` () =
+    let input = {avatar with Inventory = Map.empty; Satiety = {avatar.Satiety with CurrentValue=0.0}}
+    let expectedSatiety = 0.0
+    let expectedHealth = input.Health.CurrentValue - 1.0
+    let actual =
+        input
+        |> Avatar.Move
+    Assert.AreEqual(expectedSatiety, actual.Satiety.CurrentValue)
+    Assert.AreEqual(expectedHealth, actual.Health.CurrentValue)
 
 [<Test>]
 let ``SetJob.It sets the job of the given avatar.`` () =
