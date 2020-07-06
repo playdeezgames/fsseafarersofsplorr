@@ -9,9 +9,9 @@ let commodities :Map<Commodity, CommodityDescriptor> =
 let items: Map<Item, ItemDescriptor> =
     [(Ration, 
         {
-            DisplayName = "rations"
+            DisplayName = "waffles"
             Commodities = 
-                [(Grain, 0.01)]
+                [(Grain, 0.1)]
                 |> Map.ofList
             Occurrence = 1.0
         })]
