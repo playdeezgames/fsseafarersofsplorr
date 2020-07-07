@@ -10,6 +10,7 @@ open CommonTestFixtures
 let ``Run.It returns Main Menu after saving the game.`` () =
     let input = world
     let inputName = "name"
+    use inputConnection = createConnection()
     let expected =
         input
         |> Some
@@ -17,6 +18,6 @@ let ``Run.It returns Main Menu after saving the game.`` () =
         |> Some
     let actual =
         (inputName, input)
-        ||> SaveGame.Run sinkStub
+        ||> SaveGame.Run inputConnection sinkStub
     Assert.AreEqual(expected, actual)
 

@@ -18,7 +18,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="UnitTest1.fs" />
+    <Compile Include="CommonTestFixtures.fs" />
+    <Compile Include="PersisterTests.fs" />
+    <Compile Include="SaveSlotTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

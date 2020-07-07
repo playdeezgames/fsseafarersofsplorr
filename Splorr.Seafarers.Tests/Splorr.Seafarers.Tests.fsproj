@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Splorr.Seafarers.Persistence\Splorr.Seafarers.Persistence.fsproj" />
     <ProjectReference Include="..\Splorr.Seafarers\Splorr.Seafarers.fsproj" />
   </ItemGroup>
 

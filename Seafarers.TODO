@@ -3,7 +3,7 @@ Persistence:
         ✔ there is a save command @done(20-07-07 04:53)
         ✔ i can issue the save command from the main menu @done(20-07-07 05:10)
         ☐ issuing the save command persists the world to a sqlite database
-        ☐ the save game state returns to the main menu when it is finished
+        ✔ the save game state returns to the main menu when it is finished @done(20-07-07 05:21)
     ☐ load the game
     ☐ permadeath?
         permadeath means that the file loaded is deleted 
