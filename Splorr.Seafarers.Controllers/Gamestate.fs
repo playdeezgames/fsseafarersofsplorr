@@ -20,6 +20,7 @@ type Gamestate =
     | IslandList of uint32 * Gamestate
     | MainMenu of World option
     | Status of Gamestate
+    | SaveGame of string * World
 
 module Gamestate =
     let rec GetWorld (gamestate:Gamestate) : World option =
@@ -32,5 +33,6 @@ module Gamestate =
         | Gamestate.IslandList (_,g) -> GetWorld g
         | Gamestate.MainMenu w -> w
         | Gamestate.Status g -> GetWorld g
+        | Gamestate.SaveGame (_,w) -> w |> Some
         | _ -> None
 

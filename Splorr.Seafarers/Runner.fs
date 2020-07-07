@@ -20,6 +20,7 @@ module Runner =
             | Gamestate.IslandList (page, state) -> IslandList.Run sink page state
             | Gamestate.MainMenu world -> MainMenu.Run configuration source sink world
             | Gamestate.Status state -> Status.Run sink state
+            | Gamestate.SaveGame (name, world) -> SaveGame.Run sink name world
         match nextGamestate with
         | Some state ->
             Loop random configuration source sink state

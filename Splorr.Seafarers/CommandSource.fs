@@ -132,6 +132,14 @@ module CommandSource=
             | _ -> None
         | _ -> None
 
+    let private ParseSave (tokens:string list) : Command option =
+        if tokens.IsEmpty then
+            None
+        else
+            System.String.Join(' ',tokens |> List.toArray)
+            |> Command.Save
+            |> Some
+
     let Parse(tokens:string list) : Command option =
         match tokens with
         | [ "resume" ] -> 
@@ -203,6 +211,9 @@ module CommandSource=
         | "sell" :: tail ->
             tail
             |> ParseSell
+        | "save" :: tail ->
+            tail
+            |> ParseSave
         | _ -> 
             None
 
