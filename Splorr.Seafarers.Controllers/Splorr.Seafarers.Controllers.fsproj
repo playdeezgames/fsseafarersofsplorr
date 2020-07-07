@@ -9,18 +9,19 @@
     <Compile Include="Command.fs" />
     <Compile Include="Utility.fs" />
     <Compile Include="AtSea.fs" />
-    <Compile Include="Docked.fs" />
-    <Compile Include="Jobs.fs" />
-    <Compile Include="ItemList.fs" />
-    <Compile Include="PriceList.fs" />
-    <Compile Include="Shop.fs" />
     <Compile Include="ConfirmQuit.fs" />
-    <Compile Include="Help.fs" />
+    <Compile Include="Docked.fs" />
     <Compile Include="GameOver.fs" />
-    <Compile Include="MainMenu.fs" />
-    <Compile Include="IslandList.fs" />
-    <Compile Include="Status.fs" />
+    <Compile Include="Help.fs" />
     <Compile Include="Inventory.fs" />
+    <Compile Include="IslandList.fs" />
+    <Compile Include="ItemList.fs" />
+    <Compile Include="Jobs.fs" />
+    <Compile Include="MainMenu.fs" />
+    <Compile Include="PriceList.fs" />
+    <Compile Include="SaveGame.fs" />
+    <Compile Include="Shop.fs" />
+    <Compile Include="Status.fs" />
   </ItemGroup>
 
   <ItemGroup>
