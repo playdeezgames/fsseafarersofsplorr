@@ -53,6 +53,16 @@ let ``SetSpeed.It produces half speed when one half is passed.`` () =
     Assert.AreEqual(0.5, actual.Avatars.[avatarId].Speed)
 
 [<Test>]
+let ``SetSpeed.It does nothing when a bogus avatarid is passed.`` () =
+    let inputWorld = soloIslandWorld
+    let inputAvatarId = bogusAvatarId
+    let expected = inputWorld
+    let actual =
+        inputWorld
+        |> World.SetSpeed (1.0) inputAvatarId
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
 let ``SetSpeed.It produces full speed when one is passed.`` () =
     let actual =
         soloIslandWorld
@@ -67,7 +77,7 @@ let ``SetSpeed.It sets all stop when given zero`` () =
     Assert.AreEqual(0.0, actual.Avatars.[avatarId].Speed)
 
 [<Test>]
-let ``SetHeading.It sets a new heading.`` () =
+let ``SetHeading.It sets a new heading when given a valid avatar id.`` () =
     let heading = 
         {
             Degrees = 1
@@ -80,11 +90,32 @@ let ``SetHeading.It sets a new heading.`` () =
     Assert.AreEqual(heading |> Dms.ToFloat, actual.Avatars.[avatarId].Heading)
 
 [<Test>]
-let ``Move.It moves the avatar one unit when give 1u for distance.`` () =
+let ``SetHeading.It does nothing when given an invalid avatar id`` () =
+    let heading = 
+        {
+            Degrees = 1
+            Minutes = 2
+            Seconds = 3.0
+        }
+    let actual =
+        soloIslandWorld
+        |> World.SetHeading heading bogusAvatarId
+    Assert.AreEqual(soloIslandWorld, actual)
+
+
+[<Test>]
+let ``Move.It moves the avatar one unit when give 1u for distance when given a valid avatar id.`` () =
     let actual =
         soloIslandWorld
         |> World.Move 1u avatarId
     Assert.AreEqual((6.0,5.0), actual.Avatars.[avatarId].Position)
+
+[<Test>]
+let ``Move.It does nothing when given an invalid avatar id`` () =
+    let actual =
+        soloIslandWorld
+        |> World.Move 1u bogusAvatarId
+    Assert.AreEqual(soloIslandWorld, actual)
 
 [<Test>]
 let ``Move.It moves the avatar two units when give 2u for distance.`` () =
@@ -197,6 +228,13 @@ let ``TransformIsland.It does nothing when the location given does not have an e
     Assert.AreEqual(0, actual.Islands.Count)
 
 [<Test>]
+let ``Dock.It does nothing when given an invalid avatar id.`` () =
+    let actual = 
+        emptyWorld
+        |> World.Dock random (0.0, 0.0) bogusAvatarId
+    Assert.AreEqual(emptyWorld, actual)
+
+[<Test>]
 let ``Dock.It adds a message when the given location has no island.`` () =
     let actual = 
         emptyWorld
@@ -211,6 +249,13 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
     let updatedIsland = 
         oneIslandWorld.Islands.[(0.0, 0.0)] |> Island.AddVisit oneIslandWorld.Turn
     Assert.AreEqual({oneIslandWorld with Messages = [ "You dock." ]; Islands = oneIslandWorld.Islands |> Map.add (0.0, 0.0) updatedIsland}, actual)
+
+[<Test>]
+let ``HeadFor.It does nothing when given an invalid avatar id.`` () =
+    let actual =
+        headForWorld
+        |> World.HeadFor "yermom" bogusAvatarId
+    Assert.AreEqual(headForWorld, actual)
 
 [<Test>]
 let ``HeadFor.It adds a message when the island name does not exist.`` () =
@@ -256,6 +301,15 @@ let ``AcceptJob.It adds a message to the world when given an invalid job index f
         genericDockedWorld
         |> World.AcceptJob 0xFFFFFFFFu genericWorldIslandLocation avatarId
     Assert.AreEqual ({genericDockedWorld with Messages = [ "That job is currently unavailable." ]}, actual)
+
+[<Test>]
+let ``AcceptJob.It does nothing when given an invalid avatar id.`` () =
+    let inputWorld = 
+        genericDockedWorld
+    let actual =
+        inputWorld
+        |> World.AcceptJob 1u genericWorldIslandLocation bogusAvatarId
+    Assert.AreEqual (inputWorld, actual)
 
 [<Test>]
 let ``AcceptJob.It adds a message to the world when the job is valid but the avatar already has a job.`` () =
@@ -480,14 +534,14 @@ let ``SellItems.It gives a message and completes the purchase when the avatar ha
     Assert.AreEqual(expected, actual)
 
 [<Test>]
-let ``AVATAR_ALIVE/AVATAR_DEAD.It returns a AVATAR_ALIVE when given a world with an avatar with above minimum health.`` () =
+let ``IsAvatarAlive.It returns a true when given a world with an avatar with above minimum health.`` () =
     if genericWorld |> World.IsAvatarAlive avatarId then
         Assert.Pass("It detected that the avatar is alive")
     else
         Assert.Fail("It detected that the avatar is not alive")
 
 [<Test>]
-let ``AVATAR_ALIVE/AVATAR_DEAD.It returns a AVATAR_DEAD when given a world with an avatar minimum health (zero).`` () =
+let ``IsAvatarAlive.It returns a false when given a world with an avatar minimum health (zero).`` () =
     if deadWorld |> World.IsAvatarAlive avatarId |> not then
         Assert.Pass("It detected that the avatar is dead")
     else

@@ -93,7 +93,7 @@ module World =
         |> Option.bind transform
         |> Option.fold
             (fun w avatar -> 
-                {w with Avatars = w.Avatars|> Map.add avatarId avatar}) world
+                {w with Avatars = w.Avatars|> Map.add avatarId avatar}) {world with Avatars = world.Avatars |> Map.remove avatarId}
 
     let SetSpeed (speed:float) (avatarId:string) (world:World) : World = 
         world.Avatars
@@ -123,9 +123,8 @@ module World =
         
 
     let rec Move (distance:uint32) (avatarId:string) (world:World) :World =
-        match distance with
-        | 0u -> world
-        | x ->
+        match distance, world.Avatars |> Map.tryFind avatarId with
+        | x, Some _ when x > 0u ->
             let steppedWorld = 
                 {
                     world with 
@@ -138,6 +137,7 @@ module World =
                 |> AddMessages [ "You starve to death!" ]
             else
                 Move (x-1u) avatarId steppedWorld
+        | _ -> world
 
     let GetNearbyLocations (from:Location) (maximumDistance:float) (world:World) : Location list =
         world.Islands
@@ -172,9 +172,11 @@ module World =
                 >> Some)
             |> Option.foldBack (DoJobCompletion location avatarId) avatar.Job
             |> AddMessages [ "You dock." ]
-        | _ -> 
+        | _, Some _ -> 
             world
             |> AddMessages [ "There is no place to dock there." ]
+        | _ ->
+            world
 
     let HeadFor (islandName: string) (avatarId:string) (world:World) : World =
         let location =
@@ -190,16 +192,18 @@ module World =
             world
             |> SetHeading (Location.HeadingTo avatar.Position l |> Dms.ToDms) avatarId
             |> AddMessages [ islandName |> sprintf "You head for `%s`." ]
-        | _ ->
+        | _, Some _ ->
             world
             |> AddMessages [ islandName |> sprintf "I don't know how to get to `%s`." ]
+        | _ ->
+            world
 
     let AcceptJob (jobIndex:uint32) (location:Location) (avatarId:string) (world:World) : World =
-        match jobIndex, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId |> Option.bind (fun a -> a.Job) with
-        | 0u, _, _ ->
+        match jobIndex, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId, world.Avatars |> Map.tryFind avatarId |> Option.bind (fun a -> a.Job) with
+        | 0u, _, _, _ ->
             world
             |> AddMessages [ "That job is currently unavailable." ]
-        | _, Some island, None ->
+        | _, Some island, Some _,None ->
             match island |> Island.RemoveJob jobIndex with
             | isle, Some job ->
                 world
@@ -210,7 +214,7 @@ module World =
             | _ ->
                 world
                 |> AddMessages [ "That job is currently unavailable." ]
-        | _, Some island, Some job ->
+        | _, Some island, Some _, Some job ->
             world
             |> AddMessages [ "You must complete or abandon your current job before taking on a new one." ]
         | _ -> 

@@ -4,6 +4,7 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
 let internal avatarId = ""
+let internal bogusAvatarId = "bogus"
 let internal random = System.Random()
 let internal soloIslandWorldConfiguration: WorldGenerationConfiguration =
     {
