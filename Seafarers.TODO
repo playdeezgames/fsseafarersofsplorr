@@ -1,9 +1,69 @@
 Persistence:
     Save the game:
-        ✔ there is a save command @done(20-07-07 04:53)
-        ✔ i can issue the save command from the main menu @done(20-07-07 05:10)
         ☐ issuing the save command persists the world to a sqlite database
-        ✔ the save game state returns to the main menu when it is finished @done(20-07-07 05:21)
+        World Schema:
+          ☐ world table
+              (worldid)
+              (worldname)
+              (timestamp)
+              rewardminimum
+              rewardmaximum
+          ☐ messages table
+              message
+          ☐ avatars table
+              (avatarid)
+              (worldid)
+              (turn)
+              position x
+              position y
+              heading
+              speed
+              viewdistance
+              dockdistance
+              money
+              reputation
+          ☐ avatarjobs table
+              description
+              destination x
+              destination y
+              reward
+          ☐ avatarinventory table
+              itemid
+              count
+          ☐ avatarstatistic table
+              statisticid
+              minimum
+              maximum
+              current
+          ☐ islands table
+              position x
+              position y
+              name
+              visit count
+              last visit
+          ☐ islanditems 
+              itemid
+          ☐ islandmarkets
+              commodityid
+              supply
+              demand
+              traded
+          ☐ worldcommodities table
+              commodityid
+              name
+              baseprice
+              purchasefactor
+              salefactor
+              discount
+              occurrence
+          ☐ worlditems table
+              itemid
+              displayname
+              occurrence
+          ☐ worlditemcommodities
+              itemid
+              commodityid
+              units
     ☐ load the game
     ☐ permadeath?
         permadeath means that the file loaded is deleted 
@@ -22,7 +82,7 @@ Island Notes:
     ☐ Add island note command
     ☐ List island notes command
 Refactor "Opportunities":
-    ☐ on the islands list, indicate visually the destination of the current job
+    ✔ on the islands list, indicate visually the destination of the current job @done(20-07-07 10:49)
     ☐ Prices command may be better named commodities
     ☐ commodity price list may need to be accessible from multiple locations
     ☐ split out the view portion of the game state handler from the command handling portion
@@ -35,6 +95,9 @@ Weird Edge Case Behavior:
     ☐ how do we increase health?
     ☐ When AtSea, docking will happen with the "furthest" of all of the dockable islands. because of how the world is generated, there "should not" be more than one. however, this is not technically so.
 Archive:
+  ✔ there is a save command @done(20-07-07 04:53) @project(Persistence.Save the game)
+  ✔ i can issue the save command from the main menu @done(20-07-07 05:10) @project(Persistence.Save the game)
+  ✔ the save game state returns to the main menu when it is finished @done(20-07-07 05:21) @project(Persistence.Save the game)
   ✔ when health is at its minimum and there is hunger, the avatar dies and the game is over\ @done(20-07-06 06:12) @project(Satiety/Health)
   ✔ there is an game over gamestate @done(20-07-06 06:05) @project(Satiety/Health)
   ✔ when at any in play game state(At Sea, Docked, Shop), check if the avatar is dead, and switch to the game over game state @done(20-07-06 06:05) @project(Satiety/Health)

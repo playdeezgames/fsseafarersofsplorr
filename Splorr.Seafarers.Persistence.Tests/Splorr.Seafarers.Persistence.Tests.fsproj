@@ -20,7 +20,7 @@
   <ItemGroup>
     <Compile Include="CommonTestFixtures.fs" />
     <Compile Include="PersisterTests.fs" />
-    <Compile Include="SaveSlotTests.fs" />
+    <Compile Include="WorldTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

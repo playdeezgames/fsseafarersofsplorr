@@ -8,8 +8,8 @@ module Persister =
         try
             try
                 connection.Open()
-                SaveSlot.Create connection name
-                |> Result.map (fun _ -> true)
+                World.Save connection name world
+                |> Result.map (fun worldId -> true)
             with
             | ex -> ex |> Error
         finally

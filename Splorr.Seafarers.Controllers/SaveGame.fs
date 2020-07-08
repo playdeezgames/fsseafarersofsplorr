@@ -13,10 +13,18 @@ module SaveGame =
                 "You saved the game." |> Line
             ]
             |> List.iter sink
-        | _ ->
+        | Ok false ->
+            [
+                "" |> Line
+                "Saving the game failed for some reason." |> Line
+            ]
+            |> List.iter sink
+            
+        | Error ex ->
             [
                 "" |> Line
                 "Error occurred!" |> Line
+                ex.ToString() |> Line
             ]
             |> List.iter sink
 

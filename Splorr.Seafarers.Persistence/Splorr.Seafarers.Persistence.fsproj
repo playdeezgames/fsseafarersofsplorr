@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="SaveSlot.fs" />
+    <Compile Include="World.fs" />
     <Compile Include="Persister.fs" />
   </ItemGroup>
 
