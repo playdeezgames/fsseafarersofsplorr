@@ -488,7 +488,7 @@ let ``AVATAR_ALIVE/AVATAR_DEAD.It returns a AVATAR_ALIVE when given a world with
 
 [<Test>]
 let ``AVATAR_ALIVE/AVATAR_DEAD.It returns a AVATAR_DEAD when given a world with an avatar minimum health (zero).`` () =
-    if genericWorld |> World.IsAvatarAlive avatarId |> not then
+    if deadWorld |> World.IsAvatarAlive avatarId |> not then
         Assert.Pass("It detected that the avatar is dead")
     else
         Assert.Fail("It detected that the avatar is not dead")

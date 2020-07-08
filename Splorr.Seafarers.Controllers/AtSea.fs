@@ -51,7 +51,7 @@ module AtSea =
 
         | Some (Command.HeadFor name) ->
             world
-            |> World.HeadFor avatarId name
+            |> World.HeadFor name avatarId
             |> Gamestate.AtSea
             |> Some
 

@@ -115,7 +115,10 @@ module World =
 
     let IsAvatarAlive (avatarId:string) (world:World) =
         match world.Avatars |> Map.tryFind avatarId with
-        | Some Avatar.ALIVE -> true
+        | Some avatar -> 
+            match avatar with
+            | Avatar.ALIVE -> true
+            | Avatar.DEAD -> false
         | _ -> false
         
 
@@ -192,7 +195,7 @@ module World =
             |> AddMessages [ islandName |> sprintf "I don't know how to get to `%s`." ]
 
     let AcceptJob (jobIndex:uint32) (location:Location) (avatarId:string) (world:World) : World =
-        match jobIndex, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId |> Option.map (fun a -> a.Job) with
+        match jobIndex, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId |> Option.bind (fun a -> a.Job) with
         | 0u, _, _ ->
             world
             |> AddMessages [ "That job is currently unavailable." ]
@@ -214,7 +217,7 @@ module World =
             world
 
     let AbandonJob (avatarId: string) (world:World) : World =
-        match world.Avatars |> Map.tryFind avatarId |> Option.map (fun a -> a.Job) with
+        match world.Avatars |> Map.tryFind avatarId |> Option.bind (fun a -> a.Job) with
         | Some _ ->
             world
             |> AddMessages [ "You abandon your job." ]
