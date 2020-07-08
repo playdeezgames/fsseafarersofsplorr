@@ -16,7 +16,7 @@ let internal dockWorldconfiguration: WorldGenerationConfiguration =
 let internal dockWorld = World.Create dockWorldconfiguration random
 let internal dockLocation = (0.0, 0.0)
 let internal deadDockWorld =
-    {dockWorld with Avatar = {dockWorld.Avatar with Health={dockWorld.Avatar.Health with CurrentValue=dockWorld.Avatar.Health.MinimumValue}}}
+    {dockWorld with Avatars = Map.empty |> Map.add avatarId {dockWorld.Avatars.[avatarId] with Health={dockWorld.Avatars.[avatarId].Health with CurrentValue=dockWorld.Avatars.[avatarId].Health.MinimumValue}}}
 let internal deadDockLocation = dockLocation
 let internal smallWorldCommodities:Map<Commodity, CommodityDescriptor> = 
     [(Grain, {Name="commodity under test";BasePrice=1.0;PurchaseFactor=1.0;SaleFactor=1.0;Discount=0.5;Occurrence=1.0})] |> Map.ofList
@@ -33,12 +33,12 @@ let internal smallWorldconfiguration: WorldGenerationConfiguration =
     }
 let internal smallWorld = World.Create smallWorldconfiguration random
 let internal smallWorldIslandLocation = smallWorld.Islands |> Map.toList |> List.map fst |> List.head
-let internal smallWorldDocked = smallWorld |> World.Dock random smallWorldIslandLocation
+let internal smallWorldDocked = smallWorld |> World.Dock random smallWorldIslandLocation avatarId
 let internal shopWorld = smallWorldDocked |> World.ClearMessages
 
 let internal abandonJobWorld =
     dockWorld
-    |> World.TransformAvatar (fun avatar -> {avatar with Job=Some { FlavorText="";Reward=0.0; Destination=(0.0,0.0)}})
+    |> World.TransformAvatar avatarId (fun avatar -> {avatar with Job=Some { FlavorText="";Reward=0.0; Destination=(0.0,0.0)}} |> Some)
 
 
 

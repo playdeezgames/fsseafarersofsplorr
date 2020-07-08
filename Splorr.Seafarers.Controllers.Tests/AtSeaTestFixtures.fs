@@ -16,8 +16,8 @@ let internal configuration: WorldGenerationConfiguration =
 let internal world = World.Create configuration (System.Random())
 let internal deadWorld =
     world
-    |> World.TransformAvatar 
-        (fun a -> {a with Health = {a.Health with CurrentValue = a.Health.MinimumValue}})
+    |> World.TransformAvatar avatarId
+        (fun a -> {a with Health = {a.Health with CurrentValue = a.Health.MinimumValue}}|>Some)
     |> World.ClearMessages
     |> World.AddMessages ["Yer ded."]
 
@@ -47,14 +47,14 @@ let internal dockWorld = World.Create dockWorldconfiguration (System.Random())
 let internal headForWorldUnvisited = 
     World.Create dockWorldconfiguration (System.Random())
     |> World.TransformIsland (0.0,0.0) (Island.SetName "yermom" >> Some)
-    |> World.Move 1u
+    |> World.Move 1u avatarId
 let internal headForWorldVisited = 
     headForWorldUnvisited
-    |> World.Dock random (0.0, 0.0)
+    |> World.Dock random (0.0, 0.0) avatarId
 
 let internal abandonJobWorld =
     dockWorld
-    |> World.TransformAvatar (fun avatar -> {avatar with Job=Some { FlavorText=""; Reward=0.0; Destination=(0.0,0.0)  }})
+    |> World.TransformAvatar avatarId (fun avatar -> {avatar with Job=Some { FlavorText=""; Reward=0.0; Destination=(0.0,0.0)  }}|>Some)
 
 
 

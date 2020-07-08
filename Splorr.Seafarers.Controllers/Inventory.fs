@@ -3,14 +3,14 @@
 open Splorr.Seafarers.Models
 
 module Inventory =
-    let private RunWorld (sink:MessageSink) (world:World) : unit =
+    let private RunWorld (sink:MessageSink) (avatarId:string) (world:World) : unit =
         [
             "" |> Line
             (Heading, "Inventory:" |> Line) |> Hued
         ]
         |> List.iter sink
         let inventoryEmpty =
-            world.Avatar.Inventory
+            world.Avatars.[avatarId].Inventory
             |> Map.fold
                 (fun _ item quantity -> 
                     let descriptor = world.Items.[item]
@@ -20,9 +20,9 @@ module Inventory =
             "\t(none)"  |> Line
             |> sink
 
-    let Run (sink:MessageSink) (gamestate:Gamestate) : Gamestate option =
+    let Run (sink:MessageSink) (avatarId:string) (gamestate:Gamestate) : Gamestate option =
         gamestate 
         |> Gamestate.GetWorld
-        |> Option.iter (RunWorld sink)
+        |> Option.iter (RunWorld sink avatarId)
         gamestate
         |> Some

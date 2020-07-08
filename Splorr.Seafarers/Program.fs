@@ -18,16 +18,17 @@ let items: Map<Item, ItemDescriptor> =
         })]
     |> Map.ofList
 let connectionString = "Data Source=seafarers.db;Version=3;"
+let avatarId = ""
 [<EntryPoint>]
 let main argv =
     use connection = new SQLiteConnection(connectionString)
-    {
+    ({
         MinimumIslandDistance=10.0
         WorldSize=(100.0,100.0)
         MaximumGenerationTries=500u
         RewardRange=(1.0,10.0)
         Commodities = commodities
         Items = items
-    }
-    |> Runner.Run connection
+    }, avatarId)
+    ||> Runner.Run connection
     0

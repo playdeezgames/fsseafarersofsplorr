@@ -6,7 +6,7 @@ open Splorr.Seafarers.Services
 module IslandList =
     let private lesser (a:uint32) (b:uint32) = if a<b then a else b
 
-    let private RunWorld (sink:MessageSink) (page:uint32) (pageSize:uint32) (world:World) : unit = 
+    let private RunWorld (sink:MessageSink) (page:uint32) (pageSize:uint32) (avatarId:string) (world:World) : unit = 
         [
             "" |> Line
             (Heading, "Known Islands:" |> Line) |> Hued
@@ -27,9 +27,9 @@ module IslandList =
             |> List.take ((lesser pageSize (totalItems-skippedItems)) |> int)
             |> List.iter (fun (location, island) -> 
                 let distance =
-                    Location.DistanceTo world.Avatar.Position location
+                    Location.DistanceTo world.Avatars.[avatarId].Position location
                 let bearing =
-                    Location.HeadingTo world.Avatar.Position location
+                    Location.HeadingTo world.Avatars.[avatarId].Position location
                     |> Dms.ToDms
                     |> Dms.ToString
                 sprintf "%s Bearing:%s Distance:%f" island.Name bearing distance |> Line
@@ -40,9 +40,9 @@ module IslandList =
     let private pageSize = 20u
 
 
-    let Run (sink:MessageSink) (page:uint32) (gamestate: Gamestate) : Gamestate option =
+    let Run (sink:MessageSink) (page:uint32) (avatarId:string) (gamestate: Gamestate) : Gamestate option =
         gamestate 
         |> Gamestate.GetWorld
-        |> Option.iter (RunWorld sink page pageSize)
+        |> Option.iter (RunWorld sink page pageSize avatarId)
         gamestate
         |> Some

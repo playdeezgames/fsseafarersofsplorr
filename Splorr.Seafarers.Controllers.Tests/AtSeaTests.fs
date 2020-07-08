@@ -19,7 +19,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub
+        |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -36,7 +36,7 @@ let ``Run.It returns ConfirmQuit when given Quit command.`` () =
         |> Some
     let actual = 
         input
-        |> AtSea.Run random inputSource sinkStub
+        |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -51,7 +51,7 @@ let ``Run.It returns AtSea when given invalid command.`` () =
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub
+        |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -65,18 +65,18 @@ let ``Run.It returns AtSea with new speed when given Set Speed command.`` () =
         |> Some 
         |> toSource
     let expectedAvatar = 
-        {input.Avatar with 
+        {input.Avatars.[avatarId] with 
             Speed=newSpeed}
     let expectedMessages = ["You set your speed to 0.500000."]
     let expected = 
         {input with 
-            Avatar = expectedAvatar
+            Avatars = input.Avatars |> Map.add avatarId expectedAvatar
             Messages= expectedMessages}
         |> Gamestate.AtSea 
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub
+        |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -95,20 +95,20 @@ let ``Run.It returns AtSea with new heading when given Set Heading command.`` ()
         |> Some 
         |> toSource
     let expectedAvatar = 
-        {input.Avatar with 
+        {input.Avatars.[avatarId] with 
             Heading = 
                 newHeading 
                 |> Dms.ToFloat}
     let expectedMessages = ["You set your heading to 1\u00b02'3.000000\"."]
     let expected = 
         {input with 
-            Avatar = expectedAvatar
+            Avatars = input.Avatars |> Map.add avatarId expectedAvatar
             Messages= expectedMessages}
         |> Gamestate.AtSea 
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub
+        |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -120,21 +120,21 @@ let ``Run.It moves the avatar when given Move command.`` () =
         |> Some 
         |> toSource
     let expectedAvatar =
-        {input.Avatar with 
+        {input.Avatars.[avatarId] with 
             Position=(6.0,5.0)
-            Satiety = {input.Avatar.Satiety with CurrentValue=99.0}}
+            Satiety = {input.Avatars.[avatarId].Satiety with CurrentValue=99.0}}
     let expectedMessages = ["Steady as she goes."]
     let expectedTurn = input.Turn + 1u
     let expected = 
         {input with 
-            Avatar   = expectedAvatar
+            Avatars  = input.Avatars |> Map.add avatarId expectedAvatar
             Messages = expectedMessages
             Turn     = expectedTurn} 
         |> Gamestate.AtSea 
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub
+        |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -151,7 +151,7 @@ let ``Run.It returns At Sea Help when given the Help command.`` () =
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub
+        |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 
@@ -169,7 +169,7 @@ let ``Run.It returns At Sea Inventory when given the Inventory command.`` () =
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub
+        |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -186,7 +186,7 @@ let ``Run.It returns Main Menu when given the Menu command.`` () =
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub
+        |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 
@@ -204,7 +204,7 @@ let ``Run.It returns Island List when given the Islands command.`` () =
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub
+        |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -222,7 +222,7 @@ let ``Run.It returns AtSea when given the Dock command and there is no near enou
         |>Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub
+        |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -247,7 +247,7 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
         |>Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub
+        |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -266,7 +266,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
         |> Some
     let actual = 
         input
-        |> AtSea.Run random inputSource sinkStub
+        |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -285,7 +285,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
         |> Some
     let actual = 
         input
-        |> AtSea.Run random inputSource sinkStub
+        |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -293,16 +293,16 @@ let ``Run.It gives a message and changes heading when given a Head For command a
     let input = headForWorldVisited
     let inputSource = "yermom" |> Command.HeadFor |> Some |> toSource
     let expectedMessages = ["You set your heading to 180\u00b00'0.000000\"."; "You head for `yermom`."]
-    let expectedAvatar = {input.Avatar with Heading = System.Math.PI}
+    let expectedAvatar = {input.Avatars.[avatarId] with Heading = System.Math.PI}
     let expected = 
         {input with 
             Messages=expectedMessages
-            Avatar=expectedAvatar} 
+            Avatars = input.Avatars |> Map.add avatarId expectedAvatar} 
         |> Gamestate.AtSea 
         |> Some
     let actual = 
         input
-        |> AtSea.Run random inputSource sinkStub
+        |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -319,7 +319,7 @@ let ``Run.It returns Status when given the command Status.`` () =
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub
+        |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -338,7 +338,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub
+        |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -351,16 +351,16 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
         |> toSource
     let expectedMessages = ["You abandon your job."]
     let expectedAvatar = 
-        {input.Avatar with 
+        {input.Avatars.[avatarId] with 
             Job=None
-            Reputation = input.Avatar.Reputation - 1.0}
+            Reputation = input.Avatars.[avatarId].Reputation - 1.0}
     let expected = 
         {input with 
             Messages = expectedMessages
-            Avatar=expectedAvatar} 
+            Avatars= input.Avatars |> Map.add avatarId expectedAvatar} 
         |> Gamestate.AtSea 
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub
+        |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)

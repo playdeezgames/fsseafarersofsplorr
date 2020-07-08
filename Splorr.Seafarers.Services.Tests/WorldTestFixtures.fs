@@ -3,6 +3,7 @@
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
+let internal avatarId = ""
 let internal random = System.Random()
 let internal soloIslandWorldConfiguration: WorldGenerationConfiguration =
     {
@@ -19,8 +20,8 @@ let internal emptyWorld =
     {
         RewardRange = (1.0,10.0)
         Messages=[]
-        Avatar = 
-            {
+        Avatars = 
+            ["",{
                 Position = (0.0,0.0)
                 Heading = 0.0
                 Speed = 1.0
@@ -32,7 +33,8 @@ let internal emptyWorld =
                 Inventory = Map.empty
                 Satiety = Statistic.Create (0.0, 100.0) (100.0)
                 Health = Statistic.Create (0.0, 100.0) (100.0)
-            }
+            }] 
+            |> Map.ofList
         Islands = Map.empty
         Turn = 0u
         Commodities = Map.empty
@@ -74,11 +76,11 @@ let internal genericWorldConfiguration: WorldGenerationConfiguration =
     }
 let internal genericWorld = World.Create genericWorldConfiguration random
 let internal deadWorld =
-    {genericWorld with Avatar = {genericWorld.Avatar with Health ={genericWorld.Avatar.Health with CurrentValue = genericWorld.Avatar.Health.MinimumValue}}}
+    {genericWorld with Avatars = genericWorld.Avatars |> Map.add avatarId {genericWorld.Avatars.[avatarId] with Health ={genericWorld.Avatars.[avatarId].Health with CurrentValue = genericWorld.Avatars.[avatarId].Health.MinimumValue}}}
 
 let internal genericWorldIslandLocation = genericWorld.Islands |> Map.toList |> List.map fst |> List.head
 let internal genericWorldInvalidIslandLocation = ((genericWorldIslandLocation |> fst) + 1.0, genericWorldIslandLocation |> snd)
-let internal genericDockedWorld = World.Dock random genericWorldIslandLocation genericWorld |> World.ClearMessages
+let internal genericDockedWorld = World.Dock random genericWorldIslandLocation avatarId genericWorld |> World.ClearMessages
 
 let internal shopWorld = 
     genericDockedWorld
@@ -88,9 +90,9 @@ let internal shopWorld =
 let internal shopWorldLocation = genericWorldIslandLocation
 let internal shopWorldBogusLocation = genericWorldInvalidIslandLocation
 
-let internal jobWorld = genericDockedWorld |> World.AcceptJob 1u genericWorldIslandLocation |> World.ClearMessages
-let internal jobLocation = jobWorld.Avatar.Job.Value.Destination
+let internal jobWorld = genericDockedWorld |> World.AcceptJob 1u genericWorldIslandLocation avatarId |> World.ClearMessages
+let internal jobLocation = jobWorld.Avatars.[avatarId].Job.Value.Destination
 
 let internal headForWorld =
-    {oneIslandWorld with Avatar = {oneIslandWorld.Avatar with Position = (1.0,0.0)}}
+    {oneIslandWorld with Avatars =oneIslandWorld.Avatars |> Map.add avatarId {oneIslandWorld.Avatars.[avatarId] with Position = (1.0,0.0)}}
 

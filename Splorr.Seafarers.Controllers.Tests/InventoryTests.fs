@@ -2,6 +2,7 @@
 
 open NUnit.Framework
 open Splorr.Seafarers.Controllers
+open CommonTestFixtures
 
 let private previousGameState =
     None
@@ -14,5 +15,5 @@ let ``Run.It returns the given gamestate.`` () =
     let expected = previousGameState |> Some
     let actual =
         input
-        |> Inventory.Run sink
+        |> Inventory.Run sink avatarId
     Assert.AreEqual(expected, actual)

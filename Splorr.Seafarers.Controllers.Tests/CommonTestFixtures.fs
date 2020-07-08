@@ -10,4 +10,5 @@ let internal sinkStub (_:Message) : unit = ()
 let internal toSource (command:Command option) = fun () -> command
 let internal createConnection() :SQLiteConnection =
     new SQLiteConnection(connectionString)
+let internal avatarId:string = ""
 

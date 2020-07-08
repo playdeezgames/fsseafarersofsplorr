@@ -3,21 +3,21 @@
 open Splorr.Seafarers.Models
 
 module Status =
-    let private RunWorld (sink:MessageSink) (world:World) : unit =
+    let private RunWorld (sink:MessageSink) (avatarId:string) (world:World) : unit =
         [
             "" |> Line
             (Heading, "Status:" |> Line) |> Hued
             (Label, "Money: " |> Text) |> Hued
-            (Value, world.Avatar.Money |> sprintf "%f" |> Line) |> Hued
+            (Value, world.Avatars.[avatarId].Money |> sprintf "%f" |> Line) |> Hued
             (Label, "Reputation: " |> Text) |> Hued
-            (Value, world.Avatar.Reputation |> sprintf "%f" |> Line) |> Hued
+            (Value, world.Avatars.[avatarId].Reputation |> sprintf "%f" |> Line) |> Hued
             (Label, "Satiety: " |> Text) |> Hued
-            (Value, (world.Avatar.Satiety.CurrentValue, world.Avatar.Satiety.MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
+            (Value, (world.Avatars.[avatarId].Satiety.CurrentValue, world.Avatars.[avatarId].Satiety.MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
             (Label, "Health: " |> Text) |> Hued
-            (Value, (world.Avatar.Health.CurrentValue, world.Avatar.Health.MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
+            (Value, (world.Avatars.[avatarId].Health.CurrentValue, world.Avatars.[avatarId].Health.MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
         ]
         |> List.iter sink
-        world.Avatar.Job
+        world.Avatars.[avatarId].Job
         |> Option.iter
             (fun job ->
                 let island = 
@@ -33,10 +33,10 @@ module Status =
                 ]
                 |> List.iter sink)
 
-    let Run (sink:MessageSink) (gamestate:Gamestate) : Gamestate option =
+    let Run (sink:MessageSink) (avatarId:string) (gamestate:Gamestate) : Gamestate option =
         gamestate
         |> Gamestate.GetWorld
-        |> Option.iter (RunWorld sink)
+        |> Option.iter (RunWorld sink avatarId)
         gamestate
         |> Some
 

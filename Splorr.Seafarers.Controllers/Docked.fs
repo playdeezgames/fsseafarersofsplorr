@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module Docked = 
-    let private RunWithIsland  (source:CommandSource) (sink:MessageSink) (location:Location) (island:Island) (world: World) : Gamestate option =
+    let private RunWithIsland (source:CommandSource) (sink:MessageSink) (location:Location) (island:Island) (avatarId:string) (world: World) : Gamestate option =
         "" |> Line |> sink
         world.Messages
         |> Utility.DumpMessages sink
@@ -20,7 +20,7 @@ module Docked =
 
         match source() with
         | Some (Command.AcceptJob index) ->
-            (Dock, location, world |> World.AcceptJob index location)
+            (Dock, location, world |> World.AcceptJob index location avatarId)
             |> Gamestate.Docked
             |> Some
 
@@ -41,7 +41,7 @@ module Docked =
             |> Some
 
         | Some (Command.Abandon Job) ->
-            (Dock, location, world |> World.AbandonJob)
+            (Dock, location, world |> World.AbandonJob avatarId)
             |> Gamestate.Docked
             |> Some
 
@@ -80,17 +80,16 @@ module Docked =
             |> Gamestate.Docked 
             |> Some
 
-    let internal RunBoilerplate (func:Location -> Island -> World->(Gamestate option)) (location:Location) (world: World) : Gamestate option =
-        match world with
-        | World.AVATAR_ALIVE ->
+    let internal RunBoilerplate (func:Location -> Island -> string -> World->(Gamestate option)) (location:Location) (avatarId:string) (world: World) : Gamestate option =
+        if world |> World.IsAvatarAlive avatarId then
             match world.Islands |> Map.tryFind location with
             | Some island ->
-                func location island world
+                func location island avatarId world
             | None ->
                 world
                 |> Gamestate.AtSea
                 |> Some
-        | _ ->
+        else
             world.Messages
             |> Gamestate.GameOver
             |> Some
