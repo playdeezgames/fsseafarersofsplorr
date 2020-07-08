@@ -16,6 +16,10 @@ module Job =
             "officially"
             "accidentally"
             "jaggedly"
+            "carefully"
+            "thoughtfully"
+            "shodilly"
+            "amazingly"
         ]
     let private adjectives = 
         [
@@ -62,6 +66,11 @@ module Job =
             "ring"
             "bodice"
             "chastity belt"
+            "seedling"
+            "tiara"
+            "streamdeck"
+            "jug"
+            "key"
         ]
     let private names = 
         [
@@ -80,7 +89,24 @@ module Job =
             "Sally"
             "Susan"
             "Muffin"
+            "Beardy"
+            "Jimmy"
+            "Montgomery"
+            "James"
+            "Davin"
         ]
+
+    let private personalityadjectives =
+        [
+            "happy"
+            "joyful"
+            "magnificent"
+            "enthusiastic"
+            "submissive"
+            "dominant"
+            "dedicated"
+        ]
+
     let private professions = 
         [
             "tanner"
@@ -96,6 +122,19 @@ module Job =
             "abbot"
             "grump"
             "hamster"
+            "streamer"
+            "barkeep"
+            "silversmith"
+            "glazer"
+            "calligrapher"
+            "influencer"
+            "milkman"
+            "baker"
+            "greengrocer"
+            "nomad"
+            "traveller"
+            "moderator"
+            "arbiter"
         ]
     let private ChooseRandomTerm (random:System.Random) (terms:string list) : string =
         terms
