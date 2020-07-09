@@ -90,13 +90,33 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
         |> MainMenu.Run configuration (fun()->Command.Resume |> Some) sink 
     Assert.AreEqual(world |> Gamestate.AtSea |> Some, actual)
 
-
 [<Test>]
 let ``Run.It returns Main Menu with no world when given Resume command and there is no world.`` () =
     let actual =
         None
         |> MainMenu.Run configuration (fun()->Command.Resume |> Some) sink 
     Assert.AreEqual(None |> Gamestate.MainMenu |> Some, actual)
+
+[<Test>]
+let ``Run.It returns Main Menu when given the Save command and there is no world.`` () =
+    let inputName = "name"
+    let inputWorld = None
+    let expected = None |> Gamestate.MainMenu |> Some
+    let actual =
+        inputWorld
+        |> MainMenu.Run configuration (fun()->inputName |> Command.Save |> Some) sink 
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``Run.It returns Save Game with the save name and the world when given the Save command and there is a world.`` () =
+    let inputName = "name"
+    let inputWorld = world 
+    let expected = (inputName, inputWorld) |> Gamestate.SaveGame |> Some
+    let actual =
+        inputWorld
+        |> Some
+        |> MainMenu.Run configuration (fun()->inputName |> Command.Save |> Some) sink 
+    Assert.AreEqual(expected, actual)
 
 //[<Test>]
 //let ``Run.It returns YYYY when given XXXX command.`` () =

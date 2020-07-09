@@ -19,8 +19,8 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
         |> Gamestate.GameOver
         |> Some
     let actual =
-        (inputLocation, input)
-        ||> Docked.Run inputSource sinkStub 
+        (inputLocation, avatarId, input)
+        |||> Docked.Run inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -35,8 +35,8 @@ let ``Run.It returns AtSea when given Undock Command.`` () =
         |> Gamestate.AtSea 
         |> Some
     let actual =
-        (inputLocation, input)
-        ||> Docked.Run inputSource sinkStub 
+        (inputLocation, avatarId, input)
+        |||> Docked.Run inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -50,8 +50,8 @@ let ``Run.It returns ConfirmQuit when given Quit Command.`` () =
         |> Gamestate.ConfirmQuit 
         |> Some
     let actual =
-        (inputLocation, input)
-        ||> Docked.Run inputSource sinkStub 
+        (inputLocation, avatarId, input)
+        |||> Docked.Run inputSource sinkStub 
     Assert.AreEqual(expected,actual)
 
 [<Test>]
@@ -68,8 +68,8 @@ let ``Run.It returns Help when given Help Command.`` () =
         |> Gamestate.Help 
         |> Some
     let actual =
-        (inputLocation, input)
-        ||> Docked.Run inputSource sinkStub 
+        (inputLocation, avatarId, input)
+        |||> Docked.Run inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -86,8 +86,8 @@ let ``Run.It returns Inventory when given Inventory Command.`` () =
         |> Gamestate.Inventory 
         |> Some
     let actual =
-        (inputLocation, input)
-        ||> Docked.Run inputSource sinkStub 
+        (inputLocation, avatarId, input)
+        |||> Docked.Run inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -102,8 +102,8 @@ let ``Run.It returns Docked when given invalid Command.`` () =
         |> Gamestate.Docked 
         |> Some
     let actual =
-        (inputLocation, input)
-        ||> Docked.Run inputSource sinkStub 
+        (inputLocation, avatarId, input)
+        |||> Docked.Run inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 
@@ -121,8 +121,8 @@ let ``Run.It returns AtSea when given invalid docked location.`` () =
         |> Gamestate.AtSea 
         |> Some
     let actual =
-        (inputLocation, input)
-        ||> Docked.Run inputSource sinkStub 
+        (inputLocation, avatarId, input)
+        |||> Docked.Run inputSource sinkStub 
     Assert.AreEqual(expected,actual)
     Assert.IsFalse(sourceCalled)
 
@@ -140,8 +140,8 @@ let ``Run.It returns Status when given the command Status.`` () =
         |> Gamestate.Status 
         |> Some
     let actual =
-        (inputLocation, input)
-        ||> Docked.Run inputSource sinkStub 
+        (inputLocation, avatarId, input)
+        |||> Docked.Run inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 
@@ -158,8 +158,8 @@ let ``Run.It returns Docked (at Jobs) gamestate when given the command Jobs.`` (
         |> Gamestate.Docked 
         |> Some
     let actual =
-        (inputLocation, input)
-        ||> Docked.Run inputSource sinkStub 
+        (inputLocation, avatarId, input)
+        |||> Docked.Run inputSource sinkStub  
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -177,7 +177,7 @@ let ``Run.It gives a message when given the Accept Job command and the given job
         |> Some
     let actual =
         input
-        |> Docked.Run inputSource sinkStub inputLocation
+        |> Docked.Run inputSource sinkStub inputLocation avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -195,7 +195,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
         |> Some
     let actual =
         input
-        |> Docked.Run inputSource sinkStub inputLocation
+        |> Docked.Run inputSource sinkStub inputLocation avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -205,20 +205,20 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
     let inputSource = Job |> Command.Abandon |> Some |> toSource
     let expectedMessages = ["You abandon your job."]
     let expectedAvatar = 
-        {input.Avatar with 
+        {input.Avatars.[avatarId] with 
             Job=None
-            Reputation = input.Avatar.Reputation-1.0}
+            Reputation = input.Avatars.[avatarId].Reputation-1.0}
     let expectedWorld = 
         {input with 
             Messages = expectedMessages
-            Avatar= expectedAvatar}
+            Avatars= input.Avatars |> Map.add avatarId expectedAvatar}
     let expected = 
         (Dock, inputLocation, expectedWorld) 
         |> Gamestate.Docked 
         |> Some
     let actual =
         input
-        |> Docked.Run inputSource sinkStub inputLocation
+        |> Docked.Run inputSource sinkStub inputLocation avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -235,7 +235,7 @@ let ``Run.It returns the Docked (at PriceList) gamestate when given the Prices c
         |> Some
     let actual =
         input
-        |> Docked.Run inputSource sinkStub inputLocation
+        |> Docked.Run inputSource sinkStub inputLocation avatarId
     Assert.AreEqual(expected, actual)
 
 
@@ -253,7 +253,7 @@ let ``Run.It returns the Docked (at Shop) gamestate when given the Shop command.
         |> Some
     let actual =
         input
-        |> Docked.Run inputSource sinkStub inputLocation
+        |> Docked.Run inputSource sinkStub inputLocation avatarId
     Assert.AreEqual(expected, actual)
 
 //[<Test>]

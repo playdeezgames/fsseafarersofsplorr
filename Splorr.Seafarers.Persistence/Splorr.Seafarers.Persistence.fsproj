@@ -5,20 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Market.fs" />
-    <Compile Include="Dms.fs" />
-    <Compile Include="Job.fs" />
-    <Compile Include="Item.fs" />
-    <Compile Include="Island.fs" />
-    <Compile Include="Location.fs" />
-    <Compile Include="Statistic.fs" />
-    <Compile Include="Avatar.fs" />
     <Compile Include="World.fs" />
+    <Compile Include="Persister.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Splorr.Seafarers.Models\Splorr.Seafarers.Models.fsproj" />
-    <ProjectReference Include="..\Splorr.Seafarers.Persistence\Splorr.Seafarers.Persistence.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Data.SQLite" Version="1.0.113.1" />
   </ItemGroup>
 
   <ItemGroup>

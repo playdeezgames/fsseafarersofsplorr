@@ -183,6 +183,20 @@ let ``Parse.It returns Islands 0 command when given ["islands";"1"]`` () =
     Assert.AreEqual(0u |> Command.Islands |> Some, actual)
 
 [<Test>]
+let ``Parse.It returns Save "1" command when given ["save";"1"]`` () =
+    let actual =
+        [ "save";"1"]
+        |> CommandSource.Parse
+    Assert.AreEqual("1" |> Command.Save |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Save "1 2" command when given ["save";"1";"2"]`` () =
+    let actual =
+        [ "save";"1";"2"]
+        |> CommandSource.Parse
+    Assert.AreEqual("1 2" |> Command.Save |> Some, actual)
+
+[<Test>]
 let ``Parse.It returns Islands 1 command when given ["islands";"2"]`` () =
     let actual =
         [ "islands";"2"]

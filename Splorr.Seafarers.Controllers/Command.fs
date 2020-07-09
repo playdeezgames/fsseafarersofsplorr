@@ -35,6 +35,7 @@ type Command =
     | Inventory
     | Buy of uint32 * string
     | Sell of uint32 * string
+    | Save of string
 
 type CommandSource = unit -> (Command option)
 

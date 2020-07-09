@@ -3,6 +3,7 @@
 open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
+open CommonTestFixtures
 
 let private previousGameState =
     None
@@ -13,5 +14,5 @@ let private sink(_:Message) : unit = ()
 let ``Run.It returns the given gamestate.`` () =
     let actual =
         previousGameState
-        |> IslandList.Run sink 0u
+        |> IslandList.Run sink 0u avatarId
     Assert.AreEqual(previousGameState |> Some, actual)

@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module ItemList = 
-    let private RunWithIsland (sink:MessageSink) (location:Location) (island:Island) (world: World) : Gamestate option =
+    let private RunWithIsland (sink:MessageSink) (location:Location) (island:Island) (avatarId:string) (world: World) : Gamestate option =
         [
             "" |> Line
             (Heading, "Items for sale:" |> Line) |> Hued

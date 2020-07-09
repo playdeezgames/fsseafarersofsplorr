@@ -99,3 +99,11 @@ let ``GetWorld.It returns None from the given GameOver Gamestate.`` () =
         input
         |> Gamestate.GetWorld
     Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``GetWorld.It returns world from the given SaveGame Gamestate.`` () =
+    let actual =
+        ("savename", world)
+        |> Gamestate.SaveGame
+        |> Gamestate.GetWorld
+    Assert.AreEqual(world |> Some, actual)

@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module Shop = 
-    let private RunWithIsland (source:CommandSource) (sink:MessageSink) (location:Location) (island:Island) (world: World) : Gamestate option =
+    let private RunWithIsland (source:CommandSource) (sink:MessageSink) (avatarId:string) (location:Location) (island:Island) (world: World) : Gamestate option =
         "" |> Line |> sink
         world.Messages
         |> Utility.DumpMessages sink
@@ -14,12 +14,12 @@ module Shop =
         (Heading, island.Name |> sprintf "You are at the shop on the island of '%s'." |> Line) |> Hued |> sink
         match source() with
         | Some (Command.Buy (quantity, itemName))->
-            (Shop, location, world |> World.BuyItems location quantity itemName) 
+            (Shop, location, world |> World.BuyItems location quantity itemName avatarId) 
             |> Gamestate.Docked
             |> Some            
 
         | Some (Command.Sell (quantity, itemName))->
-            (Shop, location, world |> World.SellItems location quantity itemName) 
+            (Shop, location, world |> World.SellItems location quantity itemName avatarId) 
             |> Gamestate.Docked
             |> Some            
 
@@ -62,17 +62,16 @@ module Shop =
             |> Gamestate.Docked
             |> Some
 
-    let Run (source:CommandSource) (sink:MessageSink) (location:Location) (world: World) : Gamestate option =
-        match world with
-        | World.AVATAR_ALIVE ->
+    let Run (source:CommandSource) (sink:MessageSink) (avatarId:string) (location:Location) (world: World) : Gamestate option =
+        if world |> World.IsAvatarAlive avatarId then
             match world.Islands |> Map.tryFind location with
             | Some island ->
-                RunWithIsland source sink location island world
+                RunWithIsland source sink avatarId location island world
             | None ->
                 world
                 |> Gamestate.AtSea
                 |> Some
-        | _ ->
+        else
             world.Messages
             |> Gamestate.GameOver
             |> Some

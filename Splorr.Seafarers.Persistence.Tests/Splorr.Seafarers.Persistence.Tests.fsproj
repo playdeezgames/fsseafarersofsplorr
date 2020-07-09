@@ -14,17 +14,18 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.113.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="ParseInvalidCommandTests.fs" />
-    <Compile Include="CommandSourceTests.fs" />
+    <Compile Include="CommonTestFixtures.fs" />
+    <Compile Include="PersisterTests.fs" />
+    <Compile Include="WorldTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Splorr.Seafarers.Persistence\Splorr.Seafarers.Persistence.fsproj" />
-    <ProjectReference Include="..\Splorr.Seafarers\Splorr.Seafarers.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
