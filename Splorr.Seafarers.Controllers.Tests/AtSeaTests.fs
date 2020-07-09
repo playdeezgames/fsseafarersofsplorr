@@ -235,7 +235,7 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
     let expectedLocation = (0.0, 0.0)
     let expectedIsland = 
         input.Islands.[expectedLocation] 
-        |> Island.AddVisit input.Avatars.[avatarId].Turn.CurrentValue
+        |> Island.AddVisit input.Avatars.[avatarId].Turn.CurrentValue avatarId
     let expectedIslands = 
         input.Islands 
         |> Map.add expectedLocation expectedIsland

@@ -4,6 +4,7 @@ open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open WorldTestFixtures
+open CommonTestFixtures
 
 [<Test>]
 let ``Create.It creates a new world.`` () =
@@ -133,8 +134,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
     let blankIsland =
         {
             Name = ""
-            LastVisit = None
-            VisitCount = None
+            AvatarVisits = Map.empty
             Jobs = []
             Markets = Map.empty
             Items = Set.empty
@@ -254,7 +254,7 @@ let ``Dock.It adds a message when the given location has no island.`` () =
 let ``Dock.It updates the island's visit count and last visit when the given location has an island.`` () =
     let inputWorld = oneIslandWorld
     let expectedIsland = 
-        inputWorld.Islands.[(0.0, 0.0)] |> Island.AddVisit inputWorld.Avatars.[avatarId].Turn.CurrentValue
+        inputWorld.Islands.[(0.0, 0.0)] |> Island.AddVisit inputWorld.Avatars.[avatarId].Turn.CurrentValue avatarId
     let expectedAvatar = {inputWorld.Avatars.[avatarId] with  Messages = [ "You dock." ]}
     let expected = 
         {inputWorld with 
@@ -298,7 +298,7 @@ let ``HeadFor.It adds a message when the island name exists but is not known.`` 
 let ``HeadFor.It sets the heading when the island name exists and is known.`` () =
     let inputWorld =
         headForWorld
-        |> World.TransformIsland (0.0,0.0) (Island.AddVisit headForWorld.Avatars.[avatarId].Turn.CurrentValue >> Some)
+        |> World.TransformIsland (0.0,0.0) (Island.AddVisit headForWorld.Avatars.[avatarId].Turn.CurrentValue avatarId >> Some)
     let expected = {inputWorld with Avatars = inputWorld.Avatars |> Map.add avatarId {inputWorld.Avatars.[avatarId] with Messages=[ "You set your heading to 180°0'0.000000\"."; "You head for `Uno`." ]; Heading=System.Math.PI}}
     let actual =
         inputWorld
@@ -371,7 +371,8 @@ let ``AcceptJob.It adds the given job to the avatar and eliminates it from the i
     let expectedIsland = 
         {inputWorld.Islands.[inputLocation] with Jobs = []}
     let expectedDestination =
-        {inputDestination with VisitCount=Some 0u}
+        {inputDestination with 
+            AvatarVisits = Map.empty |> Map.add avatarId {VisitCount=0u;LastVisit=None}}
     let actual =
         inputWorld
         |> World.AcceptJob 1u inputLocation avatarId

@@ -2,12 +2,12 @@
 
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
+open CommonTestFixtures
 
 let internal unvisitedIsland = 
     {
         Island.Name = "Island"
-        LastVisit = None
-        VisitCount = None
+        AvatarVisits = Map.empty
         Jobs = []
         Markets = Map.empty
         Items = Set.empty
@@ -15,8 +15,7 @@ let internal unvisitedIsland =
 let internal visitedIslandNoLastVisit = 
     {
         Island.Name = "Island"
-        LastVisit = None
-        VisitCount = Some 0u
+        AvatarVisits = Map.empty
         Jobs = []
         Markets = Map.empty
         Items = Set.empty
@@ -24,8 +23,7 @@ let internal visitedIslandNoLastVisit =
 let internal visitedIsland =
     {
         Island.Name = "Island"
-        LastVisit = Some 10.0
-        VisitCount = Some 1u
+        AvatarVisits = Map.empty |> Map.add avatarId {VisitCount=1u;LastVisit=Some 0.0}
         Jobs = []
         Markets = Map.empty
         Items = Set.empty

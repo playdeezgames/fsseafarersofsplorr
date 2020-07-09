@@ -9,7 +9,7 @@ module Docked =
         world.Avatars.[avatarId].Messages
         |> Utility.DumpMessages sink
         [
-            (Flavor, sprintf "You have visited %u times." (island.VisitCount |> Option.defaultValue 0u) |> Line) |> Hued
+            (Flavor, sprintf "You have visited %u times." (island.AvatarVisits |> Map.tryFind avatarId |> Option.map (fun x->x.VisitCount) |> Option.defaultValue 0u) |> Line) |> Hued
             (Heading, sprintf "You are docked at '%s'" island.Name |> Line) |> Hued
         ]
         |> List.iter sink
