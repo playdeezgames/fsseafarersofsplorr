@@ -29,7 +29,7 @@ module AtSea =
             |> World.GetNearbyLocations world.Avatars.[avatarId].Position world.Avatars.[avatarId].ViewDistance
             |> List.map
                 (fun location -> 
-                    (location, Location.HeadingTo world.Avatars.[avatarId].Position location |> Dms.ToDms |> Dms.ToString, Location.DistanceTo world.Avatars.[avatarId].Position location, (world.Islands.[location] |> Island.GetDisplayName)))
+                    (location, Location.HeadingTo world.Avatars.[avatarId].Position location |> Dms.ToDms |> Dms.ToString, Location.DistanceTo world.Avatars.[avatarId].Position location, (world.Islands.[location] |> Island.GetDisplayName avatarId)))
             |> List.sortBy (fun (_,_,d,_)->d)
             |> List.fold
                 (fun target (location, heading, distance, name) -> 

@@ -70,7 +70,7 @@ Persistence:
         permadeath means that the file loaded is deleted 
     ☐ autosave?
 Avatar Longevity:
-    ☐ turn becomes part of the avatar
+    ✔ turn becomes part of the avatar @done(20-07-09 06:29)
     ☐ avatar needs a maximum turn value
     ☐ do not lose health when satiety is zero
     ☐ decrease maximum turn when satiety is zero
@@ -92,9 +92,9 @@ Island Notes:
     ☐ List island notes command
 Refactor "Opportunities":
     ✔ on the islands list, indicate visually the destination of the current job @done(20-07-07 10:49)
-    ☐ move turn from world to avatar
-    ☐ move messages from world to avatar
-    ☐ shift island visit count and last visit to per avatar
+    ✔ move turn from world to avatar @done(20-07-09 06:29)
+    ✔ move messages from world to avatar @done(20-07-09 06:29)
+    ✔ shift island visit count and last visit to per avatar @done(20-07-09 09:12)
     ☐ Prices command may be better named commodities
     ☐ commodity price list may need to be accessible from multiple locations
     ☐ split out the view portion of the game state handler from the command handling portion

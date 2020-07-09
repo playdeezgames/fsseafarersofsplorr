@@ -5,8 +5,7 @@ module Island =
     let Create() : Island =
         {
             Name = ""
-            LastVisit = None
-            VisitCount = None
+            AvatarVisits = Map.empty
             Jobs = []
             Markets = Map.empty
             Items = Set.empty
@@ -15,27 +14,30 @@ module Island =
     let SetName (name:string) (island:Island) : Island =
         {island with Name = name}
 
-    let GetDisplayName (island:Island) : string =
-        match island.VisitCount with
+    let GetDisplayName (avatarId:string) (island:Island) : string =
+        match island.AvatarVisits |> Map.tryFind avatarId with
         | Some _ ->
             island.Name
         | None ->
             "????"
     
-    let AddVisit (turn: float) (island:Island) : Island =
-        match island.VisitCount, island.LastVisit with
-        | None, None ->
+    let AddVisit (turn: float) (avatarId:string) (island:Island) : Island =
+        match island.AvatarVisits |> Map.tryFind avatarId with
+        | None ->
             {island with 
-                VisitCount = Some 1u
-                LastVisit = Some turn}
-        | Some x, None ->
+                AvatarVisits = 
+                    island.AvatarVisits 
+                    |> Map.add avatarId {VisitCount = 1u; LastVisit = Some turn}}
+        | Some x when x.LastVisit.IsNone ->
             {island with
-                VisitCount = Some (x+1u)
-                LastVisit = Some turn}
-        | Some x, Some t when t<turn ->
+                AvatarVisits =
+                    island.AvatarVisits
+                    |> Map.add avatarId {VisitCount = x.VisitCount+1u; LastVisit = Some turn}}
+        | Some x when x.LastVisit.IsSome && x.LastVisit.Value<turn ->
             {island with
-                VisitCount = Some (x+1u)
-                LastVisit = Some turn}
+                AvatarVisits =
+                    island.AvatarVisits
+                    |> Map.add avatarId {VisitCount = x.VisitCount+1u; LastVisit = Some turn}}
         | _ -> island
 
     let GenerateJobs (random:System.Random) (rewardRange:float*float) (destinations:Set<Location>) (island:Island) : Island =
@@ -52,10 +54,13 @@ module Island =
                 (fun (idx, _)->idx=index)
         {island with Jobs = left |> List.map snd}, taken |> List.map snd |> List.tryHead
 
-    let MakeKnown (island:Island) : Island =
-        match island.VisitCount with
+    let MakeKnown (avatarId:string) (island:Island) : Island =
+        match island.AvatarVisits |> Map.tryFind avatarId with
         | None ->
-            {island with VisitCount=Some 0u}
+            {island with 
+                AvatarVisits =
+                    island.AvatarVisits
+                    |> Map.add avatarId {VisitCount=0u; LastVisit=None}}
         | _ -> island
 
     let private SupplyDemandGenerator (random:System.Random) : float =

@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="CommonTestFixtures.fs" />
     <Compile Include="AvatarTestFixtures.fs" />
     <Compile Include="IslandTestFixtures.fs" />
     <Compile Include="WorldTestFixtures.fs" />

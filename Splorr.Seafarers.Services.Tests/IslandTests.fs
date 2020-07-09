@@ -4,6 +4,7 @@ open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open IslandTestFixtures
+open CommonTestFixtures
 
 [<Test>]
 let ``Create.It returns a new island.`` () =
@@ -18,13 +19,16 @@ let ``SetName.It sets the name of a given island to a given name.`` () =
 
 [<Test>]
 let ``GetDisplayName.It returns ???? when there is no visit count.`` () =
-    let actual = Island.Create() |> Island.SetName "Uno" |> Island.GetDisplayName
+    let actual = Island.Create() |> Island.SetName "Uno" |> Island.GetDisplayName avatarId
     Assert.AreEqual("????", actual)
 
 [<Test>]
 let ``GetDisplayName.It returns the island's name when there is a visit count.`` () =
     let name = "Uno"
-    let actual = {Island.Create() with VisitCount=Some 0u} |> Island.SetName name |> Island.GetDisplayName
+    let actual = 
+        {Island.Create() with 
+            AvatarVisits = Map.empty |> Map.add avatarId {VisitCount=0u; LastVisit=None}
+            } |> Island.SetName name |> Island.GetDisplayName avatarId
     Assert.AreEqual(name, actual)
 
 [<Test>]
@@ -32,34 +36,34 @@ let ``AddVisit.It increases visit count to one and sets last visit to given turn
     let turn = 100.0
     let actual =
         unvisitedIsland
-        |> Island.AddVisit turn
-    Assert.AreEqual(Some 1u, actual.VisitCount)
-    Assert.AreEqual(Some turn, actual.LastVisit)
+        |> Island.AddVisit turn avatarId
+    Assert.AreEqual(1u, actual.AvatarVisits.[avatarId].VisitCount)
+    Assert.AreEqual(Some turn, actual.AvatarVisits.[avatarId].LastVisit)
 
 [<Test>]
 let ``AddVisit.It increases visit count by one and sets last visit to given turn when there is no last visit.`` () =
     let turn = 100.0
     let actual = 
         visitedIslandNoLastVisit
-        |> Island.AddVisit turn
-    Assert.AreEqual(Some (visitedIslandNoLastVisit.VisitCount.Value + 1u), actual.VisitCount)
-    Assert.AreEqual(Some turn, actual.LastVisit)
+        |> Island.AddVisit turn avatarId
+    Assert.AreEqual(1u, actual.AvatarVisits.[avatarId].VisitCount)
+    Assert.AreEqual(Some turn, actual.AvatarVisits.[avatarId].LastVisit)
 
 [<Test>]
 let ``AddVisit.It increases visit count by one and sets last visit to given turn when the given turn is after the last visit.`` () =
     let turn = 100.0
     let actual = 
         visitedIsland
-        |> Island.AddVisit turn
-    Assert.AreEqual(Some (visitedIsland.VisitCount.Value + 1u), actual.VisitCount)
-    Assert.AreEqual(Some turn, actual.LastVisit)
+        |> Island.AddVisit turn avatarId
+    Assert.AreEqual(visitedIsland.AvatarVisits.[avatarId].VisitCount + 1u, actual.AvatarVisits.[avatarId].VisitCount)
+    Assert.AreEqual(Some turn, actual.AvatarVisits.[avatarId].LastVisit)
 
 [<Test>]
 let ``AddVisit.It does not update visit count when given turn was prior or equal to last visit.`` () =
     let turn = 0.0
     let actual = 
         visitedIsland
-        |> Island.AddVisit turn
+        |> Island.AddVisit turn avatarId
     Assert.AreEqual(visitedIsland, actual)
 
 [<Test>]
@@ -108,21 +112,23 @@ let ``RemoveJob.It returns the modified island and the indicated job when the gi
 [<Test>]
 let ``MakeKnown.It does nothing when the given island is already known.`` () =
     let input = visitedIsland
+    let expected = visitedIsland
     let actual =
         input
-        |> Island.MakeKnown
-    Assert.AreEqual(input.VisitCount, actual.VisitCount)
-    Assert.AreEqual(input.LastVisit, actual.LastVisit)
-
+        |> Island.MakeKnown avatarId
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``MakeKnown.It mutates the island's visit count to Some 0 when the given island is not known.`` () =
     let input = unvisitedIsland
+    let expected = 
+        {input with
+            AvatarVisits = Map.empty |> Map.add avatarId {VisitCount=0u;LastVisit=None}}
     let actual =
         input
-        |> Island.MakeKnown
-    Assert.AreEqual(Some 0u, actual.VisitCount)
-    Assert.AreEqual(input.LastVisit, actual.LastVisit)
+        |> Island.MakeKnown avatarId
+    Assert.AreEqual(0u, actual.AvatarVisits.[avatarId].VisitCount)
+    Assert.AreEqual(expected.AvatarVisits.[avatarId].LastVisit, actual.AvatarVisits.[avatarId].LastVisit)
 
 [<Test>]
 let ``GenerateCommodities.It does nothing when commodities already exists for the given island.`` () =

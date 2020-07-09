@@ -160,7 +160,7 @@ module World =
                 |> Set.remove location
             world
             |> TransformIsland location 
-                (Island.AddVisit world.Avatars.[avatarId].Turn.CurrentValue
+                (Island.AddVisit world.Avatars.[avatarId].Turn.CurrentValue avatarId
                 >> Island.GenerateJobs random world.RewardRange destinations 
                 >> Island.GenerateCommodities random world.Commodities
                 >> Island.GenerateItems random world.Items
@@ -178,7 +178,7 @@ module World =
             world.Islands
             |> Map.tryPick 
                 (fun k v -> 
-                    if v.Name = islandName && v.VisitCount.IsSome then
+                    if v.Name = islandName && (v.AvatarVisits.ContainsKey avatarId) then
                         Some k
                     else
                         None)
@@ -203,7 +203,7 @@ module World =
             | isle, Some job ->
                 world
                 |> SetIsland location (isle |> Some)
-                |> TransformIsland job.Destination (Island.MakeKnown >> Some)
+                |> TransformIsland job.Destination (Island.MakeKnown avatarId >> Some)
                 |> TransformAvatar avatarId (Avatar.SetJob job >> Some)
                 |> AddMessages avatarId [ "You accepted the job!" ]
             | _ ->
