@@ -22,4 +22,4 @@ release:
     paths:
       - publish/
   script:
-    - dotnet publish -c Release -o ../publish Splorr.Seafarers/Splorr.Seafarers.csproj
+    - dotnet publish -c Release -o ../publish Splorr.Seafarers/Splorr.Seafarers.fsproj
