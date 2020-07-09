@@ -15,7 +15,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
         Assert.Fail("It will not reach for user input because the avatar is dead.")
         None
     let expected =
-        input.Messages
+        input.Avatars.[avatarId].Messages
         |> Gamestate.GameOver
         |> Some
     let actual =
@@ -34,7 +34,7 @@ let ``Run.It adds a message and returns Docked (at Shop) gamestate when given an
         |> toSource
     let expectedWorld = 
         inputWorld 
-        |> World.AddMessages ["Maybe try 'help'?"]
+        |> World.AddMessages avatarId ["Maybe try 'help'?"]
     let expected = 
         (Shop, inputLocation, expectedWorld)
         |> Gamestate.Docked
@@ -145,7 +145,7 @@ let ``Run.It adds a message when given the Buy command for a non-existent item.`
     let inputSource = (1u, "non existent item") |> Command.Buy |> Some |> toSource
     let expectedWorld =
         inputWorld
-        |> World.AddMessages ["Round these parts, we don't sell things like that."]
+        |> World.AddMessages avatarId ["Round these parts, we don't sell things like that."]
     let expected = 
         (Shop, inputLocation, expectedWorld)
         |> Gamestate.Docked
@@ -158,11 +158,11 @@ let ``Run.It adds a message when given the Buy command for a non-existent item.`
 [<Test>]
 let ``Run.It adds a message when given the Buy command and the avatar does not have enough money to complete the purchase.`` () =
     let inputLocation = smallWorldIslandLocation
-    let inputWorld = smallWorldDocked |> World.ClearMessages
+    let inputWorld = smallWorldDocked |> World.ClearMessages avatarId
     let inputSource = (1u, "item under test") |> Command.Buy |> Some |> toSource
     let expectedWorld =
         inputWorld
-        |> World.AddMessages ["You don't have enough money to buy those."]
+        |> World.AddMessages avatarId ["You don't have enough money to buy those."]
     let expected = 
         (Shop, inputLocation, expectedWorld)
         |> Gamestate.Docked
@@ -192,7 +192,7 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
             Markets = expectedMarkets}
     let expectedWorld =
         inputWorld
-        |> World.AddMessages ["You complete the purchase."]
+        |> World.AddMessages avatarId ["You complete the purchase."]
         |> World.TransformIsland inputLocation (fun _ -> expectedIsland |> Some)
         |> World.TransformAvatar avatarId (Avatar.AddInventory Ration 1u >> Some)
         |> World.TransformAvatar avatarId (Avatar.SpendMoney expectedPrice >> Some)
@@ -212,7 +212,7 @@ let ``Run.It adds a message when given the Sell command for a non-existent item.
     let inputSource = (1u, "non existent item") |> Command.Sell |> Some |> toSource
     let expectedWorld =
         inputWorld
-        |> World.AddMessages ["Round these parts, we don't buy things like that."]
+        |> World.AddMessages avatarId ["Round these parts, we don't buy things like that."]
     let expected = 
         (Shop, inputLocation, expectedWorld)
         |> Gamestate.Docked
@@ -229,7 +229,7 @@ let ``Run.It adds a message when given the Sell command and the avatar does not 
     let inputSource = (1u, "item under test") |> Command.Sell |> Some |> toSource
     let expectedWorld =
         inputWorld
-        |> World.AddMessages ["You don't have enough of those to sell."]
+        |> World.AddMessages avatarId ["You don't have enough of those to sell."]
     let expected = 
         (Shop, inputLocation, expectedWorld)
         |> Gamestate.Docked
@@ -266,10 +266,11 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
     let expectedAvatar = 
         {inputAvatar with 
             Inventory = Map.empty
-            Money = 0.5}
+            Money = 0.5
+            Messages = ["You complete the sale."]}
     let expectedWorld =
         inputWorld
-        |> World.AddMessages ["You complete the sale."]
+        |> World.AddMessages avatarId ["You complete the sale."]
         |> World.TransformIsland inputLocation (fun _ -> expectedIsland |> Some)
         |> World.TransformAvatar avatarId (fun _ -> expectedAvatar |> Some)
     let expected = 

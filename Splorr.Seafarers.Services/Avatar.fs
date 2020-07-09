@@ -4,6 +4,7 @@ open Splorr.Seafarers.Models
 module Avatar =
     let Create(position:Location): Avatar =
         {
+            Messages = []
             Position = position
             Speed = 1.0
             Heading = 0.0
@@ -15,6 +16,7 @@ module Avatar =
             Inventory = Map.empty
             Satiety = Statistic.Create (0.0, 100.0) 100.0
             Health = Statistic.Create (0.0, 100.0) 100.0
+            Turn = Statistic.Create (0.0, 15000.0) 0.0
         }
 
     let SetSpeed (speed:float) (avatar:Avatar) : Avatar =
@@ -65,6 +67,7 @@ module Avatar =
         {
             avatar with 
                 Position = ((avatar.Position |> fst) + System.Math.Cos(avatar.Heading) * avatar.Speed, (avatar.Position |> snd) + System.Math.Sin(avatar.Heading) * avatar.Speed)
+                Turn = avatar.Turn |> Statistic.ChangeBy 1.0
         }
         |> Eat
 
@@ -114,3 +117,9 @@ module Avatar =
             DEAD    
         else
             ALIVE
+
+    let ClearMessages (avatar:Avatar) : Avatar =
+        {avatar with Messages = []}
+
+    let AddMessages (messages:string list) (avatar:Avatar) : Avatar =
+        {avatar with Messages = List.append avatar.Messages messages}

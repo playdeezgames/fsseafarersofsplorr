@@ -14,7 +14,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
         Assert.Fail("It will not reach for user input because the avatar is dead.")
         None
     let expected =
-        input.Messages
+        input.Avatars.[avatarId].Messages
         |> Gamestate.GameOver
         |> Some
     let actual =
@@ -64,14 +64,14 @@ let ``Run.It returns AtSea with new speed when given Set Speed command.`` () =
         |> Command.Set 
         |> Some 
         |> toSource
+    let expectedMessages = ["You set your speed to 0.500000."]
     let expectedAvatar = 
         {input.Avatars.[avatarId] with 
-            Speed=newSpeed}
-    let expectedMessages = ["You set your speed to 0.500000."]
+            Speed=newSpeed
+            Messages = expectedMessages}
     let expected = 
         {input with 
-            Avatars = input.Avatars |> Map.add avatarId expectedAvatar
-            Messages= expectedMessages}
+            Avatars = input.Avatars |> Map.add avatarId expectedAvatar}
         |> Gamestate.AtSea 
         |> Some
     let actual =
@@ -94,16 +94,16 @@ let ``Run.It returns AtSea with new heading when given Set Heading command.`` ()
         |> Command.Set 
         |> Some 
         |> toSource
+    let expectedMessages = ["You set your heading to 1\u00b02'3.000000\"."]
     let expectedAvatar = 
         {input.Avatars.[avatarId] with 
             Heading = 
                 newHeading 
-                |> Dms.ToFloat}
-    let expectedMessages = ["You set your heading to 1\u00b02'3.000000\"."]
+                |> Dms.ToFloat
+            Messages = expectedMessages}
     let expected = 
         {input with 
-            Avatars = input.Avatars |> Map.add avatarId expectedAvatar
-            Messages= expectedMessages}
+            Avatars = input.Avatars |> Map.add avatarId expectedAvatar}
         |> Gamestate.AtSea 
         |> Some
     let actual =
@@ -119,17 +119,17 @@ let ``Run.It moves the avatar when given Move command.`` () =
         |> Command.Move 
         |> Some 
         |> toSource
+    let expectedMessages = ["Steady as she goes."]
+    let expectedTurn = input.Avatars.[avatarId].Turn.CurrentValue + 1.0
     let expectedAvatar =
         {input.Avatars.[avatarId] with 
             Position=(6.0,5.0)
-            Satiety = {input.Avatars.[avatarId].Satiety with CurrentValue=99.0}}
-    let expectedMessages = ["Steady as she goes."]
-    let expectedTurn = input.Turn + 1u
+            Satiety = {input.Avatars.[avatarId].Satiety with CurrentValue=99.0}
+            Turn = {input.Avatars.[avatarId].Turn with CurrentValue=expectedTurn}
+            Messages = expectedMessages}
     let expected = 
         {input with 
-            Avatars  = input.Avatars |> Map.add avatarId expectedAvatar
-            Messages = expectedMessages
-            Turn     = expectedTurn} 
+            Avatars  = input.Avatars |> Map.add avatarId expectedAvatar} 
         |> Gamestate.AtSea 
         |> Some
     let actual =
@@ -215,9 +215,12 @@ let ``Run.It returns AtSea when given the Dock command and there is no near enou
         |> Some 
         |> toSource
     let expectedMessages = ["There is no place to dock."]
+    let expectedAvatar =
+        {input.Avatars.[avatarId] with
+            Messages=expectedMessages}
     let expected = 
         {input with 
-            Messages=expectedMessages}
+            Avatars = input.Avatars |> Map.add avatarId expectedAvatar}
         |>Gamestate.AtSea
         |>Some
     let actual =
@@ -232,14 +235,16 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
     let expectedLocation = (0.0, 0.0)
     let expectedIsland = 
         input.Islands.[expectedLocation] 
-        |> Island.AddVisit input.Turn
+        |> Island.AddVisit input.Avatars.[avatarId].Turn.CurrentValue
     let expectedIslands = 
         input.Islands 
         |> Map.add expectedLocation expectedIsland
     let expectedMessages = ["You dock."]
+    let expectedAvatar = 
+        {input.Avatars.[avatarId] with Messages = expectedMessages}
     let expectedWorld = 
         {input with 
-            Messages = expectedMessages
+            Avatars = input.Avatars |> Map.add avatarId expectedAvatar
             Islands = expectedIslands }
     let expected = 
         (Dock, expectedLocation, expectedWorld)
@@ -259,9 +264,11 @@ let ``Run.It gives a message when given a Head For command and the given island 
         |> Some 
         |> toSource
     let expectedMessages = ["I don't know how to get to `foo`."]
+    let expectedAvatar = 
+        {input.Avatars.[avatarId] with Messages = expectedMessages}
     let expected = 
         {input with 
-            Messages= expectedMessages} 
+            Avatars= input.Avatars |> Map.add avatarId expectedAvatar} 
         |> Gamestate.AtSea 
         |> Some
     let actual = 
@@ -278,9 +285,11 @@ let ``Run.It gives a message when given a Head For command and the given island 
         |> Some 
         |> toSource
     let expectedMessages = ["I don't know how to get to `yermom`."]
+    let expectedAvatar = 
+        {input.Avatars.[avatarId] with Messages = expectedMessages}
     let expected = 
         {input with 
-            Messages=expectedMessages} 
+            Avatars=input.Avatars |> Map.add avatarId expectedAvatar} 
         |> Gamestate.AtSea 
         |> Some
     let actual = 
@@ -293,10 +302,9 @@ let ``Run.It gives a message and changes heading when given a Head For command a
     let input = headForWorldVisited
     let inputSource = "yermom" |> Command.HeadFor |> Some |> toSource
     let expectedMessages = ["You set your heading to 180\u00b00'0.000000\"."; "You head for `yermom`."]
-    let expectedAvatar = {input.Avatars.[avatarId] with Heading = System.Math.PI}
+    let expectedAvatar = {input.Avatars.[avatarId] with Heading = System.Math.PI; Messages=expectedMessages}
     let expected = 
         {input with 
-            Messages=expectedMessages
             Avatars = input.Avatars |> Map.add avatarId expectedAvatar} 
         |> Gamestate.AtSea 
         |> Some
@@ -331,9 +339,11 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
         |> Some 
         |> toSource
     let expectedMessages = ["You have no job to abandon."]
+    let expectedAvatar =
+        {input.Avatars.[avatarId] with Messages = expectedMessages}
     let expected = 
         {input with 
-            Messages = expectedMessages} 
+            Avatars = input.Avatars |> Map.add avatarId expectedAvatar} 
         |> Gamestate.AtSea 
         |> Some
     let actual =
@@ -353,10 +363,10 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
     let expectedAvatar = 
         {input.Avatars.[avatarId] with 
             Job=None
-            Reputation = input.Avatars.[avatarId].Reputation - 1.0}
+            Reputation = input.Avatars.[avatarId].Reputation - 1.0
+            Messages = expectedMessages}
     let expected = 
         {input with 
-            Messages = expectedMessages
             Avatars= input.Avatars |> Map.add avatarId expectedAvatar} 
         |> Gamestate.AtSea 
         |> Some

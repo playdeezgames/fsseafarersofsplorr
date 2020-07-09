@@ -22,7 +22,7 @@ module Island =
         | None ->
             "????"
     
-    let AddVisit (turn: uint32) (island:Island) : Island =
+    let AddVisit (turn: float) (island:Island) : Island =
         match island.VisitCount, island.LastVisit with
         | None, None ->
             {island with 

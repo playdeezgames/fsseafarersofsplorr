@@ -7,15 +7,15 @@ module AtSea =
     let private RunAlive (random:System.Random) (source:CommandSource) (sink:MessageSink) (avatarId:string) (world:World) : Gamestate option =
 
         "" |> Line |> sink
-        world.Messages
+        world.Avatars.[avatarId].Messages
         |> Utility.DumpMessages sink
         let world =
             world
-            |> World.ClearMessages
+            |> World.ClearMessages avatarId
         [
             (Heading, "At Sea:" |> Line) |> Hued
             (Label, "Turn: " |> Text) |> Hued
-            (Value, world.Turn |> sprintf "%u" |> Line) |> Hued
+            (Value, world.Avatars.[avatarId].Turn.CurrentValue |> sprintf "%.0f" |> Line) |> Hued
             (Label, "Heading: " |> Text) |> Hued
             (Value, world.Avatars.[avatarId].Heading |> Dms.ToDms |> Dms.ToString |> sprintf "%s" |> Line) |> Hued
             (Label, "Speed: " |> Text) |> Hued
@@ -63,7 +63,7 @@ module AtSea =
                 |> Some
             | None ->
                 world
-                |> World.AddMessages [ "There is no place to dock." ]
+                |> World.AddMessages avatarId [ "There is no place to dock." ]
                 |> Gamestate.AtSea
                 |> Some
 
@@ -130,6 +130,6 @@ module AtSea =
         if world |> World.IsAvatarAlive avatarId then
             RunAlive random source sink avatarId world
         else
-            world.Messages
+            world.Avatars.[avatarId].Messages
             |> Gamestate.GameOver
             |> Some

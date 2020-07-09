@@ -70,8 +70,6 @@ module World =
 
     let Create (configuration:WorldGenerationConfiguration) (random:System.Random) : World =
         {
-            Turn = 0u
-            Messages = []
             Avatars = ["",Avatar.Create(configuration.WorldSize |> Location.ScaleBy 0.5)] |> Map.ofList
             Islands = Map.empty
             RewardRange = configuration.RewardRange
@@ -81,12 +79,6 @@ module World =
         |> GenerateIslands configuration random 0u
         |> NameIslands random
 
-    let ClearMessages(world:World) : World =
-        {world with Messages=[]}
-
-    let AddMessages(messages: string list) (world:World) : World =
-        {world with Messages = List.append world.Messages messages}
-
     let TransformAvatar (avatarId:string) (transform:Avatar -> Avatar option) (world:World) : World =
         world.Avatars
         |> Map.tryFind avatarId
@@ -95,6 +87,12 @@ module World =
             (fun w avatar -> 
                 {w with Avatars = w.Avatars|> Map.add avatarId avatar}) {world with Avatars = world.Avatars |> Map.remove avatarId}
 
+    let ClearMessages(avatarId:string) =
+        TransformAvatar avatarId (Avatar.ClearMessages >> Some)
+
+    let AddMessages(avatarId:string) (messages: string list) =
+        TransformAvatar avatarId (Avatar.AddMessages messages >> Some)
+
     let SetSpeed (speed:float) (avatarId:string) (world:World) : World = 
         world.Avatars
         |> Map.tryFind avatarId
@@ -102,7 +100,7 @@ module World =
         |> Option.fold 
             (fun w a ->
                 {w with Avatars = w.Avatars |> Map.add avatarId a}
-                |> AddMessages [a.Speed |> sprintf "You set your speed to %f."]) world
+                |> AddMessages avatarId [a.Speed |> sprintf "You set your speed to %f."]) world
 
     let SetHeading (heading:Dms) (avatarId:string) (world:World) : World =
         world.Avatars
@@ -111,7 +109,7 @@ module World =
         |> Option.fold 
             (fun w a ->
                 {w with Avatars = w.Avatars |> Map.add avatarId a}
-                |> AddMessages [a.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "You set your heading to %s." ]) world
+                |> AddMessages avatarId [a.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "You set your heading to %s." ]) world
 
     let IsAvatarAlive (avatarId:string) (world:World) =
         match world.Avatars |> Map.tryFind avatarId with
@@ -126,15 +124,12 @@ module World =
         match distance, world.Avatars |> Map.tryFind avatarId with
         | x, Some _ when x > 0u ->
             let steppedWorld = 
-                {
-                    world with 
-                        Turn = world.Turn + 1u
-                }
+                world
                 |> TransformAvatar avatarId (Avatar.Move >> Some)
-                |> AddMessages [ "Steady as she goes." ]
+                |> AddMessages avatarId [ "Steady as she goes." ]
             if IsAvatarAlive avatarId steppedWorld |> not then
                 steppedWorld
-                |> AddMessages [ "You starve to death!" ]
+                |> AddMessages avatarId [ "You starve to death!" ]
             else
                 Move (x-1u) avatarId steppedWorld
         | _ -> world
@@ -149,7 +144,7 @@ module World =
     let private DoJobCompletion (location:Location) (avatarId:string) (job:Job) (world:World) : World = 
         if location = job.Destination then
             world
-            |> AddMessages [ "You complete your job." ]
+            |> AddMessages avatarId [ "You complete your job." ]
             |> TransformAvatar avatarId (Avatar.CompleteJob >> Some)
         else
             world
@@ -165,16 +160,16 @@ module World =
                 |> Set.remove location
             world
             |> TransformIsland location 
-                (Island.AddVisit world.Turn 
+                (Island.AddVisit world.Avatars.[avatarId].Turn.CurrentValue
                 >> Island.GenerateJobs random world.RewardRange destinations 
                 >> Island.GenerateCommodities random world.Commodities
                 >> Island.GenerateItems random world.Items
                 >> Some)
             |> Option.foldBack (DoJobCompletion location avatarId) avatar.Job
-            |> AddMessages [ "You dock." ]
+            |> AddMessages avatarId [ "You dock." ]
         | _, Some _ -> 
             world
-            |> AddMessages [ "There is no place to dock there." ]
+            |> AddMessages avatarId [ "There is no place to dock there." ]
         | _ ->
             world
 
@@ -191,10 +186,10 @@ module World =
         | Some l, Some avatar ->
             world
             |> SetHeading (Location.HeadingTo avatar.Position l |> Dms.ToDms) avatarId
-            |> AddMessages [ islandName |> sprintf "You head for `%s`." ]
+            |> AddMessages avatarId [ islandName |> sprintf "You head for `%s`." ]
         | _, Some _ ->
             world
-            |> AddMessages [ islandName |> sprintf "I don't know how to get to `%s`." ]
+            |> AddMessages avatarId [ islandName |> sprintf "I don't know how to get to `%s`." ]
         | _ ->
             world
 
@@ -202,7 +197,7 @@ module World =
         match jobIndex, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId, world.Avatars |> Map.tryFind avatarId |> Option.bind (fun a -> a.Job) with
         | 0u, _, _, _ ->
             world
-            |> AddMessages [ "That job is currently unavailable." ]
+            |> AddMessages avatarId [ "That job is currently unavailable." ]
         | _, Some island, Some _,None ->
             match island |> Island.RemoveJob jobIndex with
             | isle, Some job ->
@@ -210,13 +205,13 @@ module World =
                 |> SetIsland location (isle |> Some)
                 |> TransformIsland job.Destination (Island.MakeKnown >> Some)
                 |> TransformAvatar avatarId (Avatar.SetJob job >> Some)
-                |> AddMessages [ "You accepted the job!" ]
+                |> AddMessages avatarId [ "You accepted the job!" ]
             | _ ->
                 world
-                |> AddMessages [ "That job is currently unavailable." ]
+                |> AddMessages avatarId [ "That job is currently unavailable." ]
         | _, Some island, Some _, Some job ->
             world
-            |> AddMessages [ "You must complete or abandon your current job before taking on a new one." ]
+            |> AddMessages avatarId [ "You must complete or abandon your current job before taking on a new one." ]
         | _ -> 
             world
 
@@ -224,11 +219,11 @@ module World =
         match world.Avatars |> Map.tryFind avatarId |> Option.bind (fun a -> a.Job) with
         | Some _ ->
             world
-            |> AddMessages [ "You abandon your job." ]
+            |> AddMessages avatarId [ "You abandon your job." ]
             |> TransformAvatar avatarId (Avatar.AbandonJob >> Some)
         | _ ->
             world
-            |> AddMessages [ "You have no job to abandon." ]
+            |> AddMessages avatarId [ "You have no job to abandon." ]
 
     let private FindItemByName (itemName:string) (world:World) : (Item * ItemDescriptor) option =
         world.Items
@@ -242,38 +237,38 @@ module World =
             let price = (quantity |> float) * unitPrice
             if price > avatar.Money then
                 world
-                |> AddMessages ["You don't have enough money to buy those."]
+                |> AddMessages avatarId ["You don't have enough money to buy those."]
             else
                 world
-                |> AddMessages ["You complete the purchase."]
+                |> AddMessages avatarId ["You complete the purchase."]
                 |> TransformAvatar avatarId (Avatar.SpendMoney price >> Some)
                 |> TransformAvatar avatarId (Avatar.AddInventory item quantity >> Some)
                 |> TransformIsland location (Island.UpdateMarketForItemSale world.Commodities descriptor quantity >> Some)
         | None, Some island, Some _ ->
             world
-            |> AddMessages ["Round these parts, we don't sell things like that."]
+            |> AddMessages avatarId ["Round these parts, we don't sell things like that."]
         | _ ->
             world
-            |> AddMessages ["You cannot buy items here."]
+            |> AddMessages avatarId ["You cannot buy items here."]
 
     let SellItems (location:Location) (quantity:uint32) (itemName:string) (avatarId:string) (world:World) : World =
         match world |> FindItemByName itemName, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
         | Some (item, descriptor), Some island, Some avatar ->
             if quantity > (avatar |> Avatar.GetItemCount item) then
                 world
-                |> AddMessages ["You don't have enough of those to sell."]
+                |> AddMessages avatarId ["You don't have enough of those to sell."]
             else
                 let unitPrice = 
                     Item.DeterminePurchasePrice world.Commodities island.Markets descriptor 
                 let price = (quantity |> float) * unitPrice
                 world
-                |> AddMessages ["You complete the sale."]
+                |> AddMessages avatarId ["You complete the sale."]
                 |> TransformAvatar avatarId (Avatar.EarnMoney price >> Some)
                 |> TransformAvatar avatarId (Avatar.RemoveInventory item quantity >> Some)
                 |> TransformIsland location (Island.UpdateMarketForItemPurchase world.Commodities descriptor quantity >> Some)
         | None, Some island, Some _ ->
             world
-            |> AddMessages ["Round these parts, we don't buy things like that."]
+            |> AddMessages avatarId ["Round these parts, we don't buy things like that."]
         | _ ->
             world
-            |> AddMessages ["You cannot sell items here."]
+            |> AddMessages avatarId ["You cannot sell items here."]

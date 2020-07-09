@@ -15,7 +15,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
         Assert.Fail("It will not reach for user input because the avatar is dead.")
         None
     let expected =
-        input.Messages
+        input.Avatars.[avatarId].Messages
         |> Gamestate.GameOver
         |> Some
     let actual =
@@ -29,9 +29,11 @@ let ``Run.It returns AtSea when given Undock Command.`` () =
     let inputLocation= dockLocation
     let inputSource = Command.Undock |> Some |> toSource
     let expectedMessages = ["You undock."]
+    let expectedAvatar = 
+        {input.Avatars.[avatarId] with Messages = expectedMessages}
     let expected = 
         {input with 
-            Messages = expectedMessages} 
+            Avatars = input.Avatars |> Map.add avatarId expectedAvatar} 
         |> Gamestate.AtSea 
         |> Some
     let actual =
@@ -168,9 +170,11 @@ let ``Run.It gives a message when given the Accept Job command and the given job
     let inputLocation = smallWorldIslandLocation
     let inputSource = 0u |> Command.AcceptJob |> Some |> toSource
     let expectedMessages = [ "That job is currently unavailable." ]
+    let expectedAvatar =
+        {input.Avatars.[avatarId] with Messages = expectedMessages}
     let expectedWorld = 
         {input with 
-            Messages = expectedMessages}
+            Avatars = input.Avatars |> Map.add avatarId expectedAvatar}
     let expected = 
         (Dock, inputLocation,  expectedWorld) 
         |> Gamestate.Docked 
@@ -189,8 +193,12 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
         |> Command.Abandon 
         |> Some 
         |> toSource
+    let expectedAvatar =
+        {input.Avatars.[avatarId] with Messages = ["You have no job to abandon."]}
+    let expectedWorld = 
+        {input with Avatars = input.Avatars |> Map.add avatarId expectedAvatar}
     let expected = 
-        (Dock, inputLocation, {input with Messages = ["You have no job to abandon."]}) 
+        (Dock, inputLocation, expectedWorld) 
         |> Gamestate.Docked 
         |> Some
     let actual =
@@ -207,10 +215,11 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
     let expectedAvatar = 
         {input.Avatars.[avatarId] with 
             Job=None
-            Reputation = input.Avatars.[avatarId].Reputation-1.0}
+            Reputation = input.Avatars.[avatarId].Reputation-1.0
+            Messages = expectedMessages}
     let expectedWorld = 
         {input with 
-            Messages = expectedMessages
+            
             Avatars= input.Avatars |> Map.add avatarId expectedAvatar}
     let expected = 
         (Dock, inputLocation, expectedWorld) 

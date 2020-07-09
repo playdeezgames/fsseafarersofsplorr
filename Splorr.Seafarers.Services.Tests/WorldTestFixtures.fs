@@ -20,9 +20,9 @@ let internal soloIslandWorld = World.Create soloIslandWorldConfiguration random
 let internal emptyWorld = 
     {
         RewardRange = (1.0,10.0)
-        Messages=[]
         Avatars = 
             ["",{
+                Messages = []
                 Position = (0.0,0.0)
                 Heading = 0.0
                 Speed = 1.0
@@ -34,10 +34,10 @@ let internal emptyWorld =
                 Inventory = Map.empty
                 Satiety = Statistic.Create (0.0, 100.0) (100.0)
                 Health = Statistic.Create (0.0, 100.0) (100.0)
+                Turn = {MinimumValue=0.0;CurrentValue=0.0;MaximumValue=15000.0}
             }] 
             |> Map.ofList
         Islands = Map.empty
-        Turn = 0u
         Commodities = Map.empty
         Items = Map.empty
     }
@@ -81,7 +81,7 @@ let internal deadWorld =
 
 let internal genericWorldIslandLocation = genericWorld.Islands |> Map.toList |> List.map fst |> List.head
 let internal genericWorldInvalidIslandLocation = ((genericWorldIslandLocation |> fst) + 1.0, genericWorldIslandLocation |> snd)
-let internal genericDockedWorld = World.Dock random genericWorldIslandLocation avatarId genericWorld |> World.ClearMessages
+let internal genericDockedWorld = World.Dock random genericWorldIslandLocation avatarId genericWorld |> World.ClearMessages avatarId
 
 let internal shopWorld = 
     genericDockedWorld
@@ -91,7 +91,7 @@ let internal shopWorld =
 let internal shopWorldLocation = genericWorldIslandLocation
 let internal shopWorldBogusLocation = genericWorldInvalidIslandLocation
 
-let internal jobWorld = genericDockedWorld |> World.AcceptJob 1u genericWorldIslandLocation avatarId |> World.ClearMessages
+let internal jobWorld = genericDockedWorld |> World.AcceptJob 1u genericWorldIslandLocation avatarId |> World.ClearMessages avatarId
 let internal jobLocation = jobWorld.Avatars.[avatarId].Job.Value.Destination
 
 let internal headForWorld =

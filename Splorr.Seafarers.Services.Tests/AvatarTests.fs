@@ -311,3 +311,25 @@ let ``ALIVE/DEAD.It returns a DEAD when given an avatar minimum health (zero).``
     match deadAvatar with
     | Avatar.DEAD -> Assert.Pass("It detected that the avatar is dead")
     | _ -> Assert.Fail("It detected that the avatar is not dead")
+
+[<Test>]
+let ``ClearMessages.It removes all of the messages from a given avatar.`` () =
+    let input =
+        {avatar with Messages=["Please clear me!"]}
+    let expected =
+        {input with Messages=[]}
+    let actual =
+        input
+        |> Avatar.ClearMessages
+    Assert.AreEqual(expected.Messages, actual.Messages)
+
+[<Test>]
+let ``AddMessages.It adds messages to a given avatar.`` () =
+    let input = {avatar with Messages=["This is a previous message!"]}
+    let inputMessages = ["Here's a message!";"And another one!"]
+    let expectedMessages = List.append input.Messages inputMessages
+    let actual =
+        input
+        |> Avatar.AddMessages inputMessages
+    Assert.AreEqual(expectedMessages, actual.Messages)
+

@@ -29,7 +29,7 @@ let ``GetDisplayName.It returns the island's name when there is a visit count.``
 
 [<Test>]
 let ``AddVisit.It increases visit count to one and sets last visit to given turn when there is no last visit and no visit count.`` () =
-    let turn = 100u
+    let turn = 100.0
     let actual =
         unvisitedIsland
         |> Island.AddVisit turn
@@ -38,7 +38,7 @@ let ``AddVisit.It increases visit count to one and sets last visit to given turn
 
 [<Test>]
 let ``AddVisit.It increases visit count by one and sets last visit to given turn when there is no last visit.`` () =
-    let turn = 100u
+    let turn = 100.0
     let actual = 
         visitedIslandNoLastVisit
         |> Island.AddVisit turn
@@ -47,7 +47,7 @@ let ``AddVisit.It increases visit count by one and sets last visit to given turn
 
 [<Test>]
 let ``AddVisit.It increases visit count by one and sets last visit to given turn when the given turn is after the last visit.`` () =
-    let turn = 100u
+    let turn = 100.0
     let actual = 
         visitedIsland
         |> Island.AddVisit turn
@@ -56,7 +56,7 @@ let ``AddVisit.It increases visit count by one and sets last visit to given turn
 
 [<Test>]
 let ``AddVisit.It does not update visit count when given turn was prior or equal to last visit.`` () =
-    let turn = 0u
+    let turn = 0.0
     let actual = 
         visitedIsland
         |> Island.AddVisit turn

@@ -24,7 +24,7 @@ let internal visitedIslandNoLastVisit =
 let internal visitedIsland =
     {
         Island.Name = "Island"
-        LastVisit = Some 10u
+        LastVisit = Some 10.0
         VisitCount = Some 1u
         Jobs = []
         Markets = Map.empty
