@@ -96,7 +96,7 @@ module Job =
             "Davin"
         ]
 
-    let private personalityadjectives =
+    let private personalAdjectives =
         [
             "happy"
             "joyful"
@@ -105,6 +105,15 @@ module Job =
             "submissive"
             "dominant"
             "dedicated"
+            "bald"
+            "well-endowed"
+            "evil"
+            "naked"
+            "unscrupulous"
+            "mysogynistic"
+            "gluttonous"
+            "smelly"
+            "surly"
         ]
 
     let private professions = 
@@ -125,7 +134,7 @@ module Job =
             "streamer"
             "barkeep"
             "silversmith"
-            "glazer"
+            "glazier"
             "calligrapher"
             "influencer"
             "milkman"
@@ -146,9 +155,10 @@ module Job =
         let adjective = ChooseRandomTerm random adjectives
         let objectName = ChooseRandomTerm random objectNames
         let name = ChooseRandomTerm random names
+        let personalAdjective = ChooseRandomTerm random personalAdjectives
         let profession = ChooseRandomTerm random professions
         {
-            FlavorText = sprintf "please deliver this %s %s %s to %s the %s" adverb adjective objectName name profession
+            FlavorText = sprintf "please deliver this %s %s %s to %s the %s %s" adverb adjective objectName name personalAdjective profession
             Destination = 
                 destinations
                 |> Set.toList

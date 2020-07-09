@@ -6,7 +6,7 @@ open Splorr.Seafarers.Services
 module Docked = 
     let private RunWithIsland (source:CommandSource) (sink:MessageSink) (location:Location) (island:Island) (avatarId:string) (world: World) : Gamestate option =
         "" |> Line |> sink
-        world.Messages
+        world.Avatars.[avatarId].Messages
         |> Utility.DumpMessages sink
         [
             (Flavor, sprintf "You have visited %u times." (island.VisitCount |> Option.defaultValue 0u) |> Line) |> Hued
@@ -16,7 +16,7 @@ module Docked =
 
         let world =
             world
-            |> World.ClearMessages
+            |> World.ClearMessages avatarId
 
         match source() with
         | Some (Command.AcceptJob index) ->
@@ -47,7 +47,7 @@ module Docked =
 
         | Some Command.Undock ->
             world 
-            |> World.AddMessages [ "You undock." ]
+            |> World.AddMessages avatarId [ "You undock." ]
             |> Gamestate.AtSea 
             |> Some
 
@@ -90,7 +90,7 @@ module Docked =
                 |> Gamestate.AtSea
                 |> Some
         else
-            world.Messages
+            world.Avatars.[avatarId].Messages
             |> Gamestate.GameOver
             |> Some
 

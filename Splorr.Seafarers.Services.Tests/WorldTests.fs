@@ -15,21 +15,25 @@ let ``Create.It creates a new world.`` () =
     Assert.AreNotEqual("", (actual.Islands |> Map.toList |> List.map snd |> List.head).Name)
 
 [<Test>]
-let ``ClearMessages.It removes any messages from the world.`` () =
+let ``ClearMessages.It removes any messages from the given avatar in the world.`` () =
+    let inputAvatar = {soloIslandWorld.Avatars.[avatarId] with Messages = ["test"]} 
+    let inputWorld = {soloIslandWorld with Avatars = soloIslandWorld.Avatars |> Map.add avatarId inputAvatar}
     let actual =
-        {soloIslandWorld with Messages = ["test"]}
-        |> World.ClearMessages
-    Assert.AreEqual([], actual.Messages)
+        inputWorld
+        |> World.ClearMessages avatarId
+    Assert.AreEqual([], actual.Avatars.[avatarId].Messages)
 
 [<Test>]
 let ``AddMessages.It appends new messages to previously existing messages in the world.`` () =
     let oldMessages = ["one"; "two"]
     let newMessages = [ "three"; "four"]
     let allMessages = List.append oldMessages newMessages
+    let inputAvatar = {soloIslandWorld.Avatars.[avatarId] with Messages = oldMessages}
+    let inputWorld = {soloIslandWorld with Avatars= soloIslandWorld.Avatars |> Map.add avatarId inputAvatar}
     let actual = 
-        {soloIslandWorld with Messages = oldMessages}
-        |> World.AddMessages newMessages
-    Assert.AreEqual(allMessages, actual.Messages)
+        inputWorld
+        |> World.AddMessages avatarId newMessages
+    Assert.AreEqual(allMessages, actual.Avatars.[avatarId].Messages)
 
 [<Test>]
 let ``SetSpeed.It produces all stop in the avatar when less than zero is passed.`` () =
@@ -140,6 +144,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
             RewardRange = (1.0,10.0)
             Avatars = 
                 [avatarId,{
+                    Messages = []
                     Position=(5.0, 5.0)
                     Speed=1.0
                     Heading=0.0
@@ -151,10 +156,9 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                     Inventory = Map.empty
                     Satiety = Statistic.Create (0.0, 100.0) (100.0)
                     Health = Statistic.Create (0.0, 100.0) (100.0)
+                    Turn = Statistic.Create (0.0, 15000.0) (0.0)
                 }]|>Map.ofList
-            Turn = 0u
             Commodities = Map.empty
-            Messages = []
             Items = Map.empty
             Islands=
                 Map.empty
@@ -236,19 +240,30 @@ let ``Dock.It does nothing when given an invalid avatar id.`` () =
 
 [<Test>]
 let ``Dock.It adds a message when the given location has no island.`` () =
+    let inputWorld = emptyWorld
+    let expectedAvatar = {inputWorld.Avatars.[avatarId] with Messages = [ "There is no place to dock there." ]}
+    let expected =
+        {inputWorld with 
+            Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar}
     let actual = 
-        emptyWorld
+        inputWorld
         |> World.Dock random (0.0, 0.0) avatarId
-    Assert.AreEqual({emptyWorld with Messages = [ "There is no place to dock there." ]}, actual)
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Dock.It updates the island's visit count and last visit when the given location has an island.`` () =
+    let inputWorld = oneIslandWorld
+    let expectedIsland = 
+        inputWorld.Islands.[(0.0, 0.0)] |> Island.AddVisit inputWorld.Avatars.[avatarId].Turn.CurrentValue
+    let expectedAvatar = {inputWorld.Avatars.[avatarId] with  Messages = [ "You dock." ]}
+    let expected = 
+        {inputWorld with 
+            Islands = inputWorld.Islands |> Map.add (0.0, 0.0) expectedIsland
+            Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar}        
     let actual = 
-        oneIslandWorld
+        inputWorld
         |> World.Dock random (0.0, 0.0) avatarId
-    let updatedIsland = 
-        oneIslandWorld.Islands.[(0.0, 0.0)] |> Island.AddVisit oneIslandWorld.Turn
-    Assert.AreEqual({oneIslandWorld with Messages = [ "You dock." ]; Islands = oneIslandWorld.Islands |> Map.add (0.0, 0.0) updatedIsland}, actual)
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``HeadFor.It does nothing when given an invalid avatar id.`` () =
@@ -259,27 +274,36 @@ let ``HeadFor.It does nothing when given an invalid avatar id.`` () =
 
 [<Test>]
 let ``HeadFor.It adds a message when the island name does not exist.`` () =
+    let inputWorld = headForWorld
+    let expectedAvatar = {inputWorld.Avatars.[avatarId] with Messages = [ "I don't know how to get to `yermom`." ]}
+    let expected =
+        {inputWorld with Avatars= inputWorld.Avatars |> Map.add avatarId expectedAvatar}        
     let actual =
-        headForWorld
+        inputWorld
         |> World.HeadFor "yermom" avatarId
-    Assert.AreEqual({headForWorld with Messages=[ "I don't know how to get to `yermom`." ]}, actual)
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``HeadFor.It adds a message when the island name exists but is not known.`` () =
+    let inputWorld = headForWorld
+    let expectedAvatar = {inputWorld.Avatars.[avatarId] with Messages = [ "I don't know how to get to `Uno`." ]}
+    let expected =
+        {inputWorld with Avatars= inputWorld.Avatars |> Map.add avatarId expectedAvatar}        
     let actual =
-        headForWorld
+        inputWorld
         |> World.HeadFor "Uno" avatarId
-    Assert.AreEqual({headForWorld with Messages=[ "I don't know how to get to `Uno`." ]}, actual)
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``HeadFor.It sets the heading when the island name exists and is known.`` () =
-    let modifiedWorld =
+    let inputWorld =
         headForWorld
-        |> World.TransformIsland (0.0,0.0) (Island.AddVisit headForWorld.Turn >> Some)
+        |> World.TransformIsland (0.0,0.0) (Island.AddVisit headForWorld.Avatars.[avatarId].Turn.CurrentValue >> Some)
+    let expected = {inputWorld with Avatars = inputWorld.Avatars |> Map.add avatarId {inputWorld.Avatars.[avatarId] with Messages=[ "You set your heading to 180°0'0.000000\"."; "You head for `Uno`." ]; Heading=System.Math.PI}}
     let actual =
-        modifiedWorld
+        inputWorld
         |> World.HeadFor "Uno" avatarId
-    Assert.AreEqual({modifiedWorld with Messages=[ "You set your heading to 180°0'0.000000\"."; "You head for `Uno`." ]; Avatars = modifiedWorld.Avatars |> Map.add avatarId {modifiedWorld.Avatars.[avatarId] with Heading=System.Math.PI}}, actual)
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``AcceptJob.It does nothing when given an invalid island location.`` () =
@@ -290,17 +314,25 @@ let ``AcceptJob.It does nothing when given an invalid island location.`` () =
 
 [<Test>]
 let ``AcceptJob.It adds a message to the world when given an 0 job index for the given valid island location.`` () =
+    let inputWorld = genericDockedWorld
+    let expectedAvatar = {inputWorld.Avatars.[avatarId] with Messages = [ "That job is currently unavailable." ]}
+    let expected =
+        {inputWorld with Avatars= inputWorld.Avatars |> Map.add avatarId expectedAvatar}        
     let actual =
-        genericDockedWorld
+        inputWorld
         |> World.AcceptJob 0u genericWorldIslandLocation avatarId
-    Assert.AreEqual ({genericDockedWorld with Messages = [ "That job is currently unavailable." ]}, actual)
+    Assert.AreEqual (expected, actual)
 
 [<Test>]
 let ``AcceptJob.It adds a message to the world when given an invalid job index for the given valid island location.`` () =
+    let inputWorld = genericDockedWorld
+    let expectedAvatar = {inputWorld.Avatars.[avatarId] with Messages = [ "That job is currently unavailable." ]}
+    let expected =
+        {inputWorld with Avatars= inputWorld.Avatars |> Map.add avatarId expectedAvatar}        
     let actual =
-        genericDockedWorld
+        inputWorld
         |> World.AcceptJob 0xFFFFFFFFu genericWorldIslandLocation avatarId
-    Assert.AreEqual ({genericDockedWorld with Messages = [ "That job is currently unavailable." ]}, actual)
+    Assert.AreEqual (expected, actual)
 
 [<Test>]
 let ``AcceptJob.It does nothing when given an invalid avatar id.`` () =
@@ -317,10 +349,13 @@ let ``AcceptJob.It adds a message to the world when the job is valid but the ava
         genericDockedWorld
         |> World.TransformAvatar avatarId
             (fun avatar -> {avatar with Job =Some {FlavorText="";Destination=(0.0,0.0); Reward=0.0}}|>Some)
+    let expectedAvatar = {inputWorld.Avatars.[avatarId] with Messages = [ "You must complete or abandon your current job before taking on a new one." ]}
+    let expected =
+        {inputWorld with Avatars= inputWorld.Avatars |> Map.add avatarId expectedAvatar}        
     let actual =
         inputWorld
         |> World.AcceptJob 1u genericWorldIslandLocation avatarId
-    Assert.AreEqual ({inputWorld with Messages = [ "You must complete or abandon your current job before taking on a new one." ]}, actual)
+    Assert.AreEqual (expected, actual)
 
 
 [<Test>]
@@ -331,6 +366,7 @@ let ``AcceptJob.It adds the given job to the avatar and eliminates it from the i
     let inputDestination = inputWorld.Islands.[inputJob.Destination]
     let expectedAvatar = 
         inputWorld.Avatars.[avatarId]
+        |> Avatar.AddMessages ["You accepted the job!"]
         |> Avatar.SetJob inputJob
     let expectedIsland = 
         {inputWorld.Islands.[inputLocation] with Jobs = []}
@@ -339,8 +375,7 @@ let ``AcceptJob.It adds the given job to the avatar and eliminates it from the i
     let actual =
         inputWorld
         |> World.AcceptJob 1u inputLocation avatarId
-    Assert.AreEqual( "You accepted the job!", actual.Messages.Head)
-    Assert.AreEqual(1, actual.Messages.Length)
+    Assert.AreEqual(1, actual.Avatars.[avatarId].Messages.Length)
     Assert.AreEqual(expectedAvatar, actual.Avatars.[avatarId])
     Assert.AreEqual(expectedIsland, actual.Islands.[inputLocation])
     Assert.AreEqual(expectedDestination, actual.Islands.[inputJob.Destination])
@@ -356,7 +391,8 @@ let ``TransformAvatar.It transforms the avatar within the given world.`` () =
 [<Test>]
 let ``AbandonJob.It adds a message when the avatar has no job.`` () =
     let input = genericDockedWorld
-    let expected = {input with Messages=["You have no job to abandon."]}
+    let expectedAvatar = {input.Avatars.[avatarId] with Messages=["You have no job to abandon."]}
+    let expected = {input with Avatars = input.Avatars |> Map.add avatarId expectedAvatar}
     let actual = 
         input
         |> World.AbandonJob avatarId
@@ -365,7 +401,7 @@ let ``AbandonJob.It adds a message when the avatar has no job.`` () =
 [<Test>]
 let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a job`` () =
     let input = jobWorld
-    let expected = {input with Messages=["You abandon your job."]; Avatars = input.Avatars |> Map.add avatarId {input.Avatars.[avatarId] with Job = None; Reputation = input.Avatars.[avatarId].Reputation - 1.0}}
+    let expected = {input with Avatars = input.Avatars |> Map.add avatarId {input.Avatars.[avatarId] with Messages=["You abandon your job."];Job = None; Reputation = input.Avatars.[avatarId].Reputation - 1.0}}
     let actual = 
         input
         |> World.AbandonJob avatarId
@@ -374,26 +410,29 @@ let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a
 [<Test>]
 let ``Dock.It does not modify avatar when given avatar has a job for a different destination.`` () =
     let input = jobWorld
+    let expectedAvatar =
+        {input.Avatars.[avatarId] with Messages = ["You dock."]}
     let actual = 
         jobWorld
         |> World.Dock random genericWorldIslandLocation avatarId
-    Assert.AreEqual(input.Avatars.[avatarId], actual.Avatars.[avatarId])
+    Assert.AreEqual(expectedAvatar, actual.Avatars.[avatarId])
 
 [<Test>]
 let ``Dock.It adds a message and completes the job when given avatar has a job for this location.`` () =
     let input = jobWorld
     let inputJob = jobWorld.Avatars.[avatarId].Job.Value
+    let expectedMessages = ["You complete your job."; "You dock."]
     let expectedAvatar = 
         {input.Avatars.[avatarId] with 
             Job = None;
             Money = input.Avatars.[avatarId].Money + inputJob.Reward;
-            Reputation = input.Avatars.[avatarId].Reputation + 1.0}
-    let expectedMessages = ["You complete your job."; "You dock."]
+            Reputation = input.Avatars.[avatarId].Reputation + 1.0
+            Messages = expectedMessages}
     let actual = 
         jobWorld
         |> World.Dock random jobLocation avatarId
     Assert.AreEqual(expectedAvatar, actual.Avatars.[avatarId])
-    Assert.AreEqual(expectedMessages, actual.Messages)
+    Assert.AreEqual(expectedMessages, actual.Avatars.[avatarId].Messages)
 
 [<Test>]
 let ``BuyItems.It gives a message when given a bogus island location.`` () =
@@ -403,7 +442,7 @@ let ``BuyItems.It gives a message when given a bogus island location.`` () =
     let inputItemName = "item under test"
     let expected =
         input
-        |> World.AddMessages ["You cannot buy items here."]
+        |> World.AddMessages avatarId ["You cannot buy items here."]
     let actual = 
         input 
         |> World.BuyItems inputLocation inputQuantity inputItemName avatarId
@@ -417,7 +456,7 @@ let ``BuyItems.It gives a message when given a valid island location and a bogus
     let inputItemName = "bogus item"
     let expected =
         input
-        |> World.AddMessages ["Round these parts, we don't sell things like that."]
+        |> World.AddMessages avatarId ["Round these parts, we don't sell things like that."]
     let actual = 
         input 
         |> World.BuyItems inputLocation inputQuantity inputItemName avatarId
@@ -431,7 +470,7 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds.`` () =
     let inputItemName = "item under test"
     let expected =
         input
-        |> World.AddMessages ["You don't have enough money to buy those."]
+        |> World.AddMessages avatarId ["You don't have enough money to buy those."]
     let actual = 
         input 
         |> World.BuyItems inputLocation inputQuantity inputItemName avatarId
@@ -458,7 +497,7 @@ let ``BuyItems.It gives a message and completes the purchase when the avatar has
         {input with
             Avatars = input.Avatars |> Map.add avatarId expectedAvatar
             Islands = input.Islands |> Map.add inputLocation expectedIsland}
-        |> World.AddMessages ["You complete the purchase."]
+        |> World.AddMessages avatarId ["You complete the purchase."]
     let actual = 
         input 
         |> World.BuyItems inputLocation inputQuantity inputItemName avatarId
@@ -472,7 +511,7 @@ let ``SellItems.It gives a message when given a bogus island location.`` () =
     let inputItemName = "item under test"
     let expected =
         input
-        |> World.AddMessages ["You cannot sell items here."]
+        |> World.AddMessages avatarId ["You cannot sell items here."]
     let actual = 
         input 
         |> World.SellItems inputLocation inputQuantity inputItemName avatarId
@@ -486,7 +525,7 @@ let ``SellItems.It gives a message when given a valid island location and bogus 
     let inputItemName = "bogus item"
     let expected =
         input
-        |> World.AddMessages ["Round these parts, we don't buy things like that."]
+        |> World.AddMessages avatarId ["Round these parts, we don't buy things like that."]
     let actual = 
         input 
         |> World.SellItems inputLocation inputQuantity inputItemName avatarId
@@ -500,7 +539,7 @@ let ``SellItems.It gives a message when the avatar has insufficient items in inv
     let inputItemName = "item under test"
     let expected =
         input
-        |> World.AddMessages ["You don't have enough of those to sell."]
+        |> World.AddMessages avatarId ["You don't have enough of those to sell."]
     let actual = 
         input 
         |> World.SellItems inputLocation inputQuantity inputItemName avatarId
@@ -527,7 +566,7 @@ let ``SellItems.It gives a message and completes the purchase when the avatar ha
         {input with
             Avatars = input.Avatars |> Map.add avatarId expectedAvatar
             Islands = input.Islands |> Map.add inputLocation expectedIsland}
-        |> World.AddMessages ["You complete the sale."]
+        |> World.AddMessages avatarId ["You complete the sale."]
     let actual = 
         input 
         |> World.SellItems inputLocation inputQuantity inputItemName avatarId

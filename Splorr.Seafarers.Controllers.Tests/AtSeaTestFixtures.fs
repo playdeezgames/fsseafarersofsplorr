@@ -18,8 +18,8 @@ let internal deadWorld =
     world
     |> World.TransformAvatar avatarId
         (fun a -> {a with Health = {a.Health with CurrentValue = a.Health.MinimumValue}}|>Some)
-    |> World.ClearMessages
-    |> World.AddMessages ["Yer ded."]
+    |> World.ClearMessages avatarId
+    |> World.AddMessages avatarId ["Yer ded."]
 
 
 let internal emptyWorldconfiguration: WorldGenerationConfiguration =

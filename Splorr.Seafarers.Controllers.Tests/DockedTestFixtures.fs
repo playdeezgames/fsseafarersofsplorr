@@ -34,7 +34,7 @@ let internal smallWorldconfiguration: WorldGenerationConfiguration =
 let internal smallWorld = World.Create smallWorldconfiguration random
 let internal smallWorldIslandLocation = smallWorld.Islands |> Map.toList |> List.map fst |> List.head
 let internal smallWorldDocked = smallWorld |> World.Dock random smallWorldIslandLocation avatarId
-let internal shopWorld = smallWorldDocked |> World.ClearMessages
+let internal shopWorld = smallWorldDocked |> World.ClearMessages avatarId
 
 let internal abandonJobWorld =
     dockWorld
