@@ -13,14 +13,14 @@ module World =
             [RewardMaximum] REAL NOT NULL,
             [Timestamp] TEXT NOT NULL
         );"
-    let private EnsureWorldTableExists (connection:SQLiteConnection) : unit =
+    let private EnsureTableExists (connection:SQLiteConnection) : unit =
         use command = new SQLiteCommand(createTableCommand, connection)
         command.ExecuteNonQuery() |> ignore
 
     let Save (connection:SQLiteConnection) (name:string) (world:World) : Result<int, exn> =
         try
             connection
-            |>  EnsureWorldTableExists 
+            |>  EnsureTableExists 
 
             use command = new SQLiteCommand("INSERT INTO [Worlds]([WorldName],[RewardMinimum],[RewardMaximum],[Timestamp]) VALUES($WorldName,$RewardMinimum,$RewardMaximum,$Timestamp)", connection)
             command.Parameters.AddWithValue("$WorldName",name) |> ignore
@@ -30,6 +30,9 @@ module World =
             command.ExecuteNonQuery() |> ignore
 
             use command = new SQLiteCommand("SELECT last_insert_rowid();",connection)
-            command.ExecuteScalar() :?> int64 |> int32 |> Ok
+            command.ExecuteScalar() 
+            :?> int64 |> int32 |> Ok
+            |> Result.bind (fun worldId -> Commodity.Save connection worldId world.Commodities)
+            |> Result.bind (fun worldId -> Item.Save connection worldId world.Items)
         with
         | ex -> ex |> Error

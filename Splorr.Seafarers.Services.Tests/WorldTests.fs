@@ -485,15 +485,15 @@ let ``BuyItems.It gives a message and completes the purchase when the avatar has
     let inputQuantity = 2u
     let inputItemName = "item under test"
     let expectedMarket =
-        {input.Islands.[inputLocation].Markets.[Grain] with
+        {input.Islands.[inputLocation].Markets.[Commodity.Grain] with
             Demand = 7.0}
     let expectedIsland = 
         {input.Islands.[inputLocation] with
-            Markets = input.Islands.[inputLocation].Markets |> Map.add Grain expectedMarket}
+            Markets = input.Islands.[inputLocation].Markets |> Map.add Commodity.Grain expectedMarket}
     let expectedAvatar = 
         {input.Avatars.[avatarId] with
             Money = 999998.0
-            Inventory = Map.empty |> Map.add Ration 2u}
+            Inventory = Map.empty |> Map.add Item.Ration 2u}
     let expected =
         {input with
             Avatars = input.Avatars |> Map.add avatarId expectedAvatar
@@ -548,17 +548,17 @@ let ``SellItems.It gives a message when the avatar has insufficient items in inv
 
 [<Test>]
 let ``SellItems.It gives a message and completes the purchase when the avatar has sufficient funds.`` () =
-    let inputAvatar = {shopWorld.Avatars.[avatarId] with Inventory = Map.empty |> Map.add Ration 2u}
+    let inputAvatar = {shopWorld.Avatars.[avatarId] with Inventory = Map.empty |> Map.add Item.Ration 2u}
     let input = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
     let inputLocation = shopWorldLocation
     let inputQuantity = 2u
     let inputItemName = "item under test"
     let expectedMarket =
-        {input.Islands.[inputLocation].Markets.[Grain] with
+        {input.Islands.[inputLocation].Markets.[Commodity.Grain] with
             Supply = 7.0}
     let expectedIsland = 
         {input.Islands.[inputLocation] with
-            Markets = input.Islands.[inputLocation].Markets |> Map.add Grain expectedMarket}
+            Markets = input.Islands.[inputLocation].Markets |> Map.add Commodity.Grain expectedMarket}
     let expectedAvatar = 
         {input.Avatars.[avatarId] with
             Money = 1.0

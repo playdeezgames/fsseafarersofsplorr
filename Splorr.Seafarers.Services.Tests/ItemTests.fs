@@ -5,13 +5,13 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 let internal commodities =
-    [(Grain, {Name=""; BasePrice=10.0; PurchaseFactor=0.0; SaleFactor=0.0; Discount=0.1; Occurrence=0.0})] |> Map.ofList
+    [(Commodity.Grain, {Name=""; BasePrice=10.0; PurchaseFactor=0.0; SaleFactor=0.0; Discount=0.1; Occurrence=0.0})] |> Map.ofList
 let internal markets =
-    [(Grain,{Demand=3.0;Supply=2.0;Traded=true})] |> Map.ofList
+    [(Commodity.Grain,{Demand=3.0;Supply=2.0;Traded=true})] |> Map.ofList
 let internal itemDescriptor = 
     {
         DisplayName=""
-        Commodities = [(Grain, 1.0)]|>Map.ofList
+        Commodities = [(Commodity.Grain, 1.0)]|>Map.ofList
         Occurrence=0.0
     }
 

@@ -15,6 +15,6 @@ let internal job =
 let internal employedAvatar =
     {avatar with Job = job |> Some; Money=10.0; Reputation=(-5.0)}
 let internal rationedAvatar =
-    {avatar with Inventory = Map.empty |> Map.add Ration 1u}
+    {avatar with Inventory = Map.empty |> Map.add Item.Ration 1u}
 let internal hoarderAvatar =
-    {avatar with Inventory = Map.empty |> Map.add Ration 100u}
+    {avatar with Inventory = Map.empty |> Map.add Item.Ration 100u}

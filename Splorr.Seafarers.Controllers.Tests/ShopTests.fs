@@ -178,15 +178,15 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
     let inputAvatar = {shopWorld.Avatars.[avatarId] with Money = 1000000.0}
     let inputWorld = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
     let inputSource = (1u, "item under test") |> Command.Buy |> Some |> toSource
-    let expectedPrice = Item.DetermineSalePrice inputWorld.Commodities inputWorld.Islands.[inputLocation].Markets inputWorld.Items.[Ration]
+    let expectedPrice = Item.DetermineSalePrice inputWorld.Commodities inputWorld.Islands.[inputLocation].Markets inputWorld.Items.[Item.Ration]
     let expectedDemand = 
-        inputWorld.Islands.[inputLocation].Markets.[Grain].Demand + inputWorld.Commodities.[Grain].SaleFactor
+        inputWorld.Islands.[inputLocation].Markets.[Commodity.Grain].Demand + inputWorld.Commodities.[Commodity.Grain].SaleFactor
     let expectedMarket = 
-        {inputWorld.Islands.[inputLocation].Markets.[Grain] with 
+        {inputWorld.Islands.[inputLocation].Markets.[Commodity.Grain] with 
             Demand= expectedDemand}
     let expectedMarkets = 
         inputWorld.Islands.[inputLocation].Markets
-        |> Map.add Grain expectedMarket
+        |> Map.add Commodity.Grain expectedMarket
     let expectedIsland = 
         {inputWorld.Islands.[inputLocation] with 
             Markets = expectedMarkets}
@@ -194,7 +194,7 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
         inputWorld
         |> World.AddMessages avatarId ["You complete the purchase."]
         |> World.TransformIsland inputLocation (fun _ -> expectedIsland |> Some)
-        |> World.TransformAvatar avatarId (Avatar.AddInventory Ration 1u >> Some)
+        |> World.TransformAvatar avatarId (Avatar.AddInventory Item.Ration 1u >> Some)
         |> World.TransformAvatar avatarId (Avatar.SpendMoney expectedPrice >> Some)
     let expected = 
         (Shop, inputLocation, expectedWorld)
@@ -242,24 +242,24 @@ let ``Run.It adds a message when given the Sell command and the avatar does not 
 [<Test>]
 let ``Run.It adds a message and completes the sale when given the Sell command and the avatar sufficient items to sell.`` () =
     let inputLocation = smallWorldIslandLocation
-    let inputItems = [(Ration, 1u)] |> Map.ofList
+    let inputItems = [(Item.Ration, 1u)] |> Map.ofList
     let inputAvatar = {shopWorld.Avatars.[avatarId] with Inventory = inputItems}
     let inputWorld = 
         {shopWorld with 
             Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
         |> World.TransformIsland smallWorldIslandLocation 
             (fun i -> 
-                {i with Markets = i.Markets |> Map.add Grain {Supply = 5.0; Demand =5.0; Traded=true}}
+                {i with Markets = i.Markets |> Map.add Commodity.Grain {Supply = 5.0; Demand =5.0; Traded=true}}
                 |> Some)
     let inputSource = (1u, "item under test") |> Command.Sell |> Some |> toSource
     let expectedSupply = 
-        inputWorld.Islands.[inputLocation].Markets.[Grain].Supply + inputWorld.Commodities.[Grain].PurchaseFactor
+        inputWorld.Islands.[inputLocation].Markets.[Commodity.Grain].Supply + inputWorld.Commodities.[Commodity.Grain].PurchaseFactor
     let expectedMarket = 
-        {inputWorld.Islands.[inputLocation].Markets.[Grain] with 
+        {inputWorld.Islands.[inputLocation].Markets.[Commodity.Grain] with 
             Supply= expectedSupply}
     let expectedMarkets = 
         inputWorld.Islands.[inputLocation].Markets
-        |> Map.add Grain expectedMarket
+        |> Map.add Commodity.Grain expectedMarket
     let expectedIsland = 
         {inputWorld.Islands.[inputLocation] with 
             Markets = expectedMarkets}

@@ -19,9 +19,9 @@ let internal deadDockWorld =
     {dockWorld with Avatars = Map.empty |> Map.add avatarId {dockWorld.Avatars.[avatarId] with Health={dockWorld.Avatars.[avatarId].Health with CurrentValue=dockWorld.Avatars.[avatarId].Health.MinimumValue}}}
 let internal deadDockLocation = dockLocation
 let internal smallWorldCommodities:Map<Commodity, CommodityDescriptor> = 
-    [(Grain, {Name="commodity under test";BasePrice=1.0;PurchaseFactor=1.0;SaleFactor=1.0;Discount=0.5;Occurrence=1.0})] |> Map.ofList
+    [(Commodity.Grain, {Name="commodity under test";BasePrice=1.0;PurchaseFactor=1.0;SaleFactor=1.0;Discount=0.5;Occurrence=1.0})] |> Map.ofList
 let internal smallWorldItems:Map<Item, ItemDescriptor> =
-    [(Ration, {DisplayName="item under test"; Commodities=[(Grain,1.0)]|>Map.ofList; Occurrence =1.0})] |> Map.ofList
+    [(Item.Ration, {DisplayName="item under test"; Commodities=[(Commodity.Grain,1.0)]|>Map.ofList; Occurrence =1.0})] |> Map.ofList
 let internal smallWorldconfiguration: WorldGenerationConfiguration =
     {
         WorldSize=(11.0, 11.0)
