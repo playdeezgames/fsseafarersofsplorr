@@ -49,7 +49,7 @@ Persistence:
               supply
               demand
               traded
-          ☐ worldcommodities table
+          ✔ worldcommodities table @done(20-07-10 06:07)
               commodityid
               name
               baseprice
@@ -57,11 +57,11 @@ Persistence:
               salefactor
               discount
               occurrence
-          ☐ worlditems table
+          ✔ worlditems table @done(20-07-10 06:07)
               itemid
               displayname
               occurrence
-          ☐ worlditemcommodities
+          ✔ worlditemcommodities @done(20-07-10 06:07)
               itemid
               commodityid
               units

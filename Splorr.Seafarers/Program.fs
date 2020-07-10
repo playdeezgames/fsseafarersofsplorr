@@ -4,15 +4,15 @@ open Splorr.Seafarers.Models
 open System.Data.SQLite
 
 let commodities :Map<Commodity, CommodityDescriptor> =
-    [(Grain,{Name="grain";BasePrice=0.1;SaleFactor=0.01;PurchaseFactor=0.01;Discount=0.1;Occurrence=1.0})]
+    [(Commodity.Grain,{Name="grain";BasePrice=0.1;SaleFactor=0.01;PurchaseFactor=0.01;Discount=0.1;Occurrence=1.0})]
     |> Map.ofList
 
 let items: Map<Item, ItemDescriptor> =
-    [(Ration, 
+    [(Item.Ration, 
         {
             DisplayName = "waffles"
             Commodities = 
-                [(Grain, 0.1)]
+                [(Commodity.Grain, 0.1)]
                 |> Map.ofList
             Occurrence = 1.0
         })]

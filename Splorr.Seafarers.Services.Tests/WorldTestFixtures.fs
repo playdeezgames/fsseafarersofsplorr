@@ -50,7 +50,7 @@ let internal oneIslandWorld =
 
 let internal genericWorldCommodities = 
     Map.empty
-    |> Map.add Grain {
+    |> Map.add Commodity.Grain {
         Name=""
         BasePrice=1.0
         PurchaseFactor=1.0
@@ -60,9 +60,9 @@ let internal genericWorldCommodities =
 
 let internal genericWorldItems = 
     Map.empty
-    |> Map.add Ration {
+    |> Map.add Item.Ration {
         DisplayName="item under test"
-        Commodities= Map.empty |> Map.add Grain 1.0
+        Commodities= Map.empty |> Map.add Commodity.Grain 1.0
         Occurrence=1.0
         }
 
@@ -87,7 +87,7 @@ let internal shopWorld =
     genericDockedWorld
     |> World.TransformIsland genericWorldIslandLocation
         (fun i -> 
-            {i with Markets = i.Markets |> Map.add Grain {Supply=5.0;Demand=5.0;Traded=true}} |> Some)
+            {i with Markets = i.Markets |> Map.add Commodity.Grain {Supply=5.0;Demand=5.0;Traded=true}} |> Some)
 let internal shopWorldLocation = genericWorldIslandLocation
 let internal shopWorldBogusLocation = genericWorldInvalidIslandLocation
 

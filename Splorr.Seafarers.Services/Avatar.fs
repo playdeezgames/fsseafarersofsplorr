@@ -50,10 +50,10 @@ module Avatar =
         {avatar with Health = avatar.Health |> transform}
 
     let private Eat (avatar:Avatar) : Avatar =
-        match avatar.Inventory.TryFind Ration with
+        match avatar.Inventory.TryFind Item.Ration with
         | Some count when count > 0u ->
             avatar
-            |> RemoveInventory Ration 1u
+            |> RemoveInventory Item.Ration 1u
             |> TransformSatiety (Statistic.ChangeBy 1.0)
         | _ ->
             if avatar.Satiety.CurrentValue > avatar.Satiety.MinimumValue then

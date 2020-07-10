@@ -19,6 +19,8 @@
 
   <ItemGroup>
     <Compile Include="CommonTestFixtures.fs" />
+    <Compile Include="CommodityTests.fs" />
+    <Compile Include="ItemTests.fs" />
     <Compile Include="PersisterTests.fs" />
     <Compile Include="WorldTests.fs" />
     <Compile Include="Program.fs" />

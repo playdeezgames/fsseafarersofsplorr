@@ -1,7 +1,7 @@
 ﻿namespace Splorr.Seafarers.Models
 
 type Commodity =
-    | Grain
+    | Grain = 1
     //| Meat
     //| Wood
     //| Stone

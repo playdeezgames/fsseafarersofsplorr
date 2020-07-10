@@ -160,7 +160,7 @@ let ``GenerateItems.It has no effect when the given island already has items in 
 [<Test>]
 let ``GenerateItems.It generates the shop when the given island has not items in the shop.`` () =
     let input = noShopIsland
-    let expected = {noShopIsland with Items = noShopIsland.Items |> Set.add Ration}
+    let expected = {noShopIsland with Items = noShopIsland.Items |> Set.add Item.Ration}
     let actual = 
         input
         |> Island.GenerateItems random items
@@ -170,14 +170,14 @@ let ``GenerateItems.It generates the shop when the given island has not items in
 let ``UpdateMarketForItemSale.It updates market commodity demands based on the given number of units sold.`` () =
     let input = shopIsland
     let inputQuantity = 1u
-    let inputDescriptor = items.[Ration]
+    let inputDescriptor = items.[Item.Ration]
 
     let expectedMarket = 
-        {input.Markets.[Grain] with
+        {input.Markets.[Commodity.Grain] with
             Demand = 2.0}
     let expectedMarkets = 
         input.Markets
-        |> Map.add Grain expectedMarket
+        |> Map.add Commodity.Grain expectedMarket
     let expected = 
         {input with
             Markets = expectedMarkets}
@@ -193,14 +193,14 @@ let ``UpdateMarketForItemSale.It updates market commodity demands based on the g
 let ``UpdateMarketForItemPurchase.It updates market commodity supply based on the given number of units purchased.`` () =
     let input = shopIsland
     let inputQuantity = 1u
-    let inputDescriptor = items.[Ration]
+    let inputDescriptor = items.[Item.Ration]
 
     let expectedMarket = 
-        {input.Markets.[Grain] with
+        {input.Markets.[Commodity.Grain] with
             Supply = 2.0}
     let expectedMarkets = 
         input.Markets
-        |> Map.add Grain expectedMarket
+        |> Map.add Commodity.Grain expectedMarket
     let expected = 
         {input with
             Markets = expectedMarkets}
