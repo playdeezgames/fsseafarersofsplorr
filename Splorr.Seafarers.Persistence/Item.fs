@@ -51,7 +51,7 @@ module Item =
             $CommodityId,
             $Amount);"
 
-    let Save (connection:SQLiteConnection) (worldId:int) (items:Map<Item, ItemDescriptor>): Result<int, exn> =
+    let Save (connection:SQLiteConnection) (worldId:int) (items:Map<uint, ItemDescriptor>): Result<int, exn> =
         try
             connection
             |> EnsureItemTableExists 

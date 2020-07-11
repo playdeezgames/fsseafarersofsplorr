@@ -6,12 +6,12 @@ open System.Data.SQLite
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Persistence
 
-let internal items:Map<Item, ItemDescriptor> =
+let internal items:Map<uint, ItemDescriptor> =
     Map.empty
-    |> Map.add Item.Ration 
+    |> Map.add 1u 
         {
             DisplayName = "waffles"
-            Commodities = Map.empty |> Map.add Commodity.Grain 1.0
+            Commodities = Map.empty |> Map.add 1u 1.0
             Occurrence = 1.0
         }
 

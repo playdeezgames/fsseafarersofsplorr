@@ -31,16 +31,6 @@ let ``GetWorld.It returns the world embedded within the given Docked (at Dock) G
         |> Gamestate.GetWorld
     Assert.AreEqual(world |> Some, actual)
 
-
-[<Test>]
-let ``GetWorld.It returns the world embedded within the given Docked (at PriceList) Gamestate.`` () =
-    let actual = 
-        (PriceList, (0.0,0.0), world)
-        |> Gamestate.Docked 
-        |> Gamestate.GetWorld
-    Assert.AreEqual(world |> Some, actual)
-
-
 [<Test>]
 let ``GetWorld.It returns the world embedded within the given MainMenu Gamestate when a world is present.`` () =
     let actual = 
@@ -62,14 +52,6 @@ let ``GetWorld.It returns None from the given MainMenu Gamestate when no world i
 let ``GetWorld.It returns world from the given Docked (at Jobs) Gamestate.`` () =
     let actual =
         (Jobs, (0.0, 0.0),world)
-        |> Gamestate.Docked
-        |> Gamestate.GetWorld
-    Assert.AreEqual(world |> Some, actual)
-
-[<Test>]
-let ``GetWorld.It returns world from the given Docked (at Shop) Gamestate.`` () =
-    let actual =
-        (Shop, (0.0, 0.0),world)
         |> Gamestate.Docked
         |> Gamestate.GetWorld
     Assert.AreEqual(world |> Some, actual)

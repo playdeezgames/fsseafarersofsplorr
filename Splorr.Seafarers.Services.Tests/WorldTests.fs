@@ -157,6 +157,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                     Satiety = Statistic.Create (0.0, 100.0) (100.0)
                     Health = Statistic.Create (0.0, 100.0) (100.0)
                     Turn = Statistic.Create (0.0, 15000.0) (0.0)
+                    RationItem = 1u
                 }]|>Map.ofList
             Commodities = Map.empty
             Items = Map.empty
@@ -485,15 +486,15 @@ let ``BuyItems.It gives a message and completes the purchase when the avatar has
     let inputQuantity = 2u
     let inputItemName = "item under test"
     let expectedMarket =
-        {input.Islands.[inputLocation].Markets.[Commodity.Grain] with
+        {input.Islands.[inputLocation].Markets.[1u] with
             Demand = 7.0}
     let expectedIsland = 
         {input.Islands.[inputLocation] with
-            Markets = input.Islands.[inputLocation].Markets |> Map.add Commodity.Grain expectedMarket}
+            Markets = input.Islands.[inputLocation].Markets |> Map.add 1u expectedMarket}
     let expectedAvatar = 
         {input.Avatars.[avatarId] with
             Money = 999998.0
-            Inventory = Map.empty |> Map.add Item.Ration 2u}
+            Inventory = Map.empty |> Map.add 1u 2u}
     let expected =
         {input with
             Avatars = input.Avatars |> Map.add avatarId expectedAvatar
@@ -548,17 +549,17 @@ let ``SellItems.It gives a message when the avatar has insufficient items in inv
 
 [<Test>]
 let ``SellItems.It gives a message and completes the purchase when the avatar has sufficient funds.`` () =
-    let inputAvatar = {shopWorld.Avatars.[avatarId] with Inventory = Map.empty |> Map.add Item.Ration 2u}
+    let inputAvatar = {shopWorld.Avatars.[avatarId] with Inventory = Map.empty |> Map.add 1u 2u}
     let input = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
     let inputLocation = shopWorldLocation
     let inputQuantity = 2u
     let inputItemName = "item under test"
     let expectedMarket =
-        {input.Islands.[inputLocation].Markets.[Commodity.Grain] with
+        {input.Islands.[inputLocation].Markets.[1u] with
             Supply = 7.0}
     let expectedIsland = 
         {input.Islands.[inputLocation] with
-            Markets = input.Islands.[inputLocation].Markets |> Map.add Commodity.Grain expectedMarket}
+            Markets = input.Islands.[inputLocation].Markets |> Map.add 1u expectedMarket}
     let expectedAvatar = 
         {input.Avatars.[avatarId] with
             Money = 1.0

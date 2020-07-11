@@ -4,6 +4,5 @@ type Market =
     {
         Supply: float
         Demand: float
-        Traded: bool
     }
 

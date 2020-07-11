@@ -10,7 +10,7 @@ let ``Run.It returns Docked (at Shop) gamestate.`` () =
     let inputLocation = dockLocation
     let inputWorld = dockWorld
     let expected = 
-        (Shop, inputLocation, inputWorld) 
+        (Dock, inputLocation, inputWorld) 
         |> Gamestate.Docked 
         |> Some
     let actual = 

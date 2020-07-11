@@ -11,7 +11,7 @@ type Island =
         Name         : string
         AvatarVisits : Map<string, AvatarVisit>
         Jobs         : Job list
-        Markets      : Map<Commodity, Market>
-        Items        : Set<Item>
+        Markets      : Map<uint, Market>
+        Items        : Set<uint>
     }
 

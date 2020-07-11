@@ -35,6 +35,7 @@ let internal emptyWorld =
                 Satiety = Statistic.Create (0.0, 100.0) (100.0)
                 Health = Statistic.Create (0.0, 100.0) (100.0)
                 Turn = {MinimumValue=0.0;CurrentValue=0.0;MaximumValue=15000.0}
+                RationItem = 1u
             }] 
             |> Map.ofList
         Islands = Map.empty
@@ -50,19 +51,18 @@ let internal oneIslandWorld =
 
 let internal genericWorldCommodities = 
     Map.empty
-    |> Map.add Commodity.Grain {
+    |> Map.add 1u {
         Name=""
         BasePrice=1.0
         PurchaseFactor=1.0
         SaleFactor=1.0
-        Discount=0.5
-        Occurrence=1.0}
+        Discount=0.5}
 
 let internal genericWorldItems = 
     Map.empty
-    |> Map.add Item.Ration {
+    |> Map.add 1u {
         DisplayName="item under test"
-        Commodities= Map.empty |> Map.add Commodity.Grain 1.0
+        Commodities= Map.empty |> Map.add 1u 1.0
         Occurrence=1.0
         }
 
@@ -87,7 +87,7 @@ let internal shopWorld =
     genericDockedWorld
     |> World.TransformIsland genericWorldIslandLocation
         (fun i -> 
-            {i with Markets = i.Markets |> Map.add Commodity.Grain {Supply=5.0;Demand=5.0;Traded=true}} |> Some)
+            {i with Markets = i.Markets |> Map.add 1u {Supply=5.0;Demand=5.0}} |> Some)
 let internal shopWorldLocation = genericWorldIslandLocation
 let internal shopWorldBogusLocation = genericWorldInvalidIslandLocation
 

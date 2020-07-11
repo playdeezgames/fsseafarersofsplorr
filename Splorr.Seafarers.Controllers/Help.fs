@@ -45,23 +45,14 @@ module Help =
             (Heading, "Docked Commands:" |> Line) |> Hued
             "\tabandon job - abandons your current job, if you have one" |> Line
             "\taccept job (number) - accepts the offered job" |> Line
+            "\tbuy (amount) (item) - purchases items" |> Line
             "\tjobs - lists job offers" |> Line
+            "\titems - lists prices of items" |> Line
             "\tprices - lists traded commodity prices for the island" |> Line
+            "\tsell (amount) (item) - sells items" |> Line
             "\tshop - goes to the shop where items may be bought and sold" |> Line
             "\tstatus - shows the avatar's status" |> Line
             "\tundock - undocks from the island" |> Line
-        ]
-        |> List.iter sink
-
-    let private Shop (sink:MessageSink) : unit =
-        [
-            "" |> Line
-            (Heading, "Shop Commands:" |> Line) |> Hued
-            "\tdock - returns to the dock" |> Line
-            "\titems - lists prices of items" |> Line
-            "\tquit - quits the game" |> Line
-            "\tstatus - shows the avatar's status" |> Line
-            
         ]
         |> List.iter sink
 
@@ -73,8 +64,6 @@ module Help =
             sink |> ConfirmQuit
         | Gamestate.Docked (Dock, _, _) ->
             sink |> Docked
-        | Gamestate.Docked (Shop, _, _) ->
-            sink |> Shop
         | _ ->
             ()
         gamestate

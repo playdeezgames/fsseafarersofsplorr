@@ -1,15 +1,6 @@
 Persistence:
     Save the game:
         ☐ issuing the save command persists the world to a sqlite database
-        World Schema:
-          ✔ world table @done(20-07-08 09:34)
-              (worldid) PK
-              (worldname)
-              (timestamp)
-              rewardminimum
-              rewardmaximum
-          ✘ messages table(Not stored) @cancelled(20-07-08 09:32)
-              message
           ☐ avatars table
               (avatarid) PK
               (worldid) FK
@@ -49,54 +40,38 @@ Persistence:
               supply
               demand
               traded
-          ✔ worldcommodities table @done(20-07-10 06:07)
-              commodityid
-              name
-              baseprice
-              purchasefactor
-              salefactor
-              discount
-              occurrence
-          ✔ worlditems table @done(20-07-10 06:07)
-              itemid
-              displayname
-              occurrence
-          ✔ worlditemcommodities @done(20-07-10 06:07)
-              itemid
-              commodityid
-              units
     ☐ load the game
     ☐ permadeath?
         permadeath means that the file loaded is deleted 
     ☐ autosave?
 Avatar Longevity:
-    ✔ turn becomes part of the avatar @done(20-07-09 06:29)
     ☐ avatar needs a maximum turn value
     ☐ do not lose health when satiety is zero
     ☐ decrease maximum turn when satiety is zero
     ☐ avatar death occurs when turn=>maximum turn
     ☐ need a decent value for maximum turn that makes eating worth it, currently looking at 15000
     ☐ need some other penalty for being hungry that is impactful to the player in the short term
-Commodities:
-    ☐ trading raw commodities takes place at the "exchange" 
+Buy Maximum and Sell All:
+    ☐ buy maximum will buy as many of the item as can be afforded and carried
+    ☐ sell all will sell all of the item stored
+Avatar Ships:
+    ☐ avatars have ships
+    ☐ ships have maximum carrying capacity
+    ☐ items require carrying capacity
+    ☐ buying things will not be allowed if it will exceed the capacity
+    ☐ carrying capacity is on the status screen
 Quests/Jobs:
     ☐ some jobs have a minimum reputation requirement
 Resting at an Inn:
     ☐ islands have inns
-        do all of them?
+        do _all_ of them?
     ☐ resting at an inn costs money!
     ☐ there is a untradable commodity driving the price of staying at an inn
-    ☐ resting at an inn increase health
+    ☐ resting at an inn increases health
 Island Notes:
     ☐ Add island note command
     ☐ List island notes command
 Refactor "Opportunities":
-    ✔ on the islands list, indicate visually the destination of the current job @done(20-07-07 10:49)
-    ✔ move turn from world to avatar @done(20-07-09 06:29)
-    ✔ move messages from world to avatar @done(20-07-09 06:29)
-    ✔ shift island visit count and last visit to per avatar @done(20-07-09 09:12)
-    ☐ Prices command may be better named commodities
-    ☐ commodity price list may need to be accessible from multiple locations
     ☐ split out the view portion of the game state handler from the command handling portion
         first, based on gamestate, show the view, and the view indicates whether or not there needs to be command input prior to the next game state
         second, when indicated by the view, collect a command from the source, and apply it 
@@ -104,9 +79,51 @@ Eliminate Hardcoded Values:
     ☐ Avatar.ViewDistance
     ☐ Avatar.DockDistance
 Weird Edge Case Behavior:
-    ☐ how do we increase health?
     ☐ When AtSea, docking will happen with the "furthest" of all of the dockable islands. because of how the world is generated, there "should not" be more than one. however, this is not technically so.
 Archive:
+  ✘ trading raw commodities takes place at the "exchange" @cancelled(20-07-10 10:56) @project(Commodities)
+  ✔ if all trades are due to items, is there a need for a prices command? @done(20-07-11 05:04) @project(Commodities)
+  ✔ if there is no need for a prices command, does there need to be an occurrence probability on the commodity? @done(20-07-11 05:19) @project(Commodities)
+    also eliminates "traded" from market
+  ✔ there is no need to have a separate inventory for commodity hauls @done(20-07-11 05:06) @project(Commodities)
+    we can simply have things like "sacks of grain" or "barrels of fish" or whatever
+  ✔ merge shop and dock together? @done(20-07-11 05:57) @project(Commodities)
+  ✔ commodity enum makes no sense... this can just be an int @done(20-07-11 04:53) @project(Refactor "Opportunities")
+  ✔ item enum makes no sense... this can just be an int @done(20-07-11 04:53) @project(Refactor "Opportunities")
+  ✔ without a specific rations item, there needs to be a way to specify which item to eat @done(20-07-11 04:53) @project(Refactor "Opportunities")
+  ✘ Prices command may be better named commodities @cancelled(20-07-11 04:13) @project(Refactor "Opportunities")
+  ✘ commodity price list may need to be accessible from multiple locations @cancelled(20-07-11 04:13) @project(Refactor "Opportunities")
+  ✔ how do we increase health? @done(20-07-11 05:05) @project(Weird Edge Case Behavior)
+    at inns
+  ✔ world table @done(20-07-08 09:34) @project(Persistence.Save the game)
+    (worldid) PK
+    (worldname)
+    (timestamp)
+    rewardminimum
+    rewardmaximum
+  ✘ messages table(Not stored) @cancelled(20-07-08 09:32) @project(Persistence.Save the game)
+    message
+  ✔ worldcommodities table @done(20-07-10 06:07) @project(Persistence.Save the game)
+    commodityid
+    name
+    baseprice
+    purchasefactor
+    salefactor
+    discount
+    occurrence
+  ✔ worlditems table @done(20-07-10 06:07) @project(Persistence.Save the game)
+    itemid
+    displayname
+    occurrence
+  ✔ worlditemcommodities @done(20-07-10 06:07) @project(Persistence.Save the game)
+    itemid
+    commodityid
+    units
+  ✔ turn becomes part of the avatar @done(20-07-09 06:29) @project(Avatar Longevity)
+  ✔ on the islands list, indicate visually the destination of the current job @done(20-07-07 10:49) @project(Refactor "Opportunities")
+  ✔ move turn from world to avatar @done(20-07-09 06:29) @project(Refactor "Opportunities")
+  ✔ move messages from world to avatar @done(20-07-09 06:29) @project(Refactor "Opportunities")
+  ✔ shift island visit count and last visit to per avatar @done(20-07-09 09:12) @project(Refactor "Opportunities")
   ✔ there is a save command @done(20-07-07 04:53) @project(Persistence.Save the game)
   ✔ i can issue the save command from the main menu @done(20-07-07 05:10) @project(Persistence.Save the game)
   ✔ the save game state returns to the main menu when it is finished @done(20-07-07 05:21) @project(Persistence.Save the game)

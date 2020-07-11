@@ -20,13 +20,6 @@ let ``Parse.It returns Help command when given ["help"]`` () =
     Assert.AreEqual(Command.Help |> Some, actual)
 
 [<Test>]
-let ``Parse.It returns Shop command when given ["shop"]`` () =
-    let actual =
-        [ "shop" ]
-        |> CommandSource.Parse
-    Assert.AreEqual(Command.Shop |> Some, actual)
-
-[<Test>]
 let ``Parse.It returns Yes command when given ["yes"]`` () =
     let actual =
         [ "yes" ]
@@ -160,13 +153,6 @@ let ``Parse.It returns Islands 0 command when given ["islands"]`` () =
         [ "islands"]
         |> CommandSource.Parse
     Assert.AreEqual(0u |> Command.Islands |> Some, actual)
-
-[<Test>]
-let ``Parse.It returns Prices command when given ["prices"]`` () =
-    let actual =
-        [ "prices"]
-        |> CommandSource.Parse
-    Assert.AreEqual(Command.Prices |> Some, actual)
 
 [<Test>]
 let ``Parse.It returns Inventory command when given ["inventory"]`` () =

@@ -20,7 +20,13 @@ module IslandList =
         let totalItems = knownIslands |> List.length |> uint32
         let totalPages = (totalItems + (pageSize-1u)) / pageSize
         let skippedItems = page * pageSize
-        ((page+1u), totalPages) ||> sprintf "Page %u of %u" |> Line |> sink
+        [
+            (Subheading, "Page " |> Text) |> Hued
+            (Value, (page+1u) |> sprintf "%u" |> Text) |> Hued
+            (Subheading, " of " |> Text) |> Hued
+            (Value, totalPages |> sprintf "%u" |> Line) |> Hued
+        ]
+        |> List.iter sink
         if page < totalPages then
             knownIslands
             |> List.skip (skippedItems |> int)
@@ -32,10 +38,16 @@ module IslandList =
                     Location.HeadingTo world.Avatars.[avatarId].Position location
                     |> Dms.ToDms
                     |> Dms.ToString
-                sprintf "%s Bearing:%s Distance:%f" island.Name bearing distance |> Line
-                |> sink)
+                [
+                    (Value, island.Name |> sprintf "%s" |> Text) |> Hued
+                    (Sublabel, " Bearing:" |> Text) |> Hued
+                    (Value, bearing |> sprintf "%s" |> Text) |> Hued
+                    (Sublabel, " Distance:" |> Text) |> Hued
+                    (Value, distance |> sprintf "%f" |> Line) |> Hued
+                ]
+                |> List.iter sink)
         else
-            "(end of list)" |> Line |> sink
+            (Usage ,"(end of list)" |> Line) |> Hued |> sink
     
     let private pageSize = 20u
 

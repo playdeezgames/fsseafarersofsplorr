@@ -6,8 +6,6 @@ type DockedState =
     | Dock
     | Jobs
     | ItemList
-    | PriceList
-    | Shop
 
 [<RequireQualifiedAccess>]
 type Gamestate = 
