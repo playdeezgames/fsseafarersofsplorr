@@ -17,6 +17,7 @@ module Avatar =
             Satiety = Statistic.Create (0.0, 100.0) 100.0
             Health = Statistic.Create (0.0, 100.0) 100.0
             Turn = Statistic.Create (0.0, 15000.0) 0.0
+            RationItem = 1u
         }
 
     let SetSpeed (speed:float) (avatar:Avatar) : Avatar =
@@ -30,7 +31,7 @@ module Avatar =
     let SetHeading (heading:Dms) (avatar:Avatar) : Avatar =
         {avatar with Heading = heading |> Dms.ToFloat}
 
-    let RemoveInventory (item:Item) (quantity:uint32) (avatar:Avatar) : Avatar =
+    let RemoveInventory (item:uint) (quantity:uint32) (avatar:Avatar) : Avatar =
         if quantity>0u then
             match avatar.Inventory.TryFind item with
             | Some count ->
@@ -50,10 +51,10 @@ module Avatar =
         {avatar with Health = avatar.Health |> transform}
 
     let private Eat (avatar:Avatar) : Avatar =
-        match avatar.Inventory.TryFind Item.Ration with
+        match avatar.Inventory.TryFind avatar.RationItem with
         | Some count when count > 0u ->
             avatar
-            |> RemoveInventory Item.Ration 1u
+            |> RemoveInventory avatar.RationItem 1u
             |> TransformSatiety (Statistic.ChangeBy 1.0)
         | _ ->
             if avatar.Satiety.CurrentValue > avatar.Satiety.MinimumValue then
@@ -103,12 +104,12 @@ module Avatar =
         else
             avatar |> SetMoney (avatar.Money - amount)
 
-    let GetItemCount (item:Item) (avatar:Avatar) : uint32 =
+    let GetItemCount (item:uint) (avatar:Avatar) : uint32 =
         match avatar.Inventory.TryFind item with
         | Some x -> x
         | None -> 0u
 
-    let AddInventory (item:Item) (quantity:uint32) (avatar:Avatar) : Avatar =
+    let AddInventory (item:uint) (quantity:uint32) (avatar:Avatar) : Avatar =
         let newQuantity = (avatar |> GetItemCount item) + quantity
         {avatar with Inventory = avatar.Inventory |> Map.add item newQuantity}
 

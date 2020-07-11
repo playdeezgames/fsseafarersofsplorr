@@ -6,6 +6,6 @@ type World =
         Islands     : Map<Location, Island>
 
         RewardRange : float * float
-        Commodities : Map<Commodity, CommodityDescriptor>
-        Items       : Map<Item, ItemDescriptor>
+        Commodities : Map<uint, CommodityDescriptor>
+        Items       : Map<uint, ItemDescriptor>
     }

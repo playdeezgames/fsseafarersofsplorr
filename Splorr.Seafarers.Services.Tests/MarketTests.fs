@@ -8,7 +8,6 @@ let private market =
     {
         Supply = 1.0
         Demand = 1.0
-        Traded = true
     }
 
 let private descriptor =
@@ -18,7 +17,6 @@ let private descriptor =
         PurchaseFactor = 0.0
         SaleFactor = 0.0
         Discount = 0.1
-        Occurrence = 1.0
     }
 
 [<Test>]

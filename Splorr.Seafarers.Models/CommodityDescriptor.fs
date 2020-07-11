@@ -7,6 +7,5 @@ type CommodityDescriptor =
         PurchaseFactor: float
         SaleFactor: float
         Discount: float
-        Occurrence: float
     }
 

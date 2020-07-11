@@ -29,8 +29,6 @@ type Command =
     | Status
     | Jobs
     | AcceptJob of uint32
-    | Prices
-    | Shop
     | Items
     | Inventory
     | Buy of uint32 * string

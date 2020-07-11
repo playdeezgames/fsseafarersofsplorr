@@ -13,7 +13,6 @@ module Commodity =
         	[PurchaseFactor]	REAL NOT NULL,
         	[SaleFactor]	REAL NOT NULL,
         	[Discount]	REAL NOT NULL,
-        	[Occurrence]	REAL NOT NULL,
         	PRIMARY KEY([CommodityId],[WorldId])
         );"
     let private EnsureTableExists (connection:SQLiteConnection) : unit =
@@ -28,8 +27,7 @@ module Commodity =
             [BasePrice], 
             [PurchaseFactor], 
             [SaleFactor], 
-            [Discount], 
-            [Occurrence]) 
+            [Discount]) 
         VALUES 
             ($WorldId, 
             $CommodityId, 
@@ -37,10 +35,9 @@ module Commodity =
             $BasePrice, 
             $PurchaseFactor, 
             $SaleFactor, 
-            $Discount, 
-            $Occurrence);"
+            $Discount);"
 
-    let Save (connection:SQLiteConnection) (worldId:int) (commodities:Map<Commodity, CommodityDescriptor>): Result<int, exn> =
+    let Save (connection:SQLiteConnection) (worldId:int) (commodities:Map<uint, CommodityDescriptor>): Result<int, exn> =
         try
             connection
             |>  EnsureTableExists 
@@ -55,7 +52,6 @@ module Commodity =
                 command.Parameters.AddWithValue("$PurchaseFactor", descriptor.PurchaseFactor) |> ignore
                 command.Parameters.AddWithValue("$SaleFactor", descriptor.SaleFactor) |> ignore
                 command.Parameters.AddWithValue("$Discount", descriptor.Discount) |> ignore
-                command.Parameters.AddWithValue("$Occurrence", descriptor.Occurrence) |> ignore
                 command.ExecuteNonQuery() |> ignore)
             worldId |> Ok
         with

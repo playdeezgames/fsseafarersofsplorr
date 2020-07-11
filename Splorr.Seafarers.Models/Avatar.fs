@@ -11,8 +11,9 @@ type Avatar =
         Money        : float
         Reputation   : float
         Job          : Job option
-        Inventory    : Map<Item, uint32>
+        Inventory    : Map<uint, uint32>
         Satiety      : Statistic
         Health       : Statistic
         Turn         : Statistic
+        RationItem   : uint
     }

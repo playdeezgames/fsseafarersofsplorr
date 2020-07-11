@@ -66,7 +66,7 @@ module Island =
     let private SupplyDemandGenerator (random:System.Random) : float =
         (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + 3.0
 
-    let GenerateCommodities (random:System.Random) (commodities:Map<Commodity, CommodityDescriptor>) (island:Island) : Island =
+    let GenerateCommodities (random:System.Random) (commodities:Map<uint, CommodityDescriptor>) (island:Island) : Island =
         if island.Markets.IsEmpty then
             commodities
             |> Map.fold
@@ -75,7 +75,6 @@ module Island =
                         {
                             Supply=random |> SupplyDemandGenerator
                             Demand=random |> SupplyDemandGenerator
-                            Traded = (random.NextDouble())<descriptor.Occurrence
                         }
                     {isle with
                         Markets = 
@@ -85,7 +84,7 @@ module Island =
         else
             island
 
-    let GenerateItems (random:System.Random) (items:Map<Item, ItemDescriptor>) (island:Island) : Island =
+    let GenerateItems (random:System.Random) (items:Map<uint, ItemDescriptor>) (island:Island) : Island =
         if island.Items.IsEmpty then
             items
             |> Map.fold 
@@ -97,22 +96,22 @@ module Island =
         else
             island
 
-    let private ChangeMarketDemand (commodity:Commodity) (value:float) (island:Island) : Island =
+    let private ChangeMarketDemand (commodity:uint) (value:float) (island:Island) : Island =
         let market = island.Markets.[commodity]
         let updatedMarket = {market with Demand = market.Demand + value}
         {island with Markets = island.Markets |> Map.add commodity updatedMarket}
 
-    let private ChangeMarketSupply (commodity:Commodity) (value:float) (island:Island) : Island =
+    let private ChangeMarketSupply (commodity:uint) (value:float) (island:Island) : Island =
         let market = island.Markets.[commodity]
         let updatedMarket = {market with Supply = market.Supply + value}
         {island with Markets = island.Markets |> Map.add commodity updatedMarket}
 
-    let UpdateMarketForItemSale (commodities:Map<Commodity,CommodityDescriptor>) (descriptor:ItemDescriptor) (quantity:uint32) (island:Island) : Island =
+    let UpdateMarketForItemSale (commodities:Map<uint,CommodityDescriptor>) (descriptor:ItemDescriptor) (quantity:uint32) (island:Island) : Island =
         descriptor.Commodities
         |> Map.map (fun k v -> v * (quantity |> float) * commodities.[k].SaleFactor)
         |> Map.fold (fun i k v -> i |> ChangeMarketDemand k v) island
 
-    let UpdateMarketForItemPurchase (commodities:Map<Commodity,CommodityDescriptor>) (descriptor:ItemDescriptor) (quantity:uint32) (island:Island) : Island =
+    let UpdateMarketForItemPurchase (commodities:Map<uint,CommodityDescriptor>) (descriptor:ItemDescriptor) (quantity:uint32) (island:Island) : Island =
         descriptor.Commodities
         |> Map.map (fun k v -> v * (quantity |> float) * commodities.[k].PurchaseFactor)
         |> Map.fold (fun i k v -> i |> ChangeMarketSupply k v) island

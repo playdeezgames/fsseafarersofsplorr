@@ -24,8 +24,18 @@ module Docked =
             |> Gamestate.Docked
             |> Some
 
-        | Some Command.Shop ->
-            (Shop, location, world)
+        | Some (Command.Buy (quantity, itemName))->
+            (Dock, location, world |> World.BuyItems location quantity itemName avatarId) 
+            |> Gamestate.Docked
+            |> Some            
+
+        | Some (Command.Sell (quantity, itemName))->
+            (Dock, location, world |> World.SellItems location quantity itemName avatarId) 
+            |> Gamestate.Docked
+            |> Some            
+
+        | Some Command.Items ->
+            (ItemList, location, world) 
             |> Gamestate.Docked
             |> Some
 
@@ -61,11 +71,6 @@ module Docked =
             (Dock, location, world) 
             |> Gamestate.Docked 
             |> Gamestate.Inventory 
-            |> Some
-
-        | Some Command.Prices ->
-            (PriceList, location, world) 
-            |> Gamestate.Docked
             |> Some
 
         | Some Command.Help ->

@@ -18,9 +18,7 @@
     <Compile Include="ItemList.fs" />
     <Compile Include="Jobs.fs" />
     <Compile Include="MainMenu.fs" />
-    <Compile Include="PriceList.fs" />
     <Compile Include="SaveGame.fs" />
-    <Compile Include="Shop.fs" />
     <Compile Include="Status.fs" />
   </ItemGroup>
 

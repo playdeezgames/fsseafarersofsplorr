@@ -148,9 +148,6 @@ module CommandSource=
         | "abandon" :: tail -> 
             tail
             |> ParseAbandon
-        | [ "shop" ] -> 
-            Command.Shop 
-            |> Some
         | [ "quit" ] -> 
             Command.Quit 
             |> Some
@@ -189,9 +186,6 @@ module CommandSource=
             |> Some
         | [ "inventory" ] ->
             Command.Inventory
-            |> Some
-        | [ "prices" ] ->
-            Command.Prices
             |> Some
         | [ "menu" ] ->
             Command.Menu

@@ -17,7 +17,7 @@ module ItemList =
             let buyPrice: float = descriptor |> Item.DeterminePurchasePrice world.Commodities island.Markets
             sprintf "\t%s Sells at:%f Bought for:%f" descriptor.DisplayName sellPrice buyPrice |> Line |> sink
             ())
-        (Shop, location, world)
+        (Dock, location, world)
         |> Gamestate.Docked
         |> Some
 

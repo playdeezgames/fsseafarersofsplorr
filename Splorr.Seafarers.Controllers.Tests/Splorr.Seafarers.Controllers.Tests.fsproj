@@ -32,9 +32,7 @@
     <Compile Include="IslandListTests.fs" />
     <Compile Include="JobsTest.fs" />
     <Compile Include="MainMenuTests.fs" />
-    <Compile Include="PriceListTests.fs" />
     <Compile Include="SaveGameTests.fs" />
-    <Compile Include="ShopTests.fs" />
     <Compile Include="StatusTests.fs" />
     <Compile Include="UtilityTests.fs" />
     <Compile Include="Program.fs" />

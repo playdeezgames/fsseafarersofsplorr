@@ -6,9 +6,9 @@ open System.Data.SQLite
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Persistence
 
-let internal commodities:Map<Commodity, CommodityDescriptor> =
+let internal commodities:Map<uint, CommodityDescriptor> =
     Map.empty
-    |> Map.add Commodity.Grain {BasePrice=1.0;PurchaseFactor=2.0;SaleFactor=3.0;Name="grain";Occurrence=0.5;Discount=0.1}
+    |> Map.add 1u {BasePrice=1.0;PurchaseFactor=2.0;SaleFactor=3.0;Name="grain";Discount=0.1}
 
 [<Test>]
 let ``Save.It persists a given set of commodities for a given world.`` () =

@@ -3,7 +3,7 @@
 type ItemDescriptor =
     {
         DisplayName: string
-        Commodities: Map<Commodity, float>
+        Commodities: Map<uint, float>
         Occurrence: float
     }
 

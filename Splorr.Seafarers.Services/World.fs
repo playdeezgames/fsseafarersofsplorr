@@ -7,8 +7,8 @@ type WorldGenerationConfiguration =
         MinimumIslandDistance: float
         MaximumGenerationTries: uint32
         RewardRange: float * float
-        Commodities: Map<Commodity, CommodityDescriptor>
-        Items: Map<Item, ItemDescriptor>
+        Commodities: Map<uint, CommodityDescriptor>
+        Items: Map<uint, ItemDescriptor>
     }
 
 module World =
@@ -225,7 +225,7 @@ module World =
             world
             |> AddMessages avatarId [ "You have no job to abandon." ]
 
-    let private FindItemByName (itemName:string) (world:World) : (Item * ItemDescriptor) option =
+    let private FindItemByName (itemName:string) (world:World) : (uint * ItemDescriptor) option =
         world.Items
         |> Map.tryPick (fun k v -> if v.DisplayName = itemName then Some (k,v) else None)
 

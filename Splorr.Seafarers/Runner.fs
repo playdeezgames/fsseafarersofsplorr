@@ -13,8 +13,6 @@ module Runner =
             | Gamestate.Docked (Dock, location, world) -> Docked.Run source sink location avatarId world
             | Gamestate.Docked (ItemList, location, world) -> ItemList.Run sink location avatarId world
             | Gamestate.Docked (Jobs, location, world) -> Jobs.Run sink (location, world)
-            | Gamestate.Docked (PriceList, location, world) -> PriceList.Run sink location world
-            | Gamestate.Docked (Shop, location, world) -> Shop.Run source sink avatarId location world
             | Gamestate.GameOver messages -> messages |> GameOver.Run sink
             | Gamestate.Help state -> Help.Run sink state
             | Gamestate.Inventory gameState -> Inventory.Run sink avatarId gameState

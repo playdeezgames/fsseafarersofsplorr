@@ -3,20 +3,28 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open System.Data.SQLite
 
-let commodities :Map<Commodity, CommodityDescriptor> =
-    [(Commodity.Grain,{Name="grain";BasePrice=0.1;SaleFactor=0.01;PurchaseFactor=0.01;Discount=0.1;Occurrence=1.0})]
+let commodities :Map<uint, CommodityDescriptor> =
+    [(1u,{Name="grain";BasePrice=1.0;SaleFactor=0.01;PurchaseFactor=0.01;Discount=0.1})]
     |> Map.ofList
 
-let items: Map<Item, ItemDescriptor> =
-    [(Item.Ration, 
+let items: Map<uint, ItemDescriptor> =
+    Map.empty
+    |> Map.add 1u 
         {
             DisplayName = "waffles"
             Commodities = 
-                [(Commodity.Grain, 0.1)]
+                [(1u, 0.01)]
                 |> Map.ofList
             Occurrence = 1.0
-        })]
-    |> Map.ofList
+        }
+    |> Map.add 2u
+        {
+            DisplayName = "sack of wheat"
+            Commodities = 
+                [(1u, 1.0)]
+                |> Map.ofList
+            Occurrence = 1.0
+        }
 let connectionString = "Data Source=seafarers.db;Version=3;"
 let avatarId = ""
 [<EntryPoint>]

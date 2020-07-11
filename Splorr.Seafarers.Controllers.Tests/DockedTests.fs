@@ -5,6 +5,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Controllers
 open CommonTestFixtures
 open DockedTestFixtures
+open Splorr.Seafarers.Services
 
 
 [<Test>]
@@ -231,38 +232,165 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
     Assert.AreEqual(expected, actual)
 
 [<Test>]
-let ``Run.It returns the Docked (at PriceList) gamestate when given the Prices command.`` () =
-    let input = dockWorld
+let ``Run.It returns Docked (at ItemList) gamestate when given the Items command.`` () =
     let inputLocation = dockLocation
+    let inputWorld = dockWorld
     let inputSource = 
-        Command.Prices 
+        Command.Items 
         |> Some 
         |> toSource
     let expected = 
-        (PriceList, inputLocation, input) 
-        |> Gamestate.Docked 
+        (ItemList, inputLocation, inputWorld)
+        |> Gamestate.Docked
         |> Some
     let actual =
-        input
-        |> Docked.Run inputSource sinkStub inputLocation avatarId
+        (inputLocation, avatarId, inputWorld)
+        |||> Docked.Run inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 
 [<Test>]
-let ``Run.It returns the Docked (at Shop) gamestate when given the Shop command.`` () =
-    let input = dockWorld
-    let inputLocation = dockLocation
-    let inputSource =  
-        Command.Shop 
-        |> Some 
-        |> toSource
+let ``Run.It adds a message when given the Buy command for a non-existent item.`` () =
+    let inputLocation = smallWorldIslandLocation
+    let inputWorld = shopWorld
+    let inputSource = (1u, "non existent item") |> Command.Buy |> Some |> toSource
+    let expectedWorld =
+        inputWorld
+        |> World.AddMessages avatarId ["Round these parts, we don't sell things like that."]
     let expected = 
-        (Shop, inputLocation, dockWorld) 
-        |> Gamestate.Docked 
+        (Dock, inputLocation, expectedWorld)
+        |> Gamestate.Docked
         |> Some
     let actual =
-        input
-        |> Docked.Run inputSource sinkStub inputLocation avatarId
+        (inputLocation, avatarId, inputWorld)
+        |||> Docked.Run inputSource (sinkStub)
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``Run.It adds a message when given the Buy command and the avatar does not have enough money to complete the purchase.`` () =
+    let inputLocation = smallWorldIslandLocation
+    let inputWorld = smallWorldDocked |> World.ClearMessages avatarId
+    let inputSource = (1u, "item under test") |> Command.Buy |> Some |> toSource
+    let expectedWorld =
+        inputWorld
+        |> World.AddMessages avatarId ["You don't have enough money to buy those."]
+    let expected = 
+        (Dock, inputLocation, expectedWorld)
+        |> Gamestate.Docked
+        |> Some
+    let actual =
+        (inputLocation, avatarId, inputWorld)
+        |||> Docked.Run inputSource (sinkStub)
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``Run.It adds a message and completes the purchase when given the Buy command and the avatar has enough money.`` () =
+    let inputLocation = smallWorldIslandLocation
+    let inputAvatar = {shopWorld.Avatars.[avatarId] with Money = 1000000.0}
+    let inputWorld = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
+    let inputSource = (1u, "item under test") |> Command.Buy |> Some |> toSource
+    let expectedPrice = Item.DetermineSalePrice inputWorld.Commodities inputWorld.Islands.[inputLocation].Markets inputWorld.Items.[1u]
+    let expectedDemand = 
+        inputWorld.Islands.[inputLocation].Markets.[1u].Demand + inputWorld.Commodities.[1u].SaleFactor
+    let expectedMarket = 
+        {inputWorld.Islands.[inputLocation].Markets.[1u] with 
+            Demand= expectedDemand}
+    let expectedMarkets = 
+        inputWorld.Islands.[inputLocation].Markets
+        |> Map.add 1u expectedMarket
+    let expectedIsland = 
+        {inputWorld.Islands.[inputLocation] with 
+            Markets = expectedMarkets}
+    let expectedWorld =
+        inputWorld
+        |> World.AddMessages avatarId ["You complete the purchase."]
+        |> World.TransformIsland inputLocation (fun _ -> expectedIsland |> Some)
+        |> World.TransformAvatar avatarId (Avatar.AddInventory 1u 1u >> Some)
+        |> World.TransformAvatar avatarId (Avatar.SpendMoney expectedPrice >> Some)
+    let expected = 
+        (Dock, inputLocation, expectedWorld)
+        |> Gamestate.Docked
+        |> Some
+    let actual =
+        (inputLocation, avatarId, inputWorld)
+        |||> Docked.Run inputSource (sinkStub)
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``Run.It adds a message when given the Sell command for a non-existent item.`` () =
+    let inputLocation = smallWorldIslandLocation
+    let inputWorld = shopWorld
+    let inputSource = (1u, "non existent item") |> Command.Sell |> Some |> toSource
+    let expectedWorld =
+        inputWorld
+        |> World.AddMessages avatarId ["Round these parts, we don't buy things like that."]
+    let expected = 
+        (Dock, inputLocation, expectedWorld)
+        |> Gamestate.Docked
+        |> Some
+    let actual =
+        (inputLocation, avatarId, inputWorld)
+        |||> Docked.Run inputSource (sinkStub)
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``Run.It adds a message when given the Sell command and the avatar does not sufficient items to sell.`` () =
+    let inputLocation = smallWorldIslandLocation
+    let inputWorld = shopWorld
+    let inputSource = (1u, "item under test") |> Command.Sell |> Some |> toSource
+    let expectedWorld =
+        inputWorld
+        |> World.AddMessages avatarId ["You don't have enough of those to sell."]
+    let expected = 
+        (Dock, inputLocation, expectedWorld)
+        |> Gamestate.Docked
+        |> Some
+    let actual =
+        (inputLocation, avatarId, inputWorld)
+        |||> Docked.Run inputSource (sinkStub)
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``Run.It adds a message and completes the sale when given the Sell command and the avatar sufficient items to sell.`` () =
+    let inputLocation = smallWorldIslandLocation
+    let inputItems = [(1u, 1u)] |> Map.ofList
+    let inputAvatar = {shopWorld.Avatars.[avatarId] with Inventory = inputItems}
+    let inputWorld = 
+        {shopWorld with 
+            Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
+        |> World.TransformIsland smallWorldIslandLocation 
+            (fun i -> 
+                {i with Markets = i.Markets |> Map.add 1u {Supply = 5.0; Demand =5.0}}
+                |> Some)
+    let inputSource = (1u, "item under test") |> Command.Sell |> Some |> toSource
+    let expectedSupply = 
+        inputWorld.Islands.[inputLocation].Markets.[1u].Supply + inputWorld.Commodities.[1u].PurchaseFactor
+    let expectedMarket = 
+        {inputWorld.Islands.[inputLocation].Markets.[1u] with 
+            Supply= expectedSupply}
+    let expectedMarkets = 
+        inputWorld.Islands.[inputLocation].Markets
+        |> Map.add 1u expectedMarket
+    let expectedIsland = 
+        {inputWorld.Islands.[inputLocation] with 
+            Markets = expectedMarkets}
+    let expectedAvatar = 
+        {inputAvatar with 
+            Inventory = Map.empty
+            Money = 0.5
+            Messages = ["You complete the sale."]}
+    let expectedWorld =
+        inputWorld
+        |> World.AddMessages avatarId ["You complete the sale."]
+        |> World.TransformIsland inputLocation (fun _ -> expectedIsland |> Some)
+        |> World.TransformAvatar avatarId (fun _ -> expectedAvatar |> Some)
+    let expected = 
+        (Dock, inputLocation, expectedWorld)
+        |> Gamestate.Docked
+        |> Some
+    let actual =
+        (inputLocation, avatarId, inputWorld)
+        |||> Docked.Run inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 //[<Test>]
