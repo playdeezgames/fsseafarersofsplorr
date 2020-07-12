@@ -232,16 +232,24 @@ let ``Parse.It returns Buy (Maximum,"foo bar") command when given ["buy";"maximu
         |> CommandSource.Parse
     Assert.AreEqual((Maximum, "foo bar") |> Command.Buy |> Some, actual)
 
+
 [<Test>]
-let ``Parse.It returns Sell (3,"foo") command when given ["sell";"3";"foo"]`` () =
+let ``Parse.It returns Sell (Maximum,"foo") command when given ["sell";"all";"foo"]`` () =
+    let actual =
+        [ "sell";"all";"foo"]
+        |> CommandSource.Parse
+    Assert.AreEqual((Maximum, "foo") |> Command.Sell |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Sell (Specific 3u,"foo") command when given ["sell";"3";"foo"]`` () =
     let actual =
         [ "sell";"3";"foo"]
         |> CommandSource.Parse
-    Assert.AreEqual((3u, "foo") |> Command.Sell |> Some, actual)
+    Assert.AreEqual((Specific 3u, "foo") |> Command.Sell |> Some, actual)
 
 [<Test>]
-let ``Parse.It returns Sell (3,"foo bar") command when given ["sell";"3";"foo";"bar"]`` () =
+let ``Parse.It returns Sell (Specific 3,"foo bar") command when given ["sell";"3";"foo";"bar"]`` () =
     let actual =
         [ "sell";"3";"foo bar"]
         |> CommandSource.Parse
-    Assert.AreEqual((3u, "foo bar") |> Command.Sell |> Some, actual)
+    Assert.AreEqual((Specific 3u, "foo bar") |> Command.Sell |> Some, actual)

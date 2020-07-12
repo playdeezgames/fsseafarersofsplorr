@@ -33,7 +33,7 @@ type Command =
     | Items
     | Inventory
     | Buy of TradeQuantity * string
-    | Sell of uint32 * string
+    | Sell of TradeQuantity * string
     | Save of string
 
 type CommandSource = unit -> (Command option)

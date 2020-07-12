@@ -51,9 +51,6 @@ Avatar Longevity:
     ☐ avatar death occurs when turn=>maximum turn
     ☐ need a decent value for maximum turn that makes eating worth it, currently looking at 15000
     ☐ need some other penalty for being hungry that is impactful to the player in the short term
-Buy Maximum and Sell All:
-    ✔ buy maximum will buy as many of the item as can be afforded and carried @started(20-07-11 06:13) @done(20-07-12 05:04) @lasted(22h51m48s)
-    ☐ sell all will sell all of the item stored
 Avatar Ships:
     ☐ avatars have ships
     ☐ ships have maximum carrying capacity
@@ -72,6 +69,17 @@ Island Notes:
     ☐ Add island note command
     ☐ List island notes command
 Refactor "Opportunities":
+    ☐ tutorial?
+    ☐ metrics to count how many times the avatar does a particular something
+        move
+        earn money
+        spend money
+        visit island
+        know an island
+        eat
+        accept job
+        abandon job
+        complete job
     ☐ is RationItem in Avatar the right place to store this value?
     ☐ split out the view portion of the game state handler from the command handling portion
         first, based on gamestate, show the view, and the view indicates whether or not there needs to be command input prior to the next game state
@@ -82,6 +90,8 @@ Eliminate Hardcoded Values:
 Weird Edge Case Behavior:
     ☐ When AtSea, docking will happen with the "furthest" of all of the dockable islands. because of how the world is generated, there "should not" be more than one. however, this is not technically so.
 Archive:
+  ✔ sell all will sell all of the item stored @started(20-07-12 05:25) @done(20-07-12 05:51) @lasted(26m19s) @project(Buy Maximum and Sell All)
+  ✔ buy maximum will buy as many of the item as can be afforded and carried @started(20-07-11 06:13) @done(20-07-12 05:04) @lasted(22h51m48s) @project(Buy Maximum and Sell All)
   ✘ trading raw commodities takes place at the "exchange" @cancelled(20-07-10 10:56) @project(Commodities)
   ✔ if all trades are due to items, is there a need for a prices command? @done(20-07-11 05:04) @project(Commodities)
   ✔ if there is no need for a prices command, does there need to be an occurrence probability on the commodity? @done(20-07-11 05:19) @project(Commodities)

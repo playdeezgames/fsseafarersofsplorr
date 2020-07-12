@@ -263,18 +263,27 @@ module World =
             world
             |> AddMessages avatarId ["You cannot buy items here."]
 
-    let SellItems (location:Location) (quantity:uint32) (itemName:string) (avatarId:string) (world:World) : World =
+    let SellItems (location:Location) (tradeQuantity:TradeQuantity) (itemName:string) (avatarId:string) (world:World) : World =
         match world |> FindItemByName itemName, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
         | Some (item, descriptor), Some island, Some avatar ->
+            let quantity = 
+                match tradeQuantity with
+                | Specific q -> q
+                | Maximum -> 
+                    avatar 
+                    |> Avatar.GetItemCount item
             if quantity > (avatar |> Avatar.GetItemCount item) then
                 world
                 |> AddMessages avatarId ["You don't have enough of those to sell."]
+            elif quantity = 0u then
+                world
+                |> AddMessages avatarId ["You don't have any of those to sell."]
             else
                 let unitPrice = 
                     Item.DeterminePurchasePrice world.Commodities island.Markets descriptor 
                 let price = (quantity |> float) * unitPrice
                 world
-                |> AddMessages avatarId ["You complete the sale."]
+                |> AddMessages avatarId [(quantity, descriptor.DisplayName) ||> sprintf "You complete the sale of %u %s."]
                 |> TransformAvatar avatarId (Avatar.EarnMoney price >> Some)
                 |> TransformAvatar avatarId (Avatar.RemoveInventory item quantity >> Some)
                 |> TransformIsland location (Island.UpdateMarketForItemPurchase world.Commodities descriptor quantity >> Some)
