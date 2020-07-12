@@ -27,6 +27,7 @@ module Runner =
             ()
     
     let Run (connection:SQLiteConnection) (configuration:WorldGenerationConfiguration) (avatarId:string) : unit =
+        System.Console.Title <- "Seafarers of Splorr!!"
         let old = System.Console.ForegroundColor
         System.Console.ForegroundColor <- System.ConsoleColor.Gray
         None

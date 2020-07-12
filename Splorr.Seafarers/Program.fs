@@ -19,7 +19,7 @@ let items: Map<uint, ItemDescriptor> =
         }
     |> Map.add 2u
         {
-            DisplayName = "sack of wheat"
+            DisplayName = "sacks of wheat"
             Commodities = 
                 [(1u, 1.0)]
                 |> Map.ofList

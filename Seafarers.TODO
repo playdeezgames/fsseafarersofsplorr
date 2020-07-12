@@ -52,7 +52,7 @@ Avatar Longevity:
     ☐ need a decent value for maximum turn that makes eating worth it, currently looking at 15000
     ☐ need some other penalty for being hungry that is impactful to the player in the short term
 Buy Maximum and Sell All:
-    ☐ buy maximum will buy as many of the item as can be afforded and carried
+    ✔ buy maximum will buy as many of the item as can be afforded and carried @started(20-07-11 06:13) @done(20-07-12 05:04) @lasted(22h51m48s)
     ☐ sell all will sell all of the item stored
 Avatar Ships:
     ☐ avatars have ships
@@ -72,6 +72,7 @@ Island Notes:
     ☐ Add island note command
     ☐ List island notes command
 Refactor "Opportunities":
+    ☐ is RationItem in Avatar the right place to store this value?
     ☐ split out the view portion of the game state handler from the command handling portion
         first, based on gamestate, show the view, and the view indicates whether or not there needs to be command input prior to the next game state
         second, when indicated by the view, collect a command from the source, and apply it 

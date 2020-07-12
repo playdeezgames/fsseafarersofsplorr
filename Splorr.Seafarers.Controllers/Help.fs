@@ -43,16 +43,24 @@ module Help =
         [
             "" |> Line
             (Heading, "Docked Commands:" |> Line) |> Hued
-            "\tabandon job - abandons your current job, if you have one" |> Line
-            "\taccept job (number) - accepts the offered job" |> Line
-            "\tbuy (amount) (item) - purchases items" |> Line
-            "\tjobs - lists job offers" |> Line
-            "\titems - lists prices of items" |> Line
-            "\tprices - lists traded commodity prices for the island" |> Line
-            "\tsell (amount) (item) - sells items" |> Line
-            "\tshop - goes to the shop where items may be bought and sold" |> Line
-            "\tstatus - shows the avatar's status" |> Line
-            "\tundock - undocks from the island" |> Line
+            (Label, "abandon job" |> Text) |> Hued
+            (Usage, " - abandons your current job, if you have one" |> Line) |> Hued
+            (Label, "accept job (number)" |> Text) |> Hued
+            (Usage, " - accepts the offered job" |> Line) |> Hued
+            (Label, "buy (amount) (item)" |> Text) |> Hued
+            (Usage, " - purchases items" |> Line) |> Hued
+            (Label, "buy maximum (item)" |> Text) |> Hued
+            (Usage, " - purchases as many of the item as you have funds for" |> Line) |> Hued
+            (Label, "jobs" |> Text) |> Hued
+            (Usage, " - lists job offers" |> Line) |> Hued
+            (Label, "items" |> Text) |> Hued
+            (Usage, " - lists prices of items" |> Line) |> Hued
+            (Label, "sell (amount) (item)" |> Text) |> Hued
+            (Usage, " - sells items" |> Line) |> Hued
+            (Label, "status" |> Text) |> Hued
+            (Usage, " - shows the avatar's status" |> Line) |> Hued
+            (Label, "undock" |> Text) |> Hued
+            (Usage, " - undocks from the island" |> Line) |> Hued
         ]
         |> List.iter sink
 

@@ -2,6 +2,7 @@
 
 open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
+open Splorr.Seafarers.Services
 
 module CommandSource=
     let private ParseSetSpeed(tokens: string list) : Command option =
@@ -104,13 +105,18 @@ module CommandSource=
         match tokens with
         | [ _ ] ->
             None
+        | "maximum" :: tail ->
+            let itemName = System.String.Join(" ", tail)
+            (Maximum, itemName)
+            |> Command.Buy
+            |> Some
         | "0" :: tail ->
             None
         | number :: tail ->
             match System.UInt32.TryParse(number) with
             | true, quantity ->
                 let itemName = System.String.Join(" ", tail)
-                (quantity, itemName)
+                (quantity |> Specific, itemName)
                 |> Command.Buy
                 |> Some
             | _ -> None

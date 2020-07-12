@@ -1,6 +1,7 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
 open Splorr.Seafarers.Models
+open Splorr.Seafarers.Services
 
 type SetCommand =
     | Speed of float
@@ -31,7 +32,7 @@ type Command =
     | AcceptJob of uint32
     | Items
     | Inventory
-    | Buy of uint32 * string
+    | Buy of TradeQuantity * string
     | Sell of uint32 * string
     | Save of string
 
