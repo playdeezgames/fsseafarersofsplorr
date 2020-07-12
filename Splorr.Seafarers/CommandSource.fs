@@ -128,11 +128,16 @@ module CommandSource=
             None
         | "0" :: tail ->
             None
+        | "all" :: tail ->
+            let itemName = System.String.Join(" ", tail)
+            (Maximum, itemName)
+            |> Command.Sell
+            |> Some
         | number :: tail ->
             match System.UInt32.TryParse(number) with
             | true, quantity ->
                 let itemName = System.String.Join(" ", tail)
-                (quantity, itemName)
+                (Specific quantity, itemName)
                 |> Command.Sell
                 |> Some
             | _ -> None

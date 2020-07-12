@@ -320,7 +320,7 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
 let ``Run.It adds a message when given the Sell command for a non-existent item.`` () =
     let inputLocation = smallWorldIslandLocation
     let inputWorld = shopWorld
-    let inputSource = (1u, "non existent item") |> Command.Sell |> Some |> toSource
+    let inputSource = (Specific 1u, "non existent item") |> Command.Sell |> Some |> toSource
     let expectedWorld =
         inputWorld
         |> World.AddMessages avatarId ["Round these parts, we don't buy things like that."]
@@ -337,7 +337,7 @@ let ``Run.It adds a message when given the Sell command for a non-existent item.
 let ``Run.It adds a message when given the Sell command and the avatar does not sufficient items to sell.`` () =
     let inputLocation = smallWorldIslandLocation
     let inputWorld = shopWorld
-    let inputSource = (1u, "item under test") |> Command.Sell |> Some |> toSource
+    let inputSource = (Specific 1u, "item under test") |> Command.Sell |> Some |> toSource
     let expectedWorld =
         inputWorld
         |> World.AddMessages avatarId ["You don't have enough of those to sell."]
@@ -362,7 +362,7 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
             (fun i -> 
                 {i with Markets = i.Markets |> Map.add 1u {Supply = 5.0; Demand =5.0}}
                 |> Some)
-    let inputSource = (1u, "item under test") |> Command.Sell |> Some |> toSource
+    let inputSource = (Specific 1u, "item under test") |> Command.Sell |> Some |> toSource
     let expectedSupply = 
         inputWorld.Islands.[inputLocation].Markets.[1u].Supply + inputWorld.Commodities.[1u].PurchaseFactor
     let expectedMarket = 
@@ -378,7 +378,7 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
         {inputAvatar with 
             Inventory = Map.empty
             Money = 0.5
-            Messages = ["You complete the sale."]}
+            Messages = ["You complete the sale of 1 item under test."]}
     let expectedWorld =
         inputWorld
         |> World.AddMessages avatarId ["You complete the sale."]

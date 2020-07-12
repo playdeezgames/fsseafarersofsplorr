@@ -57,6 +57,8 @@ module Help =
             (Usage, " - lists prices of items" |> Line) |> Hued
             (Label, "sell (amount) (item)" |> Text) |> Hued
             (Usage, " - sells items" |> Line) |> Hued
+            (Label, "sell all (item)" |> Text) |> Hued
+            (Usage, " - sells all of that particular item in your inventory" |> Line) |> Hued
             (Label, "status" |> Text) |> Hued
             (Usage, " - shows the avatar's status" |> Line) |> Hued
             (Label, "undock" |> Text) |> Hued
