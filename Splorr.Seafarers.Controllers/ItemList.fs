@@ -15,7 +15,14 @@ module ItemList =
             let descriptor = world.Items.[item]
             let sellPrice: float = descriptor |> Item.DetermineSalePrice world.Commodities island.Markets
             let buyPrice: float = descriptor |> Item.DeterminePurchasePrice world.Commodities island.Markets
-            sprintf "\t%s Sells at:%f Bought for:%f" descriptor.DisplayName sellPrice buyPrice |> Line |> sink
+            [
+                (Value, descriptor.DisplayName |> sprintf "%s" |> Text) |> Hued
+                (Sublabel, " Sells At: " |> Text) |> Hued
+                (Value, sellPrice |> sprintf "%f" |> Text) |> Hued
+                (Sublabel, " Bought For: " |> Text) |> Hued
+                (Value, buyPrice |> sprintf "%f" |> Line) |> Hued
+            ]
+            |> List.iter sink
             ())
         (Dock, location, world)
         |> Gamestate.Docked

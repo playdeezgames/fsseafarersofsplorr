@@ -253,7 +253,7 @@ let ``Run.It returns Docked (at ItemList) gamestate when given the Items command
 let ``Run.It adds a message when given the Buy command for a non-existent item.`` () =
     let inputLocation = smallWorldIslandLocation
     let inputWorld = shopWorld
-    let inputSource = (1u, "non existent item") |> Command.Buy |> Some |> toSource
+    let inputSource = (1u |> Specific, "non existent item") |> Command.Buy |> Some |> toSource
     let expectedWorld =
         inputWorld
         |> World.AddMessages avatarId ["Round these parts, we don't sell things like that."]
@@ -270,10 +270,10 @@ let ``Run.It adds a message when given the Buy command for a non-existent item.`
 let ``Run.It adds a message when given the Buy command and the avatar does not have enough money to complete the purchase.`` () =
     let inputLocation = smallWorldIslandLocation
     let inputWorld = smallWorldDocked |> World.ClearMessages avatarId
-    let inputSource = (1u, "item under test") |> Command.Buy |> Some |> toSource
+    let inputSource = (1u |> Specific, "item under test") |> Command.Buy |> Some |> toSource
     let expectedWorld =
         inputWorld
-        |> World.AddMessages avatarId ["You don't have enough money to buy those."]
+        |> World.AddMessages avatarId ["You don't have enough money."]
     let expected = 
         (Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
@@ -288,7 +288,7 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
     let inputLocation = smallWorldIslandLocation
     let inputAvatar = {shopWorld.Avatars.[avatarId] with Money = 1000000.0}
     let inputWorld = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
-    let inputSource = (1u, "item under test") |> Command.Buy |> Some |> toSource
+    let inputSource = (1u |> Specific, "item under test") |> Command.Buy |> Some |> toSource
     let expectedPrice = Item.DetermineSalePrice inputWorld.Commodities inputWorld.Islands.[inputLocation].Markets inputWorld.Items.[1u]
     let expectedDemand = 
         inputWorld.Islands.[inputLocation].Markets.[1u].Demand + inputWorld.Commodities.[1u].SaleFactor
@@ -303,7 +303,7 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
             Markets = expectedMarkets}
     let expectedWorld =
         inputWorld
-        |> World.AddMessages avatarId ["You complete the purchase."]
+        |> World.AddMessages avatarId ["You complete the purchase of 1 item under test."]
         |> World.TransformIsland inputLocation (fun _ -> expectedIsland |> Some)
         |> World.TransformAvatar avatarId (Avatar.AddInventory 1u 1u >> Some)
         |> World.TransformAvatar avatarId (Avatar.SpendMoney expectedPrice >> Some)

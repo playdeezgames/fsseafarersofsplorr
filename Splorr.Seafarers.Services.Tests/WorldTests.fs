@@ -440,7 +440,7 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
 let ``BuyItems.It gives a message when given a bogus island location.`` () =
     let input = shopWorld
     let inputLocation = shopWorldBogusLocation
-    let inputQuantity = 2u
+    let inputQuantity = 2u |> Specific
     let inputItemName = "item under test"
     let expected =
         input
@@ -454,7 +454,7 @@ let ``BuyItems.It gives a message when given a bogus island location.`` () =
 let ``BuyItems.It gives a message when given a valid island location and a bogus item to buy.`` () =
     let input = shopWorld
     let inputLocation = shopWorldLocation
-    let inputQuantity = 2u
+    let inputQuantity = 2u |> Specific
     let inputItemName = "bogus item"
     let expected =
         input
@@ -468,11 +468,11 @@ let ``BuyItems.It gives a message when given a valid island location and a bogus
 let ``BuyItems.It gives a message when the avatar has insufficient funds.`` () =
     let input = shopWorld
     let inputLocation = shopWorldLocation
-    let inputQuantity = 2u
+    let inputQuantity = 2u |> Specific
     let inputItemName = "item under test"
     let expected =
         input
-        |> World.AddMessages avatarId ["You don't have enough money to buy those."]
+        |> World.AddMessages avatarId ["You don't have enough money."]
     let actual = 
         input 
         |> World.BuyItems inputLocation inputQuantity inputItemName avatarId
@@ -483,7 +483,7 @@ let ``BuyItems.It gives a message and completes the purchase when the avatar has
     let inputAvatar = {shopWorld.Avatars.[avatarId] with Money = 1000000.0}
     let input = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
     let inputLocation = shopWorldLocation
-    let inputQuantity = 2u
+    let inputQuantity = 2u |> Specific
     let inputItemName = "item under test"
     let expectedMarket =
         {input.Islands.[inputLocation].Markets.[1u] with
@@ -499,11 +499,53 @@ let ``BuyItems.It gives a message and completes the purchase when the avatar has
         {input with
             Avatars = input.Avatars |> Map.add avatarId expectedAvatar
             Islands = input.Islands |> Map.add inputLocation expectedIsland}
-        |> World.AddMessages avatarId ["You complete the purchase."]
+        |> World.AddMessages avatarId ["You complete the purchase of 2 item under test."]
     let actual = 
         input 
         |> World.BuyItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``BuyItems.It gives a message when the avatar has insufficient funds for a single unit when specifying a maximum buy.`` () =
+    let input = shopWorld
+    let inputLocation = shopWorldLocation
+    let inputQuantity = Maximum
+    let inputItemName = "item under test"
+    let expected =
+        input
+        |> World.AddMessages avatarId ["You don't have enough money to buy any of those."]
+    let actual = 
+        input 
+        |> World.BuyItems inputLocation inputQuantity inputItemName avatarId
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``BuyItems.It gives a message indicating purchased quantity and completes the purchase when the avatar has sufficient funds for at least one and has specified a maximum buy.`` () =
+    let inputAvatar = {shopWorld.Avatars.[avatarId] with Money = 100.0}
+    let input = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
+    let inputLocation = shopWorldLocation
+    let inputQuantity = Maximum
+    let inputItemName = "item under test"
+    let expectedMarket =
+        {input.Islands.[inputLocation].Markets.[1u] with
+            Demand = 105.0}
+    let expectedIsland = 
+        {input.Islands.[inputLocation] with
+            Markets = input.Islands.[inputLocation].Markets |> Map.add 1u expectedMarket}
+    let expectedAvatar = 
+        {input.Avatars.[avatarId] with
+            Money = 0.0
+            Inventory = Map.empty |> Map.add 1u 100u}
+    let expected =
+        {input with
+            Avatars = input.Avatars |> Map.add avatarId expectedAvatar
+            Islands = input.Islands |> Map.add inputLocation expectedIsland}
+        |> World.AddMessages avatarId ["You complete the purchase of 100 item under test."]
+    let actual = 
+        input 
+        |> World.BuyItems inputLocation inputQuantity inputItemName avatarId
+    Assert.AreEqual(expected, actual)
+
 
 [<Test>]
 let ``SellItems.It gives a message when given a bogus island location.`` () =

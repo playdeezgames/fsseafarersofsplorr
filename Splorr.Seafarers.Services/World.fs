@@ -11,6 +11,10 @@ type WorldGenerationConfiguration =
         Items: Map<uint, ItemDescriptor>
     }
 
+type TradeQuantity =
+    | Maximum
+    | Specific of uint32
+
 module World =
     let private GenerateIslandName (random:System.Random) : string =
         let consonants = [| "h"; "k"; "l"; "m"; "p" |]
@@ -229,18 +233,26 @@ module World =
         world.Items
         |> Map.tryPick (fun k v -> if v.DisplayName = itemName then Some (k,v) else None)
 
-    let BuyItems (location:Location) (quantity:uint32) (itemName:string) (avatarId:string) (world:World) : World =
+
+    let BuyItems (location:Location) (tradeQuantity:TradeQuantity) (itemName:string) (avatarId:string) (world:World) : World =
         match world |> FindItemByName itemName, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
         | Some (item, descriptor) , Some island, Some avatar->
             let unitPrice = 
                 Item.DetermineSalePrice world.Commodities island.Markets descriptor 
+            let quantity =
+                match tradeQuantity with
+                | Specific amount -> amount
+                | Maximum -> floor(avatar.Money / unitPrice) |> uint32
             let price = (quantity |> float) * unitPrice
             if price > avatar.Money then
                 world
-                |> AddMessages avatarId ["You don't have enough money to buy those."]
+                |> AddMessages avatarId ["You don't have enough money."]
+            elif quantity = 0u then
+                world
+                |> AddMessages avatarId ["You don't have enough money to buy any of those."]
             else
                 world
-                |> AddMessages avatarId ["You complete the purchase."]
+                |> AddMessages avatarId [(quantity, descriptor.DisplayName) ||> sprintf "You complete the purchase of %u %s."]
                 |> TransformAvatar avatarId (Avatar.SpendMoney price >> Some)
                 |> TransformAvatar avatarId (Avatar.AddInventory item quantity >> Some)
                 |> TransformIsland location (Island.UpdateMarketForItemSale world.Commodities descriptor quantity >> Some)

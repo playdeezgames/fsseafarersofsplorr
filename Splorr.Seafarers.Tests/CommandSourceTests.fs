@@ -4,6 +4,7 @@ open NUnit.Framework
 open Splorr.Seafarers
 open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
+open Splorr.Seafarers.Services
 
 [<Test>]
 let ``Parse.It returns Quit command when given ["quit"]`` () =
@@ -204,18 +205,32 @@ let ``Parse.It returns Accept Job 1 command when given ["accept";"job";"1"]`` ()
     Assert.AreEqual(1u |> Command.AcceptJob |> Some, actual)
 
 [<Test>]
-let ``Parse.It returns Buy (3,"foo") command when given ["buy";"3";"foo"]`` () =
+let ``Parse.It returns Buy (Specific 3,"foo") command when given ["buy";"3";"foo"]`` () =
     let actual =
         [ "buy";"3";"foo"]
         |> CommandSource.Parse
-    Assert.AreEqual((3u, "foo") |> Command.Buy |> Some, actual)
+    Assert.AreEqual((3u |> Specific, "foo") |> Command.Buy |> Some, actual)
 
 [<Test>]
-let ``Parse.It returns Buy (3,"foo bar") command when given ["buy";"3";"foo";"bar"]`` () =
+let ``Parse.It returns Buy (Specific 3,"foo bar") command when given ["buy";"3";"foo";"bar"]`` () =
     let actual =
         [ "buy";"3";"foo bar"]
         |> CommandSource.Parse
-    Assert.AreEqual((3u, "foo bar") |> Command.Buy |> Some, actual)
+    Assert.AreEqual((3u |> Specific, "foo bar") |> Command.Buy |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Buy (Maximum,"foo") command when given ["buy";"maximum";"foo"]`` () =
+    let actual =
+        [ "buy";"maximum";"foo"]
+        |> CommandSource.Parse
+    Assert.AreEqual((Maximum, "foo") |> Command.Buy |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Buy (Maximum,"foo bar") command when given ["buy";"maximum";"foo";"bar"]`` () =
+    let actual =
+        [ "buy";"maximum";"foo bar"]
+        |> CommandSource.Parse
+    Assert.AreEqual((Maximum, "foo bar") |> Command.Buy |> Some, actual)
 
 [<Test>]
 let ``Parse.It returns Sell (3,"foo") command when given ["sell";"3";"foo"]`` () =
