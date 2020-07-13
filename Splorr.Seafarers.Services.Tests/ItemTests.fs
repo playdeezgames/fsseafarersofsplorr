@@ -13,6 +13,7 @@ let internal itemDescriptor =
         DisplayName=""
         Commodities = [(1u, 1.0)]|>Map.ofList
         Occurrence=0.0
+        Tonnage = 1.0
     }
 
 [<Test>]

@@ -22,6 +22,8 @@ module MessageSink =
                 System.Console.ForegroundColor <- System.ConsoleColor.DarkYellow
             | Usage ->
                 System.Console.ForegroundColor <- System.ConsoleColor.DarkGray
+            | Error ->
+                System.Console.ForegroundColor <- System.ConsoleColor.DarkRed
             message |> Write
             System.Console.ForegroundColor <- old
 

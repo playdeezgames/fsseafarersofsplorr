@@ -20,4 +20,5 @@ type Avatar =
         Turn         : Statistic
         RationItem   : uint
         Metrics      : Map<Metric, uint>
+        Vessel       : Vessel
     }

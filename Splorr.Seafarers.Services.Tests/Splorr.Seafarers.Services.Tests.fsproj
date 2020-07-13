@@ -29,6 +29,7 @@
     <Compile Include="LocationTests.fs" />
     <Compile Include="MarketTests.fs" />
     <Compile Include="StatisticTest.fs" />
+    <Compile Include="VesselTests.fs" />
     <Compile Include="WorldTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

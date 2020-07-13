@@ -23,6 +23,7 @@ let internal world : World =
                 Turn = {MinimumValue=15.0;CurrentValue=16.0;MaximumValue=17.0}
                 RationItem = 1u
                 Metrics = Map.empty
+                Vessel  = {Tonnage=100.0}
             }] |> Map.ofList
         Islands = Map.empty
         RewardRange = (1.0, 10.0)

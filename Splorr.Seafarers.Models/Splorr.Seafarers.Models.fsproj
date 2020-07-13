@@ -11,6 +11,7 @@
     <Compile Include="ItemDescriptor.fs" />
     <Compile Include="Island.fs" />
     <Compile Include="Statistic.fs" />
+    <Compile Include="Vessel.fs" />
     <Compile Include="Avatar.fs" />
     <Compile Include="World.fs" />
   </ItemGroup>

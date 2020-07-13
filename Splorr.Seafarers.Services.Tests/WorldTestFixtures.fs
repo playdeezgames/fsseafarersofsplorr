@@ -37,6 +37,7 @@ let internal emptyWorld =
                 Turn = {MinimumValue=0.0;CurrentValue=0.0;MaximumValue=15000.0}
                 RationItem = 1u
                 Metrics = Map.empty
+                Vessel  = {Tonnage=100.0}
             }] 
             |> Map.ofList
         Islands = Map.empty
@@ -65,6 +66,7 @@ let internal genericWorldItems =
         DisplayName="item under test"
         Commodities= Map.empty |> Map.add 1u 1.0
         Occurrence=1.0
+        Tonnage = 1.0
         }
 
 let internal genericWorldConfiguration: WorldGenerationConfiguration =

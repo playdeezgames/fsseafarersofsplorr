@@ -56,7 +56,7 @@ module World =
         |> SetIsland location) world
 
     let private NameIslands (random:System.Random) (world:World) : World =
-        GenerateIslandNames random (world.Islands.Count) (Set.empty)
+        GenerateIslandNames random (world.Islands.Count) (Set.empty) //TODO: make antwerp an island name
         |> List.sortBy (fun _ -> random.Next())
         |> List.zip (world.Islands |> Map.toList |> List.map fst)
         |> List.fold
@@ -239,14 +239,22 @@ module World =
         | Some (item, descriptor) , Some island, Some avatar->
             let unitPrice = 
                 Item.DetermineSalePrice world.Commodities island.Markets descriptor 
+            let availableTonnage = avatar.Vessel.Tonnage
+            let usedTonnage =
+                avatar
+                |> Avatar.GetUsedTonnage world.Items
             let quantity =
                 match tradeQuantity with
                 | Specific amount -> amount
-                | Maximum -> floor(avatar.Money / unitPrice) |> uint32
+                | Maximum -> min (floor(availableTonnage / descriptor.Tonnage)) (floor(avatar.Money / unitPrice)) |> uint32
             let price = (quantity |> float) * unitPrice
+            let tonnageNeeded = (quantity |> float) * descriptor.Tonnage
             if price > avatar.Money then
                 world
                 |> AddMessages avatarId ["You don't have enough money."]
+            elif usedTonnage + tonnageNeeded > availableTonnage then
+                world
+                |> AddMessages avatarId ["You don't have enough tonnage."]
             elif quantity = 0u then
                 world
                 |> AddMessages avatarId ["You don't have enough money to buy any of those."]
