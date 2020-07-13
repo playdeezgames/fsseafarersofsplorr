@@ -14,6 +14,13 @@ let ``Parse.It returns Quit command when given ["quit"]`` () =
     Assert.AreEqual(Command.Quit |> Some, actual)
 
 [<Test>]
+let ``Parse.It returns Metrics command when given ["metrics"]`` () =
+    let actual =
+        [ "metrics" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(Command.Metrics |> Some, actual)
+
+[<Test>]
 let ``Parse.It returns Help command when given ["help"]`` () =
     let actual =
         [ "help" ]

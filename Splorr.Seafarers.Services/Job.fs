@@ -20,7 +20,10 @@ module Job =
             "thoughtfully"
             "shodilly"
             "amazingly"
+            "recklessly"
+            "unashamedly"
         ]
+
     let private adjectives = 
         [
             "valuable"
@@ -40,7 +43,9 @@ module Job =
             "turgid"
             "swollen"
             "incridible"
+            "cheesy"
         ]
+
     let private objectNames = 
         [
             "'stuff'"
@@ -71,7 +76,11 @@ module Job =
             "streamdeck"
             "jug"
             "key"
+            "scenegraph"
+            "cheese wedge"
+            "copy of Turbo Boom"
         ]
+
     let private names = 
         [
             "Robert"

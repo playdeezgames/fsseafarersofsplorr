@@ -41,6 +41,33 @@ let ``GetWorld.It returns the world embedded within the given MainMenu Gamestate
     Assert.AreEqual(world |> Some, actual)
 
 [<Test>]
+let ``GetWorld.It returns the world embedded within the given Status Gamestate when a world is present.`` () =
+    let actual = 
+        world
+        |> Gamestate.AtSea
+        |> Gamestate.Status
+        |> Gamestate.GetWorld
+    Assert.AreEqual(world |> Some, actual)
+
+[<Test>]
+let ``GetWorld.It returns the world embedded within the given Help Gamestate when a world is present.`` () =
+    let actual = 
+        world
+        |> Gamestate.AtSea
+        |> Gamestate.Help
+        |> Gamestate.GetWorld
+    Assert.AreEqual(world |> Some, actual)
+
+[<Test>]
+let ``GetWorld.It returns the world embedded within the given Metrics Gamestate when a world is present.`` () =
+    let actual = 
+        world
+        |> Gamestate.AtSea
+        |> Gamestate.Metrics
+        |> Gamestate.GetWorld
+    Assert.AreEqual(world |> Some, actual)
+
+[<Test>]
 let ``GetWorld.It returns None from the given MainMenu Gamestate when no world is present.`` () =
     let actual = 
         None

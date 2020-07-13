@@ -18,6 +18,7 @@
     <Compile Include="ItemList.fs" />
     <Compile Include="Jobs.fs" />
     <Compile Include="MainMenu.fs" />
+    <Compile Include="Metrics.fs" />
     <Compile Include="SaveGame.fs" />
     <Compile Include="Status.fs" />
   </ItemGroup>

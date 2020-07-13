@@ -35,6 +35,7 @@ type Command =
     | Buy of TradeQuantity * string
     | Sell of TradeQuantity * string
     | Save of string
+    | Metrics
 
 type CommandSource = unit -> (Command option)
 

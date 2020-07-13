@@ -36,6 +36,7 @@ let internal emptyWorld =
                 Health = Statistic.Create (0.0, 100.0) (100.0)
                 Turn = {MinimumValue=0.0;CurrentValue=0.0;MaximumValue=15000.0}
                 RationItem = 1u
+                Metrics = Map.empty
             }] 
             |> Map.ofList
         Islands = Map.empty

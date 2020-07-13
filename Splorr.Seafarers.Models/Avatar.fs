@@ -1,5 +1,8 @@
 namespace Splorr.Seafarers.Models
 
+type Metric =
+    | Moved = 1
+
 type Avatar =
     {
         Messages     : string list
@@ -16,4 +19,5 @@ type Avatar =
         Health       : Statistic
         Turn         : Statistic
         RationItem   : uint
+        Metrics      : Map<Metric, uint>
     }

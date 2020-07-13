@@ -78,6 +78,12 @@ module AtSea =
             |> Gamestate.AtSea
             |> Some
 
+        | Some Command.Metrics ->
+            world 
+            |> Gamestate.AtSea
+            |> Gamestate.Metrics
+            |> Some
+
         | Some Command.Menu ->
             world
             |> Some

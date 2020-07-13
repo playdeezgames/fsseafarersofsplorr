@@ -156,6 +156,9 @@ module CommandSource=
         | [ "resume" ] -> 
             Command.Resume 
             |> Some
+        | [ "metrics" ] -> 
+            Command.Metrics 
+            |> Some
         | "abandon" :: tail -> 
             tail
             |> ParseAbandon
