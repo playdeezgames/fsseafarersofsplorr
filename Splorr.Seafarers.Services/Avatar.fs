@@ -18,6 +18,7 @@ module Avatar =
             Health = Statistic.Create (0.0, 100.0) 100.0
             Turn = Statistic.Create (0.0, 15000.0) 0.0
             RationItem = 1u
+            Metrics = Map.empty
         }
 
     let SetSpeed (speed:float) (avatar:Avatar) : Avatar =
@@ -64,12 +65,22 @@ module Avatar =
                 avatar
                 |> TransformHealth (Statistic.ChangeBy (-1.0))
 
+    let AddMetric (metric:Metric) (amount:uint) (avatar:Avatar) : Avatar =
+        let newValue =
+            avatar.Metrics
+            |> Map.tryFind metric
+            |> Option.defaultValue 0u
+            |> (+) amount
+        {avatar with
+            Metrics = avatar.Metrics |> Map.add metric newValue}
+
     let Move(avatar: Avatar) : Avatar =
         {
             avatar with 
                 Position = ((avatar.Position |> fst) + System.Math.Cos(avatar.Heading) * avatar.Speed, (avatar.Position |> snd) + System.Math.Sin(avatar.Heading) * avatar.Speed)
                 Turn = avatar.Turn |> Statistic.ChangeBy 1.0
         }
+        |> AddMetric Metric.Moved 1u
         |> Eat
 
     let SetJob (job: Job) (avatar:Avatar) : Avatar =

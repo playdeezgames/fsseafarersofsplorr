@@ -158,6 +158,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                     Health = Statistic.Create (0.0, 100.0) (100.0)
                     Turn = Statistic.Create (0.0, 15000.0) (0.0)
                     RationItem = 1u
+                    Metrics = Map.empty
                 }]|>Map.ofList
             Commodities = Map.empty
             Items = Map.empty

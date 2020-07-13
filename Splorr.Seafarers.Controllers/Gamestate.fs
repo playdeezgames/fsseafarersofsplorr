@@ -17,6 +17,7 @@ type Gamestate =
     | Inventory of Gamestate
     | IslandList of uint32 * Gamestate
     | MainMenu of World option
+    | Metrics of Gamestate
     | Status of Gamestate
     | SaveGame of string * World
 
@@ -30,6 +31,7 @@ module Gamestate =
         | Gamestate.Inventory g -> GetWorld g
         | Gamestate.IslandList (_,g) -> GetWorld g
         | Gamestate.MainMenu w -> w
+        | Gamestate.Metrics g -> GetWorld g
         | Gamestate.Status g -> GetWorld g
         | Gamestate.SaveGame (_,w) -> w |> Some
         | _ -> None

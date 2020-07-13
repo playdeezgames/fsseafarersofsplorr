@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open System.Data.SQLite
 
 let commodities :Map<uint, CommodityDescriptor> =
-    [(1u,{Name="grain";BasePrice=1.0;SaleFactor=0.01;PurchaseFactor=0.01;Discount=0.1})]
+    [(1u,{Name="grain";BasePrice=1.0;SaleFactor=0.01;PurchaseFactor=0.01;Discount=0.5})]
     |> Map.ofList
 
 let items: Map<uint, ItemDescriptor> =

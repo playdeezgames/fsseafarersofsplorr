@@ -333,3 +333,25 @@ let ``AddMessages.It adds messages to a given avatar.`` () =
         |> Avatar.AddMessages inputMessages
     Assert.AreEqual(expectedMessages, actual.Messages)
 
+[<Test>]
+let ``AddMetric.It creates a metric value when there is no previously existing metric value in the avatar's table.`` () = 
+    let input = avatar
+    let inputMetric = Metric.Moved
+    let inputValue = 1u
+    let expected = {input with Metrics = input.Metrics |> Map.add inputMetric inputValue}
+    let actual =
+        input
+        |> Avatar.AddMetric inputMetric inputValue
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``AddMetric.It adds to a metric value when there is a previously existing metric value in the avatar's table.`` () = 
+    let input = {avatar with Metrics = Map.empty |> Map.add Metric.Moved 1u}
+    let inputMetric = Metric.Moved
+    let inputValue = 1u
+    let expectedValue = 2u
+    let expected = {input with Metrics = input.Metrics |> Map.add inputMetric expectedValue}
+    let actual =
+        input
+        |> Avatar.AddMetric inputMetric inputValue
+    Assert.AreEqual(expected, actual)

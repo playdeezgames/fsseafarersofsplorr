@@ -123,10 +123,11 @@ let ``Run.It moves the avatar when given Move command.`` () =
     let expectedTurn = input.Avatars.[avatarId].Turn.CurrentValue + 1.0
     let expectedAvatar =
         {input.Avatars.[avatarId] with 
-            Position=(6.0,5.0)
-            Satiety = {input.Avatars.[avatarId].Satiety with CurrentValue=99.0}
-            Turn = {input.Avatars.[avatarId].Turn with CurrentValue=expectedTurn}
-            Messages = expectedMessages}
+            Position = (6.0,5.0)
+            Satiety  = {input.Avatars.[avatarId].Satiety with CurrentValue=99.0}
+            Turn     = {input.Avatars.[avatarId].Turn with CurrentValue=expectedTurn}
+            Messages = expectedMessages
+            Metrics  = Map.empty |> Map.add Metric.Moved 1u}
     let expected = 
         {input with 
             Avatars  = input.Avatars |> Map.add avatarId expectedAvatar} 
@@ -154,6 +155,22 @@ let ``Run.It returns At Sea Help when given the Help command.`` () =
         |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
+[<Test>]
+let ``Run.It returns At Sea Metrics when given the Metrics command.`` () =
+    let input = world
+    let inputSource = 
+        Command.Metrics 
+        |> Some 
+        |> toSource
+    let expected = 
+        input 
+        |> Gamestate.AtSea 
+        |> Gamestate.Metrics 
+        |> Some
+    let actual =
+        input
+        |> AtSea.Run random inputSource sinkStub avatarId
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It returns At Sea Inventory when given the Inventory command.`` () =

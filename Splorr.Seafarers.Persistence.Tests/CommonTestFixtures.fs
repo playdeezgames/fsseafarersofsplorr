@@ -22,6 +22,7 @@ let internal world : World =
                 Health = {MinimumValue=12.0; CurrentValue=13.0; MaximumValue=14.0}
                 Turn = {MinimumValue=15.0;CurrentValue=16.0;MaximumValue=17.0}
                 RationItem = 1u
+                Metrics = Map.empty
             }] |> Map.ofList
         Islands = Map.empty
         RewardRange = (1.0, 10.0)

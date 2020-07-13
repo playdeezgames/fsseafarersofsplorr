@@ -18,6 +18,7 @@ module Runner =
             | Gamestate.Inventory gameState -> Inventory.Run sink avatarId gameState
             | Gamestate.IslandList (page, state) -> IslandList.Run sink page avatarId state
             | Gamestate.MainMenu world -> MainMenu.Run configuration source sink world
+            | Gamestate.Metrics state -> Metrics.Run sink avatarId state
             | Gamestate.Status state -> Status.Run sink avatarId state
             | Gamestate.SaveGame (name, world) -> SaveGame.Run connection sink name world
         match nextGamestate with
