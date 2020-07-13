@@ -16,6 +16,7 @@ let items: Map<uint, ItemDescriptor> =
                 [(1u, 0.01)]
                 |> Map.ofList
             Occurrence = 1.0
+            Tonnage = 0.01
         }
     |> Map.add 2u
         {
@@ -24,6 +25,7 @@ let items: Map<uint, ItemDescriptor> =
                 [(1u, 1.0)]
                 |> Map.ofList
             Occurrence = 1.0
+            Tonnage = 1.0
         }
 let connectionString = "Data Source=seafarers.db;Version=3;"
 let avatarId = ""

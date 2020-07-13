@@ -153,6 +153,7 @@ module Job =
             "traveller"
             "moderator"
             "arbiter"
+            "'thing-doer'"
         ]
     let private ChooseRandomTerm (random:System.Random) (terms:string list) : string =
         terms

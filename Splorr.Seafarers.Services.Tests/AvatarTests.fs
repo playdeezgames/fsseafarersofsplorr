@@ -355,3 +355,31 @@ let ``AddMetric.It adds to a metric value when there is a previously existing me
         input
         |> Avatar.AddMetric inputMetric inputValue
     Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``GetUsedTonnage.It calculates the used tonnage based on inventory and item descriptors.`` () =
+    let input = 
+        {avatar with
+            Inventory =
+                Map.empty
+                |> Map.add 1u 2u
+                |> Map.add 2u 3u}
+    let inputItems =
+        Map.empty
+        |> Map.add 1u {
+                        DisplayName =""
+                        Commodities =Map.empty
+                        Occurrence  =0.0
+                        Tonnage     =1.0
+                        }
+        |> Map.add 2u {
+                        DisplayName =""
+                        Commodities =Map.empty
+                        Occurrence  =0.0
+                        Tonnage     =3.0
+                        }
+    let expected = 11.0
+    let actual =
+        input
+        |> Avatar.GetUsedTonnage inputItems
+    Assert.AreEqual(expected, actual)

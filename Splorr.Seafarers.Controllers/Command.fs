@@ -47,6 +47,7 @@ type Hue =
     | Value
     | Flavor
     | Usage
+    | Error
 
 type Message =
     | Line of string

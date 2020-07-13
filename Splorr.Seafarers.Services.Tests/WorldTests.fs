@@ -159,6 +159,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                     Turn = Statistic.Create (0.0, 15000.0) (0.0)
                     RationItem = 1u
                     Metrics = Map.empty
+                    Vessel  = {Tonnage=100.0}
                 }]|>Map.ofList
             Commodities = Map.empty
             Items = Map.empty
@@ -474,6 +475,23 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds.`` () =
     let expected =
         input
         |> World.AddMessages avatarId ["You don't have enough money."]
+    let actual = 
+        input 
+        |> World.BuyItems inputLocation inputQuantity inputItemName avatarId
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``BuyItems.It gives a message when the avatar has insufficient tonnage.`` () =
+    let inputAvatar = 
+        {shopWorld.Avatars.[avatarId] with
+            Money = 1000000.0}
+    let input = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
+    let inputLocation = shopWorldLocation
+    let inputQuantity = 1000u |> Specific
+    let inputItemName = "item under test"
+    let expected =
+        input
+        |> World.AddMessages avatarId ["You don't have enough tonnage."]
     let actual = 
         input 
         |> World.BuyItems inputLocation inputQuantity inputItemName avatarId

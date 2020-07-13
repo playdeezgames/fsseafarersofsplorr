@@ -20,7 +20,7 @@ module SaveGame =
             ]
             |> List.iter sink
             
-        | Error ex ->
+        | Result.Error ex ->
             [
                 "" |> Line
                 "Error occurred!" |> Line

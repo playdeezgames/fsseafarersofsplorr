@@ -49,6 +49,7 @@ let internal items =
             DisplayName = "rations"
             Commodities=[(1u, 1.0)]|>Map.ofList
             Occurrence=1.0
+            Tonnage = 1.0
         })]
     |> Map.ofList
 let shopIsland = {commodityIsland with Items = commodityIsland.Items |> Set.add 1u}

@@ -80,7 +80,7 @@ module Docked =
             |> Some
 
         | _ -> 
-            "Maybe try 'help'?" |> Line |> sink
+            (Error, "Maybe try 'help'?" |> Line) |> Hued |> sink
             (Dock, location, world) 
             |> Gamestate.Docked 
             |> Some

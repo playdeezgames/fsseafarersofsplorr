@@ -7,7 +7,12 @@ module ItemList =
     let private RunWithIsland (sink:MessageSink) (location:Location) (island:Island) (avatarId:string) (world: World) : Gamestate option =
         [
             "" |> Line
-            (Heading, "Items for sale:" |> Line) |> Hued
+            (Heading, "Item" |> sprintf "%-20s" |> Text) |> Hued
+            (Sublabel, " | " |> Text) |> Hued
+            (Heading, "Selling" |> sprintf "%8s" |> Text) |> Hued
+            (Sublabel, " | " |> Text) |> Hued
+            (Heading, "Offering" |> sprintf "%8s" |> Line) |> Hued
+            (Sublabel, "---------------------+----------+----------" |> Line) |> Hued
         ]
         |> List.iter sink
         island.Items
@@ -16,11 +21,11 @@ module ItemList =
             let sellPrice: float = descriptor |> Item.DetermineSalePrice world.Commodities island.Markets
             let buyPrice: float = descriptor |> Item.DeterminePurchasePrice world.Commodities island.Markets
             [
-                (Value, descriptor.DisplayName |> sprintf "%s" |> Text) |> Hued
-                (Sublabel, " Sells At: " |> Text) |> Hued
-                (Value, sellPrice |> sprintf "%f" |> Text) |> Hued
-                (Sublabel, " Bought For: " |> Text) |> Hued
-                (Value, buyPrice |> sprintf "%f" |> Line) |> Hued
+                (Value, descriptor.DisplayName |> sprintf "%-20s" |> Text) |> Hued
+                (Sublabel, " | " |> Text) |> Hued
+                (Value, sellPrice |> sprintf "%8.3f" |> Text) |> Hued
+                (Sublabel, " | " |> Text) |> Hued
+                (Value, buyPrice |> sprintf "%8.3f" |> Line) |> Hued
             ]
             |> List.iter sink
             ())

@@ -13,6 +13,7 @@ let internal items:Map<uint, ItemDescriptor> =
             DisplayName = "waffles"
             Commodities = Map.empty |> Map.add 1u 1.0
             Occurrence = 1.0
+            Tonnage = 1.0
         }
 
 [<Test>]

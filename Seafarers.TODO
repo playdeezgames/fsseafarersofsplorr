@@ -52,11 +52,18 @@ Avatar Longevity:
     ☐ need a decent value for maximum turn that makes eating worth it, currently looking at 15000
     ☐ need some other penalty for being hungry that is impactful to the player in the short term
 Avatar Ships:
-    ☐ avatars have ships
-    ☐ ships have maximum carrying capacity
-    ☐ items require carrying capacity
-    ☐ buying things will not be allowed if it will exceed the capacity
-    ☐ carrying capacity is on the status screen
+    ✔ avatars have ships @done(20-07-13 07:26)
+    ✔ ships have maximum carrying capacity @done(20-07-13 07:26)
+    ✔ items require carrying capacity @done(20-07-13 07:26)
+    ✔ buying things will not be allowed if it will exceed the capacity @done(20-07-13 07:26)
+    ✘ carrying capacity is on the status screen @cancelled(20-07-13 05:52)
+    ✔ show available tonnage in inventory list @done(20-07-13 07:26)
+    ✔ show tonnage for items in inventory list @done(20-07-13 06:53)
+    ☐ how to buy new ship?
+        at the ship yard, naturally!
+    ☐ wear and tear on the ship?
+    ☐ ships have a crew requirement for full speed
+    ✔ buy maximum should take into account the available tonnage of the ship @done(20-07-13 07:26)
 Quests/Jobs:
     ☐ some jobs have a minimum reputation requirement
 Resting at an Inn:
@@ -77,8 +84,11 @@ Metrics:
       accept job
       abandon job
       complete job
-  ☐ how to view metrics? with the "metrics" command?
+  ✔ how to view metrics? with the "metrics" command? @done(20-07-13 05:08)
 Refactor "Opportunities":
+    ☐ generated "countries/empires" of multiple nearby islands
+    ☐ the various countries have differing currencies (and thus, an exchange rate)
+    ☐ there are certain item types that require a specific amount of reputation in order to purchase
     ☐ is RationItem in Avatar the right place to store this value?
     ☐ split out the view portion of the game state handler from the command handling portion
         first, based on gamestate, show the view, and the view indicates whether or not there needs to be command input prior to the next game state

@@ -127,7 +127,7 @@ module AtSea =
             |> Some
 
         | _ ->
-            "Maybe try 'help'?" |> Line |> sink
+            (Error, "Maybe try 'help'?" |> Line) |> Hued |> sink
             world
             |> Gamestate.AtSea
             |> Some

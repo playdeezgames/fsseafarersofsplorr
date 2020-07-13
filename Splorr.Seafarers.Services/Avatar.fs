@@ -19,6 +19,7 @@ module Avatar =
             Turn = Statistic.Create (0.0, 15000.0) 0.0
             RationItem = 1u
             Metrics = Map.empty
+            Vessel = Vessel.Create 100.0
         }
 
     let SetSpeed (speed:float) (avatar:Avatar) : Avatar =
@@ -135,3 +136,10 @@ module Avatar =
 
     let AddMessages (messages:string list) (avatar:Avatar) : Avatar =
         {avatar with Messages = List.append avatar.Messages messages}
+
+    let GetUsedTonnage (items:Map<uint, ItemDescriptor>) (avatar:Avatar) : float =
+        (0.0, avatar.Inventory)
+        ||> Map.fold
+            (fun result item quantity -> 
+                let d = items.[item]
+                result + (quantity |> float) * d.Tonnage)
