@@ -151,8 +151,20 @@ module CommandSource=
             |> Command.Save
             |> Some
 
+    let private ParseCareen (tokens:string list) : Command option =
+        match tokens with 
+        | ["to";"port"] ->
+            Port |> Command.Careen |> Some
+        | ["to";"starboard"] ->
+            Starboard |> Command.Careen |> Some
+        | _ -> None
+
     let Parse(tokens:string list) : Command option =
         match tokens with
+        | "careen" :: tail ->
+            tail
+            |> ParseCareen 
+
         | [ "resume" ] -> 
             Command.Resume 
             |> Some
@@ -222,6 +234,13 @@ module CommandSource=
         | "save" :: tail ->
             tail
             |> ParseSave
+        | ["weigh";"anchor"] ->
+            Command.WeighAnchor
+            |> Some
+        | ["clean";"the";"hull"]
+        | ["clean";"hull"] ->
+            Command.CleanHull
+            |> Some
         | _ -> 
             None
 

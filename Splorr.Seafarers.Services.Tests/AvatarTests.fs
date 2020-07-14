@@ -392,3 +392,41 @@ let ``GetUsedTonnage.It calculates the used tonnage based on inventory and item 
         input
         |> Avatar.GetUsedTonnage inputItems
     Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``GetEffectiveSpeed.It returns full speed when there is no fouling.`` () =
+    let input = 
+        avatar
+    let expected = 1.0
+    let actual =
+        input
+        |> Avatar.GetEffectiveSpeed
+    Assert.AreEqual(expected, actual)
+
+let private fouledAvatar = 
+    {avatar with 
+        Vessel = 
+            {avatar.Vessel with
+                Fouling = avatar.Vessel.Fouling |> Statistic.ChangeBy 0.5}}
+
+[<Test>]
+let ``GetEffectiveSpeed.It returns proportionally reduced speed when there is fouling.`` () =
+    let input = fouledAvatar
+    let expected = 0.5
+    let actual =
+        input
+        |> Avatar.GetEffectiveSpeed
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``CleanHull.It cleans the hull of the given avatar.`` () =
+    let input = fouledAvatar
+    let expected =
+        {input with 
+            Turn = input.Turn |> Statistic.ChangeBy 1.0
+            Vessel = 
+                {input.Vessel with Fouling = input.Vessel.Fouling |> Statistic.ChangeBy -0.5}}
+    let actual =
+        input
+        |> Avatar.CleanHull
+    Assert.AreEqual(expected, actual)

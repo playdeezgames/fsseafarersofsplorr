@@ -22,7 +22,7 @@ module Avatar =
             Vessel = Vessel.Create 100.0
         }
 
-    let SetSpeed (speed:float) (avatar:Avatar) : Avatar =
+    let SetSpeed (speed:float) (avatar:Avatar) : Avatar = //TODO: make speed a statistic
         let clampedSpeed = 
             match speed with
             | x when x < 0.0 -> 0.0
@@ -61,26 +61,40 @@ module Avatar =
         {avatar with
             Metrics = avatar.Metrics |> Map.add metric newValue}
 
+    let private IncrementMetric (metric:Metric) (avatar:Avatar) : Avatar =
+        let rateOfIncrement = 1u
+        avatar
+        |> AddMetric metric rateOfIncrement
+
     let private Eat (avatar:Avatar) : Avatar =
+        let satietyDecrease = -1.0
+        let satietyIncrease = 1.0
+        let rationConsumptionRate = 1u
         match avatar.Inventory.TryFind avatar.RationItem with
         | Some count when count > 0u ->
             avatar
-            |> AddMetric Metric.Ate 1u
-            |> RemoveInventory avatar.RationItem 1u
-            |> TransformSatiety (Statistic.ChangeBy 1.0)
+            |> IncrementMetric Metric.Ate
+            |> RemoveInventory avatar.RationItem rationConsumptionRate
+            |> TransformSatiety (Statistic.ChangeBy satietyIncrease)
         | _ ->
             if avatar.Satiety.CurrentValue > avatar.Satiety.MinimumValue then
                 avatar
-                |> TransformSatiety (Statistic.ChangeBy (-1.0))
+                |> TransformSatiety (Statistic.ChangeBy (satietyDecrease))
             else
                 avatar
-                |> TransformHealth (Statistic.ChangeBy (-1.0))
+                |> TransformHealth (Statistic.ChangeBy (satietyDecrease))
+
+    let GetEffectiveSpeed (avatar:Avatar) : float =
+        (avatar.Speed * (1.0 - avatar.Vessel.Fouling.CurrentValue))
 
     let Move(avatar: Avatar) : Avatar =
+        let actualSpeed = avatar |> GetEffectiveSpeed
+        let newPosition = ((avatar.Position |> fst) + System.Math.Cos(avatar.Heading) * actualSpeed, (avatar.Position |> snd) + System.Math.Sin(avatar.Heading) * actualSpeed)
         {
             avatar with 
-                Position = ((avatar.Position |> fst) + System.Math.Cos(avatar.Heading) * avatar.Speed, (avatar.Position |> snd) + System.Math.Sin(avatar.Heading) * avatar.Speed)
+                Position = newPosition
                 Turn = avatar.Turn |> Statistic.ChangeBy 1.0
+                Vessel = avatar.Vessel |> Vessel.Befoul
         }
         |> AddMetric Metric.Moved 1u
         |> Eat
@@ -89,11 +103,12 @@ module Avatar =
         {avatar with Job = job |> Some}
 
     let AbandonJob (avatar:Avatar) : Avatar =
+        let reputationCostForAbandoningAJob = -1.0
         avatar.Job
         |> Option.fold 
             (fun a _ -> 
-                {a with Job = None; Reputation = a.Reputation - 1.0}
-                |> AddMetric Metric.AbandonedJob 1u) avatar
+                {a with Job = None; Reputation = a.Reputation + reputationCostForAbandoningAJob}
+                |> IncrementMetric Metric.AbandonedJob) avatar
 
     let CompleteJob (avatar:Avatar) : Avatar =
         match avatar.Job with
@@ -147,3 +162,9 @@ module Avatar =
             (fun result item quantity -> 
                 let d = items.[item]
                 result + (quantity |> float) * d.Tonnage)
+
+    let CleanHull (avatar:Avatar) : Avatar =
+        {avatar with 
+            Vessel = 
+                {avatar.Vessel with Fouling = {avatar.Vessel.Fouling with CurrentValue = 0.0}}
+            Turn = avatar.Turn |> Statistic.ChangeBy 1.0}

@@ -4,11 +4,12 @@ open Splorr.Seafarers.Models
 module Island =
     let Create() : Island =
         {
-            Name = ""
-            AvatarVisits = Map.empty
-            Jobs = []
-            Markets = Map.empty
-            Items = Set.empty
+            Name           = ""
+            AvatarVisits   = Map.empty
+            Jobs           = []
+            Markets        = Map.empty
+            Items          = Set.empty
+            CareenDistance = 0.1 //TODO: dont hardcode this
         }
 
     let SetName (name:string) (island:Island) : Island =

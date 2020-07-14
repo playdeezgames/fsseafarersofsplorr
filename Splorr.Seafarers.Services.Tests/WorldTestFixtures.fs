@@ -37,7 +37,7 @@ let internal emptyWorld =
                 Turn = {MinimumValue=0.0;CurrentValue=0.0;MaximumValue=15000.0}
                 RationItem = 1u
                 Metrics = Map.empty
-                Vessel  = {Tonnage=100.0}
+                Vessel  = {Tonnage=100.0; Fouling = {MinimumValue = 0.0; MaximumValue = 0.5; CurrentValue=0.0}; FoulRate = 0.01}
             }] 
             |> Map.ofList
         Islands = Map.empty

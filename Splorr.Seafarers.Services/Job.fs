@@ -22,6 +22,7 @@ module Job =
             "amazingly"
             "recklessly"
             "unashamedly"
+            "pretentiously"
         ]
 
     let private adjectives = 
@@ -42,8 +43,11 @@ module Job =
             "oaken"
             "turgid"
             "swollen"
-            "incridible"
+            "incredible"
             "cheesy"
+            "soapy"
+            "decadent"
+            "worn"
         ]
 
     let private objectNames = 
@@ -80,6 +84,8 @@ module Job =
             "cheese wedge"
             "copy of Turbo Boom"
             "soap"
+            "wrench"
+            "pie"
         ]
 
     let private names = 
@@ -96,6 +102,7 @@ module Job =
             "Jill"
             "Kelly"
             "Percival"
+            "Matthew"
             "Sally"
             "Susan"
             "Muffin"
@@ -155,6 +162,7 @@ module Job =
             "moderator"
             "arbiter"
             "'thing-doer'"
+            "shepherd"
         ]
     let private ChooseRandomTerm (random:System.Random) (terms:string list) : string =
         terms

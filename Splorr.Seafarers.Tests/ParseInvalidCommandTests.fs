@@ -313,3 +313,46 @@ let ``Parse.It returns invalid command when given ["sell";"-3";"foo"]`` () =
         [ "sell";"-3";"foo"]
         |> CommandSource.Parse
     Assert.AreEqual(None, actual)
+
+[<Test>]
+let ``Parse.It returns invalid command when given ["careen"]`` () =
+    let actual =
+        [ "careen" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(None, actual)
+
+[<Test>]
+let ``Parse.It returns invalid command when given ["careen";"to"]`` () =
+    let actual =
+        [ "careen";"to" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(None, actual)
+    
+[<Test>]
+let ``Parse.It returns invalid command when given ["careen";"to";"port";"foo"]`` () =
+    let actual =
+        [ "careen";"to";"port";"foo" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(None, actual)
+
+[<Test>]
+let ``Parse.It returns invalid command when given ["weigh"]`` () =
+    let actual =
+        [ "weigh" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(None, actual)
+
+[<Test>]
+let ``Parse.It returns invalid command when given ["weigh";"foo"]`` () =
+    let actual =
+        [ "weigh"; "foo" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(None, actual)
+
+[<Test>]
+let ``Parse.It returns invalid command when given ["clean"]`` () =
+    let actual =
+        [ "clean" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(None, actual)
+    

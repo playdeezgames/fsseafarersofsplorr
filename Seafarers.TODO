@@ -56,13 +56,17 @@ Avatar Ships:
         at the ship yard, naturally!
     ☐ ships have a crew requirement for full speed
 Careening and Fouling:
-    ☐ ship bottoms get fouled at a particular rate
-    ☐ a fouled bottom reduces maximum speed
-    ☐ a ship may be careened
-    ☐ a careened ship can have its hull cleaned, or at least.... half of it can be
+    ✔ a careened ship can have its hull cleaned @done(20-07-14 15:03)
         you can "careen port" or "careen starboard"
+        how to differentiate between port and starboard fouling?
+    ✔ clean hull command @done(20-07-14 15:03)
+        takes a turn
     ☐ a ship may be put into a dry dock to clean the entire hull
-    ☐ careening may only happen within a particular distance from an island
+    ☐ metric for number of times that the hull is cleaned
+    ☐ time taken to clean hull is longer with a larger hull
+    ☐ time taken to clean hull is proportional to the amount of fouling!
+    ☐ time taken to clean hull is shorter when there are more hands available to do the work
+        time taken = k * boatsize / crew size
 Quests/Jobs:
     ☐ some jobs have a minimum reputation requirement
     ☐ jobs have an "expiration date" after which the reward is ... half? a fraction?
@@ -75,20 +79,14 @@ Resting at an Inn:
 Island Notes:
     ☐ Add island note command
     ☐ List island notes command
-Metrics:
-    ✔ metrics to count how many times the avatar does a particular something @started(20-07-12 07:37) @done(20-07-14 05:45) @lasted(1d22h8m52s)
-      move(done)
-      visit island(done)
-      know an island(nah)
-      eat(done)
-      accept job
-      abandon job(done)
-      complete job(done)
 Cheeky Questions for Reflection:
     ☐ why would i ever abandon a job?
 Refactor "Opportunities":
-    ✔ metric for visiting an island is currently countin number of docks, not distinct visits @done(20-07-14 05:28)
     ☐ generated "countries/empires" of multiple nearby islands
+    ☐ track how much is "invested" in to the items you have in yer inventory
+    ☐ cleaning hull while careened only cleans one half of the hull
+        this requires tracking separately the two sides
+    ☐ "head for job" would be a handy time saver
     ☐ the various countries have differing currencies (and thus, an exchange rate)
     ☐ there are certain item types that require a specific amount of reputation in order to purchase
     ☐ is RationItem in Avatar the right place to store this value?
@@ -101,6 +99,17 @@ Eliminate Hardcoded Values:
 Weird Edge Case Behavior:
     ☐ When AtSea, docking will happen with the "furthest" of all of the dockable islands. because of how the world is generated, there "should not" be more than one. however, this is not technically so.
 Archive:
+  ✔ ship bottoms get fouled at a particular rate @done(20-07-14 06:20) @project(Careening and Fouling)
+  ✔ a fouled bottom reduces maximum speed @done(20-07-14 06:21) @project(Careening and Fouling)
+  ✔ show effective speed on at sea status @done(20-07-14 11:23) @project(Careening and Fouling)
+  ✔ a ship may be careened @done(20-07-14 13:45) @project(Careening and Fouling)
+  ✔ careen command @done(20-07-14 11:30) @project(Careening and Fouling)
+    port or starboard
+  ✔ careened gamestate @done(20-07-14 13:45) @project(Careening and Fouling)
+  ✔ to stop careening, you "weigh anchor" @done(20-07-14 13:45) @project(Careening and Fouling)
+  ✔ careening may only happen within a particular distance from an island @done(20-07-14 13:45) @project(Careening and Fouling)
+  ✔ metrics to count how many times the avatar does a particular something @started(20-07-12 07:37) @done(20-07-14 13:48) @lasted(2d6h11m27s) @project(Metrics)
+  ✔ metric for visiting an island is currently countin number of docks, not distinct visits @done(20-07-14 05:28) @project(Refactor "Opportunities")
   ✔ avatars have ships @done(20-07-13 07:26) @project(Avatar Ships)
   ✔ ships have maximum carrying capacity @done(20-07-13 07:26) @project(Avatar Ships)
   ✔ items require carrying capacity @done(20-07-13 07:26) @project(Avatar Ships)

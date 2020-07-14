@@ -12,24 +12,32 @@ module AtSea =
         let world =
             world
             |> World.ClearMessages avatarId
+        let avatar = world.Avatars.[avatarId]
         [
             (Heading, "At Sea:" |> Line) |> Hued
             (Label, "Turn: " |> Text) |> Hued
-            (Value, world.Avatars.[avatarId].Turn.CurrentValue |> sprintf "%.0f" |> Line) |> Hued
+            (Value, avatar.Turn.CurrentValue |> sprintf "%.0f" |> Line) |> Hued
             (Label, "Heading: " |> Text) |> Hued
-            (Value, world.Avatars.[avatarId].Heading |> Dms.ToDms |> Dms.ToString |> sprintf "%s" |> Line) |> Hued
+            (Value, avatar.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "%s" |> Line) |> Hued
             (Label, "Speed: " |> Text) |> Hued
-            (Value, world.Avatars.[avatarId].Speed |> sprintf "%f" |> Line) |> Hued
+            (Value, (avatar.Speed * 100.0) |> sprintf "%.0f%%" |> Text) |> Hued
+            avatar |> Avatar.GetEffectiveSpeed |> sprintf "(Effective rate: %.2f)" |> Line
             (Subheading, "Nearby:" |> Line) |> Hued
         ]
         |> List.iter sink
 
+        let canCareen = 
+            world
+            |> World.GetNearbyLocations avatar.Position avatar.ViewDistance
+            |> List.map (fun l -> (l,world.Islands.[l].CareenDistance))
+            |> List.exists (fun (l,d) -> Location.DistanceTo l avatar.Position < d)
+
         let dockTarget = 
             world
-            |> World.GetNearbyLocations world.Avatars.[avatarId].Position world.Avatars.[avatarId].ViewDistance
+            |> World.GetNearbyLocations avatar.Position avatar.ViewDistance
             |> List.map
                 (fun location -> 
-                    (location, Location.HeadingTo world.Avatars.[avatarId].Position location |> Dms.ToDms |> Dms.ToString, Location.DistanceTo world.Avatars.[avatarId].Position location, (world.Islands.[location] |> Island.GetDisplayName avatarId)))
+                    (location, Location.HeadingTo avatar.Position location |> Dms.ToDms |> Dms.ToString, Location.DistanceTo avatar.Position location, (world.Islands.[location] |> Island.GetDisplayName avatarId)))
             |> List.sortBy (fun (_,_,d,_)->d)
             |> List.fold
                 (fun target (location, heading, distance, name) -> 
@@ -39,8 +47,8 @@ module AtSea =
                     (Value, sprintf "%s " heading |> Text) |> Hued |> sink
                     (Sublabel, "Distance: " |> Text) |> Hued |> sink
                     (Value, sprintf "%f" distance |> Text) |> Hued |> sink
-                    (Flavor, sprintf "%s" (if distance<world.Avatars.[avatarId].DockDistance then " (Can Dock)" else "") |> Line) |> Hued |> sink
-                    (if distance<world.Avatars.[avatarId].DockDistance then (Some location) else target)) None
+                    (Flavor, sprintf "%s" (if distance<avatar.DockDistance then " (Can Dock)" else "") |> Line) |> Hued |> sink
+                    (if distance<avatar.DockDistance then (Some location) else target)) None
 
         match source() with
         | Some Command.Status ->
@@ -54,6 +62,17 @@ module AtSea =
             |> World.HeadFor name avatarId
             |> Gamestate.AtSea
             |> Some
+
+        | Some (Command.Careen side) ->
+            if canCareen then
+                (side, world)
+                |> Gamestate.Careened
+                |> Some
+            else
+                world
+                |> World.AddMessages avatarId [ "You cannot careen here." ]
+                |> Gamestate.AtSea
+                |> Some
 
         | Some Command.Dock ->
             match dockTarget with

@@ -11,6 +11,10 @@ type AbandonCommand =
     | Game
     | Job
 
+type Side =
+    | Port
+    | Starboard
+
 [<RequireQualifiedAccess>]
 type Command =
     | Quit
@@ -36,6 +40,9 @@ type Command =
     | Sell of TradeQuantity * string
     | Save of string
     | Metrics
+    | Careen of Side
+    | WeighAnchor
+    | CleanHull
 
 type CommandSource = unit -> (Command option)
 

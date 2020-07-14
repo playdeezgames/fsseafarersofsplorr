@@ -10,6 +10,7 @@ type DockedState =
 [<RequireQualifiedAccess>]
 type Gamestate = 
     | AtSea of World
+    | Careened of Side * World
     | ConfirmQuit of Gamestate
     | Docked of DockedState * Location *  World
     | GameOver of string list
