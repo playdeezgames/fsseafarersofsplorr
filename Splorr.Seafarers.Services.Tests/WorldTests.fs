@@ -258,7 +258,10 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
     let inputWorld = oneIslandWorld
     let expectedIsland = 
         inputWorld.Islands.[(0.0, 0.0)] |> Island.AddVisit inputWorld.Avatars.[avatarId].Turn.CurrentValue avatarId
-    let expectedAvatar = {inputWorld.Avatars.[avatarId] with  Messages = [ "You dock." ]}
+    let expectedAvatar = 
+        {inputWorld.Avatars.[avatarId] with  
+            Messages = [ "You dock." ]
+            Metrics = inputWorld.Avatars.[avatarId].Metrics |> Map.add Metric.VisitedIsland 1u}
     let expected = 
         {inputWorld with 
             Islands = inputWorld.Islands |> Map.add (0.0, 0.0) expectedIsland
@@ -371,6 +374,7 @@ let ``AcceptJob.It adds the given job to the avatar and eliminates it from the i
         inputWorld.Avatars.[avatarId]
         |> Avatar.AddMessages ["You accepted the job!"]
         |> Avatar.SetJob inputJob
+        |> Avatar.AddMetric Metric.AcceptedJob 1u
     let expectedIsland = 
         {inputWorld.Islands.[inputLocation] with Jobs = []}
     let expectedDestination =
@@ -405,7 +409,16 @@ let ``AbandonJob.It adds a message when the avatar has no job.`` () =
 [<Test>]
 let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a job`` () =
     let input = jobWorld
-    let expected = {input with Avatars = input.Avatars |> Map.add avatarId {input.Avatars.[avatarId] with Messages=["You abandon your job."];Job = None; Reputation = input.Avatars.[avatarId].Reputation - 1.0}}
+    let expected = 
+        {input with 
+            Avatars = 
+                input.Avatars 
+                |> Map.add avatarId 
+                    {input.Avatars.[avatarId] with 
+                        Messages=["You abandon your job."]
+                        Job = None
+                        Reputation = input.Avatars.[avatarId].Reputation - 1.0
+                        Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.AbandonedJob 1u}}
     let actual = 
         input
         |> World.AbandonJob avatarId
@@ -415,7 +428,9 @@ let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a
 let ``Dock.It does not modify avatar when given avatar has a job for a different destination.`` () =
     let input = jobWorld
     let expectedAvatar =
-        {input.Avatars.[avatarId] with Messages = ["You dock."]}
+        {input.Avatars.[avatarId] with 
+            Messages = ["You dock."]
+            Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.VisitedIsland 1u}
     let actual = 
         jobWorld
         |> World.Dock random genericWorldIslandLocation avatarId
@@ -431,7 +446,11 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
             Job = None;
             Money = input.Avatars.[avatarId].Money + inputJob.Reward;
             Reputation = input.Avatars.[avatarId].Reputation + 1.0
-            Messages = expectedMessages}
+            Messages = expectedMessages
+            Metrics = 
+                input.Avatars.[avatarId].Metrics 
+                |> Map.add Metric.VisitedIsland 2u
+                |> Map.add Metric.CompletedJob 1u}
     let actual = 
         jobWorld
         |> World.Dock random jobLocation avatarId

@@ -144,7 +144,11 @@ let ``AbandonJob.It does nothing when the given avatar has no job.`` () =
 [<Test>]
 let ``AbandonJob.It set job to None when the given avatar has a job.`` () =
     let input = employedAvatar
-    let expected = {input with Job=None; Reputation = input.Reputation - 1.0}
+    let expected = 
+        {input with 
+            Job=None
+            Reputation = input.Reputation - 1.0
+            Metrics = input.Metrics |> Map.add Metric.AbandonedJob 1u}
     let actual =
         input
         |> Avatar.AbandonJob
@@ -160,10 +164,15 @@ let ``CompleteJob.It does nothing when the given avatar has no job.`` () =
     Assert.AreEqual(expected, actual)
 
 [<Test>]
-let ``CompleteJob.It sets job to None, adds reward money, adds reputation when the given avatar has a job.`` () =
+let ``CompleteJob.It sets job to None, adds reward money, adds reputation and metrics when the given avatar has a job.`` () =
     let input = employedAvatar
     let inputJob = employedAvatar.Job.Value
-    let expected = {input with Job = None; Money = input.Money + inputJob.Reward; Reputation = input.Reputation + 1.0}
+    let expected = 
+        {input with 
+            Job = None
+            Money = input.Money + inputJob.Reward
+            Reputation = input.Reputation + 1.0
+            Metrics = input.Metrics |> Map.add Metric.CompletedJob 1u}
     let actual = 
         input
         |> Avatar.CompleteJob

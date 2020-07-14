@@ -9,3 +9,4 @@ type World =
         Commodities : Map<uint, CommodityDescriptor>
         Items       : Map<uint, ItemDescriptor>
     }
+    

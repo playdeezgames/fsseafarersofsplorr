@@ -155,21 +155,34 @@ module World =
 
     let Dock (random:System.Random) (location: Location) (avatarId:string) (world:World) : World =
         match world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
-        | Some _, Some avatar ->
+        | Some island, Some avatar ->
             let destinations =
                 world.Islands
                 |> Map.toList
                 |> List.map fst
                 |> Set.ofList
                 |> Set.remove location
+            let updatedIsland = 
+                island
+                |> Island.AddVisit world.Avatars.[avatarId].Turn.CurrentValue avatarId//only when this counts as a new visit...
+                |> Island.GenerateJobs random world.RewardRange destinations 
+                |> Island.GenerateCommodities random world.Commodities
+                |> Island.GenerateItems random world.Items
+            let oldVisitCount =
+                island.AvatarVisits
+                |> Map.tryFind avatarId
+                |> Option.map (fun x -> x.VisitCount)
+                |> Option.defaultValue 0u
+            let newVisitCount =
+                updatedIsland.AvatarVisits
+                |> Map.tryFind avatarId
+                |> Option.map (fun x -> x.VisitCount)
+                |> Option.defaultValue 0u
             world
             |> TransformIsland location 
-                (Island.AddVisit world.Avatars.[avatarId].Turn.CurrentValue avatarId
-                >> Island.GenerateJobs random world.RewardRange destinations 
-                >> Island.GenerateCommodities random world.Commodities
-                >> Island.GenerateItems random world.Items
-                >> Some)
+                (fun _ -> updatedIsland |> Some)
             |> Option.foldBack (DoJobCompletion location avatarId) avatar.Job
+            |> TransformAvatar avatarId (Avatar.AddMetric Metric.VisitedIsland (if newVisitCount > oldVisitCount then 1u else 0u) >> Some)//...should this add to the metric
             |> AddMessages avatarId [ "You dock." ]
         | _, Some _ -> 
             world
@@ -208,7 +221,10 @@ module World =
                 world
                 |> SetIsland location (isle |> Some)
                 |> TransformIsland job.Destination (Island.MakeKnown avatarId >> Some)
-                |> TransformAvatar avatarId (Avatar.SetJob job >> Some)
+                |> TransformAvatar avatarId 
+                    (Avatar.SetJob job 
+                    >> Avatar.AddMetric Metric.AcceptedJob 1u
+                    >> Some)
                 |> AddMessages avatarId [ "You accepted the job!" ]
             | _ ->
                 world
