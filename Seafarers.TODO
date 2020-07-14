@@ -61,9 +61,17 @@ Avatar Ships:
     ✔ show tonnage for items in inventory list @done(20-07-13 06:53)
     ☐ how to buy new ship?
         at the ship yard, naturally!
-    ☐ wear and tear on the ship?
+    ✔ wear and tear on the ship(see Careening and Fouling)? @done(20-07-13 21:08)
     ☐ ships have a crew requirement for full speed
     ✔ buy maximum should take into account the available tonnage of the ship @done(20-07-13 07:26)
+Careening and Fouling:
+    ☐ ship bottoms get fouled at a particular rate
+    ☐ a fouled bottom reduces maximum speed
+    ☐ a ship may be careened
+    ☐ a careened ship can have its hull cleaned, or at least.... half of it can be
+        you can "careen port" or "careen starboard"
+    ☐ a ship may be put into a dry dock to clean the hull
+    ☐ careening may only happen within a particular distance from an island
 Quests/Jobs:
     ☐ some jobs have a minimum reputation requirement
 Resting at an Inn:
