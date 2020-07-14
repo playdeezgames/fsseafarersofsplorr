@@ -123,11 +123,11 @@ let ``Move.It does nothing when given an invalid avatar id`` () =
     Assert.AreEqual(soloIslandWorld, actual)
 
 [<Test>]
-let ``Move.It moves the avatar two units when give 2u for distance.`` () =
+let ``Move.It moves the avatar almost two units when give 2u for distance.`` () =
     let actual =
         soloIslandWorld
         |> World.Move 2u avatarId
-    Assert.AreEqual((7.0,5.0), actual.Avatars.[avatarId].Position)
+    Assert.AreEqual((6.9989999999999997,5.0), actual.Avatars.[avatarId].Position)
 
 [<Test>]
 let ``GetNearbyLocations.It returns locations within a given distance from another given location.`` () =
@@ -138,6 +138,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
             Jobs = []
             Markets = Map.empty
             Items = Set.empty
+            CareenDistance = 0.0
         }
     let world =
         {
@@ -159,7 +160,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                     Turn = Statistic.Create (0.0, 15000.0) (0.0)
                     RationItem = 1u
                     Metrics = Map.empty
-                    Vessel  = {Tonnage=100.0}
+                    Vessel  = {Tonnage=100.0; Fouling = {MinimumValue = 0.0; MaximumValue = 0.5; CurrentValue=0.0}; FoulRate=0.1}
                 }]|>Map.ofList
             Commodities = Map.empty
             Items = Map.empty
@@ -708,6 +709,44 @@ let ``IsAvatarAlive.It returns a false when given a world with an avatar minimum
         Assert.Pass("It detected that the avatar is dead")
     else
         Assert.Fail("It detected that the avatar is not dead")
+
+
+[<Test>]
+let ``CleanHull.It returns the original world when given a bogus avatar id and world.`` () =
+    let inputWorld = 
+        genericWorld
+    let expected =
+        inputWorld
+    let actual =
+        inputWorld
+        |> World.CleanHull bogusAvatarId
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``CleanHull.It returns a cleaned hull when given a particular avatar id and world.`` () =
+    let inputVessel =
+        {genericWorld.Avatars.[avatarId].Vessel with
+            Fouling = {genericWorld.Avatars.[avatarId].Vessel.Fouling with CurrentValue=0.5}}
+    let inputAvatar =
+        {genericWorld.Avatars.[avatarId] with
+            Vessel = inputVessel}
+    let inputWorld = 
+        {genericWorld with
+            Avatars = genericWorld.Avatars |> Map.add avatarId inputAvatar}
+    let expectedVessel =
+        {inputVessel with
+            Fouling = {inputVessel.Fouling with CurrentValue=0.0}}
+    let expectedAvatar =
+        {inputAvatar with
+            Vessel = expectedVessel
+            Turn = {inputAvatar.Turn with CurrentValue = inputAvatar.Turn.CurrentValue + 1.0}}
+    let expected =
+        {inputWorld with
+            Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar}
+    let actual =
+        inputWorld
+        |> World.CleanHull avatarId
+    Assert.AreEqual(expected, actual)
 
 //[<Test>]
 //let ``FunctionName.It returns a SOMETHING when given SOMETHINGELSE.`` () =

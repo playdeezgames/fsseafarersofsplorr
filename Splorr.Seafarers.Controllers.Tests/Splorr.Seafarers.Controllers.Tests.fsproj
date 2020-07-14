@@ -22,6 +22,7 @@
     <Compile Include="DockedTestFixtures.fs" />
     <Compile Include="ConfirmQuitTestFixtures.fs" />
     <Compile Include="AtSeaTests.fs" />
+    <Compile Include="CareenedTests.fs" />
     <Compile Include="DockedTests.fs" />
     <Compile Include="ConfirmQuitTests.fs" />
     <Compile Include="GameOverTests.fs" />

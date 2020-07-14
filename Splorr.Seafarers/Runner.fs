@@ -9,6 +9,7 @@ module Runner =
         let nextGamestate : Gamestate option = 
             match gamestate with
             | Gamestate.AtSea world -> AtSea.Run random source sink avatarId world
+            | Gamestate.Careened (side, world) -> Careened.Run source sink side avatarId world
             | Gamestate.ConfirmQuit state -> ConfirmQuit.Run source sink state
             | Gamestate.Docked (Dock, location, world) -> Docked.Run source sink location avatarId world
             | Gamestate.Docked (ItemList, location, world) -> ItemList.Run sink location avatarId world

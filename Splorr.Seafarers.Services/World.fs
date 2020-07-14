@@ -317,3 +317,11 @@ module World =
         | _ ->
             world
             |> AddMessages avatarId ["You cannot sell items here."]
+
+    let CleanHull (avatarId:string) (world:World) : World =
+        world.Avatars
+        |> Map.tryFind avatarId
+        |> Option.fold
+            (fun w _ -> 
+                w
+                |> TransformAvatar avatarId (Avatar.CleanHull >> Some)) world

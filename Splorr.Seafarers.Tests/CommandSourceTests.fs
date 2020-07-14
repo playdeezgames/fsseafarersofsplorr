@@ -239,7 +239,6 @@ let ``Parse.It returns Buy (Maximum,"foo bar") command when given ["buy";"maximu
         |> CommandSource.Parse
     Assert.AreEqual((Maximum, "foo bar") |> Command.Buy |> Some, actual)
 
-
 [<Test>]
 let ``Parse.It returns Sell (Maximum,"foo") command when given ["sell";"all";"foo"]`` () =
     let actual =
@@ -260,3 +259,39 @@ let ``Parse.It returns Sell (Specific 3,"foo bar") command when given ["sell";"3
         [ "sell";"3";"foo bar"]
         |> CommandSource.Parse
     Assert.AreEqual((Specific 3u, "foo bar") |> Command.Sell |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Careen (Port) command when given ["careen";"to";"port"]`` () =
+    let actual =
+        [ "careen";"to";"port"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Port |> Command.Careen |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Careen (Starboard) command when given ["careen";"to";"starboard"]`` () =
+    let actual =
+        [ "careen";"to";"starboard"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Starboard |> Command.Careen |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Weigh Anchor command when given ["weigh";"anchor"]`` () =
+    let actual =
+        [ "weigh";"anchor"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Command.WeighAnchor |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Clean Hull ommand when given ["clean";"hull"]`` () =
+    let actual =
+        [ "clean";"hull"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Command.CleanHull |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Clean Hull ommand when given ["clean";"the";"hull"]`` () =
+    let actual =
+        [ "clean";"the";"hull"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Command.CleanHull |> Some, actual)
+    

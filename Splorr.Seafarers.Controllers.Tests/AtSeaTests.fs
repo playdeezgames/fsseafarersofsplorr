@@ -127,6 +127,7 @@ let ``Run.It moves the avatar when given Move command.`` () =
             Satiety  = {input.Avatars.[avatarId].Satiety with CurrentValue=99.0}
             Turn     = {input.Avatars.[avatarId].Turn with CurrentValue=expectedTurn}
             Messages = expectedMessages
+            Vessel   = input.Avatars.[avatarId].Vessel |> Vessel.Befoul
             Metrics  = Map.empty |> Map.add Metric.Moved 1u}
     let expected = 
         {input with 
@@ -205,7 +206,6 @@ let ``Run.It returns Main Menu when given the Menu command.`` () =
         input
         |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
-
 
 [<Test>]
 let ``Run.It returns Island List when given the Islands command.`` () =
@@ -394,3 +394,45 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
         input
         |> AtSea.Run random inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``Run.It gives a message and returns AtSea when the avatar is too far away from an island to careen.`` () =
+    let inputAvatar = 
+        {dockWorld.Avatars.[avatarId] with
+            Position = (10.0, 10.0)}
+    let input = 
+        {dockWorld with
+            Avatars = 
+                dockWorld.Avatars |> Map.add avatarId inputAvatar}
+    let inputSource = 
+        Port
+        |> Command.Careen
+        |> Some 
+        |> toSource
+    let expected =
+        input
+        |> World.AddMessages avatarId ["You cannot careen here."]
+        |> Gamestate.AtSea
+        |> Some
+    let actual =
+        input
+        |> AtSea.Run random inputSource sinkStub avatarId
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``Run.It returns Careen Port when given the careen port command and the avatar is sufficiently close to an island to careen.`` () =
+    let input = dockWorld
+    let inputSource = 
+        Port
+        |> Command.Careen
+        |> Some 
+        |> toSource
+    let expected =
+        (Port, input)
+        |> Gamestate.Careened
+        |> Some
+    let actual =
+        input
+        |> AtSea.Run random inputSource sinkStub avatarId
+    Assert.AreEqual(expected, actual)
+    

@@ -15,6 +15,8 @@ module Status =
             (Value, (world.Avatars.[avatarId].Satiety.CurrentValue, world.Avatars.[avatarId].Satiety.MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
             (Label, "Health: " |> Text) |> Hued
             (Value, (world.Avatars.[avatarId].Health.CurrentValue, world.Avatars.[avatarId].Health.MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
+            (Label, "Fouling: " |> Text) |> Hued
+            (Value, (world.Avatars.[avatarId].Vessel.Fouling.CurrentValue, world.Avatars.[avatarId].Vessel.Fouling.MaximumValue) ||> sprintf "%.2f/%.2f" |> Line) |> Hued
         ]
         |> List.iter sink
         world.Avatars.[avatarId].Job

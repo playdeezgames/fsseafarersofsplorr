@@ -8,10 +8,11 @@ type AvatarVisit =
 
 type Island =
     {
-        Name         : string
-        AvatarVisits : Map<string, AvatarVisit>
-        Jobs         : Job list
-        Markets      : Map<uint, Market>
-        Items        : Set<uint>
+        Name           : string
+        AvatarVisits   : Map<string, AvatarVisit>
+        Jobs           : Job list
+        Markets        : Map<uint, Market>
+        Items          : Set<uint>
+        CareenDistance : float
     }
 

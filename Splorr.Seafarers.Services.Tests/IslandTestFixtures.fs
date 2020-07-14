@@ -11,22 +11,27 @@ let internal unvisitedIsland =
         Jobs = []
         Markets = Map.empty
         Items = Set.empty
+        CareenDistance = 0.0
     }
+
 let internal visitedIslandNoLastVisit = 
     {
-        Island.Name = "Island"
-        AvatarVisits = Map.empty
-        Jobs = []
-        Markets = Map.empty
-        Items = Set.empty
+        Island.Name    = "Island"
+        AvatarVisits   = Map.empty
+        Jobs           = []
+        Markets        = Map.empty
+        Items          = Set.empty
+        CareenDistance = 0.0
     }
+
 let internal visitedIsland =
     {
-        Island.Name = "Island"
-        AvatarVisits = Map.empty |> Map.add avatarId {VisitCount=1u;LastVisit=Some 0.0}
-        Jobs = []
-        Markets = Map.empty
-        Items = Set.empty
+        Island.Name    = "Island"
+        AvatarVisits   = Map.empty |> Map.add avatarId {VisitCount=1u;LastVisit=Some 0.0}
+        Jobs           = []
+        Markets        = Map.empty
+        Items          = Set.empty
+        CareenDistance = 0.0
     }
 
 let internal random = System.Random()
