@@ -52,18 +52,9 @@ Avatar Longevity:
     ☐ need a decent value for maximum turn that makes eating worth it, currently looking at 15000
     ☐ need some other penalty for being hungry that is impactful to the player in the short term
 Avatar Ships:
-    ✔ avatars have ships @done(20-07-13 07:26)
-    ✔ ships have maximum carrying capacity @done(20-07-13 07:26)
-    ✔ items require carrying capacity @done(20-07-13 07:26)
-    ✔ buying things will not be allowed if it will exceed the capacity @done(20-07-13 07:26)
-    ✘ carrying capacity is on the status screen @cancelled(20-07-13 05:52)
-    ✔ show available tonnage in inventory list @done(20-07-13 07:26)
-    ✔ show tonnage for items in inventory list @done(20-07-13 06:53)
     ☐ how to buy new ship?
         at the ship yard, naturally!
-    ✔ wear and tear on the ship(see Careening and Fouling)? @done(20-07-13 21:08)
     ☐ ships have a crew requirement for full speed
-    ✔ buy maximum should take into account the available tonnage of the ship @done(20-07-13 07:26)
 Careening and Fouling:
     ☐ ship bottoms get fouled at a particular rate
     ☐ a fouled bottom reduces maximum speed
@@ -74,6 +65,7 @@ Careening and Fouling:
     ☐ careening may only happen within a particular distance from an island
 Quests/Jobs:
     ☐ some jobs have a minimum reputation requirement
+    ☐ jobs have an "expiration date" after which the reward is ... half? a fraction?
 Resting at an Inn:
     ☐ islands have inns
         do _all_ of them?
@@ -84,16 +76,18 @@ Island Notes:
     ☐ Add island note command
     ☐ List island notes command
 Metrics:
-  ☐ metrics to count how many times the avatar does a particular something @started(20-07-12 07:37)
+    ✔ metrics to count how many times the avatar does a particular something @started(20-07-12 07:37) @done(20-07-14 05:45) @lasted(1d22h8m52s)
       move(done)
-      visit island
-      know an island
-      eat
+      visit island(done)
+      know an island(nah)
+      eat(done)
       accept job
-      abandon job
-      complete job
-  ✔ how to view metrics? with the "metrics" command? @done(20-07-13 05:08)
+      abandon job(done)
+      complete job(done)
+Cheeky Questions for Reflection:
+    ☐ why would i ever abandon a job?
 Refactor "Opportunities":
+    ✔ metric for visiting an island is currently countin number of docks, not distinct visits @done(20-07-14 05:28)
     ☐ generated "countries/empires" of multiple nearby islands
     ☐ the various countries have differing currencies (and thus, an exchange rate)
     ☐ there are certain item types that require a specific amount of reputation in order to purchase
@@ -107,6 +101,16 @@ Eliminate Hardcoded Values:
 Weird Edge Case Behavior:
     ☐ When AtSea, docking will happen with the "furthest" of all of the dockable islands. because of how the world is generated, there "should not" be more than one. however, this is not technically so.
 Archive:
+  ✔ avatars have ships @done(20-07-13 07:26) @project(Avatar Ships)
+  ✔ ships have maximum carrying capacity @done(20-07-13 07:26) @project(Avatar Ships)
+  ✔ items require carrying capacity @done(20-07-13 07:26) @project(Avatar Ships)
+  ✔ buying things will not be allowed if it will exceed the capacity @done(20-07-13 07:26) @project(Avatar Ships)
+  ✘ carrying capacity is on the status screen @cancelled(20-07-13 05:52) @project(Avatar Ships)
+  ✔ show available tonnage in inventory list @done(20-07-13 07:26) @project(Avatar Ships)
+  ✔ show tonnage for items in inventory list @done(20-07-13 06:53) @project(Avatar Ships)
+  ✔ wear and tear on the ship(see Careening and Fouling)? @done(20-07-13 21:08) @project(Avatar Ships)
+  ✔ buy maximum should take into account the available tonnage of the ship @done(20-07-13 07:26) @project(Avatar Ships)
+  ✔ how to view metrics? with the "metrics" command? @done(20-07-13 05:08)
   ✔ tutorial? @started(20-07-12 06:20) @done(20-07-12 07:34) @lasted(1h14m12s) @project(Refactor "Opportunities")
   ✔ sell all will sell all of the item stored @started(20-07-12 05:25) @done(20-07-12 05:51) @lasted(26m19s) @project(Buy Maximum and Sell All)
   ✔ buy maximum will buy as many of the item as can be afforded and carried @started(20-07-11 06:13) @done(20-07-12 05:04) @lasted(22h51m48s) @project(Buy Maximum and Sell All)

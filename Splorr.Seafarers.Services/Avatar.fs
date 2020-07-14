@@ -52,10 +52,20 @@ module Avatar =
     let private TransformHealth (transform:Statistic -> Statistic) (avatar:Avatar) : Avatar =
         {avatar with Health = avatar.Health |> transform}
 
+    let AddMetric (metric:Metric) (amount:uint) (avatar:Avatar) : Avatar =
+        let newValue =
+            avatar.Metrics
+            |> Map.tryFind metric
+            |> Option.defaultValue 0u
+            |> (+) amount
+        {avatar with
+            Metrics = avatar.Metrics |> Map.add metric newValue}
+
     let private Eat (avatar:Avatar) : Avatar =
         match avatar.Inventory.TryFind avatar.RationItem with
         | Some count when count > 0u ->
             avatar
+            |> AddMetric Metric.Ate 1u
             |> RemoveInventory avatar.RationItem 1u
             |> TransformSatiety (Statistic.ChangeBy 1.0)
         | _ ->
@@ -65,15 +75,6 @@ module Avatar =
             else
                 avatar
                 |> TransformHealth (Statistic.ChangeBy (-1.0))
-
-    let AddMetric (metric:Metric) (amount:uint) (avatar:Avatar) : Avatar =
-        let newValue =
-            avatar.Metrics
-            |> Map.tryFind metric
-            |> Option.defaultValue 0u
-            |> (+) amount
-        {avatar with
-            Metrics = avatar.Metrics |> Map.add metric newValue}
 
     let Move(avatar: Avatar) : Avatar =
         {
@@ -90,7 +91,9 @@ module Avatar =
     let AbandonJob (avatar:Avatar) : Avatar =
         avatar.Job
         |> Option.fold 
-            (fun a _ -> {a with Job = None; Reputation = a.Reputation - 1.0}) avatar
+            (fun a _ -> 
+                {a with Job = None; Reputation = a.Reputation - 1.0}
+                |> AddMetric Metric.AbandonedJob 1u) avatar
 
     let CompleteJob (avatar:Avatar) : Avatar =
         match avatar.Job with
@@ -99,6 +102,7 @@ module Avatar =
                 Job = None
                 Money = avatar.Money + job.Reward
                 Reputation = avatar.Reputation + 1.0}
+            |> AddMetric Metric.CompletedJob 1u
         | _ -> avatar
 
     let private SetMoney (amount:float) (avatar:Avatar) : Avatar =

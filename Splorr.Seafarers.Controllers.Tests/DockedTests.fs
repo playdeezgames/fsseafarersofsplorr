@@ -58,6 +58,24 @@ let ``Run.It returns ConfirmQuit when given Quit Command.`` () =
     Assert.AreEqual(expected,actual)
 
 [<Test>]
+let ``Run.It returns Metrics when given Metrics Command.`` () =
+    let input =dockWorld
+    let inputLocation = dockLocation
+    let inputSource = 
+        Command.Metrics 
+        |> Some 
+        |> toSource
+    let expected = 
+        (Dock, inputLocation, input) 
+        |> Gamestate.Docked 
+        |> Gamestate.Metrics 
+        |> Some
+    let actual =
+        (inputLocation, avatarId, input)
+        |||> Docked.Run inputSource sinkStub 
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
 let ``Run.It returns Help when given Help Command.`` () =
     let input =dockWorld
     let inputLocation = dockLocation
@@ -217,7 +235,8 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
         {input.Avatars.[avatarId] with 
             Job=None
             Reputation = input.Avatars.[avatarId].Reputation-1.0
-            Messages = expectedMessages}
+            Messages = expectedMessages
+            Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.AbandonedJob 1u}
     let expectedWorld = 
         {input with 
             

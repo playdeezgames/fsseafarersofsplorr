@@ -79,6 +79,12 @@ module Docked =
             |> Gamestate.Help 
             |> Some
 
+        | Some Command.Metrics ->
+            (Dock, location, world) 
+            |> Gamestate.Docked 
+            |> Gamestate.Metrics 
+            |> Some
+
         | _ -> 
             (Error, "Maybe try 'help'?" |> Line) |> Hued |> sink
             (Dock, location, world) 
@@ -101,4 +107,3 @@ module Docked =
 
     let Run (source:CommandSource) (sink:MessageSink) =
         RunBoilerplate (RunWithIsland source sink)
-

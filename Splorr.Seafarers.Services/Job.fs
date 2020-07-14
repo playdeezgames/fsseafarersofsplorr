@@ -79,6 +79,7 @@ module Job =
             "scenegraph"
             "cheese wedge"
             "copy of Turbo Boom"
+            "soap"
         ]
 
     let private names = 

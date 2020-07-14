@@ -258,7 +258,9 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
         |> Map.add expectedLocation expectedIsland
     let expectedMessages = ["You dock."]
     let expectedAvatar = 
-        {input.Avatars.[avatarId] with Messages = expectedMessages}
+        {input.Avatars.[avatarId] with 
+            Messages = expectedMessages
+            Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.VisitedIsland 1u}
     let expectedWorld = 
         {input with 
             Avatars = input.Avatars |> Map.add avatarId expectedAvatar
@@ -381,7 +383,8 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
         {input.Avatars.[avatarId] with 
             Job=None
             Reputation = input.Avatars.[avatarId].Reputation - 1.0
-            Messages = expectedMessages}
+            Messages = expectedMessages
+            Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.AbandonedJob 1u}
     let expected = 
         {input with 
             Avatars= input.Avatars |> Map.add avatarId expectedAvatar} 
