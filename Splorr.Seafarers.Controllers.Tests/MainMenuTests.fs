@@ -10,7 +10,6 @@ let private configuration: WorldGenerationConfiguration =
         MinimumIslandDistance=30.0
         MaximumGenerationTries=10u
         RewardRange = (1.0, 10.0)
-        Commodities = Map.empty
         Items = Map.empty
     }
 let private world = World.Create configuration (System.Random())
@@ -104,17 +103,6 @@ let ``Run.It returns Main Menu when given the Save command and there is no world
     let expected = None |> Gamestate.MainMenu |> Some
     let actual =
         inputWorld
-        |> MainMenu.Run configuration (fun()->inputName |> Command.Save |> Some) sink 
-    Assert.AreEqual(expected, actual)
-
-[<Test>]
-let ``Run.It returns Save Game with the save name and the world when given the Save command and there is a world.`` () =
-    let inputName = "name"
-    let inputWorld = world 
-    let expected = (inputName, inputWorld) |> Gamestate.SaveGame |> Some
-    let actual =
-        inputWorld
-        |> Some
         |> MainMenu.Run configuration (fun()->inputName |> Command.Save |> Some) sink 
     Assert.AreEqual(expected, actual)
 

@@ -20,7 +20,6 @@ type Gamestate =
     | MainMenu of World option
     | Metrics of Gamestate
     | Status of Gamestate
-    | SaveGame of string * World
 
 module Gamestate =
     let rec GetWorld (gamestate:Gamestate) : World option =
@@ -34,6 +33,5 @@ module Gamestate =
         | Gamestate.MainMenu w -> w
         | Gamestate.Metrics g -> GetWorld g
         | Gamestate.Status g -> GetWorld g
-        | Gamestate.SaveGame (_,w) -> w |> Some
         | _ -> None
 

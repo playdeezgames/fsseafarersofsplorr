@@ -9,7 +9,6 @@ let internal configuration: WorldGenerationConfiguration =
         MinimumIslandDistance=30.0
         MaximumGenerationTries=10u
         RewardRange = (1.0,10.0)
-        Commodities = Map.empty
         Items = Map.empty
     }
 let internal previousState = 

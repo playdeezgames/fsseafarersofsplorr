@@ -10,7 +10,6 @@ let private configuration :WorldGenerationConfiguration =
         MaximumGenerationTries=1u
         MinimumIslandDistance=1.0
         RewardRange = (1.0, 10.0)
-        Commodities = Map.empty
         Items = Map.empty
     }
 let private world = World.Create configuration (System.Random())
@@ -108,11 +107,3 @@ let ``GetWorld.It returns None from the given GameOver Gamestate.`` () =
         input
         |> Gamestate.GetWorld
     Assert.AreEqual(expected, actual)
-
-[<Test>]
-let ``GetWorld.It returns world from the given SaveGame Gamestate.`` () =
-    let actual =
-        ("savename", world)
-        |> Gamestate.SaveGame
-        |> Gamestate.GetWorld
-    Assert.AreEqual(world |> Some, actual)

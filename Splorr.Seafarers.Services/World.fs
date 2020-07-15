@@ -7,8 +7,7 @@ type WorldGenerationConfiguration =
         MinimumIslandDistance: float
         MaximumGenerationTries: uint32
         RewardRange: float * float
-        Commodities: Map<uint, CommodityDescriptor>
-        Items: Map<uint, ItemDescriptor>
+        Items: Map<uint64, ItemDescriptor>
     }
 
 type TradeQuantity =
@@ -77,7 +76,6 @@ module World =
             Avatars = ["",Avatar.Create(configuration.WorldSize |> Location.ScaleBy 0.5)] |> Map.ofList
             Islands = Map.empty
             RewardRange = configuration.RewardRange
-            Commodities = configuration.Commodities
             Items = configuration.Items
         }
         |> GenerateIslands configuration random 0u
@@ -153,7 +151,7 @@ module World =
         else
             world
 
-    let Dock (random:System.Random) (location: Location) (avatarId:string) (world:World) : World =
+    let Dock (random:System.Random) (commodities:Map<uint64, CommodityDescriptor>) (location: Location) (avatarId:string) (world:World) : World =
         match world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
         | Some island, Some avatar ->
             let destinations =
@@ -166,7 +164,7 @@ module World =
                 island
                 |> Island.AddVisit world.Avatars.[avatarId].Turn.CurrentValue avatarId//only when this counts as a new visit...
                 |> Island.GenerateJobs random world.RewardRange destinations 
-                |> Island.GenerateCommodities random world.Commodities
+                |> Island.GenerateCommodities random commodities
                 |> Island.GenerateItems random world.Items
             let oldVisitCount =
                 island.AvatarVisits
@@ -245,16 +243,16 @@ module World =
             world
             |> AddMessages avatarId [ "You have no job to abandon." ]
 
-    let private FindItemByName (itemName:string) (world:World) : (uint * ItemDescriptor) option =
+    let private FindItemByName (itemName:string) (world:World) : (uint64 * ItemDescriptor) option =
         world.Items
         |> Map.tryPick (fun k v -> if v.DisplayName = itemName then Some (k,v) else None)
 
 
-    let BuyItems (location:Location) (tradeQuantity:TradeQuantity) (itemName:string) (avatarId:string) (world:World) : World =
+    let BuyItems (commodities:Map<uint64, CommodityDescriptor>) (location:Location) (tradeQuantity:TradeQuantity) (itemName:string) (avatarId:string) (world:World) : World =
         match world |> FindItemByName itemName, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
         | Some (item, descriptor) , Some island, Some avatar->
             let unitPrice = 
-                Item.DetermineSalePrice world.Commodities island.Markets descriptor 
+                Item.DetermineSalePrice commodities island.Markets descriptor 
             let availableTonnage = avatar.Vessel.Tonnage
             let usedTonnage =
                 avatar
@@ -279,7 +277,7 @@ module World =
                 |> AddMessages avatarId [(quantity, descriptor.DisplayName) ||> sprintf "You complete the purchase of %u %s."]
                 |> TransformAvatar avatarId (Avatar.SpendMoney price >> Some)
                 |> TransformAvatar avatarId (Avatar.AddInventory item quantity >> Some)
-                |> TransformIsland location (Island.UpdateMarketForItemSale world.Commodities descriptor quantity >> Some)
+                |> TransformIsland location (Island.UpdateMarketForItemSale commodities descriptor quantity >> Some)
         | None, Some island, Some _ ->
             world
             |> AddMessages avatarId ["Round these parts, we don't sell things like that."]
@@ -287,7 +285,7 @@ module World =
             world
             |> AddMessages avatarId ["You cannot buy items here."]
 
-    let SellItems (location:Location) (tradeQuantity:TradeQuantity) (itemName:string) (avatarId:string) (world:World) : World =
+    let SellItems (commodities:Map<uint64, CommodityDescriptor>) (location:Location) (tradeQuantity:TradeQuantity) (itemName:string) (avatarId:string) (world:World) : World =
         match world |> FindItemByName itemName, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
         | Some (item, descriptor), Some island, Some avatar ->
             let quantity = 
@@ -304,13 +302,13 @@ module World =
                 |> AddMessages avatarId ["You don't have any of those to sell."]
             else
                 let unitPrice = 
-                    Item.DeterminePurchasePrice world.Commodities island.Markets descriptor 
+                    Item.DeterminePurchasePrice commodities island.Markets descriptor 
                 let price = (quantity |> float) * unitPrice
                 world
                 |> AddMessages avatarId [(quantity, descriptor.DisplayName) ||> sprintf "You complete the sale of %u %s."]
                 |> TransformAvatar avatarId (Avatar.EarnMoney price >> Some)
                 |> TransformAvatar avatarId (Avatar.RemoveInventory item quantity >> Some)
-                |> TransformIsland location (Island.UpdateMarketForItemPurchase world.Commodities descriptor quantity >> Some)
+                |> TransformIsland location (Island.UpdateMarketForItemPurchase commodities descriptor quantity >> Some)
         | None, Some island, Some _ ->
             world
             |> AddMessages avatarId ["Round these parts, we don't buy things like that."]

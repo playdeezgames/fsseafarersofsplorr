@@ -76,7 +76,7 @@ let ``Move.It moves the avatar.`` () =
 let ``Move.It removes a ration when the given avatar has rations and full satiety and full health.`` () =
     let input = 
         {avatar with 
-            Inventory = Map.empty |> Map.add 1u 2u}
+            Inventory = Map.empty |> Map.add 1UL 2u}
     let expectedSatiety = input.Satiety.CurrentValue
     let expectedHealth = input.Health.CurrentValue
     let expectedInventory = Map.empty |> Map.add 1u 1u
@@ -91,7 +91,7 @@ let ``Move.It removes a ration when the given avatar has rations and full satiet
 let ``Move.It removes a ration and increases satiety when the given avatar has rations and less than full satiety.`` () =
     let input = 
         {avatar with 
-            Inventory = Map.empty |> Map.add 1u 2u
+            Inventory = Map.empty |> Map.add 1UL 2u
             Satiety = {avatar.Satiety with CurrentValue=0.0}}
     let expectedSatiety = input.Satiety.CurrentValue + 1.0
     let expectedHealth = input.Health.CurrentValue
@@ -244,7 +244,7 @@ let ``EarnMoney.It updates the avatars money by adding the given amount.`` () =
 [<Test>]
 let ``AddInventory.It adds a given number of given items to the given avatar's inventory.`` () =
     let input = employedAvatar
-    let inputItem = 1u
+    let inputItem = 1UL
     let inputQuantity = 2u
     let expected =
         {input with Inventory = input.Inventory |> Map.add inputItem inputQuantity}
@@ -256,7 +256,7 @@ let ``AddInventory.It adds a given number of given items to the given avatar's i
 [<Test>]
 let ``GetItemCount.It returns zero when the given avatar has no entry for the given item.`` () =
     let input = avatar
-    let inputItem = 1u
+    let inputItem = 1UL
     let expected = 0u
     let actual =
         input
@@ -266,7 +266,7 @@ let ``GetItemCount.It returns zero when the given avatar has no entry for the gi
 [<Test>]
 let ``GetItemCount.It returns the item count when the given avatar has an entry for the given item.`` () =
     let input = rationedAvatar
-    let inputItem = 1u
+    let inputItem = 1UL
     let expected = rationedAvatar.Inventory.[inputItem]
     let actual =
         input
@@ -276,7 +276,7 @@ let ``GetItemCount.It returns the item count when the given avatar has an entry 
 [<Test>]
 let ``RemoveInventory.It does nothing.When given a quantity of 0 items to remove or the given avatar has no items.`` ([<Values(0u, 1u)>]inputQuantity:uint32) =
     let input = avatar
-    let inputItem = 1u
+    let inputItem = 1UL
     let expected =
         input
     let actual = 
@@ -287,7 +287,7 @@ let ``RemoveInventory.It does nothing.When given a quantity of 0 items to remove
 [<Test>]
 let ``RemoveInventory.It reduces the given avatars inventory to 0 when the given number of items exceed the avatar's inventory.``() =
     let input = rationedAvatar 
-    let inputItem = 1u
+    let inputItem = 1UL
     let inputQuantity = 2u
     let expected =
         {input with Inventory = Map.empty}
@@ -299,10 +299,10 @@ let ``RemoveInventory.It reduces the given avatars inventory to 0 when the given
 [<Test>]
 let ``RemoveInventory.It reduces the given avatar's inventory by the given amount.``() =
     let input = hoarderAvatar 
-    let inputItem = 1u
+    let inputItem = 1UL
     let inputQuantity = 20u
     let expected =
-        {input with Inventory = input.Inventory |> Map.add 1u 80u}
+        {input with Inventory = input.Inventory |> Map.add 1UL 80u}
     let actual = 
         input
         |> Avatar.RemoveInventory inputItem inputQuantity
@@ -371,17 +371,17 @@ let ``GetUsedTonnage.It calculates the used tonnage based on inventory and item 
         {avatar with
             Inventory =
                 Map.empty
-                |> Map.add 1u 2u
-                |> Map.add 2u 3u}
+                |> Map.add 1UL 2u
+                |> Map.add 2UL 3u}
     let inputItems =
         Map.empty
-        |> Map.add 1u {
+        |> Map.add 1UL {
                         DisplayName =""
                         Commodities =Map.empty
                         Occurrence  =0.0
                         Tonnage     =1.0
                         }
-        |> Map.add 2u {
+        |> Map.add 2UL {
                         DisplayName =""
                         Commodities =Map.empty
                         Occurrence  =0.0
