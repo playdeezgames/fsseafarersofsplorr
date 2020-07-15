@@ -51,7 +51,8 @@ let internal commodities =
 let internal items =
     [(1UL, 
         {
-            DisplayName = "rations"
+            ItemId = 1UL
+            ItemName = "rations"
             Commodities=[(1UL, 1.0)]|>Map.ofList
             Occurrence=1.0
             Tonnage = 1.0

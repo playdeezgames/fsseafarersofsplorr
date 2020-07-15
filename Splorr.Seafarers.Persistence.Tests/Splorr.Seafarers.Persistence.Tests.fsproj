@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -20,6 +20,7 @@
   <ItemGroup>
     <Compile Include="CommonTestFixtures.fs" />
     <Compile Include="CommodityTests.fs" />
+    <Compile Include="ItemTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

@@ -7,7 +7,6 @@ type WorldGenerationConfiguration =
         MinimumIslandDistance: float
         MaximumGenerationTries: uint32
         RewardRange: float * float
-        Items: Map<uint64, ItemDescriptor>
     }
 
 type TradeQuantity =
@@ -76,7 +75,6 @@ module World =
             Avatars = ["",Avatar.Create(configuration.WorldSize |> Location.ScaleBy 0.5)] |> Map.ofList
             Islands = Map.empty
             RewardRange = configuration.RewardRange
-            Items = configuration.Items
         }
         |> GenerateIslands configuration random 0u
         |> NameIslands random
@@ -151,7 +149,7 @@ module World =
         else
             world
 
-    let Dock (random:System.Random) (commodities:Map<uint64, CommodityDescriptor>) (location: Location) (avatarId:string) (world:World) : World =
+    let Dock (random:System.Random) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (location: Location) (avatarId:string) (world:World) : World =
         match world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
         | Some island, Some avatar ->
             let destinations =
@@ -165,7 +163,7 @@ module World =
                 |> Island.AddVisit world.Avatars.[avatarId].Turn.CurrentValue avatarId//only when this counts as a new visit...
                 |> Island.GenerateJobs random world.RewardRange destinations 
                 |> Island.GenerateCommodities random commodities
-                |> Island.GenerateItems random world.Items
+                |> Island.GenerateItems random items
             let oldVisitCount =
                 island.AvatarVisits
                 |> Map.tryFind avatarId
@@ -242,21 +240,22 @@ module World =
         | _ ->
             world
             |> AddMessages avatarId [ "You have no job to abandon." ]
+    
+    //TODO: this function is in the wrong place!
+    let private FindItemByName (itemName:string) (items:Map<uint64, ItemDescriptor>) : (uint64 * ItemDescriptor) option =
+        items
+        |> Map.tryPick (fun k v -> if v.ItemName = itemName then Some (k,v) else None)
 
-    let private FindItemByName (itemName:string) (world:World) : (uint64 * ItemDescriptor) option =
-        world.Items
-        |> Map.tryPick (fun k v -> if v.DisplayName = itemName then Some (k,v) else None)
 
-
-    let BuyItems (commodities:Map<uint64, CommodityDescriptor>) (location:Location) (tradeQuantity:TradeQuantity) (itemName:string) (avatarId:string) (world:World) : World =
-        match world |> FindItemByName itemName, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
+    let BuyItems (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (location:Location) (tradeQuantity:TradeQuantity) (itemName:string) (avatarId:string) (world:World) : World =
+        match items |> FindItemByName itemName, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
         | Some (item, descriptor) , Some island, Some avatar->
             let unitPrice = 
                 Item.DetermineSalePrice commodities island.Markets descriptor 
             let availableTonnage = avatar.Vessel.Tonnage
             let usedTonnage =
                 avatar
-                |> Avatar.GetUsedTonnage world.Items
+                |> Avatar.GetUsedTonnage items
             let quantity =
                 match tradeQuantity with
                 | Specific amount -> amount
@@ -274,7 +273,7 @@ module World =
                 |> AddMessages avatarId ["You don't have enough money to buy any of those."]
             else
                 world
-                |> AddMessages avatarId [(quantity, descriptor.DisplayName) ||> sprintf "You complete the purchase of %u %s."]
+                |> AddMessages avatarId [(quantity, descriptor.ItemName) ||> sprintf "You complete the purchase of %u %s."]
                 |> TransformAvatar avatarId (Avatar.SpendMoney price >> Some)
                 |> TransformAvatar avatarId (Avatar.AddInventory item quantity >> Some)
                 |> TransformIsland location (Island.UpdateMarketForItemSale commodities descriptor quantity >> Some)
@@ -285,8 +284,8 @@ module World =
             world
             |> AddMessages avatarId ["You cannot buy items here."]
 
-    let SellItems (commodities:Map<uint64, CommodityDescriptor>) (location:Location) (tradeQuantity:TradeQuantity) (itemName:string) (avatarId:string) (world:World) : World =
-        match world |> FindItemByName itemName, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
+    let SellItems (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (location:Location) (tradeQuantity:TradeQuantity) (itemName:string) (avatarId:string) (world:World) : World =
+        match items |> FindItemByName itemName, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
         | Some (item, descriptor), Some island, Some avatar ->
             let quantity = 
                 match tradeQuantity with
@@ -305,7 +304,7 @@ module World =
                     Item.DeterminePurchasePrice commodities island.Markets descriptor 
                 let price = (quantity |> float) * unitPrice
                 world
-                |> AddMessages avatarId [(quantity, descriptor.DisplayName) ||> sprintf "You complete the sale of %u %s."]
+                |> AddMessages avatarId [(quantity, descriptor.ItemName) ||> sprintf "You complete the sale of %u %s."]
                 |> TransformAvatar avatarId (Avatar.EarnMoney price >> Some)
                 |> TransformAvatar avatarId (Avatar.RemoveInventory item quantity >> Some)
                 |> TransformIsland location (Island.UpdateMarketForItemPurchase commodities descriptor quantity >> Some)

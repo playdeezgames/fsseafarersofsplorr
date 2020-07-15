@@ -12,7 +12,6 @@ let internal soloIslandWorldConfiguration: WorldGenerationConfiguration =
         MinimumIslandDistance=30.0 
         MaximumGenerationTries=10u
         RewardRange=(1.0,10.0)
-        Items = Map.empty
     }
 let internal soloIslandWorld = World.Create soloIslandWorldConfiguration random
 let internal emptyWorld = 
@@ -39,7 +38,6 @@ let internal emptyWorld =
             }] 
             |> Map.ofList
         Islands = Map.empty
-        Items = Map.empty
     }
 let internal defaultRewardrange = (1.0,10.0)
 let internal fabricatedDestinationList = [(0.0, 0.0)] |> Set.ofList
@@ -61,7 +59,8 @@ let internal commodities =
 let internal genericWorldItems = 
     Map.empty
     |> Map.add 1UL {
-        DisplayName="item under test"
+        ItemId = 1UL
+        ItemName="item under test"
         Commodities= Map.empty |> Map.add 1UL 1.0
         Occurrence=1.0
         Tonnage = 1.0
@@ -73,7 +72,6 @@ let internal genericWorldConfiguration: WorldGenerationConfiguration =
         MinimumIslandDistance=5.0 
         MaximumGenerationTries=500u
         RewardRange=(1.0,10.0)
-        Items = genericWorldItems
     }
 let internal genericWorld = World.Create genericWorldConfiguration random
 let internal deadWorld =
@@ -81,7 +79,7 @@ let internal deadWorld =
 
 let internal genericWorldIslandLocation = genericWorld.Islands |> Map.toList |> List.map fst |> List.head
 let internal genericWorldInvalidIslandLocation = ((genericWorldIslandLocation |> fst) + 1.0, genericWorldIslandLocation |> snd)
-let internal genericDockedWorld = World.Dock random commodities genericWorldIslandLocation avatarId genericWorld |> World.ClearMessages avatarId
+let internal genericDockedWorld = World.Dock random commodities genericWorldItems genericWorldIslandLocation avatarId genericWorld |> World.ClearMessages avatarId
 
 let internal shopWorld = 
     genericDockedWorld

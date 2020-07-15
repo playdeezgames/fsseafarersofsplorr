@@ -2,7 +2,8 @@
 
 type ItemDescriptor =
     {
-        DisplayName : string
+        ItemId      : uint64
+        ItemName    : string
         Commodities : Map<uint64, float>
         Occurrence  : float
         Tonnage     : float

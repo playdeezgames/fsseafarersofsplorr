@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module Inventory =
-    let private RunWorld (sink:MessageSink) (avatarId:string) (world:World) : unit =
+    let private RunWorld (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) (avatarId:string) (world:World) : unit =
         [
             "" |> Line
             (Heading, "Item" |> sprintf "%-20s" |> Text) |> Hued
@@ -20,10 +20,10 @@ module Inventory =
             avatar.Inventory
             |> Map.fold
                 (fun _ item quantity -> 
-                    let descriptor = world.Items.[item]
+                    let descriptor = items.[item]
                     let tonnage = descriptor.Tonnage * (quantity |> float)
                     [
-                        (Value, descriptor.DisplayName |> sprintf "%-20s" |> Text) |> Hued
+                        (Value, descriptor.ItemName |> sprintf "%-20s" |> Text) |> Hued
                         (Label, " | " |> Text) |> Hued
                         (Value, quantity |> sprintf "%6u" |> Text) |> Hued
                         (Label, " | " |> Text) |> Hued
@@ -35,7 +35,7 @@ module Inventory =
             (Usage, "(none)"  |> Line) |> Hued
             |> sink
         let availableTonnage = avatar.Vessel.Tonnage
-        let usedTonnage = avatar |> Avatar.GetUsedTonnage world.Items
+        let usedTonnage = avatar |> Avatar.GetUsedTonnage items
         [
             (Sublabel, "Cargo Limit: " |> Text) |> Hued
             (Value, usedTonnage |> sprintf "%.1f" |> Text) |> Hued
@@ -44,9 +44,9 @@ module Inventory =
         ]
         |> List.iter sink
 
-    let Run (sink:MessageSink) (avatarId:string) (gamestate:Gamestate) : Gamestate option =
+    let Run (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) (avatarId:string) (gamestate:Gamestate) : Gamestate option =
         gamestate 
         |> Gamestate.GetWorld
-        |> Option.iter (RunWorld sink avatarId)
+        |> Option.iter (RunWorld items sink avatarId)
         gamestate
         |> Some

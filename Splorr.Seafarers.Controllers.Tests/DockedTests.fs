@@ -7,6 +7,7 @@ open CommonTestFixtures
 open DockedTestFixtures
 open Splorr.Seafarers.Services
 
+let private functionUnderTest =  Docked.Run commodities smallWorldItems
 
 [<Test>]
 let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
@@ -21,7 +22,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
         |> Some
     let actual =
         (inputLocation, avatarId, input)
-        |||> Docked.Run commodities inputSource sinkStub 
+        |||> functionUnderTest inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -39,7 +40,7 @@ let ``Run.It returns AtSea when given Undock Command.`` () =
         |> Some
     let actual =
         (inputLocation, avatarId, input)
-        |||> Docked.Run commodities inputSource sinkStub 
+        |||> functionUnderTest inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -54,7 +55,7 @@ let ``Run.It returns ConfirmQuit when given Quit Command.`` () =
         |> Some
     let actual =
         (inputLocation, avatarId, input)
-        |||> Docked.Run commodities inputSource sinkStub 
+        |||> functionUnderTest inputSource sinkStub 
     Assert.AreEqual(expected,actual)
 
 [<Test>]
@@ -72,7 +73,7 @@ let ``Run.It returns Metrics when given Metrics Command.`` () =
         |> Some
     let actual =
         (inputLocation, avatarId, input)
-        |||> Docked.Run commodities inputSource sinkStub 
+        |||> functionUnderTest inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -90,7 +91,7 @@ let ``Run.It returns Help when given Help Command.`` () =
         |> Some
     let actual =
         (inputLocation, avatarId, input)
-        |||> Docked.Run commodities inputSource sinkStub 
+        |||> functionUnderTest inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -108,7 +109,7 @@ let ``Run.It returns Inventory when given Inventory Command.`` () =
         |> Some
     let actual =
         (inputLocation, avatarId, input)
-        |||> Docked.Run commodities inputSource sinkStub 
+        |||> functionUnderTest inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -124,7 +125,7 @@ let ``Run.It returns Docked when given invalid Command.`` () =
         |> Some
     let actual =
         (inputLocation, avatarId, input)
-        |||> Docked.Run commodities inputSource sinkStub 
+        |||> functionUnderTest inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 
@@ -143,7 +144,7 @@ let ``Run.It returns AtSea when given invalid docked location.`` () =
         |> Some
     let actual =
         (inputLocation, avatarId, input)
-        |||> Docked.Run commodities inputSource sinkStub 
+        |||> functionUnderTest inputSource sinkStub 
     Assert.AreEqual(expected,actual)
     Assert.IsFalse(sourceCalled)
 
@@ -162,7 +163,7 @@ let ``Run.It returns Status when given the command Status.`` () =
         |> Some
     let actual =
         (inputLocation, avatarId, input)
-        |||> Docked.Run commodities inputSource sinkStub 
+        |||> functionUnderTest inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 
@@ -180,7 +181,7 @@ let ``Run.It returns Docked (at Jobs) gamestate when given the command Jobs.`` (
         |> Some
     let actual =
         (inputLocation, avatarId, input)
-        |||> Docked.Run commodities inputSource sinkStub  
+        |||> functionUnderTest inputSource sinkStub  
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -200,7 +201,7 @@ let ``Run.It gives a message when given the Accept Job command and the given job
         |> Some
     let actual =
         input
-        |> Docked.Run commodities inputSource sinkStub inputLocation avatarId
+        |> functionUnderTest inputSource sinkStub inputLocation avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -222,7 +223,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
         |> Some
     let actual =
         input
-        |> Docked.Run commodities inputSource sinkStub inputLocation avatarId
+        |> functionUnderTest inputSource sinkStub inputLocation avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -247,7 +248,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
         |> Some
     let actual =
         input
-        |> Docked.Run commodities inputSource sinkStub inputLocation avatarId
+        |> functionUnderTest inputSource sinkStub inputLocation avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -264,7 +265,7 @@ let ``Run.It returns Docked (at ItemList) gamestate when given the Items command
         |> Some
     let actual =
         (inputLocation, avatarId, inputWorld)
-        |||> Docked.Run commodities inputSource (sinkStub)
+        |||> functionUnderTest inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 
@@ -282,7 +283,7 @@ let ``Run.It adds a message when given the Buy command for a non-existent item.`
         |> Some
     let actual =
         (inputLocation, avatarId, inputWorld)
-        |||> Docked.Run commodities inputSource (sinkStub)
+        |||> functionUnderTest inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -299,7 +300,7 @@ let ``Run.It adds a message when given the Buy command and the avatar does not h
         |> Some
     let actual =
         (inputLocation, avatarId, inputWorld)
-        |||> Docked.Run commodities inputSource (sinkStub)
+        |||> functionUnderTest inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -308,7 +309,7 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
     let inputAvatar = {shopWorld.Avatars.[avatarId] with Money = 1000000.0}
     let inputWorld = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
     let inputSource = (1u |> Specific, "item under test") |> Command.Buy |> Some |> toSource
-    let expectedPrice = Item.DetermineSalePrice commodities inputWorld.Islands.[inputLocation].Markets inputWorld.Items.[1UL]
+    let expectedPrice = Item.DetermineSalePrice commodities inputWorld.Islands.[inputLocation].Markets smallWorldItems.[1UL]
     let expectedDemand = 
         inputWorld.Islands.[inputLocation].Markets.[1UL].Demand + commodities.[1UL].SaleFactor
     let expectedMarket = 
@@ -332,7 +333,7 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
         |> Some
     let actual =
         (inputLocation, avatarId, inputWorld)
-        |||> Docked.Run commodities inputSource (sinkStub)
+        |||> functionUnderTest inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -349,7 +350,7 @@ let ``Run.It adds a message when given the Sell command for a non-existent item.
         |> Some
     let actual =
         (inputLocation, avatarId, inputWorld)
-        |||> Docked.Run commodities inputSource (sinkStub)
+        |||> functionUnderTest inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -366,7 +367,7 @@ let ``Run.It adds a message when given the Sell command and the avatar does not 
         |> Some
     let actual =
         (inputLocation, avatarId, inputWorld)
-        |||> Docked.Run commodities inputSource (sinkStub)
+        |||> functionUnderTest inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -409,7 +410,7 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
         |> Some
     let actual =
         (inputLocation, avatarId, inputWorld)
-        |||> Docked.Run commodities inputSource (sinkStub)
+        |||> functionUnderTest inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 //[<Test>]

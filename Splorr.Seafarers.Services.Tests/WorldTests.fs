@@ -162,7 +162,6 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                     Metrics = Map.empty
                     Vessel  = {Tonnage=100.0; Fouling = {MinimumValue = 0.0; MaximumValue = 0.5; CurrentValue=0.0}; FoulRate=0.1}
                 }]|>Map.ofList
-            Items = Map.empty
             Islands=
                 Map.empty
                 |> Map.add ( 0.0,  0.0) blankIsland
@@ -238,7 +237,7 @@ let ``TransformIsland.It does nothing when the location given does not have an e
 let ``Dock.It does nothing when given an invalid avatar id.`` () =
     let actual = 
         emptyWorld
-        |> World.Dock random commodities (0.0, 0.0) bogusAvatarId
+        |> World.Dock random commodities genericWorldItems (0.0, 0.0) bogusAvatarId
     Assert.AreEqual(emptyWorld, actual)
 
 [<Test>]
@@ -250,7 +249,7 @@ let ``Dock.It adds a message when the given location has no island.`` () =
             Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar}
     let actual = 
         inputWorld
-        |> World.Dock random commodities (0.0, 0.0) avatarId
+        |> World.Dock random commodities genericWorldItems (0.0, 0.0) avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -268,7 +267,7 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
             Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar}        
     let actual = 
         inputWorld
-        |> World.Dock random Map.empty (0.0, 0.0) avatarId
+        |> World.Dock random Map.empty Map.empty (0.0, 0.0) avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -433,7 +432,7 @@ let ``Dock.It does not modify avatar when given avatar has a job for a different
             Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.VisitedIsland 1u}
     let actual = 
         jobWorld
-        |> World.Dock random commodities genericWorldIslandLocation avatarId
+        |> World.Dock random commodities genericWorldItems genericWorldIslandLocation avatarId
     Assert.AreEqual(expectedAvatar, actual.Avatars.[avatarId])
 
 [<Test>]
@@ -453,7 +452,7 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
                 |> Map.add Metric.CompletedJob 1u}
     let actual = 
         jobWorld
-        |> World.Dock random commodities jobLocation avatarId
+        |> World.Dock random commodities genericWorldItems jobLocation avatarId
     Assert.AreEqual(expectedAvatar, actual.Avatars.[avatarId])
     Assert.AreEqual(expectedMessages, actual.Avatars.[avatarId].Messages)
 
@@ -468,7 +467,7 @@ let ``BuyItems.It gives a message when given a bogus island location.`` () =
         |> World.AddMessages avatarId ["You cannot buy items here."]
     let actual = 
         input 
-        |> World.BuyItems commodities inputLocation inputQuantity inputItemName avatarId
+        |> World.BuyItems commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -482,7 +481,7 @@ let ``BuyItems.It gives a message when given a valid island location and a bogus
         |> World.AddMessages avatarId ["Round these parts, we don't sell things like that."]
     let actual = 
         input 
-        |> World.BuyItems commodities inputLocation inputQuantity inputItemName avatarId
+        |> World.BuyItems commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -496,7 +495,7 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds.`` () =
         |> World.AddMessages avatarId ["You don't have enough money."]
     let actual = 
         input 
-        |> World.BuyItems commodities inputLocation inputQuantity inputItemName avatarId
+        |> World.BuyItems commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -513,7 +512,7 @@ let ``BuyItems.It gives a message when the avatar has insufficient tonnage.`` ()
         |> World.AddMessages avatarId ["You don't have enough tonnage."]
     let actual = 
         input 
-        |> World.BuyItems commodities inputLocation inputQuantity inputItemName avatarId
+        |> World.BuyItems commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -540,7 +539,7 @@ let ``BuyItems.It gives a message and completes the purchase when the avatar has
         |> World.AddMessages avatarId ["You complete the purchase of 2 item under test."]
     let actual = 
         input 
-        |> World.BuyItems commodities inputLocation inputQuantity inputItemName avatarId
+        |> World.BuyItems commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -554,7 +553,7 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds for a s
         |> World.AddMessages avatarId ["You don't have enough money to buy any of those."]
     let actual = 
         input 
-        |> World.BuyItems commodities inputLocation inputQuantity inputItemName avatarId
+        |> World.BuyItems commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -581,7 +580,7 @@ let ``BuyItems.It gives a message indicating purchased quantity and completes th
         |> World.AddMessages avatarId ["You complete the purchase of 100 item under test."]
     let actual = 
         input 
-        |> World.BuyItems commodities inputLocation inputQuantity inputItemName avatarId
+        |> World.BuyItems commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 
@@ -596,7 +595,7 @@ let ``SellItems.It gives a message when given a bogus island location.`` () =
         |> World.AddMessages avatarId ["You cannot sell items here."]
     let actual = 
         input 
-        |> World.SellItems commodities inputLocation inputQuantity inputItemName avatarId
+        |> World.SellItems commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -610,7 +609,7 @@ let ``SellItems.It gives a message when given a valid island location and bogus 
         |> World.AddMessages avatarId ["Round these parts, we don't buy things like that."]
     let actual = 
         input 
-        |> World.SellItems commodities inputLocation inputQuantity inputItemName avatarId
+        |> World.SellItems commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -624,7 +623,7 @@ let ``SellItems.It gives a message when the avatar has insufficient items in inv
         |> World.AddMessages avatarId ["You don't have enough of those to sell."]
     let actual = 
         input 
-        |> World.SellItems commodities inputLocation inputQuantity inputItemName avatarId
+        |> World.SellItems commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -638,7 +637,7 @@ let ``SellItems.It gives a message when the avatar has no items in inventory and
         |> World.AddMessages avatarId ["You don't have any of those to sell."]
     let actual = 
         input 
-        |> World.SellItems commodities inputLocation inputQuantity inputItemName avatarId
+        |> World.SellItems commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -665,7 +664,7 @@ let ``SellItems.It gives a message and completes the purchase when the avatar ha
         |> World.AddMessages avatarId ["You complete the sale of 2 item under test."]
     let actual = 
         input 
-        |> World.SellItems commodities inputLocation inputQuantity inputItemName avatarId
+        |> World.SellItems commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -692,7 +691,7 @@ let ``SellItems.It gives a message and completes the salewhen the avatar has suf
         |> World.AddMessages avatarId ["You complete the sale of 2 item under test."]
     let actual = 
         input 
-        |> World.SellItems commodities inputLocation inputQuantity inputItemName avatarId
+        |> World.SellItems commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
