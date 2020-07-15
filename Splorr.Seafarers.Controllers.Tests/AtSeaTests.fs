@@ -19,7 +19,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -36,7 +36,7 @@ let ``Run.It returns ConfirmQuit when given Quit command.`` () =
         |> Some
     let actual = 
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -51,7 +51,7 @@ let ``Run.It returns AtSea when given invalid command.`` () =
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -76,7 +76,7 @@ let ``Run.It returns AtSea with new speed when given Set Speed command.`` () =
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -108,7 +108,7 @@ let ``Run.It returns AtSea with new heading when given Set Heading command.`` ()
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -136,7 +136,7 @@ let ``Run.It moves the avatar when given Move command.`` () =
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -153,7 +153,7 @@ let ``Run.It returns At Sea Help when given the Help command.`` () =
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -170,7 +170,7 @@ let ``Run.It returns At Sea Metrics when given the Metrics command.`` () =
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -187,7 +187,7 @@ let ``Run.It returns At Sea Inventory when given the Inventory command.`` () =
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -204,7 +204,7 @@ let ``Run.It returns Main Menu when given the Menu command.`` () =
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -221,7 +221,7 @@ let ``Run.It returns Island List when given the Islands command.`` () =
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -242,7 +242,7 @@ let ``Run.It returns AtSea when given the Dock command and there is no near enou
         |>Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -271,7 +271,7 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
         |>Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -292,7 +292,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
         |> Some
     let actual = 
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -313,7 +313,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
         |> Some
     let actual = 
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -329,7 +329,7 @@ let ``Run.It gives a message and changes heading when given a Head For command a
         |> Some
     let actual = 
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -346,7 +346,7 @@ let ``Run.It returns Status when given the command Status.`` () =
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -367,7 +367,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -392,7 +392,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -416,7 +416,7 @@ let ``Run.It gives a message and returns AtSea when the avatar is too far away f
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -433,6 +433,6 @@ let ``Run.It returns Careen Port when given the careen port command and the avat
         |> Some
     let actual =
         input
-        |> AtSea.Run random inputSource sinkStub avatarId
+        |> AtSea.Run random commodities inputSource sinkStub avatarId
     Assert.AreEqual(expected, actual)
     

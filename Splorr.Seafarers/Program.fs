@@ -3,26 +3,22 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open System.Data.SQLite
 
-let commodities :Map<uint, CommodityDescriptor> =
-    [(1u,{Name="grain";BasePrice=1.0;SaleFactor=0.01;PurchaseFactor=0.01;Discount=0.5})]
-    |> Map.ofList
-
-let items: Map<uint, ItemDescriptor> =
+let items: Map<uint64, ItemDescriptor> =
     Map.empty
-    |> Map.add 1u 
+    |> Map.add 1UL 
         {
             DisplayName = "waffles"
             Commodities = 
-                [(1u, 0.01)]
+                [(1UL, 0.01)]
                 |> Map.ofList
             Occurrence = 1.0
             Tonnage = 0.01
         }
-    |> Map.add 2u
+    |> Map.add 2UL
         {
             DisplayName = "sacks of wheat"
             Commodities = 
-                [(1u, 1.0)]
+                [(1UL, 1.0)]
                 |> Map.ofList
             Occurrence = 1.0
             Tonnage = 1.0
@@ -32,13 +28,16 @@ let avatarId = ""
 [<EntryPoint>]
 let main argv =
     use connection = new SQLiteConnection(connectionString)
-    ({
-        MinimumIslandDistance=10.0
-        WorldSize=(100.0,100.0)
-        MaximumGenerationTries=500u
-        RewardRange=(1.0,10.0)
-        Commodities = commodities
-        Items = items
-    }, avatarId)
-    ||> Runner.Run connection
+    try
+        connection.Open()
+        ({
+            MinimumIslandDistance=10.0
+            WorldSize=(100.0,100.0)
+            MaximumGenerationTries=500u
+            RewardRange=(1.0,10.0)
+            Items = items
+        }, avatarId)
+        ||> Runner.Run connection
+    finally
+        connection.Close()
     0

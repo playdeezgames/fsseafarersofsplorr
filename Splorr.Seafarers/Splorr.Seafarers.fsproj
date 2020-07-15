@@ -9,11 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="seafarers.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="CommandSource.fs" />
     <Compile Include="MessageSink.fs" />
     <Compile Include="Runner.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
+
+  <ItemGroup />
 
   <ItemGroup>
     <ProjectReference Include="..\Splorr.Seafarers.Controllers\Splorr.Seafarers.Controllers.fsproj" />

@@ -12,11 +12,9 @@ let internal soloIslandWorldConfiguration: WorldGenerationConfiguration =
         MinimumIslandDistance=30.0 
         MaximumGenerationTries=10u
         RewardRange=(1.0,10.0)
-        Commodities = Map.empty
         Items = Map.empty
     }
 let internal soloIslandWorld = World.Create soloIslandWorldConfiguration random
-
 let internal emptyWorld = 
     {
         RewardRange = (1.0,10.0)
@@ -35,13 +33,12 @@ let internal emptyWorld =
                 Satiety = Statistic.Create (0.0, 100.0) (100.0)
                 Health = Statistic.Create (0.0, 100.0) (100.0)
                 Turn = {MinimumValue=0.0;CurrentValue=0.0;MaximumValue=15000.0}
-                RationItem = 1u
+                RationItem = 1UL
                 Metrics = Map.empty
                 Vessel  = {Tonnage=100.0; Fouling = {MinimumValue = 0.0; MaximumValue = 0.5; CurrentValue=0.0}; FoulRate = 0.01}
             }] 
             |> Map.ofList
         Islands = Map.empty
-        Commodities = Map.empty
         Items = Map.empty
     }
 let internal defaultRewardrange = (1.0,10.0)
@@ -51,10 +48,11 @@ let internal oneIslandWorld =
     |> World.SetIsland (0.0,0.0) (Island.Create() |> Island.SetName "Uno" |> Some)
     |> World.TransformIsland  (0.0,0.0) (fun i -> {i with Jobs = [ Job.Create random defaultRewardrange fabricatedDestinationList ]} |> Some)
 
-let internal genericWorldCommodities = 
+let internal commodities = 
     Map.empty
-    |> Map.add 1u {
-        Name=""
+    |> Map.add 1UL {
+        CommodityId = 1UL
+        CommodityName=""
         BasePrice=1.0
         PurchaseFactor=1.0
         SaleFactor=1.0
@@ -62,9 +60,9 @@ let internal genericWorldCommodities =
 
 let internal genericWorldItems = 
     Map.empty
-    |> Map.add 1u {
+    |> Map.add 1UL {
         DisplayName="item under test"
-        Commodities= Map.empty |> Map.add 1u 1.0
+        Commodities= Map.empty |> Map.add 1UL 1.0
         Occurrence=1.0
         Tonnage = 1.0
         }
@@ -75,7 +73,6 @@ let internal genericWorldConfiguration: WorldGenerationConfiguration =
         MinimumIslandDistance=5.0 
         MaximumGenerationTries=500u
         RewardRange=(1.0,10.0)
-        Commodities = genericWorldCommodities
         Items = genericWorldItems
     }
 let internal genericWorld = World.Create genericWorldConfiguration random
@@ -84,13 +81,13 @@ let internal deadWorld =
 
 let internal genericWorldIslandLocation = genericWorld.Islands |> Map.toList |> List.map fst |> List.head
 let internal genericWorldInvalidIslandLocation = ((genericWorldIslandLocation |> fst) + 1.0, genericWorldIslandLocation |> snd)
-let internal genericDockedWorld = World.Dock random genericWorldIslandLocation avatarId genericWorld |> World.ClearMessages avatarId
+let internal genericDockedWorld = World.Dock random commodities genericWorldIslandLocation avatarId genericWorld |> World.ClearMessages avatarId
 
 let internal shopWorld = 
     genericDockedWorld
     |> World.TransformIsland genericWorldIslandLocation
         (fun i -> 
-            {i with Markets = i.Markets |> Map.add 1u {Supply=5.0;Demand=5.0}} |> Some)
+            {i with Markets = i.Markets |> Map.add 1UL {Supply=5.0;Demand=5.0}} |> Some)
 let internal shopWorldLocation = genericWorldIslandLocation
 let internal shopWorldBogusLocation = genericWorldInvalidIslandLocation
 

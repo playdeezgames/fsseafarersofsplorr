@@ -17,7 +17,7 @@ module Avatar =
             Satiety = Statistic.Create (0.0, 100.0) 100.0
             Health = Statistic.Create (0.0, 100.0) 100.0
             Turn = Statistic.Create (0.0, 15000.0) 0.0
-            RationItem = 1u
+            RationItem = 1UL
             Metrics = Map.empty
             Vessel = Vessel.Create 100.0
         }
@@ -33,7 +33,7 @@ module Avatar =
     let SetHeading (heading:Dms) (avatar:Avatar) : Avatar =
         {avatar with Heading = heading |> Dms.ToFloat}
 
-    let RemoveInventory (item:uint) (quantity:uint32) (avatar:Avatar) : Avatar =
+    let RemoveInventory (item:uint64) (quantity:uint32) (avatar:Avatar) : Avatar =
         if quantity>0u then
             match avatar.Inventory.TryFind item with
             | Some count ->
@@ -135,12 +135,12 @@ module Avatar =
         else
             avatar |> SetMoney (avatar.Money - amount)
 
-    let GetItemCount (item:uint) (avatar:Avatar) : uint32 =
+    let GetItemCount (item:uint64) (avatar:Avatar) : uint32 =
         match avatar.Inventory.TryFind item with
         | Some x -> x
         | None -> 0u
 
-    let AddInventory (item:uint) (quantity:uint32) (avatar:Avatar) : Avatar =
+    let AddInventory (item:uint64) (quantity:uint32) (avatar:Avatar) : Avatar =
         let newQuantity = (avatar |> GetItemCount item) + quantity
         {avatar with Inventory = avatar.Inventory |> Map.add item newQuantity}
 
@@ -156,7 +156,7 @@ module Avatar =
     let AddMessages (messages:string list) (avatar:Avatar) : Avatar =
         {avatar with Messages = List.append avatar.Messages messages}
 
-    let GetUsedTonnage (items:Map<uint, ItemDescriptor>) (avatar:Avatar) : float =
+    let GetUsedTonnage (items:Map<uint64, ItemDescriptor>) (avatar:Avatar) : float =
         (0.0, avatar.Inventory)
         ||> Map.fold
             (fun result item quantity -> 

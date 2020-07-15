@@ -4,57 +4,25 @@ open System.Data.SQLite
 open Splorr.Seafarers.Models
 
 module Commodity =
-    let private createTableCommand =
-        "CREATE TABLE IF NOT EXISTS [Commodities] (
-        	[WorldId]	INTEGER NOT NULL,
-        	[CommodityId]	INTEGER NOT NULL,
-        	[CommodityName]	TEXT NOT NULL,
-        	[BasePrice]	REAL NOT NULL,
-        	[PurchaseFactor]	REAL NOT NULL,
-        	[SaleFactor]	REAL NOT NULL,
-        	[Discount]	REAL NOT NULL,
-        	PRIMARY KEY([CommodityId],[WorldId])
-        );"
-    let private EnsureTableExists (connection:SQLiteConnection) : unit =
-        use command = new SQLiteCommand(createTableCommand, connection)
-        command.ExecuteNonQuery() |> ignore
+    let rec private ReadEntities (reader:SQLiteDataReader) (previous:CommodityDescriptor list) : Map<uint64, CommodityDescriptor> =
+        if reader.Read() then
+            let next = 
+                [{
+                    CommodityId = reader.GetInt64(0) |> uint64
+                    CommodityName = reader.GetString(1)
+                    BasePrice = reader.GetDouble(2)
+                    SaleFactor = reader.GetDouble(3)
+                    PurchaseFactor = reader.GetDouble(4)
+                    Discount = reader.GetDouble(5)
+                }] 
+                |> List.append previous
+            ReadEntities reader next
+        else    
+            previous
+            |> List.map (fun i -> (i.CommodityId, i))
+            |> Map.ofList
 
-    let private createRecordCommand =
-        "INSERT INTO [Commodities]
-            ([WorldId], 
-            [CommodityId], 
-            [CommodityName], 
-            [BasePrice], 
-            [PurchaseFactor], 
-            [SaleFactor], 
-            [Discount]) 
-        VALUES 
-            ($WorldId, 
-            $CommodityId, 
-            $CommodityName, 
-            $BasePrice, 
-            $PurchaseFactor, 
-            $SaleFactor, 
-            $Discount);"
-
-    let Save (connection:SQLiteConnection) (worldId:int) (commodities:Map<uint, CommodityDescriptor>): Result<int, exn> =
-        try
-            connection
-            |>  EnsureTableExists 
-
-            commodities
-            |> Map.iter (fun commodity descriptor ->
-                use command = new SQLiteCommand(createRecordCommand,connection)
-                command.Parameters.AddWithValue("$WorldId", worldId) |> ignore
-                command.Parameters.AddWithValue("$CommodityId", commodity) |> ignore
-                command.Parameters.AddWithValue("$CommodityName", descriptor.Name) |> ignore
-                command.Parameters.AddWithValue("$BasePrice", descriptor.BasePrice) |> ignore
-                command.Parameters.AddWithValue("$PurchaseFactor", descriptor.PurchaseFactor) |> ignore
-                command.Parameters.AddWithValue("$SaleFactor", descriptor.SaleFactor) |> ignore
-                command.Parameters.AddWithValue("$Discount", descriptor.Discount) |> ignore
-                command.ExecuteNonQuery() |> ignore)
-            worldId |> Ok
-        with
-        | ex -> ex |> Error
-
+    let GetList (connection:SQLiteConnection) : Map<uint64, CommodityDescriptor> =
+        use command = new SQLiteCommand("SELECT [CommodityId], [CommodityName], [BasePrice], [SaleFactor], [PurchaseFactor], [Discount] FROM [Commodities];",connection)
+        ReadEntities (command.ExecuteReader()) []
 

@@ -1,38 +1,35 @@
 ﻿module CommonTestFixtures
 
 open Splorr.Seafarers.Models
+open System.Data.SQLite
 
-let internal connectionString = "Data Source=:memory:;Version=3;New=True;"
-let internal avatarId = ""
-let internal world : World =
-    {
-        Avatars = 
-            [avatarId, {
-                Messages = []
-                Position = (1.0, 2.0)
-                Heading = 3.0
-                Speed = 4.0
-                ViewDistance = 5.0
-                DockDistance = 6.0
-                Money = 7.0
-                Reputation= 8.0
-                Job = None
-                Inventory = Map.empty
-                Satiety = {MinimumValue=9.0; CurrentValue=10.0; MaximumValue=11.0}
-                Health = {MinimumValue=12.0; CurrentValue=13.0; MaximumValue=14.0}
-                Turn = {MinimumValue=15.0;CurrentValue=16.0;MaximumValue=17.0}
-                RationItem = 1u
-                Metrics = Map.empty
-                Vessel  = 
-                    {
-                        Tonnage=100.0
-                        FoulRate = 0.01
-                        Fouling = {MinimumValue = 0.0; MaximumValue = 0.5; CurrentValue=0.0}
-                    }
-            }] |> Map.ofList
-        Islands = Map.empty
-        RewardRange = (1.0, 10.0)
-        Commodities= Map.empty
-        Items = Map.empty
-    }
+let private connectionString = "Data Source=:memory:;Version=3;New=True;"
 
+let private setupCommodities (connection:SQLiteConnection) : unit =
+    use command = new SQLiteCommand("CREATE TABLE IF NOT EXISTS [Commodities] (
+    	[CommodityId]	INTEGER,
+    	[CommodityName]	TEXT NOT NULL UNIQUE,
+    	[BasePrice]	REAL NOT NULL,
+    	[SaleFactor]	REAL NOT NULL,
+    	[PurchaseFactor]	REAL NOT NULL,
+    	[Discount]	REAL NOT NULL,
+    	PRIMARY KEY([CommodityId])
+    );",connection)
+    command.ExecuteNonQuery() |> ignore
+    use command = new SQLiteCommand("REPLACE INTO [Commodities] 
+        ([CommodityId],[CommodityName],[BasePrice],[SaleFactor],[PurchaseFactor],[Discount]) 
+        VALUES 
+        (1,'Commodity 1',1,0.01,0.01,0.5),
+        (2,'Commodity 2',2,0.02,0.02,0.5),
+        (3,'Commodity 3',3,0.03,0.03,0.5);",connection)
+    command.ExecuteNonQuery() |> ignore
+    ()
+
+let internal SetupConnection() : SQLiteConnection = 
+    let connection = new SQLiteConnection(connectionString)
+    connection.Open()
+
+    connection |> setupCommodities  
+
+    connection
+    

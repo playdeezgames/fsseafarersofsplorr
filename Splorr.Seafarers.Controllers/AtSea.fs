@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module AtSea =
-    let private RunAlive (random:System.Random) (source:CommandSource) (sink:MessageSink) (avatarId:string) (world:World) : Gamestate option =
+    let private RunAlive (random:System.Random) (commodities:Map<uint64, CommodityDescriptor>) (source:CommandSource) (sink:MessageSink) (avatarId:string) (world:World) : Gamestate option =
 
         "" |> Line |> sink
         world.Avatars.[avatarId].Messages
@@ -77,7 +77,7 @@ module AtSea =
         | Some Command.Dock ->
             match dockTarget with
             | Some location ->
-                (Dock, location, world |> World.Dock random location avatarId)
+                (Dock, location, world |> World.Dock random commodities location avatarId)
                 |> Gamestate.Docked
                 |> Some
             | None ->
@@ -151,9 +151,9 @@ module AtSea =
             |> Gamestate.AtSea
             |> Some
 
-    let Run (random:System.Random) (source:CommandSource) (sink:MessageSink) (avatarId:string) (world:World) : Gamestate option =
+    let Run (random:System.Random) (commodities:Map<uint64, CommodityDescriptor>) (source:CommandSource) (sink:MessageSink) (avatarId:string) (world:World) : Gamestate option =
         if world |> World.IsAvatarAlive avatarId then
-            RunAlive random source sink avatarId world
+            RunAlive random commodities source sink avatarId world
         else
             world.Avatars.[avatarId].Messages
             |> Gamestate.GameOver

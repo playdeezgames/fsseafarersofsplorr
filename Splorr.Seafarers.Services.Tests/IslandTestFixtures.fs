@@ -44,19 +44,19 @@ let internal jobAvailableIsland =
 let internal noCommodityIsland = visitedIsland
 let internal commodityIsland = 
     {noCommodityIsland with
-        Markets = [(1u, {Supply=1.0; Demand=1.0})] |> Map.ofList}
+        Markets = [(1UL, {Supply=1.0; Demand=1.0})] |> Map.ofList}
 let internal commodities = 
-    [(1u, {Name="grain"; PurchaseFactor=1.0; SaleFactor=1.0; Discount=0.5; BasePrice=1.0})]
+    [(1UL, {CommodityId = 1UL; CommodityName="grain"; PurchaseFactor=1.0; SaleFactor=1.0; Discount=0.5; BasePrice=1.0})]
     |> Map.ofList
 let internal items =
-    [(1u, 
+    [(1UL, 
         {
             DisplayName = "rations"
-            Commodities=[(1u, 1.0)]|>Map.ofList
+            Commodities=[(1UL, 1.0)]|>Map.ofList
             Occurrence=1.0
             Tonnage = 1.0
         })]
     |> Map.ofList
-let shopIsland = {commodityIsland with Items = commodityIsland.Items |> Set.add 1u}
+let shopIsland = {commodityIsland with Items = commodityIsland.Items |> Set.add 1UL}
 let noShopIsland = commodityIsland
 

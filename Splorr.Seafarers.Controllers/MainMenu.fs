@@ -30,10 +30,6 @@ module MainMenu =
         |> List.iter sink
 
         match world, source() with
-        | Some w, Some (Command.Save name) ->
-            (name, w)
-            |> Gamestate.SaveGame
-            |> Some
 
         | Some w, Some Command.Resume ->
             w

@@ -12,7 +12,8 @@ let private market =
 
 let private descriptor =
     {
-        Name = ""
+        CommodityId = 1UL
+        CommodityName = ""
         BasePrice = 10.0
         PurchaseFactor = 0.0
         SaleFactor = 0.0
