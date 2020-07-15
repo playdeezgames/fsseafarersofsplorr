@@ -1,6 +1,12 @@
 # SeafarersOfSplorr
 
-# Order of TDD Operations
+## Inspirations
+1. Elite (for the "travel between place" and trading commodities) - https://www.c64-wiki.com/wiki/Elite
+2. Space Traders  - https://www.spronck.net/spacetrader/STFrames.html
+3. Zork (for the command line interface of having to type words) - http://www.infocom-if.org/downloads/downloads.html
+4. Dwarf Fortress (for the flavor and details) - https://www.bay12games.com/dwarves/
+
+## Order of TDD Operations
 
 1. When it doesn't build... fix the build!
 2. When any code does not have test coverage... stub a test to cover the uncovered code!

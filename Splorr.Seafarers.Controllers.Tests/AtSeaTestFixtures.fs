@@ -10,7 +10,6 @@ let internal configuration: WorldGenerationConfiguration =
         MinimumIslandDistance=30.0
         MaximumGenerationTries=10u
         RewardRange = (1.0, 10.0)
-        Items = Map.empty
     }
 let internal world = World.Create configuration (System.Random())
 let internal deadWorld =
@@ -27,7 +26,6 @@ let internal emptyWorldconfiguration: WorldGenerationConfiguration =
         MinimumIslandDistance=30.0
         MaximumGenerationTries=0u
         RewardRange = (1.0, 10.0)
-        Items = Map.empty
     }
 let internal emptyWorld = World.Create emptyWorldconfiguration (System.Random())
 
@@ -37,7 +35,6 @@ let internal dockWorldconfiguration: WorldGenerationConfiguration =
         MinimumIslandDistance=30.0
         MaximumGenerationTries=1u
         RewardRange = (1.0, 10.0)
-        Items = Map.empty
     }
 let internal dockWorld = World.Create dockWorldconfiguration (System.Random())
 
@@ -48,7 +45,7 @@ let internal headForWorldUnvisited =
     |> World.Move 1u avatarId
 let internal headForWorldVisited = 
     headForWorldUnvisited
-    |> World.Dock random commodities (0.0, 0.0) avatarId
+    |> World.Dock random commodities Map.empty (0.0, 0.0) avatarId
 
 let internal abandonJobWorld =
     dockWorld

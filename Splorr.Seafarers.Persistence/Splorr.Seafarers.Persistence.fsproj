@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Commodity.fs" />
+    <Compile Include="Item.fs" />
   </ItemGroup>
 
   <ItemGroup>
