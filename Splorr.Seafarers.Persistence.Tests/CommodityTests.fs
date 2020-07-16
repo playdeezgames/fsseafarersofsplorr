@@ -8,8 +8,9 @@ open Splorr.Seafarers.Persistence
 let ``GetList.It returns a list of commodities.`` () =
     use connection = SetupConnection()
     try
-        let actual = connection |> Commodity.GetList 
-        Assert.AreEqual(3, actual.Count)
+        match connection |> Commodity.GetList with
+        | Ok actual -> Assert.AreEqual(3, actual.Count)
+        | Error message -> Assert.Fail message
     finally
         connection.Close()
 

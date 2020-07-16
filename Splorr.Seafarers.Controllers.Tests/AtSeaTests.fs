@@ -6,8 +6,31 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 open CommonTestFixtures
 open AtSeaTestFixtures
+open System.Data.SQLite
+open Splorr.Seafarers.Persistence.Schema
 
-let private functionUnderTest =  AtSea.Run random commodities Map.empty
+let mutable private connection:SQLiteConnection = null
+let mutable private functionUnderTest: CommandSource -> MessageSink -> string -> World -> Gamestate option = fun _ _ _ _ -> None
+
+[<SetUp>]
+let ``Set up function under test and connection there used.`` () =
+    connection <- new SQLiteConnection("Data Source=:memory:;Version=3;New=True;")
+    connection.Open()
+    //TODO: this query is in two place, so consolidate!
+    use command = new SQLiteCommand(Tables.Commodities,connection)
+    command.ExecuteNonQuery() |> ignore
+    //TODO: this query is in two place, so consolidate!
+    use command = new SQLiteCommand(Tables.Items,connection)
+    command.ExecuteNonQuery() |> ignore
+    //TODO: this query is in two place, so consolidate!
+    use command = new SQLiteCommand(Tables.CommodityItems,connection)
+    command.ExecuteNonQuery() |> ignore
+    functionUnderTest <- AtSea.Run random connection
+
+[<TearDown>]
+let ``Tear down connection used for function under test `` () =
+    connection.Close()
+    connection.Dispose()
 
 [<Test>]
 let ``Run.It returns GameOver when the given world's avatar is dead.`` () =

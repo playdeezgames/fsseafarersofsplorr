@@ -4,7 +4,7 @@ open System.Data.SQLite
 open Splorr.Seafarers.Models
 
 module Commodity =
-    let rec private ReadEntities (reader:SQLiteDataReader) (previous:CommodityDescriptor list) : Map<uint64, CommodityDescriptor> =
+    let rec private readEntities (reader:SQLiteDataReader) (previous:CommodityDescriptor list) : Result<Map<uint64, CommodityDescriptor>,string> =
         if reader.Read() then
             let next = 
                 [{
@@ -16,13 +16,18 @@ module Commodity =
                     Discount = reader.GetDouble(5)
                 }] 
                 |> List.append previous
-            ReadEntities reader next
+            readEntities reader next
         else    
             previous
             |> List.map (fun i -> (i.CommodityId, i))
             |> Map.ofList
+            |> Ok
 
-    let GetList (connection:SQLiteConnection) : Map<uint64, CommodityDescriptor> =
-        use command = new SQLiteCommand("SELECT [CommodityId], [CommodityName], [BasePrice], [SaleFactor], [PurchaseFactor], [Discount] FROM [Commodities];",connection)
-        ReadEntities (command.ExecuteReader()) []
+    let GetList (connection:SQLiteConnection) : Result<Map<uint64, CommodityDescriptor>,string> =
+        try
+            use command = new SQLiteCommand("SELECT [CommodityId], [CommodityName], [BasePrice], [SaleFactor], [PurchaseFactor], [Discount] FROM [Commodities];",connection)
+            readEntities (command.ExecuteReader()) []
+        with
+        | ex ->
+            Error (ex.ToString())
 

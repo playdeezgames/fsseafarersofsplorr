@@ -4,7 +4,7 @@ open System.Data.SQLite
 open Splorr.Seafarers.Models
 
 module Item = 
-    let rec private ReadEntities (reader:SQLiteDataReader) (previous:Map<uint64, ItemDescriptor>) : Map<uint64, ItemDescriptor> =
+    let rec private ReadEntities (reader:SQLiteDataReader) (previous:Map<uint64, ItemDescriptor>) : Result<Map<uint64, ItemDescriptor>,string> =
         if reader.Read() then
             let itemId = reader.GetInt64(0) |> uint64
             let item = 
@@ -29,18 +29,22 @@ module Item =
             |> ReadEntities reader
         else
             previous
+            |> Ok
 
-    let GetList (connection:SQLiteConnection) : Map<uint64, ItemDescriptor> =
-        use command = new SQLiteCommand("SELECT
-        	i.[ItemId],
-        	i.[ItemName],
-        	i.[Occurrence],
-        	i.[Tonnage],
-        	ci.[CommodityId],
-        	ci.[Quantity]
-        FROM
-        	[Items] i 
-        	JOIN [CommodityItems] ci ON i.[ItemId]=ci.[ItemId]",connection)
-        ReadEntities (command.ExecuteReader()) Map.empty
+    let GetList (connection:SQLiteConnection) : Result<Map<uint64, ItemDescriptor>,string> =
+        try
+            use command = new SQLiteCommand("SELECT
+        	    i.[ItemId],
+        	    i.[ItemName],
+        	    i.[Occurrence],
+        	    i.[Tonnage],
+        	    ci.[CommodityId],
+        	    ci.[Quantity]
+            FROM
+        	    [Items] i 
+        	    JOIN [CommodityItems] ci ON i.[ItemId]=ci.[ItemId]",connection)
+            ReadEntities (command.ExecuteReader()) Map.empty
+        with
+        | ex -> ex.ToString() |> Error
 
 

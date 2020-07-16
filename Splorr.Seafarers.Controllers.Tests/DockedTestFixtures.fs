@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open CommonTestFixtures
 
-let internal dockWorldconfiguration: WorldGenerationConfiguration =
+let internal dockWorldconfiguration: WorldConfiguration =
     {
         WorldSize=(0.0, 0.0)
         MinimumIslandDistance=30.0
@@ -20,7 +20,7 @@ let internal commodities:Map<uint64, CommodityDescriptor> =
     [(1UL, {CommodityId = 1UL; CommodityName="commodity under test";BasePrice=1.0;PurchaseFactor=1.0;SaleFactor=1.0;Discount=0.5})] |> Map.ofList
 let internal smallWorldItems:Map<uint64, ItemDescriptor> =
     [(1UL, {ItemId = 1UL;ItemName="item under test"; Commodities=[(1UL,1.0)]|>Map.ofList; Occurrence =1.0; Tonnage=1.0})] |> Map.ofList
-let internal smallWorldconfiguration: WorldGenerationConfiguration =
+let internal smallWorldconfiguration: WorldConfiguration =
     {
         WorldSize=(11.0, 11.0)
         MinimumIslandDistance=5.0

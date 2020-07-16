@@ -2,8 +2,9 @@
 
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
+open Splorr.Seafarers.Models
 
-let internal configuration: WorldGenerationConfiguration =
+let internal configuration: WorldConfiguration =
     {
         WorldSize=(10.0, 10.0)
         MinimumIslandDistance=30.0

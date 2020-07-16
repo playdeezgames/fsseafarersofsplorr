@@ -3,8 +3,9 @@
 open NUnit.Framework
 open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Services
+open Splorr.Seafarers.Models
 
-let private dockWorldconfiguration: WorldGenerationConfiguration =
+let private dockWorldconfiguration: WorldConfiguration =
     {
         WorldSize=(0.0, 0.0)
         MinimumIslandDistance=30.0

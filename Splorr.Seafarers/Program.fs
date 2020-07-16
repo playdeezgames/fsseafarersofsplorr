@@ -10,13 +10,8 @@ let main argv =
     use connection = new SQLiteConnection(connectionString)
     try
         connection.Open()
-        ({
-            MinimumIslandDistance=10.0
-            WorldSize=(100.0,100.0)
-            MaximumGenerationTries=500u
-            RewardRange=(1.0,10.0)
-        }, avatarId)
-        ||> Runner.Run connection
+        avatarId
+        |> Runner.Run connection
     finally
         connection.Close()
     0
