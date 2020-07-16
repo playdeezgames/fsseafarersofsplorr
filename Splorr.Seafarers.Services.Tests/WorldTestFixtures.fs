@@ -6,7 +6,7 @@ open CommonTestFixtures
 
 let internal bogusAvatarId = "bogus"
 let internal random = System.Random()
-let internal soloIslandWorldConfiguration: WorldGenerationConfiguration =
+let internal soloIslandWorldConfiguration: WorldConfiguration =
     {
         WorldSize=(10.0, 10.0)
         MinimumIslandDistance=30.0 
@@ -66,7 +66,7 @@ let internal genericWorldItems =
         Tonnage = 1.0
         }
 
-let internal genericWorldConfiguration: WorldGenerationConfiguration =
+let internal genericWorldConfiguration: WorldConfiguration =
     {
         WorldSize=(11.0, 11.0)
         MinimumIslandDistance=5.0 

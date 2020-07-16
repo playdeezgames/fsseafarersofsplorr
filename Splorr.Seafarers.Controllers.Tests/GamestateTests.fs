@@ -3,8 +3,9 @@
 open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
+open Splorr.Seafarers.Models
 
-let private configuration :WorldGenerationConfiguration = 
+let private configuration :WorldConfiguration = 
     {
         WorldSize = (0.0,0.0)
         MaximumGenerationTries=1u

@@ -41,6 +41,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Splorr.Seafarers.Controllers\Splorr.Seafarers.Controllers.fsproj" />
+    <ProjectReference Include="..\Splorr.Seafarers.Persistence.Schema\Splorr.Seafarers.Persistence.Schema.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

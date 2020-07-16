@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module MainMenu =
-    let Run (configuration:WorldGenerationConfiguration) (source:CommandSource) (sink:MessageSink) (world:World option) : Gamestate option =
+    let Run (configuration:WorldConfiguration) (source:CommandSource) (sink:MessageSink) (world:World option) : Gamestate option =
         [
             "" |> Line
             (Heading, "Main Menu Commands:" |> Line) |> Hued

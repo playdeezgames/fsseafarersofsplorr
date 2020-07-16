@@ -2,6 +2,8 @@
 
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
+open System.Data.SQLite
+open Splorr.Seafarers.Persistence
 
 module AtSea =
     let private RunAlive (random:System.Random) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (source:CommandSource) (sink:MessageSink) (avatarId:string) (world:World) : Gamestate option =
@@ -151,9 +153,15 @@ module AtSea =
             |> Gamestate.AtSea
             |> Some
 
-    let Run (random:System.Random) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (source:CommandSource) (sink:MessageSink) (avatarId:string) (world:World) : Gamestate option =
+    let Run (random:System.Random) (connection:SQLiteConnection) (source:CommandSource) (sink:MessageSink) (avatarId:string) (world:World) : Gamestate option =
         if world |> World.IsAvatarAlive avatarId then
-            RunAlive random commodities items source sink avatarId world
+            match connection |> Commodity.GetList, connection |> Item.GetList with
+            | Ok commodities, Ok items ->
+                RunAlive random commodities items source sink avatarId world
+            | Result.Error message, _ ->
+                raise (System.InvalidOperationException message)
+            | _, Result.Error message ->
+                raise (System.InvalidOperationException message)
         else
             world.Avatars.[avatarId].Messages
             |> Gamestate.GameOver

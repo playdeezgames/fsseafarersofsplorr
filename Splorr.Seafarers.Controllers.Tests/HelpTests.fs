@@ -6,7 +6,7 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 
 let private sink(_:Message) : unit = ()
-let private configuration: WorldGenerationConfiguration =
+let private configuration: WorldConfiguration =
     {
         WorldSize=(10.0, 10.0)
         MinimumIslandDistance=30.0

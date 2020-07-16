@@ -1,14 +1,6 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
-type WorldGenerationConfiguration =
-    {
-        WorldSize: Location
-        MinimumIslandDistance: float
-        MaximumGenerationTries: uint32
-        RewardRange: float * float
-    }
-
 type TradeQuantity =
     | Maximum
     | Specific of uint32
@@ -60,7 +52,7 @@ module World =
         |> List.fold
             (fun w (l,n) -> w |> TransformIsland l (Island.SetName n >> Some)) world
 
-    let rec private GenerateIslands (configuration:WorldGenerationConfiguration) (random:System.Random) (currentTry:uint32) (world: World) : World =
+    let rec private GenerateIslands (configuration:WorldConfiguration) (random:System.Random) (currentTry:uint32) (world: World) : World =
         if currentTry>=configuration.MaximumGenerationTries then
             world
         else
@@ -70,7 +62,7 @@ module World =
             else
                 GenerateIslands configuration random 0u {world with Islands = world.Islands |> Map.add candidateLocation (Island.Create())}
 
-    let Create (configuration:WorldGenerationConfiguration) (random:System.Random) : World =
+    let Create (configuration:WorldConfiguration) (random:System.Random) : World =
         {
             Avatars = ["",Avatar.Create(configuration.WorldSize |> Location.ScaleBy 0.5)] |> Map.ofList
             Islands = Map.empty

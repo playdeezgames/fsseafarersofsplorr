@@ -21,10 +21,12 @@
     <Compile Include="CommonTestFixtures.fs" />
     <Compile Include="CommodityTests.fs" />
     <Compile Include="ItemTests.fs" />
+    <Compile Include="WorldConfigurationTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Splorr.Seafarers.Persistence.Schema\Splorr.Seafarers.Persistence.Schema.fsproj" />
     <ProjectReference Include="..\Splorr.Seafarers.Persistence\Splorr.Seafarers.Persistence.fsproj" />
   </ItemGroup>
 

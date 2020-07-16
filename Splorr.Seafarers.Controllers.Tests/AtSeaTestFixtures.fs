@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open CommonTestFixtures
 
-let internal configuration: WorldGenerationConfiguration =
+let internal configuration: WorldConfiguration =
     {
         WorldSize=(10.0, 10.0)
         MinimumIslandDistance=30.0
@@ -20,7 +20,7 @@ let internal deadWorld =
     |> World.AddMessages avatarId ["Yer ded."]
 
 
-let internal emptyWorldconfiguration: WorldGenerationConfiguration =
+let internal emptyWorldconfiguration: WorldConfiguration =
     {
         WorldSize=(1.0, 1.0)
         MinimumIslandDistance=30.0
@@ -29,7 +29,7 @@ let internal emptyWorldconfiguration: WorldGenerationConfiguration =
     }
 let internal emptyWorld = World.Create emptyWorldconfiguration (System.Random())
 
-let internal dockWorldconfiguration: WorldGenerationConfiguration =
+let internal dockWorldconfiguration: WorldConfiguration =
     {
         WorldSize=(0.0, 0.0)
         MinimumIslandDistance=30.0
