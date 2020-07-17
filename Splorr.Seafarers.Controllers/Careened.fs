@@ -11,8 +11,15 @@ module Careened =
         let world =
             world
             |> World.ClearMessages avatarId
+        let sideName =
+            match side with
+            | Port -> "port"
+            | Starboard -> "starboard"
+        let foulage =
+            100.0 * world.Avatars.[avatarId].Vessel.Fouling.CurrentValue / world.Avatars.[avatarId].Vessel.Fouling.MaximumValue
         [
-            (Heading, "Careened:" |> Line) |> Hued
+            (Heading, sideName |> sprintf "You are careened on the %s side." |> Line) |> Hued
+            (Flavor, foulage |> sprintf "The hull is %.0f%% fouled." |> Line) |> Hued
         ]
         |> List.iter sink
         match source() with

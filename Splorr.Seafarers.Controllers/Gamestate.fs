@@ -25,6 +25,7 @@ module Gamestate =
     let rec GetWorld (gamestate:Gamestate) : World option =
         match gamestate with
         | Gamestate.AtSea w -> w |> Some
+        | Gamestate.Careened (_, w) -> w |> Some
         | Gamestate.ConfirmQuit g -> GetWorld g
         | Gamestate.Docked (_,_,w) -> w |> Some
         | Gamestate.Help g -> GetWorld g

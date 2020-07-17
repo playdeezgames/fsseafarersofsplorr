@@ -66,6 +66,15 @@ let ``GetWorld.It returns the world embedded within the given Metrics Gamestate 
         |> Gamestate.GetWorld
     Assert.AreEqual(world |> Some, actual)
 
+
+[<Test>]
+let ``GetWorld.It returns the world embedded within the given Careened Gamestate.`` () =
+    let actual = 
+        (Port, world)
+        |> Gamestate.Careened
+        |> Gamestate.GetWorld
+    Assert.AreEqual(world |> Some, actual)
+
 [<Test>]
 let ``GetWorld.It returns None from the given MainMenu Gamestate when no world is present.`` () =
     let actual = 
