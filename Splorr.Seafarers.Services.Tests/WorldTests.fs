@@ -738,6 +738,7 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
         {inputAvatar with
             Vessel = expectedVessel
             Turn = {inputAvatar.Turn with CurrentValue = inputAvatar.Turn.CurrentValue + 1.0}}
+        |> Avatar.AddMetric Metric.CleanedHull 1u
     let expected =
         {inputWorld with
             Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar}

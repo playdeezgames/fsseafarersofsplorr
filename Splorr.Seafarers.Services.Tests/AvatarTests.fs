@@ -428,6 +428,7 @@ let ``CleanHull.It cleans the hull of the given avatar.`` () =
             Turn = input.Turn |> Statistic.ChangeBy 1.0
             Vessel = 
                 {input.Vessel with Fouling = input.Vessel.Fouling |> Statistic.ChangeBy -0.5}}
+        |> Avatar.AddMetric Metric.CleanedHull 1u
     let actual =
         input
         |> Avatar.CleanHull

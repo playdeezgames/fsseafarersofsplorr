@@ -40,8 +40,8 @@ Persistence:
               supply
               demand
               traded
-    ☐ load the game
-    ☐ permadeath?
+    ✘ load the game @cancelled(20-07-17 05:49)
+    ✘ permadeath? @cancelled(20-07-17 05:49)
         permadeath means that the file loaded is deleted 
     ☐ autosave?
 Avatar Longevity:
@@ -62,7 +62,8 @@ Careening and Fouling:
     ✔ clean hull command @done(20-07-14 15:03)
         takes a turn
     ☐ a ship may be put into a dry dock to clean the entire hull
-    ☐ metric for number of times that the hull is cleaned
+        this costs money
+    ✔ metric for number of times that the hull is cleaned @started(20-07-17 05:50) @done(20-07-17 05:55) @lasted(5m3s)
     ☐ time taken to clean hull is longer with a larger hull
     ☐ time taken to clean hull is proportional to the amount of fouling!
     ☐ time taken to clean hull is shorter when there are more hands available to do the work

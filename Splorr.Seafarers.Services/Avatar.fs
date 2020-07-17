@@ -168,3 +168,4 @@ module Avatar =
             Vessel = 
                 {avatar.Vessel with Fouling = {avatar.Vessel.Fouling with CurrentValue = 0.0}}
             Turn = avatar.Turn |> Statistic.ChangeBy 1.0}
+        |> IncrementMetric Metric.CleanedHull
