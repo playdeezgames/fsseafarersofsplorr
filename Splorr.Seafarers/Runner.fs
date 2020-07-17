@@ -7,12 +7,12 @@ open Splorr.Seafarers.Persistence
 open Splorr.Seafarers.Models
 
 module Runner =
-    let rec private Loop (connection:SQLiteConnection) (random:System.Random) (configuration:WorldConfiguration) (source:CommandSource) (sink:MessageSink) (avatarId:string) (gamestate: Gamestate) : unit =
+    let rec private Loop (switches:Set<string>) (connection:SQLiteConnection) (random:System.Random) (configuration:WorldConfiguration) (source:CommandSource) (sink:MessageSink) (avatarId:string) (gamestate: Gamestate) : unit =
         let nextGamestate : Gamestate option = 
             match gamestate with
             | Gamestate.AtSea world -> AtSea.Run random connection source sink avatarId world
             | Gamestate.Careened (side, world) -> Careened.Run source sink side avatarId world
-            | Gamestate.ConfirmQuit state -> ConfirmQuit.Run source sink state
+            | Gamestate.ConfirmQuit state -> ConfirmQuit.Run switches source sink state
             | Gamestate.Docked (Dock, location, world) -> 
                 match connection |> Commodity.GetList, connection |> Item.GetList with
                 | Ok commodities, Ok items ->
@@ -44,11 +44,11 @@ module Runner =
             | Gamestate.Status state -> Status.Run sink avatarId state
         match nextGamestate with
         | Some state ->
-            Loop connection random configuration source sink avatarId state
+            Loop switches connection random configuration source sink avatarId state
         | None ->
             ()
     
-    let Run (connection:SQLiteConnection) (avatarId:string) : unit =
+    let Run (switches:Set<string>) (connection:SQLiteConnection) (avatarId:string) : unit =
         match connection |> WorldConfiguration.Get with
         | Ok configuration ->
             System.Console.Title <- "Seafarers of Splorr!!"
@@ -56,7 +56,7 @@ module Runner =
             System.Console.ForegroundColor <- System.ConsoleColor.Gray
             None
             |> Gamestate.MainMenu
-            |> Loop connection (System.Random()) configuration CommandSource.Read MessageSink.Write avatarId
+            |> Loop switches connection (System.Random()) configuration (fun () -> CommandSource.Read System.Console.ReadLine) MessageSink.Write avatarId
             System.Console.ForegroundColor <- old
         | Result.Error message ->
             raise (System.InvalidOperationException message)
