@@ -244,9 +244,9 @@ module CommandSource=
         | _ -> 
             None
 
-    let Read() : Command option =
+    let Read (lineReader:unit->string) : Command option =
         System.Console.Write ">"
-        System.Console.ReadLine().ToLower().Split([|' '|]) 
+        lineReader().ToLower().Split([|' '|]) 
         |> List.ofArray
         |> Parse
 
