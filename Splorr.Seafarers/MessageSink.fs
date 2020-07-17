@@ -27,6 +27,10 @@ module MessageSink =
             message |> Write
             System.Console.ForegroundColor <- old
 
+        | Group messages ->
+            messages
+            |> List.iter Write
+
         | Line line ->
             System.Console.WriteLine line
 

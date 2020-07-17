@@ -60,5 +60,6 @@ type Message =
     | Line of string
     | Hued of Hue * Message
     | Text of string
+    | Group of Message list
 
 type MessageSink = Message -> unit
