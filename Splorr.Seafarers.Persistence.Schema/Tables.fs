@@ -23,6 +23,15 @@ module Tables =
 	    [Quantity] REAL NOT NULL,
 	    PRIMARY KEY([CommodityId],[ItemId]));"
 
+    let Statistics : string = "CREATE TABLE IF NOT EXISTS [Statistics] (
+		[StatisticId]	INTEGER,
+		[StatisticName]	TEXT NOT NULL,
+		[MinimumValue]	REAL NOT NULL,
+		[MaximumValue]	REAL NOT NULL CHECK(MaximumValue>=MinimumValue),
+		[CurrentValue]	REAL NOT NULL CHECK(CurrentValue>=MinimumValue AND CurrentValue<=MaximumValue),
+		PRIMARY KEY([StatisticId])
+	);"
+
     let WorldConfiguration : string = "CREATE TABLE IF NOT EXISTS [WorldConfiguration] (
 			[WorldConfigurationId]	INTEGER CHECK(WorldConfigurationId=1),
 			[RewardMinimum]	REAL NOT NULL,
