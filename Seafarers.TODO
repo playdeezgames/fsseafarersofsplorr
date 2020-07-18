@@ -40,9 +40,6 @@ Persistence:
               supply
               demand
               traded
-    ✘ load the game @cancelled(20-07-17 05:49)
-    ✘ permadeath? @cancelled(20-07-17 05:49)
-        permadeath means that the file loaded is deleted 
     ☐ autosave?
 Avatar Longevity:
     ☐ avatar needs a maximum turn value
@@ -56,14 +53,8 @@ Avatar Ships:
         at the ship yard, naturally!
     ☐ ships have a crew requirement for full speed
 Careening and Fouling:
-    ✔ a careened ship can have its hull cleaned @done(20-07-14 15:03)
-        you can "careen port" or "careen starboard"
-        how to differentiate between port and starboard fouling?
-    ✔ clean hull command @done(20-07-14 15:03)
-        takes a turn
     ☐ a ship may be put into a dry dock to clean the entire hull
         this costs money
-    ✔ metric for number of times that the hull is cleaned @started(20-07-17 05:50) @done(20-07-17 05:55) @lasted(5m3s)
     ☐ time taken to clean hull is longer with a larger hull
     ☐ time taken to clean hull is proportional to the amount of fouling!
     ☐ time taken to clean hull is shorter when there are more hands available to do the work
@@ -105,6 +96,15 @@ Eliminate Hardcoded Values:
 Weird Edge Case Behavior:
     ☐ When AtSea, docking will happen with the "furthest" of all of the dockable islands. because of how the world is generated, there "should not" be more than one. however, this is not technically so.
 Archive:
+  ✘ load the game @cancelled(20-07-17 05:49) @project(Persistence)
+  ✘ permadeath? @cancelled(20-07-17 05:49) @project(Persistence)
+    permadeath means that the file loaded is deleted 
+  ✔ a careened ship can have its hull cleaned @done(20-07-14 15:03) @project(Careening and Fouling)
+    you can "careen port" or "careen starboard"
+    how to differentiate between port and starboard fouling?
+  ✔ clean hull command @done(20-07-14 15:03) @project(Careening and Fouling)
+    takes a turn
+  ✔ metric for number of times that the hull is cleaned @started(20-07-17 05:50) @done(20-07-17 05:55) @lasted(5m3s) @project(Careening and Fouling)
   ✔ ship bottoms get fouled at a particular rate @done(20-07-14 06:20) @project(Careening and Fouling)
   ✔ a fouled bottom reduces maximum speed @done(20-07-14 06:21) @project(Careening and Fouling)
   ✔ show effective speed on at sea status @done(20-07-14 11:23) @project(Careening and Fouling)

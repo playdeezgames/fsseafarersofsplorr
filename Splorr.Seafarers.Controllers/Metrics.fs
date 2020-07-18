@@ -11,7 +11,8 @@ module Metrics =
         | Metric.CompletedJob  -> "completed a job"
         | Metric.AbandonedJob  -> "abandoned a job"
         | Metric.AcceptedJob   -> "accepted a job"
-        | _ -> raise (System.NotImplementedException "A metric with no name!")
+        | Metric.CleanedHull   -> "cleaned a hull"
+        | _ -> raise (System.NotImplementedException (metric.ToString() |> sprintf "'%s' is a metric with no name!"))
 
     let private RunWorld (sink:MessageSink) (avatar:Avatar) : unit = 
         [
