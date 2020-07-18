@@ -9,6 +9,10 @@ module Statistic =
                 |> min statistic.MaximumValue 
                 |> max statistic.MinimumValue}
 
+    let private SetMaximum (maximum:float) (statistic:Statistic) : Statistic =
+        {statistic with
+            MaximumValue = maximum |> max statistic.MinimumValue}
+        |> SetCurrent statistic.CurrentValue
 
     let Create (minimum: float, maximum: float)  (current: float) : Statistic =
         {
@@ -18,6 +22,11 @@ module Statistic =
         }
         |> SetCurrent current
 
-    let ChangeBy (amount:float) (statistic:Statistic) : Statistic =
+    let ChangeCurrentBy (amount:float) (statistic:Statistic) : Statistic =
         statistic
         |> SetCurrent (amount + statistic.CurrentValue)
+
+
+    let ChangeMaximumBy (amount:float) (statistic:Statistic) : Statistic =
+        statistic
+        |> SetMaximum (amount + statistic.MaximumValue)

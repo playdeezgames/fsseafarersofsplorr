@@ -18,7 +18,8 @@ module AtSea =
         [
             (Heading, "At Sea:" |> Line) |> Hued
             (Label, "Turn: " |> Text) |> Hued
-            (Value, avatar.Statistics.[StatisticIdentifier.Turn].CurrentValue |> sprintf "%.0f" |> Line) |> Hued
+            (Value, avatar.Statistics.[StatisticIdentifier.Turn].CurrentValue |> sprintf "%.0f" |> Text) |> Hued
+            (Value, avatar.Statistics.[StatisticIdentifier.Turn].MaximumValue |> sprintf "/%.0f" |> Line) |> Hued
             (Label, "Heading: " |> Text) |> Hued
             (Value, avatar.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "%s" |> Line) |> Hued
             (Label, "Speed: " |> Text) |> Hued

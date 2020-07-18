@@ -72,7 +72,7 @@ let genericStatistic =
     }
 
 [<Test>]
-let ``ChangeBy.It changes the current value by the given delta.`` () =
+let ``ChangeCurrentBy.It changes the current value by the given delta.`` () =
     let input = genericStatistic
     let inputDelta = 0.25
     let expected =
@@ -80,11 +80,11 @@ let ``ChangeBy.It changes the current value by the given delta.`` () =
             CurrentValue = 0.75}
     let actual =
         input
-        |> Statistic.ChangeBy inputDelta
+        |> Statistic.ChangeCurrentBy inputDelta
     Assert.AreEqual(expected, actual)
 
 [<Test>]
-let ``ChangeBy.It will not change the current value below the minimum.`` () =
+let ``ChangeCurrentBy.It will not change the current value below the minimum.`` () =
     let input = genericStatistic
     let inputDelta = -1.0
     let expected =
@@ -92,11 +92,11 @@ let ``ChangeBy.It will not change the current value below the minimum.`` () =
             CurrentValue = 0.0}
     let actual =
         input
-        |> Statistic.ChangeBy inputDelta
+        |> Statistic.ChangeCurrentBy inputDelta
     Assert.AreEqual(expected, actual)
 
 [<Test>]
-let ``ChangeBy.It will not change the current value above the maximum.`` () =
+let ``ChangeCurrentBy.It will not change the current value above the maximum.`` () =
     let input = genericStatistic
     let inputDelta = 01.0
     let expected =
@@ -104,5 +104,31 @@ let ``ChangeBy.It will not change the current value above the maximum.`` () =
             CurrentValue = 1.0}
     let actual =
         input
-        |> Statistic.ChangeBy inputDelta
+        |> Statistic.ChangeCurrentBy inputDelta
+    Assert.AreEqual(expected, actual)
+
+
+[<Test>]
+let ``ChangeMaximumBy.It changes the maximum value by the given delta.`` () =
+    let input = genericStatistic
+    let inputDelta = 0.25
+    let expected =
+        {input with
+            MaximumValue = 1.25}
+    let actual =
+        input
+        |> Statistic.ChangeMaximumBy inputDelta
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``ChangeMaximumBy.It will not change the maximum value below the minimum.`` () =
+    let input = genericStatistic
+    let inputDelta = -2.0
+    let expected =
+        {input with
+            MaximumValue = 0.0
+            CurrentValue = 0.0}
+    let actual =
+        input
+        |> Statistic.ChangeMaximumBy inputDelta
     Assert.AreEqual(expected, actual)

@@ -11,5 +11,5 @@ module Vessel =
     
     let Befoul (vessel:Vessel) : Vessel =
         {vessel with
-            Fouling = vessel.Fouling |> Statistic.ChangeBy vessel.FoulRate}
+            Fouling = vessel.Fouling |> Statistic.ChangeCurrentBy vessel.FoulRate}
 

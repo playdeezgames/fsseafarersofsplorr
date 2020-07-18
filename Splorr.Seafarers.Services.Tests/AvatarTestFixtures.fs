@@ -13,6 +13,9 @@ let internal avatarNoStats =
 let internal deadAvatar =
     avatar
     |> Avatar.TransformStatistic StatisticIdentifier.Health (fun x-> {x with CurrentValue = x.MinimumValue} |> Some)
+let internal oldAvatar =
+    avatar
+    |> Avatar.TransformStatistic StatisticIdentifier.Turn (fun x-> {x with CurrentValue = x.MaximumValue} |> Some)
 let internal job =
     Job.Create random rewardRange singleLocation
 let internal employedAvatar =

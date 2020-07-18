@@ -165,7 +165,7 @@ let ``Run.It returns Careened with a cleaned hull when given the command Clean H
     let expectedVessel = 
         {inputVessel with Fouling={inputVessel.Fouling with CurrentValue=0.0}}
     let expectedTurn =
-        inputAvatar.Statistics.[StatisticIdentifier.Turn] |> Statistic.ChangeBy 1.0
+        inputAvatar.Statistics.[StatisticIdentifier.Turn] |> Statistic.ChangeCurrentBy 1.0
     let expectedAvatar =
         {inputAvatar with 
             Vessel = expectedVessel}

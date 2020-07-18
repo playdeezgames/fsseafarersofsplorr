@@ -103,12 +103,16 @@ module World =
                 {w with Avatars = w.Avatars |> Map.add avatarId a}
                 |> AddMessages avatarId [a.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "You set your heading to %s." ]) world
 
+    //a bool is not sufficient!
+    //an avatar may be dead because of health
+    //an avatar may be dead because of turns
     let IsAvatarAlive (avatarId:string) (world:World) =
         match world.Avatars |> Map.tryFind avatarId with
         | Some avatar -> 
             match avatar with
             | Avatar.ALIVE -> true
-            | Avatar.DEAD -> false
+            | Avatar.ZERO_HEALTH -> false
+            | Avatar.OLD_AGE -> false
         | _ -> false
         
 
@@ -121,7 +125,7 @@ module World =
                 |> AddMessages avatarId [ "Steady as she goes." ]
             if IsAvatarAlive avatarId steppedWorld |> not then
                 steppedWorld
-                |> AddMessages avatarId [ "You starve to death!" ]
+                |> AddMessages avatarId [ "You die of old age!" ]
             else
                 Move (x-1u) avatarId steppedWorld
         | _ -> world
