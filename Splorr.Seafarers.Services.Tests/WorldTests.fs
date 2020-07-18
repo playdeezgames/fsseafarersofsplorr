@@ -739,7 +739,7 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
     let expectedAvatar =
         {inputAvatar with
             Vessel = expectedVessel}
-        |> Avatar.TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeBy 1.0 >> Some)
+        |> Avatar.TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)
         |> Avatar.AddMetric Metric.CleanedHull 1u
     let expected =
         {inputWorld with

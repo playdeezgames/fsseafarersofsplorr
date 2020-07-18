@@ -96,16 +96,6 @@ let ``Run.It returns Main Menu with no world when given Resume command and there
         |> MainMenu.Run configuration (fun()->Command.Resume |> Some) sink 
     Assert.AreEqual(None |> Gamestate.MainMenu |> Some, actual)
 
-[<Test>]
-let ``Run.It returns Main Menu when given the Save command and there is no world.`` () =
-    let inputName = "name"
-    let inputWorld = None
-    let expected = None |> Gamestate.MainMenu |> Some
-    let actual =
-        inputWorld
-        |> MainMenu.Run configuration (fun()->inputName |> Command.Save |> Some) sink 
-    Assert.AreEqual(expected, actual)
-
 //[<Test>]
 //let ``Run.It returns YYYY when given XXXX command.`` () =
 //    raise (System.NotImplementedException "Not Implemented")

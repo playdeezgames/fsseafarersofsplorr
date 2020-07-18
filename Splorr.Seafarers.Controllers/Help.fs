@@ -22,7 +22,7 @@ module Help =
         ] |> Group
     let private careenMessage =
         [
-            (Label, "careen to (port/starboard)" |> Text) |> Hued
+            (Label, "careen to (port|starboard)" |> Text) |> Hued
             (Usage, " - careens the ship so that you can clean the hull (must be very close to an island to do this!)" |> Line) |> Hued
         ] |> Group
     let private cleanHullMessage =

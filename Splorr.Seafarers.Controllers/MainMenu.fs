@@ -15,8 +15,6 @@ module MainMenu =
             [
                 (Label, "resume" |> Text) |> Hued
                 (Usage, " - resume game" |> Line) |> Hued
-                (Label, "save (save name)" |> Text) |> Hued
-                (Usage, " - save game" |> Line) |> Hued
                 (Label, "abandon game" |> Text) |> Hued
                 (Usage, " - abandon game" |> Line) |> Hued
             ]

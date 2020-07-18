@@ -152,7 +152,7 @@ let ``Run.It moves the avatar when given Move command.`` () =
             Vessel   = input.Avatars.[avatarId].Vessel |> Vessel.Befoul
             Metrics  = Map.empty |> Map.add Metric.Moved 1u}
         |> Avatar.TransformStatistic StatisticIdentifier.Satiety (fun x -> {x with CurrentValue=99.0} |> Some)
-        |> Avatar.TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeBy 1.0 >> Some)
+        |> Avatar.TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)
     let expected = 
         {input with 
             Avatars  = input.Avatars |> Map.add avatarId expectedAvatar} 

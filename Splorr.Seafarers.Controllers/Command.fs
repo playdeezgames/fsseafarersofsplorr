@@ -38,7 +38,6 @@ type Command =
     | Inventory
     | Buy of TradeQuantity * string
     | Sell of TradeQuantity * string
-    | Save of string
     | Metrics
     | Careen of Side
     | WeighAnchor

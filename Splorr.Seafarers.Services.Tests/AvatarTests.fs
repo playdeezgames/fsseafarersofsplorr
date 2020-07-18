@@ -121,12 +121,12 @@ let ``Move.It lowers the avatar's health when the given avatar has no rations an
             Inventory = Map.empty}
         |> Avatar.TransformStatistic StatisticIdentifier.Satiety (fun x -> {x with CurrentValue=0.0} |> Some)
     let expectedSatiety = 0.0
-    let expectedHealth = input.Statistics.[StatisticIdentifier.Health].CurrentValue - 1.0
+    let expectedTurnMaximum = input.Statistics.[StatisticIdentifier.Turn].MaximumValue - 1.0
     let actual =
         input
         |> Avatar.Move
     Assert.AreEqual(expectedSatiety, actual.Statistics.[StatisticIdentifier.Satiety].CurrentValue)
-    Assert.AreEqual(expectedHealth, actual.Statistics.[StatisticIdentifier.Health].CurrentValue)
+    Assert.AreEqual(expectedTurnMaximum, actual.Statistics.[StatisticIdentifier.Turn].MaximumValue)
 
 [<Test>]
 let ``SetJob.It sets the job of the given avatar.`` () =
@@ -313,16 +313,23 @@ let ``RemoveInventory.It reduces the given avatar's inventory by the given amoun
 
 
 [<Test>]
-let ``ALIVE/DEAD.It returns a ALIVE when given an avatar with above minimum health.`` () =
+let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a ALIVE when given an avatar with above minimum health and not end of life.`` () =
     match avatar with
     | Avatar.ALIVE -> Assert.Pass("It detected that the avatar is alive")
     | _ -> Assert.Fail("It detected that the avatar is not alive")
 
 [<Test>]
-let ``ALIVE/DEAD.It returns a DEAD when given an avatar minimum health (zero).`` () =
+let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a ZERO_HEALTH when given an avatar at minimum health (zero).`` () =
     match deadAvatar with
-    | Avatar.DEAD -> Assert.Pass("It detected that the avatar is dead")
+    | Avatar.ZERO_HEALTH -> Assert.Pass("It detected that the avatar is dead of zero health")
     | _ -> Assert.Fail("It detected that the avatar is not dead")
+
+[<Test>]
+let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a OLD_AGE when given an avatar at maximum turn.`` () =
+    match oldAvatar with
+    | Avatar.OLD_AGE -> Assert.Pass("It detected that the avatar is dead of old age")
+    | _ -> Assert.Fail("It detected that the avatar is not dead")
+
 
 [<Test>]
 let ``ClearMessages.It removes all of the messages from a given avatar.`` () =
@@ -412,7 +419,7 @@ let private fouledAvatar =
     {avatar with 
         Vessel = 
             {avatar.Vessel with
-                Fouling = avatar.Vessel.Fouling |> Statistic.ChangeBy 0.5}}
+                Fouling = avatar.Vessel.Fouling |> Statistic.ChangeCurrentBy 0.5}}
 
 [<Test>]
 let ``GetEffectiveSpeed.It returns proportionally reduced speed when there is fouling.`` () =
@@ -429,8 +436,8 @@ let ``CleanHull.It cleans the hull of the given avatar.`` () =
     let expected =
         {input with 
             Vessel = 
-                {input.Vessel with Fouling = input.Vessel.Fouling |> Statistic.ChangeBy -0.5}}
-        |> Avatar.TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeBy 1.0 >> Some)
+                {input.Vessel with Fouling = input.Vessel.Fouling |> Statistic.ChangeCurrentBy -0.5}}
+        |> Avatar.TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)
         |> Avatar.AddMetric Metric.CleanedHull 1u
     let actual =
         input

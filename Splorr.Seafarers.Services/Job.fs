@@ -87,6 +87,7 @@ module Job =
             "wrench"
             "pie"
             "face shield"
+            "panda milk"
         ]
 
     let private names = 

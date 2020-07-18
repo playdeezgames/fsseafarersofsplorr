@@ -40,7 +40,7 @@ module Avatar =
         }
         |> SetStatistic StatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) 100.0 |> Some)
         |> SetStatistic StatisticIdentifier.Health (Statistic.Create (0.0, 100.0) 100.0 |> Some)
-        |> SetStatistic StatisticIdentifier.Turn (Statistic.Create (0.0, 100.0) 15000.0 |> Some)
+        |> SetStatistic StatisticIdentifier.Turn (Statistic.Create (0.0, 50000.0) 0.0 |> Some)
 
 
     let SetSpeed (speed:float) (avatar:Avatar) : Avatar = //TODO: make speed a statistic
@@ -67,13 +67,11 @@ module Avatar =
         else
             avatar
 
-    let private TransformSatiety (transform:Statistic -> Statistic) (avatar:Avatar) : Avatar =
-        avatar
-        |> TransformStatistic StatisticIdentifier.Satiety (transform >> Some)
+    let private TransformSatiety (transform:Statistic -> Statistic) =
+        TransformStatistic StatisticIdentifier.Satiety (transform >> Some)
 
-    let private TransformHealth (transform:Statistic -> Statistic) (avatar:Avatar) : Avatar =
-        avatar
-        |> TransformStatistic StatisticIdentifier.Health (transform >> Some)
+    let private TransformTurn (transform:Statistic -> Statistic) =
+        TransformStatistic StatisticIdentifier.Turn (transform >> Some)
 
     let AddMetric (metric:Metric) (amount:uint) (avatar:Avatar) : Avatar =
         let newValue =
@@ -98,14 +96,14 @@ module Avatar =
             avatar
             |> IncrementMetric Metric.Ate
             |> RemoveInventory avatar.RationItem rationConsumptionRate
-            |> TransformSatiety (Statistic.ChangeBy satietyIncrease)
+            |> TransformSatiety (Statistic.ChangeCurrentBy satietyIncrease)
         | _ ->
             if avatar.Statistics.[StatisticIdentifier.Satiety].CurrentValue > avatar.Statistics.[StatisticIdentifier.Satiety].MinimumValue then
                 avatar
-                |> TransformSatiety (Statistic.ChangeBy (satietyDecrease))
+                |> TransformSatiety (Statistic.ChangeCurrentBy (satietyDecrease))
             else
                 avatar
-                |> TransformHealth (Statistic.ChangeBy (satietyDecrease))
+                |> TransformTurn (Statistic.ChangeMaximumBy (satietyDecrease))
 
     let GetEffectiveSpeed (avatar:Avatar) : float =
         (avatar.Speed * (1.0 - avatar.Vessel.Fouling.CurrentValue))
@@ -118,7 +116,7 @@ module Avatar =
                 Position = newPosition
                 Vessel = avatar.Vessel |> Vessel.Befoul
         }
-        |> TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeBy 1.0 >> Some)
+        |> TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)
         |> AddMetric Metric.Moved 1u
         |> Eat
 
@@ -167,9 +165,11 @@ module Avatar =
         let newQuantity = (avatar |> GetItemCount item) + quantity
         {avatar with Inventory = avatar.Inventory |> Map.add item newQuantity}
 
-    let (|ALIVE|DEAD|) (avatar:Avatar) =
+    let (|ALIVE|ZERO_HEALTH|OLD_AGE|) (avatar:Avatar) =
         if avatar.Statistics.[StatisticIdentifier.Health].CurrentValue <= avatar.Statistics.[StatisticIdentifier.Health].MinimumValue then
-            DEAD    
+            ZERO_HEALTH    
+        elif avatar.Statistics.[StatisticIdentifier.Turn].CurrentValue >= avatar.Statistics.[StatisticIdentifier.Turn].MaximumValue then
+            OLD_AGE
         else
             ALIVE
 
@@ -190,5 +190,5 @@ module Avatar =
         {avatar with 
             Vessel = 
                 {avatar.Vessel with Fouling = {avatar.Vessel.Fouling with CurrentValue = 0.0}}}
-        |> TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeBy 1.0 >> Some)
+        |> TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)
         |> IncrementMetric Metric.CleanedHull
