@@ -41,6 +41,11 @@ Persistence:
               demand
               traded
     ☐ autosave?
+Statistic in DB:
+    ☐ which ones go to avatars?
+    ☐ which ones go to vessels?
+Documentation:
+    ☐ get a list of commands to give a link to in channel
 Avatar Longevity:
     ☐ avatar needs a maximum turn value
     ☐ do not lose health when satiety is zero

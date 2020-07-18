@@ -5,6 +5,7 @@
 2. Space Traders  - https://www.spronck.net/spacetrader/STFrames.html
 3. Zork (for the command line interface of having to type words) - http://www.infocom-if.org/downloads/downloads.html
 4. Dwarf Fortress (for the flavor and details) - https://www.bay12games.com/dwarves/
+5. Trade Wars/Dope Wars - 
 
 ## Order of TDD Operations
 

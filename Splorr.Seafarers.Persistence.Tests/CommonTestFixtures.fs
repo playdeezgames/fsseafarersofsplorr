@@ -57,6 +57,19 @@ let private setupWorldConfiguration (connection:SQLiteConnection) : unit =
     ]
     |> runCommands connection
 
+let private setupStatistics (connection:SQLiteConnection) : unit =
+    System.Enum.GetValues(typedefof<StatisticIdentifier>) 
+    :?> StatisticIdentifier []
+    |> Array.toList
+    |> List.map
+        (fun id ->
+            sprintf "REPLACE INTO [Statistics] ([StatisticId], [StatisticName], [MinimumValue], [MaximumValue], [CurrentValue]) VALUES (%u, 'Statistic %u', 0.0, 100.0, 50.0);" (id |> uint) (id |> uint))
+    |> List.append
+        [
+            Tables.Statistics
+        ]
+    |> runCommands connection
+
 let internal SetupConnection() : SQLiteConnection = 
     let connection = new SQLiteConnection(connectionString)
     connection.Open()
@@ -66,6 +79,8 @@ let internal SetupConnection() : SQLiteConnection =
     connection |> setupItems
 
     connection |> setupWorldConfiguration
+
+    connection |> setupStatistics
 
     connection
     

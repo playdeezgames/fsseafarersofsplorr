@@ -5,8 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Utility.fs" />
     <Compile Include="Commodity.fs" />
     <Compile Include="Item.fs" />
+    <Compile Include="Statistic.fs" />
     <Compile Include="WorldConfiguration.fs" />
   </ItemGroup>
 
