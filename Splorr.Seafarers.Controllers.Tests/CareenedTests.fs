@@ -150,8 +150,9 @@ let ``Run.It returns At Sea when given the command Weigh Anchor.`` () =
 [<Test>]
 let ``Run.It returns Careened with a cleaned hull when given the command Clean Hull.`` () =
     let inputVessel = 
-        {world.Avatars.[avatarId].Vessel with
-            Fouling={world.Avatars.[avatarId].Vessel.Fouling with CurrentValue=0.5}}
+        world.Avatars.[avatarId].Vessel
+        |> Vessel.TransformFouling Port (fun x -> {x with CurrentValue = x.MaximumValue})
+        |> Vessel.TransformFouling Starboard (fun x -> {x with CurrentValue = x.MaximumValue})
     let inputAvatar = 
         {world.Avatars.[avatarId] with
             Vessel = 
@@ -163,7 +164,8 @@ let ``Run.It returns Careened with a cleaned hull when given the command Clean H
         |> toSource
     let inputSide = Port
     let expectedVessel = 
-        {inputVessel with Fouling={inputVessel.Fouling with CurrentValue=0.0}}
+        inputVessel
+        |> Vessel.TransformFouling Starboard (fun x -> {x with CurrentValue = x.MinimumValue})
     let expectedTurn =
         inputAvatar.Statistics.[StatisticIdentifier.Turn] |> Statistic.ChangeCurrentBy 1.0
     let expectedAvatar =

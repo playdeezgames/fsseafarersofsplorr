@@ -1,9 +1,13 @@
 ﻿namespace Splorr.Seafarers.Models
 
+type Side =
+    | Port
+    | Starboard
+
 type Vessel =
     {
         Tonnage: float
-        Fouling: Statistic
+        Fouling: Map<Side,Statistic>
         FoulRate: float
     }
 

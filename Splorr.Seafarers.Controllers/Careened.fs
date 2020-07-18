@@ -15,8 +15,11 @@ module Careened =
             match side with
             | Port -> "port"
             | Starboard -> "starboard"
+        let currentValue, maximumValue =
+            world.Avatars.[avatarId].Vessel.Fouling
+            |> Map.fold (fun (c,m) k v -> (c+v.CurrentValue,m+v.MaximumValue)) (0.0,0.0)
         let foulage =
-            100.0 * world.Avatars.[avatarId].Vessel.Fouling.CurrentValue / world.Avatars.[avatarId].Vessel.Fouling.MaximumValue
+            100.0 * currentValue / maximumValue
         [
             (Heading, sideName |> sprintf "You are careened on the %s side." |> Line) |> Hued
             (Flavor, foulage |> sprintf "The hull is %.0f%% fouled." |> Line) |> Hued
@@ -49,7 +52,7 @@ module Careened =
             |> Gamestate.Help
             |> Some
         | Some Command.CleanHull ->
-            (side, world |> World.CleanHull avatarId)
+            (side, world |> World.CleanHull avatarId (if side=Port then Starboard else Port))
             |> Gamestate.Careened
             |> Some
         | Some Command.WeighAnchor ->

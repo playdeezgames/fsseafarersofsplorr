@@ -106,7 +106,10 @@ module Avatar =
                 |> TransformTurn (Statistic.ChangeMaximumBy (satietyDecrease))
 
     let GetEffectiveSpeed (avatar:Avatar) : float =
-        (avatar.Speed * (1.0 - avatar.Vessel.Fouling.CurrentValue))
+        let currentValue =
+            avatar.Vessel.Fouling
+            |> Map.fold (fun a _ v->a+v.CurrentValue) 0.0
+        (avatar.Speed * (1.0 - currentValue))
 
     let Move(avatar: Avatar) : Avatar =
         let actualSpeed = avatar |> GetEffectiveSpeed
@@ -186,9 +189,10 @@ module Avatar =
                 let d = items.[item]
                 result + (quantity |> float) * d.Tonnage)
 
-    let CleanHull (avatar:Avatar) : Avatar =
+    let CleanHull (side:Side) (avatar:Avatar) : Avatar =
         {avatar with 
             Vessel = 
-                {avatar.Vessel with Fouling = {avatar.Vessel.Fouling with CurrentValue = 0.0}}}
+                avatar.Vessel
+                |> Vessel.TransformFouling side (fun x-> {x with CurrentValue = x.MinimumValue})}
         |> TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)
         |> IncrementMetric Metric.CleanedHull

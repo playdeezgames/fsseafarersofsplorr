@@ -18,8 +18,10 @@ module MessageSink =
                 System.Console.ForegroundColor <- System.ConsoleColor.DarkMagenta
             | Value ->
                 System.Console.ForegroundColor <- System.ConsoleColor.Green
-            | Flavor ->
+            | Warning ->
                 System.Console.ForegroundColor <- System.ConsoleColor.DarkYellow
+            | Flavor ->
+                System.Console.ForegroundColor <- System.ConsoleColor.DarkBlue
             | Usage ->
                 System.Console.ForegroundColor <- System.ConsoleColor.DarkGray
             | Error ->

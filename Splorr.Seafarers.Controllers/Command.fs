@@ -11,10 +11,6 @@ type AbandonCommand =
     | Game
     | Job
 
-type Side =
-    | Port
-    | Starboard
-
 [<RequireQualifiedAccess>]
 type Command =
     | Quit
@@ -54,6 +50,7 @@ type Hue =
     | Flavor
     | Usage
     | Error
+    | Warning
 
 type Message =
     | Line of string

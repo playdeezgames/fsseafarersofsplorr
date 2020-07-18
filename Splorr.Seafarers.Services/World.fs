@@ -311,10 +311,10 @@ module World =
             world
             |> AddMessages avatarId ["You cannot sell items here."]
 
-    let CleanHull (avatarId:string) (world:World) : World =
+    let CleanHull (avatarId:string) (side:Side) (world:World) : World =
         world.Avatars
         |> Map.tryFind avatarId
         |> Option.fold
             (fun w _ -> 
                 w
-                |> TransformAvatar avatarId (Avatar.CleanHull >> Some)) world
+                |> TransformAvatar avatarId (Avatar.CleanHull side >> Some)) world

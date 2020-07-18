@@ -5,11 +5,22 @@ module Vessel =
     let Create (tonnage:float) : Vessel =
         {
             Tonnage = tonnage
-            Fouling = Statistic.Create (0.0, 0.5) 0.0
+            Fouling = 
+                Map.empty
+                |> Map.add Port (Statistic.Create (0.0, 0.25) 0.0)
+                |> Map.add Starboard (Statistic.Create (0.0, 0.25) 0.0)
             FoulRate = 0.001 //TODO: dont hardcode, and base it on vessel type
         }
+
+    let TransformFouling (side:Side) (transform:Statistic -> Statistic) (vessel:Vessel) : Vessel =
+        let fouling = vessel.Fouling.[side] |> transform
+        {vessel with
+            Fouling =
+                vessel.Fouling
+                |> Map.add side fouling}
     
     let Befoul (vessel:Vessel) : Vessel =
-        {vessel with
-            Fouling = vessel.Fouling |> Statistic.ChangeCurrentBy vessel.FoulRate}
+        vessel
+        |> TransformFouling Port (Statistic.ChangeCurrentBy (vessel.FoulRate/2.0))
+        |> TransformFouling Starboard (Statistic.ChangeCurrentBy (vessel.FoulRate/2.0))
 

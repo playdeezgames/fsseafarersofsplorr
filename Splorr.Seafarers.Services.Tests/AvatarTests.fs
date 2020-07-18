@@ -418,8 +418,9 @@ let ``GetEffectiveSpeed.It returns full speed when there is no fouling.`` () =
 let private fouledAvatar = 
     {avatar with 
         Vessel = 
-            {avatar.Vessel with
-                Fouling = avatar.Vessel.Fouling |> Statistic.ChangeCurrentBy 0.5}}
+            avatar.Vessel
+            |> Vessel.TransformFouling Port (fun x->{x with CurrentValue = x.MaximumValue})
+            |> Vessel.TransformFouling Starboard (fun x->{x with CurrentValue = x.MaximumValue})}
 
 [<Test>]
 let ``GetEffectiveSpeed.It returns proportionally reduced speed when there is fouling.`` () =
@@ -433,15 +434,17 @@ let ``GetEffectiveSpeed.It returns proportionally reduced speed when there is fo
 [<Test>]
 let ``CleanHull.It cleans the hull of the given avatar.`` () =
     let input = fouledAvatar
+    let inputSide = Port
     let expected =
         {input with 
             Vessel = 
-                {input.Vessel with Fouling = input.Vessel.Fouling |> Statistic.ChangeCurrentBy -0.5}}
+                input.Vessel
+                |> Vessel.TransformFouling inputSide (fun x -> {x with CurrentValue = x.MinimumValue})}
         |> Avatar.TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)
         |> Avatar.AddMetric Metric.CleanedHull 1u
     let actual =
         input
-        |> Avatar.CleanHull
+        |> Avatar.CleanHull inputSide
     Assert.AreEqual(expected, actual)
 
 [<Test>]

@@ -15,6 +15,13 @@ module AtSea =
             world
             |> World.ClearMessages avatarId
         let avatar = world.Avatars.[avatarId]
+        let speedHue =
+            if avatar.Speed >= 0.9 then
+                Value
+            elif avatar.Speed>=0.4 then
+                Warning
+            else
+                Error
         [
             (Heading, "At Sea:" |> Line) |> Hued
             (Label, "Turn: " |> Text) |> Hued
@@ -23,7 +30,7 @@ module AtSea =
             (Label, "Heading: " |> Text) |> Hued
             (Value, avatar.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "%s" |> Line) |> Hued
             (Label, "Speed: " |> Text) |> Hued
-            (Value, (avatar.Speed * 100.0) |> sprintf "%.0f%%" |> Text) |> Hued
+            (speedHue, (avatar.Speed * 100.0) |> sprintf "%.0f%%" |> Text) |> Hued
             avatar |> Avatar.GetEffectiveSpeed |> sprintf "(Effective rate: %.2f)" |> Line
             (Subheading, "Nearby:" |> Line) |> Hued
         ]

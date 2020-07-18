@@ -158,7 +158,15 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                     Statistics = Map.empty
                     RationItem = 1UL
                     Metrics = Map.empty
-                    Vessel  = {Tonnage=100.0; Fouling = {MinimumValue = 0.0; MaximumValue = 0.5; CurrentValue=0.0}; FoulRate=0.1}
+                    Vessel  = 
+                        {
+                            Tonnage=100.0
+                            Fouling = 
+                                Map.empty
+                                |> Map.add Port {MinimumValue = 0.0; MaximumValue = 0.5; CurrentValue=0.0}
+                                |> Map.add Starboard {MinimumValue = 0.0; MaximumValue = 0.5; CurrentValue=0.0}
+                            FoulRate=0.1
+                        }
                 }
                 |> Avatar.SetStatistic StatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0)|>Some)
                 |> Avatar.SetStatistic StatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0)|>Some)
@@ -715,18 +723,21 @@ let ``IsAvatarAlive.It returns a false when given a world with an avatar minimum
 let ``CleanHull.It returns the original world when given a bogus avatar id and world.`` () =
     let inputWorld = 
         genericWorld
+    let inputSide = Port
     let expected =
         inputWorld
     let actual =
         inputWorld
-        |> World.CleanHull bogusAvatarId
+        |> World.CleanHull bogusAvatarId inputSide
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``CleanHull.It returns a cleaned hull when given a particular avatar id and world.`` () =
+    let inputSide = Port
     let inputVessel =
-        {genericWorld.Avatars.[avatarId].Vessel with
-            Fouling = {genericWorld.Avatars.[avatarId].Vessel.Fouling with CurrentValue=0.5}}
+        genericWorld.Avatars.[avatarId].Vessel
+        |> Vessel.TransformFouling Port (fun x->{x with CurrentValue = x.MaximumValue})
+        |> Vessel.TransformFouling Starboard (fun x->{x with CurrentValue = x.MaximumValue})
     let inputAvatar =
         {genericWorld.Avatars.[avatarId] with
             Vessel = inputVessel}
@@ -734,8 +745,8 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
         {genericWorld with
             Avatars = genericWorld.Avatars |> Map.add avatarId inputAvatar}
     let expectedVessel =
-        {inputVessel with
-            Fouling = {inputVessel.Fouling with CurrentValue=0.0}}
+        inputVessel
+        |> Vessel.TransformFouling inputSide (fun x-> {x with CurrentValue=x.MinimumValue})
     let expectedAvatar =
         {inputAvatar with
             Vessel = expectedVessel}
@@ -746,7 +757,7 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
             Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar}
     let actual =
         inputWorld
-        |> World.CleanHull avatarId
+        |> World.CleanHull avatarId inputSide
     Assert.AreEqual(expected, actual)
 
 //[<Test>]

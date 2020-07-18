@@ -32,7 +32,15 @@ let internal emptyWorld =
                 Statistics = Map.empty
                 RationItem = 1UL
                 Metrics = Map.empty
-                Vessel  = {Tonnage=100.0; Fouling = {MinimumValue = 0.0; MaximumValue = 0.5; CurrentValue=0.0}; FoulRate = 0.01}
+                Vessel  = 
+                    {
+                        Tonnage=100.0
+                        Fouling = 
+                            Map.empty
+                            |> Map.add Port {MinimumValue = 0.0; MaximumValue = 0.25; CurrentValue=0.0}
+                            |> Map.add Starboard {MinimumValue = 0.0; MaximumValue = 0.25; CurrentValue=0.0}
+                        FoulRate = 0.01
+                    }
             }
             |> Avatar.SetStatistic StatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0) |> Some)
             |> Avatar.SetStatistic StatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0) |> Some)
