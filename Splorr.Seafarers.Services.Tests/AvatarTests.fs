@@ -77,53 +77,56 @@ let ``Move.It removes a ration when the given avatar has rations and full satiet
     let input = 
         {avatar with 
             Inventory = Map.empty |> Map.add 1UL 2u}
-    let expectedSatiety = input.Satiety.CurrentValue
-    let expectedHealth = input.Health.CurrentValue
+    let expectedSatiety = input.Statistics.[StatisticIdentifier.Satiety].CurrentValue
+    let expectedHealth = input.Statistics.[StatisticIdentifier.Health].CurrentValue
     let expectedInventory = Map.empty |> Map.add 1u 1u
     let actual =
         input
         |> Avatar.Move
     Assert.AreEqual(expectedInventory, actual.Inventory)
-    Assert.AreEqual(expectedSatiety, actual.Satiety.CurrentValue)
-    Assert.AreEqual(expectedHealth, actual.Health.CurrentValue)
+    Assert.AreEqual(expectedSatiety, actual.Statistics.[StatisticIdentifier.Satiety].CurrentValue)
+    Assert.AreEqual(expectedHealth, actual.Statistics.[StatisticIdentifier.Health].CurrentValue)
 
 [<Test>]
 let ``Move.It removes a ration and increases satiety when the given avatar has rations and less than full satiety.`` () =
     let input = 
         {avatar with 
-            Inventory = Map.empty |> Map.add 1UL 2u
-            Satiety = {avatar.Satiety with CurrentValue=0.0}}
-    let expectedSatiety = input.Satiety.CurrentValue + 1.0
-    let expectedHealth = input.Health.CurrentValue
+            Inventory = Map.empty |> Map.add 1UL 2u}
+        |> Avatar.TransformStatistic StatisticIdentifier.Satiety (fun x-> {x with CurrentValue=0.0} |> Some)
+    let expectedSatiety = input.Statistics.[StatisticIdentifier.Satiety].CurrentValue + 1.0
+    let expectedHealth = input.Statistics.[StatisticIdentifier.Health].CurrentValue
     let expectedInventory = Map.empty |> Map.add 1u 1u
     let actual =
         input
         |> Avatar.Move
     Assert.AreEqual(expectedInventory, actual.Inventory)
-    Assert.AreEqual(expectedSatiety, actual.Satiety.CurrentValue)
-    Assert.AreEqual(expectedHealth, actual.Health.CurrentValue)
+    Assert.AreEqual(expectedSatiety, actual.Statistics.[StatisticIdentifier.Satiety].CurrentValue)
+    Assert.AreEqual(expectedHealth, actual.Statistics.[StatisticIdentifier.Health].CurrentValue)
 
 [<Test>]
 let ``Move.It lowers the avatar's satiety but not health when the given avatar has no rations.`` () =
     let input = {avatar with Inventory = Map.empty}
-    let expectedSatiety = input.Satiety.CurrentValue - 1.0
-    let expectedHealth = input.Health.CurrentValue
+    let expectedSatiety = input.Statistics.[StatisticIdentifier.Satiety].CurrentValue - 1.0
+    let expectedHealth = input.Statistics.[StatisticIdentifier.Health].CurrentValue
     let actual =
         input
         |> Avatar.Move
-    Assert.AreEqual(expectedSatiety, actual.Satiety.CurrentValue)
-    Assert.AreEqual(expectedHealth, actual.Health.CurrentValue)
+    Assert.AreEqual(expectedSatiety, actual.Statistics.[StatisticIdentifier.Satiety].CurrentValue)
+    Assert.AreEqual(expectedHealth, actual.Statistics.[StatisticIdentifier.Health].CurrentValue)
 
 [<Test>]
 let ``Move.It lowers the avatar's health when the given avatar has no rations and minimum satiety.`` () =
-    let input = {avatar with Inventory = Map.empty; Satiety = {avatar.Satiety with CurrentValue=0.0}}
+    let input = 
+        {avatar with 
+            Inventory = Map.empty}
+        |> Avatar.TransformStatistic StatisticIdentifier.Satiety (fun x -> {x with CurrentValue=0.0} |> Some)
     let expectedSatiety = 0.0
-    let expectedHealth = input.Health.CurrentValue - 1.0
+    let expectedHealth = input.Statistics.[StatisticIdentifier.Health].CurrentValue - 1.0
     let actual =
         input
         |> Avatar.Move
-    Assert.AreEqual(expectedSatiety, actual.Satiety.CurrentValue)
-    Assert.AreEqual(expectedHealth, actual.Health.CurrentValue)
+    Assert.AreEqual(expectedSatiety, actual.Statistics.[StatisticIdentifier.Satiety].CurrentValue)
+    Assert.AreEqual(expectedHealth, actual.Statistics.[StatisticIdentifier.Health].CurrentValue)
 
 [<Test>]
 let ``SetJob.It sets the job of the given avatar.`` () =
@@ -425,11 +428,90 @@ let ``CleanHull.It cleans the hull of the given avatar.`` () =
     let input = fouledAvatar
     let expected =
         {input with 
-            Turn = input.Turn |> Statistic.ChangeBy 1.0
             Vessel = 
                 {input.Vessel with Fouling = input.Vessel.Fouling |> Statistic.ChangeBy -0.5}}
+        |> Avatar.TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeBy 1.0 >> Some)
         |> Avatar.AddMetric Metric.CleanedHull 1u
     let actual =
         input
         |> Avatar.CleanHull
     Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``SetStatistic.It adds a statistic to the avatar when the statistic is not already present.`` () =
+    let input = avatarNoStats
+    let inputHealth = Statistic.Create (0.0,100.0) 0.0
+    let expectedHealth = inputHealth
+    let expected =
+        {input with Statistics = input.Statistics |> Map.add StatisticIdentifier.Health expectedHealth}
+    let actual =
+        input
+        |> Avatar.SetStatistic StatisticIdentifier.Health (inputHealth |> Some)
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``SetStatistic.It replaces a statistic on the avatar when the statistic is already present.`` () =
+    let input = avatar
+    let inputHealth = Statistic.Create (5.0,10.0) 5.0
+    let expectedHealth = inputHealth
+    let expected =
+        {input with Statistics = input.Statistics |> Map.add StatisticIdentifier.Health expectedHealth}
+    let actual =
+        input
+        |> Avatar.SetStatistic StatisticIdentifier.Health (inputHealth |> Some)
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``SetStatistic.It removes a statistic on the avatar when the statistic is present and new value is None.`` () =
+    let input = avatar
+    let inputHealth = None
+    let expected =
+        {input with Statistics = input.Statistics |> Map.remove StatisticIdentifier.Health}
+    let actual =
+        input
+        |> Avatar.SetStatistic StatisticIdentifier.Health inputHealth
+    Assert.AreEqual(expected, actual)
+
+
+[<Test>]
+let ``GetStatistic.It returns the statistic when it exists in the avatar.`` () =
+    let input = avatar
+    let expected = input.Statistics.[StatisticIdentifier.Health] |> Some
+    let actual =
+        input
+        |> Avatar.GetStatistic StatisticIdentifier.Health
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``GetStatistic.It returns None when the statistic is absent from the avatar.`` () =
+    let input = avatarNoStats
+    let expected = None
+    let actual =
+        input
+        |> Avatar.GetStatistic StatisticIdentifier.Health
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``TransformStatistic.It replaces the statistic when that statistic is originally present in the avatar.`` () =
+    let input = avatar
+    let inputHealth = Statistic.Create (5.0,10.0) 5.0
+    let expectedHealth = inputHealth
+    let expected =
+        {input with Statistics = input.Statistics |> Map.add StatisticIdentifier.Health expectedHealth}
+    let actual =
+        input
+        |> Avatar.TransformStatistic StatisticIdentifier.Health (fun _ -> (inputHealth |> Some))
+    Assert.AreEqual(expected, actual)
+
+
+[<Test>]
+let ``TransformStatistic.It does nothing when the given statistic is absent from the avatar.`` () =
+    let input = avatarNoStats
+    let inputHealth = Statistic.Create (5.0,10.0) 5.0
+    let expected =
+        input
+    let actual =
+        input
+        |> Avatar.TransformStatistic StatisticIdentifier.Health (fun _ -> (inputHealth |> Some))
+    Assert.AreEqual(expected, actual)
+    

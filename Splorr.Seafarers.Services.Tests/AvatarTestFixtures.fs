@@ -8,8 +8,11 @@ let internal rewardRange = (1.0,10.0)
 let internal singleLocation = [(0.0, 0.0)] |> Set.ofList
 let internal avatar =
     Avatar.Create(0.0,0.0)
+let internal avatarNoStats =
+    {avatar with Statistics = Map.empty}
 let internal deadAvatar =
-    {avatar with Health = {avatar.Health with CurrentValue = avatar.Health.MinimumValue}}
+    avatar
+    |> Avatar.TransformStatistic StatisticIdentifier.Health (fun x-> {x with CurrentValue = x.MinimumValue} |> Some)
 let internal job =
     Job.Create random rewardRange singleLocation
 let internal employedAvatar =

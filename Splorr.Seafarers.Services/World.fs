@@ -152,7 +152,7 @@ module World =
                 |> Set.remove location
             let updatedIsland = 
                 island
-                |> Island.AddVisit world.Avatars.[avatarId].Turn.CurrentValue avatarId//only when this counts as a new visit...
+                |> Island.AddVisit world.Avatars.[avatarId].Statistics.[StatisticIdentifier.Turn].CurrentValue avatarId//only when this counts as a new visit...
                 |> Island.GenerateJobs random world.RewardRange destinations 
                 |> Island.GenerateCommodities random commodities
                 |> Island.GenerateItems random items

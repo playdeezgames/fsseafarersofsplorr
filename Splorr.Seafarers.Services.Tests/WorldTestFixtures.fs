@@ -29,13 +29,15 @@ let internal emptyWorld =
                 Reputation = 0.0
                 Job = None
                 Inventory = Map.empty
-                Satiety = Statistic.Create (0.0, 100.0) (100.0)
-                Health = Statistic.Create (0.0, 100.0) (100.0)
-                Turn = {MinimumValue=0.0;CurrentValue=0.0;MaximumValue=15000.0}
+                Statistics = Map.empty
                 RationItem = 1UL
                 Metrics = Map.empty
                 Vessel  = {Tonnage=100.0; Fouling = {MinimumValue = 0.0; MaximumValue = 0.5; CurrentValue=0.0}; FoulRate = 0.01}
-            }] 
+            }
+            |> Avatar.SetStatistic StatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0) |> Some)
+            |> Avatar.SetStatistic StatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0) |> Some)
+            |> Avatar.SetStatistic StatisticIdentifier.Turn ({MinimumValue=0.0;CurrentValue=0.0;MaximumValue=15000.0} |> Some)
+            ] 
             |> Map.ofList
         Islands = Map.empty
     }
@@ -75,7 +77,12 @@ let internal genericWorldConfiguration: WorldConfiguration =
     }
 let internal genericWorld = World.Create genericWorldConfiguration random
 let internal deadWorld =
-    {genericWorld with Avatars = genericWorld.Avatars |> Map.add avatarId {genericWorld.Avatars.[avatarId] with Health ={genericWorld.Avatars.[avatarId].Health with CurrentValue = genericWorld.Avatars.[avatarId].Health.MinimumValue}}}
+    {genericWorld with 
+        Avatars = 
+            genericWorld.Avatars 
+            |> Map.add 
+                avatarId 
+                (genericWorld.Avatars.[avatarId] |> Avatar.TransformStatistic StatisticIdentifier.Health (fun x -> {x with CurrentValue=x.MinimumValue} |> Some))}
 
 let internal genericWorldIslandLocation = genericWorld.Islands |> Map.toList |> List.map fst |> List.head
 let internal genericWorldInvalidIslandLocation = ((genericWorldIslandLocation |> fst) + 1.0, genericWorldIslandLocation |> snd)

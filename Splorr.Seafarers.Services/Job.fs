@@ -86,6 +86,7 @@ module Job =
             "soap"
             "wrench"
             "pie"
+            "face shield"
         ]
 
     let private names = 
@@ -111,6 +112,7 @@ module Job =
             "Montgomery"
             "James"
             "Davin"
+            "Ryan"
         ]
 
     let private personalAdjectives =
@@ -131,6 +133,7 @@ module Job =
             "gluttonous"
             "smelly"
             "surly"
+            "shy"
         ]
 
     let private professions = 
