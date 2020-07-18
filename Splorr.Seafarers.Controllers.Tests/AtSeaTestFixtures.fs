@@ -15,7 +15,15 @@ let internal world = World.Create configuration (System.Random())
 let internal deadWorld =
     world
     |> World.TransformAvatar avatarId
-        (fun a -> {a with Health = {a.Health with CurrentValue = a.Health.MinimumValue}}|>Some)
+        (fun a -> 
+            a 
+            |> Avatar.TransformStatistic 
+                StatisticIdentifier.Health 
+                (fun x-> 
+                    {x with 
+                        CurrentValue = x.MinimumValue} 
+                    |> Some) 
+            |> Some)
     |> World.ClearMessages avatarId
     |> World.AddMessages avatarId ["Yer ded."]
 

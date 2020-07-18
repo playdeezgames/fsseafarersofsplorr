@@ -145,15 +145,14 @@ let ``Run.It moves the avatar when given Move command.`` () =
         |> Some 
         |> toSource
     let expectedMessages = ["Steady as she goes."]
-    let expectedTurn = input.Avatars.[avatarId].Turn.CurrentValue + 1.0
     let expectedAvatar =
         {input.Avatars.[avatarId] with 
             Position = (6.0,5.0)
-            Satiety  = {input.Avatars.[avatarId].Satiety with CurrentValue=99.0}
-            Turn     = {input.Avatars.[avatarId].Turn with CurrentValue=expectedTurn}
             Messages = expectedMessages
             Vessel   = input.Avatars.[avatarId].Vessel |> Vessel.Befoul
             Metrics  = Map.empty |> Map.add Metric.Moved 1u}
+        |> Avatar.TransformStatistic StatisticIdentifier.Satiety (fun x -> {x with CurrentValue=99.0} |> Some)
+        |> Avatar.TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeBy 1.0 >> Some)
     let expected = 
         {input with 
             Avatars  = input.Avatars |> Map.add avatarId expectedAvatar} 
@@ -277,7 +276,7 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
     let expectedLocation = (0.0, 0.0)
     let expectedIsland = 
         input.Islands.[expectedLocation] 
-        |> Island.AddVisit input.Avatars.[avatarId].Turn.CurrentValue avatarId
+        |> Island.AddVisit input.Avatars.[avatarId].Statistics.[StatisticIdentifier.Turn].CurrentValue avatarId
     let expectedIslands = 
         input.Islands 
         |> Map.add expectedLocation expectedIsland

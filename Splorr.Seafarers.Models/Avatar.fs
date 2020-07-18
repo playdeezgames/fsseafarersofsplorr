@@ -21,9 +21,7 @@ type Avatar =
         Reputation   : float
         Job          : Job option
         Inventory    : Map<uint64, uint32>
-        Satiety      : Statistic
-        Health       : Statistic
-        Turn         : Statistic
+        Statistics   : Map<StatisticIdentifier, Statistic>
         RationItem   : uint64
         Metrics      : Map<Metric, uint>
         Vessel       : Vessel

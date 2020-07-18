@@ -14,7 +14,17 @@ let internal dockWorldconfiguration: WorldConfiguration =
 let internal dockWorld = World.Create dockWorldconfiguration random
 let internal dockLocation = (0.0, 0.0)
 let internal deadDockWorld =
-    {dockWorld with Avatars = Map.empty |> Map.add avatarId {dockWorld.Avatars.[avatarId] with Health={dockWorld.Avatars.[avatarId].Health with CurrentValue=dockWorld.Avatars.[avatarId].Health.MinimumValue}}}
+    {dockWorld with 
+        Avatars = 
+            Map.empty 
+            |> Map.add 
+                avatarId 
+                (dockWorld.Avatars.[avatarId] 
+                |> Avatar.TransformStatistic 
+                    StatisticIdentifier.Health 
+                    (fun x -> 
+                        {x with CurrentValue = x.MinimumValue} 
+                        |> Some))}
 let internal deadDockLocation = dockLocation
 let internal commodities:Map<uint64, CommodityDescriptor> = 
     [(1UL, {CommodityId = 1UL; CommodityName="commodity under test";BasePrice=1.0;PurchaseFactor=1.0;SaleFactor=1.0;Discount=0.5})] |> Map.ofList

@@ -79,6 +79,7 @@ Island Notes:
 Cheeky Questions for Reflection:
     ☐ why would i ever abandon a job?
 Refactor "Opportunities":
+    ☐ give feedback for parsing errors
     ☐ likely make some obvious visual clue when the speed is less than 1.0
     ☐ there are several commands that can be used from whatever game state
         inventory

@@ -2,6 +2,25 @@
 open Splorr.Seafarers.Models
 
 module Avatar =
+    let SetStatistic (identifier:StatisticIdentifier) (statistic:Statistic option) (avatar:Avatar) : Avatar =
+        match statistic with
+        | Some stat ->
+            {avatar with Statistics = avatar.Statistics |> Map.add identifier stat}
+        | None -> 
+            {avatar with Statistics = avatar.Statistics |> Map.remove identifier}
+
+    let GetStatistic (identifier:StatisticIdentifier) (avatar:Avatar) : Statistic option =
+        avatar.Statistics
+        |> Map.tryFind identifier   
+
+    let TransformStatistic (identifier:StatisticIdentifier) (transform:Statistic -> Statistic option) (avatar:Avatar) : Avatar =
+        avatar
+        |> GetStatistic identifier
+        |> Option.fold
+            (fun a s -> 
+                a 
+                |> SetStatistic identifier (s |> transform) ) avatar
+
     let Create(position:Location): Avatar =
         {
             Messages = []
@@ -14,13 +33,15 @@ module Avatar =
             Reputation = 0.0
             Job = None
             Inventory = Map.empty
-            Satiety = Statistic.Create (0.0, 100.0) 100.0
-            Health = Statistic.Create (0.0, 100.0) 100.0
-            Turn = Statistic.Create (0.0, 15000.0) 0.0
             RationItem = 1UL
             Metrics = Map.empty
             Vessel = Vessel.Create 100.0
+            Statistics = Map.empty
         }
+        |> SetStatistic StatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) 100.0 |> Some)
+        |> SetStatistic StatisticIdentifier.Health (Statistic.Create (0.0, 100.0) 100.0 |> Some)
+        |> SetStatistic StatisticIdentifier.Turn (Statistic.Create (0.0, 100.0) 15000.0 |> Some)
+
 
     let SetSpeed (speed:float) (avatar:Avatar) : Avatar = //TODO: make speed a statistic
         let clampedSpeed = 
@@ -47,10 +68,12 @@ module Avatar =
             avatar
 
     let private TransformSatiety (transform:Statistic -> Statistic) (avatar:Avatar) : Avatar =
-        {avatar with Satiety = avatar.Satiety |> transform}
+        avatar
+        |> TransformStatistic StatisticIdentifier.Satiety (transform >> Some)
 
     let private TransformHealth (transform:Statistic -> Statistic) (avatar:Avatar) : Avatar =
-        {avatar with Health = avatar.Health |> transform}
+        avatar
+        |> TransformStatistic StatisticIdentifier.Health (transform >> Some)
 
     let AddMetric (metric:Metric) (amount:uint) (avatar:Avatar) : Avatar =
         let newValue =
@@ -77,7 +100,7 @@ module Avatar =
             |> RemoveInventory avatar.RationItem rationConsumptionRate
             |> TransformSatiety (Statistic.ChangeBy satietyIncrease)
         | _ ->
-            if avatar.Satiety.CurrentValue > avatar.Satiety.MinimumValue then
+            if avatar.Statistics.[StatisticIdentifier.Satiety].CurrentValue > avatar.Statistics.[StatisticIdentifier.Satiety].MinimumValue then
                 avatar
                 |> TransformSatiety (Statistic.ChangeBy (satietyDecrease))
             else
@@ -93,9 +116,9 @@ module Avatar =
         {
             avatar with 
                 Position = newPosition
-                Turn = avatar.Turn |> Statistic.ChangeBy 1.0
                 Vessel = avatar.Vessel |> Vessel.Befoul
         }
+        |> TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeBy 1.0 >> Some)
         |> AddMetric Metric.Moved 1u
         |> Eat
 
@@ -145,7 +168,7 @@ module Avatar =
         {avatar with Inventory = avatar.Inventory |> Map.add item newQuantity}
 
     let (|ALIVE|DEAD|) (avatar:Avatar) =
-        if avatar.Health.CurrentValue <= avatar.Health.MinimumValue then
+        if avatar.Statistics.[StatisticIdentifier.Health].CurrentValue <= avatar.Statistics.[StatisticIdentifier.Health].MinimumValue then
             DEAD    
         else
             ALIVE
@@ -166,6 +189,6 @@ module Avatar =
     let CleanHull (avatar:Avatar) : Avatar =
         {avatar with 
             Vessel = 
-                {avatar.Vessel with Fouling = {avatar.Vessel.Fouling with CurrentValue = 0.0}}
-            Turn = avatar.Turn |> Statistic.ChangeBy 1.0}
+                {avatar.Vessel with Fouling = {avatar.Vessel.Fouling with CurrentValue = 0.0}}}
+        |> TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeBy 1.0 >> Some)
         |> IncrementMetric Metric.CleanedHull
