@@ -12,6 +12,7 @@ let ``Get.It retrieves the global world configuration.`` () =
         | Ok actual ->
             Assert.AreEqual(100.0, actual.WorldSize |> fst)
             Assert.AreEqual(100.0, actual.WorldSize |> snd)
+            Assert.AreEqual(2, actual.RationItems.Length)
         | Error message ->
             Assert.Fail(message)
     finally

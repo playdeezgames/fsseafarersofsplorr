@@ -22,7 +22,7 @@ type Avatar =
         Job          : Job option
         Inventory    : Map<uint64, uint32>
         Statistics   : Map<StatisticIdentifier, Statistic>
-        RationItem   : uint64
+        RationItems  : uint64 list
         Metrics      : Map<Metric, uint>
         Vessel       : Vessel
     }

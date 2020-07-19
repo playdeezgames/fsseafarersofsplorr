@@ -10,6 +10,7 @@ let internal dockWorldconfiguration: WorldConfiguration =
         MinimumIslandDistance=30.0
         MaximumGenerationTries=1u
         RewardRange = (1.0, 10.0)
+        RationItems = [1UL]
     }
 let internal dockWorld = World.Create dockWorldconfiguration random
 let internal dockLocation = (0.0, 0.0)
@@ -36,6 +37,7 @@ let internal smallWorldconfiguration: WorldConfiguration =
         MinimumIslandDistance=5.0
         MaximumGenerationTries=500u
         RewardRange = (1.0, 10.0)
+        RationItems = [1UL]
     }
 let internal smallWorld = World.Create smallWorldconfiguration random
 let internal smallWorldIslandLocation = smallWorld.Islands |> Map.toList |> List.map fst |> List.head

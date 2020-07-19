@@ -6,6 +6,7 @@ type WorldConfiguration =
         MinimumIslandDistance: float
         MaximumGenerationTries: uint32
         RewardRange: float * float
+        RationItems: uint64 list
     }
 
 type World =

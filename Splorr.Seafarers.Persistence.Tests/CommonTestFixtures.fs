@@ -70,6 +70,12 @@ let private setupStatistics (connection:SQLiteConnection) : unit =
         ]
     |> runCommands connection
 
+let private setupRationItems (connection:SQLiteConnection) : unit =
+    [
+        Tables.RationItems
+        "REPLACE INTO [RationItems] ([ItemId]) VALUES (1), (2);"
+    ]
+    |> runCommands connection
 let internal SetupConnection() : SQLiteConnection = 
     let connection = new SQLiteConnection(connectionString)
     connection.Open()
@@ -81,6 +87,8 @@ let internal SetupConnection() : SQLiteConnection =
     connection |> setupWorldConfiguration
 
     connection |> setupStatistics
+
+    connection |> setupRationItems
 
     connection
     

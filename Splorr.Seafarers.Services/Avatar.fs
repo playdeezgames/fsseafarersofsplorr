@@ -21,7 +21,7 @@ module Avatar =
                 a 
                 |> SetStatistic identifier (s |> transform) ) avatar
 
-    let Create(position:Location): Avatar =
+    let Create (rationItems:uint64 list) (position:Location): Avatar =
         {
             Messages = []
             Position = position
@@ -33,7 +33,7 @@ module Avatar =
             Reputation = 0.0
             Job = None
             Inventory = Map.empty
-            RationItem = 1UL
+            RationItems = rationItems
             Metrics = Map.empty
             Vessel = Vessel.Create 100.0
             Statistics = Map.empty
@@ -91,11 +91,19 @@ module Avatar =
         let satietyDecrease = -1.0
         let satietyIncrease = 1.0
         let rationConsumptionRate = 1u
-        match avatar.Inventory.TryFind avatar.RationItem with
-        | Some count when count > 0u ->
+        let rationItem =
+            avatar.RationItems
+            |> List.tryPick 
+                (fun item -> 
+                    match avatar.Inventory |> Map.tryFind item with
+                    | Some count when count > 0u ->
+                        item |> Some
+                    | _ -> None)
+        match rationItem with
+        | Some item ->
             avatar
             |> IncrementMetric Metric.Ate
-            |> RemoveInventory avatar.RationItem rationConsumptionRate
+            |> RemoveInventory item rationConsumptionRate
             |> TransformSatiety (Statistic.ChangeCurrentBy satietyIncrease)
         | _ ->
             if avatar.Statistics.[StatisticIdentifier.Satiety].CurrentValue > avatar.Statistics.[StatisticIdentifier.Satiety].MinimumValue then
