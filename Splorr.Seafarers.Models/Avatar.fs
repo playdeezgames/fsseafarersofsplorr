@@ -1,14 +1,5 @@
 namespace Splorr.Seafarers.Models
 
-type Metric =
-    | Moved         = 1
-    | Ate           = 2
-    | VisitedIsland = 3
-    | CompletedJob  = 4
-    | AbandonedJob  = 5
-    | AcceptedJob   = 6
-    | CleanedHull   = 7
-
 type Avatar =
     {
         Messages     : string list
@@ -21,8 +12,7 @@ type Avatar =
         Reputation   : float
         Job          : Job option
         Inventory    : Map<uint64, uint32>
-        Statistics   : Map<StatisticIdentifier, Statistic>
-        RationItems  : uint64 list
+        Shipmates    : Shipmate array
         Metrics      : Map<Metric, uint>
         Vessel       : Vessel
     }

@@ -167,11 +167,11 @@ let ``Run.It returns Careened with a cleaned hull when given the command Clean H
         inputVessel
         |> Vessel.TransformFouling Starboard (fun x -> {x with CurrentValue = x.MinimumValue})
     let expectedTurn =
-        inputAvatar.Statistics.[StatisticIdentifier.Turn] |> Statistic.ChangeCurrentBy 1.0
+        inputAvatar.Shipmates.[0].Statistics.[StatisticIdentifier.Turn] |> Statistic.ChangeCurrentBy 1.0
     let expectedAvatar =
         {inputAvatar with 
             Vessel = expectedVessel}
-        |> Avatar.SetStatistic StatisticIdentifier.Turn (expectedTurn |> Some)
+        |> Avatar.TransformShipmate (Shipmate.SetStatistic StatisticIdentifier.Turn (expectedTurn |> Some)) 0u
         |> Avatar.AddMetric Metric.CleanedHull 1u
     let expected =
         (inputSide, {inputWorld with Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar})
