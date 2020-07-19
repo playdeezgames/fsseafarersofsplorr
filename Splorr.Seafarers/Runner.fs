@@ -51,7 +51,7 @@ module Runner =
     let Run (switches:Set<string>) (connection:SQLiteConnection) (avatarId:string) : unit =
         match connection |> WorldConfiguration.Get with
         | Ok configuration ->
-            System.Console.Title <- "Seafarers of Splorr!!"
+            System.Console.Title <- "Seafarers of SPLORR!!"
             let old = System.Console.ForegroundColor
             System.Console.ForegroundColor <- System.ConsoleColor.Gray
             None
