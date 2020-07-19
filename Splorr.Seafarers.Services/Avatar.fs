@@ -2,24 +2,16 @@
 open Splorr.Seafarers.Models
 
 module Avatar =
-    let SetStatistic (identifier:StatisticIdentifier) (statistic:Statistic option) (avatar:Avatar) : Avatar =
-        match statistic with
-        | Some stat ->
-            {avatar with Statistics = avatar.Statistics |> Map.add identifier stat}
-        | None -> 
-            {avatar with Statistics = avatar.Statistics |> Map.remove identifier}
-
-    let GetStatistic (identifier:StatisticIdentifier) (avatar:Avatar) : Statistic option =
-        avatar.Statistics
-        |> Map.tryFind identifier   
-
-    let TransformStatistic (identifier:StatisticIdentifier) (transform:Statistic -> Statistic option) (avatar:Avatar) : Avatar =
-        avatar
-        |> GetStatistic identifier
-        |> Option.fold
-            (fun a s -> 
-                a 
-                |> SetStatistic identifier (s |> transform) ) avatar
+    let TransformShipmate (transform:Shipmate->Shipmate) (index:uint) (avatar:Avatar) : Avatar =
+        {avatar with
+            Shipmates = 
+                avatar.Shipmates
+                |> Array.mapi 
+                    (fun idx item -> 
+                        if (idx |> uint) = index then
+                            item |> transform
+                        else
+                            item)}
 
     let Create (rationItems:uint64 list) (position:Location): Avatar =
         {
@@ -33,14 +25,18 @@ module Avatar =
             Reputation = 0.0
             Job = None
             Inventory = Map.empty
-            RationItems = rationItems
             Metrics = Map.empty
             Vessel = Vessel.Create 100.0
-            Statistics = Map.empty
+            Shipmates =
+                [|{
+                    Statistics = Map.empty
+                    RationItems = rationItems
+                }
+                |> Shipmate.SetStatistic StatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) 100.0 |> Some)
+                |> Shipmate.SetStatistic StatisticIdentifier.Health (Statistic.Create (0.0, 100.0) 100.0 |> Some)
+                |> Shipmate.SetStatistic StatisticIdentifier.Turn (Statistic.Create (0.0, 50000.0) 0.0 |> Some)
+                |]
         }
-        |> SetStatistic StatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) 100.0 |> Some)
-        |> SetStatistic StatisticIdentifier.Health (Statistic.Create (0.0, 100.0) 100.0 |> Some)
-        |> SetStatistic StatisticIdentifier.Turn (Statistic.Create (0.0, 50000.0) 0.0 |> Some)
 
 
     let SetSpeed (speed:float) (avatar:Avatar) : Avatar = //TODO: make speed a statistic
@@ -67,11 +63,17 @@ module Avatar =
         else
             avatar
 
-    let private TransformSatiety (transform:Statistic -> Statistic) =
-        TransformStatistic StatisticIdentifier.Satiety (transform >> Some)
+    let private TransformSatiety (transform:Statistic -> Statistic)=
+        transform
+        >> Some
+        |> Shipmate.TransformStatistic StatisticIdentifier.Satiety
+        |> TransformShipmate
 
     let private TransformTurn (transform:Statistic -> Statistic) =
-        TransformStatistic StatisticIdentifier.Turn (transform >> Some)
+        transform
+        >> Some
+        |> Shipmate.TransformStatistic StatisticIdentifier.Turn
+        |> TransformShipmate
 
     let AddMetric (metric:Metric) (amount:uint) (avatar:Avatar) : Avatar =
         let newValue =
@@ -80,7 +82,10 @@ module Avatar =
             |> Option.defaultValue 0u
             |> (+) amount
         {avatar with
-            Metrics = avatar.Metrics |> Map.add metric newValue}
+            Metrics = 
+                avatar.Metrics 
+                |> Map.add metric newValue
+                |> Map.filter (fun _ v -> v>0u)}
 
     let private IncrementMetric (metric:Metric) (avatar:Avatar) : Avatar =
         let rateOfIncrement = 1u
@@ -88,36 +93,29 @@ module Avatar =
         |> AddMetric metric rateOfIncrement
 
     let private Eat (avatar:Avatar) : Avatar =
-        let satietyDecrease = -1.0
-        let satietyIncrease = 1.0
-        let rationConsumptionRate = 1u
-        let rationItem =
-            avatar.RationItems
-            |> List.tryPick 
-                (fun item -> 
-                    match avatar.Inventory |> Map.tryFind item with
-                    | Some count when count > 0u ->
-                        item |> Some
-                    | _ -> None)
-        match rationItem with
-        | Some item ->
-            avatar
-            |> IncrementMetric Metric.Ate
-            |> RemoveInventory item rationConsumptionRate
-            |> TransformSatiety (Statistic.ChangeCurrentBy satietyIncrease)
-        | _ ->
-            if avatar.Statistics.[StatisticIdentifier.Satiety].CurrentValue > avatar.Statistics.[StatisticIdentifier.Satiety].MinimumValue then
-                avatar
-                |> TransformSatiety (Statistic.ChangeCurrentBy (satietyDecrease))
-            else
-                avatar
-                |> TransformTurn (Statistic.ChangeMaximumBy (satietyDecrease))
+        let shipmates, inventory, eaten =
+            avatar.Shipmates
+            |> Array.fold 
+                (fun (s:Shipmate array,i,m) v -> 
+                    let mate, inv, ate =
+                        Shipmate.Eat i v
+                    ([| mate |] |> Array.append s,inv, if ate then m+1u else m)) ([||], avatar.Inventory, 0u)
+        {avatar with 
+            Shipmates = shipmates
+            Inventory = inventory}
+        |> AddMetric Metric.Ate eaten
 
     let GetEffectiveSpeed (avatar:Avatar) : float =
         let currentValue =
             avatar.Vessel.Fouling
             |> Map.fold (fun a _ v->a+v.CurrentValue) 0.0
         (avatar.Speed * (1.0 - currentValue))
+
+    let TransformShipmates (transform:Shipmate -> Shipmate) (avatar:Avatar) : Avatar =
+        [0u..(avatar.Shipmates.Length-1) |> uint]
+        |> List.fold
+            (fun a i ->
+                a |> TransformShipmate transform i) avatar
 
     let Move(avatar: Avatar) : Avatar =
         let actualSpeed = avatar |> GetEffectiveSpeed
@@ -127,7 +125,7 @@ module Avatar =
                 Position = newPosition
                 Vessel = avatar.Vessel |> Vessel.Befoul
         }
-        |> TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)
+        |> TransformShipmates (Shipmate.TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some))
         |> AddMetric Metric.Moved 1u
         |> Eat
 
@@ -177,9 +175,9 @@ module Avatar =
         {avatar with Inventory = avatar.Inventory |> Map.add item newQuantity}
 
     let (|ALIVE|ZERO_HEALTH|OLD_AGE|) (avatar:Avatar) =
-        if avatar.Statistics.[StatisticIdentifier.Health].CurrentValue <= avatar.Statistics.[StatisticIdentifier.Health].MinimumValue then
+        if avatar.Shipmates.[0].Statistics.[StatisticIdentifier.Health].CurrentValue <= avatar.Shipmates.[0].Statistics.[StatisticIdentifier.Health].MinimumValue then
             ZERO_HEALTH    
-        elif avatar.Statistics.[StatisticIdentifier.Turn].CurrentValue >= avatar.Statistics.[StatisticIdentifier.Turn].MaximumValue then
+        elif avatar.Shipmates.[0].Statistics.[StatisticIdentifier.Turn].CurrentValue >= avatar.Shipmates.[0].Statistics.[StatisticIdentifier.Turn].MaximumValue then
             OLD_AGE
         else
             ALIVE
@@ -202,5 +200,5 @@ module Avatar =
             Vessel = 
                 avatar.Vessel
                 |> Vessel.TransformFouling side (fun x-> {x with CurrentValue = x.MinimumValue})}
-        |> TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)
+        |> TransformShipmates (Shipmate.TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some))
         |> IncrementMetric Metric.CleanedHull

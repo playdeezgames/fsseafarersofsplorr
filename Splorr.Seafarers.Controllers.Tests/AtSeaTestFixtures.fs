@@ -18,12 +18,12 @@ let internal deadWorld =
     |> World.TransformAvatar avatarId
         (fun a -> 
             a 
-            |> Avatar.TransformStatistic 
+            |> Avatar.TransformShipmate (Shipmate.TransformStatistic 
                 StatisticIdentifier.Health 
                 (fun x-> 
                     {x with 
                         CurrentValue = x.MinimumValue} 
-                    |> Some) 
+                    |> Some)) 0u
             |> Some)
     |> World.ClearMessages avatarId
     |> World.AddMessages avatarId ["Yer ded."]

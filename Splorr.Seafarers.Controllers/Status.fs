@@ -12,9 +12,9 @@ module Status =
             (Label, "Reputation: " |> Text) |> Hued
             (Value, world.Avatars.[avatarId].Reputation |> sprintf "%f" |> Line) |> Hued
             (Label, "Satiety: " |> Text) |> Hued
-            (Value, (world.Avatars.[avatarId].Statistics.[StatisticIdentifier.Satiety].CurrentValue, world.Avatars.[avatarId].Statistics.[StatisticIdentifier.Satiety].MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
+            (Value, (world.Avatars.[avatarId].Shipmates.[0].Statistics.[StatisticIdentifier.Satiety].CurrentValue, world.Avatars.[avatarId].Shipmates.[0].Statistics.[StatisticIdentifier.Satiety].MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
             (Label, "Health: " |> Text) |> Hued
-            (Value, (world.Avatars.[avatarId].Statistics.[StatisticIdentifier.Health].CurrentValue, world.Avatars.[avatarId].Statistics.[StatisticIdentifier.Health].MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
+            (Value, (world.Avatars.[avatarId].Shipmates.[0].Statistics.[StatisticIdentifier.Health].CurrentValue, world.Avatars.[avatarId].Shipmates.[0].Statistics.[StatisticIdentifier.Health].MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
             (Label, "Port Fouling: " |> Text) |> Hued
             (Value, (world.Avatars.[avatarId].Vessel.Fouling.[Port].CurrentValue, world.Avatars.[avatarId].Vessel.Fouling.[Port].MaximumValue) ||> sprintf "%.2f/%.2f" |> Line) |> Hued
             (Label, "Starboard Fouling: " |> Text) |> Hued

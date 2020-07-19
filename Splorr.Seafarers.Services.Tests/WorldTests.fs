@@ -155,8 +155,6 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                     Reputation = 0.0
                     Job = None
                     Inventory = Map.empty
-                    Statistics = Map.empty
-                    RationItems = [1UL]
                     Metrics = Map.empty
                     Vessel  = 
                         {
@@ -167,10 +165,16 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                                 |> Map.add Starboard {MinimumValue = 0.0; MaximumValue = 0.5; CurrentValue=0.0}
                             FoulRate=0.1
                         }
+                    Shipmates = 
+                        [|{
+                            Statistics = Map.empty
+                            RationItems = [1UL]
+                        }
+                        |> Shipmate.SetStatistic StatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0)|>Some)
+                        |> Shipmate.SetStatistic StatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0)|>Some)
+                        |> Shipmate.SetStatistic StatisticIdentifier.Turn (Statistic.Create (0.0, 15000.0) (0.0)|>Some)
+                        |]
                 }
-                |> Avatar.SetStatistic StatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0)|>Some)
-                |> Avatar.SetStatistic StatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0)|>Some)
-                |> Avatar.SetStatistic StatisticIdentifier.Turn (Statistic.Create (0.0, 15000.0) (0.0)|>Some)
                 ]|>Map.ofList
             Islands=
                 Map.empty
@@ -266,7 +270,8 @@ let ``Dock.It adds a message when the given location has no island.`` () =
 let ``Dock.It updates the island's visit count and last visit when the given location has an island.`` () =
     let inputWorld = oneIslandWorld
     let expectedIsland = 
-        inputWorld.Islands.[(0.0, 0.0)] |> Island.AddVisit inputWorld.Avatars.[avatarId].Statistics.[StatisticIdentifier.Turn].CurrentValue avatarId
+        inputWorld.Islands.[(0.0, 0.0)] 
+        |> Island.AddVisit inputWorld.Avatars.[avatarId].Shipmates.[0].Statistics.[StatisticIdentifier.Turn].CurrentValue avatarId
     let expectedAvatar = 
         {inputWorld.Avatars.[avatarId] with  
             Messages = [ "You dock." ]
@@ -313,7 +318,7 @@ let ``HeadFor.It adds a message when the island name exists but is not known.`` 
 let ``HeadFor.It sets the heading when the island name exists and is known.`` () =
     let inputWorld =
         headForWorld
-        |> World.TransformIsland (0.0,0.0) (Island.AddVisit headForWorld.Avatars.[avatarId].Statistics.[StatisticIdentifier.Turn].CurrentValue avatarId >> Some)
+        |> World.TransformIsland (0.0,0.0) (Island.AddVisit headForWorld.Avatars.[avatarId].Shipmates.[0].Statistics.[StatisticIdentifier.Turn].CurrentValue avatarId >> Some)
     let expected = {inputWorld with Avatars = inputWorld.Avatars |> Map.add avatarId {inputWorld.Avatars.[avatarId] with Messages=[ "You set your heading to 180°0'0.000000\"."; "You head for `Uno`." ]; Heading=System.Math.PI}}
     let actual =
         inputWorld
@@ -750,7 +755,7 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
     let expectedAvatar =
         {inputAvatar with
             Vessel = expectedVessel}
-        |> Avatar.TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)
+        |> Avatar.TransformShipmate (Shipmate.TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)) 0u
         |> Avatar.AddMetric Metric.CleanedHull 1u
     let expected =
         {inputWorld with

@@ -9,13 +9,16 @@ let internal singleLocation = [(0.0, 0.0)] |> Set.ofList
 let internal avatar =
     Avatar.Create [1UL] (0.0,0.0)
 let internal avatarNoStats =
-    {avatar with Statistics = Map.empty}
+    {avatar with 
+        Shipmates =
+            avatar.Shipmates
+            |> Array.map (fun x -> {x with Statistics = Map.empty})}
 let internal deadAvatar =
     avatar
-    |> Avatar.TransformStatistic StatisticIdentifier.Health (fun x-> {x with CurrentValue = x.MinimumValue} |> Some)
+    |> Avatar.TransformShipmate (Shipmate.TransformStatistic StatisticIdentifier.Health (fun x-> {x with CurrentValue = x.MinimumValue} |> Some)) 0u
 let internal oldAvatar =
     avatar
-    |> Avatar.TransformStatistic StatisticIdentifier.Turn (fun x-> {x with CurrentValue = x.MaximumValue} |> Some)
+    |> Avatar.TransformShipmate (Shipmate.TransformStatistic StatisticIdentifier.Turn (fun x-> {x with CurrentValue = x.MaximumValue} |> Some)) 0u
 let internal job =
     Job.Create random rewardRange singleLocation
 let internal employedAvatar =

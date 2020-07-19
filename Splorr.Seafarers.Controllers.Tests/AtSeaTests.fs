@@ -151,8 +151,8 @@ let ``Run.It moves the avatar when given Move command.`` () =
             Messages = expectedMessages
             Vessel   = input.Avatars.[avatarId].Vessel |> Vessel.Befoul
             Metrics  = Map.empty |> Map.add Metric.Moved 1u}
-        |> Avatar.TransformStatistic StatisticIdentifier.Satiety (fun x -> {x with CurrentValue=99.0} |> Some)
-        |> Avatar.TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)
+        |> Avatar.TransformShipmate (Shipmate.TransformStatistic StatisticIdentifier.Satiety (fun x -> {x with CurrentValue=99.0} |> Some)) 0u
+        |> Avatar.TransformShipmate (Shipmate.TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)) 0u
     let expected = 
         {input with 
             Avatars  = input.Avatars |> Map.add avatarId expectedAvatar} 
@@ -276,7 +276,7 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
     let expectedLocation = (0.0, 0.0)
     let expectedIsland = 
         input.Islands.[expectedLocation] 
-        |> Island.AddVisit input.Avatars.[avatarId].Statistics.[StatisticIdentifier.Turn].CurrentValue avatarId
+        |> Island.AddVisit input.Avatars.[avatarId].Shipmates.[0].Statistics.[StatisticIdentifier.Turn].CurrentValue avatarId
     let expectedIslands = 
         input.Islands 
         |> Map.add expectedLocation expectedIsland
