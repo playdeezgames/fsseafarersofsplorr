@@ -76,7 +76,8 @@ let ``Move.It moves the avatar.`` () =
 let ``Move.It removes a ration when the given avatar has rations and full satiety and full health.`` () =
     let input = 
         {avatar with 
-            Inventory = Map.empty |> Map.add 1UL 2u}
+            Inventory = Map.empty |> Map.add 1UL 2u
+            RationItems = [0UL; 1UL]}
     let expectedSatiety = input.Statistics.[StatisticIdentifier.Satiety].CurrentValue
     let expectedHealth = input.Statistics.[StatisticIdentifier.Health].CurrentValue
     let expectedInventory = Map.empty |> Map.add 1u 1u

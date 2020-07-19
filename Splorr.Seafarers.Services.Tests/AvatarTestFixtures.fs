@@ -7,7 +7,7 @@ let internal random = System.Random()
 let internal rewardRange = (1.0,10.0)
 let internal singleLocation = [(0.0, 0.0)] |> Set.ofList
 let internal avatar =
-    Avatar.Create(0.0,0.0)
+    Avatar.Create [1UL] (0.0,0.0)
 let internal avatarNoStats =
     {avatar with Statistics = Map.empty}
 let internal deadAvatar =

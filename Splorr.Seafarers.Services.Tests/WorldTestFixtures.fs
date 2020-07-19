@@ -12,6 +12,7 @@ let internal soloIslandWorldConfiguration: WorldConfiguration =
         MinimumIslandDistance=30.0 
         MaximumGenerationTries=10u
         RewardRange=(1.0,10.0)
+        RationItems = [1UL]
     }
 let internal soloIslandWorld = World.Create soloIslandWorldConfiguration random
 let internal emptyWorld = 
@@ -30,7 +31,7 @@ let internal emptyWorld =
                 Job = None
                 Inventory = Map.empty
                 Statistics = Map.empty
-                RationItem = 1UL
+                RationItems = [1UL]
                 Metrics = Map.empty
                 Vessel  = 
                     {
@@ -82,6 +83,7 @@ let internal genericWorldConfiguration: WorldConfiguration =
         MinimumIslandDistance=5.0 
         MaximumGenerationTries=500u
         RewardRange=(1.0,10.0)
+        RationItems = [1UL]
     }
 let internal genericWorld = World.Create genericWorldConfiguration random
 let internal deadWorld =

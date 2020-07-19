@@ -10,6 +10,7 @@ let internal configuration: WorldConfiguration =
         MinimumIslandDistance=30.0
         MaximumGenerationTries=10u
         RewardRange = (1.0, 10.0)
+        RationItems = [1UL]
     }
 let internal world = World.Create configuration (System.Random())
 let internal deadWorld =
@@ -34,6 +35,7 @@ let internal emptyWorldconfiguration: WorldConfiguration =
         MinimumIslandDistance=30.0
         MaximumGenerationTries=0u
         RewardRange = (1.0, 10.0)
+        RationItems = [1UL]
     }
 let internal emptyWorld = World.Create emptyWorldconfiguration (System.Random())
 
@@ -43,6 +45,7 @@ let internal dockWorldconfiguration: WorldConfiguration =
         MinimumIslandDistance=30.0
         MaximumGenerationTries=1u
         RewardRange = (1.0, 10.0)
+        RationItems = [1UL]
     }
 let internal dockWorld = World.Create dockWorldconfiguration (System.Random())
 

@@ -156,7 +156,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                     Job = None
                     Inventory = Map.empty
                     Statistics = Map.empty
-                    RationItem = 1UL
+                    RationItems = [1UL]
                     Metrics = Map.empty
                     Vessel  = 
                         {
