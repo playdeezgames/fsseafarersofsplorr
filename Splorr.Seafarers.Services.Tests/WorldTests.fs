@@ -286,13 +286,6 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
     Assert.AreEqual(expected, actual)
 
 [<Test>]
-let ``HeadFor.It does nothing when given an invalid avatar id.`` () =
-    let actual =
-        headForWorld
-        |> World.HeadFor "yermom" bogusAvatarId
-    Assert.AreEqual(headForWorld, actual)
-
-[<Test>]
 let ``HeadFor.It adds a message when the island name does not exist.`` () =
     let inputWorld = headForWorld
     let expectedAvatar = {inputWorld.Avatars.[avatarId] with Messages = [ "I don't know how to get to `yermom`." ]}
@@ -300,7 +293,7 @@ let ``HeadFor.It adds a message when the island name does not exist.`` () =
         {inputWorld with Avatars= inputWorld.Avatars |> Map.add avatarId expectedAvatar}        
     let actual =
         inputWorld
-        |> World.HeadFor "yermom" avatarId
+        |> World.HeadFor "yermom"
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -311,7 +304,7 @@ let ``HeadFor.It adds a message when the island name exists but is not known.`` 
         {inputWorld with Avatars= inputWorld.Avatars |> Map.add avatarId expectedAvatar}        
     let actual =
         inputWorld
-        |> World.HeadFor "Uno" avatarId
+        |> World.HeadFor "Uno"
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -322,7 +315,7 @@ let ``HeadFor.It sets the heading when the island name exists and is known.`` ()
     let expected = {inputWorld with Avatars = inputWorld.Avatars |> Map.add avatarId {inputWorld.Avatars.[avatarId] with Messages=[ "You set your heading to 180°0'0.000000\"."; "You head for `Uno`." ]; Heading=System.Math.PI}}
     let actual =
         inputWorld
-        |> World.HeadFor "Uno" avatarId
+        |> World.HeadFor "Uno"
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -763,6 +756,48 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
     let actual =
         inputWorld
         |> World.CleanHull avatarId inputSide
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``DistanceTo.It adds a 'unknown island' message when given a bogus island name.`` () =
+    let input = genericWorld
+    let inputName = "$$$$$$$"
+    let expectedMessage = inputName |> sprintf "I don't know how to get to `%s`."
+    let expected =
+        input
+        |> World.TransformAvatar input.AvatarId (Avatar.AddMessages [expectedMessage] >> Some)
+    let actual =
+        input
+        |> World.DistanceTo inputName
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``DistanceTo.It adds a 'unknown island' message when given a valid island name that is not known.`` () =
+    let inputName = ((genericWorld.Islands |> Map.toList).Head |> snd).Name
+    let input = genericWorld
+    let expectedMessage = inputName |> sprintf "I don't know how to get to `%s`."
+    let expected =
+        input
+        |> World.TransformAvatar input.AvatarId (Avatar.AddMessages [expectedMessage] >> Some)
+    let actual =
+        input
+        |> World.DistanceTo inputName
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``DistanceTo.It adds a 'distance to island' message when given a valid island name that is known.`` () =
+    let inputLocation = (genericWorld.Islands |> Map.toList).Head |> fst
+    let inputName = ((genericWorld.Islands |> Map.toList).Head |> snd).Name
+    let input = 
+        genericWorld
+        |> World.TransformIsland inputLocation (Island.MakeKnown genericWorld.AvatarId >> Some)
+    let expectedMessage = (inputName, Location.DistanceTo inputLocation input.Avatars.[input.AvatarId].Position) ||> sprintf "Distance to `%s` is %f."
+    let expected =
+        input
+        |> World.TransformAvatar input.AvatarId (Avatar.AddMessages [expectedMessage] >> Some)
+    let actual =
+        input
+        |> World.DistanceTo inputName
     Assert.AreEqual(expected, actual)
 
 //[<Test>]

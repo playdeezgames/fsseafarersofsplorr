@@ -69,7 +69,13 @@ module AtSea =
 
         | Some (Command.HeadFor name) ->
             world
-            |> World.HeadFor name avatarId
+            |> World.HeadFor name
+            |> Gamestate.AtSea
+            |> Some
+
+        | Some (Command.DistanceTo name) ->
+            world
+            |> World.DistanceTo name
             |> Gamestate.AtSea
             |> Some
 

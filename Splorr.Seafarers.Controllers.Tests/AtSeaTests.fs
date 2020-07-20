@@ -460,3 +460,46 @@ let ``Run.It returns Careen Port when given the careen port command and the avat
         |> functionUnderTest inputSource sinkStub
     Assert.AreEqual(expected, actual)
     
+[<Test>]
+let ``Run.It adds a message when given a Distance To command with an island name that does not exist.`` () =
+    let input = dockWorld
+    let inputName = "$$$$$$"
+    let inputSource = 
+        inputName
+        |> Command.DistanceTo
+        |> Some 
+        |> toSource
+    let expectedWorld =
+        input
+        |> World.TransformAvatar input.AvatarId (Avatar.AddMessages [inputName |> sprintf "I don't know how to get to `%s`."] >> Some)
+    let expected =
+        expectedWorld
+        |> Gamestate.AtSea
+        |> Some
+    let actual =
+        input
+        |> functionUnderTest inputSource sinkStub
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``Run.It adds a message when given a Distance To command with an island name that does exist.`` () =
+    let input = 
+        dockWorld
+        |> World.TransformIsland (0.0, 0.0) (Island.MakeKnown dockWorld.AvatarId >> Some)
+    let inputIslandName = input.Islands.[(0.0, 0.0)].Name
+    let inputSource = 
+        inputIslandName
+        |> Command.DistanceTo
+        |> Some 
+        |> toSource
+    let expectedWorld =
+        input
+        |> World.TransformAvatar input.AvatarId (Avatar.AddMessages [inputIslandName |> sprintf "Distance to `%s` is 0.000000."] >> Some)
+    let expected =
+        expectedWorld
+        |> Gamestate.AtSea
+        |> Some
+    let actual =
+        input
+        |> functionUnderTest inputSource sinkStub
+    Assert.AreEqual(expected, actual)

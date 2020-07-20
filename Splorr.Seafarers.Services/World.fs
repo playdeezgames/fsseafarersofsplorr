@@ -182,23 +182,42 @@ module World =
         | _ ->
             world
 
-    let HeadFor (islandName: string) (avatarId:string) (world:World) : World =
+    let DistanceTo (islandName: string) (world:World) : World =
         let location =
             world.Islands
             |> Map.tryPick 
                 (fun k v -> 
-                    if v.Name = islandName && (v.AvatarVisits.ContainsKey avatarId) then
+                    if v.Name = islandName && (v.AvatarVisits.ContainsKey world.AvatarId) then
                         Some k
                     else
                         None)
-        match location, world.Avatars |> Map.tryFind avatarId with
+        match location, world.Avatars |> Map.tryFind world.AvatarId with
         | Some l, Some avatar ->
             world
-            |> SetHeading (Location.HeadingTo avatar.Position l |> Dms.ToDms) avatarId
-            |> AddMessages avatarId [ islandName |> sprintf "You head for `%s`." ]
+            |> AddMessages world.AvatarId [ (islandName, Location.DistanceTo l avatar.Position ) ||> sprintf "Distance to `%s` is %f." ]
         | _, Some _ ->
             world
-            |> AddMessages avatarId [ islandName |> sprintf "I don't know how to get to `%s`." ]
+            |> AddMessages world.AvatarId [ islandName |> sprintf "I don't know how to get to `%s`." ]
+        | _ ->
+            world
+
+    let HeadFor (islandName: string) (world:World) : World =
+        let location =
+            world.Islands
+            |> Map.tryPick 
+                (fun k v -> 
+                    if v.Name = islandName && (v.AvatarVisits.ContainsKey world.AvatarId) then
+                        Some k
+                    else
+                        None)
+        match location, world.Avatars |> Map.tryFind world.AvatarId with
+        | Some l, Some avatar ->
+            world
+            |> SetHeading (Location.HeadingTo avatar.Position l |> Dms.ToDms) world.AvatarId
+            |> AddMessages world.AvatarId [ islandName |> sprintf "You head for `%s`." ]
+        | _, Some _ ->
+            world
+            |> AddMessages world.AvatarId [ islandName |> sprintf "I don't know how to get to `%s`." ]
         | _ ->
             world
 
