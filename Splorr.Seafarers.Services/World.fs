@@ -62,11 +62,11 @@ module World =
             else
                 GenerateIslands configuration random 0u {world with Islands = world.Islands |> Map.add candidateLocation (Island.Create())}
 
-    let Create (configuration:WorldConfiguration) (random:System.Random) : World =
+    let Create (configuration:WorldConfiguration) (random:System.Random) (avatarId:string): World =
         {
-            Avatars = ["",Avatar.Create configuration.RationItems (configuration.WorldSize |> Location.ScaleBy 0.5)] |> Map.ofList
+            AvatarId = avatarId
+            Avatars = [avatarId,Avatar.Create configuration.StatisticDescriptors configuration.RationItems (configuration.WorldSize |> Location.ScaleBy 0.5)] |> Map.ofList
             Islands = Map.empty
-            RewardRange = configuration.RewardRange
         }
         |> GenerateIslands configuration random 0u
         |> NameIslands random
@@ -145,7 +145,7 @@ module World =
         else
             world
 
-    let Dock (random:System.Random) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (location: Location) (avatarId:string) (world:World) : World =
+    let Dock (random:System.Random) (rewardRange:float*float) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (location: Location) (avatarId:string) (world:World) : World =
         match world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
         | Some island, Some avatar ->
             let destinations =
@@ -156,8 +156,8 @@ module World =
                 |> Set.remove location
             let updatedIsland = 
                 island
-                |> Island.AddVisit world.Avatars.[avatarId].Shipmates.[0].Statistics.[StatisticIdentifier.Turn].CurrentValue avatarId//only when this counts as a new visit...
-                |> Island.GenerateJobs random world.RewardRange destinations 
+                |> Island.AddVisit world.Avatars.[avatarId].Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].CurrentValue avatarId//only when this counts as a new visit...
+                |> Island.GenerateJobs random rewardRange destinations 
                 |> Island.GenerateCommodities random commodities
                 |> Island.GenerateItems random items
             let oldVisitCount =

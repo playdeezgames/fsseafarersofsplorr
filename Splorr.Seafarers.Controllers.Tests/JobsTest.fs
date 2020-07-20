@@ -12,8 +12,9 @@ let private dockWorldconfiguration: WorldConfiguration =
         MaximumGenerationTries=1u
         RewardRange = (1.0, 10.0)
         RationItems = [1UL]
+        StatisticDescriptors = []
     }
-let private dockWorld = World.Create dockWorldconfiguration (System.Random())
+let private dockWorld = World.Create dockWorldconfiguration (System.Random()) ""
 let private dockLocation = (0.0, 0.0)
 let private sink (_:Message) : unit = ()
 

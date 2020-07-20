@@ -13,8 +13,9 @@ let private configuration: WorldConfiguration =
         MaximumGenerationTries=10u
         RewardRange = (1.0, 10.0)
         RationItems = [1UL]
+        StatisticDescriptors = []
     }
-let private world =  World.Create configuration (System.Random())
+let private world =  World.Create configuration (System.Random()) ""
 
 [<Test>]
 let ``Run.It returns the given AtSea Gamestate`` () =

@@ -11,15 +11,16 @@ let internal configuration: WorldConfiguration =
         MaximumGenerationTries=10u
         RewardRange = (1.0, 10.0)
         RationItems = [1UL]
+        StatisticDescriptors = statisticDescriptors
     }
-let internal world = World.Create configuration (System.Random())
+let internal world = World.Create configuration (System.Random()) avatarId
 let internal deadWorld =
     world
     |> World.TransformAvatar avatarId
         (fun a -> 
             a 
             |> Avatar.TransformShipmate (Shipmate.TransformStatistic 
-                StatisticIdentifier.Health 
+                AvatarStatisticIdentifier.Health 
                 (fun x-> 
                     {x with 
                         CurrentValue = x.MinimumValue} 
@@ -36,8 +37,9 @@ let internal emptyWorldconfiguration: WorldConfiguration =
         MaximumGenerationTries=0u
         RewardRange = (1.0, 10.0)
         RationItems = [1UL]
+        StatisticDescriptors = statisticDescriptors
     }
-let internal emptyWorld = World.Create emptyWorldconfiguration (System.Random())
+let internal emptyWorld = World.Create emptyWorldconfiguration (System.Random()) avatarId
 
 let internal dockWorldconfiguration: WorldConfiguration =
     {
@@ -46,17 +48,17 @@ let internal dockWorldconfiguration: WorldConfiguration =
         MaximumGenerationTries=1u
         RewardRange = (1.0, 10.0)
         RationItems = [1UL]
+        StatisticDescriptors = statisticDescriptors
     }
-let internal dockWorld = World.Create dockWorldconfiguration (System.Random())
-
+let internal dockWorld = World.Create dockWorldconfiguration (System.Random()) avatarId
 let internal commodities = Map.empty
 let internal headForWorldUnvisited = 
-    World.Create dockWorldconfiguration (System.Random())
+    World.Create dockWorldconfiguration (System.Random()) avatarId
     |> World.TransformIsland (0.0,0.0) (Island.SetName "yermom" >> Some)
     |> World.Move 1u avatarId
 let internal headForWorldVisited = 
     headForWorldUnvisited
-    |> World.Dock random commodities Map.empty (0.0, 0.0) avatarId
+    |> World.Dock random dockWorldconfiguration.RewardRange commodities Map.empty (0.0, 0.0) avatarId
 
 let internal abandonJobWorld =
     dockWorld

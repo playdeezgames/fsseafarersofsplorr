@@ -6,7 +6,7 @@ open System.Data.SQLite
 open Splorr.Seafarers.Persistence
 
 module AtSea =
-    let private RunAlive (random:System.Random) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (source:CommandSource) (sink:MessageSink) (avatarId:string) (world:World) : Gamestate option =
+    let private RunAlive (random:System.Random) (rewardRange:float*float) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (source:CommandSource) (sink:MessageSink) (avatarId:string) (world:World) : Gamestate option =
 
         "" |> Line |> sink
         world.Avatars.[avatarId].Messages
@@ -25,8 +25,8 @@ module AtSea =
         [
             (Heading, "At Sea:" |> Line) |> Hued
             (Label, "Turn: " |> Text) |> Hued
-            (Value, avatar.Shipmates.[0].Statistics.[StatisticIdentifier.Turn].CurrentValue |> sprintf "%.0f" |> Text) |> Hued
-            (Value, avatar.Shipmates.[0].Statistics.[StatisticIdentifier.Turn].MaximumValue |> sprintf "/%.0f" |> Line) |> Hued
+            (Value, avatar.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].CurrentValue |> sprintf "%.0f" |> Text) |> Hued
+            (Value, avatar.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].MaximumValue |> sprintf "/%.0f" |> Line) |> Hued
             (Label, "Heading: " |> Text) |> Hued
             (Value, avatar.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "%s" |> Line) |> Hued
             (Label, "Speed: " |> Text) |> Hued
@@ -87,7 +87,7 @@ module AtSea =
         | Some Command.Dock ->
             match dockTarget with
             | Some location ->
-                (Dock, location, world |> World.Dock random commodities items location avatarId)
+                (Dock, location, world |> World.Dock random rewardRange commodities items location avatarId)
                 |> Gamestate.Docked
                 |> Some
             | None ->
@@ -161,16 +161,16 @@ module AtSea =
             |> Gamestate.AtSea
             |> Some
 
-    let Run (random:System.Random) (connection:SQLiteConnection) (source:CommandSource) (sink:MessageSink) (avatarId:string) (world:World) : Gamestate option =
-        if world |> World.IsAvatarAlive avatarId then
+    let Run (random:System.Random) (rewardRange:float*float) (connection:SQLiteConnection) (source:CommandSource) (sink:MessageSink) (world:World) : Gamestate option =
+        if world |> World.IsAvatarAlive world.AvatarId then
             match connection |> Commodity.GetList, connection |> Item.GetList with
             | Ok commodities, Ok items ->
-                RunAlive random commodities items source sink avatarId world
+                RunAlive random rewardRange commodities items source sink world.AvatarId world
             | Result.Error message, _ ->
                 raise (System.InvalidOperationException message)
             | _, Result.Error message ->
                 raise (System.InvalidOperationException message)
         else
-            world.Avatars.[avatarId].Messages
+            world.Avatars.[world.AvatarId].Messages
             |> Gamestate.GameOver
             |> Some

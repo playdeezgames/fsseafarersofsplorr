@@ -4,19 +4,19 @@ open System.Data.SQLite
 open Splorr.Seafarers.Models
 
 module Statistic =
-    let private convertor (reader:SQLiteDataReader) : StatisticDescriptor =
+    let private convertor (reader:SQLiteDataReader) : AvatarStatisticTemplate =
         {
-            StatisticId = reader.GetInt32(0) |> enum<StatisticIdentifier>
+            StatisticId = reader.GetInt32(0) |> enum<AvatarStatisticIdentifier>
             StatisticName = reader.GetString(1)
             MinimumValue = reader.GetDouble(2)
             MaximumValue = reader.GetDouble(3)
             CurrentValue = reader.GetDouble(4)
         }
 
-    let GetList (connection:SQLiteConnection) : Result<Map<StatisticIdentifier, StatisticDescriptor>,string> =
+    let GetList (connection:SQLiteConnection) : Result<Map<AvatarStatisticIdentifier, AvatarStatisticTemplate>,string> =
         connection
         |> Utility.GetList 
-            "SELECT [StatisticId], [StatisticName], [MinimumValue], [MaximumValue], [CurrentValue] FROM [Statistics] " convertor
+            "SELECT [StatisticId], [StatisticName], [MinimumValue], [MaximumValue], [CurrentValue] FROM [AvatarStatisticTemplates];" convertor
         |> Result.map
             (fun items ->
                 items

@@ -2,7 +2,7 @@
 
 type Shipmate =
     {
-        Statistics   : Map<StatisticIdentifier, Statistic>
+        Statistics   : Map<AvatarStatisticIdentifier, Statistic>
         RationItems  : uint64 list
     }
 

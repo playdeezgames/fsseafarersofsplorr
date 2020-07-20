@@ -12,10 +12,29 @@ module WorldConfiguration =
         else
             previous
 
+    let rec private getStatisticDescriptors (reader:SQLiteDataReader) (previous:AvatarStatisticTemplate list) : AvatarStatisticTemplate list =
+        if reader.Read() then
+            [{
+                StatisticId = reader.GetInt32(0) |> enum<AvatarStatisticIdentifier>
+                StatisticName = reader.GetString(1)
+                MinimumValue = reader.GetDouble(2)
+                CurrentValue = reader.GetDouble(3)
+                MaximumValue = reader.GetDouble(4)
+            }]
+            |> List.append previous
+            |> getStatisticDescriptors reader
+        else
+            previous
+
+
     let Get (connection:SQLiteConnection) : Result<WorldConfiguration,string> =
         try
-            use command = new SQLiteCommand("SELECT [ItemId] FROM [RationItems];", connection)
+            use command = new SQLiteCommand("SELECT [ItemId] FROM [RationItems] ORDER BY [DefaultOrder];", connection)
             let rationItems = getRationItems (command.ExecuteReader()) []
+
+            use command = new SQLiteCommand("SELECT [StatisticId], [StatisticName], [MinimumValue], [CurrentValue], [MaximumValue] FROM [AvatarStatisticTemplates];",connection)
+            let statisticDescriptors = getStatisticDescriptors (command.ExecuteReader()) []
+
             use command = new SQLiteCommand("SELECT [WorldConfigurationId],[RewardMinimum],[RewardMaximum],[WorldWidth],[WorldHeight],[MaximumGenerationTries],[MinimumIslandDistance] FROM [WorldConfiguration];", connection)
             let reader = command.ExecuteReader()
             if reader.Read() then
@@ -25,6 +44,7 @@ module WorldConfiguration =
                     MaximumGenerationTries =  reader.GetInt32(5) |> uint32
                     RewardRange = (reader.GetDouble(1), reader.GetDouble(2))
                     RationItems = rationItems
+                    StatisticDescriptors = statisticDescriptors
                 }
                 |> Ok
             else

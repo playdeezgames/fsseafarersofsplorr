@@ -39,10 +39,11 @@ module MainMenu =
             |> Gamestate.MainMenu
             |> Some
 
-        | None, Some Command.Start ->
+        | None, Some (Command.Start avatarId)->
             World.Create 
                 configuration
-                (System.Random())//TODO: still hard coded!
+                (System.Random())
+                avatarId
             |> Gamestate.AtSea
             |> Some
 

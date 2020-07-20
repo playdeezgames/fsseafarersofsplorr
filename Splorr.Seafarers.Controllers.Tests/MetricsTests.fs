@@ -17,7 +17,7 @@ let ``Run.It returns the given gamestate.`` () =
     let expected =previousGameState |> Some
     let actual =
         input
-        |> Metrics.Run sink avatarId
+        |> Metrics.Run sink
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -36,6 +36,6 @@ let ``Run.It works when all of the metrics have counters.`` () =
     let expected = input |> Some
     let actual =
         input
-        |> Metrics.Run sink avatarId
+        |> Metrics.Run sink
     Assert.AreEqual(expected, actual)
 

@@ -91,17 +91,17 @@ module Docked =
             |> Gamestate.Docked 
             |> Some
 
-    let internal RunBoilerplate (func:Location -> Island -> string -> World->(Gamestate option)) (location:Location) (avatarId:string) (world: World) : Gamestate option =
-        if world |> World.IsAvatarAlive avatarId then
+    let internal RunBoilerplate (func:Location -> Island -> string -> World->(Gamestate option)) (location:Location) (world: World) : Gamestate option =
+        if world |> World.IsAvatarAlive world.AvatarId then
             match world.Islands |> Map.tryFind location with
             | Some island ->
-                func location island avatarId world
+                func location island world.AvatarId world
             | None ->
                 world
                 |> Gamestate.AtSea
                 |> Some
         else
-            world.Avatars.[avatarId].Messages
+            world.Avatars.[world.AvatarId].Messages
             |> Gamestate.GameOver
             |> Some
 

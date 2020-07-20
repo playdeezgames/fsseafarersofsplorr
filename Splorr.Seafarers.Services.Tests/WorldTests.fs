@@ -142,7 +142,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
         }
     let world =
         {
-            RewardRange = (1.0,10.0)
+            AvatarId = avatarId
             Avatars = 
                 [avatarId,{
                     Messages = []
@@ -170,9 +170,9 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                             Statistics = Map.empty
                             RationItems = [1UL]
                         }
-                        |> Shipmate.SetStatistic StatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0)|>Some)
-                        |> Shipmate.SetStatistic StatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0)|>Some)
-                        |> Shipmate.SetStatistic StatisticIdentifier.Turn (Statistic.Create (0.0, 15000.0) (0.0)|>Some)
+                        |> Shipmate.SetStatistic AvatarStatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0)|>Some)
+                        |> Shipmate.SetStatistic AvatarStatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0)|>Some)
+                        |> Shipmate.SetStatistic AvatarStatisticIdentifier.Turn (Statistic.Create (0.0, 15000.0) (0.0)|>Some)
                         |]
                 }
                 ]|>Map.ofList
@@ -251,7 +251,7 @@ let ``TransformIsland.It does nothing when the location given does not have an e
 let ``Dock.It does nothing when given an invalid avatar id.`` () =
     let actual = 
         emptyWorld
-        |> World.Dock random commodities genericWorldItems (0.0, 0.0) bogusAvatarId
+        |> World.Dock random (0.0, 0.0) commodities genericWorldItems (0.0, 0.0) bogusAvatarId
     Assert.AreEqual(emptyWorld, actual)
 
 [<Test>]
@@ -263,7 +263,7 @@ let ``Dock.It adds a message when the given location has no island.`` () =
             Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar}
     let actual = 
         inputWorld
-        |> World.Dock random commodities genericWorldItems (0.0, 0.0) avatarId
+        |> World.Dock random (0.0, 0.0) commodities genericWorldItems (0.0, 0.0) avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -271,7 +271,7 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
     let inputWorld = oneIslandWorld
     let expectedIsland = 
         inputWorld.Islands.[(0.0, 0.0)] 
-        |> Island.AddVisit inputWorld.Avatars.[avatarId].Shipmates.[0].Statistics.[StatisticIdentifier.Turn].CurrentValue avatarId
+        |> Island.AddVisit inputWorld.Avatars.[avatarId].Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].CurrentValue avatarId
     let expectedAvatar = 
         {inputWorld.Avatars.[avatarId] with  
             Messages = [ "You dock." ]
@@ -282,7 +282,7 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
             Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar}        
     let actual = 
         inputWorld
-        |> World.Dock random Map.empty Map.empty (0.0, 0.0) avatarId
+        |> World.Dock random (0.0, 0.0) Map.empty Map.empty (0.0, 0.0) avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -318,7 +318,7 @@ let ``HeadFor.It adds a message when the island name exists but is not known.`` 
 let ``HeadFor.It sets the heading when the island name exists and is known.`` () =
     let inputWorld =
         headForWorld
-        |> World.TransformIsland (0.0,0.0) (Island.AddVisit headForWorld.Avatars.[avatarId].Shipmates.[0].Statistics.[StatisticIdentifier.Turn].CurrentValue avatarId >> Some)
+        |> World.TransformIsland (0.0,0.0) (Island.AddVisit headForWorld.Avatars.[avatarId].Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].CurrentValue avatarId >> Some)
     let expected = {inputWorld with Avatars = inputWorld.Avatars |> Map.add avatarId {inputWorld.Avatars.[avatarId] with Messages=[ "You set your heading to 180°0'0.000000\"."; "You head for `Uno`." ]; Heading=System.Math.PI}}
     let actual =
         inputWorld
@@ -447,7 +447,7 @@ let ``Dock.It does not modify avatar when given avatar has a job for a different
             Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.VisitedIsland 1u}
     let actual = 
         jobWorld
-        |> World.Dock random commodities genericWorldItems genericWorldIslandLocation avatarId
+        |> World.Dock random (0.0, 0.0) commodities genericWorldItems genericWorldIslandLocation avatarId
     Assert.AreEqual(expectedAvatar, actual.Avatars.[avatarId])
 
 [<Test>]
@@ -467,7 +467,7 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
                 |> Map.add Metric.CompletedJob 1u}
     let actual = 
         jobWorld
-        |> World.Dock random commodities genericWorldItems jobLocation avatarId
+        |> World.Dock random (0.0, 0.0) commodities genericWorldItems jobLocation avatarId
     Assert.AreEqual(expectedAvatar, actual.Avatars.[avatarId])
     Assert.AreEqual(expectedMessages, actual.Avatars.[avatarId].Messages)
 
@@ -755,7 +755,7 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
     let expectedAvatar =
         {inputAvatar with
             Vessel = expectedVessel}
-        |> Avatar.TransformShipmate (Shipmate.TransformStatistic StatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)) 0u
+        |> Avatar.TransformShipmate (Shipmate.TransformStatistic AvatarStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)) 0u
         |> Avatar.AddMetric Metric.CleanedHull 1u
     let expected =
         {inputWorld with

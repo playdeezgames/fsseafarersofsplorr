@@ -188,7 +188,8 @@ module CommandSource=
             Command.Help
             |> Some
         | [ "start" ] ->
-            Command.Start
+            System.Guid.NewGuid().ToString()
+            |> Command.Start
             |> Some
         | [ "dock" ] ->
             Command.Dock

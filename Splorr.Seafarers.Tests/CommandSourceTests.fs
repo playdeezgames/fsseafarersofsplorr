@@ -89,7 +89,11 @@ let ``Parse.It returns Start command when given ["start"]`` () =
     let actual =
         [ "start"]
         |> CommandSource.Parse
-    Assert.AreEqual(Command.Start|>Some, actual)
+    match actual with
+    | Some (Command.Start _) ->
+        Assert.Pass("A start command was generated.")
+    | _ ->
+        Assert.Fail("A start command was not generated.")
 
 [<Test>]
 let ``Parse.It returns Items command when given ["items"]`` () =

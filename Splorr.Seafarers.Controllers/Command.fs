@@ -19,7 +19,7 @@ type Command =
     | Set of SetCommand
     | Move of uint32
     | Help
-    | Start
+    | Start of string
     | Menu
     | Resume
     | Abandon of AbandonCommand

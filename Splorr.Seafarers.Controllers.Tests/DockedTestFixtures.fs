@@ -11,8 +11,9 @@ let internal dockWorldconfiguration: WorldConfiguration =
         MaximumGenerationTries=1u
         RewardRange = (1.0, 10.0)
         RationItems = [1UL]
+        StatisticDescriptors = statisticDescriptors
     }
-let internal dockWorld = World.Create dockWorldconfiguration random
+let internal dockWorld = World.Create dockWorldconfiguration random avatarId
 let internal dockLocation = (0.0, 0.0)
 let internal deadDockWorld =
     {dockWorld with 
@@ -22,7 +23,7 @@ let internal deadDockWorld =
                 avatarId 
                 (dockWorld.Avatars.[avatarId] 
                 |> Avatar.TransformShipmate (Shipmate.TransformStatistic 
-                    StatisticIdentifier.Health 
+                    AvatarStatisticIdentifier.Health 
                     (fun x -> 
                         {x with CurrentValue = x.MinimumValue} 
                         |> Some)) 0u)}
@@ -38,10 +39,11 @@ let internal smallWorldconfiguration: WorldConfiguration =
         MaximumGenerationTries=500u
         RewardRange = (1.0, 10.0)
         RationItems = [1UL]
+        StatisticDescriptors = statisticDescriptors
     }
-let internal smallWorld = World.Create smallWorldconfiguration random
+let internal smallWorld = World.Create smallWorldconfiguration random avatarId
 let internal smallWorldIslandLocation = smallWorld.Islands |> Map.toList |> List.map fst |> List.head
-let internal smallWorldDocked = smallWorld |> World.Dock random commodities smallWorldItems smallWorldIslandLocation avatarId
+let internal smallWorldDocked = smallWorld |> World.Dock random smallWorldconfiguration.RewardRange commodities smallWorldItems smallWorldIslandLocation avatarId
 let internal shopWorld = smallWorldDocked |> World.ClearMessages avatarId
 
 let internal abandonJobWorld =

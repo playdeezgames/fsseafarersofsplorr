@@ -13,13 +13,14 @@ let internal soloIslandWorldConfiguration: WorldConfiguration =
         MaximumGenerationTries=10u
         RewardRange=(1.0,10.0)
         RationItems = [1UL]
+        StatisticDescriptors = statisticDescriptors
     }
-let internal soloIslandWorld = World.Create soloIslandWorldConfiguration random
+let internal soloIslandWorld = World.Create soloIslandWorldConfiguration random avatarId
 let internal emptyWorld = 
     {
-        RewardRange = (1.0,10.0)
+        AvatarId = avatarId
         Avatars = 
-            ["",{
+            [avatarId,{
                 Messages = []
                 Position = (0.0,0.0)
                 Heading = 0.0
@@ -45,9 +46,9 @@ let internal emptyWorld =
                         RationItems=[1UL]
                         Statistics = Map.empty
                     }
-                    |> Shipmate.SetStatistic StatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0) |> Some)
-                    |> Shipmate.SetStatistic StatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0) |> Some)
-                    |> Shipmate.SetStatistic StatisticIdentifier.Turn ({MinimumValue=0.0;CurrentValue=0.0;MaximumValue=15000.0} |> Some)
+                    |> Shipmate.SetStatistic AvatarStatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0) |> Some)
+                    |> Shipmate.SetStatistic AvatarStatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0) |> Some)
+                    |> Shipmate.SetStatistic AvatarStatisticIdentifier.Turn ({MinimumValue=0.0;CurrentValue=0.0;MaximumValue=15000.0} |> Some)
                     |]
             }
             ] 
@@ -88,8 +89,9 @@ let internal genericWorldConfiguration: WorldConfiguration =
         MaximumGenerationTries=500u
         RewardRange=(1.0,10.0)
         RationItems = [1UL]
+        StatisticDescriptors = statisticDescriptors
     }
-let internal genericWorld = World.Create genericWorldConfiguration random
+let internal genericWorld = World.Create genericWorldConfiguration random avatarId
 let internal deadWorld =
     {genericWorld with 
         Avatars = 
@@ -97,11 +99,11 @@ let internal deadWorld =
             |> Map.add 
                 avatarId 
                 (genericWorld.Avatars.[avatarId] 
-                |> Avatar.TransformShipmate (Shipmate.TransformStatistic StatisticIdentifier.Health (fun x -> {x with CurrentValue=x.MinimumValue} |> Some)) 0u )}
+                |> Avatar.TransformShipmate (Shipmate.TransformStatistic AvatarStatisticIdentifier.Health (fun x -> {x with CurrentValue=x.MinimumValue} |> Some)) 0u )}
 
 let internal genericWorldIslandLocation = genericWorld.Islands |> Map.toList |> List.map fst |> List.head
 let internal genericWorldInvalidIslandLocation = ((genericWorldIslandLocation |> fst) + 1.0, genericWorldIslandLocation |> snd)
-let internal genericDockedWorld = World.Dock random commodities genericWorldItems genericWorldIslandLocation avatarId genericWorld |> World.ClearMessages avatarId
+let internal genericDockedWorld = World.Dock random genericWorldConfiguration.RewardRange commodities genericWorldItems genericWorldIslandLocation avatarId genericWorld |> World.ClearMessages avatarId
 
 let internal shopWorld = 
     genericDockedWorld

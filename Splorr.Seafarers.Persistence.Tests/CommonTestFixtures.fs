@@ -58,12 +58,12 @@ let private setupWorldConfiguration (connection:SQLiteConnection) : unit =
     |> runCommands connection
 
 let private setupStatistics (connection:SQLiteConnection) : unit =
-    System.Enum.GetValues(typedefof<StatisticIdentifier>) 
-    :?> StatisticIdentifier []
+    System.Enum.GetValues(typedefof<AvatarStatisticIdentifier>) 
+    :?> AvatarStatisticIdentifier []
     |> Array.toList
     |> List.map
         (fun id ->
-            sprintf "REPLACE INTO [Statistics] ([StatisticId], [StatisticName], [MinimumValue], [MaximumValue], [CurrentValue]) VALUES (%u, 'Statistic %u', 0.0, 100.0, 50.0);" (id |> uint) (id |> uint))
+            sprintf "REPLACE INTO [AvatarStatisticTemplates] ([StatisticId], [StatisticName], [MinimumValue], [MaximumValue], [CurrentValue]) VALUES (%u, 'Statistic %u', 0.0, 100.0, 50.0);" (id |> uint) (id |> uint))
     |> List.append
         [
             Tables.Statistics
@@ -73,7 +73,7 @@ let private setupStatistics (connection:SQLiteConnection) : unit =
 let private setupRationItems (connection:SQLiteConnection) : unit =
     [
         Tables.RationItems
-        "REPLACE INTO [RationItems] ([ItemId]) VALUES (1), (2);"
+        "REPLACE INTO [RationItems] ([ItemId],[DefaultOrder]) VALUES (1,2), (2,1);"
     ]
     |> runCommands connection
 let internal SetupConnection() : SQLiteConnection = 
