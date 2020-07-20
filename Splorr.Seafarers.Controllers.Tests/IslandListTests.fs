@@ -14,5 +14,5 @@ let private sink(_:Message) : unit = ()
 let ``Run.It returns the given gamestate.`` () =
     let actual =
         previousGameState
-        |> IslandList.Run sink 0u avatarId
+        |> IslandList.Run sink 0u
     Assert.AreEqual(previousGameState |> Some, actual)

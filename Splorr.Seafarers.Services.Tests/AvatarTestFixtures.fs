@@ -2,12 +2,13 @@
 
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
+open CommonTestFixtures
 
 let internal random = System.Random()
 let internal rewardRange = (1.0,10.0)
 let internal singleLocation = [(0.0, 0.0)] |> Set.ofList
 let internal avatar =
-    Avatar.Create [1UL] (0.0,0.0)
+    Avatar.Create statisticDescriptors [1UL] (0.0,0.0)
 let internal avatarNoStats =
     {avatar with 
         Shipmates =
@@ -15,10 +16,10 @@ let internal avatarNoStats =
             |> Array.map (fun x -> {x with Statistics = Map.empty})}
 let internal deadAvatar =
     avatar
-    |> Avatar.TransformShipmate (Shipmate.TransformStatistic StatisticIdentifier.Health (fun x-> {x with CurrentValue = x.MinimumValue} |> Some)) 0u
+    |> Avatar.TransformShipmate (Shipmate.TransformStatistic AvatarStatisticIdentifier.Health (fun x-> {x with CurrentValue = x.MinimumValue} |> Some)) 0u
 let internal oldAvatar =
     avatar
-    |> Avatar.TransformShipmate (Shipmate.TransformStatistic StatisticIdentifier.Turn (fun x-> {x with CurrentValue = x.MaximumValue} |> Some)) 0u
+    |> Avatar.TransformShipmate (Shipmate.TransformStatistic AvatarStatisticIdentifier.Turn (fun x-> {x with CurrentValue = x.MaximumValue} |> Some)) 0u
 let internal job =
     Job.Create random rewardRange singleLocation
 let internal employedAvatar =

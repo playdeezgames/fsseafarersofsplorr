@@ -1,9 +1,5 @@
 ﻿namespace Splorr.Seafarers.Models
 
-type Side =
-    | Port
-    | Starboard
-
 type Vessel =
     {
         Tonnage: float

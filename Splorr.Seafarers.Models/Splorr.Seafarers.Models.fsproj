@@ -9,12 +9,17 @@
     <Compile Include="CommodityDescriptor.fs" />
     <Compile Include="Market.fs" />
     <Compile Include="ItemDescriptor.fs" />
+    <Compile Include="AvatarVisit.fs" />
     <Compile Include="Island.fs" />
+    <Compile Include="AvatarStatisticIdentifier.fs" />
+    <Compile Include="AvatarStatisticTemplate.fs" />
     <Compile Include="Statistic.fs" />
+    <Compile Include="Side.fs" />
     <Compile Include="Vessel.fs" />
     <Compile Include="Metric.fs" />
     <Compile Include="Shipmate.fs" />
     <Compile Include="Avatar.fs" />
+    <Compile Include="WorldConfiguration.fs" />
     <Compile Include="World.fs" />
   </ItemGroup>
   <ItemGroup>

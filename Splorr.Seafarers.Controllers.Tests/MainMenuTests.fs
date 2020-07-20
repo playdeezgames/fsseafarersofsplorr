@@ -12,15 +12,16 @@ let private configuration: WorldConfiguration =
         MaximumGenerationTries=10u
         RewardRange = (1.0, 10.0)
         RationItems = [1UL]
+        StatisticDescriptors = []
     }
-let private world = World.Create configuration (System.Random())
+let private world = World.Create configuration (System.Random()) ""
 let private sink(_:Message) : unit = ()
 
 [<Test>]
 let ``Run.It returns Confirm Quit when given Quit command and there is no world.`` () =
     let actual =
         None
-        |> MainMenu.Run configuration (fun()->Command.Quit |> Some) sink 
+        |> MainMenu.Run configuration (fun()->Command.Quit |> Some) sink
     Assert.AreEqual(None |> Gamestate.MainMenu |> Gamestate.ConfirmQuit |> Some, actual)
 
 [<Test>]
@@ -50,7 +51,7 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
 let ``Run.It returns At Sea when given Start command and there is no world.`` () =
     let actual =
         None
-        |> MainMenu.Run configuration (fun()->Command.Start |> Some) sink 
+        |> MainMenu.Run configuration (fun()->System.Guid.NewGuid().ToString() |> Command.Start |> Some) sink 
     match actual with
     | Some (Gamestate.AtSea _) -> true
     | _ -> false
@@ -62,7 +63,7 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
     let actual =
         world
         |> Some
-        |> MainMenu.Run configuration (fun()->Command.Start |> Some) sink 
+        |> MainMenu.Run configuration (fun()->"" |> Command.Start |> Some) sink 
     Assert.AreEqual(world |> Some |> Gamestate.MainMenu |> Some, actual)
 
 [<Test>]

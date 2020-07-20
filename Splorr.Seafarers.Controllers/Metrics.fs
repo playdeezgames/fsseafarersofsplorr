@@ -36,8 +36,8 @@ module Metrics =
                     ]
                     |> List.iter sink)
 
-    let Run (sink:MessageSink) (avatarId:string) (gamestate:Gamestate) : Gamestate option =
-        match gamestate |> Gamestate.GetWorld |> Option.bind (fun w->w.Avatars |> Map.tryFind avatarId) with
+    let Run (sink:MessageSink) (gamestate:Gamestate) : Gamestate option =
+        match gamestate |> Gamestate.GetWorld |> Option.bind (fun w->w.Avatars |> Map.tryFind w.AvatarId) with
         | Some avatar ->
             RunWorld sink avatar
         | None -> 

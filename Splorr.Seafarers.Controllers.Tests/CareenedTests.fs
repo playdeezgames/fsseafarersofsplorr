@@ -20,7 +20,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
         |> Some
     let actual =
         inputWorld
-        |> Careened.Run inputSource sinkStub inputSide avatarId
+        |> Careened.Run inputSource sinkStub inputSide
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -38,7 +38,7 @@ let ``Run.It returns ConfirmQuit when given Quit command.`` () =
         |> Some
     let actual =
         inputWorld
-        |> Careened.Run inputSource sinkStub inputSide avatarId
+        |> Careened.Run inputSource sinkStub inputSide
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -54,7 +54,7 @@ let ``Run.It returns Careened when given invalid command.`` () =
         |> Some
     let actual =
         inputWorld
-        |> Careened.Run inputSource sinkStub inputSide avatarId
+        |> Careened.Run inputSource sinkStub inputSide
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -72,7 +72,7 @@ let ``Run.It returns Careened Help when given the Help command.`` () =
         |> Some
     let actual =
         inputWorld
-        |> Careened.Run inputSource sinkStub inputSide avatarId
+        |> Careened.Run inputSource sinkStub inputSide
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -90,7 +90,7 @@ let ``Run.It returns Careened Metrics when given the Metrics command.`` () =
         |> Some
     let actual =
         inputWorld
-        |> Careened.Run inputSource sinkStub inputSide avatarId
+        |> Careened.Run inputSource sinkStub inputSide
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -108,7 +108,7 @@ let ``Run.It returns Careened Inventory when given the Inventory command.`` () =
         |> Some
     let actual =
         inputWorld
-        |> Careened.Run inputSource sinkStub inputSide avatarId
+        |> Careened.Run inputSource sinkStub inputSide
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -126,7 +126,7 @@ let ``Run.It returns Status when given the command Status.`` () =
         |> Some
     let actual =
         inputWorld
-        |> Careened.Run inputSource sinkStub inputSide avatarId
+        |> Careened.Run inputSource sinkStub inputSide
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -143,7 +143,7 @@ let ``Run.It returns At Sea when given the command Weigh Anchor.`` () =
         |> Some
     let actual =
         inputWorld
-        |> Careened.Run inputSource sinkStub inputSide avatarId
+        |> Careened.Run inputSource sinkStub inputSide
     Assert.AreEqual(expected, actual)
 
 
@@ -167,11 +167,11 @@ let ``Run.It returns Careened with a cleaned hull when given the command Clean H
         inputVessel
         |> Vessel.TransformFouling Starboard (fun x -> {x with CurrentValue = x.MinimumValue})
     let expectedTurn =
-        inputAvatar.Shipmates.[0].Statistics.[StatisticIdentifier.Turn] |> Statistic.ChangeCurrentBy 1.0
+        inputAvatar.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn] |> Statistic.ChangeCurrentBy 1.0
     let expectedAvatar =
         {inputAvatar with 
             Vessel = expectedVessel}
-        |> Avatar.TransformShipmate (Shipmate.SetStatistic StatisticIdentifier.Turn (expectedTurn |> Some)) 0u
+        |> Avatar.TransformShipmate (Shipmate.SetStatistic AvatarStatisticIdentifier.Turn (expectedTurn |> Some)) 0u
         |> Avatar.AddMetric Metric.CleanedHull 1u
     let expected =
         (inputSide, {inputWorld with Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar})
@@ -179,7 +179,7 @@ let ``Run.It returns Careened with a cleaned hull when given the command Clean H
         |> Some
     let actual =
         inputWorld
-        |> Careened.Run inputSource sinkStub inputSide avatarId
+        |> Careened.Run inputSource sinkStub inputSide
     Assert.AreEqual(expected, actual)
 
 //[<Test>]

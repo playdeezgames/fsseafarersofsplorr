@@ -11,7 +11,7 @@ let ``GetList.It returns a list of statistics.`` () =
     try
         match connection |> Statistic.GetList with
         | Ok actual ->
-            let expectedCount = System.Enum.GetValues(typedefof<StatisticIdentifier>).Length
+            let expectedCount = System.Enum.GetValues(typedefof<AvatarStatisticIdentifier>).Length
             Assert.AreEqual(expectedCount, actual.Count)
         | Error message -> Assert.Fail message
     finally

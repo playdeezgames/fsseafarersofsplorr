@@ -65,10 +65,10 @@ module Careened =
             |> Gamestate.Careened
             |> Some
 
-    let Run (source:CommandSource) (sink:MessageSink) (side:Side) (avatarId:string) (world:World) : Gamestate option =
-        if world |> World.IsAvatarAlive avatarId then
-            RunAlive source sink side avatarId world
+    let Run (source:CommandSource) (sink:MessageSink) (side:Side) (world:World) : Gamestate option =
+        if world |> World.IsAvatarAlive world.AvatarId then
+            RunAlive source sink side world.AvatarId world
         else
-            world.Avatars.[avatarId].Messages
+            world.Avatars.[world.AvatarId].Messages
             |> Gamestate.GameOver
             |> Some

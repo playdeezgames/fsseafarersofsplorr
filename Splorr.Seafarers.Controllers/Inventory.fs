@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module Inventory =
-    let private RunWorld (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) (avatarId:string) (world:World) : unit =
+    let private RunWorld (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) (world:World) : unit =
         [
             "" |> Line
             (Heading, "Item" |> sprintf "%-20s" |> Text) |> Hued
@@ -15,7 +15,7 @@ module Inventory =
             (Label, "---------------------+--------+---------" |> Line ) |> Hued
         ]
         |> List.iter sink
-        let avatar = world.Avatars.[avatarId]
+        let avatar = world.Avatars.[world.AvatarId]
         let inventoryEmpty =
             avatar.Inventory
             |> Map.fold
@@ -44,9 +44,9 @@ module Inventory =
         ]
         |> List.iter sink
 
-    let Run (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) (avatarId:string) (gamestate:Gamestate) : Gamestate option =
+    let Run (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) (gamestate:Gamestate) : Gamestate option =
         gamestate 
         |> Gamestate.GetWorld
-        |> Option.iter (RunWorld items sink avatarId)
+        |> Option.iter (RunWorld items sink)
         gamestate
         |> Some

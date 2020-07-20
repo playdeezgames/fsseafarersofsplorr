@@ -7,16 +7,16 @@ open Splorr.Seafarers.Persistence
 open Splorr.Seafarers.Models
 
 module Runner =
-    let rec private Loop (switches:Set<string>) (connection:SQLiteConnection) (random:System.Random) (configuration:WorldConfiguration) (source:CommandSource) (sink:MessageSink) (avatarId:string) (gamestate: Gamestate) : unit =
+    let rec private Loop (switches:Set<string>) (connection:SQLiteConnection) (random:System.Random) (configuration:WorldConfiguration) (source:CommandSource) (sink:MessageSink) (gamestate: Gamestate) : unit =
         let nextGamestate : Gamestate option = 
             match gamestate with
-            | Gamestate.AtSea world -> AtSea.Run random connection source sink avatarId world
-            | Gamestate.Careened (side, world) -> Careened.Run source sink side avatarId world
+            | Gamestate.AtSea world -> AtSea.Run random configuration.RewardRange connection source sink world
+            | Gamestate.Careened (side, world) -> Careened.Run source sink side world
             | Gamestate.ConfirmQuit state -> ConfirmQuit.Run switches source sink state
             | Gamestate.Docked (Dock, location, world) -> 
                 match connection |> Commodity.GetList, connection |> Item.GetList with
                 | Ok commodities, Ok items ->
-                    Docked.Run commodities items source sink location avatarId world
+                    Docked.Run commodities items source sink location world
                 | Result.Error message, _ ->
                     raise (System.InvalidOperationException message)
                 | _, Result.Error message ->
@@ -24,7 +24,7 @@ module Runner =
             | Gamestate.Docked (ItemList, location, world) -> 
                 match connection |> Commodity.GetList, connection |> Item.GetList with
                 | Ok commodities, Ok items ->
-                    ItemList.Run commodities items sink location avatarId world
+                    ItemList.Run commodities items sink location world
                 | Result.Error message, _ ->
                     raise (System.InvalidOperationException message)
                 | _, Result.Error message ->
@@ -35,20 +35,20 @@ module Runner =
             | Gamestate.Inventory gameState -> 
                 match connection |> Item.GetList with
                 | Ok items ->
-                    Inventory.Run items sink avatarId gameState
+                    Inventory.Run items sink gameState
                 | Result.Error message ->
                     raise (System.InvalidOperationException message)
-            | Gamestate.IslandList (page, state) -> IslandList.Run sink page avatarId state
+            | Gamestate.IslandList (page, state) -> IslandList.Run sink page state
             | Gamestate.MainMenu world -> MainMenu.Run configuration source sink world
-            | Gamestate.Metrics state -> Metrics.Run sink avatarId state
-            | Gamestate.Status state -> Status.Run sink avatarId state
+            | Gamestate.Metrics state -> Metrics.Run sink state
+            | Gamestate.Status state -> Status.Run sink state
         match nextGamestate with
         | Some state ->
-            Loop switches connection random configuration source sink avatarId state
+            Loop switches connection random configuration source sink state
         | None ->
             ()
     
-    let Run (switches:Set<string>) (connection:SQLiteConnection) (avatarId:string) : unit =
+    let Run (switches:Set<string>) (connection:SQLiteConnection) : unit =
         match connection |> WorldConfiguration.Get with
         | Ok configuration ->
             System.Console.Title <- "Seafarers of SPLORR!!"
@@ -56,7 +56,7 @@ module Runner =
             System.Console.ForegroundColor <- System.ConsoleColor.Gray
             None
             |> Gamestate.MainMenu
-            |> Loop switches connection (System.Random()) configuration (fun () -> CommandSource.Read System.Console.ReadLine) MessageSink.Write avatarId
+            |> Loop switches connection (System.Random()) configuration (fun () -> CommandSource.Read System.Console.ReadLine) MessageSink.Write
             System.Console.ForegroundColor <- old
         | Result.Error message ->
             raise (System.InvalidOperationException message)

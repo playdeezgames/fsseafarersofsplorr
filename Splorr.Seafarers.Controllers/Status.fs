@@ -3,25 +3,25 @@
 open Splorr.Seafarers.Models
 
 module Status =
-    let private RunWorld (sink:MessageSink) (avatarId:string) (world:World) : unit =
+    let private RunWorld (sink:MessageSink) (world:World) : unit =
         [
             "" |> Line
             (Heading, "Status:" |> Line) |> Hued
             (Label, "Money: " |> Text) |> Hued
-            (Value, world.Avatars.[avatarId].Money |> sprintf "%f" |> Line) |> Hued
+            (Value, world.Avatars.[world.AvatarId].Money |> sprintf "%f" |> Line) |> Hued
             (Label, "Reputation: " |> Text) |> Hued
-            (Value, world.Avatars.[avatarId].Reputation |> sprintf "%f" |> Line) |> Hued
+            (Value, world.Avatars.[world.AvatarId].Reputation |> sprintf "%f" |> Line) |> Hued
             (Label, "Satiety: " |> Text) |> Hued
-            (Value, (world.Avatars.[avatarId].Shipmates.[0].Statistics.[StatisticIdentifier.Satiety].CurrentValue, world.Avatars.[avatarId].Shipmates.[0].Statistics.[StatisticIdentifier.Satiety].MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
+            (Value, (world.Avatars.[world.AvatarId].Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Satiety].CurrentValue, world.Avatars.[world.AvatarId].Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Satiety].MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
             (Label, "Health: " |> Text) |> Hued
-            (Value, (world.Avatars.[avatarId].Shipmates.[0].Statistics.[StatisticIdentifier.Health].CurrentValue, world.Avatars.[avatarId].Shipmates.[0].Statistics.[StatisticIdentifier.Health].MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
+            (Value, (world.Avatars.[world.AvatarId].Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Health].CurrentValue, world.Avatars.[world.AvatarId].Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Health].MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
             (Label, "Port Fouling: " |> Text) |> Hued
-            (Value, (world.Avatars.[avatarId].Vessel.Fouling.[Port].CurrentValue, world.Avatars.[avatarId].Vessel.Fouling.[Port].MaximumValue) ||> sprintf "%.2f/%.2f" |> Line) |> Hued
+            (Value, (world.Avatars.[world.AvatarId].Vessel.Fouling.[Port].CurrentValue, world.Avatars.[world.AvatarId].Vessel.Fouling.[Port].MaximumValue) ||> sprintf "%.2f/%.2f" |> Line) |> Hued
             (Label, "Starboard Fouling: " |> Text) |> Hued
-            (Value, (world.Avatars.[avatarId].Vessel.Fouling.[Starboard].CurrentValue, world.Avatars.[avatarId].Vessel.Fouling.[Starboard].MaximumValue) ||> sprintf "%.2f/%.2f" |> Line) |> Hued
+            (Value, (world.Avatars.[world.AvatarId].Vessel.Fouling.[Starboard].CurrentValue, world.Avatars.[world.AvatarId].Vessel.Fouling.[Starboard].MaximumValue) ||> sprintf "%.2f/%.2f" |> Line) |> Hued
         ]
         |> List.iter sink
-        world.Avatars.[avatarId].Job
+        world.Avatars.[world.AvatarId].Job
         |> Option.iter
             (fun job ->
                 let island = 
@@ -37,10 +37,10 @@ module Status =
                 ]
                 |> List.iter sink)
 
-    let Run (sink:MessageSink) (avatarId:string) (gamestate:Gamestate) : Gamestate option =
+    let Run (sink:MessageSink) (gamestate:Gamestate) : Gamestate option =
         gamestate
         |> Gamestate.GetWorld
-        |> Option.iter (RunWorld sink avatarId)
+        |> Option.iter (RunWorld sink)
         gamestate
         |> Some
 

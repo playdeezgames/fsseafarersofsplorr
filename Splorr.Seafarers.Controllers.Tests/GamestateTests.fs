@@ -12,8 +12,9 @@ let private configuration :WorldConfiguration =
         MinimumIslandDistance=1.0
         RewardRange = (1.0, 10.0)
         RationItems = [1UL]
+        StatisticDescriptors = []
     }
-let private world = World.Create configuration (System.Random())
+let private world = World.Create configuration (System.Random()) ""
 
 [<Test>]
 let ``GetWorld.It returns the world embedded within the given AtSea Gamestate.`` () =

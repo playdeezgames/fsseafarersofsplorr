@@ -15,6 +15,6 @@ let ``Run.It returns the given gamestate.`` () =
     let expected =previousGameState |> Some
     let actual =
         input
-        |> Status.Run sink avatarId
+        |> Status.Run sink
     Assert.AreEqual(expected, actual)
 

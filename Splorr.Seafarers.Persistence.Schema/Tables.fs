@@ -25,9 +25,10 @@ module Tables =
 
     let RationItems : string = "CREATE TABLE IF NOT EXISTS [RationItems] (
         [ItemId] INTEGER,
+		[DefaultOrder] INTEGER NOT NULL,
         PRIMARY KEY([ItemId]));"
 
-    let Statistics : string = "CREATE TABLE IF NOT EXISTS [Statistics] (
+    let Statistics : string = "CREATE TABLE IF NOT EXISTS [AvatarStatisticTemplates] (
 		[StatisticId]	INTEGER,
 		[StatisticName]	TEXT NOT NULL,
 		[MinimumValue]	REAL NOT NULL,
