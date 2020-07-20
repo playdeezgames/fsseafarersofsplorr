@@ -4,33 +4,33 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module Docked = 
-    let private RunWithIsland (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (source:CommandSource) (sink:MessageSink) (location:Location) (island:Island) (avatarId:string) (world: World) : Gamestate option =
+    let private RunWithIsland (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (source:CommandSource) (sink:MessageSink) (location:Location) (island:Island) (world: World) : Gamestate option =
         "" |> Line |> sink
-        world.Avatars.[avatarId].Messages
+        world.Avatars.[world.AvatarId].Messages
         |> Utility.DumpMessages sink
         [
-            (Flavor, sprintf "You have visited %u times." (island.AvatarVisits |> Map.tryFind avatarId |> Option.map (fun x->x.VisitCount) |> Option.defaultValue 0u) |> Line) |> Hued
+            (Flavor, sprintf "You have visited %u times." (island.AvatarVisits |> Map.tryFind world.AvatarId |> Option.map (fun x->x.VisitCount) |> Option.defaultValue 0u) |> Line) |> Hued
             (Heading, sprintf "You are docked at '%s':" island.Name |> Line) |> Hued
         ]
         |> List.iter sink
 
         let world =
             world
-            |> World.ClearMessages avatarId
+            |> World.ClearMessages world.AvatarId
 
         match source() with
         | Some (Command.AcceptJob index) ->
-            (Dock, location, world |> World.AcceptJob index location avatarId)
+            (Dock, location, world |> World.AcceptJob index location world.AvatarId)
             |> Gamestate.Docked
             |> Some
 
         | Some (Command.Buy (quantity, itemName))->
-            (Dock, location, world |> World.BuyItems commodities items location quantity itemName avatarId) 
+            (Dock, location, world |> World.BuyItems commodities items location quantity itemName world.AvatarId) 
             |> Gamestate.Docked
             |> Some            
 
         | Some (Command.Sell (quantity, itemName))->
-            (Dock, location, world |> World.SellItems commodities items location quantity itemName avatarId) 
+            (Dock, location, world |> World.SellItems commodities items location quantity itemName world.AvatarId) 
             |> Gamestate.Docked
             |> Some            
 
@@ -51,13 +51,13 @@ module Docked =
             |> Some
 
         | Some (Command.Abandon Job) ->
-            (Dock, location, world |> World.AbandonJob avatarId)
+            (Dock, location, world |> World.AbandonJob world.AvatarId)
             |> Gamestate.Docked
             |> Some
 
         | Some Command.Undock ->
             world 
-            |> World.AddMessages avatarId [ "You undock." ]
+            |> World.AddMessages world.AvatarId [ "You undock." ]
             |> Gamestate.AtSea 
             |> Some
 
@@ -91,11 +91,11 @@ module Docked =
             |> Gamestate.Docked 
             |> Some
 
-    let internal RunBoilerplate (func:Location -> Island -> string -> World->(Gamestate option)) (location:Location) (world: World) : Gamestate option =
+    let internal RunBoilerplate (func:Location -> Island -> World->(Gamestate option)) (location:Location) (world: World) : Gamestate option =
         if world |> World.IsAvatarAlive world.AvatarId then
             match world.Islands |> Map.tryFind location with
             | Some island ->
-                func location island world.AvatarId world
+                func location island world
             | None ->
                 world
                 |> Gamestate.AtSea

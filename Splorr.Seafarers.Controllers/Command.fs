@@ -27,6 +27,7 @@ type Command =
     | Undock
     | Islands of uint32
     | HeadFor of string
+    | DistanceTo of string
     | Status
     | Jobs
     | AcceptJob of uint32

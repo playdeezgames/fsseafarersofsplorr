@@ -355,4 +355,24 @@ let ``Parse.It returns invalid command when given ["clean"]`` () =
         [ "clean" ]
         |> CommandSource.Parse
     Assert.AreEqual(None, actual)
-    
+
+[<Test>]
+let ``Parse.It returns invalid command when given ["distance"]`` () =
+    let actual =
+        [ "distance"]
+        |> CommandSource.Parse
+    Assert.AreEqual(None, actual)
+
+[<Test>]
+let ``Parse.It returns invalid command when given ["distance";"to"]`` () =
+    let actual =
+        [ "distance";"to"]
+        |> CommandSource.Parse
+    Assert.AreEqual(None, actual)
+
+[<Test>]
+let ``Parse.It returns invalid command when given ["distance";"to";"foo";"foo"]`` () =
+    let actual =
+        [ "distance";"to";"foo";"foo"]
+        |> CommandSource.Parse
+    Assert.AreEqual(None, actual)

@@ -64,6 +64,14 @@ module CommandSource=
             |> Some
         | _ -> None
 
+    let private ParseDistance (tokens:string list) : Command option =
+        match tokens with
+        | "to" :: [ name ] ->
+            name
+            |> Command.DistanceTo
+            |> Some
+        | _ -> None
+
     let private ParseAccept (tokens:string list) : Command option =
         match tokens with
         | "job" :: [ number ] ->
@@ -215,6 +223,9 @@ module CommandSource=
         | "head" :: tail ->
             tail
             |> ParseHead
+        | "distance" :: tail ->
+            tail
+            |> ParseDistance
         | "accept" :: tail ->
             tail
             |> ParseAccept

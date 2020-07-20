@@ -193,6 +193,13 @@ let ``Parse.It returns Head For Foo command when given ["head";"for";"foo"]`` ()
         [ "head";"for";"foo"]
         |> CommandSource.Parse
     Assert.AreEqual("foo" |> Command.HeadFor |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Head For Foo command when given ["distance";"to";"foo"]`` () =
+    let actual =
+        [ "distance";"to";"foo"]
+        |> CommandSource.Parse
+    Assert.AreEqual("foo" |> Command.DistanceTo |> Some, actual)
    
 [<Test>]
 let ``Parse.It returns Accept Job 1 command when given ["accept";"job";"1"]`` () =

@@ -4,7 +4,8 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module ItemList = 
-    let private RunWithIsland (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) (location:Location) (island:Island) (avatarId:string) (world: World) : Gamestate option =
+    let private RunWithIsland (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) (location:Location) (island:Island) (world: World) : Gamestate option =
+        let avatar = world.Avatars.[world.AvatarId]
         [
             "" |> Line
             (Heading, "Item" |> sprintf "%-20s" |> Text) |> Hued
@@ -29,6 +30,11 @@ module ItemList =
             ]
             |> List.iter sink
             ())
+        [
+            (Label, "Money: " |> Text) |> Hued
+            (Value, avatar.Money |> sprintf "%f" |> Line) |> Hued
+        ]
+        |> List.iter sink
         (Dock, location, world)
         |> Gamestate.Docked
         |> Some
