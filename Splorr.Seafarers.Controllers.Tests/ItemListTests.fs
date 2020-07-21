@@ -8,6 +8,7 @@ open CommonTestFixtures
 [<Test>]
 let ``Run.It returns Docked (at Shop) gamestate.`` () =
     let inputLocation = dockLocation
+    let islandItemSource (_) = Set.empty
     let inputWorld = dockWorld
     let expected = 
         (Dock, inputLocation, inputWorld) 
@@ -15,5 +16,5 @@ let ``Run.It returns Docked (at Shop) gamestate.`` () =
         |> Some
     let actual = 
         (inputLocation, inputWorld)
-        ||> ItemList.Run commodities smallWorldItems sinkStub
+        ||> ItemList.Run islandItemSource commodities smallWorldItems sinkStub
     Assert.AreEqual(expected, actual)

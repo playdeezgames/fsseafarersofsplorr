@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Command.fs" />
+    <Compile Include="MessageSink.fs" />
     <Compile Include="Gamestate.fs" />
     <Compile Include="Utility.fs" />
     <Compile Include="AtSea.fs" />

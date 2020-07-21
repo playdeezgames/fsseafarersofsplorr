@@ -76,6 +76,16 @@ let private setupRationItems (connection:SQLiteConnection) : unit =
         "REPLACE INTO [RationItems] ([ItemId],[DefaultOrder]) VALUES (1,2), (2,1);"
     ]
     |> runCommands connection
+
+//Island locations: (0.0, 0.0); (10.0,0.0); (0.0;10.0)
+
+let private setupIslandItems (connection:SQLiteConnection) : unit =
+    [
+        Tables.IslandItems
+        "REPLACE INTO [IslandItems] ([IslandX], [IslandY], [ItemId]) VALUES (0.0, 0.0, 1), (0.0, 0.0, 2), (0.0, 0.0, 3), (10.0, 0.0, 1), (10.0, 0.0, 2), (0.0, 10.0, 1);"
+    ]
+    |> runCommands connection
+
 let internal SetupConnection() : SQLiteConnection = 
     let connection = new SQLiteConnection(connectionString)
     connection.Open()
@@ -89,6 +99,8 @@ let internal SetupConnection() : SQLiteConnection =
     connection |> setupStatistics
 
     connection |> setupRationItems
+
+    connection |> setupIslandItems
 
     connection
     

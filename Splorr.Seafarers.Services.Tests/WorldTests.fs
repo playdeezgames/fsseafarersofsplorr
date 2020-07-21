@@ -137,7 +137,6 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
             AvatarVisits = Map.empty
             Jobs = []
             Markets = Map.empty
-            Items = Set.empty
             CareenDistance = 0.0
         }
     let world =
@@ -247,11 +246,14 @@ let ``TransformIsland.It does nothing when the location given does not have an e
         |> World.TransformIsland (0.0, 0.0) (fun _-> Island.Create() |> Island.SetName "Uno" |> Some)
     Assert.AreEqual(0, actual.Islands.Count)
 
+let private islandItemSourceStub (_) = Set.empty
+let private islandItemSinkStub (_) (_) = ()
+
 [<Test>]
 let ``Dock.It does nothing when given an invalid avatar id.`` () =
     let actual = 
         emptyWorld
-        |> World.Dock random (0.0, 0.0) commodities genericWorldItems (0.0, 0.0) bogusAvatarId
+        |> World.Dock islandItemSourceStub islandItemSinkStub random (0.0, 0.0) commodities genericWorldItems (0.0, 0.0) bogusAvatarId
     Assert.AreEqual(emptyWorld, actual)
 
 [<Test>]
@@ -263,7 +265,7 @@ let ``Dock.It adds a message when the given location has no island.`` () =
             Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar}
     let actual = 
         inputWorld
-        |> World.Dock random (0.0, 0.0) commodities genericWorldItems (0.0, 0.0) avatarId
+        |> World.Dock islandItemSourceStub islandItemSinkStub random (0.0, 0.0) commodities genericWorldItems (0.0, 0.0) avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -282,7 +284,7 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
             Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar}        
     let actual = 
         inputWorld
-        |> World.Dock random (0.0, 0.0) Map.empty Map.empty (0.0, 0.0) avatarId
+        |> World.Dock islandItemSourceStub islandItemSinkStub random (0.0, 0.0) Map.empty Map.empty (0.0, 0.0) avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -440,7 +442,7 @@ let ``Dock.It does not modify avatar when given avatar has a job for a different
             Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.VisitedIsland 1u}
     let actual = 
         jobWorld
-        |> World.Dock random (0.0, 0.0) commodities genericWorldItems genericWorldIslandLocation avatarId
+        |> World.Dock islandItemSourceStub islandItemSinkStub random (0.0, 0.0) commodities genericWorldItems genericWorldIslandLocation avatarId
     Assert.AreEqual(expectedAvatar, actual.Avatars.[avatarId])
 
 [<Test>]
@@ -460,7 +462,7 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
                 |> Map.add Metric.CompletedJob 1u}
     let actual = 
         jobWorld
-        |> World.Dock random (0.0, 0.0) commodities genericWorldItems jobLocation avatarId
+        |> World.Dock islandItemSourceStub islandItemSinkStub random (0.0, 0.0) commodities genericWorldItems jobLocation avatarId
     Assert.AreEqual(expectedAvatar, actual.Avatars.[avatarId])
     Assert.AreEqual(expectedMessages, actual.Avatars.[avatarId].Messages)
 

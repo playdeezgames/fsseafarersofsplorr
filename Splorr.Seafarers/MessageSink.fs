@@ -8,7 +8,7 @@ module MessageSink =
         | Hued (hue, message) ->
             let old = System.Console.ForegroundColor
             match hue with
-            | Heading -> 
+            | Hue.Heading -> 
                 System.Console.ForegroundColor <- System.ConsoleColor.Cyan
             | Subheading ->
                 System.Console.ForegroundColor <- System.ConsoleColor.DarkCyan

@@ -10,7 +10,6 @@ let internal unvisitedIsland =
         AvatarVisits = Map.empty
         Jobs = []
         Markets = Map.empty
-        Items = Set.empty
         CareenDistance = 0.0
     }
 
@@ -20,7 +19,6 @@ let internal visitedIslandNoLastVisit =
         AvatarVisits   = Map.empty
         Jobs           = []
         Markets        = Map.empty
-        Items          = Set.empty
         CareenDistance = 0.0
     }
 
@@ -30,7 +28,6 @@ let internal visitedIsland =
         AvatarVisits   = Map.empty |> Map.add avatarId {VisitCount=1u;LastVisit=Some 0.0}
         Jobs           = []
         Markets        = Map.empty
-        Items          = Set.empty
         CareenDistance = 0.0
     }
 
@@ -58,6 +55,7 @@ let internal items =
             Tonnage = 1.0
         })]
     |> Map.ofList
-let shopIsland = {commodityIsland with Items = commodityIsland.Items |> Set.add 1UL}
+let shopIsland = commodityIsland
+let shopIslandItemSource = fun (_:Location) -> [1UL] |> Set.ofList
 let noShopIsland = commodityIsland
 

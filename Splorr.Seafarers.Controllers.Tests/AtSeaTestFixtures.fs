@@ -56,9 +56,11 @@ let internal headForWorldUnvisited =
     World.Create dockWorldconfiguration (System.Random()) avatarId
     |> World.TransformIsland (0.0,0.0) (Island.SetName "yermom" >> Some)
     |> World.Move 1u avatarId
+let private headForWorldIslandItemSource (_) = [1UL] |> Set.ofList
+let private headForWorldIslandItemSink (_) (_) = ()
 let internal headForWorldVisited = 
     headForWorldUnvisited
-    |> World.Dock random dockWorldconfiguration.RewardRange commodities Map.empty (0.0, 0.0) avatarId
+    |> World.Dock headForWorldIslandItemSource headForWorldIslandItemSink random dockWorldconfiguration.RewardRange commodities Map.empty (0.0, 0.0) avatarId
 
 let internal abandonJobWorld =
     dockWorld
