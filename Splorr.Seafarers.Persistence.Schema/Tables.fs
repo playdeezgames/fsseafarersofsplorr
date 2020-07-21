@@ -23,6 +23,13 @@ module Tables =
 	    [Quantity] REAL NOT NULL,
 	    PRIMARY KEY([CommodityId],[ItemId]));"
 
+    let IslandItems : string = "CREATE TABLE IF NOT EXISTS [IslandItems] (
+		[IslandX]	REAL NOT NULL,
+		[IslandY]	REAL NOT NULL,
+		[ItemId]	INTEGER NOT NULL,
+		PRIMARY KEY([IslandX],[IslandY],[ItemId])
+	);"
+
     let RationItems : string = "CREATE TABLE IF NOT EXISTS [RationItems] (
         [ItemId] INTEGER,
 		[DefaultOrder] INTEGER NOT NULL,

@@ -11,6 +11,9 @@ open Splorr.Seafarers.Persistence.Schema
 
 let mutable private connection:SQLiteConnection = null
 let mutable private functionUnderTest: CommandSource -> MessageSink -> World -> Gamestate option = fun _ _ _ -> None
+let private islandItemSource (_) = Set.empty
+let private islandItemSink (_) (_) = ()
+
 
 [<SetUp>]
 let ``Set up function under test and connection there used.`` () =
@@ -25,7 +28,7 @@ let ``Set up function under test and connection there used.`` () =
     //TODO: this query is in two place, so consolidate!
     use command = new SQLiteCommand(Tables.CommodityItems,connection)
     command.ExecuteNonQuery() |> ignore
-    functionUnderTest <- AtSea.Run random (0.0, 0.0) connection
+    functionUnderTest <- AtSea.Run islandItemSource islandItemSink random (0.0, 0.0) connection
 
 [<TearDown>]
 let ``Tear down connection used for function under test `` () =

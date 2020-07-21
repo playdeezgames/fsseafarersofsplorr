@@ -103,7 +103,9 @@ let internal deadWorld =
 
 let internal genericWorldIslandLocation = genericWorld.Islands |> Map.toList |> List.map fst |> List.head
 let internal genericWorldInvalidIslandLocation = ((genericWorldIslandLocation |> fst) + 1.0, genericWorldIslandLocation |> snd)
-let internal genericDockedWorld = World.Dock random genericWorldConfiguration.RewardRange commodities genericWorldItems genericWorldIslandLocation avatarId genericWorld |> World.ClearMessages avatarId
+let private genericWorldIslandItemSource (_:Location) = Set.empty
+let private genericWorldIslandItemSink (_) (_) = ()
+let internal genericDockedWorld = World.Dock genericWorldIslandItemSource genericWorldIslandItemSink random genericWorldConfiguration.RewardRange commodities genericWorldItems genericWorldIslandLocation avatarId genericWorld |> World.ClearMessages avatarId
 
 let internal shopWorld = 
     genericDockedWorld

@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module ItemList = 
-    let private RunWithIsland (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) (location:Location) (island:Island) (world: World) : Gamestate option =
+    let private RunWithIsland (islandItemSource:Location->Set<uint64>) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) (location:Location) (island:Island) (world: World) : Gamestate option =
         let avatar = world.Avatars.[world.AvatarId]
         [
             "" |> Line
@@ -16,7 +16,8 @@ module ItemList =
             (Sublabel, "---------------------+----------+----------" |> Line) |> Hued
         ]
         |> List.iter sink
-        island.Items
+        location
+        |> islandItemSource
         |> Set.iter (fun item -> 
             let descriptor = items.[item]
             let sellPrice: float = descriptor |> Item.DetermineSalePrice commodities island.Markets
@@ -39,7 +40,7 @@ module ItemList =
         |> Gamestate.Docked
         |> Some
 
-    let Run (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) =
-        Docked.RunBoilerplate (RunWithIsland commodities items sink)
+    let Run (islandItemSource:Location->Set<uint64>) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) =
+        Docked.RunBoilerplate (RunWithIsland islandItemSource commodities items sink)
     
 

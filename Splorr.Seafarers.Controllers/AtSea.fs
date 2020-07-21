@@ -6,7 +6,7 @@ open System.Data.SQLite
 open Splorr.Seafarers.Persistence
 
 module AtSea =
-    let private RunAlive (random:System.Random) (rewardRange:float*float) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (source:CommandSource) (sink:MessageSink) (avatarId:string) (world:World) : Gamestate option =
+    let private RunAlive (islandItemSource) (islandItemSink) (random:System.Random) (rewardRange:float*float) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (source:CommandSource) (sink:MessageSink) (avatarId:string) (world:World) : Gamestate option =
 
         "" |> Line |> sink
         world.Avatars.[avatarId].Messages
@@ -93,7 +93,7 @@ module AtSea =
         | Some Command.Dock ->
             match dockTarget with
             | Some location ->
-                (Dock, location, world |> World.Dock random rewardRange commodities items location avatarId)
+                (Dock, location, world |> World.Dock islandItemSource islandItemSink random rewardRange commodities items location avatarId)
                 |> Gamestate.Docked
                 |> Some
             | None ->
@@ -167,11 +167,11 @@ module AtSea =
             |> Gamestate.AtSea
             |> Some
 
-    let Run (random:System.Random) (rewardRange:float*float) (connection:SQLiteConnection) (source:CommandSource) (sink:MessageSink) (world:World) : Gamestate option =
+    let Run (islandItemSource) (islandItemSink) (random:System.Random) (rewardRange:float*float) (connection:SQLiteConnection) (source:CommandSource) (sink:MessageSink) (world:World) : Gamestate option =
         if world |> World.IsAvatarAlive world.AvatarId then
             match connection |> Commodity.GetList, connection |> Item.GetList with
             | Ok commodities, Ok items ->
-                RunAlive random rewardRange commodities items source sink world.AvatarId world
+                RunAlive islandItemSource islandItemSink random rewardRange commodities items source sink world.AvatarId world
             | Result.Error message, _ ->
                 raise (System.InvalidOperationException message)
             | _, Result.Error message ->

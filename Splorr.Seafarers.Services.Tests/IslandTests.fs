@@ -149,22 +149,24 @@ let ``GenerateCommodities.It generates commodities when the given island has no 
 
 [<Test>]
 let ``GenerateItems.It has no effect when the given island already has items in the shop.`` () =
-    let input = shopIsland
-    let expected = shopIsland
-    let actual = 
-        input
-        |> Island.GenerateItems random items
-    Assert.AreEqual(expected, actual)
+    let input = (0.0,0.0)
+    let islandItemSource (l:Location) = [1UL] |> Set.ofList
+    let islandItemSink (_) (_) =
+        Assert.Fail("This should not be called")
+    input
+    |> Island.GenerateItems islandItemSource islandItemSink random items
 
 
 [<Test>]
-let ``GenerateItems.It generates the shop when the given island has not items in the shop.`` () =
-    let input = noShopIsland
-    let expected = {noShopIsland with Items = noShopIsland.Items |> Set.add 1UL}
-    let actual = 
-        input
-        |> Island.GenerateItems random items
-    Assert.AreEqual(expected, actual)
+let ``GenerateItems.It generates the shop when the given island has no items in the shop.`` () =
+    let mutable counter = 0
+    let input = (0.0,0.0)
+    let islandItemSource (l:Location) = Set.empty
+    let islandItemSink (_) (_) =
+        counter <- counter + 1
+    input
+    |> Island.GenerateItems islandItemSource islandItemSink random items
+    Assert.AreEqual(1,counter)
 
 [<Test>]
 let ``UpdateMarketForItemSale.It updates market commodity demands based on the given number of units sold.`` () =

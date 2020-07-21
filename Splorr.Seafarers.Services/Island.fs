@@ -8,7 +8,6 @@ module Island =
             AvatarVisits   = Map.empty
             Jobs           = []
             Markets        = Map.empty
-            Items          = Set.empty
             CareenDistance = 0.1 //TODO: dont hardcode this
         }
 
@@ -85,17 +84,17 @@ module Island =
         else
             island
 
-    let GenerateItems (random:System.Random) (items:Map<uint64, ItemDescriptor>) (island:Island) : Island =
-        if island.Items.IsEmpty then
+    let GenerateItems (islandItemSource:Location->Set<uint64>) (islandItemSink:Location->Set<uint64>->unit) (random:System.Random) (items:Map<uint64, ItemDescriptor>) (location:Location) : unit =
+        let islandItems = islandItemSource location
+        if islandItems.IsEmpty then
             items
             |> Map.fold 
                 (fun a k v -> 
                     if random.NextDouble() < v.Occurrence then
-                        {a with Items = a.Items |> Set.add k}
+                        a |> Set.add k
                     else
-                        a) island
-        else
-            island
+                        a) islandItems
+            |> islandItemSink location
 
     let private ChangeMarketDemand (commodity:uint64) (value:float) (island:Island) : Island =
         let market = island.Markets.[commodity]

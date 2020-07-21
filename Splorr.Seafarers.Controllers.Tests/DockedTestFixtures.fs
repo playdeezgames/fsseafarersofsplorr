@@ -43,7 +43,9 @@ let internal smallWorldconfiguration: WorldConfiguration =
     }
 let internal smallWorld = World.Create smallWorldconfiguration random avatarId
 let internal smallWorldIslandLocation = smallWorld.Islands |> Map.toList |> List.map fst |> List.head
-let internal smallWorldDocked = smallWorld |> World.Dock random smallWorldconfiguration.RewardRange commodities smallWorldItems smallWorldIslandLocation avatarId
+let private smallWorldIslandItemSource (_) = [1UL] |> Set.ofList
+let private smallWorldIslandItemSink (_) (_) = ()
+let internal smallWorldDocked = smallWorld |> World.Dock smallWorldIslandItemSource smallWorldIslandItemSink random smallWorldconfiguration.RewardRange commodities smallWorldItems smallWorldIslandLocation avatarId
 let internal shopWorld = smallWorldDocked |> World.ClearMessages avatarId
 
 let internal abandonJobWorld =
