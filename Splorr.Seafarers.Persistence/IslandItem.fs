@@ -14,13 +14,15 @@ module IslandItem =
             |> Ok
 
     let GetForIsland (connection:SQLiteConnection) (location:Location) : Result<Set<uint64>,string> =
-        try
-            use command : SQLiteCommand = new SQLiteCommand("SELECT [ItemId] FROM [IslandItems] WHERE [IslandX]= $islandX AND [IslandY]= $islandY;", connection)
+        let commandSideEffect (command: SQLiteCommand) =
             command.Parameters.AddWithValue("$islandX", location |> fst) |> ignore
             command.Parameters.AddWithValue("$islandY", location |> snd) |> ignore
-            ReadEntities (command.ExecuteReader()) Set.empty
-        with
-        | ex -> ex.ToString() |> Error
+        let convertor (reader:SQLiteDataReader) =
+            (reader.GetInt64(0) |> uint64)
+        connection
+        |> Utility.GetList "SELECT [ItemId] FROM [IslandItems] WHERE [IslandX]= $islandX AND [IslandY]= $islandY;" commandSideEffect convertor
+        |> Result.bind
+            (Set.ofList >> Ok)
 
     let ExistForIsland (connection:SQLiteConnection) (location:Location) : Result<bool, string> =
         try

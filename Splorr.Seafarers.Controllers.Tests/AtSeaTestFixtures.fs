@@ -58,9 +58,11 @@ let internal headForWorldUnvisited =
     |> World.Move 1u avatarId
 let private headForWorldIslandItemSource (_) = [1UL] |> Set.ofList
 let private headForWorldIslandItemSink (_) (_) = ()
+let private headForWorldIslandMarketSource (_) = [1UL, {Supply=5.0; Demand=5.0}] |> Map.ofList
+let private headForWorldIslandMarketSink (_) (_) = ()
 let internal headForWorldVisited = 
     headForWorldUnvisited
-    |> World.Dock headForWorldIslandItemSource headForWorldIslandItemSink random dockWorldconfiguration.RewardRange commodities Map.empty (0.0, 0.0) avatarId
+    |> World.Dock headForWorldIslandMarketSource headForWorldIslandMarketSink headForWorldIslandItemSource headForWorldIslandItemSink random dockWorldconfiguration.RewardRange commodities Map.empty (0.0, 0.0) avatarId
 
 let internal abandonJobWorld =
     dockWorld

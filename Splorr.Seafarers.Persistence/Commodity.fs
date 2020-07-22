@@ -17,7 +17,7 @@ module Commodity =
     let GetList (connection:SQLiteConnection) : Result<Map<uint64, CommodityDescriptor>,string> =
         connection
         |> Utility.GetList 
-            "SELECT [CommodityId], [CommodityName], [BasePrice], [SaleFactor], [PurchaseFactor], [Discount] FROM [Commodities];" convertor
+            "SELECT [CommodityId], [CommodityName], [BasePrice], [SaleFactor], [PurchaseFactor], [Discount] FROM [Commodities];" (fun _->()) convertor
         |> Result.map
             (fun items ->
                 items

@@ -16,7 +16,7 @@ module Statistic =
     let GetList (connection:SQLiteConnection) : Result<Map<AvatarStatisticIdentifier, AvatarStatisticTemplate>,string> =
         connection
         |> Utility.GetList 
-            "SELECT [StatisticId], [StatisticName], [MinimumValue], [MaximumValue], [CurrentValue] FROM [AvatarStatisticTemplates];" convertor
+            "SELECT [StatisticId], [StatisticName], [MinimumValue], [MaximumValue], [CurrentValue] FROM [AvatarStatisticTemplates];" (fun _->()) convertor
         |> Result.map
             (fun items ->
                 items

@@ -13,6 +13,8 @@ let mutable private connection:SQLiteConnection = null
 let mutable private functionUnderTest: CommandSource -> MessageSink -> World -> Gamestate option = fun _ _ _ -> None
 let private islandItemSource (_) = Set.empty
 let private islandItemSink (_) (_) = ()
+let private islandMarketSource (_) = Map.empty
+let private islandMarketSink (_) (_) = ()
 
 
 [<SetUp>]
@@ -28,7 +30,7 @@ let ``Set up function under test and connection there used.`` () =
     //TODO: this query is in two place, so consolidate!
     use command = new SQLiteCommand(Tables.CommodityItems,connection)
     command.ExecuteNonQuery() |> ignore
-    functionUnderTest <- AtSea.Run islandItemSource islandItemSink random (0.0, 0.0) connection
+    functionUnderTest <- AtSea.Run islandMarketSource islandMarketSink islandItemSource islandItemSink random (0.0, 0.0) connection
 
 [<TearDown>]
 let ``Tear down connection used for function under test `` () =
