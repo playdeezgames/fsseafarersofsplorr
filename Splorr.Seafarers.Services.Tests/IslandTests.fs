@@ -132,20 +132,25 @@ let ``MakeKnown.It mutates the island's visit count to Some 0 when the given isl
 
 [<Test>]
 let ``GenerateCommodities.It does nothing when commodities already exists for the given island.`` () =
-    let input = commodityIsland
-    let expected = input
-    let actual = 
-        input
-        |> Island.GenerateCommodities random commodities
-    Assert.AreEqual(expected, actual)
+    let input = (0.0, 0.0)
+    let islandMarketSource (_) =
+        Map.empty
+        |> Map.add 1UL { Supply=1.0; Demand=1.0 }
+    let islandMarketSink (_) (_) =
+        Assert.Fail("This should not be called.")
+    input
+    |> Island.GenerateCommodities islandMarketSource islandMarketSink random commodities
 
 [<Test>]
 let ``GenerateCommodities.It generates commodities when the given island has no commodities.`` () =
-    let input = noCommodityIsland
-    let actual = 
-        input
-        |> Island.GenerateCommodities random commodities
-    Assert.AreEqual(commodities.Count, actual.Markets.Count)
+    let input = (0.0, 0.0)
+    let islandMarketSource (_) =
+        Map.empty
+    let islandMarketSink (_) (markets:Map<uint64, Market>) =
+        Assert.AreEqual(commodities.Count, markets.Count)
+    input
+    |> Island.GenerateCommodities islandMarketSource islandMarketSink random commodities
+
 
 [<Test>]
 let ``GenerateItems.It has no effect when the given island already has items in the shop.`` () =
@@ -170,48 +175,40 @@ let ``GenerateItems.It generates the shop when the given island has no items in 
 
 [<Test>]
 let ``UpdateMarketForItemSale.It updates market commodity demands based on the given number of units sold.`` () =
-    let input = shopIsland
+    let input = (0.0, 0.0)
     let inputQuantity = 1u
     let inputDescriptor = items.[1UL]
-
+    let market = {Supply=1.0;Demand=1.0}
+    let islandMarketSource (_) =
+        Map.empty
+        |> Map.add 1UL market
     let expectedMarket = 
-        {input.Markets.[1UL] with
-            Demand = 2.0}
-    let expectedMarkets = 
-        input.Markets
-        |> Map.add 1UL expectedMarket
-    let expected = 
-        {input with
-            Markets = expectedMarkets}
-
-    let actual = 
-        input
-        |> Island.UpdateMarketForItemSale commodities inputDescriptor inputQuantity
-
-    Assert.AreEqual(expected, actual)
+        {Supply=1.0;Demand=market.Demand+1.0}
+    let islandSingleMarketSink (_) (commodityId, market) =
+        Assert.AreEqual(1UL, commodityId)
+        Assert.AreEqual(expectedMarket, market)
+    input
+    |> Island.UpdateMarketForItemSale islandMarketSource islandSingleMarketSink commodities inputDescriptor inputQuantity
 
 
 [<Test>]
 let ``UpdateMarketForItemPurchase.It updates market commodity supply based on the given number of units purchased.`` () =
-    let input = shopIsland
+    let input = (0.0, 0.0)
     let inputQuantity = 1u
     let inputDescriptor = items.[1UL]
+    let market = {Supply=1.0; Demand=1.0}
+    let islandMarketSource (_) =
+        Map.empty
+        |> Map.add 1UL market
 
     let expectedMarket = 
-        {input.Markets.[1UL] with
+        {market with
             Supply = 2.0}
-    let expectedMarkets = 
-        input.Markets
-        |> Map.add 1UL expectedMarket
-    let expected = 
-        {input with
-            Markets = expectedMarkets}
-
-    let actual = 
-        input
-        |> Island.UpdateMarketForItemPurchase commodities inputDescriptor inputQuantity
-
-    Assert.AreEqual(expected, actual)
+    let islandMarketSink (_) (commodityId: uint64,market:Market) =
+        Assert.AreEqual(1UL, commodityId)
+        Assert.AreEqual(expectedMarket, market)
+    input
+    |> Island.UpdateMarketForItemPurchase islandMarketSource islandMarketSink commodities inputDescriptor inputQuantity
 
 //[<Test>]
 //let ``AddVisit..`` () =

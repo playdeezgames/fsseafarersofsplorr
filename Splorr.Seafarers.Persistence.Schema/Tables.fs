@@ -27,8 +27,15 @@ module Tables =
 		[IslandX]	REAL NOT NULL,
 		[IslandY]	REAL NOT NULL,
 		[ItemId]	INTEGER NOT NULL,
-		PRIMARY KEY([IslandX],[IslandY],[ItemId])
-	);"
+		PRIMARY KEY([IslandX],[IslandY],[ItemId]));"
+
+    let IslandMarkets : string = "CREATE TABLE IF NOT EXISTS [IslandMarkets] (
+    	[IslandX]	REAL NOT NULL,
+    	[IslandY]	REAL NOT NULL,
+    	[CommodityId]	INTEGER NOT NULL,
+    	[Supply]	REAL NOT NULL,
+    	[Demand]	REAL NOT NULL,
+    	PRIMARY KEY([IslandX],[IslandY],[CommodityId]));"
 
     let RationItems : string = "CREATE TABLE IF NOT EXISTS [RationItems] (
         [ItemId] INTEGER,
@@ -41,16 +48,14 @@ module Tables =
 		[MinimumValue]	REAL NOT NULL,
 		[MaximumValue]	REAL NOT NULL CHECK(MaximumValue>=MinimumValue),
 		[CurrentValue]	REAL NOT NULL CHECK(CurrentValue>=MinimumValue AND CurrentValue<=MaximumValue),
-		PRIMARY KEY([StatisticId])
-	);"
+		PRIMARY KEY([StatisticId]));"
 
     let WorldConfiguration : string = "CREATE TABLE IF NOT EXISTS [WorldConfiguration] (
-			[WorldConfigurationId]	INTEGER CHECK(WorldConfigurationId=1),
-			[RewardMinimum]	REAL NOT NULL,
-			[RewardMaximum]	REAL NOT NULL,
-			[WorldWidth]	REAL NOT NULL,
-			[WorldHeight]	REAL NOT NULL,
-			[MaximumGenerationTries]	INTEGER NOT NULL,
-			[MinimumIslandDistance]	REAL NOT NULL,
-			PRIMARY KEY([WorldConfigurationId])
-		);"
+		[WorldConfigurationId]	INTEGER CHECK(WorldConfigurationId=1),
+		[RewardMinimum]	REAL NOT NULL,
+		[RewardMaximum]	REAL NOT NULL,
+		[WorldWidth]	REAL NOT NULL,
+		[WorldHeight]	REAL NOT NULL,
+		[MaximumGenerationTries]	INTEGER NOT NULL,
+		[MinimumIslandDistance]	REAL NOT NULL,
+		PRIMARY KEY([WorldConfigurationId]));"

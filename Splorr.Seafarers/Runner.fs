@@ -7,16 +7,16 @@ open Splorr.Seafarers.Persistence
 open Splorr.Seafarers.Models
 
 module Runner =
-    let rec private Loop (switches:Set<string>) (islandListSource) (islandListSink) (connection:SQLiteConnection) (random:System.Random) (configuration:WorldConfiguration) (source:CommandSource) (sink:MessageSink) (gamestate: Gamestate) : unit =
+    let rec private Loop (switches:Set<string>) (islandMarketSource) (islandMarketSink) (islandSingleMarketSink) (islandListSource) (islandListSink) (connection:SQLiteConnection) (random:System.Random) (configuration:WorldConfiguration) (source:CommandSource) (sink:MessageSink) (gamestate: Gamestate) : unit =
         let nextGamestate : Gamestate option = 
             match gamestate with
-            | Gamestate.AtSea world -> AtSea.Run islandListSource islandListSink random configuration.RewardRange connection source sink world
+            | Gamestate.AtSea world -> AtSea.Run islandMarketSource islandMarketSink islandListSource islandListSink random configuration.RewardRange connection source sink world
             | Gamestate.Careened (side, world) -> Careened.Run source sink side world
             | Gamestate.ConfirmQuit state -> ConfirmQuit.Run switches source sink state
             | Gamestate.Docked (Dock, location, world) -> 
                 match connection |> Commodity.GetList, connection |> Item.GetList with
                 | Ok commodities, Ok items ->
-                    Docked.Run commodities items source sink location world
+                    Docked.Run islandMarketSource islandSingleMarketSink commodities items source sink location world
                 | Result.Error message, _ ->
                     raise (System.InvalidOperationException message)
                 | _, Result.Error message ->
@@ -24,7 +24,7 @@ module Runner =
             | Gamestate.Docked (ItemList, location, world) -> 
                 match connection |> Commodity.GetList, connection |> Item.GetList with
                 | Ok commodities, Ok items ->
-                    ItemList.Run islandListSource commodities items sink location world
+                    ItemList.Run islandMarketSource islandListSource commodities items sink location world
                 | Result.Error message, _ ->
                     raise (System.InvalidOperationException message)
                 | _, Result.Error message ->
@@ -44,11 +44,11 @@ module Runner =
             | Gamestate.Status state -> Status.Run sink state
         match nextGamestate with
         | Some state ->
-            Loop switches islandListSource islandListSink connection random configuration source sink state
+            Loop switches islandMarketSource islandMarketSink islandSingleMarketSink islandListSource islandListSink connection random configuration source sink state
         | None ->
             ()
     
-    let Run (switches:Set<string>) (islandListSource) (islandListSink) (connection:SQLiteConnection) : unit =
+    let Run (switches:Set<string>) (islandMarketSource) (islandMarketSink) (islandSingleMarketSink) (islandListSource) (islandListSink) (connection:SQLiteConnection) : unit =
         match connection |> WorldConfiguration.Get with
         | Ok configuration ->
             System.Console.Title <- "Seafarers of SPLORR!!"
@@ -56,7 +56,7 @@ module Runner =
             System.Console.ForegroundColor <- System.ConsoleColor.Gray
             None
             |> Gamestate.MainMenu
-            |> Loop switches islandListSource islandListSink connection (System.Random()) configuration (fun () -> CommandSource.Read System.Console.ReadLine) MessageSink.Write
+            |> Loop switches islandMarketSource islandMarketSink islandSingleMarketSink islandListSource islandListSink connection (System.Random()) configuration (fun () -> CommandSource.Read System.Console.ReadLine) MessageSink.Write
             System.Console.ForegroundColor <- old
         | Result.Error message ->
             raise (System.InvalidOperationException message)

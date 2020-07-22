@@ -86,6 +86,13 @@ let private setupIslandItems (connection:SQLiteConnection) : unit =
     ]
     |> runCommands connection
 
+let private setupIslandMarkets (connection:SQLiteConnection) : unit =
+    [
+        Tables.IslandMarkets
+        "REPLACE INTO [IslandMarkets] ([IslandX], [IslandY], [CommodityId], [Supply], [Demand]) VALUES (0.0, 0.0, 1, 1.0, 1.0), (0.0, 0.0, 2, 2.0, 2.0), (0.0, 0.0, 3, 3.0, 3.0);"
+    ]
+    |> runCommands connection
+
 let internal SetupConnection() : SQLiteConnection = 
     let connection = new SQLiteConnection(connectionString)
     connection.Open()
@@ -101,6 +108,8 @@ let internal SetupConnection() : SQLiteConnection =
     connection |> setupRationItems
 
     connection |> setupIslandItems
+
+    connection |> setupIslandMarkets
 
     connection
     

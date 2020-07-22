@@ -9,7 +9,6 @@ let internal unvisitedIsland =
         Island.Name = "Island"
         AvatarVisits = Map.empty
         Jobs = []
-        Markets = Map.empty
         CareenDistance = 0.0
     }
 
@@ -18,7 +17,6 @@ let internal visitedIslandNoLastVisit =
         Island.Name    = "Island"
         AvatarVisits   = Map.empty
         Jobs           = []
-        Markets        = Map.empty
         CareenDistance = 0.0
     }
 
@@ -27,7 +25,6 @@ let internal visitedIsland =
         Island.Name    = "Island"
         AvatarVisits   = Map.empty |> Map.add avatarId {VisitCount=1u;LastVisit=Some 0.0}
         Jobs           = []
-        Markets        = Map.empty
         CareenDistance = 0.0
     }
 
@@ -40,8 +37,7 @@ let internal jobAvailableIsland =
 
 let internal noCommodityIsland = visitedIsland
 let internal commodityIsland = 
-    {noCommodityIsland with
-        Markets = [(1UL, {Supply=1.0; Demand=1.0})] |> Map.ofList}
+    noCommodityIsland
 let internal commodities = 
     [(1UL, {CommodityId = 1UL; CommodityName="grain"; PurchaseFactor=1.0; SaleFactor=1.0; Discount=0.5; BasePrice=1.0})]
     |> Map.ofList

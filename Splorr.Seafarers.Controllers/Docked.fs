@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module Docked = 
-    let private RunWithIsland (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (source:CommandSource) (sink:MessageSink) (location:Location) (island:Island) (world: World) : Gamestate option =
+    let private RunWithIsland (islandMarketSource) (islandSingleMarketSink) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (source:CommandSource) (sink:MessageSink) (location:Location) (island:Island) (world: World) : Gamestate option =
         "" |> Line |> sink
         world.Avatars.[world.AvatarId].Messages
         |> Utility.DumpMessages sink
@@ -25,12 +25,12 @@ module Docked =
             |> Some
 
         | Some (Command.Buy (quantity, itemName))->
-            (Dock, location, world |> World.BuyItems commodities items location quantity itemName world.AvatarId) 
+            (Dock, location, world |> World.BuyItems islandMarketSource islandSingleMarketSink commodities items location quantity itemName world.AvatarId) 
             |> Gamestate.Docked
             |> Some            
 
         | Some (Command.Sell (quantity, itemName))->
-            (Dock, location, world |> World.SellItems commodities items location quantity itemName world.AvatarId) 
+            (Dock, location, world |> World.SellItems islandMarketSource islandSingleMarketSink commodities items location quantity itemName world.AvatarId) 
             |> Gamestate.Docked
             |> Some            
 
@@ -105,5 +105,5 @@ module Docked =
             |> Gamestate.GameOver
             |> Some
 
-    let Run (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (source:CommandSource) (sink:MessageSink) =
-        RunBoilerplate (RunWithIsland commodities items source sink)
+    let Run (islandMarketSource) (islandSingleMarketSink) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (source:CommandSource) (sink:MessageSink) =
+        RunBoilerplate (RunWithIsland  islandMarketSource islandSingleMarketSink commodities items source sink)

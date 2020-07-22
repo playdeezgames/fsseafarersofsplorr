@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module ItemList = 
-    let private RunWithIsland (islandItemSource:Location->Set<uint64>) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) (location:Location) (island:Island) (world: World) : Gamestate option =
+    let private RunWithIsland (islandMarketSource:Location->Map<uint64,Market>) (islandItemSource:Location->Set<uint64>) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) (location:Location) (island:Island) (world: World) : Gamestate option =
         let avatar = world.Avatars.[world.AvatarId]
         [
             "" |> Line
@@ -20,8 +20,9 @@ module ItemList =
         |> islandItemSource
         |> Set.iter (fun item -> 
             let descriptor = items.[item]
-            let sellPrice: float = descriptor |> Item.DetermineSalePrice commodities island.Markets
-            let buyPrice: float = descriptor |> Item.DeterminePurchasePrice commodities island.Markets
+            let markets = islandMarketSource location
+            let sellPrice: float = descriptor |> Item.DetermineSalePrice commodities markets
+            let buyPrice: float = descriptor |> Item.DeterminePurchasePrice commodities markets
             [
                 (Value, descriptor.ItemName |> sprintf "%-20s" |> Text) |> Hued
                 (Sublabel, " | " |> Text) |> Hued
@@ -40,7 +41,7 @@ module ItemList =
         |> Gamestate.Docked
         |> Some
 
-    let Run (islandItemSource:Location->Set<uint64>) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) =
-        Docked.RunBoilerplate (RunWithIsland islandItemSource commodities items sink)
+    let Run (islandMarketSource:Location->Map<uint64,Market>) (islandItemSource:Location->Set<uint64>) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) =
+        Docked.RunBoilerplate (RunWithIsland islandMarketSource islandItemSource commodities items sink)
     
 

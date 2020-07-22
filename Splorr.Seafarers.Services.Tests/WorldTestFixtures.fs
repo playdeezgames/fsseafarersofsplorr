@@ -105,13 +105,12 @@ let internal genericWorldIslandLocation = genericWorld.Islands |> Map.toList |> 
 let internal genericWorldInvalidIslandLocation = ((genericWorldIslandLocation |> fst) + 1.0, genericWorldIslandLocation |> snd)
 let private genericWorldIslandItemSource (_:Location) = Set.empty
 let private genericWorldIslandItemSink (_) (_) = ()
-let internal genericDockedWorld = World.Dock genericWorldIslandItemSource genericWorldIslandItemSink random genericWorldConfiguration.RewardRange commodities genericWorldItems genericWorldIslandLocation avatarId genericWorld |> World.ClearMessages avatarId
+let private genericWorldIslandMarketSource (_:Location) = Map.empty
+let private genericWorldIslandMarketSink (_) (_) = ()
+let internal genericDockedWorld = World.Dock genericWorldIslandMarketSource genericWorldIslandMarketSink genericWorldIslandItemSource genericWorldIslandItemSink random genericWorldConfiguration.RewardRange commodities genericWorldItems genericWorldIslandLocation avatarId genericWorld |> World.ClearMessages avatarId
 
 let internal shopWorld = 
     genericDockedWorld
-    |> World.TransformIsland genericWorldIslandLocation
-        (fun i -> 
-            {i with Markets = i.Markets |> Map.add 1UL {Supply=5.0;Demand=5.0}} |> Some)
 let internal shopWorldLocation = genericWorldIslandLocation
 let internal shopWorldBogusLocation = genericWorldInvalidIslandLocation
 

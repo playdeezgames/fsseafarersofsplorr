@@ -18,9 +18,19 @@ let main argv =
     let islandItemSink (location:Location) (items:Set<uint64>) =
         IslandItem.CreateForIsland connection location items
         |> ignore
+    let islandMarketSource (location:Location) =
+        match location |> IslandMarket.GetForIsland connection with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+    let islandMarketSink (location:Location) (markets:Map<uint64, Market>)=
+        IslandMarket.CreateForIsland connection location markets
+        |> ignore
+    let islandSingleMarketSink (location:Location) (data:uint64 * Market)=
+        IslandMarket.SetForIsland connection location data
+        |> ignore
     try
         connection.Open()
-        Runner.Run switches islandItemSource islandItemSink connection
+        Runner.Run switches islandMarketSource islandMarketSink islandSingleMarketSink islandItemSource islandItemSink connection
     finally
         connection.Close()
     0
