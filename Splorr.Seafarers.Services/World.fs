@@ -62,6 +62,20 @@ module World =
             else
                 GenerateIslands configuration random 0u {world with Islands = world.Islands |> Map.add candidateLocation (Island.Create())}
 
+    let UpdateCharts (avatarId: string) (world:World) : World =
+        world.Avatars
+        |> Map.tryFind avatarId
+        |> Option.fold 
+            (fun w avatar -> 
+                w.Islands
+                |> Map.filter
+                    (fun location island -> 
+                        (island.AvatarVisits.ContainsKey avatarId |> not) && ((avatar.Position |> Location.DistanceTo location)<=avatar.ViewDistance))
+                |> Map.fold
+                    (fun a location _ ->
+                        a
+                        |> TransformIsland location (Island.MakeSeen avatarId >> Some)) w) world
+
     let Create (configuration:WorldConfiguration) (random:System.Random) (avatarId:string): World =
         {
             AvatarId = avatarId
@@ -70,6 +84,7 @@ module World =
         }
         |> GenerateIslands configuration random 0u
         |> NameIslands random
+        |> UpdateCharts avatarId
 
     let TransformAvatar (avatarId:string) (transform:Avatar -> Avatar option) (world:World) : World =
         world.Avatars
@@ -125,6 +140,7 @@ module World =
                 |> AddMessages avatarId [ "Steady as she goes." ]
             if IsAvatarAlive avatarId steppedWorld |> not then
                 steppedWorld
+                |> UpdateCharts avatarId
                 |> AddMessages avatarId [ "You die of old age!" ]
             else
                 Move (x-1u) avatarId steppedWorld
@@ -163,12 +179,12 @@ module World =
             let oldVisitCount =
                 island.AvatarVisits
                 |> Map.tryFind avatarId
-                |> Option.map (fun x -> x.VisitCount)
+                |> Option.bind (fun x -> x.VisitCount)
                 |> Option.defaultValue 0u
             let newVisitCount =
                 updatedIsland.AvatarVisits
                 |> Map.tryFind avatarId
-                |> Option.map (fun x -> x.VisitCount)
+                |> Option.bind (fun x -> x.VisitCount)
                 |> Option.defaultValue 0u
             world
             |> TransformIsland location 
@@ -187,7 +203,7 @@ module World =
             world.Islands
             |> Map.tryPick 
                 (fun k v -> 
-                    if v.Name = islandName && (v.AvatarVisits.ContainsKey world.AvatarId) then
+                    if v.Name = islandName && (v.AvatarVisits.ContainsKey world.AvatarId) && v.AvatarVisits.[world.AvatarId].VisitCount.IsSome then
                         Some k
                     else
                         None)
@@ -206,7 +222,7 @@ module World =
             world.Islands
             |> Map.tryPick 
                 (fun k v -> 
-                    if v.Name = islandName && (v.AvatarVisits.ContainsKey world.AvatarId) then
+                    if v.Name = islandName && (v.AvatarVisits.ContainsKey world.AvatarId) && v.AvatarVisits.[world.AvatarId].VisitCount.IsSome then
                         Some k
                     else
                         None)

@@ -389,7 +389,7 @@ let ``AcceptJob.It adds the given job to the avatar and eliminates it from the i
         {inputWorld.Islands.[inputLocation] with Jobs = []}
     let expectedDestination =
         {inputDestination with 
-            AvatarVisits = Map.empty |> Map.add avatarId {VisitCount=0u;LastVisit=None}}
+            AvatarVisits = Map.empty |> Map.add avatarId {VisitCount=0u |> Some;LastVisit=None}}
     let actual =
         inputWorld
         |> World.AcceptJob 1u inputLocation avatarId
@@ -814,6 +814,47 @@ let ``DistanceTo.It adds a 'distance to island' message when given a valid islan
     let actual =
         input
         |> World.DistanceTo inputName
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``UpdateChart.It does nothing when the given avatar is not near any nearby islands.`` () =
+    let input =
+        genericWorld
+        |> World.TransformAvatar 
+            avatarId 
+            (fun a -> 
+                {a with Position = genericWorldConfiguration.WorldSize |> Location.ScaleBy 10.0} |> Some)
+    let expected =
+        input
+    let actual =
+        input
+        |> World.UpdateCharts avatarId
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``UpdateChart.It does nothing when the given avatar has already seen all nearby islands.`` () =
+    let input =
+        genericWorld
+    let expected =
+        input
+    let actual =
+        input
+        |> World.UpdateCharts avatarId
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``UpdateChart.It does sets all nearby island to "seen" when given avatar is near previously unseen islands.`` () =
+    let input =
+        genericWorld.Islands
+        |> Map.fold 
+            (fun w k v -> 
+                w
+                |> World.TransformIsland k (fun _ -> {v with AvatarVisits = Map.empty} |> Some)) genericWorld
+    let expected =
+        genericWorld
+    let actual =
+        input
+        |> World.UpdateCharts avatarId
     Assert.AreEqual(expected, actual)
 
 //[<Test>]

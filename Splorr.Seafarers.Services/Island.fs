@@ -15,9 +15,9 @@ module Island =
 
     let GetDisplayName (avatarId:string) (island:Island) : string =
         match island.AvatarVisits |> Map.tryFind avatarId with
-        | Some _ ->
+        | Some x when x.VisitCount.IsSome ->
             island.Name
-        | None ->
+        | _ ->
             "????"
     
     let AddVisit (turn: float) (avatarId:string) (island:Island) : Island =
@@ -26,17 +26,17 @@ module Island =
             {island with 
                 AvatarVisits = 
                     island.AvatarVisits 
-                    |> Map.add avatarId {VisitCount = 1u; LastVisit = Some turn}}
+                    |> Map.add avatarId {VisitCount = 1u |> Some; LastVisit = Some turn}}
         | Some x when x.LastVisit.IsNone ->
             {island with
                 AvatarVisits =
                     island.AvatarVisits
-                    |> Map.add avatarId {VisitCount = x.VisitCount+1u; LastVisit = Some turn}}
+                    |> Map.add avatarId {VisitCount = ((x.VisitCount |> Option.defaultValue 0u)+1u) |> Some; LastVisit = Some turn}}
         | Some x when x.LastVisit.IsSome && x.LastVisit.Value<turn ->
             {island with
                 AvatarVisits =
                     island.AvatarVisits
-                    |> Map.add avatarId {VisitCount = x.VisitCount+1u; LastVisit = Some turn}}
+                    |> Map.add avatarId {VisitCount = ((x.VisitCount |> Option.defaultValue 0u)+1u) |> Some; LastVisit = Some turn}}
         | _ -> island
 
     let GenerateJobs (random:System.Random) (rewardRange:float*float) (destinations:Set<Location>) (island:Island) : Island =
@@ -59,7 +59,21 @@ module Island =
             {island with 
                 AvatarVisits =
                     island.AvatarVisits
-                    |> Map.add avatarId {VisitCount=0u; LastVisit=None}}
+                    |> Map.add avatarId {VisitCount=0u |> Some; LastVisit=None}}
+        | Some x when x.VisitCount = None -> //TODO: i dislike this copypasta
+            {island with 
+                AvatarVisits =
+                    island.AvatarVisits
+                    |> Map.add avatarId {VisitCount=0u |> Some; LastVisit=None}}
+        | _ -> island
+
+    let MakeSeen (avatarId: string) (island:Island) : Island =
+        match island.AvatarVisits |> Map.tryFind avatarId with
+        | None ->
+            {island with 
+                AvatarVisits =
+                    island.AvatarVisits
+                    |> Map.add avatarId {VisitCount=None; LastVisit=None}}
         | _ -> island
 
     let private SupplyDemandGenerator (random:System.Random) : float =

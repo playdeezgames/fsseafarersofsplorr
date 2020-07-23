@@ -2,6 +2,6 @@
 
 type AvatarVisit =
     {
-        VisitCount : uint32
+        VisitCount : uint32 option
         LastVisit  : float option
     }
