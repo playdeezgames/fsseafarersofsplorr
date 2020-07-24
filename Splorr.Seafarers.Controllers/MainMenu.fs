@@ -54,6 +54,10 @@ module MainMenu =
             |> Some
 
         | _ ->
+            [
+                (Hue.Error, "Invalid command." |> Line) |> Hued
+            ]
+            |> List.iter sink
             world
             |> Gamestate.MainMenu
             |> Some
