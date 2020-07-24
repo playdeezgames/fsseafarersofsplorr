@@ -12,6 +12,7 @@ module Runner =
             match gamestate with
             | Gamestate.AtSea world -> AtSea.Run islandMarketSource islandMarketSink islandListSource islandListSink random configuration.RewardRange connection source sink world
             | Gamestate.Careened (side, world) -> Careened.Run source sink side world
+            | Gamestate.Chart (chartName, world) -> Chart.Run configuration.WorldSize sink chartName world
             | Gamestate.ConfirmQuit state -> ConfirmQuit.Run switches source sink state
             | Gamestate.Docked (Dock, location, world) -> 
                 match connection |> Commodity.GetList, connection |> Item.GetList with

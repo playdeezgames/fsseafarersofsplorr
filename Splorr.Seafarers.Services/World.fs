@@ -46,13 +46,18 @@ module World =
         |> SetIsland location) world
 
     let private NameIslands (random:System.Random) (world:World) : World =
-        GenerateIslandNames random (world.Islands.Count) (Set.empty) //TODO: make antwerp an island name
+        GenerateIslandNames random (world.Islands.Count) (if world.Islands.IsEmpty then Set.empty else Set.empty |> Set.add "antwerp")
         |> List.sortBy (fun _ -> random.Next())
         |> List.zip (world.Islands |> Map.toList |> List.map fst)
         |> List.fold
             (fun w (l,n) -> w |> TransformIsland l (Island.SetName n >> Some)) world
 
-    let rec private GenerateIslands (configuration:WorldConfiguration) (random:System.Random) (currentTry:uint32) (world: World) : World =
+    let rec private GenerateIslands 
+            (configuration:WorldConfiguration) 
+            (random:System.Random) 
+            (currentTry:uint32) 
+            (world: World) 
+            : World =
         if currentTry>=configuration.MaximumGenerationTries then
             world
         else
@@ -138,13 +143,14 @@ module World =
                 world
                 |> TransformAvatar avatarId (Avatar.Move >> Some)
                 |> AddMessages avatarId [ "Steady as she goes." ]
+                |> UpdateCharts avatarId
             if IsAvatarAlive avatarId steppedWorld |> not then
                 steppedWorld
-                |> UpdateCharts avatarId
                 |> AddMessages avatarId [ "You die of old age!" ]
             else
                 Move (x-1u) avatarId steppedWorld
-        | _ -> world
+        | _ -> 
+            world
 
     let GetNearbyLocations (from:Location) (maximumDistance:float) (world:World) : Location list =
         world.Islands

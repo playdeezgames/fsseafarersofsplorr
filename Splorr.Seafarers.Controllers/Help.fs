@@ -25,6 +25,11 @@ module Help =
             (Label, "careen to (port|starboard)" |> Text) |> Hued
             (Usage, " - careens the ship so that you can clean the hull (must be very close to an island to do this!)" |> Line) |> Hued
         ] |> Group
+    let private chartMessage =
+        [
+            (Label, "chart [chart name]" |> Text) |> Hued
+            (Usage, " - exports a png map and text file containing a legend to the map" |> Line) |> Hued
+        ] |> Group
     let private cleanHullMessage =
         [
             (Label, "clean [the] hull" |> Text) |> Hued
@@ -128,6 +133,7 @@ module Help =
             (Heading, "At Sea Commands:" |> Line) |> Hued
             abandonJobMessage
             careenMessage
+            chartMessage
             dockMessage
             headForMessage
             inventoryMessage

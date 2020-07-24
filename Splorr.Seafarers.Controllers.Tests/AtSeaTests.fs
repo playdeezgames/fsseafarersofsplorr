@@ -362,6 +362,24 @@ let ``Run.It gives a message and changes heading when given a Head For command a
     Assert.AreEqual(expected, actual)
 
 [<Test>]
+let ``Run.It returns Chart when given the command Chart.`` () =
+    let input = world
+    let inputChartName = "chartname"
+    let inputSource = 
+        inputChartName
+        |> Command.Chart 
+        |> Some 
+        |> toSource
+    let expected = 
+        (inputChartName, input)
+        |> Gamestate.Chart 
+        |> Some
+    let actual =
+        input
+        |> functionUnderTest inputSource sinkStub
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
 let ``Run.It returns Status when given the command Status.`` () =
     let input = world
     let inputSource = 

@@ -119,6 +119,11 @@ module AtSea =
             |> Gamestate.Metrics
             |> Some
 
+        | Some (Command.Chart x) ->
+            (x, world)
+            |> Gamestate.Chart
+            |> Some
+
         | Some Command.Menu ->
             world
             |> Some
