@@ -7,7 +7,7 @@ module Chart =
     let private plotLocation (scale:int) (location:Location) : int * int =
         ((location |> fst |> int) * scale - scale/2, (location |> snd |> int) * scale-scale/2)
 
-    let private outputChart (worldSize:Location) (chartName: string) (world:World) : unit =
+    let private outputChart (worldSize:Location) (sink:MessageSink) (chartName: string) (world:World) : unit =
         try
             let avatar = world.Avatars.[world.AvatarId]
             let scale = 10
@@ -51,9 +51,12 @@ module Chart =
                 |> List.toArray
             System.IO.File.WriteAllLines(chartName |> sprintf "%s.txt", legendText)
         with
-        | _ -> ()
+        | _ ->
+            [
+                (Hue.Error, "An error occurred when attempting to export the chart." |> Line) |> Hued
+            ]            
+            |> List.iter sink
             //try, catch, eat... ci build fails because of the gdi stuff not working on wherever it is being built
-            //TODO: if this should happen on a user's machine, we should puke something out to a file or other indicator
 
     let Run (worldSize:Location) (sink:MessageSink) (chartName:string) (world:World) : Gamestate option =
         let chartName = if chartName |> System.String.IsNullOrWhiteSpace then System.Guid.NewGuid().ToString() else chartName
@@ -62,7 +65,7 @@ module Chart =
             (chartName, chartName) ||> sprintf "Writing chart to '%s.png' and '%s.txt'" |> Line
         ]
         |> List.iter sink
-        outputChart worldSize chartName world
+        outputChart worldSize sink chartName world
         world
         |> Gamestate.AtSea
         |> Some
