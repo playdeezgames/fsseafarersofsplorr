@@ -51,6 +51,14 @@ let ``GetWorld.It returns the world embedded within the given Status Gamestate w
     Assert.AreEqual(world |> Some, actual)
 
 [<Test>]
+let ``GetWorld.It returns the world embedded within the given Chart Gamestate when a world is present.`` () =
+    let actual = 
+        ("chartname", world)
+        |> Gamestate.Chart
+        |> Gamestate.GetWorld
+    Assert.AreEqual(world |> Some, actual)
+
+[<Test>]
 let ``GetWorld.It returns the world embedded within the given Help Gamestate when a world is present.`` () =
     let actual = 
         world

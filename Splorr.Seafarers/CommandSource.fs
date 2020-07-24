@@ -161,6 +161,9 @@ module CommandSource=
 
     let Parse(tokens:string list) : Command option =
         match tokens with
+        | "chart" :: tail ->
+            System.String.Join(" ", tail) |> Command.Chart |> Some
+
         | "careen" :: tail ->
             tail
             |> ParseCareen 

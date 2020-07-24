@@ -39,6 +39,7 @@ type Command =
     | Careen of Side
     | WeighAnchor
     | CleanHull
+    | Chart of string
 
 type CommandSource = unit -> (Command option)
 

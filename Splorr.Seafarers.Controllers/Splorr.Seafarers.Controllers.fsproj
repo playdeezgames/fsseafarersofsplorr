@@ -11,6 +11,7 @@
     <Compile Include="Utility.fs" />
     <Compile Include="AtSea.fs" />
     <Compile Include="Careened.fs" />
+    <Compile Include="Chart.fs" />
     <Compile Include="ConfirmQuit.fs" />
     <Compile Include="Docked.fs" />
     <Compile Include="GameOver.fs" />
@@ -22,6 +23,10 @@
     <Compile Include="MainMenu.fs" />
     <Compile Include="Metrics.fs" />
     <Compile Include="Status.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,6 +7,27 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 [<Test>]
+let ``Parse.It returns Map with empty string command when given ["chart"]`` () =
+    let actual =
+        [ "chart" ]
+        |> CommandSource.Parse
+    Assert.AreEqual("" |> Command.Chart |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Map foo command when given ["chart";"foo"]`` () =
+    let actual =
+        [ "chart"; "foo" ]
+        |> CommandSource.Parse
+    Assert.AreEqual("foo" |> Command.Chart |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Map foo command when given ["map";"foo";"foo"]`` () =
+    let actual =
+        [ "chart"; "foo"; "foo" ]
+        |> CommandSource.Parse
+    Assert.AreEqual("foo foo" |> Command.Chart |> Some, actual)
+
+[<Test>]
 let ``Parse.It returns Quit command when given ["quit"]`` () =
     let actual =
         [ "quit" ]

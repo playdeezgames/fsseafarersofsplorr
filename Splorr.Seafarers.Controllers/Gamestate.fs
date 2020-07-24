@@ -11,6 +11,7 @@ type DockedState =
 type Gamestate = 
     | AtSea of World
     | Careened of Side * World
+    | Chart of string * World
     | ConfirmQuit of Gamestate
     | Docked of DockedState * Location *  World
     | GameOver of string list
@@ -26,6 +27,7 @@ module Gamestate =
         match gamestate with
         | Gamestate.AtSea w -> w |> Some
         | Gamestate.Careened (_, w) -> w |> Some
+        | Gamestate.Chart (_,w) -> w |> Some
         | Gamestate.ConfirmQuit g -> GetWorld g
         | Gamestate.Docked (_,_,w) -> w |> Some
         | Gamestate.Help g -> GetWorld g
