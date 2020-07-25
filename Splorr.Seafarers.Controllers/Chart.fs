@@ -5,15 +5,16 @@ open System.Drawing
 
 module Chart = 
     let private plotLocation (scale:int) (location:Location) : int * int =
-        ((location |> fst |> int) * scale - scale/2, (location |> snd |> int) * scale-scale/2)
+        ((location |> snd |> int) * scale - scale/2, (-(location |> fst |> int)) * scale - scale/2)
 
     let private outputChart (worldSize:Location) (sink:MessageSink) (chartName: string) (world:World) : unit =
         try
             let avatar = world.Avatars.[world.AvatarId]
             let scale = 10
             let x, y = plotLocation scale worldSize
-            use bmp = new Bitmap(x, y)
+            use bmp = new Bitmap(x, -y)
             let g = Graphics.FromImage(bmp)
+            g.TranslateTransform(0.0f, (-y) |> float32)
             g.Clear(Color.DarkBlue)
             use seenIslandBrush = new SolidBrush(Color.Green)
             use knownIslandBrush = new SolidBrush(Color.LightGreen)
@@ -40,7 +41,8 @@ module Chart =
                             |> Map.add index island.Name
                         else
                             leg) Map.empty
-            g.FillEllipse(avatarBrush, (avatar.Position |> fst |> int) * scale, (avatar.Position |> snd |> int) * scale, scale, scale)
+            let avatarPosition = avatar.Position |> plotLocation scale
+            g.FillEllipse(avatarBrush, avatarPosition |> fst , avatarPosition |> snd, scale, scale)
             bmp.Save(chartName |> sprintf "%s.png", Imaging.ImageFormat.Png)
             let legendText =
                 legend
@@ -51,9 +53,9 @@ module Chart =
                 |> List.toArray
             System.IO.File.WriteAllLines(chartName |> sprintf "%s.txt", legendText)
         with
-        | _ ->
+        | ex ->
             [
-                (Hue.Error, "An error occurred when attempting to export the chart." |> Line) |> Hued
+                (Hue.Error, ex.ToString() |> sprintf "An error occurred when attempting to export the chart: '%s'" |> Line) |> Hued
             ]            
             |> List.iter sink
             //try, catch, eat... ci build fails because of the gdi stuff not working on wherever it is being built
