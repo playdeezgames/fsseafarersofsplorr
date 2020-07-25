@@ -27,7 +27,7 @@ module AtSea =
             (Hue.Value, avatar.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].CurrentValue |> sprintf "%.0f" |> Text) |> Hued
             (Hue.Value, avatar.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].MaximumValue |> sprintf "/%.0f" |> Line) |> Hued
             (Hue.Label, "Heading: " |> Text) |> Hued
-            (Hue.Value, avatar.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "%s" |> Line) |> Hued
+            (Hue.Value, avatar.Heading |> Dms.ToDegrees |> Dms.ToString |> sprintf "%s" |> Line) |> Hued
             (Hue.Label, "Speed: " |> Text) |> Hued
             (speedHue, (avatar.Speed * 100.0) |> sprintf "%.0f%%" |> Text) |> Hued
             avatar |> Avatar.GetEffectiveSpeed |> sprintf "(Effective rate: %.2f)" |> Line
@@ -46,7 +46,7 @@ module AtSea =
             |> World.GetNearbyLocations avatar.Position avatar.ViewDistance
             |> List.map
                 (fun location -> 
-                    (location, Location.HeadingTo avatar.Position location |> Dms.ToDms |> Dms.ToString, Location.DistanceTo avatar.Position location, (world.Islands.[location] |> Island.GetDisplayName avatarId)))
+                    (location, Location.HeadingTo avatar.Position location |> Dms.ToDegrees |> Dms.ToString, Location.DistanceTo avatar.Position location, (world.Islands.[location] |> Island.GetDisplayName avatarId)))
             |> List.sortBy (fun (_,_,d,_)->d)
             |> List.fold
                 (fun target (location, heading, distance, name) -> 

@@ -36,7 +36,7 @@ module IslandList =
                     Location.DistanceTo world.Avatars.[world.AvatarId].Position location
                 let bearing =
                     Location.HeadingTo world.Avatars.[world.AvatarId].Position location
-                    |> Dms.ToDms
+                    |> Dms.ToDegrees
                     |> Dms.ToString
                 [
                     (Hue.Value, island.Name |> sprintf "%s" |> Text) |> Hued

@@ -114,14 +114,14 @@ module World =
                 {w with Avatars = w.Avatars |> Map.add avatarId a}
                 |> AddMessages avatarId [a.Speed |> sprintf "You set your speed to %f."]) world
 
-    let SetHeading (heading:Dms) (avatarId:string) (world:World) : World =
+    let SetHeading (heading:float) (avatarId:string) (world:World) : World =
         world.Avatars
         |> Map.tryFind avatarId
         |> Option.bind (Avatar.SetHeading heading >> Some)
         |> Option.fold 
             (fun w a ->
                 {w with Avatars = w.Avatars |> Map.add avatarId a}
-                |> AddMessages avatarId [a.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "You set your heading to %s." ]) world
+                |> AddMessages avatarId [a.Heading |> Dms.ToDegrees |> Dms.ToString |> sprintf "You set your heading to %s." ]) world
 
     //a bool is not sufficient!
     //an avatar may be dead because of health
@@ -235,7 +235,7 @@ module World =
         match location, world.Avatars |> Map.tryFind world.AvatarId with
         | Some l, Some avatar ->
             world
-            |> SetHeading (Location.HeadingTo avatar.Position l |> Dms.ToDms) world.AvatarId
+            |> SetHeading (Location.HeadingTo avatar.Position l |> Dms.ToDegrees) world.AvatarId
             |> AddMessages world.AvatarId [ islandName |> sprintf "You head for `%s`." ]
         | _, Some _ ->
             world

@@ -40,8 +40,8 @@ module Avatar =
             | x -> x
         {avatar with Speed = clampedSpeed}
 
-    let SetHeading (heading:Dms) (avatar:Avatar) : Avatar =
-        {avatar with Heading = heading |> Dms.ToFloat}
+    let SetHeading (heading:float) (avatar:Avatar) : Avatar =
+        {avatar with Heading = heading |> Dms.ToRadians}
 
     let RemoveInventory (item:uint64) (quantity:uint32) (avatar:Avatar) : Avatar =
         if quantity>0u then

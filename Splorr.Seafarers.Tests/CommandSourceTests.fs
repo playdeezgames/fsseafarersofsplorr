@@ -82,21 +82,14 @@ let ``Parse.It returns Set Heading command when given ["set";"heading";"1"]`` ()
     let actual =
         [ "set"; "heading"; "1"]
         |> CommandSource.Parse
-    Assert.AreEqual({Degrees=1;Minutes=0;Seconds=0.0} |> SetCommand.Heading |> Command.Set |> Some, actual)
+    Assert.AreEqual(1.0 |> SetCommand.Heading |> Command.Set |> Some, actual)
 
 [<Test>]
-let ``Parse.It returns Set Heading command when given ["set";"heading";"1","2"]`` () =
+let ``Parse.It returns Set Heading command when given ["set";"heading";"1.5"]`` () =
     let actual =
-        [ "set"; "heading"; "1"; "2"]
+        [ "set"; "heading"; "1.5"]
         |> CommandSource.Parse
-    Assert.AreEqual({Degrees=1;Minutes=2;Seconds=0.0} |> SetCommand.Heading |> Command.Set |> Some, actual)
-
-[<Test>]
-let ``Parse.It returns Set Heading command when given ["set";"heading";"1","2","3"]`` () =
-    let actual =
-        [ "set"; "heading"; "1"; "2"; "3"]
-        |> CommandSource.Parse
-    Assert.AreEqual({Degrees=1;Minutes=2;Seconds=3.0} |> SetCommand.Heading |> Command.Set |> Some, actual)
+    Assert.AreEqual(1.5 |> SetCommand.Heading |> Command.Set |> Some, actual)
 
 [<Test>]
 let ``Parse.It returns Set Speed 1 command when given ["set";"speed";"1"]`` () =

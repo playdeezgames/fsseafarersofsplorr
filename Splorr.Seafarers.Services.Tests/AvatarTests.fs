@@ -52,16 +52,11 @@ let ``SetSpeed.It sets all stop when given zero.`` () =
 
 [<Test>]
 let ``SetHeading.It sets a given heading.`` () =
-    let heading = 
-        {
-            Degrees = 1
-            Minutes = 2
-            Seconds = 3.0
-        }
+    let heading = 2.5
     let actual =
         avatar
         |> Avatar.SetHeading heading
-    Assert.AreEqual(heading |> Dms.ToFloat, actual.Heading)
+    Assert.AreEqual(heading |> Dms.ToRadians, actual.Heading)
 
 [<Test>]
 let ``Move.It moves the avatar.`` () =
