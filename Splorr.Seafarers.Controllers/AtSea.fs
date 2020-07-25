@@ -2,11 +2,10 @@
 
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
-open System.Data.SQLite
 open Splorr.Seafarers.Persistence
 
 module AtSea =
-    let private RunAlive (islandMarketSource) (islandMarketSink) (islandItemSource) (islandItemSink) (random:System.Random) (rewardRange:float*float) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (source:CommandSource) (sink:MessageSink) (avatarId:string) (world:World) : Gamestate option =
+    let private RunAlive (commoditySource:unit -> Map<uint64, CommodityDescriptor>) (itemSource:unit -> Map<uint64, ItemDescriptor>) (islandMarketSource) (islandMarketSink) (islandItemSource) (islandItemSink) (random:System.Random) (rewardRange:float*float) (source:CommandSource) (sink:MessageSink) (avatarId:string) (world:World) : Gamestate option =
 
         "" |> Line |> sink
         world.Avatars.[avatarId].Messages
@@ -93,7 +92,7 @@ module AtSea =
         | Some Command.Dock ->
             match dockTarget with
             | Some location ->
-                (Dock, location, world |> World.Dock islandMarketSource islandMarketSink islandItemSource islandItemSink random rewardRange commodities items location avatarId)
+                (Dock, location, world |> World.Dock islandMarketSource islandMarketSink islandItemSource islandItemSink random rewardRange (commoditySource()) (itemSource()) location avatarId)
                 |> Gamestate.Docked
                 |> Some
             | None ->
@@ -172,15 +171,21 @@ module AtSea =
             |> Gamestate.AtSea
             |> Some
 
-    let Run (islandMarketSource) (islandMarketSink) (islandItemSource) (islandItemSink) (random:System.Random) (rewardRange:float*float) (connection:SQLiteConnection) (source:CommandSource) (sink:MessageSink) (world:World) : Gamestate option =
+    let Run 
+            (commoditySource:unit -> Map<uint64, CommodityDescriptor>) 
+            (itemSource:unit -> Map<uint64, ItemDescriptor>) 
+            (islandMarketSource) 
+            (islandMarketSink) 
+            (islandItemSource) 
+            (islandItemSink) 
+            (random:System.Random) 
+            (rewardRange:float*float) 
+            (source:CommandSource) 
+            (sink:MessageSink) 
+            (world:World) 
+            : Gamestate option =
         if world |> World.IsAvatarAlive world.AvatarId then
-            match connection |> Commodity.GetList, connection |> Item.GetList with
-            | Ok commodities, Ok items ->
-                RunAlive islandMarketSource islandMarketSink islandItemSource islandItemSink random rewardRange commodities items source sink world.AvatarId world
-            | Result.Error message, _ ->
-                raise (System.InvalidOperationException message)
-            | _, Result.Error message ->
-                raise (System.InvalidOperationException message)
+            RunAlive commoditySource itemSource islandMarketSource islandMarketSink islandItemSource islandItemSink random rewardRange source sink world.AvatarId world
         else
             world.Avatars.[world.AvatarId].Messages
             |> Gamestate.GameOver

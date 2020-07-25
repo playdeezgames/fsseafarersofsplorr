@@ -41,7 +41,9 @@ module ItemList =
         |> Gamestate.Docked
         |> Some
 
-    let Run (islandMarketSource:Location->Map<uint64,Market>) (islandItemSource:Location->Set<uint64>) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) =
+    let Run (islandMarketSource:Location->Map<uint64,Market>) (islandItemSource:Location->Set<uint64>) (commoditySource: unit -> Map<uint64, CommodityDescriptor>) (itemSource: unit -> Map<uint64, ItemDescriptor>) (sink:MessageSink) =
+        let commodities = commoditySource()
+        let items = itemSource()
         Docked.RunBoilerplate (RunWithIsland islandMarketSource islandItemSource commodities items sink)
     
 

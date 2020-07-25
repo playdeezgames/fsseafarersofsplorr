@@ -44,7 +44,8 @@ module Inventory =
         ]
         |> List.iter sink
 
-    let Run (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) (gamestate:Gamestate) : Gamestate option =
+    let Run (itemSource:unit -> Map<uint64, ItemDescriptor>) (sink:MessageSink) (gamestate:Gamestate) : Gamestate option =
+        let items = itemSource()
         gamestate 
         |> Gamestate.GetWorld
         |> Option.iter (RunWorld items sink)

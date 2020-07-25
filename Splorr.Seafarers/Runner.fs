@@ -1,63 +1,178 @@
 ﻿namespace Splorr.Seafarers
 
 open Splorr.Seafarers.Controllers
-open Splorr.Seafarers.Services
-open System.Data.SQLite
-open Splorr.Seafarers.Persistence
 open Splorr.Seafarers.Models
+open System
 
 module Runner =
-    let rec private Loop (switches:Set<string>) (islandMarketSource) (islandMarketSink) (islandSingleMarketSink) (islandListSource) (islandListSink) (connection:SQLiteConnection) (random:System.Random) (configuration:WorldConfiguration) (source:CommandSource) (sink:MessageSink) (gamestate: Gamestate) : unit =
+    let rec private Loop 
+            (switches               : Set<string>) 
+            (commoditySource        : unit     -> Map<uint64, CommodityDescriptor>)
+            (itemSource             : unit     -> Map<uint64, ItemDescriptor>)
+            (islandMarketSource     : Location -> Map<uint64, Market>) 
+            (islandMarketSink       : Location -> Map<uint64, Market> -> unit) 
+            (islandSingleMarketSink : Location -> uint64 * Market -> unit) 
+            (islandListSource       : Location -> Set<uint64>) 
+            (islandListSink         : Location -> Set<uint64> -> unit) 
+            (random                 : Random) 
+            (configurationSource    : unit -> WorldConfiguration) 
+            (commandSource          : CommandSource) 
+            (messageSink            : MessageSink) 
+            (gamestate              : Gamestate) 
+            : unit =
+
         let nextGamestate : Gamestate option = 
             match gamestate with
-            | Gamestate.AtSea world -> AtSea.Run islandMarketSource islandMarketSink islandListSource islandListSink random configuration.RewardRange connection source sink world
-            | Gamestate.Careened (side, world) -> Careened.Run source sink side world
-            | Gamestate.Chart (chartName, world) -> Chart.Run configuration.WorldSize sink chartName world
-            | Gamestate.ConfirmQuit state -> ConfirmQuit.Run switches source sink state
+            | Gamestate.AtSea world -> 
+                AtSea.Run 
+                    commoditySource 
+                    itemSource 
+                    islandMarketSource
+                    islandMarketSink 
+                    islandListSource 
+                    islandListSink 
+                    random 
+                    (configurationSource()).RewardRange 
+                    commandSource 
+                    messageSink 
+                    world
+
+            | Gamestate.Careened (side, world) -> 
+                Careened.Run 
+                    commandSource 
+                    messageSink 
+                    side 
+                    world
+
+            | Gamestate.Chart (chartName, world) -> 
+                Chart.Run 
+                    (configurationSource()).WorldSize 
+                    messageSink 
+                    chartName 
+                    world
+
+            | Gamestate.ConfirmQuit state -> 
+                ConfirmQuit.Run 
+                    switches 
+                    commandSource 
+                    messageSink 
+                    state
+
             | Gamestate.Docked (Dock, location, world) -> 
-                match connection |> Commodity.GetList, connection |> Item.GetList with
-                | Ok commodities, Ok items ->
-                    Docked.Run islandMarketSource islandSingleMarketSink commodities items source sink location world
-                | Result.Error message, _ ->
-                    raise (System.InvalidOperationException message)
-                | _, Result.Error message ->
-                    raise (System.InvalidOperationException message)
+                Docked.Run 
+                    islandMarketSource 
+                    islandSingleMarketSink 
+                    commoditySource 
+                    itemSource 
+                    commandSource 
+                    messageSink 
+                    location 
+                    world
+
             | Gamestate.Docked (ItemList, location, world) -> 
-                match connection |> Commodity.GetList, connection |> Item.GetList with
-                | Ok commodities, Ok items ->
-                    ItemList.Run islandMarketSource islandListSource commodities items sink location world
-                | Result.Error message, _ ->
-                    raise (System.InvalidOperationException message)
-                | _, Result.Error message ->
-                    raise (System.InvalidOperationException message)
-            | Gamestate.Docked (Jobs, location, world) -> Jobs.Run sink (location, world)
-            | Gamestate.GameOver messages -> messages |> GameOver.Run sink
-            | Gamestate.Help state -> Help.Run sink state
+                ItemList.Run 
+                    islandMarketSource 
+                    islandListSource 
+                    commoditySource 
+                    itemSource 
+                    messageSink 
+                    location 
+                    world
+
+            | Gamestate.Docked (Jobs, location, world) -> 
+                Jobs.Run 
+                    messageSink 
+                    (location, world)
+
+            | Gamestate.GameOver messages -> 
+                GameOver.Run 
+                    messageSink 
+                    messages
+
+            | Gamestate.Help state -> 
+                Help.Run 
+                    messageSink 
+                    state
+
             | Gamestate.Inventory gameState -> 
-                match connection |> Item.GetList with
-                | Ok items ->
-                    Inventory.Run items sink gameState
-                | Result.Error message ->
-                    raise (System.InvalidOperationException message)
-            | Gamestate.IslandList (page, state) -> IslandList.Run sink page state
-            | Gamestate.MainMenu world -> MainMenu.Run configuration source sink world
-            | Gamestate.Metrics state -> Metrics.Run sink state
-            | Gamestate.Status state -> Status.Run sink state
+                Inventory.Run 
+                    itemSource 
+                    messageSink 
+                    gameState
+
+            | Gamestate.IslandList (page, state) -> 
+                IslandList.Run 
+                    messageSink 
+                    page 
+                    state
+
+            | Gamestate.MainMenu world -> 
+                MainMenu.Run 
+                    (configurationSource()) 
+                    commandSource 
+                    messageSink 
+                    world
+
+            | Gamestate.Metrics state -> 
+                Metrics.Run 
+                    messageSink 
+                    state
+
+            | Gamestate.Status state -> 
+                Status.Run 
+                    messageSink 
+                    state
+
         match nextGamestate with
         | Some state ->
-            Loop switches islandMarketSource islandMarketSink islandSingleMarketSink islandListSource islandListSink connection random configuration source sink state
+            Loop 
+                switches 
+                commoditySource 
+                itemSource 
+                islandMarketSource 
+                islandMarketSink 
+                islandSingleMarketSink 
+                islandListSource 
+                islandListSink 
+                random 
+                configurationSource 
+                commandSource 
+                messageSink 
+                state
+
         | None ->
             ()
     
-    let Run (switches:Set<string>) (islandMarketSource) (islandMarketSink) (islandSingleMarketSink) (islandListSource) (islandListSink) (connection:SQLiteConnection) : unit =
-        match connection |> WorldConfiguration.Get with
-        | Ok configuration ->
-            System.Console.Title <- "Seafarers of SPLORR!!"
-            let old = System.Console.ForegroundColor
-            System.Console.ForegroundColor <- System.ConsoleColor.Gray
-            None
-            |> Gamestate.MainMenu
-            |> Loop switches islandMarketSource islandMarketSink islandSingleMarketSink islandListSource islandListSink connection (System.Random()) configuration (fun () -> CommandSource.Read System.Console.ReadLine) MessageSink.Write
-            System.Console.ForegroundColor <- old
-        | Result.Error message ->
-            raise (System.InvalidOperationException message)
+    let Run 
+            (switches               : Set<string>) 
+            (configurationSource    : unit     -> WorldConfiguration) 
+            (commoditySource        : unit     -> Map<uint64, CommodityDescriptor>) 
+            (itemSource             : unit     -> Map<uint64, ItemDescriptor>) 
+            (islandMarketSource     : Location -> Map<uint64, Market>) 
+            (islandMarketSink       : Location -> Map<uint64, Market> -> unit) 
+            (islandSingleMarketSink : Location -> uint64 * Market     -> unit) 
+            (islandListSource       : Location -> Set<uint64>) 
+            (islandListSink         : Location -> Set<uint64>->unit) 
+            : unit =
+
+        Console.Title <- "Seafarers of SPLORR!!"
+        let old = Console.ForegroundColor
+        Console.ForegroundColor <- ConsoleColor.Gray
+
+        None
+        |> Gamestate.MainMenu
+        |> Loop 
+            switches 
+            commoditySource 
+            itemSource 
+            islandMarketSource 
+            islandMarketSink 
+            islandSingleMarketSink 
+            islandListSource 
+            islandListSink 
+            (Random()) 
+            configurationSource
+            (fun () -> CommandSource.Read Console.ReadLine) 
+            MessageSink.Write
+
+        Console.ForegroundColor <- old
