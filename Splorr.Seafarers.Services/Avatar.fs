@@ -13,14 +13,14 @@ module Avatar =
                         else
                             item)}
 
-    let Create (statisticDescriptors:AvatarStatisticTemplate list) (rationItems:uint64 list) (position:Location): Avatar =
+    let Create (viewDistance:float, dockDistance:float) (statisticDescriptors:AvatarStatisticTemplate list) (rationItems:uint64 list) (position:Location): Avatar =
         {
             Messages = []
             Position = position
             Speed = 1.0
             Heading = 0.0
-            ViewDistance = 10.0
-            DockDistance = 1.0
+            ViewDistance = viewDistance
+            DockDistance = dockDistance
             Money = 0.0
             Reputation = 0.0
             Job = None

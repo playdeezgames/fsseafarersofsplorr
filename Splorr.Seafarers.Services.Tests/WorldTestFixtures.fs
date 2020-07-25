@@ -8,6 +8,7 @@ let internal bogusAvatarId = "bogus"
 let internal random = System.Random()
 let internal soloIslandWorldConfiguration: WorldConfiguration =
     {
+        AvatarDistances = (10.0,1.0)
         WorldSize=(10.0, 10.0)
         MinimumIslandDistance=30.0 
         MaximumGenerationTries=10u
@@ -84,6 +85,7 @@ let internal genericWorldItems =
 
 let internal genericWorldConfiguration: WorldConfiguration =
     {
+        AvatarDistances = (10.0,1.0)
         WorldSize=(11.0, 11.0)
         MinimumIslandDistance=5.0 
         MaximumGenerationTries=500u

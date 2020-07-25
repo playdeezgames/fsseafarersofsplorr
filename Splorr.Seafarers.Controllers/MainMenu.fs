@@ -7,23 +7,23 @@ module MainMenu =
     let Run (configuration:WorldConfiguration) (source:CommandSource) (sink:MessageSink) (world:World option) : Gamestate option =
         [
             "" |> Line
-            (Heading, "Main Menu Commands:" |> Line) |> Hued
+            (Hue.Heading, "Main Menu Commands:" |> Line) |> Hued
         ]
         |> List.iter sink
 
         if world.IsSome then
             [
-                (Label, "resume" |> Text) |> Hued
-                (Usage, " - resume game" |> Line) |> Hued
-                (Label, "abandon game" |> Text) |> Hued
-                (Usage, " - abandon game" |> Line) |> Hued
+                (Hue.Label, "resume" |> Text) |> Hued
+                (Hue.Usage, " - resume game" |> Line) |> Hued
+                (Hue.Label, "abandon game" |> Text) |> Hued
+                (Hue.Usage, " - abandon game" |> Line) |> Hued
             ]
         else
             [
-                (Label, "start" |> Text) |> Hued
-                (Usage, " - starts a new world" |> Line) |> Hued
-                (Label, "quit" |> Text) |> Hued
-                (Usage, " - quits the game" |> Line) |> Hued
+                (Hue.Label, "start" |> Text) |> Hued
+                (Hue.Usage, " - starts a new world" |> Line) |> Hued
+                (Hue.Label, "quit" |> Text) |> Hued
+                (Hue.Usage, " - quits the game" |> Line) |> Hued
             ]
         |> List.iter sink
 

@@ -8,12 +8,12 @@ module ItemList =
         let avatar = world.Avatars.[world.AvatarId]
         [
             "" |> Line
-            (Heading, "Item" |> sprintf "%-20s" |> Text) |> Hued
-            (Sublabel, " | " |> Text) |> Hued
-            (Heading, "Selling" |> sprintf "%8s" |> Text) |> Hued
-            (Sublabel, " | " |> Text) |> Hued
-            (Heading, "Offering" |> sprintf "%8s" |> Line) |> Hued
-            (Sublabel, "---------------------+----------+----------" |> Line) |> Hued
+            (Hue.Heading, "Item" |> sprintf "%-20s" |> Text) |> Hued
+            (Hue.Sublabel, " | " |> Text) |> Hued
+            (Hue.Heading, "Selling" |> sprintf "%8s" |> Text) |> Hued
+            (Hue.Sublabel, " | " |> Text) |> Hued
+            (Hue.Heading, "Offering" |> sprintf "%8s" |> Line) |> Hued
+            (Hue.Sublabel, "---------------------+----------+----------" |> Line) |> Hued
         ]
         |> List.iter sink
         location
@@ -24,17 +24,17 @@ module ItemList =
             let sellPrice: float = descriptor |> Item.DetermineSalePrice commodities markets
             let buyPrice: float = descriptor |> Item.DeterminePurchasePrice commodities markets
             [
-                (Value, descriptor.ItemName |> sprintf "%-20s" |> Text) |> Hued
-                (Sublabel, " | " |> Text) |> Hued
-                (Value, sellPrice |> sprintf "%8.3f" |> Text) |> Hued
-                (Sublabel, " | " |> Text) |> Hued
-                (Value, buyPrice |> sprintf "%8.3f" |> Line) |> Hued
+                (Hue.Value, descriptor.ItemName |> sprintf "%-20s" |> Text) |> Hued
+                (Hue.Sublabel, " | " |> Text) |> Hued
+                (Hue.Value, sellPrice |> sprintf "%8.3f" |> Text) |> Hued
+                (Hue.Sublabel, " | " |> Text) |> Hued
+                (Hue.Value, buyPrice |> sprintf "%8.3f" |> Line) |> Hued
             ]
             |> List.iter sink
             ())
         [
-            (Label, "Money: " |> Text) |> Hued
-            (Value, avatar.Money |> sprintf "%f" |> Line) |> Hued
+            (Hue.Label, "Money: " |> Text) |> Hued
+            (Hue.Value, avatar.Money |> sprintf "%f" |> Line) |> Hued
         ]
         |> List.iter sink
         (Dock, location, world)

@@ -84,7 +84,7 @@ module World =
     let Create (configuration:WorldConfiguration) (random:System.Random) (avatarId:string): World =
         {
             AvatarId = avatarId
-            Avatars = [avatarId,Avatar.Create configuration.StatisticDescriptors configuration.RationItems (configuration.WorldSize |> Location.ScaleBy 0.5)] |> Map.ofList
+            Avatars = [avatarId,Avatar.Create configuration.AvatarDistances configuration.StatisticDescriptors configuration.RationItems (configuration.WorldSize |> Location.ScaleBy 0.5)] |> Map.ofList
             Islands = Map.empty
         }
         |> GenerateIslands configuration random 0u

@@ -16,7 +16,7 @@ let ``DumpMessages.It sends all messages to the sink.`` () =
         ]
     let expected = 
         input
-        |> List.map (fun x -> (Flavor, x |> Line) |> Hued)
+        |> List.map (fun x -> (Hue.Flavor, x |> Line) |> Hued)
     input
     |> Utility.DumpMessages sinkFake
     Assert.AreEqual(expected, actual)

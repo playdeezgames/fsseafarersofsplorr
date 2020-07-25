@@ -52,8 +52,8 @@ let private setupWorldConfiguration (connection:SQLiteConnection) : unit =
     [
         Tables.WorldConfiguration
         "REPLACE INTO [WorldConfiguration] 
-        ([WorldConfigurationId],[RewardMinimum],[RewardMaximum],[WorldWidth],[WorldHeight],[MaximumGenerationTries],[MinimumIslandDistance]) 
-        VALUES (1,1,10,100,100,500,10);"
+        ([WorldConfigurationId],[RewardMinimum],[RewardMaximum],[WorldWidth],[WorldHeight],[MaximumGenerationTries],[MinimumIslandDistance],[AvatarViewDistance],[AvatarDockDistance]) 
+        VALUES (1,1,10,100,100,500,10,10,1);"
     ]
     |> runCommands connection
 

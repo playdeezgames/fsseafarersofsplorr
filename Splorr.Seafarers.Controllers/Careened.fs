@@ -21,8 +21,8 @@ module Careened =
         let foulage =
             100.0 * currentValue / maximumValue
         [
-            (Heading, sideName |> sprintf "You are careened on the %s side." |> Line) |> Hued
-            (Flavor, foulage |> sprintf "The hull is %.0f%% fouled." |> Line) |> Hued
+            (Hue.Heading, sideName |> sprintf "You are careened on the %s side." |> Line) |> Hued
+            (Hue.Flavor, foulage |> sprintf "The hull is %.0f%% fouled." |> Line) |> Hued
         ]
         |> List.iter sink
         match source() with
@@ -60,7 +60,7 @@ module Careened =
             |> Gamestate.AtSea
             |> Some
         | _ ->
-            (Error, "Maybe try 'help'?" |> Line) |> Hued |> sink
+            (Hue.Error, "Maybe try 'help'?" |> Line) |> Hued |> sink
             (side, world)
             |> Gamestate.Careened
             |> Some

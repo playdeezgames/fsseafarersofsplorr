@@ -6,6 +6,7 @@ open CommonTestFixtures
 
 let internal configuration: WorldConfiguration =
     {
+        AvatarDistances = (10.0,1.0)
         WorldSize=(10.0, 10.0)
         MinimumIslandDistance=30.0
         MaximumGenerationTries=10u
@@ -32,6 +33,7 @@ let internal deadWorld =
 
 let internal emptyWorldconfiguration: WorldConfiguration =
     {
+        AvatarDistances = (10.0,1.0)
         WorldSize=(1.0, 1.0)
         MinimumIslandDistance=30.0
         MaximumGenerationTries=0u
@@ -43,6 +45,7 @@ let internal emptyWorld = World.Create emptyWorldconfiguration (System.Random())
 
 let internal dockWorldconfiguration: WorldConfiguration =
     {
+        AvatarDistances = (10.0,1.0)
         WorldSize=(0.0, 0.0)
         MinimumIslandDistance=30.0
         MaximumGenerationTries=1u

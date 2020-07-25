@@ -1,42 +1,40 @@
 ﻿namespace Splorr.Seafarers
 
 open Splorr.Seafarers.Controllers
+open System
 
 module MessageSink =
+    let private colorMap : Map<Hue, ConsoleColor> =
+        [
+            Hue.Heading,    ConsoleColor.Cyan
+            Hue.Subheading, ConsoleColor.DarkCyan
+            Hue.Label,      ConsoleColor.Magenta
+            Hue.Sublabel,   ConsoleColor.DarkMagenta
+            Hue.Value,      ConsoleColor.Green
+            Hue.Warning,    ConsoleColor.DarkYellow
+            Hue.Flavor ,    ConsoleColor.DarkBlue
+            Hue.Usage,      ConsoleColor.DarkGray
+            Hue.Error,      ConsoleColor.DarkRed
+        ]
+        |> Map.ofList
+
     let rec Write (message:Message) : unit = 
         match message with
         | Hued (hue, message) ->
-            let old = System.Console.ForegroundColor
-            match hue with
-            | Hue.Heading -> 
-                System.Console.ForegroundColor <- System.ConsoleColor.Cyan
-            | Subheading ->
-                System.Console.ForegroundColor <- System.ConsoleColor.DarkCyan
-            | Label ->
-                System.Console.ForegroundColor <- System.ConsoleColor.Magenta
-            | Sublabel ->
-                System.Console.ForegroundColor <- System.ConsoleColor.DarkMagenta
-            | Value ->
-                System.Console.ForegroundColor <- System.ConsoleColor.Green
-            | Warning ->
-                System.Console.ForegroundColor <- System.ConsoleColor.DarkYellow
-            | Flavor ->
-                System.Console.ForegroundColor <- System.ConsoleColor.DarkBlue
-            | Usage ->
-                System.Console.ForegroundColor <- System.ConsoleColor.DarkGray
-            | Error ->
-                System.Console.ForegroundColor <- System.ConsoleColor.DarkRed
-            message |> Write
-            System.Console.ForegroundColor <- old
+            let old = Console.ForegroundColor
+            Console.ForegroundColor<-colorMap.[hue]
+            message 
+            |> Write
+            Console.ForegroundColor <- old
 
         | Group messages ->
             messages
             |> List.iter Write
 
         | Line line ->
-            System.Console.WriteLine line
+            Console.WriteLine line
 
         | Text text ->
-            System.Console.Write text
+            Console.Write text
             
 

@@ -7,14 +7,14 @@ module ConfirmQuit =
         if switches.Contains onStreamSwitch then
             [
                 "" |> Line
-                (Error, "(nice try!)" |> Line) |> Hued
+                (Hue.Error, "(nice try!)" |> Line) |> Hued
             ]
             |> List.iter sink
             state
             |> Some
         else
             "" |> Line |> sink
-            (Heading, "Are you sure you want to quit?" |> Line) |> Hued |> sink
+            (Hue.Heading, "Are you sure you want to quit?" |> Line) |> Hued |> sink
 
             match source() with
             | Some Command.Help -> 

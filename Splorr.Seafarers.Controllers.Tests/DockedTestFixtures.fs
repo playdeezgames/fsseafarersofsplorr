@@ -6,6 +6,7 @@ open CommonTestFixtures
 
 let internal dockWorldconfiguration: WorldConfiguration =
     {
+        AvatarDistances = (10.0,1.0)
         WorldSize=(0.0, 0.0)
         MinimumIslandDistance=30.0
         MaximumGenerationTries=1u
@@ -34,6 +35,7 @@ let internal smallWorldItems:Map<uint64, ItemDescriptor> =
     [(1UL, {ItemId = 1UL;ItemName="item under test"; Commodities=[(1UL,1.0)]|>Map.ofList; Occurrence =1.0; Tonnage=1.0})] |> Map.ofList
 let internal smallWorldconfiguration: WorldConfiguration =
     {
+        AvatarDistances = (10.0,1.0)
         WorldSize=(11.0, 11.0)
         MinimumIslandDistance=5.0
         MaximumGenerationTries=500u

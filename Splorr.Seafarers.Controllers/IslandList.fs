@@ -9,7 +9,7 @@ module IslandList =
     let private RunWorld (sink:MessageSink) (page:uint32) (pageSize:uint32) (world:World) : unit = 
         [
             "" |> Line
-            (Heading, "Known Islands:" |> Line) |> Hued
+            (Hue.Heading, "Known Islands:" |> Line) |> Hued
         ]
         |> List.iter sink
         let knownIslands =
@@ -21,10 +21,10 @@ module IslandList =
         let totalPages = (totalItems + (pageSize-1u)) / pageSize
         let skippedItems = page * pageSize
         [
-            (Subheading, "Page " |> Text) |> Hued
-            (Value, (page+1u) |> sprintf "%u" |> Text) |> Hued
-            (Subheading, " of " |> Text) |> Hued
-            (Value, totalPages |> sprintf "%u" |> Line) |> Hued
+            (Hue.Subheading, "Page " |> Text) |> Hued
+            (Hue.Value, (page+1u) |> sprintf "%u" |> Text) |> Hued
+            (Hue.Subheading, " of " |> Text) |> Hued
+            (Hue.Value, totalPages |> sprintf "%u" |> Line) |> Hued
         ]
         |> List.iter sink
         if page < totalPages then
@@ -39,15 +39,15 @@ module IslandList =
                     |> Dms.ToDms
                     |> Dms.ToString
                 [
-                    (Value, island.Name |> sprintf "%s" |> Text) |> Hued
-                    (Sublabel, " Bearing:" |> Text) |> Hued
-                    (Value, bearing |> sprintf "%s" |> Text) |> Hued
-                    (Sublabel, " Distance:" |> Text) |> Hued
-                    (Value, distance |> sprintf "%f" |> Line) |> Hued
+                    (Hue.Value, island.Name |> sprintf "%s" |> Text) |> Hued
+                    (Hue.Sublabel, " Bearing:" |> Text) |> Hued
+                    (Hue.Value, bearing |> sprintf "%s" |> Text) |> Hued
+                    (Hue.Sublabel, " Distance:" |> Text) |> Hued
+                    (Hue.Value, distance |> sprintf "%f" |> Line) |> Hued
                 ]
                 |> List.iter sink)
         else
-            (Usage ,"(end of list)" |> Line) |> Hued |> sink
+            (Hue.Usage ,"(end of list)" |> Line) |> Hued |> sink
     
     let private pageSize = 20u
 

@@ -13,6 +13,7 @@ let private configuration :WorldConfiguration =
         RewardRange = (1.0, 10.0)
         RationItems = [1UL]
         StatisticDescriptors = []
+        AvatarDistances = (10.0, 1.0)
     }
 let private world = World.Create configuration (System.Random()) ""
 
