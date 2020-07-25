@@ -15,5 +15,5 @@ let ``Run.It returns the given gamestate.`` () =
     let expected = previousGameState |> Some
     let actual =
         input
-        |> Inventory.Run Map.empty sink
+        |> Inventory.Run (fun () -> Map.empty) sink
     Assert.AreEqual(expected, actual)

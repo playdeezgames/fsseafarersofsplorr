@@ -9,7 +9,7 @@ open Splorr.Seafarers.Services
 
 let private itemMarketSourceStub (_) = Map.empty
 let private itemSingleMarketSinkStub (_) (_) = ()
-let private functionUnderTest itemMarketSource itemSingleMarketSink =  Docked.Run itemMarketSource itemSingleMarketSink commodities smallWorldItems
+let private functionUnderTest itemMarketSource itemSingleMarketSink =  Docked.Run itemMarketSource itemSingleMarketSink (fun () -> commodities) (fun () -> smallWorldItems)
 let private functionUnderTestStubbed = functionUnderTest itemMarketSourceStub itemSingleMarketSinkStub
 [<Test>]
 let ``Run.It returns GameOver when the given world's avatar is dead.`` () =

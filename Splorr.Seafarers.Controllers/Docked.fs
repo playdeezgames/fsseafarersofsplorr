@@ -105,5 +105,5 @@ module Docked =
             |> Gamestate.GameOver
             |> Some
 
-    let Run (islandMarketSource) (islandSingleMarketSink) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (source:CommandSource) (sink:MessageSink) =
-        RunBoilerplate (RunWithIsland  islandMarketSource islandSingleMarketSink commodities items source sink)
+    let Run (islandMarketSource) (islandSingleMarketSink) (commoditySource:unit -> Map<uint64, CommodityDescriptor>) (itemSource:unit->Map<uint64, ItemDescriptor>) (source:CommandSource) (sink:MessageSink) =
+        RunBoilerplate (RunWithIsland  islandMarketSource islandSingleMarketSink (commoditySource()) (itemSource()) source sink)

@@ -1,20 +1,20 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
 type Hue =
-    | Heading    = 1
-    | Subheading = 2
-    | Label      = 3
-    | Sublabel   = 4 
-    | Value      = 5
-    | Flavor     = 6
+    | Error      = 1
+    | Flavor     = 2
+    | Heading    = 3
+    | Label      = 4
+    | Subheading = 5
+    | Sublabel   = 6 
     | Usage      = 7
-    | Error      = 8
+    | Value      = 8
     | Warning    = 9
 
 type Message =
-    | Line of string
-    | Hued of Hue * Message
-    | Text of string
     | Group of Message list
+    | Hued of Hue * Message
+    | Line of string
+    | Text of string
 
 type MessageSink = Message -> unit

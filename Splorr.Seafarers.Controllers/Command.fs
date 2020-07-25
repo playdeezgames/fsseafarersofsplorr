@@ -4,8 +4,8 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 type SetCommand =
-    | Speed of float
     | Heading of Dms
+    | Speed of float
 
 type AbandonCommand =
     | Game
@@ -13,33 +13,33 @@ type AbandonCommand =
 
 [<RequireQualifiedAccess>]
 type Command =
-    | Quit
-    | Yes
-    | No
-    | Set of SetCommand
-    | Move of uint32
-    | Help
-    | Start of string
-    | Menu
-    | Resume
     | Abandon of AbandonCommand
-    | Dock
-    | Undock
-    | Islands of uint32
-    | HeadFor of string
-    | DistanceTo of string
-    | Status
-    | Jobs
     | AcceptJob of uint32
-    | Items
-    | Inventory
     | Buy of TradeQuantity * string
-    | Sell of TradeQuantity * string
-    | Metrics
     | Careen of Side
-    | WeighAnchor
-    | CleanHull
     | Chart of string
+    | CleanHull
+    | DistanceTo of string
+    | Dock
+    | Help
+    | HeadFor of string
+    | Inventory
+    | Islands of uint32
+    | Items
+    | Jobs
+    | Menu
+    | Metrics
+    | Move of uint32
+    | No
+    | Quit
+    | Resume
+    | Sell of TradeQuantity * string
+    | Set of SetCommand
+    | Start of string
+    | Status
+    | Undock
+    | WeighAnchor
+    | Yes
 
 type CommandSource = unit -> (Command option)
 
