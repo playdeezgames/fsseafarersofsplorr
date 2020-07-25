@@ -7,6 +7,7 @@ open Splorr.Seafarers.Models
 
 let private configuration: WorldConfiguration =
     {
+        AvatarDistances = (10.0,1.0)
         WorldSize=(10.0, 10.0)
         MinimumIslandDistance=30.0
         MaximumGenerationTries=10u

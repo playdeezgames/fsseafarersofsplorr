@@ -29,16 +29,18 @@ module WorldConfiguration =
 
     let Get (connection:SQLiteConnection) : Result<WorldConfiguration,string> =
         try
+
             use command = new SQLiteCommand("SELECT [ItemId] FROM [RationItems] ORDER BY [DefaultOrder];", connection)
             let rationItems = getRationItems (command.ExecuteReader()) []
 
             use command = new SQLiteCommand("SELECT [StatisticId], [StatisticName], [MinimumValue], [CurrentValue], [MaximumValue] FROM [AvatarStatisticTemplates];",connection)
             let statisticDescriptors = getStatisticDescriptors (command.ExecuteReader()) []
 
-            use command = new SQLiteCommand("SELECT [WorldConfigurationId],[RewardMinimum],[RewardMaximum],[WorldWidth],[WorldHeight],[MaximumGenerationTries],[MinimumIslandDistance] FROM [WorldConfiguration];", connection)
+            use command = new SQLiteCommand("SELECT [WorldConfigurationId],[RewardMinimum],[RewardMaximum],[WorldWidth],[WorldHeight],[MaximumGenerationTries],[MinimumIslandDistance],[AvatarViewDistance],[AvatarDockDistance] FROM [WorldConfiguration];", connection)
             let reader = command.ExecuteReader()
             if reader.Read() then
                 {
+                    AvatarDistances = (reader.GetDouble(7), reader.GetDouble(8))
                     WorldSize = (reader.GetDouble(3), reader.GetDouble(4))
                     MinimumIslandDistance = reader.GetDouble(6)
                     MaximumGenerationTries =  reader.GetInt32(5) |> uint32

@@ -5,8 +5,9 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module CommandSource=
-    let private ParseSetSpeed(tokens: string list) : Command option =
-        match tokens with
+    let private ParseSetSpeed:
+            string list -> Command option = 
+        function
         | [ x ] ->
             match System.Double.TryParse x with
             | true, v ->
@@ -14,7 +15,9 @@ module CommandSource=
             | _ -> None
         | _ -> None
 
-    let private ParseDms(d:string, m: string, s:string) : Dms option =
+    let private ParseDms
+            (d:string, m: string, s:string) 
+            : Dms option =
         match System.Int32.TryParse(d), System.Int32.TryParse(m), System.Double.TryParse(s) with
         | (true, degrees), (true, minutes), (true, seconds) ->
             {
@@ -25,7 +28,9 @@ module CommandSource=
             |> Some
         | _ -> None
 
-    let private ParseSetHeading(tokens:string list) : Command option = 
+    let private ParseSetHeading
+            (tokens:string list) 
+            : Command option = 
         (match tokens with
         | [degrees; minutes; seconds] ->
             ParseDms(degrees,minutes,seconds)
@@ -36,8 +41,9 @@ module CommandSource=
         | _ -> None)
         |> Option.map(fun x -> x |> SetCommand.Heading |> Command.Set)
 
-    let private ParseSet(tokens: string list) : Command option =
-        match tokens with
+    let private ParseSet:
+            string list -> Command option =
+        function
         | "speed" :: tail ->
             tail
             |> ParseSetSpeed 
@@ -46,8 +52,9 @@ module CommandSource=
             |> ParseSetHeading
         | _ -> None
 
-    let private ParseIslands(tokens: string list) : Command option =
-        match tokens with
+    let private ParseIslands: 
+            string list -> Command option =
+        function
         | [] -> 0u |> Command.Islands |> Some
         | [ token ] ->
             match System.UInt32.TryParse token with
@@ -56,24 +63,27 @@ module CommandSource=
             | _ -> None
         | _ -> None
 
-    let private ParseHead (tokens:string list) : Command option =
-        match tokens with
+    let private ParseHead: 
+            string list -> Command option =
+        function
         | "for" :: [ name ] ->
             name
             |> Command.HeadFor
             |> Some
         | _ -> None
 
-    let private ParseDistance (tokens:string list) : Command option =
-        match tokens with
+    let private ParseDistance: 
+            string list -> Command option =
+        function
         | "to" :: [ name ] ->
             name
             |> Command.DistanceTo
             |> Some
         | _ -> None
 
-    let private ParseAccept (tokens:string list) : Command option =
-        match tokens with
+    let private ParseAccept: 
+            string list -> Command option =
+        function
         | "job" :: [ number ] ->
             match System.UInt32.TryParse(number) with
             | true, value -> 
@@ -81,8 +91,9 @@ module CommandSource=
             | _ -> None
         | _ -> None
 
-    let private ParseAbandon (tokens:string list) : Command option =
-        match tokens with 
+    let private ParseAbandon: 
+            string list -> Command option =
+        function 
         | [ "game" ] -> 
             Game
             |> Command.Abandon
@@ -93,8 +104,9 @@ module CommandSource=
             |> Some
         | _ -> None
 
-    let private ParseMove (tokens:string list) : Command option =
-        match tokens with
+    let private ParseMove: 
+            string list -> Command option =
+        function
         | [ "0" ] -> 
             None
         | [ number ] ->
@@ -109,8 +121,9 @@ module CommandSource=
             |> Command.Move 
             |> Some
 
-    let ParseBuy (tokens:string list) : Command option =
-        match tokens with
+    let ParseBuy: 
+            string list -> Command option =
+        function
         | [ _ ] ->
             None
         | "maximum" :: tail ->
@@ -130,8 +143,9 @@ module CommandSource=
             | _ -> None
         | _ -> None
 
-    let ParseSell (tokens:string list) : Command option =
-        match tokens with
+    let ParseSell: 
+            string list -> Command option =
+        function
         | [ _ ] ->
             None
         | "0" :: tail ->
@@ -151,16 +165,18 @@ module CommandSource=
             | _ -> None
         | _ -> None
 
-    let private ParseCareen (tokens:string list) : Command option =
-        match tokens with 
+    let private ParseCareen: 
+            string list -> Command option =
+        function 
         | ["to";"port"] ->
             Port |> Command.Careen |> Some
         | ["to";"starboard"] ->
             Starboard |> Command.Careen |> Some
         | _ -> None
 
-    let Parse(tokens:string list) : Command option =
-        match tokens with
+    let Parse: 
+            string list -> Command option =
+        function
         | "chart" :: tail ->
             System.String.Join(" ", tail) |> Command.Chart |> Some
 
@@ -238,17 +254,19 @@ module CommandSource=
         | "sell" :: tail ->
             tail
             |> ParseSell
-        | ["weigh";"anchor"] ->
+        | [ "weigh"; "anchor" ] ->
             Command.WeighAnchor
             |> Some
-        | ["clean";"the";"hull"]
-        | ["clean";"hull"] ->
+        | [ "clean"; "the"; "hull"]
+        | [ "clean"; "hull"] ->
             Command.CleanHull
             |> Some
         | _ -> 
             None
 
-    let Read (lineReader:unit->string) : Command option =
+    let Read 
+            (lineReader: unit -> string) 
+            : Command option =
         System.Console.Write ">"
         lineReader().ToLower().Split([|' '|]) 
         |> List.ofArray

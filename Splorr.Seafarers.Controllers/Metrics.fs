@@ -17,22 +17,22 @@ module Metrics =
     let private RunWorld (sink:MessageSink) (avatar:Avatar) : unit = 
         [
             "" |> Line
-            (Heading, "Metric Name" |> sprintf "%-24s" |> Text) |> Hued
+            (Hue.Heading, "Metric Name" |> sprintf "%-24s" |> Text) |> Hued
             " | " |> Text
-            (Heading, "Count" |> sprintf "%6s" |> Line) |> Hued
+            (Hue.Heading, "Count" |> sprintf "%6s" |> Line) |> Hued
             "-------------------------+-------" |> Line
         ]
         |> List.iter sink
         if avatar.Metrics.IsEmpty then
-            (Usage, "(none)" |> Line) |> Hued |> sink
+            (Hue.Usage, "(none)" |> Line) |> Hued |> sink
         else
             avatar.Metrics
             |> Map.iter
                 (fun k v -> 
                     [
-                        (Label, k |> GetMetricDisplayName |> sprintf "%-24s" |> Text) |> Hued
+                        (Hue.Label, k |> GetMetricDisplayName |> sprintf "%-24s" |> Text) |> Hued
                         " | " |> Text
-                        (Value, v |> sprintf "%6u" |> Line) |> Hued
+                        (Hue.Value, v |> sprintf "%6u" |> Line) |> Hued
                     ]
                     |> List.iter sink)
 

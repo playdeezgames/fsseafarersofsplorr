@@ -7,6 +7,7 @@ open Splorr.Seafarers.Models
 
 let private dockWorldconfiguration: WorldConfiguration =
     {
+        AvatarDistances = (10.0,1.0)
         WorldSize=(0.0, 0.0)
         MinimumIslandDistance=30.0
         MaximumGenerationTries=1u

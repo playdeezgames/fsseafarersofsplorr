@@ -7,7 +7,7 @@ module Jobs =
     let private RunIsland (sink:MessageSink) (location:Location) (islands:Map<Location,Island>) (island:Island) : unit =
         [
             "" |> Line
-            (Heading, "Jobs Available:" |> Line) |> Hued
+            (Hue.Heading, "Jobs Available:" |> Line) |> Hued
         ]
         |> List.iter sink
         island.Jobs
@@ -22,15 +22,15 @@ module Jobs =
                 let distance = 
                     Location.DistanceTo location job.Destination
                 [
-                    (Label, index |> sprintf "%d. " |> Text) |> Hued
-                    (Value, island.Name |> sprintf "%s " |> Text) |> Hued
-                    (Sublabel, "Bearing: " |> Text) |> Hued
-                    (Value, bearing |> sprintf "%s " |> Text) |> Hued
-                    (Sublabel, "Distance: " |> Text) |> Hued
-                    (Value, distance |> sprintf "%f " |> Text) |> Hued
-                    (Sublabel, "Reward: " |> Text) |> Hued
-                    (Value, job.Reward |> sprintf "%f " |> Line) |> Hued
-                    (Flavor, job.FlavorText |> sprintf "\t'%s'" |> Line) |> Hued
+                    (Hue.Label, index |> sprintf "%d. " |> Text) |> Hued
+                    (Hue.Value, island.Name |> sprintf "%s " |> Text) |> Hued
+                    (Hue.Sublabel, "Bearing: " |> Text) |> Hued
+                    (Hue.Value, bearing |> sprintf "%s " |> Text) |> Hued
+                    (Hue.Sublabel, "Distance: " |> Text) |> Hued
+                    (Hue.Value, distance |> sprintf "%f " |> Text) |> Hued
+                    (Hue.Sublabel, "Reward: " |> Text) |> Hued
+                    (Hue.Value, job.Reward |> sprintf "%f " |> Line) |> Hued
+                    (Hue.Flavor, job.FlavorText |> sprintf "\t'%s'" |> Line) |> Hued
                 ]
                 |> List.iter sink)
         if island.Jobs.IsEmpty then

@@ -58,4 +58,6 @@ module Tables =
 		[WorldHeight]	REAL NOT NULL,
 		[MaximumGenerationTries]	INTEGER NOT NULL,
 		[MinimumIslandDistance]	REAL NOT NULL,
+		[AvatarViewDistance]	REAL NOT NULL,
+		[AvatarDockDistance]	REAL NOT NULL,
 		PRIMARY KEY([WorldConfigurationId]));"

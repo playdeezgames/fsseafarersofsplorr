@@ -17,22 +17,22 @@ module AtSea =
         let avatar = world.Avatars.[avatarId]
         let speedHue =
             if avatar.Speed >= 0.9 then
-                Value
+                Hue.Value
             elif avatar.Speed>=0.4 then
-                Warning
+                Hue.Warning
             else
-                Error
+                Hue.Error
         [
-            (Heading, "At Sea:" |> Line) |> Hued
-            (Label, "Turn: " |> Text) |> Hued
-            (Value, avatar.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].CurrentValue |> sprintf "%.0f" |> Text) |> Hued
-            (Value, avatar.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].MaximumValue |> sprintf "/%.0f" |> Line) |> Hued
-            (Label, "Heading: " |> Text) |> Hued
-            (Value, avatar.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "%s" |> Line) |> Hued
-            (Label, "Speed: " |> Text) |> Hued
+            (Hue.Heading, "At Sea:" |> Line) |> Hued
+            (Hue.Label, "Turn: " |> Text) |> Hued
+            (Hue.Value, avatar.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].CurrentValue |> sprintf "%.0f" |> Text) |> Hued
+            (Hue.Value, avatar.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].MaximumValue |> sprintf "/%.0f" |> Line) |> Hued
+            (Hue.Label, "Heading: " |> Text) |> Hued
+            (Hue.Value, avatar.Heading |> Dms.ToDms |> Dms.ToString |> sprintf "%s" |> Line) |> Hued
+            (Hue.Label, "Speed: " |> Text) |> Hued
             (speedHue, (avatar.Speed * 100.0) |> sprintf "%.0f%%" |> Text) |> Hued
             avatar |> Avatar.GetEffectiveSpeed |> sprintf "(Effective rate: %.2f)" |> Line
-            (Subheading, "Nearby:" |> Line) |> Hued
+            (Hue.Subheading, "Nearby:" |> Line) |> Hued
         ]
         |> List.iter sink
 
@@ -51,13 +51,13 @@ module AtSea =
             |> List.sortBy (fun (_,_,d,_)->d)
             |> List.fold
                 (fun target (location, heading, distance, name) -> 
-                    (Sublabel, "Name: " |> Text) |> Hued |> sink
-                    (Value, sprintf "%s " (if name="" then "????" else name) |> Text) |> Hued |> sink
-                    (Sublabel, "Bearing: " |> Text) |> Hued |> sink
-                    (Value, sprintf "%s " heading |> Text) |> Hued |> sink
-                    (Sublabel, "Distance: " |> Text) |> Hued |> sink
-                    (Value, sprintf "%f" distance |> Text) |> Hued |> sink
-                    (Flavor, sprintf "%s" (if distance<avatar.DockDistance then " (Can Dock)" else "") |> Line) |> Hued |> sink
+                    (Hue.Sublabel, "Name: " |> Text) |> Hued |> sink
+                    (Hue.Value, sprintf "%s " (if name="" then "????" else name) |> Text) |> Hued |> sink
+                    (Hue.Sublabel, "Bearing: " |> Text) |> Hued |> sink
+                    (Hue.Value, sprintf "%s " heading |> Text) |> Hued |> sink
+                    (Hue.Sublabel, "Distance: " |> Text) |> Hued |> sink
+                    (Hue.Value, sprintf "%f" distance |> Text) |> Hued |> sink
+                    (Hue.Flavor, sprintf "%s" (if distance<avatar.DockDistance then " (Can Dock)" else "") |> Line) |> Hued |> sink
                     (if distance<avatar.DockDistance then (Some location) else target)) None
 
         match source() with
@@ -167,7 +167,7 @@ module AtSea =
             |> Some
 
         | _ ->
-            (Error, "Maybe try 'help'?" |> Line) |> Hued |> sink
+            (Hue.Error, "Maybe try 'help'?" |> Line) |> Hued |> sink
             world
             |> Gamestate.AtSea
             |> Some
