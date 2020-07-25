@@ -36,7 +36,8 @@ module Chart =
                         g.FillEllipse(brush,x,y,scale,scale)
                         if addToLegend then
                             let index = (leg.Count + 1) |> uint
-                            g.DrawString(index|>sprintf "%u", font, textBrush, (x |> float32), (y |> float32) - 20.0f)
+                            let yOffset = if (-y)>bmp.Height/2 then 10.0f else (-20.0f)
+                            g.DrawString(index|>sprintf "%u", font, textBrush, (x |> float32), (y |> float32) + yOffset)
                             leg
                             |> Map.add index island.Name
                         else

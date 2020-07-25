@@ -23,6 +23,7 @@ module Job =
             "recklessly"
             "unashamedly"
             "pretentiously"
+            "wonderfully"
         ]
 
     let private adjectives = 
@@ -88,6 +89,7 @@ module Job =
             "pie"
             "face shield"
             "panda milk"
+            "map"
         ]
 
     let private names = 
@@ -114,6 +116,7 @@ module Job =
             "James"
             "Davin"
             "Ryan"
+            "'Grumpy'"
         ]
 
     let private personalAdjectives =
@@ -135,6 +138,8 @@ module Job =
             "smelly"
             "surly"
             "shy"
+            "contemptuous"
+            "self-righteous"
         ]
 
     let private professions = 
