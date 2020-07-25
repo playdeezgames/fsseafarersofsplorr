@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 type SetCommand =
-    | Heading of Dms
+    | Heading of float
     | Speed of float
 
 type AbandonCommand =

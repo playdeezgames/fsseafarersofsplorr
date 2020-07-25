@@ -17,7 +17,7 @@ module Jobs =
             (fun (index, job, island) ->
                 let bearing = 
                     Location.HeadingTo location job.Destination
-                    |> Dms.ToDms
+                    |> Dms.ToDegrees
                     |> Dms.ToString
                 let distance = 
                     Location.DistanceTo location job.Destination

@@ -9,8 +9,6 @@ open AtSeaTestFixtures
 open System.Data.SQLite
 open Splorr.Seafarers.Persistence.Schema
 
-let mutable private connection:SQLiteConnection = null
-let mutable private functionUnderTest: CommandSource -> MessageSink -> World -> Gamestate option = fun _ _ _ -> None
 let private islandItemSource (_) = Set.empty
 let private islandItemSink (_) (_) = ()
 let private islandMarketSource (_) = Map.empty
@@ -18,26 +16,7 @@ let private islandMarketSink (_) (_) = ()
 let private commoditySource (_) = Map.empty
 let private itemSource (_) = Map.empty
 
-
-[<SetUp>]
-let ``Set up function under test and connection there used.`` () =
-    connection <- new SQLiteConnection("Data Source=:memory:;Version=3;New=True;")
-    connection.Open()
-    //TODO: this query is in two place, so consolidate!
-    use command = new SQLiteCommand(Tables.Commodities,connection)
-    command.ExecuteNonQuery() |> ignore
-    //TODO: this query is in two place, so consolidate!
-    use command = new SQLiteCommand(Tables.Items,connection)
-    command.ExecuteNonQuery() |> ignore
-    //TODO: this query is in two place, so consolidate!
-    use command = new SQLiteCommand(Tables.CommodityItems,connection)
-    command.ExecuteNonQuery() |> ignore
-    functionUnderTest <- AtSea.Run commoditySource itemSource islandMarketSource islandMarketSink islandItemSource islandItemSink random (0.0, 0.0)
-
-[<TearDown>]
-let ``Tear down connection used for function under test `` () =
-    connection.Close()
-    connection.Dispose()
+let internal functionUnderTest = AtSea.Run commoditySource itemSource islandMarketSource islandMarketSink islandItemSource islandItemSink random (0.0, 0.0)
 
 [<Test>]
 let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
@@ -113,12 +92,7 @@ let ``Run.It returns AtSea with new speed when given Set Speed command.`` () =
 
 [<Test>]
 let ``Run.It returns AtSea with new heading when given Set Heading command.`` () =
-    let newHeading = 
-        {
-            Degrees = 1
-            Minutes = 2
-            Seconds = 3.0
-        }
+    let newHeading = 1.5
     let input = world
     let inputSource = 
         newHeading 
@@ -126,12 +100,12 @@ let ``Run.It returns AtSea with new heading when given Set Heading command.`` ()
         |> Command.Set 
         |> Some 
         |> toSource
-    let expectedMessages = ["You set your heading to 1\u00b02'3.000000\"."]
+    let expectedMessages = ["You set your heading to 1.50\u00b0."]
     let expectedAvatar = 
         {input.Avatars.[avatarId] with 
             Heading = 
                 newHeading 
-                |> Dms.ToFloat
+                |> Dms.ToRadians
             Messages = expectedMessages}
     let expected = 
         {input with 
@@ -351,7 +325,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
 let ``Run.It gives a message and changes heading when given a Head For command and the given island exists and is known.`` () =
     let input = headForWorldVisited
     let inputSource = "yermom" |> Command.HeadFor |> Some |> toSource
-    let expectedMessages = ["You set your heading to 180\u00b00'0.000000\"."; "You head for `yermom`."]
+    let expectedMessages = ["You set your heading to 180.00\u00b0."; "You head for `yermom`."]
     let expectedAvatar = {input.Avatars.[avatarId] with Heading = System.Math.PI; Messages=expectedMessages}
     let expected = 
         {input with 

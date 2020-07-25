@@ -4,7 +4,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Location.fs" />
-    <Compile Include="Dms.fs" />
     <Compile Include="Job.fs" />
     <Compile Include="CommodityDescriptor.fs" />
     <Compile Include="Market.fs" />

@@ -16,15 +16,11 @@ module CommandSource=
         | _ -> None
 
     let private ParseDms
-            (d:string, m: string, s:string) 
-            : Dms option =
-        match System.Int32.TryParse(d), System.Int32.TryParse(m), System.Double.TryParse(s) with
-        | (true, degrees), (true, minutes), (true, seconds) ->
-            {
-                Degrees = degrees
-                Minutes = minutes
-                Seconds = seconds
-            }
+            (d:string) 
+            : float option =
+        match System.Double.TryParse(d) with
+        | (true, degrees) ->
+            degrees
             |> Some
         | _ -> None
 
@@ -32,12 +28,8 @@ module CommandSource=
             (tokens:string list) 
             : Command option = 
         (match tokens with
-        | [degrees; minutes; seconds] ->
-            ParseDms(degrees,minutes,seconds)
-        | [degrees; minutes] ->
-            ParseDms(degrees,minutes,"0.0")
         | [degrees] ->
-            ParseDms(degrees,"0","0.0")
+            ParseDms(degrees)
         | _ -> None)
         |> Option.map(fun x -> x |> SetCommand.Heading |> Command.Set)
 

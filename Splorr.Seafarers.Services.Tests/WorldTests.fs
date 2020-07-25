@@ -83,25 +83,15 @@ let ``SetSpeed.It sets all stop when given zero`` () =
 
 [<Test>]
 let ``SetHeading.It sets a new heading when given a valid avatar id.`` () =
-    let heading = 
-        {
-            Degrees = 1
-            Minutes = 2
-            Seconds = 3.0
-        }
+    let heading = 1.5
     let actual =
         soloIslandWorld
         |> World.SetHeading heading avatarId
-    Assert.AreEqual(heading |> Dms.ToFloat, actual.Avatars.[avatarId].Heading)
+    Assert.AreEqual(heading |> Dms.ToRadians, actual.Avatars.[avatarId].Heading)
 
 [<Test>]
 let ``SetHeading.It does nothing when given an invalid avatar id`` () =
-    let heading = 
-        {
-            Degrees = 1
-            Minutes = 2
-            Seconds = 3.0
-        }
+    let heading = 1.5
     let actual =
         soloIslandWorld
         |> World.SetHeading heading bogusAvatarId
@@ -315,7 +305,7 @@ let ``HeadFor.It sets the heading when the island name exists and is known.`` ()
     let inputWorld =
         headForWorld
         |> World.TransformIsland (0.0,0.0) (Island.AddVisit headForWorld.Avatars.[avatarId].Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].CurrentValue avatarId >> Some)
-    let expected = {inputWorld with Avatars = inputWorld.Avatars |> Map.add avatarId {inputWorld.Avatars.[avatarId] with Messages=[ "You set your heading to 180°0'0.000000\"."; "You head for `Uno`." ]; Heading=System.Math.PI}}
+    let expected = {inputWorld with Avatars = inputWorld.Avatars |> Map.add avatarId {inputWorld.Avatars.[avatarId] with Messages=[ "You set your heading to 180.00°."; "You head for `Uno`." ]; Heading=System.Math.PI}}
     let actual =
         inputWorld
         |> World.HeadFor "Uno"
