@@ -1,6 +1,7 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
 open Splorr.Seafarers.Models
+open Splorr.Seafarers.Services
 
 type DockedState =
     | Dock
@@ -9,18 +10,19 @@ type DockedState =
 
 [<RequireQualifiedAccess>]
 type Gamestate = 
-    | AtSea of World
-    | Careened of Side * World
-    | Chart of string * World
-    | ConfirmQuit of Gamestate
-    | Docked of DockedState * Location *  World
-    | GameOver of string list
-    | Help of Gamestate
-    | Inventory of Gamestate
-    | IslandList of uint32 * Gamestate
-    | MainMenu of World option
-    | Metrics of Gamestate
-    | Status of Gamestate
+    | AtSea        of World
+    | Careened     of Side * World
+    | Chart        of string * World
+    | ConfirmQuit  of Gamestate
+    | Docked       of DockedState * Location *  World
+    | GameOver     of string list
+    | Help         of Gamestate
+    | InvalidInput of Gamestate
+    | Inventory    of Gamestate
+    | IslandList   of uint32 * Gamestate
+    | MainMenu     of World option
+    | Metrics      of Gamestate
+    | Status       of Gamestate
 
 module Gamestate =
     let rec GetWorld (gamestate:Gamestate) : World option =
@@ -31,6 +33,7 @@ module Gamestate =
         | Gamestate.ConfirmQuit g    -> GetWorld g
         | Gamestate.Docked (_,_,w)   -> w |> Some
         | Gamestate.Help g           -> GetWorld g
+        | Gamestate.InvalidInput g   -> GetWorld g
         | Gamestate.Inventory g      -> GetWorld g
         | Gamestate.IslandList (_,g) -> GetWorld g
         | Gamestate.MainMenu w       -> w
@@ -38,3 +41,15 @@ module Gamestate =
         | Gamestate.Status g         -> GetWorld g
         | _ -> None
 
+    let CheckForAvatarDeath (gamestate:Gamestate option) : Gamestate option =
+        gamestate
+        |> Option.bind
+            (GetWorld)
+        |> Option.fold 
+            (fun g w -> 
+                if w |> World.IsAvatarAlive w.AvatarId then
+                    g
+                else
+                    w.Avatars.[w.AvatarId].Messages
+                    |> Gamestate.GameOver
+                    |> Some) gamestate

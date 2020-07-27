@@ -1,13 +1,18 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
+open System
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module Careened = 
-    let private RunAlive (source:CommandSource) (sink:MessageSink) (side:Side) (avatarId:string) (world:World) : Gamestate option =
-        "" |> Line |> sink
+    let private UpdateDisplay 
+            (messageSink:MessageSink) 
+            (side:Side)
+            (world:World) : unit =
+        let avatarId = world.AvatarId
+        "" |> Line |> messageSink
         world.Avatars.[avatarId].Messages
-        |> Utility.DumpMessages sink
+        |> Utility.DumpMessages messageSink
         let world =
             world
             |> World.ClearMessages avatarId
@@ -24,8 +29,10 @@ module Careened =
             (Hue.Heading, sideName |> sprintf "You are careened on the %s side." |> Line) |> Hued
             (Hue.Flavor, foulage |> sprintf "The hull is %.0f%% fouled." |> Line) |> Hued
         ]
-        |> List.iter sink
-        match source() with
+        |> List.iter messageSink
+
+    let private HandleCommand (command:Command option) (sink:MessageSink) (side:Side) (world:World) : Gamestate option =
+        match command with
         | Some Command.Metrics ->
             (side, world)
             |> Gamestate.Careened
@@ -52,7 +59,8 @@ module Careened =
             |> Gamestate.Help
             |> Some
         | Some Command.CleanHull ->
-            (side, world |> World.CleanHull avatarId (if side=Port then Starboard else Port))
+            (side, world 
+            |> World.CleanHull world.AvatarId (if side=Port then Starboard else Port))
             |> Gamestate.Careened
             |> Some
         | Some Command.WeighAnchor ->
@@ -60,14 +68,25 @@ module Careened =
             |> Gamestate.AtSea
             |> Some
         | _ ->
-            (Hue.Error, "Maybe try 'help'?" |> Line) |> Hued |> sink
             (side, world)
             |> Gamestate.Careened
+            |> Gamestate.InvalidInput
             |> Some
 
-    let Run (source:CommandSource) (sink:MessageSink) (side:Side) (world:World) : Gamestate option =
+    let private RunAlive (source:CommandSource) (sink:MessageSink) (side:Side) (world:World) : Gamestate option =
+        UpdateDisplay 
+            sink 
+            side 
+            world
+        HandleCommand
+            (source())
+            sink
+            side
+            world
+
+    let Run (commandSource:CommandSource) (messageSink:MessageSink) (side:Side) (world:World) : Gamestate option =
         if world |> World.IsAvatarAlive world.AvatarId then
-            RunAlive source sink side world.AvatarId world
+            RunAlive commandSource messageSink side world
         else
             world.Avatars.[world.AvatarId].Messages
             |> Gamestate.GameOver

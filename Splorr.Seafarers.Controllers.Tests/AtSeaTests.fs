@@ -51,7 +51,7 @@ let ``Run.It returns ConfirmQuit when given Quit command.`` () =
     Assert.AreEqual(expected, actual)
 
 [<Test>]
-let ``Run.It returns AtSea when given invalid command.`` () =
+let ``Run.It returns InvalidInput when given invalid command.`` () =
     let input = world
     let inputSource = 
         None 
@@ -59,6 +59,7 @@ let ``Run.It returns AtSea when given invalid command.`` () =
     let expected = 
         input 
         |> Gamestate.AtSea 
+        |> Gamestate.InvalidInput
         |> Some
     let actual =
         input

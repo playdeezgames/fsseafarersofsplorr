@@ -29,6 +29,7 @@
     <Compile Include="GameOverTests.fs" />
     <Compile Include="GamestateTests.fs" />
     <Compile Include="HelpTests.fs" />
+    <Compile Include="InvalidInputTests.fs" />
     <Compile Include="InventoryTests.fs" />
     <Compile Include="ItemListTests.fs" />
     <Compile Include="IslandListTests.fs" />

@@ -2,9 +2,12 @@
 
 open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
+open Splorr.Seafarers.Services
 open System
 
 module Runner =
+
+
     let rec private Loop 
             (switches               : Set<string>) 
             (commoditySource        : unit     -> Map<uint64, CommodityDescriptor>)
@@ -94,6 +97,11 @@ module Runner =
                     messageSink 
                     state
 
+            | Gamestate.InvalidInput state ->
+                InvalidInput.Run
+                    messageSink
+                    state
+
             | Gamestate.Inventory gameState -> 
                 Inventory.Run 
                     itemSource 
@@ -122,6 +130,8 @@ module Runner =
                 Status.Run 
                     messageSink 
                     state
+
+            |> Gamestate.CheckForAvatarDeath
 
         match nextGamestate with
         | Some state ->

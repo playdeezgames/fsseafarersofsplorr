@@ -1,5 +1,6 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
+open System
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Persistence
@@ -29,7 +30,7 @@ module AtSea =
                 (location, Location.HeadingTo avatar.Position location |> Dms.ToDegrees |> Dms.ToString, Location.DistanceTo avatar.Position location, (world.Islands.[location] |> Island.GetDisplayName world.AvatarId)))
         |> List.sortBy (fun (_,_,d,_)->d)
 
-    let private OutputState 
+    let private UpdateDisplay 
             (messageSink:MessageSink) 
             (world:World) : unit =
         "" |> Line |> messageSink
@@ -68,18 +69,18 @@ module AtSea =
                 ]
                 |> List.iter messageSink)
 
-    let private UpdateState 
+    let private HandleCommand 
             (commoditySource:unit -> Map<uint64, CommodityDescriptor>) 
             (itemSource:unit -> Map<uint64, ItemDescriptor>) 
             (islandMarketSource:Location->Map<uint64, Market>) 
             (islandMarketSink:Location->Map<uint64, Market>->unit) 
             (islandItemSource:Location->Set<uint64>) 
             (islandItemSink:Location->Set<uint64>->unit) 
-            (random:System.Random) 
+            (random:Random) 
             (rewardRange:float*float) 
             (command:Command option) 
             (world:World) 
-            : bool * (Gamestate option) =
+            : Gamestate option =
         let world =
             world
             |> World.ClearMessages world.AvatarId
@@ -98,174 +99,171 @@ module AtSea =
 
         match command with
         | Some Command.Status ->
-            (true, world 
+            world 
             |> Gamestate.AtSea
             |> Gamestate.Status
-            |> Some)
+            |> Some
 
         | Some (Command.HeadFor name) ->
-            (true, world
+            world
             |> World.HeadFor name
             |> Gamestate.AtSea
-            |> Some)
+            |> Some
 
         | Some (Command.DistanceTo name) ->
-            (true, world
+            world
             |> World.DistanceTo name
             |> Gamestate.AtSea
-            |> Some)
+            |> Some
 
         | Some (Command.Careen side) ->
             if canCareen then
-                (true, (side, world)
+                (side, world)
                 |> Gamestate.Careened
-                |> Some)
+                |> Some
             else
-                (true, world
+                world
                 |> World.AddMessages world.AvatarId [ "You cannot careen here." ]
                 |> Gamestate.AtSea
-                |> Some)
+                |> Some
 
         | Some Command.Dock ->
             match dockTarget with
             | Some location ->
-                (true, 
-                    (Dock, 
-                        location, 
-                            world 
-                            |> World.Dock 
-                                commoditySource 
-                                itemSource
-                                islandMarketSource 
-                                islandMarketSink 
-                                islandItemSource 
-                                islandItemSink 
-                                random 
-                                rewardRange 
-                                location)
+                (Dock, 
+                    location, 
+                        world 
+                        |> World.Dock 
+                            commoditySource 
+                            itemSource
+                            islandMarketSource 
+                            islandMarketSink 
+                            islandItemSource 
+                            islandItemSink 
+                            random 
+                            rewardRange 
+                            location)
                 |> Gamestate.Docked
-                |> Some)
+                |> Some
             | None ->
-                (true, world
+                world
                 |> World.AddMessages world.AvatarId [ "There is no place to dock." ]
                 |> Gamestate.AtSea
-                |> Some)
+                |> Some
 
         | Some (Command.Islands page) ->
-            (true, (page, world |> Gamestate.AtSea)
+            (page, world |> Gamestate.AtSea)
             |> Gamestate.IslandList
-            |> Some)
+            |> Some
 
         | Some (Command.Abandon Job) ->
-            (true, world
+            world
             |> World.AbandonJob world.AvatarId
             |> Gamestate.AtSea
-            |> Some)
+            |> Some
 
         | Some Command.Metrics ->
-            (true, world 
+            world 
             |> Gamestate.AtSea
             |> Gamestate.Metrics
-            |> Some)
+            |> Some
 
         | Some (Command.Chart x) ->
-            (true, (x, world)
+            (x, world)
             |> Gamestate.Chart
-            |> Some)
+            |> Some
 
         | Some Command.Menu ->
-            (true, world
+            world
             |> Some
             |> Gamestate.MainMenu
-            |> Some)
+            |> Some
 
         | Some Command.Help ->
-            (true, world
+            world
             |> Gamestate.AtSea
             |> Gamestate.Help
-            |> Some)
+            |> Some
 
         | Some (Command.Move distance)->
-            (true, world
+            world
             |> World.Move distance world.AvatarId
             |> Gamestate.AtSea
-            |> Some)
+            |> Some
 
         | Some (Command.Set (SetCommand.Heading heading)) ->
-            (true, world
+            world
             |> World.SetHeading heading world.AvatarId
             |> Gamestate.AtSea
-            |> Some)
+            |> Some
 
         | Some (Command.Set (Speed speed)) ->
-            (true, world
+            world
             |> World.SetSpeed speed world.AvatarId
             |> Gamestate.AtSea
-            |> Some)
+            |> Some
 
         | Some Command.Quit -> 
-            (true, world
+            world
             |> Gamestate.AtSea
             |> Gamestate.ConfirmQuit
-            |> Some)
+            |> Some
 
         | Some Command.Inventory -> 
-            (true, world
+            world
             |> Gamestate.AtSea
             |> Gamestate.Inventory
-            |> Some)
+            |> Some
 
         | _ ->
-            (false, world
+            world
             |> Gamestate.AtSea
-            |> Some)
+            |> Gamestate.InvalidInput
+            |> Some
 
     let private RunAlive 
-            (commoditySource:unit -> Map<uint64, CommodityDescriptor>) 
-            (itemSource:unit -> Map<uint64, ItemDescriptor>) 
-            (islandMarketSource:Location->Map<uint64, Market>) 
-            (islandMarketSink:Location->Map<uint64, Market>->unit) 
-            (islandItemSource:Location->Set<uint64>) 
-            (islandItemSink:Location->Set<uint64>->unit) 
-            (random:System.Random) 
-            (rewardRange:float*float) 
-            (source:CommandSource) 
-            (sink:MessageSink) 
-            (world:World) 
+            (commoditySource    : unit -> Map<uint64, CommodityDescriptor>) 
+            (itemSource         : unit -> Map<uint64, ItemDescriptor>) 
+            (islandMarketSource : Location -> Map<uint64, Market>) 
+            (islandMarketSink   : Location -> Map<uint64, Market>->unit) 
+            (islandItemSource   : Location -> Set<uint64>) 
+            (islandItemSink     : Location -> Set<uint64>->unit) 
+            (random             : Random) 
+            (rewardRange        : float*float) 
+            (commandSource      : CommandSource) 
+            (messageSink        : MessageSink) 
+            (world              : World) 
             : Gamestate option =
-        OutputState sink world
-        let handled, next = 
-            UpdateState
-                commoditySource
-                itemSource
-                islandMarketSource
-                islandMarketSink
-                islandItemSource
-                islandItemSink
-                random
-                rewardRange
-                (source())
-                world
-        if not handled then
-            (Hue.Error, "Maybe try 'help'?" |> Line) |> Hued |> sink
-        next
-
+        UpdateDisplay 
+            messageSink 
+            world
+        HandleCommand
+            commoditySource
+            itemSource
+            islandMarketSource
+            islandMarketSink
+            islandItemSource
+            islandItemSink
+            random
+            rewardRange
+            (commandSource())
+            world
 
     let Run 
-            (commoditySource:unit -> Map<uint64, CommodityDescriptor>) 
-            (itemSource:unit -> Map<uint64, ItemDescriptor>) 
-            (islandMarketSource:Location->Map<uint64, Market>) 
-            (islandMarketSink:Location->Map<uint64, Market>->unit) 
-            (islandItemSource:Location->Set<uint64>) 
-            (islandItemSink:Location->Set<uint64>->unit) 
-            (random:System.Random) 
-            (rewardRange:float*float) 
-            (source:CommandSource) 
-            (sink:MessageSink) 
-            (world:World) 
+            (commoditySource    : unit -> Map<uint64, CommodityDescriptor>) 
+            (itemSource         : unit -> Map<uint64, ItemDescriptor>) 
+            (islandMarketSource : Location -> Map<uint64, Market>) 
+            (islandMarketSink   : Location -> Map<uint64, Market>->unit) 
+            (islandItemSource   : Location -> Set<uint64>) 
+            (islandItemSink     : Location -> Set<uint64>->unit) 
+            (random             : Random) 
+            (rewardRange        : float*float) 
+            (commandSource      : CommandSource) 
+            (messageSink        : MessageSink) 
+            (world              : World) 
             : Gamestate option =
         if world |> World.IsAvatarAlive world.AvatarId then
-            RunAlive commoditySource itemSource islandMarketSource islandMarketSink islandItemSource islandItemSink random rewardRange source sink world
+            RunAlive commoditySource itemSource islandMarketSource islandMarketSink islandItemSource islandItemSink random rewardRange commandSource messageSink world
         else
             world.Avatars.[world.AvatarId].Messages
             |> Gamestate.GameOver
