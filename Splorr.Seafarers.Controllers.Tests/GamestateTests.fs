@@ -77,6 +77,14 @@ let ``GetWorld.It returns the world embedded within the given Metrics Gamestate 
         |> Gamestate.GetWorld
     Assert.AreEqual(world |> Some, actual)
 
+[<Test>]
+let ``GetWorld.It returns the world embedded within the given InvalidInput Gamestate when a world is present.`` () =
+    let actual = 
+        world
+        |> Gamestate.AtSea
+        |> Gamestate.InvalidInput
+        |> Gamestate.GetWorld
+    Assert.AreEqual(world |> Some, actual)
 
 [<Test>]
 let ``GetWorld.It returns the world embedded within the given Careened Gamestate.`` () =
@@ -126,4 +134,66 @@ let ``GetWorld.It returns None from the given GameOver Gamestate.`` () =
     let actual =
         input
         |> Gamestate.GetWorld
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``CheckForAvatarDeath.It returns the original gamestate when the avatar embedded therein is not dead.`` () =
+    let avatarTransformHealth:Avatar -> Avatar option =
+        Avatar.TransformShipmate 
+            (Shipmate.SetStatistic AvatarStatisticIdentifier.Health ({MinimumValue=0.0; CurrentValue=1.0; MaximumValue=1.0}|>Some)) 0u
+        >> Some
+    let avatarTransformTurn:Avatar -> Avatar option =
+        Avatar.TransformShipmate 
+            (Shipmate.SetStatistic AvatarStatisticIdentifier.Turn ({MinimumValue=0.0; CurrentValue=0.0; MaximumValue=1.0}|>Some)) 0u
+        >> Some
+    let input =
+        world
+        |> World.TransformAvatar world.AvatarId avatarTransformHealth
+        |> World.TransformAvatar world.AvatarId avatarTransformTurn
+        |> Gamestate.AtSea
+        |> Some
+    let expected =
+        input
+    let actual =
+        input
+        |> Gamestate.CheckForAvatarDeath
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``CheckForAvatarDeath.It returns the original gamestate when there is not a world embedded in the gamestate.`` () =
+    let input =
+        None
+        |> Gamestate.MainMenu
+        |> Some
+    let expected =
+        input
+    let actual =
+        input
+        |> Gamestate.CheckForAvatarDeath
+    Assert.AreEqual(expected, actual)
+
+
+[<Test>]
+let ``CheckForAvatarDeath.It returns gameover when the avatar embedded therein is dead.`` () =
+    let avatarTransformHealth:Avatar -> Avatar option =
+        Avatar.TransformShipmate 
+            (Shipmate.SetStatistic AvatarStatisticIdentifier.Health ({MinimumValue=0.0; CurrentValue=0.0; MaximumValue=1.0}|>Some)) 0u
+        >> Some
+    let avatarTransformTurn:Avatar -> Avatar option =
+        Avatar.TransformShipmate 
+            (Shipmate.SetStatistic AvatarStatisticIdentifier.Turn ({MinimumValue=0.0; CurrentValue=0.0; MaximumValue=1.0}|>Some)) 0u
+        >> Some
+    let input =
+        world
+        |> World.TransformAvatar world.AvatarId avatarTransformHealth
+        |> World.TransformAvatar world.AvatarId avatarTransformTurn
+        |> Gamestate.AtSea
+        |> Some
+    let expected =
+        []
+        |> Gamestate.GameOver
+        |> Some
+    let actual =
+        input
+        |> Gamestate.CheckForAvatarDeath
     Assert.AreEqual(expected, actual)

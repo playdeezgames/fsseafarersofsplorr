@@ -86,9 +86,9 @@ module Docked =
             |> Some
 
         | _ -> 
-            (Hue.Error, "Maybe try 'help'?" |> Line) |> Hued |> sink
             (Dock, location, world) 
             |> Gamestate.Docked 
+            |> Gamestate.InvalidInput
             |> Some
 
     let internal RunBoilerplate (func:Location -> Island -> World->(Gamestate option)) (location:Location) (world: World) : Gamestate option =

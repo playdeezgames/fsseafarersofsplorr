@@ -42,7 +42,7 @@ let ``Run.It returns ConfirmQuit when given Quit command.`` () =
     Assert.AreEqual(expected, actual)
 
 [<Test>]
-let ``Run.It returns Careened when given invalid command.`` () =
+let ``Run.It returns InvalidInput when given invalid command.`` () =
     let inputWorld = world
     let inputSource = 
         None 
@@ -51,6 +51,7 @@ let ``Run.It returns Careened when given invalid command.`` () =
     let expected =
         (inputSide, inputWorld)
         |> Gamestate.Careened
+        |> Gamestate.InvalidInput
         |> Some
     let actual =
         inputWorld

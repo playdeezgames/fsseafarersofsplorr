@@ -115,7 +115,7 @@ let ``Run.It returns Inventory when given Inventory Command.`` () =
     Assert.AreEqual(expected, actual)
 
 [<Test>]
-let ``Run.It returns Docked when given invalid Command.`` () =
+let ``Run.It returns InvalidInput when given invalid Command.`` () =
     let input =dockWorld
     let inputLocation = dockLocation
     let inputSource =
@@ -124,6 +124,7 @@ let ``Run.It returns Docked when given invalid Command.`` () =
     let expected = 
         (Dock, inputLocation, input) 
         |> Gamestate.Docked 
+        |> Gamestate.InvalidInput
         |> Some
     let actual =
         (inputLocation, input)
