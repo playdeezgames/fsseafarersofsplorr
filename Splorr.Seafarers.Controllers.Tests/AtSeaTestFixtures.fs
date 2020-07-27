@@ -65,7 +65,7 @@ let private headForWorldIslandMarketSource (_) = [1UL, {Supply=5.0; Demand=5.0}]
 let private headForWorldIslandMarketSink (_) (_) = ()
 let internal headForWorldVisited = 
     headForWorldUnvisited
-    |> World.Dock headForWorldIslandMarketSource headForWorldIslandMarketSink headForWorldIslandItemSource headForWorldIslandItemSink random dockWorldconfiguration.RewardRange commodities Map.empty (0.0, 0.0) avatarId
+    |> World.Dock (fun()->commodities) (fun()->Map.empty) headForWorldIslandMarketSource headForWorldIslandMarketSink headForWorldIslandItemSource headForWorldIslandItemSink random dockWorldconfiguration.RewardRange (0.0, 0.0)
 
 let internal abandonJobWorld =
     dockWorld
