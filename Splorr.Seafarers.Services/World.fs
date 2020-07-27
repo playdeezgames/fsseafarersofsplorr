@@ -167,7 +167,19 @@ module World =
         else
             world
 
-    let Dock (islandMarketSource:Location->Map<uint64, Market>) (islandMarketSink:Location->Map<uint64, Market>->unit) (islandItemSource:Location->Set<uint64>) (islandItemSink: Location->Set<uint64>->unit) (random:System.Random) (rewardRange:float*float) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (location: Location) (avatarId:string) (world:World) : World =
+    let Dock 
+            (commoditySource:unit ->Map<uint64, CommodityDescriptor>) 
+            (itemSource:unit->Map<uint64, ItemDescriptor>) 
+            (islandMarketSource:Location->Map<uint64, Market>) 
+            (islandMarketSink:Location->Map<uint64, Market>->unit) 
+            (islandItemSource:Location->Set<uint64>) 
+            (islandItemSink: Location->Set<uint64>->unit) 
+            (random:System.Random) 
+            (rewardRange:float*float) 
+            (location: Location) 
+            (world:World) 
+            : World =
+        let avatarId = world.AvatarId
         match world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
         | Some island, Some avatar ->
             let destinations =
@@ -180,6 +192,8 @@ module World =
                 island
                 |> Island.AddVisit world.Avatars.[avatarId].Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].CurrentValue avatarId//only when this counts as a new visit...
                 |> Island.GenerateJobs random rewardRange destinations 
+            let commodities = commoditySource()
+            let items = itemSource()
             Island.GenerateCommodities islandMarketSource islandMarketSink random commodities location
             Island.GenerateItems islandItemSource islandItemSink random items location
             let oldVisitCount =

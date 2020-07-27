@@ -49,7 +49,7 @@ let private smallWorldIslandItemSource (_) = [1UL] |> Set.ofList
 let private smallWorldIslandItemSink (_) (_) = ()
 let private smallWorldIslandMarketSource (_) = [1UL, {Supply=1.0;Demand=1.0}] |> Map.ofList
 let private smallWorldIslandMarketSink (_) (_) = ()
-let internal smallWorldDocked = smallWorld |> World.Dock smallWorldIslandMarketSource smallWorldIslandMarketSink smallWorldIslandItemSource smallWorldIslandItemSink random smallWorldconfiguration.RewardRange commodities smallWorldItems smallWorldIslandLocation avatarId
+let internal smallWorldDocked = smallWorld |> World.Dock (fun()->commodities) (fun()->smallWorldItems) smallWorldIslandMarketSource smallWorldIslandMarketSink smallWorldIslandItemSource smallWorldIslandItemSink random smallWorldconfiguration.RewardRange smallWorldIslandLocation
 let internal shopWorld = smallWorldDocked |> World.ClearMessages avatarId
 
 let internal abandonJobWorld =

@@ -109,7 +109,7 @@ let private genericWorldIslandItemSource (_:Location) = Set.empty
 let private genericWorldIslandItemSink (_) (_) = ()
 let private genericWorldIslandMarketSource (_:Location) = Map.empty
 let private genericWorldIslandMarketSink (_) (_) = ()
-let internal genericDockedWorld = World.Dock genericWorldIslandMarketSource genericWorldIslandMarketSink genericWorldIslandItemSource genericWorldIslandItemSink random genericWorldConfiguration.RewardRange commodities genericWorldItems genericWorldIslandLocation avatarId genericWorld |> World.ClearMessages avatarId
+let internal genericDockedWorld = World.Dock (fun()->commodities) (fun()->genericWorldItems) genericWorldIslandMarketSource genericWorldIslandMarketSink genericWorldIslandItemSource genericWorldIslandItemSink random genericWorldConfiguration.RewardRange genericWorldIslandLocation genericWorld |> World.ClearMessages avatarId
 
 let internal shopWorld = 
     genericDockedWorld
