@@ -47,7 +47,7 @@ module Gamestate =
             (GetWorld)
         |> Option.fold 
             (fun g w -> 
-                if w |> World.IsAvatarAlive w.AvatarId then
+                if w |> World.IsAvatarAlive then
                     g
                 else
                     w.Avatars.[w.AvatarId].Messages

@@ -84,7 +84,7 @@ module AtSea =
             : Gamestate option =
         let world =
             world
-            |> World.ClearMessages world.AvatarId
+            |> World.ClearMessages
 
         let avatar = world.Avatars.[world.AvatarId]
 
@@ -124,7 +124,7 @@ module AtSea =
                 |> Some
             else
                 world
-                |> World.AddMessages world.AvatarId [ "You cannot careen here." ]
+                |> World.AddMessages [ "You cannot careen here." ]
                 |> Gamestate.AtSea
                 |> Some
 
@@ -148,7 +148,7 @@ module AtSea =
                 |> Some
             | None ->
                 world
-                |> World.AddMessages world.AvatarId [ "There is no place to dock." ]
+                |> World.AddMessages [ "There is no place to dock." ]
                 |> Gamestate.AtSea
                 |> Some
 
@@ -159,7 +159,7 @@ module AtSea =
 
         | Some (Command.Abandon Job) ->
             world
-            |> World.AbandonJob world.AvatarId
+            |> World.AbandonJob
             |> Gamestate.AtSea
             |> Some
 
@@ -194,13 +194,13 @@ module AtSea =
 
         | Some (Command.Set (SetCommand.Heading heading)) ->
             world
-            |> World.SetHeading heading world.AvatarId
+            |> World.SetHeading heading
             |> Gamestate.AtSea
             |> Some
 
         | Some (Command.Set (Speed speed)) ->
             world
-            |> World.SetSpeed speed world.AvatarId
+            |> World.SetSpeed speed
             |> Gamestate.AtSea
             |> Some
 
@@ -263,7 +263,7 @@ module AtSea =
             (messageSink        : MessageSink) 
             (world              : World) 
             : Gamestate option =
-        if world |> World.IsAvatarAlive world.AvatarId then
+        if world |> World.IsAvatarAlive then
             RunAlive commoditySource itemSource islandMarketSource islandMarketSink islandItemSource islandItemSink random rewardRange commandSource messageSink world
         else
             world.Avatars.[world.AvatarId].Messages

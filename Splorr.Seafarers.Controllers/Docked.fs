@@ -30,21 +30,21 @@ module Docked =
             (world: World) =
         let world =
             world
-            |> World.ClearMessages world.AvatarId
+            |> World.ClearMessages
 
         match command with
         | Some (Command.AcceptJob index) ->
-            (Dock, location, world |> World.AcceptJob index location world.AvatarId)
+            (Dock, location, world |> World.AcceptJob index location)
             |> Gamestate.Docked
             |> Some
 
         | Some (Command.Buy (quantity, itemName))->
-            (Dock, location, world |> World.BuyItems islandMarketSource islandSingleMarketSink (commoditySource()) (itemSource()) location quantity itemName world.AvatarId) 
+            (Dock, location, world |> World.BuyItems islandMarketSource islandSingleMarketSink (commoditySource()) (itemSource()) location quantity itemName) 
             |> Gamestate.Docked
             |> Some            
 
         | Some (Command.Sell (quantity, itemName))->
-            (Dock, location, world |> World.SellItems islandMarketSource islandSingleMarketSource islandSingleMarketSink (commoditySource()) (itemSource()) location quantity itemName world.AvatarId) 
+            (Dock, location, world |> World.SellItems islandMarketSource islandSingleMarketSource islandSingleMarketSink (commoditySource()) (itemSource()) location quantity itemName) 
             |> Gamestate.Docked
             |> Some            
 
@@ -65,13 +65,13 @@ module Docked =
             |> Some
 
         | Some (Command.Abandon Job) ->
-            (Dock, location, world |> World.AbandonJob world.AvatarId)
+            (Dock, location, world |> World.AbandonJob)
             |> Gamestate.Docked
             |> Some
 
         | Some Command.Undock ->
             world 
-            |> World.AddMessages world.AvatarId [ "You undock." ]
+            |> World.AddMessages [ "You undock." ]
             |> Gamestate.AtSea 
             |> Some
 
@@ -136,7 +136,7 @@ module Docked =
             (location : Location) 
             (world    : World) 
             : Gamestate option =
-        if world |> World.IsAvatarAlive world.AvatarId then
+        if world |> World.IsAvatarAlive then
             if world.Islands |> Map.containsKey location then
                 func location world
             else

@@ -109,14 +109,14 @@ let private genericWorldIslandItemSource (_:Location) = Set.empty
 let private genericWorldIslandItemSink (_) (_) = ()
 let private genericWorldIslandMarketSource (_:Location) = Map.empty
 let private genericWorldIslandMarketSink (_) (_) = ()
-let internal genericDockedWorld = World.Dock (fun()->commodities) (fun()->genericWorldItems) genericWorldIslandMarketSource genericWorldIslandMarketSink genericWorldIslandItemSource genericWorldIslandItemSink random genericWorldConfiguration.RewardRange genericWorldIslandLocation genericWorld |> World.ClearMessages avatarId
+let internal genericDockedWorld = World.Dock (fun()->commodities) (fun()->genericWorldItems) genericWorldIslandMarketSource genericWorldIslandMarketSink genericWorldIslandItemSource genericWorldIslandItemSink random genericWorldConfiguration.RewardRange genericWorldIslandLocation genericWorld |> World.ClearMessages
 
 let internal shopWorld = 
     genericDockedWorld
 let internal shopWorldLocation = genericWorldIslandLocation
 let internal shopWorldBogusLocation = genericWorldInvalidIslandLocation
 
-let internal jobWorld = genericDockedWorld |> World.AcceptJob 1u genericWorldIslandLocation avatarId |> World.ClearMessages avatarId
+let internal jobWorld = genericDockedWorld |> World.AcceptJob 1u genericWorldIslandLocation |> World.ClearMessages
 let internal jobLocation = jobWorld.Avatars.[avatarId].Job.Value.Destination
 
 let internal headForWorld =

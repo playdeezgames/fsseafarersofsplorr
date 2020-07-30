@@ -426,7 +426,7 @@ let ``Run.It gives a message and returns AtSea when the avatar is too far away f
         |> toSource
     let expected =
         input
-        |> World.AddMessages avatarId ["You cannot careen here."]
+        |> World.AddMessages ["You cannot careen here."]
         |> Gamestate.AtSea
         |> Some
     let actual =
@@ -462,7 +462,7 @@ let ``Run.It adds a message when given a Distance To command with an island name
         |> toSource
     let expectedWorld =
         input
-        |> World.TransformAvatar input.AvatarId (Avatar.AddMessages [inputName |> sprintf "I don't know how to get to `%s`."] >> Some)
+        |> World.TransformAvatar (Avatar.AddMessages [inputName |> sprintf "I don't know how to get to `%s`."] >> Some)
     let expected =
         expectedWorld
         |> Gamestate.AtSea
@@ -485,7 +485,7 @@ let ``Run.It adds a message when given a Distance To command with an island name
         |> toSource
     let expectedWorld =
         input
-        |> World.TransformAvatar input.AvatarId (Avatar.AddMessages [inputIslandName |> sprintf "Distance to `%s` is 0.000000."] >> Some)
+        |> World.TransformAvatar (Avatar.AddMessages [inputIslandName |> sprintf "Distance to `%s` is 0.000000."] >> Some)
     let expected =
         expectedWorld
         |> Gamestate.AtSea

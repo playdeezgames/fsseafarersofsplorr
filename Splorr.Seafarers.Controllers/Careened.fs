@@ -15,7 +15,7 @@ module Careened =
         |> Utility.DumpMessages messageSink
         let world =
             world
-            |> World.ClearMessages avatarId
+            |> World.ClearMessages
         let sideName =
             match side with
             | Port -> "port"
@@ -60,7 +60,7 @@ module Careened =
             |> Some
         | Some Command.CleanHull ->
             (side, world 
-            |> World.CleanHull world.AvatarId (if side=Port then Starboard else Port))
+            |> World.CleanHull (if side=Port then Starboard else Port))
             |> Gamestate.Careened
             |> Some
         | Some Command.WeighAnchor ->
@@ -85,7 +85,7 @@ module Careened =
             world
 
     let Run (commandSource:CommandSource) (messageSink:MessageSink) (side:Side) (world:World) : Gamestate option =
-        if world |> World.IsAvatarAlive world.AvatarId then
+        if world |> World.IsAvatarAlive then
             RunAlive commandSource messageSink side world
         else
             world.Avatars.[world.AvatarId].Messages

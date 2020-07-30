@@ -78,6 +78,7 @@ module World =
             : World =
         if currentTry>=configuration.MaximumGenerationTries then
             world
+            |> NameIslands random
         else
             let candidateLocation = (random.NextDouble() * (configuration.WorldSize |> fst), random.NextDouble() * (configuration.WorldSize |> snd))
             if world.Islands |> Map.exists(fun k _ ->(Location.DistanceTo candidateLocation k) < configuration.MinimumIslandDistance) then
@@ -107,17 +108,25 @@ module World =
             (avatarId      : string): World =
         {
             AvatarId = avatarId
-            Avatars = [avatarId,Avatar.Create configuration.AvatarDistances configuration.StatisticDescriptors configuration.RationItems (configuration.WorldSize |> Location.ScaleBy 0.5)] |> Map.ofList
+            Avatars = 
+                Map.empty
+                |> Map.add 
+                    avatarId 
+                    (Avatar.Create 
+                        configuration.AvatarDistances 
+                        configuration.StatisticDescriptors 
+                        configuration.RationItems 
+                        (configuration.WorldSize 
+                        |> Location.ScaleBy 0.5))
             Islands = Map.empty
         }
         |> GenerateIslands configuration random 0u
-        |> NameIslands random
         |> UpdateCharts
 
     let TransformAvatar 
-            (avatarId  : string) 
             (transform : Avatar -> Avatar option) 
             (world     : World) : World =
+        let avatarId = world.AvatarId
         world.Avatars
         |> Map.tryFind avatarId
         |> Option.bind transform
@@ -125,48 +134,45 @@ module World =
             (fun w avatar -> 
                 {w with Avatars = w.Avatars|> Map.add avatarId avatar}) {world with Avatars = world.Avatars |> Map.remove avatarId}
 
-    let ClearMessages
-            (avatarId : string) =
-        TransformAvatar avatarId (Avatar.ClearMessages >> Some)
+    let ClearMessages =
+        TransformAvatar (Avatar.ClearMessages >> Some)
 
     let AddMessages
-            (avatarId : string) 
             (messages : string list) =
-        TransformAvatar avatarId (Avatar.AddMessages messages >> Some)
+        TransformAvatar (Avatar.AddMessages messages >> Some)
 
     let SetSpeed 
             (speed    : float) 
-            (avatarId : string) 
             (world    : World) : World = 
+        let avatarId = world.AvatarId
         world.Avatars
         |> Map.tryFind avatarId
         |> Option.bind (Avatar.SetSpeed speed >> Some)
         |> Option.fold 
             (fun w a ->
                 {w with Avatars = w.Avatars |> Map.add avatarId a}
-                |> AddMessages avatarId [a.Speed |> sprintf "You set your speed to %f."]) world
+                |> AddMessages [a.Speed |> sprintf "You set your speed to %f."]) world
 
     let SetHeading 
             (heading  : float) 
-            (avatarId : string) 
             (world    : World) 
             : World =
+        let avatarId = world.AvatarId
         world.Avatars
         |> Map.tryFind avatarId
         |> Option.bind (Avatar.SetHeading heading >> Some)
         |> Option.fold 
             (fun w a ->
                 {w with Avatars = w.Avatars |> Map.add avatarId a}
-                |> AddMessages avatarId [a.Heading |> Angle.ToDegrees |> Angle.ToString |> sprintf "You set your heading to %s." ]) world
+                |> AddMessages [a.Heading |> Angle.ToDegrees |> Angle.ToString |> sprintf "You set your heading to %s." ]) world
 
     //a bool is not sufficient!
     //an avatar may be dead because of health
     //an avatar may be dead because of turns
     let IsAvatarAlive 
-            (avatarId : string) 
             (world    : World) 
             : bool =
-        match world.Avatars |> Map.tryFind avatarId with
+        match world.Avatars |> Map.tryFind world.AvatarId with
         | Some avatar -> 
             match avatar with
             | Avatar.ALIVE -> true
@@ -183,12 +189,12 @@ module World =
         | x, Some _ when x > 0u ->
             let steppedWorld = 
                 world
-                |> TransformAvatar avatarId (Avatar.Move >> Some)
-                |> AddMessages avatarId [ "Steady as she goes." ]
+                |> TransformAvatar (Avatar.Move >> Some)
+                |> AddMessages [ "Steady as she goes." ]
                 |> UpdateCharts
-            if IsAvatarAlive avatarId steppedWorld |> not then
+            if IsAvatarAlive steppedWorld |> not then
                 steppedWorld
-                |> AddMessages avatarId [ "You die of old age!" ]
+                |> AddMessages [ "You die of old age!" ]
             else
                 Move (x-1u) steppedWorld
         | _ -> 
@@ -212,8 +218,8 @@ module World =
         if location = job.Destination then
             let avatarId = world.AvatarId
             world
-            |> AddMessages avatarId [ "You complete your job." ]
-            |> TransformAvatar avatarId (Avatar.CompleteJob >> Some)
+            |> AddMessages [ "You complete your job." ]
+            |> TransformAvatar (Avatar.CompleteJob >> Some)
         else
             world
 
@@ -259,11 +265,11 @@ module World =
             |> TransformIsland location 
                 (fun _ -> updatedIsland |> Some)
             |> Option.foldBack (DoJobCompletion location) avatar.Job
-            |> TransformAvatar avatarId (Avatar.AddMetric Metric.VisitedIsland (if newVisitCount > oldVisitCount then 1u else 0u) >> Some)//...should this add to the metric
-            |> AddMessages avatarId [ "You dock." ]
+            |> TransformAvatar (Avatar.AddMetric Metric.VisitedIsland (if newVisitCount > oldVisitCount then 1u else 0u) >> Some)//...should this add to the metric
+            |> AddMessages [ "You dock." ]
         | _, Some _ -> 
             world
-            |> AddMessages avatarId [ "There is no place to dock there." ]
+            |> AddMessages [ "There is no place to dock there." ]
         | _ ->
             world
 
@@ -282,10 +288,10 @@ module World =
         match location, world.Avatars |> Map.tryFind world.AvatarId with
         | Some l, Some avatar ->
             world
-            |> AddMessages world.AvatarId [ (islandName, Location.DistanceTo l avatar.Position ) ||> sprintf "Distance to `%s` is %f." ]
+            |> AddMessages [ (islandName, Location.DistanceTo l avatar.Position ) ||> sprintf "Distance to `%s` is %f." ]
         | _, Some _ ->
             world
-            |> AddMessages world.AvatarId [ islandName |> sprintf "I don't know how to get to `%s`." ]
+            |> AddMessages [ islandName |> sprintf "I don't know how to get to `%s`." ]
         | _ ->
             world
 
@@ -304,56 +310,56 @@ module World =
         match location, world.Avatars |> Map.tryFind world.AvatarId with
         | Some l, Some avatar ->
             world
-            |> SetHeading (Location.HeadingTo avatar.Position l |> Angle.ToDegrees) world.AvatarId
-            |> AddMessages world.AvatarId [ islandName |> sprintf "You head for `%s`." ]
+            |> SetHeading (Location.HeadingTo avatar.Position l |> Angle.ToDegrees)
+            |> AddMessages [ islandName |> sprintf "You head for `%s`." ]
         | _, Some _ ->
             world
-            |> AddMessages world.AvatarId [ islandName |> sprintf "I don't know how to get to `%s`." ]
+            |> AddMessages [ islandName |> sprintf "I don't know how to get to `%s`." ]
         | _ ->
             world
 
     let AcceptJob 
             (jobIndex : uint32) 
             (location : Location) 
-            (avatarId : string) 
             (world    : World) 
             : World =
+        let avatarId = world.AvatarId
         match jobIndex, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId, world.Avatars |> Map.tryFind avatarId |> Option.bind (fun a -> a.Job) with
         | 0u, _, _, _ ->
             world
-            |> AddMessages avatarId [ "That job is currently unavailable." ]
+            |> AddMessages [ "That job is currently unavailable." ]
         | _, Some island, Some _,None ->
             match island |> Island.RemoveJob jobIndex with
             | isle, Some job ->
                 world
                 |> SetIsland location (isle |> Some)
                 |> TransformIsland job.Destination (Island.MakeKnown avatarId >> Some)
-                |> TransformAvatar avatarId 
+                |> TransformAvatar 
                     (Avatar.SetJob job 
                     >> Avatar.AddMetric Metric.AcceptedJob 1u
                     >> Some)
-                |> AddMessages avatarId [ "You accepted the job!" ]
+                |> AddMessages [ "You accepted the job!" ]
             | _ ->
                 world
-                |> AddMessages avatarId [ "That job is currently unavailable." ]
+                |> AddMessages [ "That job is currently unavailable." ]
         | _, Some island, Some _, Some job ->
             world
-            |> AddMessages avatarId [ "You must complete or abandon your current job before taking on a new one." ]
+            |> AddMessages [ "You must complete or abandon your current job before taking on a new one." ]
         | _ -> 
             world
 
     let AbandonJob 
-            (avatarId : string) 
             (world    : World) 
             : World =
+        let avatarId = world.AvatarId
         match world.Avatars |> Map.tryFind avatarId |> Option.bind (fun a -> a.Job) with
         | Some _ ->
             world
-            |> AddMessages avatarId [ "You abandon your job." ]
-            |> TransformAvatar avatarId (Avatar.AbandonJob >> Some)
+            |> AddMessages [ "You abandon your job." ]
+            |> TransformAvatar (Avatar.AbandonJob >> Some)
         | _ ->
             world
-            |> AddMessages avatarId [ "You have no job to abandon." ]
+            |> AddMessages [ "You have no job to abandon." ]
     
     //TODO: this function is in the wrong place!
     let private FindItemByName 
@@ -372,9 +378,9 @@ module World =
             (location               : Location) 
             (tradeQuantity          : TradeQuantity) 
             (itemName               : string) 
-            (avatarId               :string) 
             (world                  : World) 
             : World =
+        let avatarId = world.AvatarId
         match items |> FindItemByName itemName, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
         | Some (item, descriptor) , Some island, Some avatar->
             let markets =
@@ -393,25 +399,24 @@ module World =
             let tonnageNeeded = (quantity |> float) * descriptor.Tonnage
             if price > avatar.Money then
                 world
-                |> AddMessages avatarId ["You don't have enough money."]
+                |> AddMessages ["You don't have enough money."]
             elif usedTonnage + tonnageNeeded > availableTonnage then
                 world
-                |> AddMessages avatarId ["You don't have enough tonnage."]
+                |> AddMessages ["You don't have enough tonnage."]
             elif quantity = 0u then
                 world
-                |> AddMessages avatarId ["You don't have enough money to buy any of those."]
+                |> AddMessages ["You don't have enough money to buy any of those."]
             else
                 Island.UpdateMarketForItemSale islandMarketSource islandSingleMarketSink commodities descriptor quantity location
                 world
-                |> AddMessages avatarId [(quantity, descriptor.ItemName) ||> sprintf "You complete the purchase of %u %s."]
-                |> TransformAvatar avatarId (Avatar.SpendMoney price >> Some)
-                |> TransformAvatar avatarId (Avatar.AddInventory item quantity >> Some)
+                |> AddMessages [(quantity, descriptor.ItemName) ||> sprintf "You complete the purchase of %u %s."]
+                |> TransformAvatar (Avatar.SpendMoney price >> Avatar.AddInventory item quantity >> Some)
         | None, Some island, Some _ ->
             world
-            |> AddMessages avatarId ["Round these parts, we don't sell things like that."]
+            |> AddMessages ["Round these parts, we don't sell things like that."]
         | _ ->
             world
-            |> AddMessages avatarId ["You cannot buy items here."]
+            |> AddMessages ["You cannot buy items here."]
 
     let SellItems 
             (islandMarketSource       : Location -> Map<uint64, Market>) 
@@ -422,9 +427,9 @@ module World =
             (location                 : Location) 
             (tradeQuantity            : TradeQuantity) 
             (itemName                 : string) 
-            (avatarId                 : string) 
             (world                    : World) 
             : World =
+        let avatarId = world.AvatarId
         match items |> FindItemByName itemName, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
         | Some (item, descriptor), Some _, Some avatar ->
             let quantity = 
@@ -435,10 +440,10 @@ module World =
                     |> Avatar.GetItemCount item
             if quantity > (avatar |> Avatar.GetItemCount item) then
                 world
-                |> AddMessages avatarId ["You don't have enough of those to sell."]
+                |> AddMessages ["You don't have enough of those to sell."]
             elif quantity = 0u then
                 world
-                |> AddMessages avatarId ["You don't have any of those to sell."]
+                |> AddMessages ["You don't have any of those to sell."]
             else
                 let markets = islandMarketSource location
                 let unitPrice = 
@@ -446,24 +451,23 @@ module World =
                 let price = (quantity |> float) * unitPrice
                 Island.UpdateMarketForItemPurchase islandSingleMarketSource islandSingleMarketSink commodities descriptor quantity location
                 world
-                |> AddMessages avatarId [(quantity, descriptor.ItemName) ||> sprintf "You complete the sale of %u %s."]
-                |> TransformAvatar avatarId (Avatar.EarnMoney price >> Some)
-                |> TransformAvatar avatarId (Avatar.RemoveInventory item quantity >> Some)
+                |> AddMessages [(quantity, descriptor.ItemName) ||> sprintf "You complete the sale of %u %s."]
+                |> TransformAvatar (Avatar.EarnMoney price >> Avatar.RemoveInventory item quantity >> Some)
         | None, Some island, Some _ ->
             world
-            |> AddMessages avatarId ["Round these parts, we don't buy things like that."]
+            |> AddMessages ["Round these parts, we don't buy things like that."]
         | _ ->
             world
-            |> AddMessages avatarId ["You cannot sell items here."]
+            |> AddMessages ["You cannot sell items here."]
 
     let CleanHull 
-            (avatarId : string) 
             (side     : Side) 
             (world    : World) 
             : World =
+        let avatarId = world.AvatarId
         world.Avatars
         |> Map.tryFind avatarId
         |> Option.fold
             (fun w _ -> 
                 w
-                |> TransformAvatar avatarId (Avatar.CleanHull side >> Some)) world
+                |> TransformAvatar (Avatar.CleanHull side >> Some)) world

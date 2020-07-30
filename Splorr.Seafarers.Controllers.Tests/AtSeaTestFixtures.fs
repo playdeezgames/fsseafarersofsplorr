@@ -17,7 +17,7 @@ let internal configuration: WorldConfiguration =
 let internal world = World.Create configuration (System.Random()) avatarId
 let internal deadWorld =
     world
-    |> World.TransformAvatar avatarId
+    |> World.TransformAvatar
         (fun a -> 
             a 
             |> Avatar.TransformShipmate (Shipmate.TransformStatistic 
@@ -27,8 +27,8 @@ let internal deadWorld =
                         CurrentValue = x.MinimumValue} 
                     |> Some)) 0u
             |> Some)
-    |> World.ClearMessages avatarId
-    |> World.AddMessages avatarId ["Yer ded."]
+    |> World.ClearMessages
+    |> World.AddMessages ["Yer ded."]
 
 
 let internal emptyWorldconfiguration: WorldConfiguration =
@@ -69,7 +69,7 @@ let internal headForWorldVisited =
 
 let internal abandonJobWorld =
     dockWorld
-    |> World.TransformAvatar avatarId (fun avatar -> {avatar with Job=Some { FlavorText=""; Reward=0.0; Destination=(0.0,0.0)  }}|>Some)
+    |> World.TransformAvatar (fun avatar -> {avatar with Job=Some { FlavorText=""; Reward=0.0; Destination=(0.0,0.0)  }}|>Some)
 let internal atSeaIslandItemSource (_) = Set.empty
 let internal atSeaIslandItemSink (_) (_) = ()
 let internal atSeaIslandMarketSource (_) = Map.empty

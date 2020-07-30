@@ -165,8 +165,8 @@ let ``CheckForAvatarDeath.It returns the original gamestate when the avatar embe
         >> Some
     let input =
         world
-        |> World.TransformAvatar world.AvatarId avatarTransformHealth
-        |> World.TransformAvatar world.AvatarId avatarTransformTurn
+        |> World.TransformAvatar avatarTransformHealth
+        |> World.TransformAvatar avatarTransformTurn
         |> Gamestate.AtSea
         |> Some
     let expected =
@@ -202,8 +202,8 @@ let ``CheckForAvatarDeath.It returns gameover when the avatar embedded therein i
         >> Some
     let input =
         world
-        |> World.TransformAvatar world.AvatarId avatarTransformHealth
-        |> World.TransformAvatar world.AvatarId avatarTransformTurn
+        |> World.TransformAvatar avatarTransformHealth
+        |> World.TransformAvatar avatarTransformTurn
         |> Gamestate.AtSea
         |> Some
     let expected =

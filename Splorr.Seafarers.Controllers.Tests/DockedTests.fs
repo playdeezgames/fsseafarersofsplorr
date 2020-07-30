@@ -273,7 +273,7 @@ let ``Run.It adds a message when given the Buy command for a non-existent item.`
     let inputSource = (1u |> Specific, "non existent item") |> Command.Buy |> Some |> toSource
     let expectedWorld =
         inputWorld
-        |> World.AddMessages avatarId ["Round these parts, we don't sell things like that."]
+        |> World.AddMessages ["Round these parts, we don't sell things like that."]
     let expected = 
         (Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
@@ -286,7 +286,7 @@ let ``Run.It adds a message when given the Buy command for a non-existent item.`
 [<Test>]
 let ``Run.It adds a message when given the Buy command and the avatar does not have enough money to complete the purchase.`` () =
     let inputLocation = smallWorldIslandLocation
-    let inputWorld = smallWorldDocked |> World.ClearMessages avatarId
+    let inputWorld = smallWorldDocked |> World.ClearMessages
     let inputSource = (1u |> Specific, "item under test") |> Command.Buy |> Some |> toSource
     let markets =
         Map.empty
@@ -299,7 +299,7 @@ let ``Run.It adds a message when given the Buy command and the avatar does not h
         Assert.Fail("This should not be called.")
     let expectedWorld =
         inputWorld
-        |> World.AddMessages avatarId ["You don't have enough money."]
+        |> World.AddMessages ["You don't have enough money."]
     let expected = 
         (Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
@@ -333,10 +333,10 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
         inputWorld.Islands.[inputLocation]
     let expectedWorld =
         inputWorld
-        |> World.AddMessages avatarId ["You complete the purchase of 1 item under test."]
+        |> World.AddMessages ["You complete the purchase of 1 item under test."]
         |> World.TransformIsland inputLocation (fun _ -> expectedIsland |> Some)
-        |> World.TransformAvatar avatarId (Avatar.AddInventory 1UL 1u >> Some)
-        |> World.TransformAvatar avatarId (Avatar.SpendMoney expectedPrice >> Some)
+        |> World.TransformAvatar (Avatar.AddInventory 1UL 1u >> Some)
+        |> World.TransformAvatar (Avatar.SpendMoney expectedPrice >> Some)
     let expected = 
         (Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
@@ -353,7 +353,7 @@ let ``Run.It adds a message when given the Sell command for a non-existent item.
     let inputSource = (Specific 1u, "non existent item") |> Command.Sell |> Some |> toSource
     let expectedWorld =
         inputWorld
-        |> World.AddMessages avatarId ["Round these parts, we don't buy things like that."]
+        |> World.AddMessages ["Round these parts, we don't buy things like that."]
     let expected = 
         (Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
@@ -370,7 +370,7 @@ let ``Run.It adds a message when given the Sell command and the avatar does not 
     let inputSource = (Specific 1u, "item under test") |> Command.Sell |> Some |> toSource
     let expectedWorld =
         inputWorld
-        |> World.AddMessages avatarId ["You don't have enough of those to sell."]
+        |> World.AddMessages ["You don't have enough of those to sell."]
     let expected = 
         (Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
@@ -413,9 +413,9 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
             Messages = ["You complete the sale of 1 item under test."]}
     let expectedWorld =
         inputWorld
-        |> World.AddMessages avatarId ["You complete the sale."]
+        |> World.AddMessages ["You complete the sale."]
         |> World.TransformIsland inputLocation (fun _ -> expectedIsland |> Some)
-        |> World.TransformAvatar avatarId (fun _ -> expectedAvatar |> Some)
+        |> World.TransformAvatar (fun _ -> expectedAvatar |> Some)
     let expected = 
         (Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
