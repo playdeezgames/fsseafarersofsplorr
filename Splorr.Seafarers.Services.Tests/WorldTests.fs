@@ -87,7 +87,7 @@ let ``SetHeading.It sets a new heading when given a valid avatar id.`` () =
     let actual =
         soloIslandWorld
         |> World.SetHeading heading avatarId
-    Assert.AreEqual(heading |> Dms.ToRadians, actual.Avatars.[avatarId].Heading)
+    Assert.AreEqual(heading |> Angle.ToRadians, actual.Avatars.[avatarId].Heading)
 
 [<Test>]
 let ``SetHeading.It does nothing when given an invalid avatar id`` () =
@@ -102,21 +102,23 @@ let ``SetHeading.It does nothing when given an invalid avatar id`` () =
 let ``Move.It moves the avatar one unit when give 1u for distance when given a valid avatar id.`` () =
     let actual =
         soloIslandWorld
-        |> World.Move 1u avatarId
+        |> World.Move 1u
     Assert.AreEqual((6.0,5.0), actual.Avatars.[avatarId].Position)
 
 [<Test>]
 let ``Move.It does nothing when given an invalid avatar id`` () =
+    let inputWorld =
+        {soloIslandWorld with AvatarId = bogusAvatarId}
     let actual =
-        soloIslandWorld
-        |> World.Move 1u bogusAvatarId
-    Assert.AreEqual(soloIslandWorld, actual)
+        inputWorld
+        |> World.Move 1u
+    Assert.AreEqual(inputWorld, actual)
 
 [<Test>]
 let ``Move.It moves the avatar almost two units when give 2u for distance.`` () =
     let actual =
         soloIslandWorld
-        |> World.Move 2u avatarId
+        |> World.Move 2u
     Assert.AreEqual((6.9989999999999997,5.0), actual.Avatars.[avatarId].Position)
 
 [<Test>]
@@ -238,6 +240,7 @@ let ``TransformIsland.It does nothing when the location given does not have an e
 let private islandItemSourceStub (_) = Set.empty
 let private islandItemSinkStub (_) (_) = ()
 let private islandMarketSourceStub (_) = Map.empty
+let private islandSingleMarketSourceStub (_) (_) = None
 let private islandMarketSinkStub (_) (_) = ()
 
 [<Test>]
@@ -609,7 +612,7 @@ let ``SellItems.It gives a message when given a bogus island location.`` () =
         |> World.AddMessages avatarId ["You cannot sell items here."]
     let actual = 
         input 
-        |> World.SellItems islandMarketSourceStub islandSingleMarketSinkStub commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
+        |> World.SellItems islandMarketSourceStub islandSingleMarketSourceStub islandSingleMarketSinkStub commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -623,7 +626,7 @@ let ``SellItems.It gives a message when given a valid island location and bogus 
         |> World.AddMessages avatarId ["Round these parts, we don't buy things like that."]
     let actual = 
         input 
-        |> World.SellItems islandMarketSourceStub islandSingleMarketSinkStub commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
+        |> World.SellItems islandMarketSourceStub islandSingleMarketSourceStub islandSingleMarketSinkStub commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -637,7 +640,7 @@ let ``SellItems.It gives a message when the avatar has insufficient items in inv
         |> World.AddMessages avatarId ["You don't have enough of those to sell."]
     let actual = 
         input 
-        |> World.SellItems islandMarketSourceStub islandSingleMarketSinkStub commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
+        |> World.SellItems islandMarketSourceStub islandSingleMarketSourceStub islandSingleMarketSinkStub commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -651,7 +654,7 @@ let ``SellItems.It gives a message when the avatar has no items in inventory and
         |> World.AddMessages avatarId ["You don't have any of those to sell."]
     let actual = 
         input 
-        |> World.SellItems islandMarketSourceStub islandSingleMarketSinkStub commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
+        |> World.SellItems islandMarketSourceStub islandSingleMarketSourceStub islandSingleMarketSinkStub commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -678,7 +681,7 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
         |> World.AddMessages avatarId ["You complete the sale of 2 item under test."]
     let actual = 
         input 
-        |> World.SellItems islandMarketSource islandSingleMarketSink commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
+        |> World.SellItems islandMarketSource islandSingleMarketSourceStub islandSingleMarketSink commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -705,7 +708,7 @@ let ``SellItems.It gives a message and completes the salewhen the avatar has suf
         |> World.AddMessages avatarId ["You complete the sale of 2 item under test."]
     let actual = 
         input 
-        |> World.SellItems islandMarketSource islandSingleMarketSink commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
+        |> World.SellItems islandMarketSource islandSingleMarketSourceStub islandSingleMarketSink commodities genericWorldItems inputLocation inputQuantity inputItemName avatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -818,7 +821,7 @@ let ``UpdateChart.It does nothing when the given avatar is not near any nearby i
         input
     let actual =
         input
-        |> World.UpdateCharts avatarId
+        |> World.UpdateCharts
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -829,7 +832,7 @@ let ``UpdateChart.It does nothing when the given avatar has already seen all nea
         input
     let actual =
         input
-        |> World.UpdateCharts avatarId
+        |> World.UpdateCharts
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -844,7 +847,7 @@ let ``UpdateChart.It does sets all nearby island to "seen" when given avatar is 
         genericWorld
     let actual =
         input
-        |> World.UpdateCharts avatarId
+        |> World.UpdateCharts
     Assert.AreEqual(expected, actual)
 
 //[<Test>]

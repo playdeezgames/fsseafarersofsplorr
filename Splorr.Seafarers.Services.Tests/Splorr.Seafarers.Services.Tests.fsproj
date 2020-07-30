@@ -22,7 +22,7 @@
     <Compile Include="IslandTestFixtures.fs" />
     <Compile Include="WorldTestFixtures.fs" />
     <Compile Include="AvatarTests.fs" />
-    <Compile Include="DmsTests.fs" />
+    <Compile Include="AngleTests.fs" />
     <Compile Include="IslandTests.fs" />
     <Compile Include="ItemTests.fs" />
     <Compile Include="JobTests.fs" />

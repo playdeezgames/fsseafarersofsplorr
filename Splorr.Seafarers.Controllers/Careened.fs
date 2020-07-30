@@ -68,9 +68,9 @@ module Careened =
             |> Gamestate.AtSea
             |> Some
         | _ ->
-            (side, world)
-            |> Gamestate.Careened
-            |> Gamestate.InvalidInput
+            ("Maybe try 'help'?",(side, world)
+            |> Gamestate.Careened)
+            |> Gamestate.ErrorMessage
             |> Some
 
     let private RunAlive (source:CommandSource) (sink:MessageSink) (side:Side) (world:World) : Gamestate option =

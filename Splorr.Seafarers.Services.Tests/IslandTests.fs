@@ -20,7 +20,7 @@ let ``SetName.It sets the name of a given island to a given name.`` () =
 [<Test>]
 let ``GetDisplayName.It returns ???? when there is no visit count.`` () =
     let actual = Island.Create() |> Island.SetName "Uno" |> Island.GetDisplayName avatarId
-    Assert.AreEqual("????", actual)
+    Assert.AreEqual("(unknown)", actual)
 
 [<Test>]
 let ``GetDisplayName.It returns the island's name when there is a visit count.`` () =
@@ -171,7 +171,7 @@ let ``GenerateCommodities.It does nothing when commodities already exists for th
     let islandMarketSink (_) (_) =
         Assert.Fail("This should not be called.")
     input
-    |> Island.GenerateCommodities islandMarketSource islandMarketSink random commodities
+    |> Island.GenerateCommodities commoditySource islandMarketSource islandMarketSink random
 
 [<Test>]
 let ``GenerateCommodities.It generates commodities when the given island has no commodities.`` () =
@@ -181,7 +181,7 @@ let ``GenerateCommodities.It generates commodities when the given island has no 
     let islandMarketSink (_) (markets:Map<uint64, Market>) =
         Assert.AreEqual(commodities.Count, markets.Count)
     input
-    |> Island.GenerateCommodities islandMarketSource islandMarketSink random commodities
+    |> Island.GenerateCommodities commoditySource islandMarketSource islandMarketSink random
 
 
 [<Test>]
@@ -232,6 +232,9 @@ let ``UpdateMarketForItemPurchase.It updates market commodity supply based on th
     let islandMarketSource (_) =
         Map.empty
         |> Map.add 1UL market
+    let islandSingleMarketSource location commodity =
+        islandMarketSource location
+        |> Map.tryFind commodity
 
     let expectedMarket = 
         {market with
@@ -240,7 +243,7 @@ let ``UpdateMarketForItemPurchase.It updates market commodity supply based on th
         Assert.AreEqual(1UL, commodityId)
         Assert.AreEqual(expectedMarket, market)
     input
-    |> Island.UpdateMarketForItemPurchase islandMarketSource islandMarketSink commodities inputDescriptor inputQuantity
+    |> Island.UpdateMarketForItemPurchase islandSingleMarketSource islandMarketSink commodities inputDescriptor inputQuantity
 
 //[<Test>]
 //let ``AddVisit..`` () =

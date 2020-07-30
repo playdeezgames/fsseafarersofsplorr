@@ -2,11 +2,11 @@
 
 open Splorr.Seafarers.Controllers
 open NUnit.Framework
+open CommonTestFixtures
 
 let private previousGameState =
     None
     |> Gamestate.MainMenu
-let private sink(_:Message) : unit = ()
 
 [<Test>]
 let ``Run.It returns the given gamestate.`` () =
@@ -14,5 +14,5 @@ let ``Run.It returns the given gamestate.`` () =
     let expected =previousGameState |> Some
     let actual =
         input
-        |> InvalidInput.Run sink
+        |> ErrorMessage.Run sinkStub ""
     Assert.AreEqual(expected, actual)

@@ -46,6 +46,11 @@ let main argv =
         | Ok x -> x
         | Error x -> raise (System.InvalidOperationException x)
 
+    let islandSingleMarketSource (location:Location) (itemId:uint64) =
+        match location |> IslandMarket.GetMarketForIsland connection itemId with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+
     let islandMarketSink (location:Location) (markets:Map<uint64, Market>)=
         IslandMarket.CreateForIsland connection location markets
         |> ignore
@@ -65,6 +70,7 @@ let main argv =
             commoditySource
             itemSource 
             islandMarketSource 
+            islandSingleMarketSource
             islandMarketSink 
             islandSingleMarketSink 
             islandItemSource 

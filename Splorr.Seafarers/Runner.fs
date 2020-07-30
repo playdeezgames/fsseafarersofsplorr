@@ -9,19 +9,20 @@ module Runner =
 
 
     let rec private Loop 
-            (switches               : Set<string>) 
-            (commoditySource        : unit     -> Map<uint64, CommodityDescriptor>)
-            (itemSource             : unit     -> Map<uint64, ItemDescriptor>)
-            (islandMarketSource     : Location -> Map<uint64, Market>) 
-            (islandMarketSink       : Location -> Map<uint64, Market> -> unit) 
-            (islandSingleMarketSink : Location -> uint64 * Market -> unit) 
-            (islandListSource       : Location -> Set<uint64>) 
-            (islandListSink         : Location -> Set<uint64> -> unit) 
-            (random                 : Random) 
-            (configurationSource    : unit -> WorldConfiguration) 
-            (commandSource          : CommandSource) 
-            (messageSink            : MessageSink) 
-            (gamestate              : Gamestate) 
+            (switches                 : Set<string>) 
+            (commoditySource          : unit     -> Map<uint64, CommodityDescriptor>)
+            (itemSource               : unit     -> Map<uint64, ItemDescriptor>)
+            (islandMarketSource       : Location -> Map<uint64, Market>) 
+            (islandSingleMarketSource : Location -> uint64 -> Market option)
+            (islandMarketSink         : Location -> Map<uint64, Market> -> unit) 
+            (islandSingleMarketSink   : Location -> uint64 * Market -> unit) 
+            (islandListSource         : Location -> Set<uint64>) 
+            (islandListSink           : Location -> Set<uint64> -> unit) 
+            (random                   : Random) 
+            (configurationSource      : unit -> WorldConfiguration) 
+            (commandSource            : CommandSource) 
+            (messageSink              : MessageSink) 
+            (gamestate                : Gamestate) 
             : unit =
 
         let nextGamestate : Gamestate option = 
@@ -63,10 +64,11 @@ module Runner =
 
             | Gamestate.Docked (Dock, location, world) -> 
                 Docked.Run 
-                    islandMarketSource 
-                    islandSingleMarketSink 
                     commoditySource 
                     itemSource 
+                    islandMarketSource 
+                    islandSingleMarketSource
+                    islandSingleMarketSink 
                     commandSource 
                     messageSink 
                     location 
@@ -74,10 +76,10 @@ module Runner =
 
             | Gamestate.Docked (ItemList, location, world) -> 
                 ItemList.Run 
-                    islandMarketSource 
-                    islandListSource 
                     commoditySource 
                     itemSource 
+                    islandMarketSource 
+                    islandListSource 
                     messageSink 
                     location 
                     world
@@ -85,7 +87,8 @@ module Runner =
             | Gamestate.Docked (Jobs, location, world) -> 
                 Jobs.Run 
                     messageSink 
-                    (location, world)
+                    location
+                    world
 
             | Gamestate.GameOver messages -> 
                 GameOver.Run 
@@ -97,9 +100,10 @@ module Runner =
                     messageSink 
                     state
 
-            | Gamestate.InvalidInput state ->
-                InvalidInput.Run
+            | Gamestate.ErrorMessage (message, state) ->
+                ErrorMessage.Run
                     messageSink
+                    message
                     state
 
             | Gamestate.Inventory gameState -> 
@@ -140,6 +144,7 @@ module Runner =
                 commoditySource 
                 itemSource 
                 islandMarketSource 
+                islandSingleMarketSource
                 islandMarketSink 
                 islandSingleMarketSink 
                 islandListSource 
@@ -154,15 +159,16 @@ module Runner =
             ()
     
     let Run 
-            (switches               : Set<string>) 
-            (configurationSource    : unit     -> WorldConfiguration) 
-            (commoditySource        : unit     -> Map<uint64, CommodityDescriptor>) 
-            (itemSource             : unit     -> Map<uint64, ItemDescriptor>) 
-            (islandMarketSource     : Location -> Map<uint64, Market>) 
-            (islandMarketSink       : Location -> Map<uint64, Market> -> unit) 
-            (islandSingleMarketSink : Location -> uint64 * Market     -> unit) 
-            (islandListSource       : Location -> Set<uint64>) 
-            (islandListSink         : Location -> Set<uint64>->unit) 
+            (switches                 : Set<string>) 
+            (configurationSource      : unit     -> WorldConfiguration) 
+            (commoditySource          : unit     -> Map<uint64, CommodityDescriptor>) 
+            (itemSource               : unit     -> Map<uint64, ItemDescriptor>) 
+            (islandMarketSource       : Location -> Map<uint64, Market>) 
+            (islandSingleMarketSource : Location -> uint64 -> Market option) 
+            (islandMarketSink         : Location -> Map<uint64, Market> -> unit) 
+            (islandSingleMarketSink   : Location -> uint64 * Market     -> unit) 
+            (islandListSource         : Location -> Set<uint64>) 
+            (islandListSink           : Location -> Set<uint64>->unit) 
             : unit =
 
         Console.Title <- "Seafarers of SPLORR!!"
@@ -176,6 +182,7 @@ module Runner =
             commoditySource 
             itemSource 
             islandMarketSource 
+            islandSingleMarketSource
             islandMarketSink 
             islandSingleMarketSink 
             islandListSource 

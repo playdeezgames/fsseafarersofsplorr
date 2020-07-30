@@ -4,33 +4,47 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module Docked = 
-    let private RunWithIsland (islandMarketSource) (islandSingleMarketSink) (commodities:Map<uint64, CommodityDescriptor>) (items:Map<uint64, ItemDescriptor>) (source:CommandSource) (sink:MessageSink) (location:Location) (island:Island) (world: World) : Gamestate option =
-        "" |> Line |> sink
+    let private UpdateDisplay 
+            (messageSink:MessageSink) 
+            (location:Location) 
+            (world: World) =
+        "" |> Line |> messageSink
         world.Avatars.[world.AvatarId].Messages
-        |> Utility.DumpMessages sink
+        |> Utility.DumpMessages messageSink
+        let island =
+            world.Islands.[location]
         [
             (Hue.Flavor, sprintf "You have visited %u times." (island.AvatarVisits |> Map.tryFind world.AvatarId |> Option.bind (fun x->x.VisitCount) |> Option.defaultValue 0u) |> Line) |> Hued
             (Hue.Heading, sprintf "You are docked at '%s':" island.Name |> Line) |> Hued
         ]
-        |> List.iter sink
+        |> List.iter messageSink
 
+    let private HandleCommand
+            (commoditySource:unit->Map<uint64, CommodityDescriptor>) 
+            (itemSource:unit->Map<uint64, ItemDescriptor>) 
+            (islandMarketSource:Location->Map<uint64, Market>) 
+            (islandSingleMarketSource:Location->uint64->Market option) 
+            (islandSingleMarketSink:Location->uint64 * Market -> unit) 
+            (command:Command option) 
+            (location:Location) 
+            (world: World) =
         let world =
             world
             |> World.ClearMessages world.AvatarId
 
-        match source() with
+        match command with
         | Some (Command.AcceptJob index) ->
             (Dock, location, world |> World.AcceptJob index location world.AvatarId)
             |> Gamestate.Docked
             |> Some
 
         | Some (Command.Buy (quantity, itemName))->
-            (Dock, location, world |> World.BuyItems islandMarketSource islandSingleMarketSink commodities items location quantity itemName world.AvatarId) 
+            (Dock, location, world |> World.BuyItems islandMarketSource islandSingleMarketSink (commoditySource()) (itemSource()) location quantity itemName world.AvatarId) 
             |> Gamestate.Docked
             |> Some            
 
         | Some (Command.Sell (quantity, itemName))->
-            (Dock, location, world |> World.SellItems islandMarketSource islandSingleMarketSink commodities items location quantity itemName world.AvatarId) 
+            (Dock, location, world |> World.SellItems islandMarketSource islandSingleMarketSource islandSingleMarketSink (commoditySource()) (itemSource()) location quantity itemName world.AvatarId) 
             |> Gamestate.Docked
             |> Some            
 
@@ -86,17 +100,46 @@ module Docked =
             |> Some
 
         | _ -> 
-            (Dock, location, world) 
-            |> Gamestate.Docked 
-            |> Gamestate.InvalidInput
+            ("Maybe try 'help'?",(Dock, location, world) 
+            |> Gamestate.Docked)
+            |> Gamestate.ErrorMessage
             |> Some
 
-    let internal RunBoilerplate (func:Location -> Island -> World->(Gamestate option)) (location:Location) (world: World) : Gamestate option =
+    let private RunWithIsland 
+            (commoditySource          : unit -> Map<uint64, CommodityDescriptor>) 
+            (itemSource               : unit -> Map<uint64, ItemDescriptor>) 
+            (islandMarketSource       : Location -> Map<uint64, Market>) 
+            (islandSingleMarketSource : Location -> uint64 -> Market option) 
+            (islandSingleMarketSink   : Location -> uint64 * Market -> unit) 
+            (commandSource            : CommandSource) 
+            (messageSink              : MessageSink) 
+            (location                 : Location) 
+            (world                    : World) 
+            : Gamestate option =
+        world
+        |> UpdateDisplay 
+            messageSink 
+            location 
+        
+        world   
+        |> HandleCommand 
+            commoditySource 
+            itemSource 
+            islandMarketSource 
+            islandSingleMarketSource
+            islandSingleMarketSink 
+            (commandSource()) 
+            location 
+
+    let internal RunBoilerplate 
+            (func     : Location -> World->(Gamestate option)) 
+            (location : Location) 
+            (world    : World) 
+            : Gamestate option =
         if world |> World.IsAvatarAlive world.AvatarId then
-            match world.Islands |> Map.tryFind location with
-            | Some island ->
-                func location island world
-            | None ->
+            if world.Islands |> Map.containsKey location then
+                func location world
+            else
                 world
                 |> Gamestate.AtSea
                 |> Some
@@ -105,5 +148,20 @@ module Docked =
             |> Gamestate.GameOver
             |> Some
 
-    let Run (islandMarketSource) (islandSingleMarketSink) (commoditySource:unit -> Map<uint64, CommodityDescriptor>) (itemSource:unit->Map<uint64, ItemDescriptor>) (source:CommandSource) (sink:MessageSink) =
-        RunBoilerplate (RunWithIsland  islandMarketSource islandSingleMarketSink (commoditySource()) (itemSource()) source sink)
+    let Run 
+            (commoditySource          : unit -> Map<uint64, CommodityDescriptor>) 
+            (itemSource               : unit -> Map<uint64, ItemDescriptor>) 
+            (islandMarketSource       : Location -> Map<uint64,Market>) 
+            (islandSingleMarketSource : Location -> uint64 -> Market option) 
+            (islandSingleMarketSink   : Location -> uint64 * Market -> unit) 
+            (commandSource            : CommandSource) 
+            (messageSink              : MessageSink) =
+        RunBoilerplate 
+            (RunWithIsland 
+                commoditySource 
+                itemSource 
+                islandMarketSource 
+                islandSingleMarketSource
+                islandSingleMarketSink 
+                commandSource 
+                messageSink)

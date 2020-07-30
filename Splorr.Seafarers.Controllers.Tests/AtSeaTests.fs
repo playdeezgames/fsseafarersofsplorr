@@ -6,17 +6,8 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 open CommonTestFixtures
 open AtSeaTestFixtures
-open System.Data.SQLite
-open Splorr.Seafarers.Persistence.Schema
 
-let private islandItemSource (_) = Set.empty
-let private islandItemSink (_) (_) = ()
-let private islandMarketSource (_) = Map.empty
-let private islandMarketSink (_) (_) = ()
-let private commoditySource (_) = Map.empty
-let private itemSource (_) = Map.empty
-
-let internal functionUnderTest = AtSea.Run commoditySource itemSource islandMarketSource islandMarketSink islandItemSource islandItemSink random (0.0, 0.0)
+let private functionUnderTest = AtSea.Run atSeaCommoditySource atSeaItemSource atSeaIslandMarketSource atSeaIslandMarketSink atSeaIslandItemSource atSeaIslandItemSink random (0.0, 0.0)
 
 [<Test>]
 let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
@@ -57,9 +48,9 @@ let ``Run.It returns InvalidInput when given invalid command.`` () =
         None 
         |> toSource
     let expected = 
-        input 
-        |> Gamestate.AtSea 
-        |> Gamestate.InvalidInput
+        ("Maybe try 'help'?",input 
+        |> Gamestate.AtSea)
+        |> Gamestate.ErrorMessage
         |> Some
     let actual =
         input
@@ -93,10 +84,10 @@ let ``Run.It returns AtSea with new speed when given Set Speed command.`` () =
 
 [<Test>]
 let ``Run.It returns AtSea with new heading when given Set Heading command.`` () =
-    let newHeading = 1.5
+    let inputHeading = 1.5
     let input = world
     let inputSource = 
-        newHeading 
+        inputHeading 
         |> SetCommand.Heading 
         |> Command.Set 
         |> Some 
@@ -105,8 +96,8 @@ let ``Run.It returns AtSea with new heading when given Set Heading command.`` ()
     let expectedAvatar = 
         {input.Avatars.[avatarId] with 
             Heading = 
-                newHeading 
-                |> Dms.ToRadians
+                inputHeading 
+                |> Angle.ToRadians
             Messages = expectedMessages}
     let expected = 
         {input with 
@@ -231,7 +222,7 @@ let ``Run.It returns Island List when given the Islands command.`` () =
     Assert.AreEqual(expected, actual)
 
 [<Test>]
-let ``Run.It returns AtSea when given the Dock command and there is no near enough island.`` () =
+let ``Run.It returns AtSea when given the Dock command and there is no sufficiently close island.`` () =
     let input = emptyWorld
     let inputSource = 
         Command.Dock 

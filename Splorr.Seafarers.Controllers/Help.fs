@@ -127,7 +127,7 @@ module Help =
             (Hue.Label, "yes" |> Line) |> Hued
             (Hue.Usage, " - confirms the action" |> Line) |> Hued
         ] |> Group
-    let private AtSea (sink:MessageSink) : unit =
+    let private AtSea (messageSink:MessageSink) : unit =
         [
             "" |> Line
             (Hue.Heading, "At Sea Commands:" |> Line) |> Hued
@@ -146,9 +146,9 @@ module Help =
             setSpeedMessage
             statusMessage
         ]
-        |> List.iter sink
+        |> List.iter messageSink
 
-    let private Careened (sink:MessageSink) : unit =
+    let private Careened (messageSink:MessageSink) : unit =
         [
             "" |> Line
             (Hue.Heading, "Careened Commands:" |> Line) |> Hued
@@ -159,18 +159,18 @@ module Help =
             statusMessage
             weighAnchorMessage
         ]
-        |> List.iter sink
+        |> List.iter messageSink
 
-    let private ConfirmQuit (sink:MessageSink) : unit =
+    let private ConfirmQuit (messageSink:MessageSink) : unit =
         [
             "" |> Line
             (Hue.Heading, "Confirm Quit Commands:" |> Line) |> Hued
             noMessage
             yesMessage
         ]
-        |> List.iter sink
+        |> List.iter messageSink
 
-    let private Docked (sink:MessageSink) : unit =
+    let private Docked (messageSink:MessageSink) : unit =
         [
             "" |> Line
             (Hue.Heading, "Docked Commands:" |> Line) |> Hued
@@ -186,18 +186,21 @@ module Help =
             statusMessage
             undockMessage
         ]
-        |> List.iter sink
+        |> List.iter messageSink
 
-    let Run (sink:MessageSink) (gamestate:Gamestate) : Gamestate option =
+    let Run 
+            (messageSink:MessageSink) 
+            (gamestate:Gamestate) 
+            : Gamestate option =
         match gamestate with
         | Gamestate.AtSea _ ->
-            sink |> AtSea    
+            messageSink |> AtSea    
         | Gamestate.Careened _ ->
-            sink |> Careened
+            messageSink |> Careened
         | Gamestate.ConfirmQuit _ ->
-            sink |> ConfirmQuit
+            messageSink |> ConfirmQuit
         | Gamestate.Docked (Dock, _, _) ->
-            sink |> Docked
+            messageSink |> Docked
         | _ ->
             ()
         gamestate

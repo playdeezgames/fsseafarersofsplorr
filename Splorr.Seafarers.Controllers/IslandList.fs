@@ -4,14 +4,16 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module IslandList =
-    let private lesser (a:uint32) (b:uint32) = if a<b then a else b
-
-    let private RunWorld (sink:MessageSink) (page:uint32) (pageSize:uint32) (world:World) : unit = 
+    let private RunWorld 
+            (messageSink : MessageSink) 
+            (pageSize    : uint32) 
+            (page        : uint32) 
+            (world       : World) : unit = 
         [
             "" |> Line
             (Hue.Heading, "Known Islands:" |> Line) |> Hued
         ]
-        |> List.iter sink
+        |> List.iter messageSink
         let knownIslands =
             world.Islands
             |> Map.toList
@@ -26,18 +28,18 @@ module IslandList =
             (Hue.Subheading, " of " |> Text) |> Hued
             (Hue.Value, totalPages |> sprintf "%u" |> Line) |> Hued
         ]
-        |> List.iter sink
+        |> List.iter messageSink
         if page < totalPages then
             knownIslands
             |> List.skip (skippedItems |> int)
-            |> List.take ((lesser pageSize (totalItems-skippedItems)) |> int)
+            |> List.take ((Utility.Lesser pageSize (totalItems-skippedItems)) |> int)
             |> List.iter (fun (location, island) -> 
                 let distance =
                     Location.DistanceTo world.Avatars.[world.AvatarId].Position location
                 let bearing =
                     Location.HeadingTo world.Avatars.[world.AvatarId].Position location
-                    |> Dms.ToDegrees
-                    |> Dms.ToString
+                    |> Angle.ToDegrees
+                    |> Angle.ToString
                 [
                     (Hue.Value, island.Name |> sprintf "%s" |> Text) |> Hued
                     (Hue.Sublabel, " Bearing:" |> Text) |> Hued
@@ -45,16 +47,19 @@ module IslandList =
                     (Hue.Sublabel, " Distance:" |> Text) |> Hued
                     (Hue.Value, distance |> sprintf "%f" |> Line) |> Hued
                 ]
-                |> List.iter sink)
+                |> List.iter messageSink)
         else
-            (Hue.Usage ,"(end of list)" |> Line) |> Hued |> sink
+            (Hue.Usage ,"(end of list)" |> Line) |> Hued |> messageSink
     
     let private pageSize = 20u
 
-
-    let Run (sink:MessageSink) (page:uint32) (gamestate: Gamestate) : Gamestate option =
+    let Run 
+            (messageSink : MessageSink) 
+            (page        : uint32) 
+            (gamestate   : Gamestate) 
+            : Gamestate option =
         gamestate 
         |> Gamestate.GetWorld
-        |> Option.iter (RunWorld sink page pageSize)
+        |> Option.iter (RunWorld messageSink pageSize page )
         gamestate
         |> Some

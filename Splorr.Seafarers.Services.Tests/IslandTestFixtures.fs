@@ -49,6 +49,7 @@ let internal commodityIsland =
 let internal commodities = 
     [(1UL, {CommodityId = 1UL; CommodityName="grain"; PurchaseFactor=1.0; SaleFactor=1.0; Discount=0.5; BasePrice=1.0})]
     |> Map.ofList
+let internal commoditySource = fun () -> commodities
 let internal items =
     [(1UL, 
         {

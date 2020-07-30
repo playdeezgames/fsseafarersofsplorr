@@ -58,7 +58,7 @@ let internal commodities = Map.empty
 let internal headForWorldUnvisited = 
     World.Create dockWorldconfiguration (System.Random()) avatarId
     |> World.TransformIsland (0.0,0.0) (Island.SetName "yermom" >> Some)
-    |> World.Move 1u avatarId
+    |> World.Move 1u
 let private headForWorldIslandItemSource (_) = [1UL] |> Set.ofList
 let private headForWorldIslandItemSink (_) (_) = ()
 let private headForWorldIslandMarketSource (_) = [1UL, {Supply=5.0; Demand=5.0}] |> Map.ofList
@@ -70,6 +70,11 @@ let internal headForWorldVisited =
 let internal abandonJobWorld =
     dockWorld
     |> World.TransformAvatar avatarId (fun avatar -> {avatar with Job=Some { FlavorText=""; Reward=0.0; Destination=(0.0,0.0)  }}|>Some)
-
+let internal atSeaIslandItemSource (_) = Set.empty
+let internal atSeaIslandItemSink (_) (_) = ()
+let internal atSeaIslandMarketSource (_) = Map.empty
+let internal atSeaIslandMarketSink (_) (_) = ()
+let internal atSeaCommoditySource (_) = Map.empty
+let internal atSeaItemSource (_) = Map.empty
 
 

@@ -1,12 +1,12 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
-open Splorr.Seafarers.Models
-open Splorr.Seafarers.Services
-
 module GameOver =
-    let Run (sink:MessageSink) (messages:string list): Gamestate option =
-        "" |> Line |> sink
-        messages |> Utility.DumpMessages sink
+    let Run 
+            (messageSink:MessageSink) 
+            (messages:string list)
+            : Gamestate option =
+        "" |> Line |> messageSink
+        messages |> Utility.DumpMessages messageSink
         None
         |> Gamestate.MainMenu
         |> Some

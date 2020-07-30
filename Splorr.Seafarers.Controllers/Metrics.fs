@@ -3,7 +3,9 @@
 open Splorr.Seafarers.Models
 
 module Metrics = 
-    let private GetMetricDisplayName (metric:Metric) : string =
+    let private GetMetricDisplayName 
+            (metric:Metric) 
+            : string =
         match metric with
         | Metric.Moved         -> "moved"
         | Metric.Ate           -> "ate"
@@ -14,7 +16,10 @@ module Metrics =
         | Metric.CleanedHull   -> "cleaned a hull"
         | _ -> raise (System.NotImplementedException (metric.ToString() |> sprintf "'%s' is a metric with no name!"))
 
-    let private RunWorld (sink:MessageSink) (avatar:Avatar) : unit = 
+    let private RunWorld 
+            (messageSink:MessageSink) 
+            (avatar:Avatar) 
+            : unit = 
         [
             "" |> Line
             (Hue.Heading, "Metric Name" |> sprintf "%-24s" |> Text) |> Hued
@@ -22,26 +27,28 @@ module Metrics =
             (Hue.Heading, "Count" |> sprintf "%6s" |> Line) |> Hued
             "-------------------------+-------" |> Line
         ]
-        |> List.iter sink
+        |> List.iter messageSink
         if avatar.Metrics.IsEmpty then
-            (Hue.Usage, "(none)" |> Line) |> Hued |> sink
+            (Hue.Usage, "(none)" |> Line) |> Hued |> messageSink
         else
             avatar.Metrics
             |> Map.iter
-                (fun k v -> 
+                (fun metric value -> 
                     [
-                        (Hue.Label, k |> GetMetricDisplayName |> sprintf "%-24s" |> Text) |> Hued
+                        (Hue.Label, metric |> GetMetricDisplayName |> sprintf "%-24s" |> Text) |> Hued
                         " | " |> Text
-                        (Hue.Value, v |> sprintf "%6u" |> Line) |> Hued
+                        (Hue.Value, value |> sprintf "%6u" |> Line) |> Hued
                     ]
-                    |> List.iter sink)
+                    |> List.iter messageSink)
 
-    let Run (sink:MessageSink) (gamestate:Gamestate) : Gamestate option =
-        match gamestate |> Gamestate.GetWorld |> Option.bind (fun w->w.Avatars |> Map.tryFind w.AvatarId) with
-        | Some avatar ->
-            RunWorld sink avatar
-        | None -> 
-            ()
+    let Run 
+            (messageSink:MessageSink) 
+            (gamestate:Gamestate) 
+            : Gamestate option =
+        gamestate 
+        |> Gamestate.GetWorld 
+        |> Option.bind (fun w->w.Avatars |> Map.tryFind w.AvatarId)
+        |> Option.iter (RunWorld messageSink)
         gamestate
         |> Some
 

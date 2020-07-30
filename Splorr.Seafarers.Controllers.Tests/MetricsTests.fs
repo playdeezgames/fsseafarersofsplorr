@@ -9,7 +9,6 @@ open AtSeaTestFixtures
 let private previousGameState =
     None
     |> Gamestate.MainMenu
-let private sink(_:Message) : unit = ()
 
 [<Test>]
 let ``Run.It returns the given gamestate.`` () =
@@ -17,7 +16,7 @@ let ``Run.It returns the given gamestate.`` () =
     let expected =previousGameState |> Some
     let actual =
         input
-        |> Metrics.Run sink
+        |> Metrics.Run sinkStub
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -36,6 +35,6 @@ let ``Run.It works when all of the metrics have counters.`` () =
     let expected = input |> Some
     let actual =
         input
-        |> Metrics.Run sink
+        |> Metrics.Run sinkStub
     Assert.AreEqual(expected, actual)
 

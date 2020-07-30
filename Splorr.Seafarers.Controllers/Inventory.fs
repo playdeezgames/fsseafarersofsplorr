@@ -4,7 +4,11 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module Inventory =
-    let private RunWorld (items:Map<uint64, ItemDescriptor>) (sink:MessageSink) (world:World) : unit =
+    let private RunWorld 
+            (itemSource  : unit -> Map<uint64, ItemDescriptor>)
+            (messageSink : MessageSink) 
+            (world       : World) 
+            : unit =
         [
             "" |> Line
             (Hue.Heading, "Item" |> sprintf "%-20s" |> Text) |> Hued
@@ -14,8 +18,9 @@ module Inventory =
             (Hue.Heading, "Tonnage" |> sprintf "%8s" |> Line) |> Hued
             (Hue.Label, "---------------------+--------+---------" |> Line ) |> Hued
         ]
-        |> List.iter sink
+        |> List.iter messageSink
         let avatar = world.Avatars.[world.AvatarId]
+        let items = itemSource()
         let inventoryEmpty =
             avatar.Inventory
             |> Map.fold
@@ -29,11 +34,11 @@ module Inventory =
                         (Hue.Label, " | " |> Text) |> Hued
                         (Hue.Value, tonnage |> sprintf "%8.1f" |> Line) |> Hued
                     ]
-                    |> List.iter sink
+                    |> List.iter messageSink
                     false) true
         if inventoryEmpty then 
             (Hue.Usage, "(none)"  |> Line) |> Hued
-            |> sink
+            |> messageSink
         let availableTonnage = avatar.Vessel.Tonnage
         let usedTonnage = avatar |> Avatar.GetUsedTonnage items
         [
@@ -42,12 +47,15 @@ module Inventory =
             (Hue.Sublabel, "/" |> Text) |> Hued
             (Hue.Value, availableTonnage |> sprintf "%.1f" |> Line) |> Hued
         ]
-        |> List.iter sink
+        |> List.iter messageSink
 
-    let Run (itemSource:unit -> Map<uint64, ItemDescriptor>) (sink:MessageSink) (gamestate:Gamestate) : Gamestate option =
-        let items = itemSource()
+    let Run 
+            (itemSource : unit -> Map<uint64, ItemDescriptor>) 
+            (messageSink       : MessageSink) 
+            (gamestate  : Gamestate) 
+            : Gamestate option =
         gamestate 
         |> Gamestate.GetWorld
-        |> Option.iter (RunWorld items sink)
+        |> Option.iter (RunWorld itemSource messageSink)
         gamestate
         |> Some

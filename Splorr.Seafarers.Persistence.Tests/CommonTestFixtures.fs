@@ -77,8 +77,6 @@ let private setupRationItems (connection:SQLiteConnection) : unit =
     ]
     |> runCommands connection
 
-//Island locations: (0.0, 0.0); (10.0,0.0); (0.0;10.0)
-
 let private setupIslandItems (connection:SQLiteConnection) : unit =
     [
         Tables.IslandItems
