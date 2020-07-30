@@ -1,18 +1,21 @@
 ﻿module IslandListTests
 
 open NUnit.Framework
-open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 open CommonTestFixtures
 
 let private previousGameState =
     None
     |> Gamestate.MainMenu
-let private sink(_:Message) : unit = ()
 
 [<Test>]
 let ``Run.It returns the given gamestate.`` () =
-    let actual =
+    let input = 
         previousGameState
-        |> IslandList.Run sink 0u
-    Assert.AreEqual(previousGameState |> Some, actual)
+    let expected =
+        input
+        |> Some
+    let actual =
+        input
+        |> IslandList.Run sinkStub 0u
+    Assert.AreEqual(expected, actual)

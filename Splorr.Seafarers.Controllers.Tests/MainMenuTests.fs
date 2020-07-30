@@ -4,6 +4,7 @@ open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
+open CommonTestFixtures
 
 let private configuration: WorldConfiguration =
     {
@@ -16,43 +17,83 @@ let private configuration: WorldConfiguration =
         StatisticDescriptors = []
     }
 let private world = World.Create configuration (System.Random()) ""
-let private sink(_:Message) : unit = ()
 
 [<Test>]
 let ``Run.It returns Confirm Quit when given Quit command and there is no world.`` () =
-    let actual =
+    let input = 
         None
-        |> MainMenu.Run configuration (fun()->Command.Quit |> Some) sink
-    Assert.AreEqual(None |> Gamestate.MainMenu |> Gamestate.ConfirmQuit |> Some, actual)
+    let inputSource = 
+        Command.Quit 
+        |> Some 
+        |> toSource
+    let expected = 
+        input 
+        |> Gamestate.MainMenu 
+        |> Gamestate.ConfirmQuit 
+        |> Some
+    let actual =
+        input
+        |> MainMenu.Run configuration inputSource sinkStub
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It returns Main Menu when given Quit command and there is a world.`` () =
+    let input = world
+    let inputSource = 
+        Command.Quit 
+        |> Some 
+        |> toSource
+    let expected = 
+        ("Invalid command.", 
+            input 
+            |> Some 
+            |> Gamestate.MainMenu) 
+        |> Gamestate.ErrorMessage |> Some
     let actual =
-        world
+        input
         |> Some
-        |> MainMenu.Run configuration (fun()->Command.Quit |> Some) sink 
-    Assert.AreEqual(world |> Some |> Gamestate.MainMenu |> Some, actual)
+        |> MainMenu.Run configuration inputSource sinkStub 
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It returns Main Menu when given invalid command and there is no world.`` () =
+    let input = None
+    let expected = 
+        ("Invalid command.", 
+            input 
+            |> Gamestate.MainMenu) 
+        |> Gamestate.ErrorMessage 
+        |> Some
     let actual =
-        None
-        |> MainMenu.Run configuration (fun()->None) sink 
-    Assert.AreEqual(None |> Gamestate.MainMenu |> Some, actual)
+        input
+        |> MainMenu.Run configuration (fun()->None) sinkStub 
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It returns Main Menu when given invalid command and there is a world.`` () =
-    let actual =
-        world
+    let input = world
+    let expected = 
+        ("Invalid command.", 
+            input 
+            |> Some 
+            |> Gamestate.MainMenu) 
+        |> Gamestate.ErrorMessage 
         |> Some
-        |> MainMenu.Run configuration (fun()->None) sink 
-    Assert.AreEqual(world |> Some |> Gamestate.MainMenu |> Some, actual)
+    let actual =
+        input
+        |> Some
+        |> MainMenu.Run configuration (fun()->None) sinkStub 
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It returns At Sea when given Start command and there is no world.`` () =
+    let input = None
+    let inputSource = System.Guid.NewGuid().ToString() |> Command.Start |> Some |> toSource
     let actual =
-        None
-        |> MainMenu.Run configuration (fun()->System.Guid.NewGuid().ToString() |> Command.Start |> Some) sink 
+        input
+        |> MainMenu.Run configuration inputSource sinkStub 
+    //the command creates a world, which has randomness in the generation
+    //so it is very brittle to figure out what the expected would be
     match actual with
     | Some (Gamestate.AtSea _) -> true
     | _ -> false
@@ -61,46 +102,84 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
 
 [<Test>]
 let ``Run.It returns Main Menu when given Start command and there is a world.`` () =
-    let actual =
-        world
+    let inputSource = "" |> Command.Start |> Some |> toSource
+    let input = world
+    let expected = 
+        ("Invalid command.", 
+            input 
+            |> Some 
+            |> Gamestate.MainMenu) 
+        |> Gamestate.ErrorMessage 
         |> Some
-        |> MainMenu.Run configuration (fun()->"" |> Command.Start |> Some) sink 
-    Assert.AreEqual(world |> Some |> Gamestate.MainMenu |> Some, actual)
+    let actual =
+        input
+        |> Some
+        |> MainMenu.Run configuration inputSource sinkStub 
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It returns Main Menu with no world when given Abandon Game command and there is a world.`` () =
-    let actual =
-        world
+    let input = world
+    let inputSource = Game |> Command.Abandon |> Some |> toSource
+    let expected = 
+        None 
+        |> Gamestate.MainMenu 
         |> Some
-        |> MainMenu.Run configuration (fun()->Game |> Command.Abandon |> Some) sink 
-    Assert.AreEqual(None |> Gamestate.MainMenu |> Some, actual)
+    let actual =
+        input
+        |> Some
+        |> MainMenu.Run configuration inputSource sinkStub 
+    Assert.AreEqual(expected, actual)
 
 
 [<Test>]
 let ``Run.It returns Main Menu with no world when given Abandon Game command and there is no world.`` () =
-    let actual =
+    let input = 
         None
-        |> MainMenu.Run configuration (fun()->Game |> Command.Abandon |> Some) sink 
-    Assert.AreEqual(None |> Gamestate.MainMenu |> Some, actual)
+    let inputSource =
+        Game 
+        |> Command.Abandon 
+        |> Some
+        |> toSource
+    let expected = 
+        ("Invalid command.", 
+            None 
+            |> Gamestate.MainMenu) 
+        |> Gamestate.ErrorMessage 
+        |> Some
+    let actual =
+        input
+        |> MainMenu.Run configuration inputSource sinkStub 
+    Assert.AreEqual(expected, actual)
 
 
 [<Test>]
 let ``Run.It returns At Sea when given Resume command and there is a world.`` () =
-    let actual =
-        world
+    let input = world
+    let inputSource = Command.Resume |> Some |> toSource
+    let expected =
+        input 
+        |> Gamestate.AtSea 
         |> Some
-        |> MainMenu.Run configuration (fun()->Command.Resume |> Some) sink 
-    Assert.AreEqual(world |> Gamestate.AtSea |> Some, actual)
+    let actual =
+        input
+        |> Some
+        |> MainMenu.Run configuration inputSource sinkStub
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It returns Main Menu with no world when given Resume command and there is no world.`` () =
+    let input = None
+    let inputSource = Command.Resume |> Some |> toSource
+    let expected = 
+        ("Invalid command.", 
+            input 
+            |> Gamestate.MainMenu) 
+        |> Gamestate.ErrorMessage 
+        |> Some
     let actual =
-        None
-        |> MainMenu.Run configuration (fun()->Command.Resume |> Some) sink 
-    Assert.AreEqual(None |> Gamestate.MainMenu |> Some, actual)
-
-//[<Test>]
-//let ``Run.It returns YYYY when given XXXX command.`` () =
-//    raise (System.NotImplementedException "Not Implemented")
+        input
+        |> MainMenu.Run configuration inputSource sinkStub 
+    Assert.AreEqual(expected, actual)
 
 

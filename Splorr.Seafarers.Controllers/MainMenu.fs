@@ -4,62 +4,115 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module MainMenu =
-    let Run (configuration:WorldConfiguration) (source:CommandSource) (sink:MessageSink) (world:World option) : Gamestate option =
+    let private UpdateDisplayHeader 
+            (messageSink : MessageSink) 
+            : unit =
         [
             "" |> Line
             (Hue.Heading, "Main Menu Commands:" |> Line) |> Hued
         ]
-        |> List.iter sink
+        |> List.iter messageSink
 
-        if world.IsSome then
-            [
-                (Hue.Label, "resume" |> Text) |> Hued
-                (Hue.Usage, " - resume game" |> Line) |> Hued
-                (Hue.Label, "abandon game" |> Text) |> Hued
-                (Hue.Usage, " - abandon game" |> Line) |> Hued
-            ]
+    let private UpdateDisplayInGame 
+            (messageSink : MessageSink) 
+            : unit =
+        UpdateDisplayHeader messageSink
+        [
+            (Hue.Label, "resume" |> Text) |> Hued
+            (Hue.Usage, " - resume game" |> Line) |> Hued
+            (Hue.Label, "abandon game" |> Text) |> Hued
+            (Hue.Usage, " - abandon game" |> Line) |> Hued
+        ]
+        |> List.iter messageSink
+
+    let private UpdateDisplayNoGame 
+            (messageSink : MessageSink) 
+            : unit =
+        UpdateDisplayHeader messageSink
+        [
+            (Hue.Label, "start" |> Text) |> Hued
+            (Hue.Usage, " - starts a new world" |> Line) |> Hued
+            (Hue.Label, "quit" |> Text) |> Hued
+            (Hue.Usage, " - quits the game" |> Line) |> Hued
+        ]
+        |> List.iter messageSink
+    
+    let private UpdateDisplay 
+            (messageSink : MessageSink) 
+            (inGame      : bool) 
+            : unit =
+        if inGame then
+            UpdateDisplayInGame messageSink
         else
-            [
-                (Hue.Label, "start" |> Text) |> Hued
-                (Hue.Usage, " - starts a new world" |> Line) |> Hued
-                (Hue.Label, "quit" |> Text) |> Hued
-                (Hue.Usage, " - quits the game" |> Line) |> Hued
-            ]
-        |> List.iter sink
+            UpdateDisplayNoGame messageSink
 
-        match world, source() with
+    let private HandleInvalidCommand 
+            (world:World option) 
+            : Gamestate option =
+        ("Invalid command.", world
+        |> Gamestate.MainMenu)
+        |> Gamestate.ErrorMessage
+        |> Some
 
-        | Some w, Some Command.Resume ->
-            w
+    let private HandleCommandInGame 
+            (world : World) =
+        function
+        | Some Command.Resume ->
+            world
             |> Gamestate.AtSea
             |> Some
-
-        | Some w, Some Command.Abandon ->
+        | Some Command.Abandon ->
             None
             |> Gamestate.MainMenu
             |> Some
+        | _ ->
+            world
+            |> Some
+            |> HandleInvalidCommand
 
-        | None, Some (Command.Start avatarId)->
+    let private HandleCommandNoGame 
+            (configuration : WorldConfiguration) =
+        function
+        | Some (Command.Start avatarId)->
             World.Create 
                 configuration
                 (System.Random())
                 avatarId
             |> Gamestate.AtSea
             |> Some
-
-        | None, Some Command.Quit ->
-            world
+        | Some Command.Quit ->
+            None
             |> Gamestate.MainMenu
             |> Gamestate.ConfirmQuit
             |> Some
-
         | _ ->
-            [
-                (Hue.Error, "Invalid command." |> Line) |> Hued
-            ]
-            |> List.iter sink
+            None
+            |> HandleInvalidCommand
+
+    let private HandleCommand
+            (configuration : WorldConfiguration) 
+            (world         : World option) 
+            (command       : Command option) 
+            : Gamestate option =
+        match world with
+        | Some w ->
+            HandleCommandInGame w command
+        | _ ->
+            HandleCommandNoGame configuration command
+
+    let Run 
+            (configuration : WorldConfiguration) 
+            (commandSource : CommandSource) 
+            (messageSink   : MessageSink) 
+            (world         : World option) 
+            : Gamestate option =
+        UpdateDisplay 
+            messageSink 
+            world.IsSome
+        HandleCommand
+            configuration
             world
-            |> Gamestate.MainMenu
-            |> Some
+            (commandSource())
+
 
 

@@ -49,9 +49,9 @@ let ``Run.It returns InvalidInput when given invalid command.`` () =
         |> toSource
     let inputSide = Port
     let expected =
-        (inputSide, inputWorld)
-        |> Gamestate.Careened
-        |> Gamestate.InvalidInput
+        ("Maybe try 'help'?",(inputSide, inputWorld)
+        |> Gamestate.Careened)
+        |> Gamestate.ErrorMessage
         |> Some
     let actual =
         inputWorld
@@ -182,8 +182,4 @@ let ``Run.It returns Careened with a cleaned hull when given the command Clean H
         inputWorld
         |> Careened.Run inputSource sinkStub inputSide
     Assert.AreEqual(expected, actual)
-
-//[<Test>]
-//let ``Run..`` () =
-//    raise (System.NotImplementedException "Not implemented")
 

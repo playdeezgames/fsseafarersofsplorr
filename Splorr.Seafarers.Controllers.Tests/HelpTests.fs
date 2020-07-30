@@ -16,7 +16,9 @@ let private configuration: WorldConfiguration =
         RationItems = [1UL]
         StatisticDescriptors = []
     }
-let private world =  World.Create configuration (System.Random()) ""
+let private random = System.Random()
+let private avatarId = ""
+let private world =  World.Create configuration random avatarId
 
 [<Test>]
 let ``Run.It returns the given AtSea Gamestate`` () =
@@ -29,7 +31,7 @@ let ``Run.It returns the given AtSea Gamestate`` () =
     let actual = 
         input
         |> Help.Run sink
-    Assert.AreEqual(input |> Some, actual)
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It returns the given ConfirmQuit Gamestate`` () =

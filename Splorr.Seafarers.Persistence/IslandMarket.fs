@@ -2,6 +2,7 @@
 
 open System.Data.SQLite
 open Splorr.Seafarers.Models
+open System
 
 module IslandMarket = 
     let GetForIsland (connection:SQLiteConnection) (location:Location) : Result<Map<uint64, Market>,string> =
@@ -14,6 +15,18 @@ module IslandMarket =
         |> Utility.GetList "SELECT [CommodityId], [Supply], [Demand] FROM [IslandMarkets] WHERE [IslandX]= $islandX AND [IslandY]= $islandY;" commandSideEffect convertor
         |> Result.bind
             (Map.ofList >> Ok)
+
+    let GetMarketForIsland (connection:SQLiteConnection) (commodityId: uint64) (location:Location) : Result<Market option,string> =
+        let commandSideEffect (command: SQLiteCommand) =
+            command.Parameters.AddWithValue("$islandX", location |> fst) |> ignore
+            command.Parameters.AddWithValue("$islandY", location |> snd) |> ignore
+            command.Parameters.AddWithValue("$commodityId", commodityId) |> ignore
+        let convertor (reader:SQLiteDataReader) =
+            {Supply=reader.GetDouble(1); Demand=reader.GetDouble(2)}
+        connection
+        |> Utility.GetList "SELECT [CommodityId], [Supply], [Demand] FROM [IslandMarkets] WHERE [IslandX]= $islandX AND [IslandY] = $islandY AND [CommodityId] = $commodityId;" commandSideEffect convertor
+        |> Result.bind
+            (List.tryHead >> Ok)
    
     let SetForIsland (connection:SQLiteConnection) (location:Location) (commodityId:uint64, market: Market) : Result<unit, string> =
         try

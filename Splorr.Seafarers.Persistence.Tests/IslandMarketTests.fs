@@ -17,6 +17,30 @@ let ``GetForIsland.It returns nothing when there are no markets at the given loc
     Assert.AreEqual(expected, actual)
 
 [<Test>]
+let ``GetMarketForIsland.It returns the market when the given item has a value for the given island location`` () =
+    let connection = SetupConnection()
+    let input = (0.0, 0.0)
+    let inputCommodityId = 1UL
+    let expected : Result<Market option,string> =
+        ({Supply=1.0; Demand=1.0} |> Some) |> Ok
+    let actual =
+        input 
+        |> IslandMarket.GetMarketForIsland connection inputCommodityId
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``GetMarketForIsland.It returns nothing when the given item has no value for the given island location`` () =
+    let connection = SetupConnection()
+    let input = (0.0, 0.0)
+    let inputCommodityId = 4UL
+    let expected : Result<Market option,string> =
+        None |> Ok
+    let actual =
+        input 
+        |> IslandMarket.GetMarketForIsland connection inputCommodityId
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
 let ``GetForIsland.It returns the map of markets when there are markets at the given location.`` () =
     let connection = SetupConnection()
     let input = (0.0, 0.0)

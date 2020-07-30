@@ -7,10 +7,8 @@ open CommonTestFixtures
 open DockedTestFixtures
 open Splorr.Seafarers.Services
 
-let private itemMarketSourceStub (_) = Map.empty
-let private itemSingleMarketSinkStub (_) (_) = ()
-let private functionUnderTest itemMarketSource itemSingleMarketSink =  Docked.Run itemMarketSource itemSingleMarketSink (fun () -> commodities) (fun () -> smallWorldItems)
-let private functionUnderTestStubbed = functionUnderTest itemMarketSourceStub itemSingleMarketSinkStub
+let private functionUnderTest itemMarketSource itemSingleMarketSink =  Docked.Run dockedCommoditySource dockedItemSource itemMarketSource itemSingleMarketSink
+let private functionUnderTestStubbed = functionUnderTest dockedItemMarketSourceStub dockedItemSingleMarketSourceStub dockedItemSingleMarketSinkStub
 [<Test>]
 let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
     let input = deadDockWorld   
@@ -122,9 +120,9 @@ let ``Run.It returns InvalidInput when given invalid Command.`` () =
         None 
         |> toSource
     let expected = 
-        (Dock, inputLocation, input) 
-        |> Gamestate.Docked 
-        |> Gamestate.InvalidInput
+        ("Maybe try 'help'?",(Dock, inputLocation, input) 
+        |> Gamestate.Docked)
+        |> Gamestate.ErrorMessage
         |> Some
     let actual =
         (inputLocation, input)
@@ -134,11 +132,10 @@ let ``Run.It returns InvalidInput when given invalid Command.`` () =
 
 [<Test>]
 let ``Run.It returns AtSea when given invalid docked location.`` () =
-    let mutable sourceCalled:bool = false
     let input = dockWorld
     let inputLocation = (1.0, 1.0)
     let inputSource () = 
-        sourceCalled <- true
+        Assert.Fail("This should not be called.")
         Command.Help 
         |> Some
     let expected = 
@@ -149,7 +146,6 @@ let ``Run.It returns AtSea when given invalid docked location.`` () =
         (inputLocation, input)
         ||> functionUnderTestStubbed inputSource sinkStub 
     Assert.AreEqual(expected,actual)
-    Assert.IsFalse(sourceCalled)
 
 [<Test>]
 let ``Run.It returns Status when given the command Status.`` () =
@@ -243,7 +239,6 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
             Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.AbandonedJob 1u}
     let expectedWorld = 
         {input with 
-            
             Avatars= input.Avatars |> Map.add avatarId expectedAvatar}
     let expected = 
         (Dock, inputLocation, expectedWorld) 
@@ -271,7 +266,6 @@ let ``Run.It returns Docked (at ItemList) gamestate when given the Items command
         ||> functionUnderTestStubbed inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
-
 [<Test>]
 let ``Run.It adds a message when given the Buy command for a non-existent item.`` () =
     let inputLocation = smallWorldIslandLocation
@@ -298,6 +292,9 @@ let ``Run.It adds a message when given the Buy command and the avatar does not h
         Map.empty
         |> Map.add 1UL {Demand=5.0; Supply=5.0}
     let islandMarketSource (_) = markets
+    let islandSingleMarketSource x y =
+        islandMarketSource x
+        |> Map.tryFind y
     let islandSingleMarketSink (_) (_) =
         Assert.Fail("This should not be called.")
     let expectedWorld =
@@ -309,7 +306,7 @@ let ``Run.It adds a message when given the Buy command and the avatar does not h
         |> Some
     let actual =
         (inputLocation, inputWorld)
-        ||> functionUnderTest islandMarketSource islandSingleMarketSink inputSource (sinkStub)
+        ||> functionUnderTest islandMarketSource islandSingleMarketSource islandSingleMarketSink inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -322,12 +319,12 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
         Map.empty
         |> Map.add 1UL {Demand=5.0; Supply=5.0}
     let islandMarketSource (_) = markets
+    let islandSingleMarketSource x y =
+        islandMarketSource x
+        |> Map.tryFind y
     let expectedPrice = Item.DetermineSalePrice commodities markets smallWorldItems.[1UL]
     let expectedDemand = 
         markets.[1UL].Demand + commodities.[1UL].SaleFactor
-    let expectedMarket = 
-        {markets.[1UL] with 
-            Demand= expectedDemand}
     let islandSingleMarketSink (_) (commodityId, market) =
         Assert.AreEqual(1UL, commodityId)
         Assert.AreEqual(markets.[commodityId].Supply, market.Supply)
@@ -346,7 +343,7 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
         |> Some
     let actual =
         (inputLocation, inputWorld)
-        ||> functionUnderTest islandMarketSource islandSingleMarketSink inputSource (sinkStub)
+        ||> functionUnderTest islandMarketSource islandSingleMarketSource islandSingleMarketSink inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -392,6 +389,9 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
         Map.empty
         |> Map.add 1UL {Supply = 5.0; Demand =5.0}
     let islandMarketSource (_) = markets
+    let islandSingleMarketSource x y =
+        islandMarketSource x
+        |> Map.tryFind y
     let inputWorld = 
         {shopWorld with 
             Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
@@ -422,10 +422,6 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
         |> Some
     let actual =
         (inputLocation, inputWorld)
-        ||> functionUnderTest islandMarketSource islandSingleMarketSink inputSource (sinkStub)
+        ||> functionUnderTest islandMarketSource islandSingleMarketSource islandSingleMarketSink inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
-
-//[<Test>]
-//let ``Run.It .`` () =
-//    raise (System.NotImplementedException "Not Implemented")
 

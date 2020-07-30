@@ -15,9 +15,9 @@ type Gamestate =
     | Chart        of string * World
     | ConfirmQuit  of Gamestate
     | Docked       of DockedState * Location *  World
+    | ErrorMessage of string * Gamestate 
     | GameOver     of string list
     | Help         of Gamestate
-    | InvalidInput of Gamestate
     | Inventory    of Gamestate
     | IslandList   of uint32 * Gamestate
     | MainMenu     of World option
@@ -27,18 +27,18 @@ type Gamestate =
 module Gamestate =
     let rec GetWorld (gamestate:Gamestate) : World option =
         match gamestate with
-        | Gamestate.AtSea w          -> w |> Some
-        | Gamestate.Careened (_, w)  -> w |> Some
-        | Gamestate.Chart (_,w)      -> w |> Some
-        | Gamestate.ConfirmQuit g    -> GetWorld g
-        | Gamestate.Docked (_,_,w)   -> w |> Some
-        | Gamestate.Help g           -> GetWorld g
-        | Gamestate.InvalidInput g   -> GetWorld g
-        | Gamestate.Inventory g      -> GetWorld g
-        | Gamestate.IslandList (_,g) -> GetWorld g
-        | Gamestate.MainMenu w       -> w
-        | Gamestate.Metrics g        -> GetWorld g
-        | Gamestate.Status g         -> GetWorld g
+        | Gamestate.AtSea w            -> w |> Some
+        | Gamestate.Careened (_, w)    -> w |> Some
+        | Gamestate.Chart (_,w)        -> w |> Some
+        | Gamestate.ConfirmQuit g      -> GetWorld g
+        | Gamestate.Docked (_,_,w)     -> w |> Some
+        | Gamestate.ErrorMessage (_,g) -> GetWorld g
+        | Gamestate.Help g             -> GetWorld g
+        | Gamestate.Inventory g        -> GetWorld g
+        | Gamestate.IslandList (_,g)   -> GetWorld g
+        | Gamestate.MainMenu w         -> w
+        | Gamestate.Metrics g          -> GetWorld g
+        | Gamestate.Status g           -> GetWorld g
         | _ -> None
 
     let CheckForAvatarDeath (gamestate:Gamestate option) : Gamestate option =

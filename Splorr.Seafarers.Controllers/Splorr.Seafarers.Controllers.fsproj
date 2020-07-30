@@ -14,9 +14,9 @@
     <Compile Include="Chart.fs" />
     <Compile Include="ConfirmQuit.fs" />
     <Compile Include="Docked.fs" />
+    <Compile Include="ErrorMessage.fs" />
     <Compile Include="GameOver.fs" />
     <Compile Include="Help.fs" />
-    <Compile Include="InvalidInput.fs" />
     <Compile Include="Inventory.fs" />
     <Compile Include="IslandList.fs" />
     <Compile Include="ItemList.fs" />

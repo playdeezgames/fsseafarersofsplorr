@@ -3,11 +3,11 @@
 open NUnit.Framework
 open Splorr.Seafarers.Controllers
 open CommonTestFixtures
+open AtSeaTestFixtures
 
 let private previousGameState =
     None
     |> Gamestate.MainMenu
-let private sink(_:Message) : unit = ()
 
 [<Test>]
 let ``Run.It returns the given gamestate.`` () =
@@ -15,5 +15,5 @@ let ``Run.It returns the given gamestate.`` () =
     let expected = previousGameState |> Some
     let actual =
         input
-        |> Inventory.Run (fun () -> Map.empty) sink
+        |> Inventory.Run atSeaItemSource sinkStub
     Assert.AreEqual(expected, actual)

@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Market.fs" />
-    <Compile Include="Dms.fs" />
+    <Compile Include="Angle.fs" />
     <Compile Include="Job.fs" />
     <Compile Include="Item.fs" />
     <Compile Include="Island.fs" />

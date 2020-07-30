@@ -56,5 +56,11 @@ let internal abandonJobWorld =
     dockWorld
     |> World.TransformAvatar avatarId (fun avatar -> {avatar with Job=Some { FlavorText="";Reward=0.0; Destination=(0.0,0.0)}} |> Some)
 
+let internal dockedItemMarketSourceStub (_) = Map.empty
+let internal dockedItemSingleMarketSourceStub (_) (_) = None
+let internal dockedItemSingleMarketSinkStub (_) (_) = ()
+let internal dockedCommoditySource () = commodities
+let internal dockedItemSource() = smallWorldItems
+
 
 

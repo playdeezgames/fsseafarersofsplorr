@@ -27,12 +27,13 @@ module AtSea =
         |> World.GetNearbyLocations avatar.Position avatar.ViewDistance
         |> List.map
             (fun location -> 
-                (location, Location.HeadingTo avatar.Position location |> Dms.ToDegrees |> Dms.ToString, Location.DistanceTo avatar.Position location, (world.Islands.[location] |> Island.GetDisplayName world.AvatarId)))
+                (location, Location.HeadingTo avatar.Position location |> Angle.ToDegrees |> Angle.ToString, Location.DistanceTo avatar.Position location, (world.Islands.[location] |> Island.GetDisplayName world.AvatarId)))
         |> List.sortBy (fun (_,_,d,_)->d)
 
     let private UpdateDisplay 
-            (messageSink:MessageSink) 
-            (world:World) : unit =
+            (messageSink : MessageSink) 
+            (world       : World) 
+            : unit =
         "" |> Line |> messageSink
         world.Avatars.[world.AvatarId].Messages
         |> Utility.DumpMessages messageSink
@@ -46,7 +47,7 @@ module AtSea =
             (Hue.Value, shipmateZero.Statistics.[AvatarStatisticIdentifier.Turn].CurrentValue |> sprintf "%.0f" |> Text) |> Hued
             (Hue.Value, shipmateZero.Statistics.[AvatarStatisticIdentifier.Turn].MaximumValue |> sprintf "/%.0f" |> Line) |> Hued
             (Hue.Label, "Heading: " |> Text) |> Hued
-            (Hue.Value, avatar.Heading |> Dms.ToDegrees |> Dms.ToString |> sprintf "%s" |> Line) |> Hued
+            (Hue.Value, avatar.Heading |> Angle.ToDegrees |> Angle.ToString |> sprintf "%s" |> Line) |> Hued
             (Hue.Label, "Speed: " |> Text) |> Hued
             (speedHue, (avatar.Speed * 100.0) |> sprintf "%.0f%%" |> Text) |> Hued
             avatar |> Avatar.GetEffectiveSpeed |> sprintf "(Effective rate: %.2f)" |> Line
@@ -187,7 +188,7 @@ module AtSea =
 
         | Some (Command.Move distance)->
             world
-            |> World.Move distance world.AvatarId
+            |> World.Move distance
             |> Gamestate.AtSea
             |> Some
 
@@ -216,9 +217,9 @@ module AtSea =
             |> Some
 
         | _ ->
-            world
-            |> Gamestate.AtSea
-            |> Gamestate.InvalidInput
+            ("Maybe try 'help'?",world
+            |> Gamestate.AtSea)
+            |> Gamestate.ErrorMessage
             |> Some
 
     let private RunAlive 

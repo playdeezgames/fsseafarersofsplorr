@@ -4,11 +4,20 @@ open Splorr.Seafarers.Models
 open System.Drawing
 
 module Chart = 
-    let private plotLocation (scale:int) (location:Location) : int * int =
+    let private plotLocation 
+            (scale    : int) 
+            (location : Location) 
+            : int * int =
         ((location |> snd |> int) * scale - scale/2, (-(location |> fst |> int)) * scale - scale/2)
 
-    let private outputChart (worldSize:Location) (sink:MessageSink) (chartName: string) (world:World) : unit =
+    let private outputChart 
+            (worldSize   : Location) 
+            (messageSink : MessageSink) 
+            (chartName   : string) 
+            (world       : World) 
+            : unit =
         try
+            //TODO: clean up this code!
             let avatar = world.Avatars.[world.AvatarId]
             let scale = 10
             let x, y = plotLocation scale worldSize
@@ -58,17 +67,41 @@ module Chart =
             [
                 (Hue.Error, ex.ToString() |> sprintf "An error occurred when attempting to export the chart: '%s'" |> Line) |> Hued
             ]            
-            |> List.iter sink
+            |> List.iter messageSink
             //try, catch, eat... ci build fails because of the gdi stuff not working on wherever it is being built
 
-    let Run (worldSize:Location) (sink:MessageSink) (chartName:string) (world:World) : Gamestate option =
-        let chartName = if chartName |> System.String.IsNullOrWhiteSpace then System.Guid.NewGuid().ToString() else chartName
+    let private UpdateDisplay 
+        (messageSink:MessageSink) 
+        (chartName:string)  =
         [
             "" |> Line
             (chartName, chartName) ||> sprintf "Writing chart to '%s.png' and '%s.txt'" |> Line
         ]
-        |> List.iter sink
-        outputChart worldSize sink chartName world
+        |> List.iter messageSink
+
+    let private GetDefaultedChartName (chartName:string) : string =
+        if chartName |> System.String.IsNullOrWhiteSpace then 
+            System.Guid.NewGuid().ToString() 
+        else 
+            chartName
+
+    let Run 
+            (worldSize:Location) 
+            (messageSink:MessageSink) 
+            (chartName:string) 
+            (world:World) 
+            : Gamestate option =
+        let chartName = 
+            chartName 
+            |> GetDefaultedChartName
+        UpdateDisplay 
+            messageSink 
+            chartName
+        outputChart 
+            worldSize 
+            messageSink 
+            chartName 
+            world
         world
         |> Gamestate.AtSea
         |> Some

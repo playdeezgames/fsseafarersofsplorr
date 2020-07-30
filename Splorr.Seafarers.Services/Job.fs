@@ -90,6 +90,7 @@ module Job =
             "face shield"
             "panda milk"
             "map"
+            "gravy"
         ]
 
     let private names = 
@@ -173,12 +174,20 @@ module Job =
             "'thing-doer'"
             "shepherd"
         ]
-    let private ChooseRandomTerm (random:System.Random) (terms:string list) : string =
+
+    let private ChooseRandomTerm 
+            (random:System.Random) 
+            (terms:string list) 
+            : string =
         terms
         |> List.sortBy (fun _ -> random.Next())
         |> List.head
 
-    let Create (random:System.Random) (rewardMinimum:float, rewardMaximum: float) (destinations:Set<Location>) : Job =
+    let Create 
+            (random:System.Random) 
+            (rewardMinimum:float, rewardMaximum: float) 
+            (destinations:Set<Location>) 
+            : Job =
         let adverb = ChooseRandomTerm random adverbs
         let adjective = ChooseRandomTerm random adjectives
         let objectName = ChooseRandomTerm random objectNames

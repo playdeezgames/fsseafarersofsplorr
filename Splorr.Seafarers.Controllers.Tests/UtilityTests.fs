@@ -21,3 +21,18 @@ let ``DumpMessages.It sends all messages to the sink.`` () =
     |> Utility.DumpMessages sinkFake
     Assert.AreEqual(expected, actual)
 
+[<Test>]
+let ``Lesser.It returns the first given item if the first item is the lesser.`` () =
+    let first = 0u
+    let second = 1u
+    let expected = first
+    let actual = Utility.Lesser first second
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``Lesser.It returns the second given item if the second item is the lesser.`` () =
+    let first = 1u
+    let second = 0u
+    let expected = second
+    let actual = Utility.Lesser first second
+    Assert.AreEqual(expected, actual)

@@ -56,7 +56,7 @@ let ``SetHeading.It sets a given heading.`` () =
     let actual =
         avatar
         |> Avatar.SetHeading heading
-    Assert.AreEqual(heading |> Dms.ToRadians, actual.Heading)
+    Assert.AreEqual(heading |> Angle.ToRadians, actual.Heading)
 
 [<Test>]
 let ``Move.It moves the avatar.`` () =
