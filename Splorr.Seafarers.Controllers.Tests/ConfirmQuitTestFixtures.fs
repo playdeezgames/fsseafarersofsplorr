@@ -14,8 +14,16 @@ let internal configuration: WorldConfiguration =
         RationItems = [1UL]
         StatisticDescriptors = []
     }
+let private vesselStatisticTemplateSourceStub () = Map.empty
+let private vesselStatisticSinkStub (_) (_) = ()
+
 let internal previousState = 
-    World.Create configuration (System.Random()) ""
+    World.Create
+        vesselStatisticTemplateSourceStub
+        vesselStatisticSinkStub
+        configuration 
+        (System.Random()) 
+        ""
     |> Gamestate.AtSea
 
 

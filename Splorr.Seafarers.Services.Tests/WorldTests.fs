@@ -103,26 +103,37 @@ let ``SetHeading.It does nothing when given an invalid avatar id`` () =
 
 [<Test>]
 let ``Move.It moves the avatar one unit when give 1u for distance when given a valid avatar id.`` () =
+    let vesselSingleStatisticSource (_) (_) = {MinimumValue=0.0; CurrentValue=0.0; MaximumValue=0.25} |> Some
+    let vesselSingleStatisticSink (_) (_:VesselStatisticIdentifier, statistic:Statistic) : unit =
+        Assert.AreEqual(0.00050000000000000001, statistic.CurrentValue)
     let actual =
         soloIslandWorld
-        |> World.Move 1u
+        |> World.Move vesselSingleStatisticSource vesselSingleStatisticSink 1u
     Assert.AreEqual((6.0,5.0), actual.Avatars.[avatarId].Position)
 
 [<Test>]
 let ``Move.It does nothing when given an invalid avatar id`` () =
+    let vesselSingleStatisticSource (_) (_) =
+        Assert.Fail("Dont ask for vessel statistics")
+        None
+    let vesselSingleStatisticSink (_) (_) : unit =
+        Assert.Fail("Dont try to set a vessel statistic")
     let inputWorld =
         {soloIslandWorld with AvatarId = bogusAvatarId}
     let actual =
         inputWorld
-        |> World.Move 1u
+        |> World.Move vesselSingleStatisticSource vesselSingleStatisticSink 1u
     Assert.AreEqual(inputWorld, actual)
 
 [<Test>]
 let ``Move.It moves the avatar almost two units when give 2u for distance.`` () =
+    let vesselSingleStatisticSource (_) (_) = {MinimumValue=0.0; CurrentValue=0.0; MaximumValue=0.25} |> Some
+    let vesselSingleStatisticSink (_) (_:VesselStatisticIdentifier, statistic:Statistic) : unit =
+        Assert.AreEqual(0.00050000000000000001, statistic.CurrentValue)
     let actual =
         soloIslandWorld
-        |> World.Move 2u
-    Assert.AreEqual((6.9989999999999997,5.0), actual.Avatars.[avatarId].Position)
+        |> World.Move vesselSingleStatisticSource vesselSingleStatisticSink 2u
+    Assert.AreEqual((7.0,5.0), actual.Avatars.[avatarId].Position)
 
 [<Test>]
 let ``GetNearbyLocations.It returns locations within a given distance from another given location.`` () =
@@ -152,10 +163,6 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                     Vessel  = 
                         {
                             Tonnage=100.0
-                            Fouling = 
-                                Map.empty
-                                |> Map.add Port {MinimumValue = 0.0; MaximumValue = 0.5; CurrentValue=0.0}
-                                |> Map.add Starboard {MinimumValue = 0.0; MaximumValue = 0.5; CurrentValue=0.0}
                             FoulRate=0.1
                         }
                     Shipmates = 
@@ -396,10 +403,12 @@ let ``AcceptJob.It adds the given job to the avatar and eliminates it from the i
 
 [<Test>]
 let ``TransformAvatar.It transforms the avatar within the given world.`` () =
-    let expectedAvatar = genericWorld.Avatars.[avatarId] |> Avatar.Move
+    let vesselSingleStatisticSource (_) (_) = None
+    let vesselSingleStatisticSink (_) (_) = ()
+    let expectedAvatar = genericWorld.Avatars.[avatarId] |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink avatarId
     let actual =
         genericWorld
-        |> World.TransformAvatar (Avatar.Move >> Some)
+        |> World.TransformAvatar (Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink avatarId >> Some)
     Assert.AreEqual(expectedAvatar,actual.Avatars.[avatarId])
 
 [<Test>]
@@ -736,9 +745,14 @@ let ``CleanHull.It returns the original world when given a bogus avatar id and w
     let inputSide = Port
     let expected =
         inputWorld
+    let vesselSingleStatisticSource (_) (_) =
+        Assert.Fail("Dont ask for statistics.")
+        None
+    let vesselSingleStatisticSink (_) (_) =
+        Assert.Fail("Dont set statistics")
     let actual =
         inputWorld
-        |> World.CleanHull inputSide
+        |> World.CleanHull vesselSingleStatisticSource vesselSingleStatisticSink inputSide
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -746,8 +760,6 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
     let inputSide = Port
     let inputVessel =
         genericWorld.Avatars.[avatarId].Vessel
-        |> Vessel.TransformFouling Port (fun x->{x with CurrentValue = x.MaximumValue})
-        |> Vessel.TransformFouling Starboard (fun x->{x with CurrentValue = x.MaximumValue})
     let inputAvatar =
         {genericWorld.Avatars.[avatarId] with
             Vessel = inputVessel}
@@ -756,7 +768,10 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
             Avatars = genericWorld.Avatars |> Map.add avatarId inputAvatar}
     let expectedVessel =
         inputVessel
-        |> Vessel.TransformFouling inputSide (fun x-> {x with CurrentValue=x.MinimumValue})
+    let vesselSingleStatisticSource (_) (_) =
+        {MinimumValue = 0.0; MaximumValue=0.25; CurrentValue = 0.25} |> Some
+    let vesselSingleStatisticSink (_) (_, statistic:Statistic) =
+        Assert.AreEqual(statistic.MinimumValue, statistic.CurrentValue)
     let expectedAvatar =
         {inputAvatar with
             Vessel = expectedVessel}
@@ -767,7 +782,7 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
             Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar}
     let actual =
         inputWorld
-        |> World.CleanHull inputSide
+        |> World.CleanHull vesselSingleStatisticSource vesselSingleStatisticSink inputSide
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -852,6 +867,3 @@ let ``UpdateChart.It does sets all nearby island to "seen" when given avatar is 
         |> World.UpdateCharts
     Assert.AreEqual(expected, actual)
 
-//[<Test>]
-//let ``FunctionName.It returns a SOMETHING when given SOMETHINGELSE.`` () =
-//    raise (System.NotImplementedException "Not Implemented")

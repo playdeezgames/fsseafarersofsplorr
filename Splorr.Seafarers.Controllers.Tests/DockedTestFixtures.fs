@@ -14,7 +14,13 @@ let internal dockWorldconfiguration: WorldConfiguration =
         RationItems = [1UL]
         StatisticDescriptors = statisticDescriptors
     }
-let internal dockWorld = World.Create dockWorldconfiguration random avatarId
+let internal dockWorld = 
+    World.Create
+        vesselStatisticTemplateSourceStub
+        vesselStatisticSinkStub
+        dockWorldconfiguration 
+        random 
+        avatarId
 let internal dockLocation = (0.0, 0.0)
 let internal deadDockWorld =
     {dockWorld with 
@@ -43,7 +49,13 @@ let internal smallWorldconfiguration: WorldConfiguration =
         RationItems = [1UL]
         StatisticDescriptors = statisticDescriptors
     }
-let internal smallWorld = World.Create smallWorldconfiguration random avatarId
+let internal smallWorld = 
+    World.Create 
+        vesselStatisticTemplateSourceStub
+        vesselStatisticSinkStub
+        smallWorldconfiguration 
+        random 
+        avatarId
 let internal smallWorldIslandLocation = smallWorld.Islands |> Map.toList |> List.map fst |> List.head
 let private smallWorldIslandItemSource (_) = [1UL] |> Set.ofList
 let private smallWorldIslandItemSink (_) (_) = ()

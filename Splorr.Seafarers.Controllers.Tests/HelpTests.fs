@@ -4,6 +4,7 @@ open NUnit.Framework
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
+open CommonTestFixtures
 
 let private sink(_:Message) : unit = ()
 let private configuration: WorldConfiguration =
@@ -18,7 +19,13 @@ let private configuration: WorldConfiguration =
     }
 let private random = System.Random()
 let private avatarId = ""
-let private world =  World.Create configuration random avatarId
+let private world =  
+    World.Create 
+        vesselStatisticTemplateSourceStub
+        vesselStatisticSinkStub
+        configuration 
+        random 
+        avatarId
 
 [<Test>]
 let ``Run.It returns the given AtSea Gamestate`` () =

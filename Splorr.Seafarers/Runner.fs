@@ -18,6 +18,10 @@ module Runner =
             (islandSingleMarketSink   : Location -> uint64 * Market -> unit) 
             (islandListSource         : Location -> Set<uint64>) 
             (islandListSink           : Location -> Set<uint64> -> unit) 
+            (vesselStatisticTemplateSource: unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
+            (vesselStatisticSink: string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
+            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
+            (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
             (random                   : Random) 
             (configurationSource      : unit -> WorldConfiguration) 
             (commandSource            : CommandSource) 
@@ -35,6 +39,8 @@ module Runner =
                     islandMarketSink 
                     islandListSource 
                     islandListSink 
+                    vesselSingleStatisticSource
+                    vesselSingleStatisticSink
                     random 
                     (configurationSource()).RewardRange 
                     commandSource 
@@ -43,6 +49,8 @@ module Runner =
 
             | Gamestate.Careened (side, world) -> 
                 Careened.Run 
+                    vesselSingleStatisticSource
+                    vesselSingleStatisticSink
                     commandSource 
                     messageSink 
                     side 
@@ -120,6 +128,8 @@ module Runner =
 
             | Gamestate.MainMenu world -> 
                 MainMenu.Run 
+                    vesselStatisticTemplateSource
+                    vesselStatisticSink
                     (configurationSource()) 
                     commandSource 
                     messageSink 
@@ -132,6 +142,7 @@ module Runner =
 
             | Gamestate.Status state -> 
                 Status.Run 
+                    vesselSingleStatisticSource
                     messageSink 
                     state
 
@@ -149,6 +160,10 @@ module Runner =
                 islandSingleMarketSink 
                 islandListSource 
                 islandListSink 
+                vesselStatisticTemplateSource
+                vesselStatisticSink
+                vesselSingleStatisticSource
+                vesselSingleStatisticSink
                 random 
                 configurationSource 
                 commandSource 
@@ -169,6 +184,10 @@ module Runner =
             (islandSingleMarketSink   : Location -> uint64 * Market     -> unit) 
             (islandListSource         : Location -> Set<uint64>) 
             (islandListSink           : Location -> Set<uint64>->unit) 
+            (vesselStatisticTemplateSource: unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
+            (vesselStatisticSink: string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
+            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
+            (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
             : unit =
 
         Console.Title <- "Seafarers of SPLORR!!"
@@ -187,6 +206,10 @@ module Runner =
             islandSingleMarketSink 
             islandListSource 
             islandListSink 
+            vesselStatisticTemplateSource
+            vesselStatisticSink
+            vesselSingleStatisticSource
+            vesselSingleStatisticSink
             (Random()) 
             configurationSource
             (fun () -> CommandSource.Read Console.ReadLine) 

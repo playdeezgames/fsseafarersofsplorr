@@ -42,13 +42,29 @@ module Tables =
 		[DefaultOrder] INTEGER NOT NULL,
         PRIMARY KEY([ItemId]));"
 
-    let Statistics : string = "CREATE TABLE IF NOT EXISTS [AvatarStatisticTemplates] (
+    let AvatarStatisticTemplates : string = "CREATE TABLE IF NOT EXISTS [AvatarStatisticTemplates] (
 		[StatisticId]	INTEGER,
 		[StatisticName]	TEXT NOT NULL,
 		[MinimumValue]	REAL NOT NULL,
 		[MaximumValue]	REAL NOT NULL CHECK(MaximumValue>=MinimumValue),
 		[CurrentValue]	REAL NOT NULL CHECK(CurrentValue>=MinimumValue AND CurrentValue<=MaximumValue),
 		PRIMARY KEY([StatisticId]));"
+
+    let VesselStatisticTemplates : string = "CREATE TABLE IF NOT EXISTS [VesselStatisticTemplates] (
+		[StatisticId]	INTEGER,
+		[StatisticName]	TEXT NOT NULL,
+		[MinimumValue]	REAL NOT NULL,
+		[MaximumValue]	REAL NOT NULL CHECK(MaximumValue>=MinimumValue),
+		[CurrentValue]	REAL NOT NULL CHECK(CurrentValue>=MinimumValue AND CurrentValue<=MaximumValue),
+		PRIMARY KEY([StatisticId]));"
+
+    let VesselStatistics : string = "CREATE TABLE IF NOT EXISTS [VesselStatistics] (
+		[AvatarId]      TEXT NOT NULL,
+		[StatisticId]	INTEGER NOT NULL,
+		[MinimumValue]	REAL NOT NULL,
+		[MaximumValue]	REAL NOT NULL CHECK(MaximumValue>=MinimumValue),
+		[CurrentValue]	REAL NOT NULL CHECK(CurrentValue>=MinimumValue AND CurrentValue<=MaximumValue),
+		PRIMARY KEY([AvatarId], [StatisticId]));"
 
     let WorldConfiguration : string = "CREATE TABLE IF NOT EXISTS [WorldConfiguration] (
 		[WorldConfigurationId]	INTEGER CHECK(WorldConfigurationId=1),

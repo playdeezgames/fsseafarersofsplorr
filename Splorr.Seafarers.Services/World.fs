@@ -103,6 +103,8 @@ module World =
                         |> TransformIsland location (Island.MakeSeen world.AvatarId >> Some)) w) world
 
     let Create 
+            (vesselStatisticTemplateSource: unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
+            (vesselStatisticSink: string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
             (configuration : WorldConfiguration) 
             (random        : Random) 
             (avatarId      : string): World =
@@ -113,6 +115,9 @@ module World =
                 |> Map.add 
                     avatarId 
                     (Avatar.Create 
+                        vesselStatisticTemplateSource
+                        vesselStatisticSink
+                        avatarId
                         configuration.AvatarDistances 
                         configuration.StatisticDescriptors 
                         configuration.RationItems 
@@ -182,21 +187,24 @@ module World =
         
 
     let rec Move 
-            (distance : uint32) 
-            (world    : World) :World =
+            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
+            (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
+            (distance                    : uint32) 
+            (world                       : World) 
+            : World =
         let avatarId = world.AvatarId
         match distance, world.Avatars |> Map.tryFind avatarId with
         | x, Some _ when x > 0u ->
             let steppedWorld = 
                 world
-                |> TransformAvatar (Avatar.Move >> Some)
+                |> TransformAvatar (Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink avatarId >> Some)
                 |> AddMessages [ "Steady as she goes." ]
                 |> UpdateCharts
             if IsAvatarAlive steppedWorld |> not then
                 steppedWorld
                 |> AddMessages [ "You die of old age!" ]
             else
-                Move (x-1u) steppedWorld
+                Move vesselSingleStatisticSource vesselSingleStatisticSink (x-1u) steppedWorld
         | _ -> 
             world
 
@@ -461,6 +469,8 @@ module World =
             |> AddMessages ["You cannot sell items here."]
 
     let CleanHull 
+            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
+            (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
             (side     : Side) 
             (world    : World) 
             : World =
@@ -470,4 +480,4 @@ module World =
         |> Option.fold
             (fun w _ -> 
                 w
-                |> TransformAvatar (Avatar.CleanHull side >> Some)) world
+                |> TransformAvatar (Avatar.CleanHull vesselSingleStatisticSource vesselSingleStatisticSink avatarId side >> Some)) world

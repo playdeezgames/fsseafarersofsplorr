@@ -14,7 +14,13 @@ let internal configuration: WorldConfiguration =
         RationItems = [1UL]
         StatisticDescriptors = statisticDescriptors
     }
-let internal world = World.Create configuration (System.Random()) avatarId
+let internal world = 
+    World.Create 
+        vesselStatisticTemplateSourceStub
+        vesselStatisticSinkStub
+        configuration 
+        (System.Random()) 
+        avatarId
 let internal deadWorld =
     world
     |> World.TransformAvatar
@@ -41,7 +47,13 @@ let internal emptyWorldconfiguration: WorldConfiguration =
         RationItems = [1UL]
         StatisticDescriptors = statisticDescriptors
     }
-let internal emptyWorld = World.Create emptyWorldconfiguration (System.Random()) avatarId
+let internal emptyWorld = 
+    World.Create 
+        vesselStatisticTemplateSourceStub
+        vesselStatisticSinkStub
+        emptyWorldconfiguration 
+        (System.Random()) 
+        avatarId
 
 let internal dockWorldconfiguration: WorldConfiguration =
     {
@@ -53,12 +65,23 @@ let internal dockWorldconfiguration: WorldConfiguration =
         RationItems = [1UL]
         StatisticDescriptors = statisticDescriptors
     }
-let internal dockWorld = World.Create dockWorldconfiguration (System.Random()) avatarId
+let internal dockWorld = 
+    World.Create 
+        vesselStatisticTemplateSourceStub
+        vesselStatisticSinkStub
+        dockWorldconfiguration 
+        (System.Random()) 
+        avatarId
 let internal commodities = Map.empty
 let internal headForWorldUnvisited = 
-    World.Create dockWorldconfiguration (System.Random()) avatarId
+    World.Create 
+        vesselStatisticTemplateSourceStub
+        vesselStatisticSinkStub
+        dockWorldconfiguration 
+        (System.Random()) 
+        avatarId
     |> World.TransformIsland (0.0,0.0) (Island.SetName "yermom" >> Some)
-    |> World.Move 1u
+    |> World.Move vesselSingleStatisticSourceStub vesselSingleStatisticSinkStub 1u
 let private headForWorldIslandItemSource (_) = [1UL] |> Set.ofList
 let private headForWorldIslandItemSink (_) (_) = ()
 let private headForWorldIslandMarketSource (_) = [1UL, {Supply=5.0; Demand=5.0}] |> Map.ofList

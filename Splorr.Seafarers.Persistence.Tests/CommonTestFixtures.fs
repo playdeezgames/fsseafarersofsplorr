@@ -57,7 +57,7 @@ let private setupWorldConfiguration (connection:SQLiteConnection) : unit =
     ]
     |> runCommands connection
 
-let private setupStatistics (connection:SQLiteConnection) : unit =
+let private setupAvatarStatisticTemlates (connection:SQLiteConnection) : unit =
     System.Enum.GetValues(typedefof<AvatarStatisticIdentifier>) 
     :?> AvatarStatisticIdentifier []
     |> Array.toList
@@ -66,7 +66,20 @@ let private setupStatistics (connection:SQLiteConnection) : unit =
             sprintf "REPLACE INTO [AvatarStatisticTemplates] ([StatisticId], [StatisticName], [MinimumValue], [MaximumValue], [CurrentValue]) VALUES (%u, 'Statistic %u', 0.0, 100.0, 50.0);" (id |> uint) (id |> uint))
     |> List.append
         [
-            Tables.Statistics
+            Tables.AvatarStatisticTemplates
+        ]
+    |> runCommands connection
+
+let private setupVesselStatisticTemplates (connection:SQLiteConnection) : unit =
+    System.Enum.GetValues(typedefof<VesselStatisticIdentifier>) 
+    :?> VesselStatisticIdentifier []
+    |> Array.toList
+    |> List.map
+        (fun id ->
+            sprintf "REPLACE INTO [VesselStatisticTemplates] ([StatisticId], [StatisticName], [MinimumValue], [MaximumValue], [CurrentValue]) VALUES (%u, 'Statistic %u', 0.0, 100.0, 50.0);" (id |> uint) (id |> uint))
+    |> List.append
+        [
+            Tables.VesselStatisticTemplates
         ]
     |> runCommands connection
 
@@ -91,6 +104,22 @@ let private setupIslandMarkets (connection:SQLiteConnection) : unit =
     ]
     |> runCommands connection
 
+let private setupVesselStatistics (avatarId:string) (connection:SQLiteConnection) : unit =
+    System.Enum.GetValues(typedefof<VesselStatisticIdentifier>) 
+    :?> VesselStatisticIdentifier []
+    |> Array.toList
+    |> List.map
+        (fun id ->
+            sprintf "REPLACE INTO [VesselStatistics] ([AvatarId], [StatisticId], [MinimumValue], [MaximumValue], [CurrentValue]) VALUES ('%s', %u, 0.0, 100.0, 50.0);" (avatarId) (id |> uint))
+    |> List.append
+        [
+            Tables.VesselStatistics
+        ]
+    |> runCommands connection
+
+let internal ExistingAvatarId = "avatar"
+let internal NewAvatarId = "newavatar"
+
 let internal SetupConnection() : SQLiteConnection = 
     let connection = new SQLiteConnection(connectionString)
     connection.Open()
@@ -101,7 +130,11 @@ let internal SetupConnection() : SQLiteConnection =
 
     connection |> setupWorldConfiguration
 
-    connection |> setupStatistics
+    connection |> setupAvatarStatisticTemlates
+
+    connection |> setupVesselStatisticTemplates
+
+    connection |> setupVesselStatistics ExistingAvatarId
 
     connection |> setupRationItems
 

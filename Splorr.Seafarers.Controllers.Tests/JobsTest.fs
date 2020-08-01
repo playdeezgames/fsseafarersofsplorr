@@ -16,7 +16,13 @@ let private dockWorldconfiguration: WorldConfiguration =
         RationItems = [1UL]
         StatisticDescriptors = []
     }
-let private dockWorld = World.Create dockWorldconfiguration (System.Random()) ""
+let private dockWorld = 
+    World.Create 
+        vesselStatisticTemplateSourceStub
+        vesselStatisticSinkStub
+        dockWorldconfiguration 
+        (System.Random()) 
+        ""
 let private dockLocation = (0.0, 0.0)
 
 [<Test>]

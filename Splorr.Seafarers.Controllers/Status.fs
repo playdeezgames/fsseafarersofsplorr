@@ -1,15 +1,18 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
 open Splorr.Seafarers.Models
+open Splorr.Seafarers.Persistence
 
 module Status =
     let private RunWorld 
+            (vesselSingleStatisticSource: string -> VesselStatisticIdentifier -> Statistic option)
             (messageSink:MessageSink) 
             (world:World) 
             : unit =
         let avatar = world.Avatars.[world.AvatarId]
         let shipmate = avatar.Shipmates.[0]
-        let vessel = avatar.Vessel
+        let portFouling = vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.PortFouling |> Option.get
+        let starboardFouling = vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.StarboardFouling |> Option.get
         [
             "" |> Line
             (Hue.Heading, "Status:" |> Line) |> Hued
@@ -22,9 +25,9 @@ module Status =
             (Hue.Label, "Health: " |> Text) |> Hued
             (Hue.Value, (shipmate.Statistics.[AvatarStatisticIdentifier.Health].CurrentValue, shipmate.Statistics.[AvatarStatisticIdentifier.Health].MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
             (Hue.Label, "Port Fouling: " |> Text) |> Hued
-            (Hue.Value, (vessel.Fouling.[Port].CurrentValue, vessel.Fouling.[Port].MaximumValue) ||> sprintf "%.2f/%.2f" |> Line) |> Hued
+            (Hue.Value, (portFouling.CurrentValue, portFouling.MaximumValue) ||> sprintf "%.2f/%.2f" |> Line) |> Hued
             (Hue.Label, "Starboard Fouling: " |> Text) |> Hued
-            (Hue.Value, (vessel.Fouling.[Starboard].CurrentValue, vessel.Fouling.[Starboard].MaximumValue) ||> sprintf "%.2f/%.2f" |> Line) |> Hued
+            (Hue.Value, (starboardFouling.CurrentValue, starboardFouling.MaximumValue) ||> sprintf "%.2f/%.2f" |> Line) |> Hued
         ]
         |> List.iter messageSink
         world.Avatars.[world.AvatarId].Job
@@ -44,12 +47,13 @@ module Status =
                 |> List.iter messageSink)
 
     let Run 
+            (vesselSingleStatisticSource: string -> VesselStatisticIdentifier -> Statistic option)
             (messageSink:MessageSink) 
             (gamestate:Gamestate) 
             : Gamestate option =
         gamestate
         |> Gamestate.GetWorld
-        |> Option.iter (RunWorld messageSink)
+        |> Option.iter (RunWorld vesselSingleStatisticSource messageSink)
         gamestate
         |> Some
 

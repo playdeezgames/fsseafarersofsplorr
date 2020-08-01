@@ -18,4 +18,8 @@ let internal statisticDescriptors =
         {StatisticId = AvatarStatisticIdentifier.Health; StatisticName="health"; MinimumValue=0.0; CurrentValue=100.0;MaximumValue=100.0}
         {StatisticId = AvatarStatisticIdentifier.Turn; StatisticName="turn"; MinimumValue=0.0; CurrentValue=0.0;MaximumValue=50000.0}
     ]
+let internal vesselStatisticTemplateSourceStub() = Map.empty
+let internal vesselStatisticSinkStub (_) (_) = ()
+let internal vesselSingleStatisticSourceStub (_) (_) = None
+let internal vesselSingleStatisticSinkStub (_) (_) = ()
 

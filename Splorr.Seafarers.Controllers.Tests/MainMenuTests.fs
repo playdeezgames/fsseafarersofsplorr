@@ -16,7 +16,13 @@ let private configuration: WorldConfiguration =
         RationItems = [1UL]
         StatisticDescriptors = []
     }
-let private world = World.Create configuration (System.Random()) ""
+let private world = 
+    World.Create 
+        vesselStatisticTemplateSourceStub
+        vesselStatisticSinkStub
+        configuration 
+        (System.Random()) 
+        ""
 
 [<Test>]
 let ``Run.It returns Confirm Quit when given Quit command and there is no world.`` () =
@@ -33,7 +39,12 @@ let ``Run.It returns Confirm Quit when given Quit command and there is no world.
         |> Some
     let actual =
         input
-        |> MainMenu.Run configuration inputSource sinkStub
+        |> MainMenu.Run 
+            vesselStatisticTemplateSourceStub
+            vesselStatisticSinkStub
+            configuration 
+            inputSource 
+            sinkStub
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -52,7 +63,10 @@ let ``Run.It returns Main Menu when given Quit command and there is a world.`` (
     let actual =
         input
         |> Some
-        |> MainMenu.Run configuration inputSource sinkStub 
+        |> MainMenu.Run 
+            vesselStatisticTemplateSourceStub
+            vesselStatisticSinkStub
+            configuration inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -66,7 +80,10 @@ let ``Run.It returns Main Menu when given invalid command and there is no world.
         |> Some
     let actual =
         input
-        |> MainMenu.Run configuration (fun()->None) sinkStub 
+        |> MainMenu.Run 
+            vesselStatisticTemplateSourceStub
+            vesselStatisticSinkStub
+            configuration (fun()->None) sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -82,7 +99,10 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
     let actual =
         input
         |> Some
-        |> MainMenu.Run configuration (fun()->None) sinkStub 
+        |> MainMenu.Run 
+            vesselStatisticTemplateSourceStub
+            vesselStatisticSinkStub
+            configuration (fun()->None) sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -91,7 +111,10 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
     let inputSource = System.Guid.NewGuid().ToString() |> Command.Start |> Some |> toSource
     let actual =
         input
-        |> MainMenu.Run configuration inputSource sinkStub 
+        |> MainMenu.Run 
+            vesselStatisticTemplateSourceStub
+            vesselStatisticSinkStub
+            configuration inputSource sinkStub 
     //the command creates a world, which has randomness in the generation
     //so it is very brittle to figure out what the expected would be
     match actual with
@@ -114,7 +137,10 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
     let actual =
         input
         |> Some
-        |> MainMenu.Run configuration inputSource sinkStub 
+        |> MainMenu.Run 
+            vesselStatisticTemplateSourceStub
+            vesselStatisticSinkStub
+            configuration inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -128,7 +154,10 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
     let actual =
         input
         |> Some
-        |> MainMenu.Run configuration inputSource sinkStub 
+        |> MainMenu.Run 
+            vesselStatisticTemplateSourceStub
+            vesselStatisticSinkStub
+            configuration inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 
@@ -149,7 +178,10 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
         |> Some
     let actual =
         input
-        |> MainMenu.Run configuration inputSource sinkStub 
+        |> MainMenu.Run 
+            vesselStatisticTemplateSourceStub
+            vesselStatisticSinkStub
+            configuration inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 
@@ -164,7 +196,10 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
     let actual =
         input
         |> Some
-        |> MainMenu.Run configuration inputSource sinkStub
+        |> MainMenu.Run 
+            vesselStatisticTemplateSourceStub
+            vesselStatisticSinkStub
+            configuration inputSource sinkStub
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -179,7 +214,10 @@ let ``Run.It returns Main Menu with no world when given Resume command and there
         |> Some
     let actual =
         input
-        |> MainMenu.Run configuration inputSource sinkStub 
+        |> MainMenu.Run 
+            vesselStatisticTemplateSourceStub
+            vesselStatisticSinkStub
+            configuration inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 

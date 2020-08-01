@@ -3,7 +3,7 @@
 open System.Data.SQLite
 open Splorr.Seafarers.Models
 
-module Statistic =
+module AvatarStatisticTemplate =
     let private convertor (reader:SQLiteDataReader) : AvatarStatisticTemplate =
         {
             StatisticId = reader.GetInt32(0) |> enum<AvatarStatisticIdentifier>

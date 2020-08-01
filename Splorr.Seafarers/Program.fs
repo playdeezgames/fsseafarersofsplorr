@@ -63,6 +63,20 @@ let main argv =
     let itemSource = Persister.parameterlessFetcher connection Item.GetList
     let configurationSource = Persister.parameterlessFetcher connection WorldConfiguration.Get
 
+    let vesselStatisticTemplateSource = Persister.parameterlessFetcher connection VesselStatisticTemplate.GetList
+    let vesselStatisticSink (avatarId:string) (statistics:Map<VesselStatisticIdentifier, Statistic>) : unit =
+        VesselStatistic.SetForAvatar avatarId statistics connection
+        |> ignore
+
+    let vesselSingleStatisticSource (avatarId:string) (identifier:VesselStatisticIdentifier) : Statistic option =
+        match VesselStatistic.GetStatisticForAvatar avatarId identifier connection with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+
+    let vesselSingleStatisticSink (avatarId: string) (identifier:VesselStatisticIdentifier, statistic:Statistic) : unit =
+        VesselStatistic.SetStatisticForAvatar avatarId (identifier, statistic) connection
+        |> ignore
+
     try
         Runner.Run 
             switches 
@@ -75,6 +89,10 @@ let main argv =
             islandSingleMarketSink 
             islandItemSource 
             islandItemSink 
+            vesselStatisticTemplateSource
+            vesselStatisticSink
+            vesselSingleStatisticSource
+            vesselSingleStatisticSink
     finally
         connection.Close()
     0

@@ -58,13 +58,16 @@ let ``SetHeading.It sets a given heading.`` () =
         |> Avatar.SetHeading heading
     Assert.AreEqual(heading |> Angle.ToRadians, actual.Heading)
 
+
+let private inputAvatarId = "avatar"
+
 [<Test>]
 let ``Move.It moves the avatar.`` () =
     let input = avatar
     let expectedPosition = (1.0,0.0)
     let actual =
         input
-        |> Avatar.Move
+        |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId
     Assert.AreEqual(expectedPosition, actual.Position)
 
 [<Test>]
@@ -80,7 +83,7 @@ let ``Move.It removes a ration when the given avatar has rations and full satiet
     let expectedInventory = Map.empty |> Map.add 1u 1u
     let actual =
         input
-        |> Avatar.Move
+        |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId
     Assert.AreEqual(expectedInventory, actual.Inventory)
     Assert.AreEqual(expectedSatiety, actual.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Satiety].CurrentValue)
     Assert.AreEqual(expectedHealth, actual.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Health].CurrentValue)
@@ -96,7 +99,7 @@ let ``Move.It removes a ration and increases satiety when the given avatar has r
     let expectedInventory = Map.empty |> Map.add 1u 1u
     let actual =
         input
-        |> Avatar.Move
+        |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId
     Assert.AreEqual(expectedInventory, actual.Inventory)
     Assert.AreEqual(expectedSatiety, actual.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Satiety].CurrentValue)
     Assert.AreEqual(expectedHealth, actual.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Health].CurrentValue)
@@ -108,7 +111,7 @@ let ``Move.It lowers the avatar's satiety but not health when the given avatar h
     let expectedHealth = input.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Health].CurrentValue
     let actual =
         input
-        |> Avatar.Move
+        |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId
     Assert.AreEqual(expectedSatiety, actual.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Satiety].CurrentValue)
     Assert.AreEqual(expectedHealth, actual.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Health].CurrentValue)
 
@@ -122,7 +125,7 @@ let ``Move.It lowers the avatar's health when the given avatar has no rations an
     let expectedTurnMaximum = input.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].MaximumValue - 1.0
     let actual =
         input
-        |> Avatar.Move
+        |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId
     Assert.AreEqual(expectedSatiety, actual.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Satiety].CurrentValue)
     Assert.AreEqual(expectedTurnMaximum, actual.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].MaximumValue)
 
@@ -410,39 +413,35 @@ let ``GetEffectiveSpeed.It returns full speed when there is no fouling.`` () =
     let expected = 1.0
     let actual =
         input
-        |> Avatar.GetEffectiveSpeed
+        |> Avatar.GetEffectiveSpeed vesselSingleStatisticSource inputAvatarId
     Assert.AreEqual(expected, actual)
 
-let private fouledAvatar = 
-    {avatar with 
-        Vessel = 
-            avatar.Vessel
-            |> Vessel.TransformFouling Port (fun x->{x with CurrentValue = x.MaximumValue})
-            |> Vessel.TransformFouling Starboard (fun x->{x with CurrentValue = x.MaximumValue})}
+let private fouledAvatar = avatar
 
 [<Test>]
 let ``GetEffectiveSpeed.It returns proportionally reduced speed when there is fouling.`` () =
     let input = fouledAvatar
     let expected = 0.5
+    let vesselSingleStatisticSource (_) (_) = {MinimumValue=0.0;MaximumValue=0.25;CurrentValue=0.25} |> Some
     let actual =
         input
-        |> Avatar.GetEffectiveSpeed
+        |> Avatar.GetEffectiveSpeed vesselSingleStatisticSource inputAvatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``CleanHull.It cleans the hull of the given avatar.`` () =
     let input = fouledAvatar
     let inputSide = Port
+    let vesselSingleStatisticSource (_) (_) = {MinimumValue=0.0;MaximumValue=0.5;CurrentValue=0.5} |> Some
+    let vesselSingleStatisticSink (_) (_:VesselStatisticIdentifier, statistic:Statistic) : unit =
+        Assert.AreEqual(statistic.MinimumValue, statistic.CurrentValue)
     let expected =
-        {input with 
-            Vessel = 
-                input.Vessel
-                |> Vessel.TransformFouling inputSide (fun x -> {x with CurrentValue = x.MinimumValue})}
+        input
         |> Avatar.TransformShipmate (Shipmate.TransformStatistic AvatarStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)) 0u
         |> Avatar.AddMetric Metric.CleanedHull 1u
     let actual =
         input
-        |> Avatar.CleanHull inputSide
+        |> Avatar.CleanHull vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId inputSide
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -524,7 +523,6 @@ let ``TransformStatistic.It replaces the statistic when that statistic is origin
         |> Avatar.TransformShipmate (Shipmate.TransformStatistic AvatarStatisticIdentifier.Health (fun _ -> (inputHealth |> Some))) 0u
     Assert.AreEqual(expected, actual)
 
-
 [<Test>]
 let ``TransformStatistic.It does nothing when the given statistic is absent from the avatar.`` () =
     let input = avatarNoStats
@@ -535,4 +533,24 @@ let ``TransformStatistic.It does nothing when the given statistic is absent from
         input
         |> Avatar.TransformShipmate (Shipmate.TransformStatistic AvatarStatisticIdentifier.Health (fun _ -> (inputHealth |> Some))) 0u
     Assert.AreEqual(expected, actual)
-    
+
+[<Test>]
+let ``GetCurrentFouling.It returns the current fouling for the Avatar.`` () =
+    let vesselSingleStatisticSource (_) (_) =
+        {MaximumValue=0.5; MinimumValue=0.0; CurrentValue=0.25} |> Some
+    let inputAvatarId = "avatar"
+    let expected = 0.5
+    let actual = 
+        Avatar.GetCurrentFouling vesselSingleStatisticSource inputAvatarId
+    Assert.AreEqual(expected, actual)
+
+
+[<Test>]
+let ``GetMaximumFouling.It returns the maximum fouling for the Avatar.`` () =
+    let vesselSingleStatisticSource (_) (_) =
+        {MaximumValue=0.5; MinimumValue=0.0; CurrentValue=0.25} |> Some
+    let inputAvatarId = "avatar"
+    let expected = 1.0
+    let actual = 
+        Avatar.GetMaximumFouling vesselSingleStatisticSource inputAvatarId
+    Assert.AreEqual(expected, actual)

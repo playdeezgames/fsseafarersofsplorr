@@ -23,7 +23,9 @@
     <Compile Include="IslandItemTests.fs" />
     <Compile Include="IslandMarketTests.fs" />
     <Compile Include="ItemTests.fs" />
-    <Compile Include="StatisticsTest.fs" />
+    <Compile Include="AvatarStatisticTemplateTests.fs" />
+    <Compile Include="VesselStatisticTemplateTests.fs" />
+    <Compile Include="VesselStatisticTests.fs" />
     <Compile Include="WorldConfigurationTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

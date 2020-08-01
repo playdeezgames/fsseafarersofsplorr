@@ -14,6 +14,8 @@ let ``Run.It returns the given gamestate.`` () =
     let expected = input |> Some
     let actual =
         input
-        |> Status.Run sinkStub
+        |> Status.Run 
+            vesselSingleStatisticSourceStub
+            sinkStub
     Assert.AreEqual(expected, actual)
 
