@@ -7,7 +7,18 @@ open Splorr.Seafarers.Controllers
 open CommonTestFixtures
 open AtSeaTestFixtures
 
-let private functionUnderTest = AtSea.Run atSeaCommoditySource atSeaItemSource atSeaIslandMarketSource atSeaIslandMarketSink atSeaIslandItemSource atSeaIslandItemSink random (0.0, 0.0)
+let private functionUnderTest = 
+    AtSea.Run 
+        atSeaCommoditySource 
+        atSeaItemSource 
+        atSeaIslandMarketSource 
+        atSeaIslandMarketSink 
+        atSeaIslandItemSource 
+        atSeaIslandItemSink 
+        vesselSingleStatisticSourceStub
+        vesselSingleStatisticSinkStub
+        random 
+        (0.0, 0.0)
 
 [<Test>]
 let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
@@ -122,7 +133,7 @@ let ``Run.It moves the avatar when given Move command.`` () =
         {input.Avatars.[avatarId] with 
             Position = (6.0,5.0)
             Messages = expectedMessages
-            Vessel   = input.Avatars.[avatarId].Vessel |> Vessel.Befoul
+            //Vessel   = input.Avatars.[avatarId].Vessel |> Vessel.Befoul
             Metrics  = Map.empty |> Map.add Metric.Moved 1u}
         |> Avatar.TransformShipmate (Shipmate.TransformStatistic AvatarStatisticIdentifier.Satiety (fun x -> {x with CurrentValue=99.0} |> Some)) 0u
         |> Avatar.TransformShipmate (Shipmate.TransformStatistic AvatarStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)) 0u

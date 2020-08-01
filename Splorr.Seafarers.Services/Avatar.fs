@@ -18,6 +18,9 @@ module Avatar =
                             item)}
 
     let Create 
+            (vesselStatisticTemplateSource: unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
+            (vesselStatisticSink: string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
+            (avatarId: string)
             (distances            : float * float) 
             (statisticDescriptors : AvatarStatisticTemplate list) 
             (rationItems          : uint64 list) 
@@ -35,7 +38,7 @@ module Avatar =
             Job = None
             Inventory = Map.empty
             Metrics = Map.empty
-            Vessel = Vessel.Create 100.0
+            Vessel = Vessel.Create vesselStatisticTemplateSource vesselStatisticSink avatarId 100.0
             Shipmates =
                 [| Shipmate.Create rationItems statisticDescriptors |]
         }
@@ -115,12 +118,41 @@ module Avatar =
             Inventory = inventory}
         |> AddMetric Metric.Ate eaten
 
+    
+    let GetCurrentFouling
+            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
+            (avatarId                    : string)
+            :float =
+        let portFouling = 
+            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PortFouling
+            |> Option.map (fun x -> x.CurrentValue)
+            |> Option.defaultValue 0.0
+        let starboardFouling = 
+            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.StarboardFouling
+            |> Option.map (fun x -> x.CurrentValue)
+            |> Option.defaultValue 0.0
+        portFouling + starboardFouling
+    
+    let GetMaximumFouling
+            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
+            (avatarId                    : string)
+            :float =
+        let portFouling = 
+            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PortFouling
+            |> Option.map (fun x -> x.MaximumValue)
+            |> Option.defaultValue 0.0
+        let starboardFouling = 
+            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.StarboardFouling
+            |> Option.map (fun x -> x.MaximumValue)
+            |> Option.defaultValue 0.0
+        portFouling + starboardFouling
+
     let GetEffectiveSpeed 
-            (avatar : Avatar) 
+            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
+            (avatarId                    : string)
+            (avatar                      : Avatar) 
             : float =
-        let currentValue =
-            avatar.Vessel.Fouling
-            |> Map.fold (fun a _ v->a+v.CurrentValue) 0.0
+        let currentValue = GetCurrentFouling vesselSingleStatisticSource avatarId
         (avatar.Speed * (1.0 - currentValue))
 
     let TransformShipmates 
@@ -133,14 +165,17 @@ module Avatar =
                 a |> TransformShipmate transform i) avatar
 
     let Move
-            (avatar : Avatar) 
+            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
+            (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
+            (avatarId                    : string)
+            (avatar                      : Avatar) 
             : Avatar =
-        let actualSpeed = avatar |> GetEffectiveSpeed
+        let actualSpeed = avatar |> GetEffectiveSpeed vesselSingleStatisticSource avatarId
+        Vessel.Befoul vesselSingleStatisticSource vesselSingleStatisticSink avatarId avatar.Vessel
         let newPosition = ((avatar.Position |> fst) + System.Math.Cos(avatar.Heading) * actualSpeed, (avatar.Position |> snd) + System.Math.Sin(avatar.Heading) * actualSpeed)
         {
             avatar with 
                 Position = newPosition
-                Vessel = avatar.Vessel |> Vessel.Befoul
         }
         |> TransformShipmates (Shipmate.TransformStatistic AvatarStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some))
         |> AddMetric Metric.Moved 1u
@@ -251,11 +286,12 @@ module Avatar =
                 result + (quantity |> float) * d.Tonnage)
 
     let CleanHull 
-            (side   : Side) 
-            (avatar : Avatar) : Avatar =
-        {avatar with 
-            Vessel = 
-                avatar.Vessel
-                |> Vessel.TransformFouling side (fun x-> {x with CurrentValue = x.MinimumValue})}
+            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
+            (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
+            (avatarId                    : string)
+            (side                        : Side) 
+            (avatar                      : Avatar) : Avatar =
+        Vessel.TransformFouling vesselSingleStatisticSource vesselSingleStatisticSink avatarId side (fun x-> {x with CurrentValue = x.MinimumValue})
+        avatar
         |> TransformShipmates (Shipmate.TransformStatistic AvatarStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some))
         |> IncrementMetric Metric.CleanedHull

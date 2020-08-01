@@ -16,7 +16,15 @@ let internal soloIslandWorldConfiguration: WorldConfiguration =
         RationItems = [1UL]
         StatisticDescriptors = statisticDescriptors
     }
-let internal soloIslandWorld = World.Create soloIslandWorldConfiguration random avatarId
+let private vesselStatisticTemplateSourceStub () = Map.empty
+let private vesselStatisticSinkStub (_) (_) = ()
+let internal soloIslandWorld = 
+    World.Create 
+        vesselStatisticTemplateSourceStub
+        vesselStatisticSinkStub
+        soloIslandWorldConfiguration 
+        random 
+        avatarId
 let internal emptyWorld = 
     {
         AvatarId = avatarId
@@ -36,10 +44,6 @@ let internal emptyWorld =
                 Vessel  = 
                     {
                         Tonnage=100.0
-                        Fouling = 
-                            Map.empty
-                            |> Map.add Port {MinimumValue = 0.0; MaximumValue = 0.25; CurrentValue=0.0}
-                            |> Map.add Starboard {MinimumValue = 0.0; MaximumValue = 0.25; CurrentValue=0.0}
                         FoulRate = 0.01
                     }
                 Shipmates = 
@@ -93,7 +97,13 @@ let internal genericWorldConfiguration: WorldConfiguration =
         RationItems = [1UL]
         StatisticDescriptors = statisticDescriptors
     }
-let internal genericWorld = World.Create genericWorldConfiguration random avatarId
+let internal genericWorld = 
+    World.Create 
+        vesselStatisticTemplateSourceStub
+        vesselStatisticSinkStub
+        genericWorldConfiguration 
+        random 
+        avatarId
 let internal deadWorld =
     {genericWorld with 
         Avatars = 

@@ -71,10 +71,14 @@ module MainMenu =
             |> HandleInvalidCommand
 
     let private HandleCommandNoGame 
+            (vesselStatisticTemplateSource: unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
+            (vesselStatisticSink: string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
             (configuration : WorldConfiguration) =
         function
         | Some (Command.Start avatarId)->
             World.Create 
+                vesselStatisticTemplateSource
+                vesselStatisticSink
                 configuration
                 (System.Random())
                 avatarId
@@ -90,6 +94,8 @@ module MainMenu =
             |> HandleInvalidCommand
 
     let private HandleCommand
+            (vesselStatisticTemplateSource: unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
+            (vesselStatisticSink: string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
             (configuration : WorldConfiguration) 
             (world         : World option) 
             (command       : Command option) 
@@ -98,9 +104,15 @@ module MainMenu =
         | Some w ->
             HandleCommandInGame w command
         | _ ->
-            HandleCommandNoGame configuration command
+            HandleCommandNoGame 
+                vesselStatisticTemplateSource
+                vesselStatisticSink
+                configuration 
+                command
 
     let Run 
+            (vesselStatisticTemplateSource: unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
+            (vesselStatisticSink: string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
             (configuration : WorldConfiguration) 
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
@@ -110,6 +122,8 @@ module MainMenu =
             messageSink 
             world.IsSome
         HandleCommand
+            vesselStatisticTemplateSource
+            vesselStatisticSink
             configuration
             world
             (commandSource())

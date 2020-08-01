@@ -5,6 +5,7 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
 open System
+open CommonTestFixtures
 
 let private configuration :WorldConfiguration = 
     {
@@ -18,7 +19,13 @@ let private configuration :WorldConfiguration =
     }
 let private random = Random()
 let private avatarId = ""
-let private world = World.Create configuration random avatarId
+let private world = 
+    World.Create 
+        vesselStatisticTemplateSourceStub
+        vesselStatisticSinkStub
+        configuration 
+        random 
+        avatarId
 
 [<Test>]
 let ``GetWorld.It returns the world embedded within the given AtSea Gamestate.`` () =

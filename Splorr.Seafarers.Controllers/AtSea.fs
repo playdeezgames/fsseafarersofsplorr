@@ -31,8 +31,9 @@ module AtSea =
         |> List.sortBy (fun (_,_,d,_)->d)
 
     let private UpdateDisplay 
-            (messageSink : MessageSink) 
-            (world       : World) 
+            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
+            (messageSink                 : MessageSink) 
+            (world                       : World) 
             : unit =
         "" |> Line |> messageSink
         world.Avatars.[world.AvatarId].Messages
@@ -50,7 +51,7 @@ module AtSea =
             (Hue.Value, avatar.Heading |> Angle.ToDegrees |> Angle.ToString |> sprintf "%s" |> Line) |> Hued
             (Hue.Label, "Speed: " |> Text) |> Hued
             (speedHue, (avatar.Speed * 100.0) |> sprintf "%.0f%%" |> Text) |> Hued
-            avatar |> Avatar.GetEffectiveSpeed |> sprintf "(Effective rate: %.2f)" |> Line
+            avatar |> Avatar.GetEffectiveSpeed vesselSingleStatisticSource world.AvatarId |> sprintf "(Effective rate: %.2f)" |> Line
             (Hue.Subheading, "Nearby:" |> Line) |> Hued
         ]
         |> List.iter messageSink
@@ -77,6 +78,8 @@ module AtSea =
             (islandMarketSink:Location->Map<uint64, Market>->unit) 
             (islandItemSource:Location->Set<uint64>) 
             (islandItemSink:Location->Set<uint64>->unit) 
+            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
+            (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
             (random:Random) 
             (rewardRange:float*float) 
             (command:Command option) 
@@ -188,7 +191,7 @@ module AtSea =
 
         | Some (Command.Move distance)->
             world
-            |> World.Move distance
+            |> World.Move vesselSingleStatisticSource vesselSingleStatisticSink distance
             |> Gamestate.AtSea
             |> Some
 
@@ -229,6 +232,8 @@ module AtSea =
             (islandMarketSink   : Location -> Map<uint64, Market>->unit) 
             (islandItemSource   : Location -> Set<uint64>) 
             (islandItemSink     : Location -> Set<uint64>->unit) 
+            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
+            (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
             (random             : Random) 
             (rewardRange        : float*float) 
             (commandSource      : CommandSource) 
@@ -236,6 +241,7 @@ module AtSea =
             (world              : World) 
             : Gamestate option =
         UpdateDisplay 
+            vesselSingleStatisticSource
             messageSink 
             world
         HandleCommand
@@ -245,6 +251,8 @@ module AtSea =
             islandMarketSink
             islandItemSource
             islandItemSink
+            vesselSingleStatisticSource
+            vesselSingleStatisticSink
             random
             rewardRange
             (commandSource())
@@ -257,6 +265,8 @@ module AtSea =
             (islandMarketSink   : Location -> Map<uint64, Market>->unit) 
             (islandItemSource   : Location -> Set<uint64>) 
             (islandItemSink     : Location -> Set<uint64>->unit) 
+            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
+            (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
             (random             : Random) 
             (rewardRange        : float*float) 
             (commandSource      : CommandSource) 
@@ -264,7 +274,20 @@ module AtSea =
             (world              : World) 
             : Gamestate option =
         if world |> World.IsAvatarAlive then
-            RunAlive commoditySource itemSource islandMarketSource islandMarketSink islandItemSource islandItemSink random rewardRange commandSource messageSink world
+            RunAlive 
+                commoditySource 
+                itemSource 
+                islandMarketSource 
+                islandMarketSink 
+                islandItemSource 
+                islandItemSink 
+                vesselSingleStatisticSource
+                vesselSingleStatisticSink
+                random 
+                rewardRange 
+                commandSource 
+                messageSink 
+                world
         else
             world.Avatars.[world.AvatarId].Messages
             |> Gamestate.GameOver

@@ -7,8 +7,14 @@ open CommonTestFixtures
 let internal random = System.Random()
 let internal rewardRange = (1.0,10.0)
 let internal singleLocation = [(0.0, 0.0)] |> Set.ofList
+let private vesselStatisticTemplateSourceStub () = Map.empty
+let private vesselStatisticSinkStub (_) (_) = ()
+let internal vesselSingleStatisticSource (_) (_) = None
+let internal vesselSingleStatisticSink (_) (_) = ()
+
+
 let internal avatar =
-    Avatar.Create (10.0, 1.0) statisticDescriptors [1UL] (0.0,0.0)
+    Avatar.Create vesselStatisticTemplateSourceStub vesselStatisticSinkStub avatarId (10.0, 1.0) statisticDescriptors [1UL] (0.0,0.0)
 let internal avatarNoStats =
     {avatar with 
         Shipmates =

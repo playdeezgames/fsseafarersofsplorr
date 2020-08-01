@@ -6,6 +6,7 @@ open Splorr.Seafarers.Services
 
 module Careened = 
     let private UpdateDisplay 
+            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
             (messageSink:MessageSink) 
             (side:Side)
             (world:World) : unit =
@@ -20,9 +21,10 @@ module Careened =
             match side with
             | Port -> "port"
             | Starboard -> "starboard"
-        let currentValue, maximumValue =
-            world.Avatars.[avatarId].Vessel.Fouling
-            |> Map.fold (fun (c,m) k v -> (c+v.CurrentValue,m+v.MaximumValue)) (0.0,0.0)
+        let currentValue =
+            Avatar.GetCurrentFouling vesselSingleStatisticSource avatarId
+        let maximumValue = 
+            Avatar.GetMaximumFouling vesselSingleStatisticSource avatarId
         let foulage =
             100.0 * currentValue / maximumValue
         [
@@ -31,7 +33,14 @@ module Careened =
         ]
         |> List.iter messageSink
 
-    let private HandleCommand (command:Command option) (sink:MessageSink) (side:Side) (world:World) : Gamestate option =
+    let private HandleCommand 
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+            (vesselSingleStatisticSink   : string -> VesselStatisticIdentifier*Statistic -> unit)
+            (command                     : Command option) 
+            (sink                        : MessageSink) 
+            (side                        : Side) 
+            (world                       : World) 
+            : Gamestate option =
         match command with
         | Some Command.Metrics ->
             (side, world)
@@ -60,7 +69,10 @@ module Careened =
             |> Some
         | Some Command.CleanHull ->
             (side, world 
-            |> World.CleanHull (if side=Port then Starboard else Port))
+            |> World.CleanHull 
+                vesselSingleStatisticSource
+                vesselSingleStatisticSink
+                (if side=Port then Starboard else Port))
             |> Gamestate.Careened
             |> Some
         | Some Command.WeighAnchor ->
@@ -73,20 +85,43 @@ module Careened =
             |> Gamestate.ErrorMessage
             |> Some
 
-    let private RunAlive (source:CommandSource) (sink:MessageSink) (side:Side) (world:World) : Gamestate option =
+    let private RunAlive 
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+            (vesselSingleStatisticSink   : string -> VesselStatisticIdentifier*Statistic -> unit)
+            (source:CommandSource) 
+            (sink:MessageSink) 
+            (side:Side) 
+            (world:World) 
+            : Gamestate option =
         UpdateDisplay 
+            vesselSingleStatisticSource
             sink 
             side 
             world
         HandleCommand
+            vesselSingleStatisticSource
+            vesselSingleStatisticSink
             (source())
             sink
             side
             world
 
-    let Run (commandSource:CommandSource) (messageSink:MessageSink) (side:Side) (world:World) : Gamestate option =
+    let Run 
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+            (vesselSingleStatisticSink   : string -> VesselStatisticIdentifier*Statistic -> unit)
+            (commandSource:CommandSource) 
+            (messageSink:MessageSink) 
+            (side:Side) 
+            (world:World) 
+            : Gamestate option =
         if world |> World.IsAvatarAlive then
-            RunAlive commandSource messageSink side world
+            RunAlive 
+                vesselSingleStatisticSource
+                vesselSingleStatisticSink
+                commandSource 
+                messageSink 
+                side 
+                world
         else
             world.Avatars.[world.AvatarId].Messages
             |> Gamestate.GameOver

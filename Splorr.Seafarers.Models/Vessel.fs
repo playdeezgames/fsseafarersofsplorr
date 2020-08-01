@@ -3,7 +3,6 @@
 type Vessel =
     {
         Tonnage: float
-        Fouling: Map<Side,Statistic>
         FoulRate: float
     }
 
