@@ -17,7 +17,11 @@ module IslandList =
         let knownIslands =
             world.Islands
             |> Map.toList
-            |> List.filter(fun (_,x) -> x.AvatarVisits.TryFind world.AvatarId |> Option.isSome)
+            |> List.filter
+                (fun (_,island) -> 
+                    island.AvatarVisits.TryFind world.AvatarId 
+                    |> Option.map (fun i -> i.VisitCount.IsSome)
+                    |> Option.defaultValue false)
             |> List.sortBy(fun (_,x)->x.Name)
         let totalItems = knownIslands |> List.length |> uint32
         let totalPages = (totalItems + (pageSize-1u)) / pageSize
