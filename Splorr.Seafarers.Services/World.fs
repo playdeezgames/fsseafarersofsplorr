@@ -381,6 +381,7 @@ module World =
     let BuyItems 
             (islandMarketSource     : Location->Map<uint64, Market>) 
             (islandSingleMarketSink : Location->(uint64 * Market)->unit) 
+            (vesselSingleStatisticSource:string->VesselStatisticIdentifier->Statistic option)
             (commodities            : Map<uint64, CommodityDescriptor>) 
             (items                  : Map<uint64, ItemDescriptor>) 
             (location               : Location) 
@@ -395,7 +396,7 @@ module World =
                 islandMarketSource location
             let unitPrice = 
                 Item.DetermineSalePrice commodities markets descriptor 
-            let availableTonnage = avatar.Vessel.Tonnage
+            let availableTonnage = vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Tonnage |> Option.map (fun x->x.CurrentValue) |> Option.get
             let usedTonnage =
                 avatar
                 |> Avatar.GetUsedTonnage items

@@ -20,14 +20,16 @@ module Docked =
         |> List.iter messageSink
 
     let private HandleCommand
-            (commoditySource:unit->Map<uint64, CommodityDescriptor>) 
-            (itemSource:unit->Map<uint64, ItemDescriptor>) 
-            (islandMarketSource:Location->Map<uint64, Market>) 
-            (islandSingleMarketSource:Location->uint64->Market option) 
-            (islandSingleMarketSink:Location->uint64 * Market -> unit) 
-            (command:Command option) 
-            (location:Location) 
-            (world: World) =
+            (commoditySource             : unit -> Map<uint64, CommodityDescriptor>) 
+            (itemSource                  : unit -> Map<uint64, ItemDescriptor>) 
+            (islandMarketSource          : Location -> Map<uint64, Market>) 
+            (islandSingleMarketSource    : Location -> uint64 -> Market option) 
+            (islandSingleMarketSink      : Location -> uint64 * Market -> unit) 
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+            (command                     : Command option) 
+            (location                    : Location) 
+            (world                       : World) 
+            : Gamestate option =
         let world =
             world
             |> World.ClearMessages
@@ -39,7 +41,7 @@ module Docked =
             |> Some
 
         | Some (Command.Buy (quantity, itemName))->
-            (Dock, location, world |> World.BuyItems islandMarketSource islandSingleMarketSink (commoditySource()) (itemSource()) location quantity itemName) 
+            (Dock, location, world |> World.BuyItems islandMarketSource islandSingleMarketSink vesselSingleStatisticSource (commoditySource()) (itemSource()) location quantity itemName) 
             |> Gamestate.Docked
             |> Some            
 
@@ -111,6 +113,7 @@ module Docked =
             (islandMarketSource       : Location -> Map<uint64, Market>) 
             (islandSingleMarketSource : Location -> uint64 -> Market option) 
             (islandSingleMarketSink   : Location -> uint64 * Market -> unit) 
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (commandSource            : CommandSource) 
             (messageSink              : MessageSink) 
             (location                 : Location) 
@@ -128,6 +131,7 @@ module Docked =
             islandMarketSource 
             islandSingleMarketSource
             islandSingleMarketSink 
+            vesselSingleStatisticSource
             (commandSource()) 
             location 
 
@@ -149,13 +153,14 @@ module Docked =
             |> Some
 
     let Run 
-            (commoditySource          : unit -> Map<uint64, CommodityDescriptor>) 
-            (itemSource               : unit -> Map<uint64, ItemDescriptor>) 
-            (islandMarketSource       : Location -> Map<uint64,Market>) 
-            (islandSingleMarketSource : Location -> uint64 -> Market option) 
-            (islandSingleMarketSink   : Location -> uint64 * Market -> unit) 
-            (commandSource            : CommandSource) 
-            (messageSink              : MessageSink) =
+            (commoditySource             : unit -> Map<uint64, CommodityDescriptor>) 
+            (itemSource                  : unit -> Map<uint64, ItemDescriptor>) 
+            (islandMarketSource          : Location -> Map<uint64,Market>) 
+            (islandSingleMarketSource    : Location -> uint64 -> Market option) 
+            (islandSingleMarketSink      : Location -> uint64 * Market -> unit) 
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+            (commandSource               : CommandSource) 
+            (messageSink                 : MessageSink) =
         RunBoilerplate 
             (RunWithIsland 
                 commoditySource 
@@ -163,5 +168,6 @@ module Docked =
                 islandMarketSource 
                 islandSingleMarketSource
                 islandSingleMarketSink 
+                vesselSingleStatisticSource
                 commandSource 
                 messageSink)

@@ -7,16 +7,12 @@ module Vessel =
             (vesselStatisticSink: string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
             (avatarId: string)
             (tonnage:float) 
-            : Vessel =
+            : unit =
         vesselStatisticTemplateSource()
         |> Map.map
             (fun _ template ->
                 {MinimumValue = template.MinimumValue; MaximumValue=template.MaximumValue; CurrentValue = template.CurrentValue})
         |> vesselStatisticSink avatarId
-        {
-            Tonnage = tonnage
-            FoulRate = 0.001 //TODO: dont hardcode, and base it on vessel type
-        }
 
     let TransformFouling 
             (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
@@ -36,8 +32,11 @@ module Vessel =
             (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
             (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
             (avatarId                    : string)
-            (vessel                      : Vessel) 
             : unit =
-        TransformFouling vesselSingleStatisticSource vesselSingleStatisticSink avatarId Port (Statistic.ChangeCurrentBy (vessel.FoulRate/2.0))
-        TransformFouling vesselSingleStatisticSource vesselSingleStatisticSink avatarId Starboard (Statistic.ChangeCurrentBy (vessel.FoulRate/2.0))
+        let foulRate = 
+            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.FoulRate
+            |> Option.map (fun x->x.CurrentValue)
+            |> Option.get
+        TransformFouling vesselSingleStatisticSource vesselSingleStatisticSink avatarId Port (Statistic.ChangeCurrentBy (foulRate/2.0))
+        TransformFouling vesselSingleStatisticSource vesselSingleStatisticSink avatarId Starboard (Statistic.ChangeCurrentBy (foulRate/2.0))
 

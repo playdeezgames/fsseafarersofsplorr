@@ -14,5 +14,4 @@ type Avatar =
         Inventory    : Map<uint64, uint32>
         Shipmates    : Shipmate array
         Metrics      : Map<Metric, uint>
-        Vessel       : Vessel
     }

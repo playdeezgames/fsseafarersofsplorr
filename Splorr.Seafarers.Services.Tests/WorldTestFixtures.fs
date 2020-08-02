@@ -41,11 +41,6 @@ let internal emptyWorld =
                 Job = None
                 Inventory = Map.empty
                 Metrics = Map.empty
-                Vessel  = 
-                    {
-                        Tonnage=100.0
-                        FoulRate = 0.01
-                    }
                 Shipmates = 
                     [|{
                         RationItems=[1UL]

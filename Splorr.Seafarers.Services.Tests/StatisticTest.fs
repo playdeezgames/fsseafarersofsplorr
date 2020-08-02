@@ -132,3 +132,17 @@ let ``ChangeMaximumBy.It will not change the maximum value below the minimum.`` 
         input
         |> Statistic.ChangeMaximumBy inputDelta
     Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``GetCurrentValue.It returns the current value of the given statistic.`` () =
+    let inputMaximum = 100.0
+    let inputMinimum = 0.0
+    let inputCurrent = 50.0
+    let input =
+        Statistic.Create (inputMinimum, inputMaximum) inputCurrent
+    let expected = inputCurrent
+    let actual =
+        input
+        |> Statistic.GetCurrentValue
+    Assert.AreEqual(expected, actual)
+        

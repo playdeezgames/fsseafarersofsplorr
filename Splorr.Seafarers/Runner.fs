@@ -77,6 +77,7 @@ module Runner =
                     islandMarketSource 
                     islandSingleMarketSource
                     islandSingleMarketSink 
+                    vesselSingleStatisticSource
                     commandSource 
                     messageSink 
                     location 
@@ -117,6 +118,7 @@ module Runner =
             | Gamestate.Inventory gameState -> 
                 Inventory.Run 
                     itemSource 
+                    vesselSingleStatisticSource
                     messageSink 
                     gameState
 

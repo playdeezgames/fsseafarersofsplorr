@@ -6,6 +6,7 @@ open Splorr.Seafarers.Services
 module Inventory =
     let private RunWorld 
             (itemSource  : unit -> Map<uint64, ItemDescriptor>)
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (messageSink : MessageSink) 
             (world       : World) 
             : unit =
@@ -39,7 +40,10 @@ module Inventory =
         if inventoryEmpty then 
             (Hue.Usage, "(none)"  |> Line) |> Hued
             |> messageSink
-        let availableTonnage = avatar.Vessel.Tonnage
+        let availableTonnage = 
+            vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.Tonnage
+            |> Option.map Statistic.GetCurrentValue
+            |> Option.get
         let usedTonnage = avatar |> Avatar.GetUsedTonnage items
         [
             (Hue.Sublabel, "Cargo Limit: " |> Text) |> Hued
@@ -51,11 +55,12 @@ module Inventory =
 
     let Run 
             (itemSource : unit -> Map<uint64, ItemDescriptor>) 
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (messageSink       : MessageSink) 
             (gamestate  : Gamestate) 
             : Gamestate option =
         gamestate 
         |> Gamestate.GetWorld
-        |> Option.iter (RunWorld itemSource messageSink)
+        |> Option.iter (RunWorld itemSource vesselSingleStatisticSource messageSink)
         gamestate
         |> Some

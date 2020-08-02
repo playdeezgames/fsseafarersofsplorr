@@ -9,7 +9,12 @@ let internal rewardRange = (1.0,10.0)
 let internal singleLocation = [(0.0, 0.0)] |> Set.ofList
 let private vesselStatisticTemplateSourceStub () = Map.empty
 let private vesselStatisticSinkStub (_) (_) = ()
-let internal vesselSingleStatisticSource (_) (_) = None
+let internal vesselSingleStatisticSource (_) (identifier) = 
+    match identifier with
+    | VesselStatisticIdentifier.FoulRate ->
+        {MinimumValue = 0.001; CurrentValue=0.001; MaximumValue=0.001} |> Some
+    | _ ->
+        None
 let internal vesselSingleStatisticSink (_) (_) = ()
 
 

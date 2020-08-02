@@ -8,6 +8,3 @@ type Metric =
     | AbandonedJob  = 5
     | AcceptedJob   = 6
     | CleanedHull   = 7
-
-
-

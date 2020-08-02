@@ -45,3 +45,8 @@ module Statistic =
             : Statistic =
         statistic
         |> SetMaximum (amount + statistic.MaximumValue)
+
+    let GetCurrentValue
+            (statistic : Statistic)
+            : float =
+        statistic.CurrentValue

@@ -26,6 +26,7 @@ module Avatar =
             (rationItems          : uint64 list) 
             (position             : Location)
             : Avatar =
+        Vessel.Create vesselStatisticTemplateSource vesselStatisticSink avatarId 100.0
         {
             Messages = []
             Position = position
@@ -38,7 +39,6 @@ module Avatar =
             Job = None
             Inventory = Map.empty
             Metrics = Map.empty
-            Vessel = Vessel.Create vesselStatisticTemplateSource vesselStatisticSink avatarId 100.0
             Shipmates =
                 [| Shipmate.Create rationItems statisticDescriptors |]
         }
@@ -171,7 +171,7 @@ module Avatar =
             (avatar                      : Avatar) 
             : Avatar =
         let actualSpeed = avatar |> GetEffectiveSpeed vesselSingleStatisticSource avatarId
-        Vessel.Befoul vesselSingleStatisticSource vesselSingleStatisticSink avatarId avatar.Vessel
+        Vessel.Befoul vesselSingleStatisticSource vesselSingleStatisticSink avatarId
         let newPosition = ((avatar.Position |> fst) + System.Math.Cos(avatar.Heading) * actualSpeed, (avatar.Position |> snd) + System.Math.Sin(avatar.Heading) * actualSpeed)
         {
             avatar with 

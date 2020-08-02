@@ -103,7 +103,16 @@ let ``SetHeading.It does nothing when given an invalid avatar id`` () =
 
 [<Test>]
 let ``Move.It moves the avatar one unit when give 1u for distance when given a valid avatar id.`` () =
-    let vesselSingleStatisticSource (_) (_) = {MinimumValue=0.0; CurrentValue=0.0; MaximumValue=0.25} |> Some
+    let vesselSingleStatisticSource (_) (identifier) =
+        match identifier with
+        | VesselStatisticIdentifier.PortFouling
+        | VesselStatisticIdentifier.StarboardFouling ->
+            {MinimumValue=0.0; CurrentValue=0.0; MaximumValue=0.25} |> Some
+        | VesselStatisticIdentifier.FoulRate ->
+            {MinimumValue=0.001; MaximumValue=0.001; CurrentValue=0.001} |> Some
+        | _ ->
+            Assert.Fail("Dont call me.")
+            None
     let vesselSingleStatisticSink (_) (_:VesselStatisticIdentifier, statistic:Statistic) : unit =
         Assert.AreEqual(0.00050000000000000001, statistic.CurrentValue)
     let actual =
@@ -127,7 +136,16 @@ let ``Move.It does nothing when given an invalid avatar id`` () =
 
 [<Test>]
 let ``Move.It moves the avatar almost two units when give 2u for distance.`` () =
-    let vesselSingleStatisticSource (_) (_) = {MinimumValue=0.0; CurrentValue=0.0; MaximumValue=0.25} |> Some
+    let vesselSingleStatisticSource (_) (identifier) = 
+        match identifier with
+        | VesselStatisticIdentifier.PortFouling
+        | VesselStatisticIdentifier.StarboardFouling ->
+            {MinimumValue=0.0; CurrentValue=0.0; MaximumValue=0.25} |> Some
+        | VesselStatisticIdentifier.FoulRate ->
+            {MinimumValue=0.001; MaximumValue=0.001; CurrentValue=0.001} |> Some
+        | _ ->
+            Assert.Fail("Dont call me.")
+            None
     let vesselSingleStatisticSink (_) (_:VesselStatisticIdentifier, statistic:Statistic) : unit =
         Assert.AreEqual(0.00050000000000000001, statistic.CurrentValue)
     let actual =
@@ -160,11 +178,6 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                     Job = None
                     Inventory = Map.empty
                     Metrics = Map.empty
-                    Vessel  = 
-                        {
-                            Tonnage=100.0
-                            FoulRate=0.1
-                        }
                     Shipmates = 
                         [|{
                             Statistics = Map.empty
@@ -403,9 +416,16 @@ let ``AcceptJob.It adds the given job to the avatar and eliminates it from the i
 
 [<Test>]
 let ``TransformAvatar.It transforms the avatar within the given world.`` () =
-    let vesselSingleStatisticSource (_) (_) = None
+    let vesselSingleStatisticSource (_) (identifier) = 
+        match identifier with
+        | VesselStatisticIdentifier.FoulRate ->
+            {MinimumValue=0.01; MaximumValue=0.01; CurrentValue=0.01} |> Some
+        | _ ->
+            None
     let vesselSingleStatisticSink (_) (_) = ()
-    let expectedAvatar = genericWorld.Avatars.[avatarId] |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink avatarId
+    let expectedAvatar = 
+        genericWorld.Avatars.[avatarId] 
+        |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink avatarId
     let actual =
         genericWorld
         |> World.TransformAvatar (Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink avatarId >> Some)
@@ -473,6 +493,10 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
     Assert.AreEqual(expectedMessages, actual.Avatars.[avatarId].Messages)
 
 let islandSingleMarketSinkStub (_) (_) = ()
+let vesselSingleStatisticSourceStub (_) (identifier) = 
+    match identifier with
+    | VesselStatisticIdentifier.Tonnage -> {MinimumValue=100.0; CurrentValue=100.0; MaximumValue=100.0} |> Some
+    | _ -> None
 
 [<Test>]
 let ``BuyItems.It gives a message when given a bogus island location.`` () =
@@ -485,7 +509,7 @@ let ``BuyItems.It gives a message when given a bogus island location.`` () =
         |> World.AddMessages ["You cannot buy items here."]
     let actual = 
         input 
-        |> World.BuyItems islandMarketSourceStub islandSingleMarketSinkStub commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.BuyItems islandMarketSourceStub islandSingleMarketSinkStub vesselSingleStatisticSourceStub commodities genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -499,7 +523,7 @@ let ``BuyItems.It gives a message when given a valid island location and a bogus
         |> World.AddMessages ["Round these parts, we don't sell things like that."]
     let actual = 
         input 
-        |> World.BuyItems islandMarketSourceStub islandSingleMarketSinkStub commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.BuyItems islandMarketSourceStub islandSingleMarketSinkStub vesselSingleStatisticSourceStub commodities genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -516,7 +540,7 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds.`` () =
         |> World.AddMessages ["You don't have enough money."]
     let actual = 
         input 
-        |> World.BuyItems islandMarketSource islandSingleMarketSinkStub commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.BuyItems islandMarketSource islandSingleMarketSinkStub vesselSingleStatisticSourceStub commodities genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -536,7 +560,7 @@ let ``BuyItems.It gives a message when the avatar has insufficient tonnage.`` ()
         |> World.AddMessages ["You don't have enough tonnage."]
     let actual = 
         input 
-        |> World.BuyItems islandMarketSource islandSingleMarketSinkStub commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.BuyItems islandMarketSource islandSingleMarketSinkStub vesselSingleStatisticSourceStub commodities genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -563,7 +587,7 @@ let ``BuyItems.It gives a message and completes the purchase when the avatar has
         |> World.AddMessages ["You complete the purchase of 2 item under test."]
     let actual = 
         input 
-        |> World.BuyItems islandMarketSource islandSingleMarketSink commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.BuyItems islandMarketSource islandSingleMarketSink vesselSingleStatisticSourceStub commodities genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -582,7 +606,7 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds for a s
         |> World.AddMessages ["You don't have enough money to buy any of those."]
     let actual = 
         input 
-        |> World.BuyItems islandMarketSource islandSingleMarketSink commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.BuyItems islandMarketSource islandSingleMarketSink vesselSingleStatisticSourceStub commodities genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -609,7 +633,7 @@ let ``BuyItems.It gives a message indicating purchased quantity and completes th
         |> World.AddMessages ["You complete the purchase of 100 item under test."]
     let actual = 
         input 
-        |> World.BuyItems islandMarketSource islandSingleMarketSink commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.BuyItems islandMarketSource islandSingleMarketSink vesselSingleStatisticSourceStub commodities genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 
@@ -758,23 +782,17 @@ let ``CleanHull.It returns the original world when given a bogus avatar id and w
 [<Test>]
 let ``CleanHull.It returns a cleaned hull when given a particular avatar id and world.`` () =
     let inputSide = Port
-    let inputVessel =
-        genericWorld.Avatars.[avatarId].Vessel
     let inputAvatar =
-        {genericWorld.Avatars.[avatarId] with
-            Vessel = inputVessel}
+        genericWorld.Avatars.[avatarId]
     let inputWorld = 
         {genericWorld with
             Avatars = genericWorld.Avatars |> Map.add avatarId inputAvatar}
-    let expectedVessel =
-        inputVessel
     let vesselSingleStatisticSource (_) (_) =
         {MinimumValue = 0.0; MaximumValue=0.25; CurrentValue = 0.25} |> Some
     let vesselSingleStatisticSink (_) (_, statistic:Statistic) =
         Assert.AreEqual(statistic.MinimumValue, statistic.CurrentValue)
     let expectedAvatar =
-        {inputAvatar with
-            Vessel = expectedVessel}
+        inputAvatar
         |> Avatar.TransformShipmate (Shipmate.TransformStatistic AvatarStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)) 0u
         |> Avatar.AddMetric Metric.CleanedHull 1u
     let expected =
