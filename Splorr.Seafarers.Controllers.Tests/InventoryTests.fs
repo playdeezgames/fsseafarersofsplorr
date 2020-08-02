@@ -11,9 +11,15 @@ let private previousGameState =
 
 [<Test>]
 let ``Run.It returns the given gamestate.`` () =
-    let input = previousGameState
-    let expected = previousGameState |> Some
+    let input = 
+        previousGameState
+    let expected = 
+        previousGameState 
+        |> Some
     let actual =
         input
-        |> Inventory.Run atSeaItemSource vesselSingleStatisticSourceStub sinkStub
+        |> Inventory.Run 
+            atSeaItemSource 
+            vesselSingleStatisticSourceStub 
+            sinkStub
     Assert.AreEqual(expected, actual)

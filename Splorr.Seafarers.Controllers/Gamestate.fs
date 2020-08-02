@@ -25,7 +25,9 @@ type Gamestate =
     | Status       of Gamestate
 
 module Gamestate =
-    let rec GetWorld (gamestate:Gamestate) : World option =
+    let rec GetWorld 
+            (gamestate:Gamestate) 
+            : World option =
         match gamestate with
         | Gamestate.AtSea w            -> w |> Some
         | Gamestate.Careened (_, w)    -> w |> Some
@@ -41,7 +43,9 @@ module Gamestate =
         | Gamestate.Status g           -> GetWorld g
         | _ -> None
 
-    let CheckForAvatarDeath (gamestate:Gamestate option) : Gamestate option =
+    let CheckForAvatarDeath 
+            (gamestate:Gamestate option) 
+            : Gamestate option =
         gamestate
         |> Option.bind
             (GetWorld)

@@ -47,7 +47,7 @@ module MainMenu =
             UpdateDisplayNoGame messageSink
 
     let private HandleInvalidCommand 
-            (world:World option) 
+            (world : World option) 
             : Gamestate option =
         ("Invalid command.", world
         |> Gamestate.MainMenu)
@@ -71,9 +71,9 @@ module MainMenu =
             |> HandleInvalidCommand
 
     let private HandleCommandNoGame 
-            (vesselStatisticTemplateSource: unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
-            (vesselStatisticSink: string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
-            (configuration : WorldConfiguration) =
+            (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
+            (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
+            (configuration                 : WorldConfiguration) =
         function
         | Some (Command.Start avatarId)->
             World.Create 
@@ -94,11 +94,11 @@ module MainMenu =
             |> HandleInvalidCommand
 
     let private HandleCommand
-            (vesselStatisticTemplateSource: unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
-            (vesselStatisticSink: string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
-            (configuration : WorldConfiguration) 
-            (world         : World option) 
-            (command       : Command option) 
+            (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
+            (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
+            (configuration                 : WorldConfiguration) 
+            (world                         : World option) 
+            (command                       : Command option) 
             : Gamestate option =
         match world with
         | Some w ->
@@ -111,12 +111,12 @@ module MainMenu =
                 command
 
     let Run 
-            (vesselStatisticTemplateSource: unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
-            (vesselStatisticSink: string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
-            (configuration : WorldConfiguration) 
-            (commandSource : CommandSource) 
-            (messageSink   : MessageSink) 
-            (world         : World option) 
+            (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
+            (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
+            (configuration                 : WorldConfiguration) 
+            (commandSource                 : CommandSource) 
+            (messageSink                   : MessageSink) 
+            (world                         : World option) 
             : Gamestate option =
         UpdateDisplay 
             messageSink 

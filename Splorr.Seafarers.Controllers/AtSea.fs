@@ -6,7 +6,9 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Persistence
 
 module AtSea =
-    let private DetermineSpeedHue (speed:float) : Hue =
+    let private DetermineSpeedHue 
+            (speed:float) 
+            : Hue =
         if speed >= 0.9 then
             Hue.Value
         elif speed>=0.4 then
@@ -14,14 +16,18 @@ module AtSea =
         else
             Hue.Error
 
-    let private CanCareen (world: World) : bool =
+    let private CanCareen 
+            (world : World) 
+            : bool =
         let avatar = world.Avatars.[world.AvatarId]
         world
         |> World.GetNearbyLocations avatar.Position avatar.ViewDistance
         |> List.map (fun l -> (l,world.Islands.[l].CareenDistance))
         |> List.exists (fun (l,d) -> Location.DistanceTo l avatar.Position < d)
 
-    let private GetVisibleIslands (world:World) : (Location * string * float * string) list =
+    let private GetVisibleIslands 
+            (world : World) 
+            : (Location * string * float * string) list =
         let avatar = world.Avatars.[world.AvatarId]
         world
         |> World.GetNearbyLocations avatar.Position avatar.ViewDistance
@@ -72,18 +78,18 @@ module AtSea =
                 |> List.iter messageSink)
 
     let private HandleCommand 
-            (commoditySource:unit -> Map<uint64, CommodityDescriptor>) 
-            (itemSource:unit -> Map<uint64, ItemDescriptor>) 
-            (islandMarketSource:Location->Map<uint64, Market>) 
-            (islandMarketSink:Location->Map<uint64, Market>->unit) 
-            (islandItemSource:Location->Set<uint64>) 
-            (islandItemSink:Location->Set<uint64>->unit) 
-            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
-            (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
-            (random:Random) 
-            (rewardRange:float*float) 
-            (command:Command option) 
-            (world:World) 
+            (commoditySource             : unit -> Map<uint64, CommodityDescriptor>) 
+            (itemSource                  : unit -> Map<uint64, ItemDescriptor>) 
+            (islandMarketSource          : Location -> Map<uint64, Market>) 
+            (islandMarketSink            : Location -> Map<uint64, Market> -> unit) 
+            (islandItemSource            : Location -> Set<uint64>) 
+            (islandItemSink              : Location -> Set<uint64> -> unit) 
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+            (vesselSingleStatisticSink   : string -> VesselStatisticIdentifier * Statistic -> unit)
+            (random                      : Random) 
+            (rewardRange                 : float * float) 
+            (command                     : Command option) 
+            (world                       : World) 
             : Gamestate option =
         let world =
             world
@@ -226,19 +232,19 @@ module AtSea =
             |> Some
 
     let private RunAlive 
-            (commoditySource    : unit -> Map<uint64, CommodityDescriptor>) 
-            (itemSource         : unit -> Map<uint64, ItemDescriptor>) 
-            (islandMarketSource : Location -> Map<uint64, Market>) 
-            (islandMarketSink   : Location -> Map<uint64, Market>->unit) 
-            (islandItemSource   : Location -> Set<uint64>) 
-            (islandItemSink     : Location -> Set<uint64>->unit) 
+            (commoditySource             : unit -> Map<uint64, CommodityDescriptor>) 
+            (itemSource                  : unit -> Map<uint64, ItemDescriptor>) 
+            (islandMarketSource          : Location -> Map<uint64, Market>) 
+            (islandMarketSink            : Location -> Map<uint64, Market>->unit) 
+            (islandItemSource            : Location -> Set<uint64>) 
+            (islandItemSink              : Location -> Set<uint64>->unit) 
             (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
             (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
-            (random             : Random) 
-            (rewardRange        : float*float) 
-            (commandSource      : CommandSource) 
-            (messageSink        : MessageSink) 
-            (world              : World) 
+            (random                      : Random) 
+            (rewardRange                 : float*float) 
+            (commandSource               : CommandSource) 
+            (messageSink                 : MessageSink) 
+            (world                       : World) 
             : Gamestate option =
         UpdateDisplay 
             vesselSingleStatisticSource
@@ -259,19 +265,19 @@ module AtSea =
             world
 
     let Run 
-            (commoditySource    : unit -> Map<uint64, CommodityDescriptor>) 
-            (itemSource         : unit -> Map<uint64, ItemDescriptor>) 
-            (islandMarketSource : Location -> Map<uint64, Market>) 
-            (islandMarketSink   : Location -> Map<uint64, Market>->unit) 
-            (islandItemSource   : Location -> Set<uint64>) 
-            (islandItemSink     : Location -> Set<uint64>->unit) 
+            (commoditySource             : unit -> Map<uint64, CommodityDescriptor>) 
+            (itemSource                  : unit -> Map<uint64, ItemDescriptor>) 
+            (islandMarketSource          : Location -> Map<uint64, Market>) 
+            (islandMarketSink            : Location -> Map<uint64, Market>->unit) 
+            (islandItemSource            : Location -> Set<uint64>) 
+            (islandItemSink              : Location -> Set<uint64>->unit) 
             (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
             (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
-            (random             : Random) 
-            (rewardRange        : float*float) 
-            (commandSource      : CommandSource) 
-            (messageSink        : MessageSink) 
-            (world              : World) 
+            (random                      : Random) 
+            (rewardRange                 : float*float) 
+            (commandSource               : CommandSource) 
+            (messageSink                 : MessageSink) 
+            (world                       : World) 
             : Gamestate option =
         if world |> World.IsAvatarAlive then
             RunAlive 

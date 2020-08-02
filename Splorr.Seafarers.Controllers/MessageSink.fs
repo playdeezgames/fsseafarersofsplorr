@@ -13,8 +13,9 @@ type Hue =
 
 type Message =
     | Group of Message list
-    | Hued of Hue * Message
-    | Line of string
-    | Text of string
+    | Hued  of Hue * Message
+    | Line  of string
+    | Text  of string
 
-type MessageSink = Message -> unit
+type MessageSink = 
+    Message -> unit

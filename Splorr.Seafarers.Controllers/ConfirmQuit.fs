@@ -3,7 +3,12 @@
 module ConfirmQuit = 
     let private onStreamSwitch = "on-stream"
 
-    let Run (switches:Set<string>) (source:CommandSource) (sink:MessageSink) (state:Gamestate) : Gamestate option =
+    let Run 
+            (switches : Set<string>) 
+            (source   : CommandSource) 
+            (sink     : MessageSink) 
+            (state    : Gamestate) 
+            : Gamestate option =
         if switches.Contains onStreamSwitch then
             [
                 "" |> Line

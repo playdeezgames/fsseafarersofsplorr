@@ -8,21 +8,22 @@ open CommonTestFixtures
 
 let private configuration: WorldConfiguration =
     {
-        AvatarDistances = (10.0,1.0)
-        WorldSize=(10.0, 10.0)
-        MinimumIslandDistance=30.0
-        MaximumGenerationTries=10u
-        RewardRange = (1.0, 10.0)
-        RationItems = [1UL]
-        StatisticDescriptors = []
+        AvatarDistances        = (10.0, 1.0)
+        MaximumGenerationTries = 10u
+        MinimumIslandDistance  = 30.0
+        RationItems            = [ 1UL ]
+        RewardRange            = (1.0, 10.0)
+        StatisticDescriptors   = []
+        WorldSize              = (10.0, 10.0)
     }
+
 let private world = 
     World.Create 
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         configuration 
-        (System.Random()) 
-        ""
+        random 
+        avatarId
 
 [<Test>]
 let ``Run.It returns Confirm Quit when given Quit command and there is no world.`` () =

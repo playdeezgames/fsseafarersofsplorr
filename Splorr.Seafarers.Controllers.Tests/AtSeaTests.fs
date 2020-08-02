@@ -23,7 +23,7 @@ let private functionUnderTest =
 [<Test>]
 let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
     let input = deadWorld   
-    let inputSource(): Command option =
+    let inputSource() : Command option =
         Assert.Fail("It will not reach for user input because the avatar is dead.")
         None
     let expected =

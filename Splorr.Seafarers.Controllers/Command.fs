@@ -41,5 +41,6 @@ type Command =
     | WeighAnchor
     | Yes
 
-type CommandSource = unit -> (Command option)
+type CommandSource = 
+    unit -> (Command option)
 

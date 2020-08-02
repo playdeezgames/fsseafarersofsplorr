@@ -3,7 +3,8 @@ open System.Data.SQLite
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Persistence
 
-let bootstrapConnection () : SQLiteConnection =
+let bootstrapConnection () 
+        : SQLiteConnection =
     let sourceConnectionString = "Data Source=seafarers.db;Version=3;"
     let connectionString = "Data Source=:memory:;Version=3;"
     use source = new SQLiteConnection(sourceConnectionString)

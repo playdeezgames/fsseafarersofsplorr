@@ -8,21 +8,23 @@ open CommonTestFixtures
 
 let private dockWorldconfiguration: WorldConfiguration =
     {
-        AvatarDistances = (10.0,1.0)
-        WorldSize=(0.0, 0.0)
-        MinimumIslandDistance=30.0
-        MaximumGenerationTries=1u
-        RewardRange = (1.0, 10.0)
-        RationItems = [1UL]
-        StatisticDescriptors = []
+        AvatarDistances        = (10.0, 1.0)
+        MaximumGenerationTries = 1u
+        MinimumIslandDistance  = 30.0
+        RationItems            = [ 1UL ]
+        RewardRange            = (1.0, 10.0)
+        StatisticDescriptors   = []
+        WorldSize              = (0.0, 0.0)
     }
+
 let private dockWorld = 
     World.Create 
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         dockWorldconfiguration 
-        (System.Random()) 
-        ""
+        random
+        avatarId
+
 let private dockLocation = (0.0, 0.0)
 
 [<Test>]

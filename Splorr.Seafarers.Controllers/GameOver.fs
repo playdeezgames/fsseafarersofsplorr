@@ -2,8 +2,8 @@
 
 module GameOver =
     let Run 
-            (messageSink:MessageSink) 
-            (messages:string list)
+            (messageSink : MessageSink) 
+            (messages    : string list)
             : Gamestate option =
         "" |> Line |> messageSink
         messages |> Utility.DumpMessages messageSink

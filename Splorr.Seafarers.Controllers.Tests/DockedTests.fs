@@ -7,8 +7,20 @@ open CommonTestFixtures
 open DockedTestFixtures
 open Splorr.Seafarers.Services
 
-let private functionUnderTest itemMarketSource itemSingleMarketSink =  Docked.Run dockedCommoditySource dockedItemSource itemMarketSource itemSingleMarketSink
-let private functionUnderTestStubbed = functionUnderTest dockedItemMarketSourceStub dockedItemSingleMarketSourceStub dockedItemSingleMarketSinkStub vesselSingleStatisticSourceStub
+let private functionUnderTest (itemMarketSource) (itemSingleMarketSink) =  
+    Docked.Run 
+        commoditySource 
+        itemSource 
+        itemMarketSource 
+        itemSingleMarketSink
+
+let private functionUnderTestStubbed = 
+    functionUnderTest 
+        dockedItemMarketSourceStub 
+        dockedItemSingleMarketSourceStub 
+        dockedItemSingleMarketSinkStub 
+        vesselSingleStatisticSourceStub
+
 [<Test>]
 let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
     let input = deadDockWorld   
@@ -322,6 +334,8 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
     let islandSingleMarketSource x y =
         islandMarketSource x
         |> Map.tryFind y
+    let commodities = commoditySource()
+    let smallWorldItems = itemSource()
     let expectedPrice = Item.DetermineSalePrice commodities markets smallWorldItems.[1UL]
     let expectedDemand = 
         markets.[1UL].Demand + commodities.[1UL].SaleFactor
@@ -396,6 +410,7 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
         {shopWorld with 
             Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
     let inputSource = (Specific 1u, "item under test") |> Command.Sell |> Some |> toSource
+    let commodities = commoditySource()
     let expectedSupply = 
         markets.[1UL].Supply + commodities.[1UL].PurchaseFactor
     let expectedMarket = 

@@ -1,24 +1,29 @@
 ﻿module HelpTests
 
+open CommonTestFixtures
 open NUnit.Framework
+open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
-open Splorr.Seafarers.Controllers
-open CommonTestFixtures
+open System
 
 let private sink(_:Message) : unit = ()
+
 let private configuration: WorldConfiguration =
     {
-        AvatarDistances = (10.0,1.0)
-        WorldSize=(10.0, 10.0)
-        MinimumIslandDistance=30.0
-        MaximumGenerationTries=10u
-        RewardRange = (1.0, 10.0)
-        RationItems = [1UL]
-        StatisticDescriptors = []
+        AvatarDistances        = (10.0, 1.0)
+        MaximumGenerationTries = 10u
+        MinimumIslandDistance  = 30.0
+        RationItems            = [1UL]
+        RewardRange            = (1.0, 10.0)
+        StatisticDescriptors   = []
+        WorldSize              = (10.0, 10.0)
     }
-let private random = System.Random()
+
+let private random = Random()
+
 let private avatarId = ""
+
 let private world =  
     World.Create 
         vesselStatisticTemplateSourceStub

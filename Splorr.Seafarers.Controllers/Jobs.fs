@@ -43,9 +43,9 @@ module Jobs =
 
         
     let Run  
-            (messageSink:MessageSink) 
-            (location:Location)
-            (world: World) 
+            (messageSink : MessageSink) 
+            (location    : Location)
+            (world       : World) 
             : Gamestate option =
         world.Islands 
         |> Map.tryFind location

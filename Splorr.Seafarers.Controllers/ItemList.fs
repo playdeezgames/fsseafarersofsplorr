@@ -7,8 +7,8 @@ module ItemList =
     let private RunWithIsland 
             (commoditySource    : unit -> Map<uint64, CommodityDescriptor>) 
             (itemSource         : unit -> Map<uint64, ItemDescriptor>) 
-            (islandMarketSource : Location->Map<uint64,Market>) 
-            (islandItemSource   : Location->Set<uint64>) 
+            (islandMarketSource : Location -> Map<uint64,Market>) 
+            (islandItemSource   : Location -> Set<uint64>) 
             (messageSink        : MessageSink) 
             (location           : Location) 
             (world              : World) 

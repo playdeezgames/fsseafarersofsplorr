@@ -4,7 +4,8 @@ open Splorr.Seafarers.Controllers
 open System
 
 module MessageSink =
-    let private colorMap : Map<Hue, ConsoleColor> =
+    let private colorMap 
+            : Map<Hue, ConsoleColor> =
         [
             Hue.Heading,    ConsoleColor.Cyan
             Hue.Subheading, ConsoleColor.DarkCyan
@@ -18,7 +19,9 @@ module MessageSink =
         ]
         |> Map.ofList
 
-    let rec Write (message:Message) : unit = 
+    let rec Write 
+            (message:Message) 
+            : unit = 
         match message with
         | Hued (hue, message) ->
             let old = Console.ForegroundColor

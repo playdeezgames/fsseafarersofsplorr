@@ -8,7 +8,8 @@ module IslandList =
             (messageSink : MessageSink) 
             (pageSize    : uint32) 
             (page        : uint32) 
-            (world       : World) : unit = 
+            (world       : World) 
+            : unit = 
         [
             "" |> Line
             (Hue.Heading, "Known Islands:" |> Line) |> Hued

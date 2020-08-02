@@ -3,10 +3,10 @@ open Splorr.Seafarers.Models
 
 module Vessel =
     let Create
-            (vesselStatisticTemplateSource: unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
-            (vesselStatisticSink: string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
-            (avatarId: string)
-            (tonnage:float) 
+            (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
+            (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
+            (avatarId                      : string)
+            (tonnage                       : float) 
             : unit =
         vesselStatisticTemplateSource()
         |> Map.map
@@ -15,8 +15,8 @@ module Vessel =
         |> vesselStatisticSink avatarId
 
     let TransformFouling 
-            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
-            (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+            (vesselSingleStatisticSink   : string -> VesselStatisticIdentifier * Statistic -> unit)
             (avatarId                    : string)
             (side                        : Side) 
             (transform                   : Statistic -> Statistic)

@@ -5,10 +5,10 @@ open Splorr.Seafarers.Services
 
 module Inventory =
     let private RunWorld 
-            (itemSource  : unit -> Map<uint64, ItemDescriptor>)
+            (itemSource                  : unit -> Map<uint64, ItemDescriptor>)
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
-            (messageSink : MessageSink) 
-            (world       : World) 
+            (messageSink                 : MessageSink) 
+            (world                       : World) 
             : unit =
         [
             "" |> Line
@@ -54,10 +54,10 @@ module Inventory =
         |> List.iter messageSink
 
     let Run 
-            (itemSource : unit -> Map<uint64, ItemDescriptor>) 
+            (itemSource                  : unit -> Map<uint64, ItemDescriptor>) 
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
-            (messageSink       : MessageSink) 
-            (gamestate  : Gamestate) 
+            (messageSink                 : MessageSink) 
+            (gamestate                   : Gamestate) 
             : Gamestate option =
         gamestate 
         |> Gamestate.GetWorld

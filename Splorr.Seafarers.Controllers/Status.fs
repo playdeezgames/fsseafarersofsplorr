@@ -5,9 +5,9 @@ open Splorr.Seafarers.Persistence
 
 module Status =
     let private RunWorld 
-            (vesselSingleStatisticSource: string -> VesselStatisticIdentifier -> Statistic option)
-            (messageSink:MessageSink) 
-            (world:World) 
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+            (messageSink                 : MessageSink) 
+            (world                       : World) 
             : unit =
         let avatar = world.Avatars.[world.AvatarId]
         let shipmate = avatar.Shipmates.[0]
@@ -47,9 +47,9 @@ module Status =
                 |> List.iter messageSink)
 
     let Run 
-            (vesselSingleStatisticSource: string -> VesselStatisticIdentifier -> Statistic option)
-            (messageSink:MessageSink) 
-            (gamestate:Gamestate) 
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+            (messageSink                 : MessageSink) 
+            (gamestate                   : Gamestate) 
             : Gamestate option =
         gamestate
         |> Gamestate.GetWorld

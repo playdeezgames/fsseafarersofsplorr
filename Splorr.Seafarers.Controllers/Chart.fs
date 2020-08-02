@@ -2,6 +2,7 @@
 
 open Splorr.Seafarers.Models
 open System.Drawing
+open System
 
 module Chart = 
     let private plotLocation 
@@ -17,7 +18,6 @@ module Chart =
             (world       : World) 
             : unit =
         try
-            //TODO: clean up this code!
             let avatar = world.Avatars.[world.AvatarId]
             let scale = 10
             let x, y = plotLocation scale worldSize
@@ -61,7 +61,7 @@ module Chart =
                     (fun (index,name) ->
                         sprintf "%u - %s" index name)
                 |> List.toArray
-            System.IO.File.WriteAllLines(chartName |> sprintf "%s.txt", legendText)
+            IO.File.WriteAllLines(chartName |> sprintf "%s.txt", legendText)
         with
         | ex ->
             [
@@ -71,17 +71,20 @@ module Chart =
             //try, catch, eat... ci build fails because of the gdi stuff not working on wherever it is being built
 
     let private UpdateDisplay 
-        (messageSink:MessageSink) 
-        (chartName:string)  =
+        (messageSink : MessageSink) 
+        (chartName   : string)
+        : unit =
         [
             "" |> Line
             (chartName, chartName) ||> sprintf "Writing chart to '%s.png' and '%s.txt'" |> Line
         ]
         |> List.iter messageSink
 
-    let private GetDefaultedChartName (chartName:string) : string =
-        if chartName |> System.String.IsNullOrWhiteSpace then 
-            System.Guid.NewGuid().ToString() 
+    let private GetDefaultedChartName 
+            (chartName : string) 
+            : string =
+        if chartName |> String.IsNullOrWhiteSpace then 
+            Guid.NewGuid().ToString() 
         else 
             chartName
 

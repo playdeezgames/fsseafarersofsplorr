@@ -5,9 +5,10 @@ open Splorr.Seafarers.Services
 
 module Docked = 
     let private UpdateDisplay 
-            (messageSink:MessageSink) 
-            (location:Location) 
-            (world: World) =
+            (messageSink : MessageSink) 
+            (location    : Location) 
+            (world       : World) 
+            : unit =
         "" |> Line |> messageSink
         world.Avatars.[world.AvatarId].Messages
         |> Utility.DumpMessages messageSink
@@ -108,16 +109,16 @@ module Docked =
             |> Some
 
     let private RunWithIsland 
-            (commoditySource          : unit -> Map<uint64, CommodityDescriptor>) 
-            (itemSource               : unit -> Map<uint64, ItemDescriptor>) 
-            (islandMarketSource       : Location -> Map<uint64, Market>) 
-            (islandSingleMarketSource : Location -> uint64 -> Market option) 
-            (islandSingleMarketSink   : Location -> uint64 * Market -> unit) 
+            (commoditySource             : unit -> Map<uint64, CommodityDescriptor>) 
+            (itemSource                  : unit -> Map<uint64, ItemDescriptor>) 
+            (islandMarketSource          : Location -> Map<uint64, Market>) 
+            (islandSingleMarketSource    : Location -> uint64 -> Market option) 
+            (islandSingleMarketSink      : Location -> uint64 * Market -> unit) 
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
-            (commandSource            : CommandSource) 
-            (messageSink              : MessageSink) 
-            (location                 : Location) 
-            (world                    : World) 
+            (commandSource               : CommandSource) 
+            (messageSink                 : MessageSink) 
+            (location                    : Location) 
+            (world                       : World) 
             : Gamestate option =
         world
         |> UpdateDisplay 
@@ -136,7 +137,7 @@ module Docked =
             location 
 
     let internal RunBoilerplate 
-            (func     : Location -> World->(Gamestate option)) 
+            (func     : Location -> World -> Gamestate option) 
             (location : Location) 
             (world    : World) 
             : Gamestate option =

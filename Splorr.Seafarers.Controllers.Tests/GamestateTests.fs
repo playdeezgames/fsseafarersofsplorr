@@ -7,18 +7,21 @@ open Splorr.Seafarers.Models
 open System
 open CommonTestFixtures
 
-let private configuration :WorldConfiguration = 
+let private configuration : WorldConfiguration = 
     {
-        WorldSize = (0.0,0.0)
-        MaximumGenerationTries=1u
-        MinimumIslandDistance=1.0
-        RewardRange = (1.0, 10.0)
-        RationItems = [1UL]
-        StatisticDescriptors = []
-        AvatarDistances = (10.0, 1.0)
+        AvatarDistances        = (10.0, 1.0)
+        MaximumGenerationTries = 1u
+        MinimumIslandDistance  = 1.0
+        RationItems            = [ 1UL ]
+        RewardRange            = (1.0, 10.0)
+        StatisticDescriptors   = []
+        WorldSize              = (0.0, 0.0)
     }
-let private random = Random()
+let private random = 
+    Random()
+
 let private avatarId = ""
+
 let private world = 
     World.Create 
         vesselStatisticTemplateSourceStub

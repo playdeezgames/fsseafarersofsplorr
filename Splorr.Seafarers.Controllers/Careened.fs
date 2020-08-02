@@ -6,10 +6,11 @@ open Splorr.Seafarers.Services
 
 module Careened = 
     let private UpdateDisplay 
-            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
-            (messageSink:MessageSink) 
-            (side:Side)
-            (world:World) : unit =
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+            (messageSink                 : MessageSink) 
+            (side                        : Side)
+            (world                       : World) 
+            : unit =
         let avatarId = world.AvatarId
         "" |> Line |> messageSink
         world.Avatars.[avatarId].Messages
@@ -35,7 +36,7 @@ module Careened =
 
     let private HandleCommand 
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
-            (vesselSingleStatisticSink   : string -> VesselStatisticIdentifier*Statistic -> unit)
+            (vesselSingleStatisticSink   : string -> VesselStatisticIdentifier * Statistic -> unit)
             (command                     : Command option) 
             (sink                        : MessageSink) 
             (side                        : Side) 

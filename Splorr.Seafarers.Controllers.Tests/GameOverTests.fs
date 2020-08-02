@@ -1,7 +1,6 @@
 ﻿module GameOverTests
 
 open NUnit.Framework
-open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 open CommonTestFixtures
 

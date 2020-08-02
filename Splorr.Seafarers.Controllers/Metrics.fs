@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 
 module Metrics = 
     let private GetMetricDisplayName 
-            (metric:Metric) 
+            (metric : Metric) 
             : string =
         match metric with
         | Metric.Moved         -> "moved"
@@ -17,8 +17,8 @@ module Metrics =
         | _ -> raise (System.NotImplementedException (metric.ToString() |> sprintf "'%s' is a metric with no name!"))
 
     let private RunWorld 
-            (messageSink:MessageSink) 
-            (avatar:Avatar) 
+            (messageSink : MessageSink) 
+            (avatar      : Avatar) 
             : unit = 
         [
             "" |> Line
@@ -42,8 +42,8 @@ module Metrics =
                     |> List.iter messageSink)
 
     let Run 
-            (messageSink:MessageSink) 
-            (gamestate:Gamestate) 
+            (messageSink : MessageSink) 
+            (gamestate   : Gamestate) 
             : Gamestate option =
         gamestate 
         |> Gamestate.GetWorld 
