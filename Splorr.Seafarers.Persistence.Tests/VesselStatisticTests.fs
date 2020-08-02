@@ -40,7 +40,7 @@ let ``SetStatisticForAvatar.It replaces the given statistic for the given avatar
         use command = new SQLiteCommand("SELECT COUNT(1) FROM [VesselStatistics] WHERE [AvatarId]=$avatarId;", connection)
         command.Parameters.AddWithValue("$avatarId", inputAvatarId) |> ignore
         let initialCount = command.ExecuteScalar() :?> int64
-        Assert.AreEqual(2L, initialCount)
+        Assert.AreEqual(4L, initialCount)
 
         let expected: Result<unit, string> = () |> Ok
         let actual =
@@ -48,7 +48,7 @@ let ``SetStatisticForAvatar.It replaces the given statistic for the given avatar
         Assert.AreEqual(expected, actual)
 
         let finalCount = command.ExecuteScalar() :?> int64
-        Assert.AreEqual(2L, finalCount)
+        Assert.AreEqual(4L, finalCount)
     finally
         connection.Close()
 
@@ -106,6 +106,8 @@ let ``SetForAvatar.It creates the vessel statistics for a given avatar when that
             Map.empty
             |> Map.add VesselStatisticIdentifier.PortFouling ({MinimumValue=0.0; MaximumValue=100.0; CurrentValue=50.0})
             |> Map.add VesselStatisticIdentifier.StarboardFouling ({MinimumValue=0.0; MaximumValue=100.0; CurrentValue=50.0})
+            |> Map.add VesselStatisticIdentifier.FoulRate ({MinimumValue=0.001; MaximumValue=0.001; CurrentValue=0.001})
+            |> Map.add VesselStatisticIdentifier.Tonnage ({MinimumValue=100.0; MaximumValue=100.0; CurrentValue=100.0})
         match connection |> VesselStatistic.GetForAvatar inputAvatarId with
         | Ok x ->
             Assert.AreEqual(0, x.Count)

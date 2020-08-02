@@ -8,7 +8,7 @@ open DockedTestFixtures
 open Splorr.Seafarers.Services
 
 let private functionUnderTest itemMarketSource itemSingleMarketSink =  Docked.Run dockedCommoditySource dockedItemSource itemMarketSource itemSingleMarketSink
-let private functionUnderTestStubbed = functionUnderTest dockedItemMarketSourceStub dockedItemSingleMarketSourceStub dockedItemSingleMarketSinkStub
+let private functionUnderTestStubbed = functionUnderTest dockedItemMarketSourceStub dockedItemSingleMarketSourceStub dockedItemSingleMarketSinkStub vesselSingleStatisticSourceStub
 [<Test>]
 let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
     let input = deadDockWorld   
@@ -306,7 +306,7 @@ let ``Run.It adds a message when given the Buy command and the avatar does not h
         |> Some
     let actual =
         (inputLocation, inputWorld)
-        ||> functionUnderTest islandMarketSource islandSingleMarketSource islandSingleMarketSink inputSource (sinkStub)
+        ||> functionUnderTest islandMarketSource islandSingleMarketSource islandSingleMarketSink vesselSingleStatisticSourceStub inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -343,7 +343,7 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
         |> Some
     let actual =
         (inputLocation, inputWorld)
-        ||> functionUnderTest islandMarketSource islandSingleMarketSource islandSingleMarketSink inputSource (sinkStub)
+        ||> functionUnderTest islandMarketSource islandSingleMarketSource islandSingleMarketSink vesselSingleStatisticSourceStub inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -422,6 +422,6 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
         |> Some
     let actual =
         (inputLocation, inputWorld)
-        ||> functionUnderTest islandMarketSource islandSingleMarketSource islandSingleMarketSink inputSource (sinkStub)
+        ||> functionUnderTest islandMarketSource islandSingleMarketSource islandSingleMarketSink vesselSingleStatisticSourceStub inputSource (sinkStub)
     Assert.AreEqual(expected, actual)
 

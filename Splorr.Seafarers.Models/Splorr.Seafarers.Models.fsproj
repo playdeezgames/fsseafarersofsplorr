@@ -17,7 +17,6 @@
     <Compile Include="VesselStatisticTemplate.fs" />
     <Compile Include="Statistic.fs" />
     <Compile Include="Side.fs" />
-    <Compile Include="Vessel.fs" />
     <Compile Include="Metric.fs" />
     <Compile Include="Shipmate.fs" />
     <Compile Include="Avatar.fs" />

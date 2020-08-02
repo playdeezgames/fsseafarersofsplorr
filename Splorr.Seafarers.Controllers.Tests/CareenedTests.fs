@@ -186,25 +186,18 @@ let ``Run.It returns At Sea when given the command Weigh Anchor.`` () =
 
 [<Test>]
 let ``Run.It returns Careened with a cleaned hull when given the command Clean Hull.`` () =
-    let inputVessel = 
-        world.Avatars.[avatarId].Vessel
     let inputAvatar = 
-        {world.Avatars.[avatarId] with
-            Vessel = 
-                inputVessel}
+        world.Avatars.[avatarId]
     let inputWorld = {world with Avatars = world.Avatars |> Map.add avatarId inputAvatar}
     let inputSource = 
         Command.CleanHull
         |> Some 
         |> toSource
     let inputSide = Port
-    let expectedVessel = 
-        inputVessel
     let expectedTurn =
         inputAvatar.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn] |> Statistic.ChangeCurrentBy 1.0
     let expectedAvatar =
-        {inputAvatar with 
-            Vessel = expectedVessel}
+        inputAvatar
         |> Avatar.TransformShipmate (Shipmate.SetStatistic AvatarStatisticIdentifier.Turn (expectedTurn |> Some)) 0u
         |> Avatar.AddMetric Metric.CleanedHull 1u
     let expected =

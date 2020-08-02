@@ -116,7 +116,7 @@ let ``Move.It lowers the avatar's satiety but not health when the given avatar h
     Assert.AreEqual(expectedHealth, actual.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Health].CurrentValue)
 
 [<Test>]
-let ``Move.It lowers the avatar's health when the given avatar has no rations and minimum satiety.`` () =
+let ``Move.It lowers the avatar's maximum turn when the given avatar has no rations and minimum satiety.`` () =
     let input = 
         {avatar with 
             Inventory = Map.empty}
