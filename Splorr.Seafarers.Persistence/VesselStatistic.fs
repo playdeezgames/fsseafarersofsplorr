@@ -4,7 +4,9 @@ open System.Data.SQLite
 open Splorr.Seafarers.Models
 
 module VesselStatistic =
-    let private convertor (reader:SQLiteDataReader) : VesselStatisticIdentifier * Statistic =
+    let private convertor 
+            (reader : SQLiteDataReader) 
+            : VesselStatisticIdentifier * Statistic =
         (reader.GetInt32(0) |> enum<VesselStatisticIdentifier>, 
             {
                 MinimumValue = reader.GetDouble(1)
@@ -14,11 +16,12 @@ module VesselStatistic =
 
     
     let SetStatisticForAvatar 
-            (avatarId:string) 
-            (identifier:VesselStatisticIdentifier, statistic:Statistic) 
-            (connection:SQLiteConnection) 
-            : Result<unit,string> =
+            (avatarId            : string) 
+            (identifiedStatistic : VesselStatisticIdentifier * Statistic) 
+            (connection          : SQLiteConnection) 
+            : Result<unit, string> =
         try
+            let identifier, statistic = identifiedStatistic
             use command = new SQLiteCommand("REPLACE INTO [VesselStatistics] ([AvatarId],[StatisticId],[MinimumValue],[CurrentValue],[MaximumValue]) VALUES ($avatarId, $statisticId, $minimumValue, $currentValue, $maximumValue);", connection)
             command.Parameters.AddWithValue("$avatarId", avatarId) |> ignore
             command.Parameters.AddWithValue("$statisticId", identifier) |> ignore
@@ -30,7 +33,11 @@ module VesselStatistic =
         with
         | ex -> ex.ToString() |> Error
 
-    let GetStatisticForAvatar (avatarId:string) (identifier:VesselStatisticIdentifier) (connection:SQLiteConnection) : Result<Statistic option,string> =
+    let GetStatisticForAvatar 
+            (avatarId   : string) 
+            (identifier : VesselStatisticIdentifier) 
+            (connection : SQLiteConnection) 
+            : Result<Statistic option,string> =
         let commandFilter (command: SQLiteCommand) =
             command.Parameters.AddWithValue("$avatarId", avatarId) |> ignore
             command.Parameters.AddWithValue("$statisticId", identifier) |> ignore
@@ -43,7 +50,10 @@ module VesselStatistic =
                 |> List.map snd
                 |> List.tryHead)
 
-    let GetForAvatar (avatarId:string) (connection:SQLiteConnection) : Result<Map<VesselStatisticIdentifier, Statistic>,string> =
+    let GetForAvatar 
+            (avatarId   : string) 
+            (connection : SQLiteConnection) 
+            : Result<Map<VesselStatisticIdentifier, Statistic>, string> =
         let commandFilter (command: SQLiteCommand) =
             command.Parameters.AddWithValue("$avatarId", avatarId) |> ignore
         connection
@@ -54,7 +64,11 @@ module VesselStatistic =
                 items
                 |> Map.ofList)
 
-    let SetForAvatar (avatarId:string) (statistics:Map<VesselStatisticIdentifier, Statistic>) (connection:SQLiteConnection) : Result<unit, string> =
+    let SetForAvatar 
+            (avatarId   : string) 
+            (statistics : Map<VesselStatisticIdentifier, Statistic>) 
+            (connection : SQLiteConnection) 
+            : Result<unit, string> =
         try
             statistics
             |> Map.iter 

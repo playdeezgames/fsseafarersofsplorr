@@ -5,7 +5,10 @@ open Splorr.Seafarers.Models
 open System
 
 module IslandMarket = 
-    let GetForIsland (connection:SQLiteConnection) (location:Location) : Result<Map<uint64, Market>,string> =
+    let GetForIsland 
+            (connection : SQLiteConnection) 
+            (location   : Location) 
+            : Result<Map<uint64, Market>, string> =
         let commandSideEffect (command: SQLiteCommand) =
             command.Parameters.AddWithValue("$islandX", location |> fst) |> ignore
             command.Parameters.AddWithValue("$islandY", location |> snd) |> ignore
@@ -16,7 +19,11 @@ module IslandMarket =
         |> Result.bind
             (Map.ofList >> Ok)
 
-    let GetMarketForIsland (connection:SQLiteConnection) (commodityId: uint64) (location:Location) : Result<Market option,string> =
+    let GetMarketForIsland 
+            (connection  : SQLiteConnection) 
+            (commodityId : uint64) 
+            (location    : Location) 
+            : Result<Market option,string> =
         let commandSideEffect (command: SQLiteCommand) =
             command.Parameters.AddWithValue("$islandX", location |> fst) |> ignore
             command.Parameters.AddWithValue("$islandY", location |> snd) |> ignore
@@ -28,8 +35,13 @@ module IslandMarket =
         |> Result.bind
             (List.tryHead >> Ok)
    
-    let SetForIsland (connection:SQLiteConnection) (location:Location) (commodityId:uint64, market: Market) : Result<unit, string> =
+    let SetForIsland 
+            (connection      : SQLiteConnection) 
+            (location        : Location) 
+            (commodityMarket : uint64 * Market) 
+            : Result<unit, string> =
         try
+            let commodityId, market = commodityMarket
             use command = new SQLiteCommand("REPLACE INTO [IslandMarkets] ([IslandX], [IslandY], [CommodityId], [Supply], [Demand]) VALUES ($islandX, $islandY, $commodityId, $supply, $demand);", connection)
             command.Parameters.AddWithValue("$islandX", location |> fst) |> ignore
             command.Parameters.AddWithValue("$islandY", location |> snd) |> ignore
@@ -41,7 +53,11 @@ module IslandMarket =
         with
         | ex -> ex.ToString() |> Error
 
-    let CreateForIsland (connection:SQLiteConnection) (location:Location) (markets: Map<uint64, Market>) : Result<unit, string> =
+    let CreateForIsland 
+            (connection : SQLiteConnection) 
+            (location   : Location) 
+            (markets    : Map<uint64, Market>) 
+            : Result<unit, string> =
         try
             use command : SQLiteCommand = new SQLiteCommand("DELETE FROM [IslandMarkets] WHERE [IslandX]= $islandX AND [IslandY]= $islandY;", connection)
             command.Parameters.AddWithValue("$islandX", location |> fst) |> ignore

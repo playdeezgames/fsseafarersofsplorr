@@ -3,6 +3,7 @@
 open CommonTestFixtures
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
+open AtSeaTestFixtures
 
 let internal dockWorldconfiguration: WorldConfiguration =
     {
@@ -115,6 +116,7 @@ let private smallWorldIslandMarketSink (_) (_) = ()
 let internal smallWorldDocked = 
     smallWorld 
     |> World.Dock 
+        adverbSource
         commoditySource 
         itemSource
         smallWorldIslandMarketSource 

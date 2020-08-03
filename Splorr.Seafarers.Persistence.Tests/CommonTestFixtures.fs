@@ -6,7 +6,10 @@ open Splorr.Seafarers.Persistence.Schema
 
 let private connectionString = "Data Source=:memory:;Version=3;New=True;"
 
-let private runCommands (connection:SQLiteConnection) (commandTexts:string list) : unit =
+let private runCommands 
+        (connection   : SQLiteConnection) 
+        (commandTexts : string list) 
+        : unit =
     commandTexts
     |> List.iter
         (fun text ->
@@ -14,7 +17,9 @@ let private runCommands (connection:SQLiteConnection) (commandTexts:string list)
             command.ExecuteNonQuery() |> ignore)
     
 
-let private setupCommodities (connection:SQLiteConnection) : unit =
+let private setupCommodities 
+        (connection : SQLiteConnection) 
+        : unit =
     [
         Tables.Commodities
         "REPLACE INTO [Commodities] 
@@ -26,7 +31,9 @@ let private setupCommodities (connection:SQLiteConnection) : unit =
     ]
     |> runCommands connection
 
-let private setupItems (connection:SQLiteConnection)  : unit =
+let private setupItems 
+        (connection : SQLiteConnection)
+        : unit =
     [
         Tables.Items
         Tables.CommodityItems
@@ -48,7 +55,9 @@ let private setupItems (connection:SQLiteConnection)  : unit =
     ] 
     |> runCommands connection
 
-let private setupWorldConfiguration (connection:SQLiteConnection) : unit =
+let private setupWorldConfiguration 
+        (connection : SQLiteConnection) 
+        : unit =
     [
         Tables.WorldConfiguration
         "REPLACE INTO [WorldConfiguration] 
@@ -57,7 +66,9 @@ let private setupWorldConfiguration (connection:SQLiteConnection) : unit =
     ]
     |> runCommands connection
 
-let private setupAvatarStatisticTemlates (connection:SQLiteConnection) : unit =
+let private setupAvatarStatisticTemplates 
+        (connection : SQLiteConnection) 
+        : unit =
     System.Enum.GetValues(typedefof<AvatarStatisticIdentifier>) 
     :?> AvatarStatisticIdentifier []
     |> Array.toList
@@ -70,7 +81,9 @@ let private setupAvatarStatisticTemlates (connection:SQLiteConnection) : unit =
         ]
     |> runCommands connection
 
-let private setupVesselStatisticTemplates (connection:SQLiteConnection) : unit =
+let private setupVesselStatisticTemplates 
+        (connection:SQLiteConnection) 
+        : unit =
     System.Enum.GetValues(typedefof<VesselStatisticIdentifier>) 
     :?> VesselStatisticIdentifier []
     |> Array.toList
@@ -83,28 +96,37 @@ let private setupVesselStatisticTemplates (connection:SQLiteConnection) : unit =
         ]
     |> runCommands connection
 
-let private setupRationItems (connection:SQLiteConnection) : unit =
+let private setupRationItems 
+        (connection : SQLiteConnection) 
+        : unit =
     [
         Tables.RationItems
         "REPLACE INTO [RationItems] ([ItemId],[DefaultOrder]) VALUES (1,2), (2,1);"
     ]
     |> runCommands connection
 
-let private setupIslandItems (connection:SQLiteConnection) : unit =
+let private setupIslandItems 
+        (connection : SQLiteConnection) 
+        : unit =
     [
         Tables.IslandItems
         "REPLACE INTO [IslandItems] ([IslandX], [IslandY], [ItemId]) VALUES (0.0, 0.0, 1), (0.0, 0.0, 2), (0.0, 0.0, 3), (10.0, 0.0, 1), (10.0, 0.0, 2), (0.0, 10.0, 1);"
     ]
     |> runCommands connection
 
-let private setupIslandMarkets (connection:SQLiteConnection) : unit =
+let private setupIslandMarkets 
+        (connection : SQLiteConnection) 
+        : unit =
     [
         Tables.IslandMarkets
         "REPLACE INTO [IslandMarkets] ([IslandX], [IslandY], [CommodityId], [Supply], [Demand]) VALUES (0.0, 0.0, 1, 1.0, 1.0), (0.0, 0.0, 2, 2.0, 2.0), (0.0, 0.0, 3, 3.0, 3.0);"
     ]
     |> runCommands connection
 
-let private setupVesselStatistics (avatarId:string) (connection:SQLiteConnection) : unit =
+let private setupVesselStatistics 
+        (avatarId   : string) 
+        (connection : SQLiteConnection) 
+        : unit =
     System.Enum.GetValues(typedefof<VesselStatisticIdentifier>) 
     :?> VesselStatisticIdentifier []
     |> Array.toList
@@ -124,23 +146,18 @@ let internal SetupConnection() : SQLiteConnection =
     let connection = new SQLiteConnection(connectionString)
     connection.Open()
 
-    connection |> setupCommodities  
-
-    connection |> setupItems
-
-    connection |> setupWorldConfiguration
-
-    connection |> setupAvatarStatisticTemlates
-
-    connection |> setupVesselStatisticTemplates
-
-    connection |> setupVesselStatistics ExistingAvatarId
-
-    connection |> setupRationItems
-
-    connection |> setupIslandItems
-
-    connection |> setupIslandMarkets
+    [
+        setupCommodities  
+        setupItems
+        setupWorldConfiguration
+        setupAvatarStatisticTemplates
+        setupVesselStatisticTemplates
+        setupVesselStatistics ExistingAvatarId
+        setupRationItems
+        setupIslandItems
+        setupIslandMarkets
+    ]
+    |> List.iter (fun f -> f connection)
 
     connection
     

@@ -9,7 +9,7 @@ open Splorr.Seafarers.Models
 let ``GetForIsland.It returns nothing when there are no markets at the given location.`` () =
     let connection = SetupConnection()
     let input = (10.0, 10.0)
-    let expected : Result<Map<uint64, Market>,string> =
+    let expected : Result<Map<uint64, Market>, string> =
         Map.empty |> Ok
     let actual =
         input 

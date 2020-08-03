@@ -2,7 +2,7 @@
 
 type Market =
     {
-        Supply: float
-        Demand: float
+        Supply : float
+        Demand : float
     }
 

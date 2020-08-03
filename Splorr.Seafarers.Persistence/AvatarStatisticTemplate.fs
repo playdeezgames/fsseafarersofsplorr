@@ -4,7 +4,9 @@ open System.Data.SQLite
 open Splorr.Seafarers.Models
 
 module AvatarStatisticTemplate =
-    let private convertor (reader:SQLiteDataReader) : AvatarStatisticTemplate =
+    let private convertor 
+            (reader : SQLiteDataReader) 
+            : AvatarStatisticTemplate =
         {
             StatisticId = reader.GetInt32(0) |> enum<AvatarStatisticIdentifier>
             StatisticName = reader.GetString(1)
@@ -13,7 +15,9 @@ module AvatarStatisticTemplate =
             CurrentValue = reader.GetDouble(4)
         }
 
-    let GetList (connection:SQLiteConnection) : Result<Map<AvatarStatisticIdentifier, AvatarStatisticTemplate>,string> =
+    let GetList 
+            (connection : SQLiteConnection) 
+            : Result<Map<AvatarStatisticIdentifier, AvatarStatisticTemplate>, string> =
         connection
         |> Utility.GetList 
             "SELECT [StatisticId], [StatisticName], [MinimumValue], [MaximumValue], [CurrentValue] FROM [AvatarStatisticTemplates];" (fun _->()) convertor

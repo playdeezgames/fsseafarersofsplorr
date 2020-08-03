@@ -10,6 +10,7 @@ module Runner =
 
     let rec private Loop 
             (switches                      : Set<string>) 
+            (adverbSource                  : TermSource)
             (commoditySource               : unit     -> Map<uint64, CommodityDescriptor>)
             (itemSource                    : unit     -> Map<uint64, ItemDescriptor>)
             (islandMarketSource            : Location -> Map<uint64, Market>) 
@@ -33,6 +34,7 @@ module Runner =
             match gamestate with
             | Gamestate.AtSea world -> 
                 AtSea.Run 
+                    adverbSource
                     commoditySource 
                     itemSource 
                     islandMarketSource
@@ -153,7 +155,9 @@ module Runner =
         match nextGamestate with
         | Some state ->
             Loop 
+                
                 switches 
+                adverbSource
                 commoditySource 
                 itemSource 
                 islandMarketSource 
@@ -177,6 +181,7 @@ module Runner =
     
     let Run 
             (switches                      : Set<string>) 
+            (adverbSource                  : TermSource)
             (configurationSource           : unit     -> WorldConfiguration) 
             (commoditySource               : unit     -> Map<uint64, CommodityDescriptor>) 
             (itemSource                    : unit     -> Map<uint64, ItemDescriptor>) 
@@ -200,6 +205,7 @@ module Runner =
         |> Gamestate.MainMenu
         |> Loop 
             switches 
+            adverbSource
             commoditySource 
             itemSource 
             islandMarketSource 

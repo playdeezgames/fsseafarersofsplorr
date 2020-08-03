@@ -115,9 +115,12 @@ let private headForWorldIslandMarketSink (_) (_) = ()
 
 let private itemSourceStub() = Map.empty
 
+let internal adverbSource() = [ "woefully" ]
+
 let internal headForWorldVisited = 
     headForWorldUnvisited
     |> World.Dock 
+        adverbSource
         commoditySourceStub 
         itemSourceStub 
         headForWorldIslandMarketSource 

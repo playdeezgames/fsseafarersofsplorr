@@ -4,7 +4,10 @@ open System.Data.SQLite
 open Splorr.Seafarers.Models
 
 module WorldConfiguration =
-    let rec private getRationItems (reader:SQLiteDataReader) (previous:uint64 list) : uint64 list =
+    let rec private getRationItems 
+            (reader   : SQLiteDataReader) 
+            (previous : uint64 list) 
+            : uint64 list =
         if reader.Read() then
             [(reader.GetInt64(0) |> uint64)]
             |> List.append previous
@@ -12,7 +15,10 @@ module WorldConfiguration =
         else
             previous
 
-    let rec private getStatisticDescriptors (reader:SQLiteDataReader) (previous:AvatarStatisticTemplate list) : AvatarStatisticTemplate list =
+    let rec private getStatisticDescriptors 
+            (reader   : SQLiteDataReader) 
+            (previous : AvatarStatisticTemplate list) 
+            : AvatarStatisticTemplate list =
         if reader.Read() then
             [{
                 StatisticId = reader.GetInt32(0) |> enum<AvatarStatisticIdentifier>
@@ -27,7 +33,9 @@ module WorldConfiguration =
             previous
 
 
-    let Get (connection:SQLiteConnection) : Result<WorldConfiguration,string> =
+    let Get 
+            (connection : SQLiteConnection) 
+            : Result<WorldConfiguration, string> =
         try
 
             use command = new SQLiteCommand("SELECT [ItemId] FROM [RationItems] ORDER BY [DefaultOrder];", connection)

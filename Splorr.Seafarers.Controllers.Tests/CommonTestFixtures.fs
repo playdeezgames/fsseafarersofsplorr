@@ -5,6 +5,7 @@ open System.Data.SQLite
 open Splorr.Seafarers.Models
 open System
 
+let internal adverbSource () = ["woefully"]
 
 let internal connectionString = 
     "Data Source=:memory:;Version=3;New=True;"

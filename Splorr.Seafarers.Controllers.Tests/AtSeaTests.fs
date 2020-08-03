@@ -9,6 +9,7 @@ open AtSeaTestFixtures
 
 let private functionUnderTest = 
     AtSea.Run 
+        adverbSource
         atSeaCommoditySource 
         atSeaItemSource 
         atSeaIslandMarketSource 

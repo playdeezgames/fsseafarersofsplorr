@@ -270,7 +270,7 @@ let private islandMarketSinkStub (_) (_) = ()
 let ``Dock.It does nothing when given an invalid avatar id.`` () =
     let actual = 
         {emptyWorld with AvatarId = bogusAvatarId}
-        |> World.Dock (fun()->commodities) (fun()->genericWorldItems) islandMarketSourceStub islandMarketSinkStub islandItemSourceStub islandItemSinkStub random (0.0, 0.0) (0.0, 0.0)
+        |> World.Dock adverbSource (fun()->commodities) (fun()->genericWorldItems) islandMarketSourceStub islandMarketSinkStub islandItemSourceStub islandItemSinkStub random (0.0, 0.0) (0.0, 0.0)
     Assert.AreEqual({emptyWorld with AvatarId = bogusAvatarId}, actual)
 
 [<Test>]
@@ -282,7 +282,7 @@ let ``Dock.It adds a message when the given location has no island.`` () =
             Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar}
     let actual = 
         inputWorld
-        |> World.Dock (fun()->commodities) (fun()->genericWorldItems) islandMarketSourceStub islandMarketSinkStub islandItemSourceStub islandItemSinkStub random (0.0, 0.0) (0.0, 0.0)
+        |> World.Dock adverbSource (fun()->commodities) (fun()->genericWorldItems) islandMarketSourceStub islandMarketSinkStub islandItemSourceStub islandItemSinkStub random (0.0, 0.0) (0.0, 0.0)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -301,7 +301,7 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
             Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar}        
     let actual = 
         inputWorld
-        |> World.Dock (fun()->Map.empty) (fun()->Map.empty) islandMarketSourceStub islandMarketSinkStub islandItemSourceStub islandItemSinkStub random (0.0, 0.0) (0.0, 0.0)
+        |> World.Dock adverbSource (fun()->Map.empty) (fun()->Map.empty) islandMarketSourceStub islandMarketSinkStub islandItemSourceStub islandItemSinkStub random (0.0, 0.0) (0.0, 0.0)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -468,7 +468,7 @@ let ``Dock.It does not modify avatar when given avatar has a job for a different
             Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.VisitedIsland 1u}
     let actual = 
         jobWorld
-        |> World.Dock (fun()->commodities) (fun()->genericWorldItems) islandMarketSourceStub islandMarketSinkStub islandItemSourceStub islandItemSinkStub random (0.0, 0.0) genericWorldIslandLocation
+        |> World.Dock adverbSource (fun()->commodities) (fun()->genericWorldItems) islandMarketSourceStub islandMarketSinkStub islandItemSourceStub islandItemSinkStub random (0.0, 0.0) genericWorldIslandLocation
     Assert.AreEqual(expectedAvatar, actual.Avatars.[avatarId])
 
 [<Test>]
@@ -488,7 +488,7 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
                 |> Map.add Metric.CompletedJob 1u}
     let actual = 
         jobWorld
-        |> World.Dock (fun()->commodities) (fun()->genericWorldItems) islandMarketSourceStub islandMarketSinkStub islandItemSourceStub islandItemSinkStub random (0.0, 0.0) jobLocation
+        |> World.Dock adverbSource (fun()->commodities) (fun()->genericWorldItems) islandMarketSourceStub islandMarketSinkStub islandItemSourceStub islandItemSinkStub random (0.0, 0.0) jobLocation
     Assert.AreEqual(expectedAvatar, actual.Avatars.[avatarId])
     Assert.AreEqual(expectedMessages, actual.Avatars.[avatarId].Messages)
 

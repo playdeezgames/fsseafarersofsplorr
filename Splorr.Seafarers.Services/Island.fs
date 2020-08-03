@@ -51,13 +51,19 @@ module Island =
         | _ -> island
 
     let GenerateJobs 
+            (adverbSource : TermSource)
             (random       : Random) 
             (rewardRange  : float*float) 
             (destinations : Set<Location>) 
             (island       : Island) 
             : Island =
         if island.Jobs.IsEmpty && not destinations.IsEmpty then
-            {island with Jobs = [Job.Create random rewardRange destinations] |> List.append island.Jobs}
+            {island with 
+                Jobs = 
+                    [
+                        Job.Create adverbSource random rewardRange destinations
+                    ] 
+                    |> List.append island.Jobs}
         else
             island
 
@@ -101,7 +107,9 @@ module Island =
                     |> Map.add avatarId {VisitCount=None; LastVisit=None}}
         | _ -> island
 
-    let private SupplyDemandGenerator (random:Random) : float = //TODO: move this function out!
+    let private SupplyDemandGenerator 
+            (random:Random) 
+            : float = //TODO: move this function out!
         (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + 3.0
 
     let GenerateCommodities 
@@ -132,7 +140,8 @@ module Island =
             (islandItemSink   : Location->Set<uint64>->unit) 
             (random           : Random) 
             (items            : Map<uint64, ItemDescriptor>) //TODO: make this a source
-            (location         : Location) : unit =
+            (location         : Location) 
+            : unit =
         let islandItems = islandItemSource location
         if islandItems.IsEmpty then
             items

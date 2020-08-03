@@ -6,10 +6,18 @@ open Splorr.Seafarers.Persistence
 
 [<Test>]
 let ``GetForIsland.It retrieves the items sold on a particular island.`` () =
-    use connection = SetupConnection()
-    let input = (0.0, 0.0)
+    use connection = 
+        SetupConnection()
+    let input = 
+        (0.0, 0.0)
     let expected : Result<Set<uint64>,string>  =
-        [1UL; 2UL; 3UL] |> Set.ofList |> Ok
+        [
+            1UL
+            2UL
+            3UL
+        ] 
+        |> Set.ofList 
+        |> Ok
     let actual =
         input
         |> IslandItem.GetForIsland connection
@@ -17,10 +25,13 @@ let ``GetForIsland.It retrieves the items sold on a particular island.`` () =
 
 [<Test>]
 let ``GetForIsland.It returns an error when an island is not found at the location.`` () =
-    use connection = SetupConnection()
-    let input = (10.0, 10.0)
+    use connection = 
+        SetupConnection()
+    let input = 
+        (10.0, 10.0)
     let expected : Result<Set<uint64>,string> =
-        Set.empty |> Ok
+        Set.empty 
+        |> Ok
     let actual =
         input
         |> IslandItem.GetForIsland connection
@@ -28,9 +39,13 @@ let ``GetForIsland.It returns an error when an island is not found at the locati
 
 [<Test>]
 let ``ExistForIsland.It returns true when items are found for a given island location.`` () =
-    use connection = SetupConnection()
-    let input = (0.0, 0.0)
-    let expected : Result<bool, string> = true |> Ok
+    use connection = 
+        SetupConnection()
+    let input = 
+        (0.0, 0.0)
+    let expected : Result<bool, string> = 
+        true 
+        |> Ok
     let actual =
         input
         |> IslandItem.ExistForIsland connection
@@ -38,9 +53,13 @@ let ``ExistForIsland.It returns true when items are found for a given island loc
 
 [<Test>]
 let ``ExistForIsland.It returns false when items are not found for a given island location.`` () =
-    use connection = SetupConnection()
-    let input = (10.0, 10.0)
-    let expected : Result<bool, string> = false |> Ok
+    use connection = 
+        SetupConnection()
+    let input = 
+        (10.0, 10.0)
+    let expected : Result<bool, string> = 
+        false 
+        |> Ok
     let actual =
         input
         |> IslandItem.ExistForIsland connection
@@ -48,10 +67,16 @@ let ``ExistForIsland.It returns false when items are not found for a given islan
 
 [<Test>]
 let ``CreateForIsland.It makes new records when no previous records exist.`` () =
-    use connection = SetupConnection()
-    let input = [1UL] |> Set.ofList;
-    let inputLocation = (10.0, 10.0)
-    let expected : Result<unit, string> = () |> Ok
+    use connection = 
+        SetupConnection()
+    let input = 
+        [ 1UL ] 
+        |> Set.ofList
+    let inputLocation = 
+        (10.0, 10.0)
+    let expected : Result<unit, string> = 
+        () 
+        |> Ok
     let actualInitialCount = 
         match IslandItem.GetForIsland connection inputLocation with
         | Ok x -> 
@@ -76,9 +101,13 @@ let ``CreateForIsland.It makes new records when no previous records exist.`` () 
 [<Test>]
 let ``CreateForIsland.It removes old records when previous records exist.`` () =
     use connection = SetupConnection()
-    let input = [] |> Set.ofList;
-    let inputLocation = (0.0, 0.0)
-    let expected : Result<unit, string> = () |> Ok
+    let input = 
+        Set.empty
+    let inputLocation = 
+        (0.0, 0.0)
+    let expected : Result<unit, string> = 
+        () 
+        |> Ok
     let actualInitialCount = 
         match IslandItem.GetForIsland connection inputLocation with
         | Ok x -> 
@@ -102,10 +131,16 @@ let ``CreateForIsland.It removes old records when previous records exist.`` () =
 
 [<Test>]
 let ``CreateForIsland.It replaces old records when previous records exist.`` () =
-    use connection = SetupConnection()
-    let input = [1UL] |> Set.ofList;
-    let inputLocation = (0.0, 0.0)
-    let expected : Result<unit, string> = () |> Ok
+    use connection = 
+        SetupConnection()
+    let input = 
+        [ 1UL ] 
+        |> Set.ofList;
+    let inputLocation = 
+        (0.0, 0.0)
+    let expected : Result<unit, string> = 
+        () 
+        |> Ok
     let actualInitialCount = 
         match IslandItem.GetForIsland connection inputLocation with
         | Ok x -> 

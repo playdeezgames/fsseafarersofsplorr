@@ -65,7 +65,7 @@ module World =
             (world  : World) 
             : World =
         GenerateIslandNames random (world.Islands.Count) (if world.Islands.IsEmpty then Set.empty else Set.empty |> Set.add "antwerp")
-        |> List.sortBy (fun _ -> random.Next())
+        |> Utility.SortListRandomly random
         |> List.zip (world.Islands |> Map.toList |> List.map fst)
         |> List.fold
             (fun w (l,n) -> w |> TransformIsland l (Island.SetName n >> Some)) world
@@ -232,6 +232,7 @@ module World =
             world
 
     let Dock 
+            (adverbSource       : TermSource)
             (commoditySource    : unit ->Map<uint64, CommodityDescriptor>) 
             (itemSource         : unit->Map<uint64, ItemDescriptor>) 
             (islandMarketSource : Location->Map<uint64, Market>) 
@@ -255,7 +256,7 @@ module World =
             let updatedIsland = 
                 island
                 |> Island.AddVisit world.Avatars.[avatarId].Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].CurrentValue avatarId//only when this counts as a new visit...
-                |> Island.GenerateJobs random rewardRange destinations 
+                |> Island.GenerateJobs adverbSource random rewardRange destinations 
             let items = itemSource()
             Island.GenerateCommodities commoditySource islandMarketSource islandMarketSink random location
             Island.GenerateItems islandItemSource islandItemSink random items location

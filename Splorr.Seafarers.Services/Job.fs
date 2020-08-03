@@ -1,31 +1,10 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
+open System
+
+type TermSource = unit -> string list
 
 module Job =
-    let private adverbs = 
-        [
-            "extremely"
-            "woefully"
-            "majestically"
-            "surprisingly"
-            "tenderly"
-            "carelessly"
-            "greatly"
-            "reassuringly"
-            "interestingly"
-            "officially"
-            "accidentally"
-            "jaggedly"
-            "carefully"
-            "thoughtfully"
-            "shodilly"
-            "amazingly"
-            "recklessly"
-            "unashamedly"
-            "pretentiously"
-            "wonderfully"
-        ]
-
     let private adjectives = 
         [
             "valuable"
@@ -175,31 +154,22 @@ module Job =
             "shepherd"
         ]
 
-    let private ChooseRandomTerm 
-            (random:System.Random) 
-            (terms:string list) 
-            : string =
-        terms
-        |> List.sortBy (fun _ -> random.Next())
-        |> List.head
-
     let Create 
-            (random:System.Random) 
-            (rewardMinimum:float, rewardMaximum: float) 
-            (destinations:Set<Location>) 
+            (adverbSource : TermSource)
+            (random       : Random) 
+            (rewardRange  : float * float) 
+            (destinations : Set<Location>) 
             : Job =
-        let adverb = ChooseRandomTerm random adverbs
-        let adjective = ChooseRandomTerm random adjectives
-        let objectName = ChooseRandomTerm random objectNames
-        let name = ChooseRandomTerm random names
-        let personalAdjective = ChooseRandomTerm random personalAdjectives
-        let profession = ChooseRandomTerm random professions
+        let adverb            = adverbSource() |> Utility.PickRandomly random
+        let adjective         = Utility.PickRandomly random adjectives
+        let objectName        = Utility.PickRandomly random objectNames
+        let name              = Utility.PickRandomly random names
+        let personalAdjective = Utility.PickRandomly random personalAdjectives
+        let profession        = Utility.PickRandomly random professions
+        let destination       = destinations |> Set.toList |> Utility.PickRandomly random 
+        let rewardMinimum, rewardMaximum = rewardRange
         {
-            FlavorText = sprintf "please deliver this %s %s %s to %s the %s %s" adverb adjective objectName name personalAdjective profession
-            Destination = 
-                destinations
-                |> Set.toList
-                |> List.sortBy (fun _ -> random.Next())
-                |> List.head
-            Reward = random.NextDouble() * (rewardMaximum - rewardMinimum) + rewardMinimum
+            FlavorText  = sprintf "please deliver this %s %s %s to %s the %s %s" adverb adjective objectName name personalAdjective profession
+            Destination = destination
+            Reward      = random.NextDouble() * (rewardMaximum - rewardMinimum) + rewardMinimum
         }

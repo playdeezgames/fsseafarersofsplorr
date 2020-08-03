@@ -78,9 +78,34 @@ let main argv =
         VesselStatistic.SetStatisticForAvatar avatarId (identifier, statistic) connection
         |> ignore
 
+    let adverbSource() =
+        [
+            "extremely"
+            "woefully"
+            "majestically"
+            "surprisingly"
+            "tenderly"
+            "carelessly"
+            "greatly"
+            "reassuringly"
+            "interestingly"
+            "officially"
+            "accidentally"
+            "jaggedly"
+            "carefully"
+            "thoughtfully"
+            "shodilly"
+            "amazingly"
+            "recklessly"
+            "unashamedly"
+            "pretentiously"
+            "wonderfully"
+        ]
+
     try
         Runner.Run 
             switches 
+            adverbSource
             configurationSource
             commoditySource
             itemSource 

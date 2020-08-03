@@ -4,7 +4,10 @@ open System.Data.SQLite
 open Splorr.Seafarers.Models
 
 module IslandItem =
-    let rec private ReadEntities (reader:SQLiteDataReader) (items:Set<uint64>) : Result<Set<uint64>, string> =
+    let rec private ReadEntities 
+            (reader : SQLiteDataReader) 
+            (items  : Set<uint64>) 
+            : Result<Set<uint64>, string> =
         if reader.Read() then
             items
             |> Set.add (reader.GetInt64(0) |> uint64)
@@ -13,7 +16,10 @@ module IslandItem =
             items
             |> Ok
 
-    let GetForIsland (connection:SQLiteConnection) (location:Location) : Result<Set<uint64>,string> =
+    let GetForIsland 
+            (connection : SQLiteConnection) 
+            (location   : Location) 
+            : Result<Set<uint64>, string> =
         let commandSideEffect (command: SQLiteCommand) =
             command.Parameters.AddWithValue("$islandX", location |> fst) |> ignore
             command.Parameters.AddWithValue("$islandY", location |> snd) |> ignore
@@ -24,7 +30,10 @@ module IslandItem =
         |> Result.bind
             (Set.ofList >> Ok)
 
-    let ExistForIsland (connection:SQLiteConnection) (location:Location) : Result<bool, string> =
+    let ExistForIsland 
+            (connection : SQLiteConnection) 
+            (location   : Location) 
+            : Result<bool, string> =
         try
             use command : SQLiteCommand = new SQLiteCommand("SELECT COUNT(1) FROM [IslandItems] WHERE [IslandX]= $islandX AND [IslandY]= $islandY;", connection)
             command.Parameters.AddWithValue("$islandX", location |> fst) |> ignore
@@ -36,7 +45,11 @@ module IslandItem =
             ex.ToString() 
             |> Error
 
-    let CreateForIsland (connection:SQLiteConnection) (location:Location) (items: Set<uint64>) : Result<unit, string> =
+    let CreateForIsland 
+            (connection : SQLiteConnection) 
+            (location   : Location) 
+            (items      : Set<uint64>) 
+            : Result<unit, string> =
         try
             use command : SQLiteCommand = new SQLiteCommand("DELETE FROM [IslandItems] WHERE [IslandX]= $islandX AND [IslandY]= $islandY;", connection)
             command.Parameters.AddWithValue("$islandX", location |> fst) |> ignore
