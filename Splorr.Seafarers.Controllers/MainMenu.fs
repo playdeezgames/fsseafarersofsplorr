@@ -71,12 +71,14 @@ module MainMenu =
             |> HandleInvalidCommand
 
     let private HandleCommandNoGame 
+            (nameSource                    : TermSource)
             (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
             (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
             (configuration                 : WorldConfiguration) =
         function
         | Some (Command.Start avatarId)->
             World.Create 
+                nameSource
                 vesselStatisticTemplateSource
                 vesselStatisticSink
                 configuration
@@ -94,6 +96,7 @@ module MainMenu =
             |> HandleInvalidCommand
 
     let private HandleCommand
+            (nameSource                    : TermSource)
             (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
             (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
             (configuration                 : WorldConfiguration) 
@@ -105,12 +108,14 @@ module MainMenu =
             HandleCommandInGame w command
         | _ ->
             HandleCommandNoGame 
+                nameSource
                 vesselStatisticTemplateSource
                 vesselStatisticSink
                 configuration 
                 command
 
     let Run 
+            (nameSource                    : TermSource)
             (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
             (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
             (configuration                 : WorldConfiguration) 
@@ -122,6 +127,7 @@ module MainMenu =
             messageSink 
             world.IsSome
         HandleCommand
+            nameSource
             vesselStatisticTemplateSource
             vesselStatisticSink
             configuration

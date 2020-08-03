@@ -24,8 +24,11 @@ let private random = Random()
 
 let private avatarId = ""
 
+let private nameSourceStub () = []
+
 let internal previousState = 
     World.Create
+        nameSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         configuration 

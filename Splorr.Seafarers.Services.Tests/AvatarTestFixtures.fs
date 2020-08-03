@@ -32,7 +32,7 @@ let internal oldAvatar =
     avatar
     |> Avatar.TransformShipmate (Shipmate.TransformStatistic AvatarStatisticIdentifier.Turn (fun x-> {x with CurrentValue = x.MaximumValue} |> Some)) 0u
 let internal job =
-    Job.Create adverbSource random rewardRange singleLocation
+    Job.Create termSources random rewardRange singleLocation
 let internal employedAvatar =
     {avatar with Job = job |> Some; Money=10.0; Reputation=(-5.0)}
 let internal rationedAvatar =

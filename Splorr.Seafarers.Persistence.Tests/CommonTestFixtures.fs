@@ -139,6 +139,20 @@ let private setupVesselStatistics
         ]
     |> runCommands connection
 
+let private setupTerms
+        (connection : SQLiteConnection) 
+        : unit =
+    [
+        Tables.Terms
+        "INSERT INTO [Terms] ([TermType], [Term]) VALUES ('adverb', 'woefully');"
+        "INSERT INTO [Terms] ([TermType], [Term]) VALUES ('adjective', 'tatty');"
+        "INSERT INTO [Terms] ([TermType], [Term]) VALUES ('object name', 'thing');"
+        "INSERT INTO [Terms] ([TermType], [Term]) VALUES ('person name', 'bob');"
+        "INSERT INTO [Terms] ([TermType], [Term]) VALUES ('person adjective', 'smelly');"
+        "INSERT INTO [Terms] ([TermType], [Term]) VALUES ('profession', 'monk');"
+    ]
+    |> runCommands connection
+
 let internal ExistingAvatarId = "avatar"
 let internal NewAvatarId = "newavatar"
 
@@ -156,6 +170,7 @@ let internal SetupConnection() : SQLiteConnection =
         setupRationItems
         setupIslandItems
         setupIslandMarkets
+        setupTerms
     ]
     |> List.iter (fun f -> f connection)
 

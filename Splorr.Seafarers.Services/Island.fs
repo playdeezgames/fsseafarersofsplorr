@@ -51,7 +51,7 @@ module Island =
         | _ -> island
 
     let GenerateJobs 
-            (adverbSource : TermSource)
+            (termSources  : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
             (random       : Random) 
             (rewardRange  : float*float) 
             (destinations : Set<Location>) 
@@ -61,7 +61,7 @@ module Island =
             {island with 
                 Jobs = 
                     [
-                        Job.Create adverbSource random rewardRange destinations
+                        Job.Create termSources random rewardRange destinations
                     ] 
                     |> List.append island.Jobs}
         else

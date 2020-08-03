@@ -33,6 +33,8 @@ module World =
         if names.Count>=nameCount then
             names
             |> Set.toList
+            |> Utility.SortListRandomly random
+            |> List.take nameCount
         else
             names
             |> Set.add (GenerateIslandName random)
@@ -61,16 +63,21 @@ module World =
         |> SetIsland location) world
 
     let private NameIslands  //TODO: move to world generator?
-            (random : Random) 
-            (world  : World) 
+            (nameSource : TermSource)
+            (random     : Random) 
+            (world      : World) 
             : World =
-        GenerateIslandNames random (world.Islands.Count) (if world.Islands.IsEmpty then Set.empty else Set.empty |> Set.add "antwerp")
+        GenerateIslandNames 
+            random 
+            (world.Islands.Count) 
+            (nameSource() |> Set.ofList)
         |> Utility.SortListRandomly random
         |> List.zip (world.Islands |> Map.toList |> List.map fst)
         |> List.fold
             (fun w (l,n) -> w |> TransformIsland l (Island.SetName n >> Some)) world
 
     let rec private GenerateIslands  //TODO: move to world generator?
+            (nameSource    : TermSource)
             (configuration : WorldConfiguration) 
             (random        : Random) 
             (currentTry    : uint32) 
@@ -78,13 +85,13 @@ module World =
             : World =
         if currentTry>=configuration.MaximumGenerationTries then
             world
-            |> NameIslands random
+            |> NameIslands nameSource random
         else
             let candidateLocation = (random.NextDouble() * (configuration.WorldSize |> fst), random.NextDouble() * (configuration.WorldSize |> snd))
             if world.Islands |> Map.exists(fun k _ ->(Location.DistanceTo candidateLocation k) < configuration.MinimumIslandDistance) then
-                GenerateIslands configuration random (currentTry+1u) world
+                GenerateIslands nameSource configuration random (currentTry+1u) world
             else
-                GenerateIslands configuration random 0u {world with Islands = world.Islands |> Map.add candidateLocation (Island.Create())}
+                GenerateIslands nameSource configuration random 0u {world with Islands = world.Islands |> Map.add candidateLocation (Island.Create())}
 
     let UpdateCharts 
             (world    : World) 
@@ -103,11 +110,12 @@ module World =
                         |> TransformIsland location (Island.MakeSeen world.AvatarId >> Some)) w) world
 
     let Create 
-            (vesselStatisticTemplateSource: unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
-            (vesselStatisticSink: string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
-            (configuration : WorldConfiguration) 
-            (random        : Random) 
-            (avatarId      : string): World =
+            (nameSource                    : TermSource)
+            (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
+            (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
+            (configuration                 : WorldConfiguration) 
+            (random                        : Random) 
+            (avatarId                      : string): World =
         {
             AvatarId = avatarId
             Avatars = 
@@ -125,7 +133,7 @@ module World =
                         |> Location.ScaleBy 0.5))
             Islands = Map.empty
         }
-        |> GenerateIslands configuration random 0u
+        |> GenerateIslands nameSource configuration random 0u
         |> UpdateCharts
 
     let TransformAvatar 
@@ -232,7 +240,7 @@ module World =
             world
 
     let Dock 
-            (adverbSource       : TermSource)
+            (termSources        : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
             (commoditySource    : unit ->Map<uint64, CommodityDescriptor>) 
             (itemSource         : unit->Map<uint64, ItemDescriptor>) 
             (islandMarketSource : Location->Map<uint64, Market>) 
@@ -256,7 +264,7 @@ module World =
             let updatedIsland = 
                 island
                 |> Island.AddVisit world.Avatars.[avatarId].Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].CurrentValue avatarId//only when this counts as a new visit...
-                |> Island.GenerateJobs adverbSource random rewardRange destinations 
+                |> Island.GenerateJobs termSources random rewardRange destinations 
             let items = itemSource()
             Island.GenerateCommodities commoditySource islandMarketSource islandMarketSink random location
             Island.GenerateItems islandItemSource islandItemSink random items location

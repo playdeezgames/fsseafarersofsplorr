@@ -20,6 +20,7 @@ let private random = Random()
 
 let internal world = 
     World.Create 
+        nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         configuration 
@@ -53,6 +54,7 @@ let internal emptyWorldconfiguration: WorldConfiguration =
 
 let internal emptyWorld = 
     World.Create 
+        nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         emptyWorldconfiguration 
@@ -72,6 +74,7 @@ let internal dockWorldconfiguration: WorldConfiguration =
 
 let internal dockWorld = 
     World.Create 
+        nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         dockWorldconfiguration 
@@ -82,6 +85,7 @@ let internal commoditySourceStub () = Map.empty
 
 let internal headForWorldUnvisited = 
     World.Create 
+        nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         dockWorldconfiguration 
@@ -115,12 +119,10 @@ let private headForWorldIslandMarketSink (_) (_) = ()
 
 let private itemSourceStub() = Map.empty
 
-let internal adverbSource() = [ "woefully" ]
-
 let internal headForWorldVisited = 
     headForWorldUnvisited
     |> World.Dock 
-        adverbSource
+        termSources
         commoditySourceStub 
         itemSourceStub 
         headForWorldIslandMarketSource 

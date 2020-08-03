@@ -10,7 +10,8 @@ module Runner =
 
     let rec private Loop 
             (switches                      : Set<string>) 
-            (adverbSource                  : TermSource)
+            (nameSource                    : TermSource)
+            (termSources                   : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
             (commoditySource               : unit     -> Map<uint64, CommodityDescriptor>)
             (itemSource                    : unit     -> Map<uint64, ItemDescriptor>)
             (islandMarketSource            : Location -> Map<uint64, Market>) 
@@ -34,7 +35,7 @@ module Runner =
             match gamestate with
             | Gamestate.AtSea world -> 
                 AtSea.Run 
-                    adverbSource
+                    termSources
                     commoditySource 
                     itemSource 
                     islandMarketSource
@@ -132,6 +133,7 @@ module Runner =
 
             | Gamestate.MainMenu world -> 
                 MainMenu.Run 
+                    nameSource
                     vesselStatisticTemplateSource
                     vesselStatisticSink
                     (configurationSource()) 
@@ -155,9 +157,9 @@ module Runner =
         match nextGamestate with
         | Some state ->
             Loop 
-                
                 switches 
-                adverbSource
+                nameSource
+                termSources
                 commoditySource 
                 itemSource 
                 islandMarketSource 
@@ -181,7 +183,8 @@ module Runner =
     
     let Run 
             (switches                      : Set<string>) 
-            (adverbSource                  : TermSource)
+            (nameSource                    : TermSource)
+            (termSources                   : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
             (configurationSource           : unit     -> WorldConfiguration) 
             (commoditySource               : unit     -> Map<uint64, CommodityDescriptor>) 
             (itemSource                    : unit     -> Map<uint64, ItemDescriptor>) 
@@ -205,7 +208,8 @@ module Runner =
         |> Gamestate.MainMenu
         |> Loop 
             switches 
-            adverbSource
+            nameSource
+            termSources
             commoditySource 
             itemSource 
             islandMarketSource 

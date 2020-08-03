@@ -72,14 +72,14 @@ let ``AddVisit.It does not update visit count when given turn was prior or equal
 let ``GenerateJob.It generates a job when no job is present on the island.`` () =
     let actual =
         visitedIsland
-        |> Island.GenerateJobs adverbSource random rewardRange singleDestination
+        |> Island.GenerateJobs termSources random rewardRange singleDestination
     Assert.False(actual.Jobs.IsEmpty)
 
 [<Test>]
 let ``GenerateJob.It does nothing when no job is present on the island and no potential job destinations are given.`` () =
     let actual =
         visitedIsland
-        |> Island.GenerateJobs adverbSource random rewardRange Set.empty
+        |> Island.GenerateJobs termSources random rewardRange Set.empty
     Assert.True(actual.Jobs.IsEmpty)
 
 [<Test>]

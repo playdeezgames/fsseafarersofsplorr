@@ -1,6 +1,14 @@
 ﻿namespace Splorr.Seafarers.Persistence.Schema
 
 module Tables =
+    let AvatarStatisticTemplates : string = "CREATE TABLE IF NOT EXISTS [AvatarStatisticTemplates] (
+		[StatisticId]	INTEGER,
+		[StatisticName]	TEXT NOT NULL,
+		[MinimumValue]	REAL NOT NULL,
+		[MaximumValue]	REAL NOT NULL CHECK(MaximumValue>=MinimumValue),
+		[CurrentValue]	REAL NOT NULL CHECK(CurrentValue>=MinimumValue AND CurrentValue<=MaximumValue),
+		PRIMARY KEY([StatisticId]));"
+
     let Commodities = "CREATE TABLE IF NOT EXISTS [Commodities] (
 	    [CommodityId] INTEGER,
 	    [CommodityName] TEXT NOT NULL UNIQUE,
@@ -9,13 +17,6 @@ module Tables =
 	    [PurchaseFactor] REAL NOT NULL,
 	    [Discount] REAL NOT NULL,
 	    PRIMARY KEY([CommodityId]));"
-
-    let Items : string = "CREATE TABLE IF NOT EXISTS [Items] (
-		[ItemId] INTEGER,
-		[ItemName] TEXT NOT NULL UNIQUE,
-		[Occurrence] REAL NOT NULL,
-		[Tonnage] REAL NOT NULL,
-		PRIMARY KEY([ItemId]));"
 
     let CommodityItems : string = "CREATE TABLE IF NOT EXISTS [CommodityItems] (
 	    [CommodityId] INTEGER,
@@ -36,19 +37,23 @@ module Tables =
     	[Supply]	REAL NOT NULL,
     	[Demand]	REAL NOT NULL,
     	PRIMARY KEY([IslandX],[IslandY],[CommodityId]));"
+    
+    let Items : string = "CREATE TABLE IF NOT EXISTS [Items] (
+		[ItemId] INTEGER,
+		[ItemName] TEXT NOT NULL UNIQUE,
+		[Occurrence] REAL NOT NULL,
+		[Tonnage] REAL NOT NULL,
+		PRIMARY KEY([ItemId]));"
 
     let RationItems : string = "CREATE TABLE IF NOT EXISTS [RationItems] (
         [ItemId] INTEGER,
 		[DefaultOrder] INTEGER NOT NULL,
         PRIMARY KEY([ItemId]));"
 
-    let AvatarStatisticTemplates : string = "CREATE TABLE IF NOT EXISTS [AvatarStatisticTemplates] (
-		[StatisticId]	INTEGER,
-		[StatisticName]	TEXT NOT NULL,
-		[MinimumValue]	REAL NOT NULL,
-		[MaximumValue]	REAL NOT NULL CHECK(MaximumValue>=MinimumValue),
-		[CurrentValue]	REAL NOT NULL CHECK(CurrentValue>=MinimumValue AND CurrentValue<=MaximumValue),
-		PRIMARY KEY([StatisticId]));"
+    let Terms : string = "CREATE TABLE [Terms] (
+		[TermType]	TEXT NOT NULL,
+		[Term]	TEXT NOT NULL,
+		PRIMARY KEY([Term],[TermType]));"
 
     let VesselStatisticTemplates : string = "CREATE TABLE IF NOT EXISTS [VesselStatisticTemplates] (
 		[StatisticId]	INTEGER,
