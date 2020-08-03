@@ -19,6 +19,7 @@ let private configuration: WorldConfiguration =
 
 let private world = 
     World.Create 
+        nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         configuration 
@@ -41,6 +42,7 @@ let ``Run.It returns Confirm Quit when given Quit command and there is no world.
     let actual =
         input
         |> MainMenu.Run 
+            nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             configuration 
@@ -65,6 +67,7 @@ let ``Run.It returns Main Menu when given Quit command and there is a world.`` (
         input
         |> Some
         |> MainMenu.Run 
+            nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             configuration inputSource sinkStub 
@@ -82,6 +85,7 @@ let ``Run.It returns Main Menu when given invalid command and there is no world.
     let actual =
         input
         |> MainMenu.Run 
+            nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             configuration (fun()->None) sinkStub 
@@ -101,6 +105,7 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
         input
         |> Some
         |> MainMenu.Run 
+            nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             configuration (fun()->None) sinkStub 
@@ -113,6 +118,7 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
     let actual =
         input
         |> MainMenu.Run 
+            nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             configuration inputSource sinkStub 
@@ -139,6 +145,7 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
         input
         |> Some
         |> MainMenu.Run 
+            nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             configuration inputSource sinkStub 
@@ -156,6 +163,7 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
         input
         |> Some
         |> MainMenu.Run 
+            nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             configuration inputSource sinkStub 
@@ -180,6 +188,7 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
     let actual =
         input
         |> MainMenu.Run 
+            nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             configuration inputSource sinkStub 
@@ -198,6 +207,7 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
         input
         |> Some
         |> MainMenu.Run 
+            nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             configuration inputSource sinkStub
@@ -216,6 +226,7 @@ let ``Run.It returns Main Menu with no world when given Resume command and there
     let actual =
         input
         |> MainMenu.Run 
+            nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             configuration inputSource sinkStub 

@@ -26,6 +26,7 @@ let private avatarId = ""
 
 let private world =  
     World.Create 
+        nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         configuration 

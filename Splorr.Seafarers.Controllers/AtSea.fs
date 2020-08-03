@@ -78,7 +78,7 @@ module AtSea =
                 |> List.iter messageSink)
 
     let private HandleCommand 
-            (adverbSource                : TermSource)
+            (termSources                 : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
             (commoditySource             : unit -> Map<uint64, CommodityDescriptor>) 
             (itemSource                  : unit -> Map<uint64, ItemDescriptor>) 
             (islandMarketSource          : Location -> Map<uint64, Market>) 
@@ -145,7 +145,7 @@ module AtSea =
                     location, 
                         world 
                         |> World.Dock 
-                            adverbSource
+                            termSources
                             commoditySource 
                             itemSource
                             islandMarketSource 
@@ -234,7 +234,7 @@ module AtSea =
             |> Some
 
     let private RunAlive 
-            (adverbSource                : TermSource)
+            (termSources                 : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
             (commoditySource             : unit -> Map<uint64, CommodityDescriptor>) 
             (itemSource                  : unit -> Map<uint64, ItemDescriptor>) 
             (islandMarketSource          : Location -> Map<uint64, Market>) 
@@ -254,7 +254,7 @@ module AtSea =
             messageSink 
             world
         HandleCommand
-            adverbSource
+            termSources
             commoditySource
             itemSource
             islandMarketSource
@@ -269,7 +269,7 @@ module AtSea =
             world
 
     let Run 
-            (adverbSource                : TermSource)
+            (termSources                 : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
             (commoditySource             : unit -> Map<uint64, CommodityDescriptor>) 
             (itemSource                  : unit -> Map<uint64, ItemDescriptor>) 
             (islandMarketSource          : Location -> Map<uint64, Market>) 
@@ -286,7 +286,7 @@ module AtSea =
             : Gamestate option =
         if world |> World.IsAvatarAlive then
             RunAlive 
-                adverbSource
+                termSources
                 commoditySource 
                 itemSource 
                 islandMarketSource 

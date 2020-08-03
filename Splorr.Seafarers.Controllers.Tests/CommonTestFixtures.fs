@@ -5,8 +5,6 @@ open System.Data.SQLite
 open Splorr.Seafarers.Models
 open System
 
-let internal adverbSource () = ["woefully"]
-
 let internal connectionString = 
     "Data Source=:memory:;Version=3;New=True;"
 
@@ -69,3 +67,13 @@ let internal vesselSingleStatisticSourceStub (_) (identifier: VesselStatisticIde
 
 let internal vesselSingleStatisticSinkStub (_) (_) = ()
 
+let internal adverbSource()          : string list = [ "woefully" ]
+let internal adjectiveSource()       : string list = [ "tatty" ]
+let internal objectNameSource()      : string list = [ "thing" ]
+let internal personNameSource()      : string list = [ "george" ]
+let internal personAdjectiveSource() : string list = [ "ugly" ]
+let internal professionSource()      : string list = [ "poopsmith" ]
+let internal termSources = 
+    (adverbSource, adjectiveSource, objectNameSource, personNameSource, personAdjectiveSource, professionSource)
+
+let internal nameSource() = []

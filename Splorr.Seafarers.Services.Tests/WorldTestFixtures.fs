@@ -20,6 +20,7 @@ let private vesselStatisticTemplateSourceStub () = Map.empty
 let private vesselStatisticSinkStub (_) (_) = ()
 let internal soloIslandWorld = 
     World.Create 
+        nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         soloIslandWorldConfiguration 
@@ -60,7 +61,7 @@ let internal fabricatedDestinationList = [(0.0, 0.0)] |> Set.ofList
 let internal oneIslandWorld = 
     emptyWorld
     |> World.SetIsland (0.0,0.0) (Island.Create() |> Island.SetName "Uno" |> Some)
-    |> World.TransformIsland  (0.0,0.0) (fun i -> {i with Jobs = [ Job.Create adverbSource random defaultRewardrange fabricatedDestinationList ]} |> Some)
+    |> World.TransformIsland  (0.0,0.0) (fun i -> {i with Jobs = [ Job.Create termSources random defaultRewardrange fabricatedDestinationList ]} |> Some)
 
 let internal commodities = 
     Map.empty
@@ -94,6 +95,7 @@ let internal genericWorldConfiguration: WorldConfiguration =
     }
 let internal genericWorld = 
     World.Create 
+        nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         genericWorldConfiguration 
@@ -114,7 +116,7 @@ let private genericWorldIslandItemSource (_:Location) = Set.empty
 let private genericWorldIslandItemSink (_) (_) = ()
 let private genericWorldIslandMarketSource (_:Location) = Map.empty
 let private genericWorldIslandMarketSink (_) (_) = ()
-let internal genericDockedWorld = World.Dock adverbSource (fun()->commodities) (fun()->genericWorldItems) genericWorldIslandMarketSource genericWorldIslandMarketSink genericWorldIslandItemSource genericWorldIslandItemSink random genericWorldConfiguration.RewardRange genericWorldIslandLocation genericWorld |> World.ClearMessages
+let internal genericDockedWorld = World.Dock termSources (fun()->commodities) (fun()->genericWorldItems) genericWorldIslandMarketSource genericWorldIslandMarketSink genericWorldIslandItemSource genericWorldIslandItemSink random genericWorldConfiguration.RewardRange genericWorldIslandLocation genericWorld |> World.ClearMessages
 
 let internal shopWorld = 
     genericDockedWorld

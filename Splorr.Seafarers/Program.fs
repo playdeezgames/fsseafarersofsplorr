@@ -78,34 +78,49 @@ let main argv =
         VesselStatistic.SetStatisticForAvatar avatarId (identifier, statistic) connection
         |> ignore
 
-    let adverbSource() =
-        [
-            "extremely"
-            "woefully"
-            "majestically"
-            "surprisingly"
-            "tenderly"
-            "carelessly"
-            "greatly"
-            "reassuringly"
-            "interestingly"
-            "officially"
-            "accidentally"
-            "jaggedly"
-            "carefully"
-            "thoughtfully"
-            "shodilly"
-            "amazingly"
-            "recklessly"
-            "unashamedly"
-            "pretentiously"
-            "wonderfully"
-        ]
+    let adverbSource() : string list =
+        match connection |> Term.GetForTermType "adverb" with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+
+    let adjectiveSource() : string list =
+        match connection |> Term.GetForTermType "adjective" with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+
+    let objectNameSource() : string list =
+        match connection |> Term.GetForTermType "object name" with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+
+    let personNameSource() : string list =
+        match connection |> Term.GetForTermType "person name" with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+
+    let personAdjectiveSource() : string list =
+        match connection |> Term.GetForTermType "person adjective" with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+
+    let professionSource() : string list =
+        match connection |> Term.GetForTermType "profession" with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+
+    let islandNameSource() : string list =
+        match connection |> Term.GetForTermType "island name" with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+
+    let termSources = 
+        (adverbSource, adjectiveSource, objectNameSource, personNameSource, personAdjectiveSource, professionSource)
 
     try
         Runner.Run 
             switches 
-            adverbSource
+            islandNameSource
+            termSources
             configurationSource
             commoditySource
             itemSource 

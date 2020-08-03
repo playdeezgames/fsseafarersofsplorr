@@ -18,6 +18,7 @@ let internal dockWorldconfiguration: WorldConfiguration =
 
 let internal dockWorld = 
     World.Create
+        nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         dockWorldconfiguration 
@@ -83,6 +84,7 @@ let internal smallWorldconfiguration: WorldConfiguration =
 
 let internal smallWorld = 
     World.Create 
+        nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         smallWorldconfiguration 
@@ -116,7 +118,7 @@ let private smallWorldIslandMarketSink (_) (_) = ()
 let internal smallWorldDocked = 
     smallWorld 
     |> World.Dock 
-        adverbSource
+        termSources
         commoditySource 
         itemSource
         smallWorldIslandMarketSource 

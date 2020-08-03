@@ -19,6 +19,7 @@ let private dockWorldconfiguration: WorldConfiguration =
 
 let private dockWorld = 
     World.Create 
+        nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         dockWorldconfiguration 
