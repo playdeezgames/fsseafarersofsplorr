@@ -8,5 +8,5 @@ type WorldConfiguration =
         MaximumGenerationTries : uint32
         RewardRange            : float * float
         RationItems            : uint64 list
-        StatisticDescriptors   : AvatarStatisticTemplate list
+        StatisticDescriptors   : ShipmateStatisticTemplate list
     }

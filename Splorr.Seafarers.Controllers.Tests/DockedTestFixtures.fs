@@ -21,6 +21,7 @@ let internal dockWorld =
         nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
+        vesselSingleStatisticSourceStub
         dockWorldconfiguration 
         random 
         avatarId
@@ -35,7 +36,7 @@ let internal deadDockWorld =
                 avatarId 
                 (dockWorld.Avatars.[avatarId] 
                 |> Avatar.TransformShipmate (Shipmate.TransformStatistic 
-                    AvatarStatisticIdentifier.Health 
+                    ShipmateStatisticIdentifier.Health 
                     (fun x -> 
                         {x with CurrentValue = x.MinimumValue} 
                         |> Some)) 0u)}
@@ -87,6 +88,7 @@ let internal smallWorld =
         nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
+        vesselSingleStatisticSourceStub
         smallWorldconfiguration 
         random 
         avatarId

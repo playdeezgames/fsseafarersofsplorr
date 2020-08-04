@@ -5,3 +5,7 @@ type VesselStatisticIdentifier =
     | StarboardFouling = 2
     | FoulRate         = 3
     | Tonnage          = 4
+    | Speed            = 5
+    | Heading          = 6
+    | ViewDistance     = 7
+    | DockDistance     = 8

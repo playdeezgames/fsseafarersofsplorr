@@ -19,7 +19,7 @@ let internal vesselSingleStatisticSink (_) (_) = ()
 
 
 let internal avatar =
-    Avatar.Create vesselStatisticTemplateSourceStub vesselStatisticSinkStub avatarId (10.0, 1.0) statisticDescriptors [1UL] (0.0,0.0)
+    Avatar.Create vesselStatisticTemplateSourceStub vesselStatisticSinkStub avatarId statisticDescriptors [1UL] (0.0,0.0)
 let internal avatarNoStats =
     {avatar with 
         Shipmates =
@@ -27,10 +27,10 @@ let internal avatarNoStats =
             |> Array.map (fun x -> {x with Statistics = Map.empty})}
 let internal deadAvatar =
     avatar
-    |> Avatar.TransformShipmate (Shipmate.TransformStatistic AvatarStatisticIdentifier.Health (fun x-> {x with CurrentValue = x.MinimumValue} |> Some)) 0u
+    |> Avatar.TransformShipmate (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Health (fun x-> {x with CurrentValue = x.MinimumValue} |> Some)) 0u
 let internal oldAvatar =
     avatar
-    |> Avatar.TransformShipmate (Shipmate.TransformStatistic AvatarStatisticIdentifier.Turn (fun x-> {x with CurrentValue = x.MaximumValue} |> Some)) 0u
+    |> Avatar.TransformShipmate (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Turn (fun x-> {x with CurrentValue = x.MaximumValue} |> Some)) 0u
 let internal job =
     Job.Create termSources random rewardRange singleLocation
 let internal employedAvatar =

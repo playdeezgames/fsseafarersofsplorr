@@ -19,6 +19,11 @@ let private vesselStatisticTemplateSourceStub () =
     Map.empty
 
 let private vesselStatisticSinkStub (_) (_) = ()
+let private vesselSingleStatisticSourceStub (_) (identifier:VesselStatisticIdentifier) = 
+    match identifier with
+    | VesselStatisticIdentifier.ViewDistance ->
+        {MinimumValue=10.0; CurrentValue=10.0; MaximumValue=10.0} |> Some
+    | _ -> None
 
 let private random = Random()
 
@@ -31,6 +36,7 @@ let internal previousState =
         nameSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
+        vesselSingleStatisticSourceStub
         configuration 
         random
         avatarId

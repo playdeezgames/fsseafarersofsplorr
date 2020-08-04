@@ -3,7 +3,7 @@ open Splorr.Seafarers.Models
 
 module Shipmate =
     let SetStatistic 
-            (identifier : AvatarStatisticIdentifier) 
+            (identifier : ShipmateStatisticIdentifier) 
             (statistic  : Statistic option) 
             (mate       : Shipmate) 
             : Shipmate =
@@ -14,7 +14,7 @@ module Shipmate =
             {mate with Statistics = mate.Statistics |> Map.remove identifier}
 
     let GetStatistic 
-            (identifier : AvatarStatisticIdentifier) 
+            (identifier : ShipmateStatisticIdentifier) 
             (mate       : Shipmate) 
             : Statistic option =
         mate.Statistics
@@ -22,7 +22,7 @@ module Shipmate =
 
     let Create 
             (rationItems          : uint64 list) 
-            (statisticDescriptors : AvatarStatisticTemplate list) 
+            (statisticDescriptors : ShipmateStatisticTemplate list) 
             : Shipmate =
         {
             RationItems = rationItems
@@ -34,7 +34,7 @@ module Shipmate =
                 |> SetStatistic i.StatisticId (Statistic.Create (i.MinimumValue, i.MaximumValue) i.CurrentValue |> Some)) statisticDescriptors
 
     let TransformStatistic 
-            (identifier:AvatarStatisticIdentifier) 
+            (identifier:ShipmateStatisticIdentifier) 
             (transform:Statistic -> Statistic option) 
             (mate:Shipmate) 
             : Shipmate =
@@ -65,16 +65,16 @@ module Shipmate =
         | Some item ->
             let updatedMate = 
                 mate
-                |> TransformStatistic AvatarStatisticIdentifier.Satiety (Statistic.ChangeCurrentBy satietyIncrease >> Some)
+                |> TransformStatistic ShipmateStatisticIdentifier.Satiety (Statistic.ChangeCurrentBy satietyIncrease >> Some)
             let updatedInventory =
                 inventory
                 |> Map.add item (inventory.[item] - rationConsumptionRate)
                 |> Map.filter (fun k v -> v > 0u)
             (updatedMate, updatedInventory, true)
         | _ ->
-            if mate.Statistics.[AvatarStatisticIdentifier.Satiety].CurrentValue > mate.Statistics.[AvatarStatisticIdentifier.Satiety].MinimumValue then
+            if mate.Statistics.[ShipmateStatisticIdentifier.Satiety].CurrentValue > mate.Statistics.[ShipmateStatisticIdentifier.Satiety].MinimumValue then
                 (mate
-                |> TransformStatistic AvatarStatisticIdentifier.Satiety (Statistic.ChangeCurrentBy (satietyDecrease) >> Some), inventory, false)
+                |> TransformStatistic ShipmateStatisticIdentifier.Satiety (Statistic.ChangeCurrentBy (satietyDecrease) >> Some), inventory, false)
             else
                 (mate
-                |> TransformStatistic AvatarStatisticIdentifier.Turn (Statistic.ChangeMaximumBy (satietyDecrease) >> Some), inventory, false)
+                |> TransformStatistic ShipmateStatisticIdentifier.Turn (Statistic.ChangeMaximumBy (satietyDecrease) >> Some), inventory, false)

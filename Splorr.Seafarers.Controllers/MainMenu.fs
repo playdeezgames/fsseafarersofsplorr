@@ -74,6 +74,8 @@ module MainMenu =
             (nameSource                    : TermSource)
             (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
             (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+
             (configuration                 : WorldConfiguration) =
         function
         | Some (Command.Start avatarId)->
@@ -81,6 +83,7 @@ module MainMenu =
                 nameSource
                 vesselStatisticTemplateSource
                 vesselStatisticSink
+                vesselSingleStatisticSource
                 configuration
                 (System.Random())
                 avatarId
@@ -99,6 +102,8 @@ module MainMenu =
             (nameSource                    : TermSource)
             (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
             (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+
             (configuration                 : WorldConfiguration) 
             (world                         : World option) 
             (command                       : Command option) 
@@ -111,6 +116,7 @@ module MainMenu =
                 nameSource
                 vesselStatisticTemplateSource
                 vesselStatisticSink
+                vesselSingleStatisticSource
                 configuration 
                 command
 
@@ -118,6 +124,7 @@ module MainMenu =
             (nameSource                    : TermSource)
             (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
             (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (configuration                 : WorldConfiguration) 
             (commandSource                 : CommandSource) 
             (messageSink                   : MessageSink) 
@@ -130,6 +137,7 @@ module MainMenu =
             nameSource
             vesselStatisticTemplateSource
             vesselStatisticSink
+            vesselSingleStatisticSource
             configuration
             world
             (commandSource())

@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <Compile Include="CommonTestFixtures.fs" />
-    <Compile Include="AvatarStatisticTemplateTests.fs" />
+    <Compile Include="ShipmateStatisticTemplateTests.fs" />
     <Compile Include="CommodityTests.fs" />
     <Compile Include="IslandItemTests.fs" />
     <Compile Include="IslandMarketTests.fs" />

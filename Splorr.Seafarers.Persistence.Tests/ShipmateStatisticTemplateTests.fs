@@ -1,4 +1,4 @@
-﻿module AvatarStatisticTemplateTests
+﻿module ShipmateStatisticTemplateTests
 
 open NUnit.Framework
 open CommonTestFixtures
@@ -9,9 +9,9 @@ open Splorr.Seafarers.Models
 let ``GetList.It returns a list of statistics.`` () =
     use connection = SetupConnection()
     try
-        match connection |> AvatarStatisticTemplate.GetList with
+        match connection |> ShipmateStatisticTemplate.GetList with
         | Ok actual ->
-            let expectedCount = System.Enum.GetValues(typedefof<AvatarStatisticIdentifier>).Length
+            let expectedCount = System.Enum.GetValues(typedefof<ShipmateStatisticIdentifier>).Length
             Assert.AreEqual(expectedCount, actual.Count)
         | Error message -> Assert.Fail message
     finally

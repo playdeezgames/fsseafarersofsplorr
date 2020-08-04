@@ -21,8 +21,7 @@ module Avatar =
             (vesselStatisticTemplateSource: unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
             (vesselStatisticSink: string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
             (avatarId: string)
-            (distances            : float * float) 
-            (statisticDescriptors : AvatarStatisticTemplate list) 
+            (statisticDescriptors : ShipmateStatisticTemplate list) 
             (rationItems          : uint64 list) 
             (position             : Location)
             : Avatar =
@@ -32,8 +31,6 @@ module Avatar =
             Position = position
             Speed = 1.0
             Heading = 0.0
-            ViewDistance = distances |> fst
-            DockDistance = distances |> snd
             Money = 0.0
             Reputation = 0.0
             Job = None
@@ -177,7 +174,7 @@ module Avatar =
             avatar with 
                 Position = newPosition
         }
-        |> TransformShipmates (Shipmate.TransformStatistic AvatarStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some))
+        |> TransformShipmates (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some))
         |> AddMetric Metric.Moved 1u
         |> Eat
 
@@ -257,9 +254,9 @@ module Avatar =
 
     let (|ALIVE|ZERO_HEALTH|OLD_AGE|)  //TODO: active patterns, while neat... just no. get rid of it and make a function instead.
             (avatar : Avatar) =
-        if avatar.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Health].CurrentValue <= avatar.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Health].MinimumValue then
+        if avatar.Shipmates.[0].Statistics.[ShipmateStatisticIdentifier.Health].CurrentValue <= avatar.Shipmates.[0].Statistics.[ShipmateStatisticIdentifier.Health].MinimumValue then
             ZERO_HEALTH    
-        elif avatar.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].CurrentValue >= avatar.Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].MaximumValue then
+        elif avatar.Shipmates.[0].Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue >= avatar.Shipmates.[0].Statistics.[ShipmateStatisticIdentifier.Turn].MaximumValue then
             OLD_AGE
         else
             ALIVE
@@ -293,5 +290,5 @@ module Avatar =
             (avatar                      : Avatar) : Avatar =
         Vessel.TransformFouling vesselSingleStatisticSource vesselSingleStatisticSink avatarId side (fun x-> {x with CurrentValue = x.MinimumValue})
         avatar
-        |> TransformShipmates (Shipmate.TransformStatistic AvatarStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some))
+        |> TransformShipmates (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some))
         |> IncrementMetric Metric.CleanedHull

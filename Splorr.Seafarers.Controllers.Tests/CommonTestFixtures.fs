@@ -29,21 +29,21 @@ let internal avatarId : string = ""
 let internal statisticDescriptors =
     [
         {
-            StatisticId = AvatarStatisticIdentifier.Satiety
+            StatisticId = ShipmateStatisticIdentifier.Satiety
             StatisticName="satiety"
             MinimumValue=0.0
             CurrentValue=100.0
             MaximumValue=100.0
         }
         {
-            StatisticId = AvatarStatisticIdentifier.Health
+            StatisticId = ShipmateStatisticIdentifier.Health
             StatisticName="health"
             MinimumValue=0.0
             CurrentValue=100.0
             MaximumValue=100.0
         }
         {
-            StatisticId = AvatarStatisticIdentifier.Turn
+            StatisticId = ShipmateStatisticIdentifier.Turn
             StatisticName="turn"
             MinimumValue=0.0
             CurrentValue=0.0
@@ -62,6 +62,10 @@ let internal vesselSingleStatisticSourceStub (_) (identifier: VesselStatisticIde
         {MinimumValue=0.001; MaximumValue=0.001; CurrentValue=0.001} |> Some
     | VesselStatisticIdentifier.Tonnage ->
         {MinimumValue=100.0; MaximumValue=100.0; CurrentValue=100.0} |> Some
+    | VesselStatisticIdentifier.ViewDistance ->
+        {MinimumValue=10.0; MaximumValue=10.0; CurrentValue=10.0} |> Some
+    | VesselStatisticIdentifier.DockDistance ->
+        {MinimumValue=1.0; MaximumValue=1.0; CurrentValue=1.0} |> Some
     | _ ->
         None
 

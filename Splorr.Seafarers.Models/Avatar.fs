@@ -2,16 +2,14 @@ namespace Splorr.Seafarers.Models
 
 type Avatar =
     {
-        Messages     : string list
-        Position     : Location
-        Heading      : float
-        Speed        : float
-        ViewDistance : float
-        DockDistance : float
-        Money        : float
-        Reputation   : float
-        Job          : Job option
-        Inventory    : Map<uint64, uint32>
-        Shipmates    : Shipmate array
-        Metrics      : Map<Metric, uint>
+        Messages     : string list//TODO: associate directly to avatarId
+        Position     : Location//TODO: make this a Vessel statistics
+        Heading      : float//TODO: make this a Vessel statistic - min 0, max 2pi
+        Speed        : float//TODO: make this a Vessel statistic - min 0, max 1
+        Money        : float//TODO: make this a Shipmate statistic - min 0, max 1.7976931348623157e308
+        Reputation   : float//TODO: make this a Shipmate statistic - min -1.7976931348623157e308, max 1.7976931348623157e308
+        Job          : Job option //TODO: associate directly to avatarId
+        Inventory    : Map<uint64, uint32> //TODO: gets its own table
+        Shipmates    : Shipmate array //TODO: gets its own set of tables associate to avatarId
+        Metrics      : Map<Metric, uint> //TODO: gets its own table associate to avatarId
     }
