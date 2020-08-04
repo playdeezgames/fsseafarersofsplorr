@@ -136,6 +136,7 @@ module Runner =
                     nameSource
                     vesselStatisticTemplateSource
                     vesselStatisticSink
+                    vesselSingleStatisticSource
                     (configurationSource()) 
                     commandSource 
                     messageSink 

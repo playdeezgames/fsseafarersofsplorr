@@ -1,7 +1,7 @@
 ﻿namespace Splorr.Seafarers.Persistence.Schema
 
 module Tables =
-    let AvatarStatisticTemplates : string = "CREATE TABLE IF NOT EXISTS [AvatarStatisticTemplates] (
+    let ShipmateStatisticTemplates : string = "CREATE TABLE IF NOT EXISTS [ShipmateStatisticTemplates] (
 		[StatisticId]	INTEGER,
 		[StatisticName]	TEXT NOT NULL,
 		[MinimumValue]	REAL NOT NULL,

@@ -3,12 +3,12 @@
 open System.Data.SQLite
 open Splorr.Seafarers.Models
 
-module AvatarStatisticTemplate =
+module ShipmateStatisticTemplate =
     let private convertor 
             (reader : SQLiteDataReader) 
-            : AvatarStatisticTemplate =
+            : ShipmateStatisticTemplate =
         {
-            StatisticId = reader.GetInt32(0) |> enum<AvatarStatisticIdentifier>
+            StatisticId = reader.GetInt32(0) |> enum<ShipmateStatisticIdentifier>
             StatisticName = reader.GetString(1)
             MinimumValue = reader.GetDouble(2)
             MaximumValue = reader.GetDouble(3)
@@ -17,10 +17,10 @@ module AvatarStatisticTemplate =
 
     let GetList 
             (connection : SQLiteConnection) 
-            : Result<Map<AvatarStatisticIdentifier, AvatarStatisticTemplate>, string> =
+            : Result<Map<ShipmateStatisticIdentifier, ShipmateStatisticTemplate>, string> =
         connection
         |> Utility.GetList 
-            "SELECT [StatisticId], [StatisticName], [MinimumValue], [MaximumValue], [CurrentValue] FROM [AvatarStatisticTemplates];" (fun _->()) convertor
+            "SELECT [StatisticId], [StatisticName], [MinimumValue], [MaximumValue], [CurrentValue] FROM [ShipmateStatisticTemplates];" (fun _->()) convertor
         |> Result.map
             (fun items ->
                 items

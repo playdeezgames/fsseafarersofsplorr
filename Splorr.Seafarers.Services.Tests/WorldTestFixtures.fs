@@ -18,11 +18,17 @@ let internal soloIslandWorldConfiguration: WorldConfiguration =
     }
 let private vesselStatisticTemplateSourceStub () = Map.empty
 let private vesselStatisticSinkStub (_) (_) = ()
+let private vesselSingleStatisticSourceStub (_) (identifier:VesselStatisticIdentifier) =
+    match identifier with
+    | VesselStatisticIdentifier.ViewDistance ->
+        {MinimumValue=10.0; CurrentValue=10.0; MaximumValue=10.0} |> Some
+    | _ -> None
 let internal soloIslandWorld = 
     World.Create 
         nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
+        vesselSingleStatisticSourceStub
         soloIslandWorldConfiguration 
         random 
         avatarId
@@ -35,8 +41,6 @@ let internal emptyWorld =
                 Position = (0.0,0.0)
                 Heading = 0.0
                 Speed = 1.0
-                ViewDistance = 10.0
-                DockDistance = 1.0
                 Money = 0.0
                 Reputation = 0.0
                 Job = None
@@ -47,9 +51,9 @@ let internal emptyWorld =
                         RationItems=[1UL]
                         Statistics = Map.empty
                     }
-                    |> Shipmate.SetStatistic AvatarStatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0) |> Some)
-                    |> Shipmate.SetStatistic AvatarStatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0) |> Some)
-                    |> Shipmate.SetStatistic AvatarStatisticIdentifier.Turn ({MinimumValue=0.0;CurrentValue=0.0;MaximumValue=15000.0} |> Some)
+                    |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0) |> Some)
+                    |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0) |> Some)
+                    |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Turn ({MinimumValue=0.0;CurrentValue=0.0;MaximumValue=15000.0} |> Some)
                     |]
             }
             ] 
@@ -98,6 +102,7 @@ let internal genericWorld =
         nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
+        vesselSingleStatisticSourceStub
         genericWorldConfiguration 
         random 
         avatarId
@@ -108,7 +113,7 @@ let internal deadWorld =
             |> Map.add 
                 avatarId 
                 (genericWorld.Avatars.[avatarId] 
-                |> Avatar.TransformShipmate (Shipmate.TransformStatistic AvatarStatisticIdentifier.Health (fun x -> {x with CurrentValue=x.MinimumValue} |> Some)) 0u )}
+                |> Avatar.TransformShipmate (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Health (fun x -> {x with CurrentValue=x.MinimumValue} |> Some)) 0u )}
 
 let internal genericWorldIslandLocation = genericWorld.Islands |> Map.toList |> List.map fst |> List.head
 let internal genericWorldInvalidIslandLocation = ((genericWorldIslandLocation |> fst) + 1.0, genericWorldIslandLocation |> snd)

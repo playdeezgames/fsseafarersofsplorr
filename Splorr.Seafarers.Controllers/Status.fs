@@ -21,9 +21,9 @@ module Status =
             (Hue.Label, "Reputation: " |> Text) |> Hued
             (Hue.Value, avatar.Reputation |> sprintf "%f" |> Line) |> Hued
             (Hue.Label, "Satiety: " |> Text) |> Hued
-            (Hue.Value, (shipmate.Statistics.[AvatarStatisticIdentifier.Satiety].CurrentValue, shipmate.Statistics.[AvatarStatisticIdentifier.Satiety].MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
+            (Hue.Value, (shipmate.Statistics.[ShipmateStatisticIdentifier.Satiety].CurrentValue, shipmate.Statistics.[ShipmateStatisticIdentifier.Satiety].MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
             (Hue.Label, "Health: " |> Text) |> Hued
-            (Hue.Value, (shipmate.Statistics.[AvatarStatisticIdentifier.Health].CurrentValue, shipmate.Statistics.[AvatarStatisticIdentifier.Health].MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
+            (Hue.Value, (shipmate.Statistics.[ShipmateStatisticIdentifier.Health].CurrentValue, shipmate.Statistics.[ShipmateStatisticIdentifier.Health].MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
             (Hue.Label, "Port Fouling: " |> Text) |> Hued
             (Hue.Value, (portFouling.CurrentValue, portFouling.MaximumValue) ||> sprintf "%.2f/%.2f" |> Line) |> Hued
             (Hue.Label, "Starboard Fouling: " |> Text) |> Hued

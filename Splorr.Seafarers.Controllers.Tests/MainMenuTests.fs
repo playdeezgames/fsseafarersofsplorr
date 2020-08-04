@@ -22,6 +22,7 @@ let private world =
         nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
+        vesselSingleStatisticSourceStub
         configuration 
         random 
         avatarId
@@ -45,6 +46,7 @@ let ``Run.It returns Confirm Quit when given Quit command and there is no world.
             nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
+            vesselSingleStatisticSourceStub
             configuration 
             inputSource 
             sinkStub
@@ -70,7 +72,10 @@ let ``Run.It returns Main Menu when given Quit command and there is a world.`` (
             nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
-            configuration inputSource sinkStub 
+            vesselSingleStatisticSourceStub
+            configuration 
+            inputSource 
+            sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -88,6 +93,7 @@ let ``Run.It returns Main Menu when given invalid command and there is no world.
             nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
+            vesselSingleStatisticSourceStub
             configuration (fun()->None) sinkStub 
     Assert.AreEqual(expected, actual)
 
@@ -108,7 +114,10 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
             nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
-            configuration (fun()->None) sinkStub 
+            vesselSingleStatisticSourceStub
+            configuration 
+            (fun()->None) 
+            sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -121,7 +130,10 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
             nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
-            configuration inputSource sinkStub 
+            vesselSingleStatisticSourceStub
+            configuration 
+            inputSource 
+            sinkStub 
     //the command creates a world, which has randomness in the generation
     //so it is very brittle to figure out what the expected would be
     match actual with
@@ -148,7 +160,10 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
             nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
-            configuration inputSource sinkStub 
+            vesselSingleStatisticSourceStub
+            configuration 
+            inputSource 
+            sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -166,7 +181,10 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
             nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
-            configuration inputSource sinkStub 
+            vesselSingleStatisticSourceStub
+            configuration 
+            inputSource 
+            sinkStub 
     Assert.AreEqual(expected, actual)
 
 
@@ -191,7 +209,10 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
             nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
-            configuration inputSource sinkStub 
+            vesselSingleStatisticSourceStub
+            configuration 
+            inputSource 
+            sinkStub 
     Assert.AreEqual(expected, actual)
 
 
@@ -210,7 +231,10 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
             nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
-            configuration inputSource sinkStub
+            vesselSingleStatisticSourceStub
+            configuration 
+            inputSource 
+            sinkStub
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -229,7 +253,10 @@ let ``Run.It returns Main Menu with no world when given Resume command and there
             nameSource
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
-            configuration inputSource sinkStub 
+            vesselSingleStatisticSourceStub
+            configuration 
+            inputSource 
+            sinkStub 
     Assert.AreEqual(expected, actual)
 
 

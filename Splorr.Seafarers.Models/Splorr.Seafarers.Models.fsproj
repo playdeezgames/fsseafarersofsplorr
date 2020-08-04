@@ -11,8 +11,8 @@
     <Compile Include="AvatarVisit.fs" />
     <Compile Include="Island.fs" />
     <Compile Include="StatisticTemplate.fs" />
-    <Compile Include="AvatarStatisticIdentifier.fs" />
-    <Compile Include="AvatarStatisticTemplate.fs" />
+    <Compile Include="ShipmateStatisticIdentifier.fs" />
+    <Compile Include="ShipmateStatisticTemplate.fs" />
     <Compile Include="VesselStatisticIdentifier.fs" />
     <Compile Include="VesselStatisticTemplate.fs" />
     <Compile Include="Statistic.fs" />

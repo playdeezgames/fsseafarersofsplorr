@@ -94,8 +94,13 @@ module World =
                 GenerateIslands nameSource configuration random 0u {world with Islands = world.Islands |> Map.add candidateLocation (Island.Create())}
 
     let UpdateCharts 
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (world    : World) 
             : World =
+        let viewDistance = 
+            vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.ViewDistance 
+            |> Option.get 
+            |> Statistic.GetCurrentValue
         world.Avatars
         |> Map.tryFind world.AvatarId
         |> Option.fold 
@@ -103,7 +108,7 @@ module World =
                 w.Islands
                 |> Map.filter
                     (fun location island -> 
-                        (island.AvatarVisits.ContainsKey world.AvatarId |> not) && ((avatar.Position |> Location.DistanceTo location)<=avatar.ViewDistance))
+                        (island.AvatarVisits.ContainsKey world.AvatarId |> not) && ((avatar.Position |> Location.DistanceTo location)<=viewDistance))
                 |> Map.fold
                     (fun a location _ ->
                         a
@@ -113,6 +118,7 @@ module World =
             (nameSource                    : TermSource)
             (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
             (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (configuration                 : WorldConfiguration) 
             (random                        : Random) 
             (avatarId                      : string): World =
@@ -126,7 +132,6 @@ module World =
                         vesselStatisticTemplateSource
                         vesselStatisticSink
                         avatarId
-                        configuration.AvatarDistances 
                         configuration.StatisticDescriptors 
                         configuration.RationItems 
                         (configuration.WorldSize 
@@ -134,7 +139,7 @@ module World =
             Islands = Map.empty
         }
         |> GenerateIslands nameSource configuration random 0u
-        |> UpdateCharts
+        |> UpdateCharts vesselSingleStatisticSource
 
     let TransformAvatar 
             (transform : Avatar -> Avatar option) 
@@ -207,7 +212,7 @@ module World =
                 world
                 |> TransformAvatar (Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink avatarId >> Some)
                 |> AddMessages [ "Steady as she goes." ]
-                |> UpdateCharts
+                |> UpdateCharts vesselSingleStatisticSource
             if IsAvatarAlive steppedWorld |> not then
                 steppedWorld
                 |> AddMessages [ "You die of old age!" ]
@@ -263,7 +268,7 @@ module World =
                 |> Set.remove location
             let updatedIsland = 
                 island
-                |> Island.AddVisit world.Avatars.[avatarId].Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].CurrentValue avatarId//only when this counts as a new visit...
+                |> Island.AddVisit world.Avatars.[avatarId].Shipmates.[0].Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue avatarId//only when this counts as a new visit...
                 |> Island.GenerateJobs termSources random rewardRange destinations 
             let items = itemSource()
             Island.GenerateCommodities commoditySource islandMarketSource islandMarketSink random location

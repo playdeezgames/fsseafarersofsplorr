@@ -3,13 +3,14 @@
 open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
+open System
 
 module CommandSource=
     let private ParseSetSpeed:
             string list -> Command option = 
         function
         | [ x ] ->
-            match System.Double.TryParse x with
+            match Double.TryParse x with
             | true, v ->
                 v |> Speed |> Command.Set |> Some
             | _ -> None
@@ -18,7 +19,7 @@ module CommandSource=
     let private ParseDms
             (d:string) 
             : float option =
-        match System.Double.TryParse(d) with
+        match Double.TryParse(d) with
         | (true, degrees) ->
             degrees
             |> Some
@@ -49,7 +50,7 @@ module CommandSource=
         function
         | [] -> 0u |> Command.Islands |> Some
         | [ token ] ->
-            match System.UInt32.TryParse token with
+            match UInt32.TryParse token with
             | true, page when page > 0u ->
                 (page - 1u) |> Command.Islands |> Some
             | _ -> None
@@ -77,7 +78,7 @@ module CommandSource=
             string list -> Command option =
         function
         | "job" :: [ number ] ->
-            match System.UInt32.TryParse(number) with
+            match UInt32.TryParse(number) with
             | true, value -> 
                 value |> Command.AcceptJob |> Some
             | _ -> None
@@ -102,7 +103,7 @@ module CommandSource=
         | [ "0" ] -> 
             None
         | [ number ] ->
-            match System.UInt32.TryParse(number) with
+            match UInt32.TryParse(number) with
             | true, distance ->
                 distance
                 |> Command.Move
@@ -126,7 +127,7 @@ module CommandSource=
         | "0" :: tail ->
             None
         | number :: tail ->
-            match System.UInt32.TryParse(number) with
+            match UInt32.TryParse(number) with
             | true, quantity ->
                 let itemName = System.String.Join(" ", tail)
                 (quantity |> Specific, itemName)
@@ -148,7 +149,7 @@ module CommandSource=
             |> Command.Sell
             |> Some
         | number :: tail ->
-            match System.UInt32.TryParse(number) with
+            match UInt32.TryParse(number) with
             | true, quantity ->
                 let itemName = System.String.Join(" ", tail)
                 (Specific quantity, itemName)

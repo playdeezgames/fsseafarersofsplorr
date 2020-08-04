@@ -29,6 +29,7 @@ let private world =
         nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
+        vesselSingleStatisticSourceStub
         configuration 
         random 
         avatarId

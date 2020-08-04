@@ -17,20 +17,30 @@ module AtSea =
             Hue.Error
 
     let private CanCareen 
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (world : World) 
             : bool =
         let avatar = world.Avatars.[world.AvatarId]
+        let viewDistance =
+            vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.ViewDistance 
+            |> Option.get 
+            |> Statistic.GetCurrentValue
         world
-        |> World.GetNearbyLocations avatar.Position avatar.ViewDistance
+        |> World.GetNearbyLocations avatar.Position viewDistance
         |> List.map (fun l -> (l,world.Islands.[l].CareenDistance))
         |> List.exists (fun (l,d) -> Location.DistanceTo l avatar.Position < d)
 
     let private GetVisibleIslands 
+            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (world : World) 
             : (Location * string * float * string) list =
         let avatar = world.Avatars.[world.AvatarId]
+        let viewDistance =
+            vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.ViewDistance 
+            |> Option.get 
+            |> Statistic.GetCurrentValue
         world
-        |> World.GetNearbyLocations avatar.Position avatar.ViewDistance
+        |> World.GetNearbyLocations avatar.Position viewDistance
         |> List.map
             (fun location -> 
                 (location, Location.HeadingTo avatar.Position location |> Angle.ToDegrees |> Angle.ToString, Location.DistanceTo avatar.Position location, (world.Islands.[location] |> Island.GetDisplayName world.AvatarId)))
@@ -51,8 +61,8 @@ module AtSea =
         [
             (Hue.Heading, "At Sea:" |> Line) |> Hued
             (Hue.Label, "Turn: " |> Text) |> Hued
-            (Hue.Value, shipmateZero.Statistics.[AvatarStatisticIdentifier.Turn].CurrentValue |> sprintf "%.0f" |> Text) |> Hued
-            (Hue.Value, shipmateZero.Statistics.[AvatarStatisticIdentifier.Turn].MaximumValue |> sprintf "/%.0f" |> Line) |> Hued
+            (Hue.Value, shipmateZero.Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue |> sprintf "%.0f" |> Text) |> Hued
+            (Hue.Value, shipmateZero.Statistics.[ShipmateStatisticIdentifier.Turn].MaximumValue |> sprintf "/%.0f" |> Line) |> Hued
             (Hue.Label, "Heading: " |> Text) |> Hued
             (Hue.Value, avatar.Heading |> Angle.ToDegrees |> Angle.ToString |> sprintf "%s" |> Line) |> Hued
             (Hue.Label, "Speed: " |> Text) |> Hued
@@ -62,8 +72,12 @@ module AtSea =
         ]
         |> List.iter messageSink
 
+        let dockDistance = 
+            vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.DockDistance 
+            |> Option.get 
+            |> Statistic.GetCurrentValue
         world
-        |> GetVisibleIslands
+        |> GetVisibleIslands vesselSingleStatisticSource
         |> List.iter
             (fun (_, heading, distance, name) -> 
                 [
@@ -73,7 +87,7 @@ module AtSea =
                     (Hue.Value, sprintf "%s " heading |> Text) |> Hued
                     (Hue.Sublabel, "Distance: " |> Text) |> Hued
                     (Hue.Value, sprintf "%f" distance |> Text) |> Hued
-                    (Hue.Flavor, sprintf "%s" (if distance<avatar.DockDistance then " (Can Dock)" else "") |> Line) |> Hued
+                    (Hue.Flavor, sprintf "%s" (if distance<dockDistance then " (Can Dock)" else "") |> Line) |> Hued
                 ]
                 |> List.iter messageSink)
 
@@ -99,14 +113,18 @@ module AtSea =
         let avatar = world.Avatars.[world.AvatarId]
 
         let canCareen = 
-            CanCareen world
+            CanCareen vesselSingleStatisticSource world
 
+        let dockDistance = 
+            vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.ViewDistance 
+            |> Option.get 
+            |> Statistic.GetCurrentValue
         let dockTarget = 
             world
-            |> GetVisibleIslands
+            |> GetVisibleIslands vesselSingleStatisticSource
             |> List.fold
                 (fun target (location, _, distance, _) -> 
-                    (if distance<avatar.DockDistance then (Some location) else target)) None
+                    (if distance<dockDistance then (Some location) else target)) None
 
         match command with
         | Some Command.Status ->

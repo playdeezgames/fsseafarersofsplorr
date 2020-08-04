@@ -23,6 +23,7 @@ let internal world =
         nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
+        vesselSingleStatisticSourceStub
         configuration 
         random 
         avatarId
@@ -31,7 +32,7 @@ let internal deadWorld =
     world
     |> World.TransformAvatar
         (Avatar.TransformShipmate (Shipmate.TransformStatistic 
-                AvatarStatisticIdentifier.Health 
+                ShipmateStatisticIdentifier.Health 
                 (fun statistic-> 
                     {statistic with 
                         CurrentValue = statistic.MinimumValue} 
@@ -57,6 +58,7 @@ let internal emptyWorld =
         nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
+        vesselSingleStatisticSourceStub
         emptyWorldconfiguration 
         random
         avatarId
@@ -77,6 +79,7 @@ let internal dockWorld =
         nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
+        vesselSingleStatisticSourceStub
         dockWorldconfiguration 
         random
         avatarId
@@ -88,6 +91,7 @@ let internal headForWorldUnvisited =
         nameSource
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
+        vesselSingleStatisticSourceStub
         dockWorldconfiguration 
         random
         avatarId

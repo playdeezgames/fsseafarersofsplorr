@@ -110,6 +110,8 @@ let ``Move.It moves the avatar one unit when give 1u for distance when given a v
             {MinimumValue=0.0; CurrentValue=0.0; MaximumValue=0.25} |> Some
         | VesselStatisticIdentifier.FoulRate ->
             {MinimumValue=0.001; MaximumValue=0.001; CurrentValue=0.001} |> Some
+        | VesselStatisticIdentifier.ViewDistance ->
+            {MinimumValue=10.0; MaximumValue=10.0; CurrentValue=10.0} |> Some
         | _ ->
             Assert.Fail("Dont call me.")
             None
@@ -143,6 +145,8 @@ let ``Move.It moves the avatar almost two units when give 2u for distance.`` () 
             {MinimumValue=0.0; CurrentValue=0.0; MaximumValue=0.25} |> Some
         | VesselStatisticIdentifier.FoulRate ->
             {MinimumValue=0.001; MaximumValue=0.001; CurrentValue=0.001} |> Some
+        | VesselStatisticIdentifier.ViewDistance ->
+            {MinimumValue=10.0; MaximumValue=10.0; CurrentValue=10.0} |> Some
         | _ ->
             Assert.Fail("Dont call me.")
             None
@@ -162,6 +166,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
             Jobs = []
             CareenDistance = 0.0
         }
+    let viewDistance = 5.0
     let world =
         {
             AvatarId = avatarId
@@ -171,8 +176,6 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                     Position=(5.0, 5.0)
                     Speed=1.0
                     Heading=0.0
-                    ViewDistance = 5.0
-                    DockDistance = 1.0
                     Money = 0.0
                     Reputation = 0.0
                     Job = None
@@ -183,9 +186,9 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                             Statistics = Map.empty
                             RationItems = [1UL]
                         }
-                        |> Shipmate.SetStatistic AvatarStatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0)|>Some)
-                        |> Shipmate.SetStatistic AvatarStatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0)|>Some)
-                        |> Shipmate.SetStatistic AvatarStatisticIdentifier.Turn (Statistic.Create (0.0, 15000.0) (0.0)|>Some)
+                        |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0)|>Some)
+                        |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0)|>Some)
+                        |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Turn (Statistic.Create (0.0, 15000.0) (0.0)|>Some)
                         |]
                 }
                 ]|>Map.ofList
@@ -203,7 +206,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
         }
     let actual = 
         world
-        |> World.GetNearbyLocations world.Avatars.[avatarId].Position world.Avatars.[avatarId].ViewDistance
+        |> World.GetNearbyLocations world.Avatars.[avatarId].Position viewDistance
     Assert.AreEqual(5, actual.Length)
     Assert.IsFalse (actual |> List.exists(fun i -> i=( 0.0,  0.0)))
     Assert.IsTrue  (actual |> List.exists(fun i -> i=( 5.0,  0.0)))
@@ -290,7 +293,7 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
     let inputWorld = oneIslandWorld
     let expectedIsland = 
         inputWorld.Islands.[(0.0, 0.0)] 
-        |> Island.AddVisit inputWorld.Avatars.[avatarId].Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].CurrentValue avatarId
+        |> Island.AddVisit inputWorld.Avatars.[avatarId].Shipmates.[0].Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue avatarId
     let expectedAvatar = 
         {inputWorld.Avatars.[avatarId] with  
             Messages = [ "You dock." ]
@@ -330,7 +333,7 @@ let ``HeadFor.It adds a message when the island name exists but is not known.`` 
 let ``HeadFor.It sets the heading when the island name exists and is known.`` () =
     let inputWorld =
         headForWorld
-        |> World.TransformIsland (0.0,0.0) (Island.AddVisit headForWorld.Avatars.[avatarId].Shipmates.[0].Statistics.[AvatarStatisticIdentifier.Turn].CurrentValue avatarId >> Some)
+        |> World.TransformIsland (0.0,0.0) (Island.AddVisit headForWorld.Avatars.[avatarId].Shipmates.[0].Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue avatarId >> Some)
     let expected = {inputWorld with Avatars = inputWorld.Avatars |> Map.add avatarId {inputWorld.Avatars.[avatarId] with Messages=[ "You set your heading to 180.00°."; "You head for `Uno`." ]; Heading=System.Math.PI}}
     let actual =
         inputWorld
@@ -496,6 +499,7 @@ let islandSingleMarketSinkStub (_) (_) = ()
 let vesselSingleStatisticSourceStub (_) (identifier) = 
     match identifier with
     | VesselStatisticIdentifier.Tonnage -> {MinimumValue=100.0; CurrentValue=100.0; MaximumValue=100.0} |> Some
+    | VesselStatisticIdentifier.ViewDistance -> {MinimumValue=10.0; CurrentValue=10.0; MaximumValue=10.0} |> Some
     | _ -> None
 
 [<Test>]
@@ -793,7 +797,7 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
         Assert.AreEqual(statistic.MinimumValue, statistic.CurrentValue)
     let expectedAvatar =
         inputAvatar
-        |> Avatar.TransformShipmate (Shipmate.TransformStatistic AvatarStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)) 0u
+        |> Avatar.TransformShipmate (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)) 0u
         |> Avatar.AddMetric Metric.CleanedHull 1u
     let expected =
         {inputWorld with
@@ -856,7 +860,7 @@ let ``UpdateChart.It does nothing when the given avatar is not near any nearby i
         input
     let actual =
         input
-        |> World.UpdateCharts
+        |> World.UpdateCharts vesselSingleStatisticSourceStub
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -867,7 +871,7 @@ let ``UpdateChart.It does nothing when the given avatar has already seen all nea
         input
     let actual =
         input
-        |> World.UpdateCharts
+        |> World.UpdateCharts vesselSingleStatisticSourceStub
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -882,6 +886,6 @@ let ``UpdateChart.It does sets all nearby island to "seen" when given avatar is 
         genericWorld
     let actual =
         input
-        |> World.UpdateCharts
+        |> World.UpdateCharts vesselSingleStatisticSourceStub
     Assert.AreEqual(expected, actual)
 
