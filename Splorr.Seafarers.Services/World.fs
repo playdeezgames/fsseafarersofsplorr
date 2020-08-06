@@ -174,17 +174,19 @@ module World =
                 |> AddMessages [newSpeed |> sprintf "You set your speed to %.2f."]) world
 
     let SetHeading 
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
             (heading  : float) 
             (world    : World) 
             : World =
-        let avatarId = world.AvatarId
-        world.Avatars
-        |> Map.tryFind avatarId
-        |> Option.bind (Avatar.SetHeading heading >> Some)
-        |> Option.fold 
-            (fun w a ->
-                {w with Avatars = w.Avatars |> Map.add avatarId a}
-                |> AddMessages [a.Heading |> Angle.ToDegrees |> Angle.ToString |> sprintf "You set your heading to %s." ]) world
+        world.AvatarId
+        |> Avatar.SetHeading vesselSingleStatisticSource vesselSingleStatisticSink heading 
+        world.AvatarId
+        |> Avatar.GetHeading vesselSingleStatisticSource
+        |> Option.fold
+            (fun w newHeading ->
+                w
+                |> AddMessages [newHeading |> Angle.ToDegrees |> Angle.ToString |> sprintf "You set your heading to %s." ]) world
 
     //a bool is not sufficient!
     //an avatar may be dead because of health
@@ -318,7 +320,9 @@ module World =
         | _ ->
             world
 
-    let HeadFor 
+    let HeadFor
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
             (islandName : string) 
             (world      : World) 
             : World =
@@ -333,7 +337,7 @@ module World =
         match location, world.Avatars |> Map.tryFind world.AvatarId with
         | Some l, Some avatar ->
             world
-            |> SetHeading (Location.HeadingTo avatar.Position l |> Angle.ToDegrees)
+            |> SetHeading vesselSingleStatisticSource vesselSingleStatisticSink (Location.HeadingTo avatar.Position l |> Angle.ToDegrees)
             |> AddMessages [ islandName |> sprintf "You head for `%s`." ]
         | _, Some _ ->
             world

@@ -11,8 +11,6 @@ let ``Create.It creates an avatar.`` () =
     let actual =
         avatar
     Assert.AreEqual((0.0,0.0), actual.Position)
-    Assert.AreEqual(0.0, actual.Heading)
-
 
 [<Test>]
 let ``SetSpeed.It sets all stop when given less than zero.`` () =
@@ -113,12 +111,22 @@ let ``SetSpeed.It sets all stop when given zero.`` () =
 
 [<Test>]
 let ``SetHeading.It sets a given heading.`` () =
-    let heading = 2.5
-    let actual =
-        avatar
-        |> Avatar.SetHeading heading
-    Assert.AreEqual(heading |> Angle.ToRadians, actual.Heading)
-
+    let input = avatarId
+    let inputHeading = 2.5
+    let originalHeading = 0.0
+    let vesselSingleStatisticSource (_) (identifier) = 
+        match identifier with
+        | VesselStatisticIdentifier.Heading ->
+            {MinimumValue=0.0; MaximumValue=6.3; CurrentValue=originalHeading} |> Some
+        | _ -> 
+            raise (System.NotImplementedException "Dont call me.")
+            None
+    let expectedHeading = inputHeading |> Angle.ToRadians
+    let vesselSingleStatisticSink (_) (identifier: VesselStatisticIdentifier, statistic:Statistic) = 
+        Assert.AreEqual(VesselStatisticIdentifier.Heading,identifier)
+        Assert.AreEqual(expectedHeading, statistic.CurrentValue)
+    input
+    |> Avatar.SetHeading vesselSingleStatisticSource vesselSingleStatisticSink inputHeading
 
 let private inputAvatarId = "avatar"
 
@@ -630,4 +638,26 @@ let ``GetSpeed.It gets the speed of an avatar.`` () =
     let actual =
         inputAvatarId
         |> Avatar.GetSpeed vesselSingleStatisticSource
+    Assert.AreEqual(expected, actual)
+
+
+[<Test>]
+let ``GetHeading.It gets the heading of an avatar.`` () =
+    let actualSpeed = 
+        {
+            MinimumValue = 0.0
+            MaximumValue = 6.3
+            CurrentValue = 0.0
+        }
+    let vesselSingleStatisticSource (_) (identifier) =
+        match identifier with
+        | VesselStatisticIdentifier.Heading -> actualSpeed |> Some
+        | _ ->
+            raise (System.NotImplementedException "Kaboom get")
+            None
+    let inputAvatarId="avatar"
+    let expected = 0.0 |> Some
+    let actual =
+        inputAvatarId
+        |> Avatar.GetHeading vesselSingleStatisticSource
     Assert.AreEqual(expected, actual)

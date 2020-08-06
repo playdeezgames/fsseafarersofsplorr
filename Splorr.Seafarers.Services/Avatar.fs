@@ -29,7 +29,6 @@ module Avatar =
         {
             Messages = []
             Position = position
-            Heading = 0.0
             Money = 0.0
             Reputation = 0.0
             Job = None
@@ -47,6 +46,15 @@ module Avatar =
         |> vesselSingleStatisticSource avatarId 
         |> Option.map Statistic.GetCurrentValue
 
+    let GetHeading
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (avatarId                    : string)
+            : float option =
+        VesselStatisticIdentifier.Heading
+        |> vesselSingleStatisticSource avatarId 
+        |> Option.map Statistic.GetCurrentValue
+
+
     let SetSpeed 
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (vesselSingleStatisticSink   : VesselSingleStatisticSink)
@@ -62,10 +70,18 @@ module Avatar =
                 |> vesselSingleStatisticSink avatarId)
 
     let SetHeading 
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
             (heading : float) 
-            (avatar  : Avatar) 
-            : Avatar = //TODO: make heading a vessel statistic
-        {avatar with Heading = heading |> Angle.ToRadians}
+            (avatarId  : string) 
+            : unit =
+        vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Heading
+        |> Option.iter
+            (fun statistic ->
+                (VesselStatisticIdentifier.Heading, 
+                    statistic
+                    |> Statistic.SetCurrentValue (heading |> Angle.ToRadians))
+                |> vesselSingleStatisticSink avatarId)
 
     let private PurgeInventory (avatar:Avatar) : Avatar =
         {avatar with Inventory = avatar.Inventory |> Map.filter (fun _ v -> v>0u)}
@@ -176,9 +192,15 @@ module Avatar =
             (avatarId                    : string)
             (avatar                      : Avatar) 
             : Avatar =
-        let actualSpeed = avatarId |> GetEffectiveSpeed vesselSingleStatisticSource
+        let actualSpeed = 
+            avatarId 
+            |> GetEffectiveSpeed vesselSingleStatisticSource
+        let actualHeading = 
+            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Heading 
+            |> Option.map Statistic.GetCurrentValue 
+            |> Option.get
         Vessel.Befoul vesselSingleStatisticSource vesselSingleStatisticSink avatarId
-        let newPosition = ((avatar.Position |> fst) + System.Math.Cos(avatar.Heading) * actualSpeed, (avatar.Position |> snd) + System.Math.Sin(avatar.Heading) * actualSpeed)
+        let newPosition = ((avatar.Position |> fst) + System.Math.Cos(actualHeading) * actualSpeed, (avatar.Position |> snd) + System.Math.Sin(actualHeading) * actualSpeed)
         {
             avatar with 
                 Position = newPosition

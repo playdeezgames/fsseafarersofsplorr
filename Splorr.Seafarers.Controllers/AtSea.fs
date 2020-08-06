@@ -60,6 +60,10 @@ module AtSea =
             world.AvatarId 
             |> Avatar.GetSpeed vesselSingleStatisticSource 
             |> Option.get
+        let heading = 
+            world.AvatarId 
+            |> Avatar.GetHeading vesselSingleStatisticSource 
+            |> Option.get
         let speedHue =DetermineSpeedHue speed
         let shipmateZero = avatar.Shipmates.[0]
         [
@@ -68,7 +72,7 @@ module AtSea =
             (Hue.Value, shipmateZero.Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue |> sprintf "%.0f" |> Text) |> Hued
             (Hue.Value, shipmateZero.Statistics.[ShipmateStatisticIdentifier.Turn].MaximumValue |> sprintf "/%.0f" |> Line) |> Hued
             (Hue.Label, "Heading: " |> Text) |> Hued
-            (Hue.Value, avatar.Heading |> Angle.ToDegrees |> Angle.ToString |> sprintf "%s" |> Line) |> Hued
+            (Hue.Value, heading |> Angle.ToDegrees |> Angle.ToString |> sprintf "%s" |> Line) |> Hued
             (Hue.Label, "Speed: " |> Text) |> Hued
             (speedHue, (speed * 100.0) |> sprintf "%.0f%%" |> Text) |> Hued
             world.AvatarId 
@@ -141,7 +145,7 @@ module AtSea =
 
         | Some (Command.HeadFor name) ->
             world
-            |> World.HeadFor name
+            |> World.HeadFor vesselSingleStatisticSource vesselSingleStatisticSink name
             |> Gamestate.AtSea
             |> Some
 
@@ -229,7 +233,7 @@ module AtSea =
 
         | Some (Command.Set (SetCommand.Heading heading)) ->
             world
-            |> World.SetHeading heading
+            |> World.SetHeading vesselSingleStatisticSource vesselSingleStatisticSink heading
             |> Gamestate.AtSea
             |> Some
 

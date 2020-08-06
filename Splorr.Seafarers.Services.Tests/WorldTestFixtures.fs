@@ -39,7 +39,6 @@ let internal emptyWorld =
             [avatarId,{
                 Messages = []
                 Position = (0.0,0.0)
-                Heading = 0.0
                 Money = 0.0
                 Reputation = 0.0
                 Job = None

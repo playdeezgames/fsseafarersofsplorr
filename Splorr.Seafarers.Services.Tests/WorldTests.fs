@@ -9,7 +9,6 @@ open CommonTestFixtures
 [<Test>]
 let ``Create.It creates a new world.`` () =
     let actual = soloIslandWorld
-    Assert.AreEqual(0.0, actual.Avatars.[avatarId].Heading)
     Assert.AreEqual((5.0,5.0), actual.Avatars.[avatarId].Position)
     Assert.AreEqual(1, actual.Islands.Count)
     Assert.AreNotEqual("", (actual.Islands |> Map.toList |> List.map snd |> List.head).Name)
@@ -153,21 +152,34 @@ let ``SetSpeed.It sets all stop when given zero`` () =
 [<Test>]
 let ``SetHeading.It sets a new heading when given a valid avatar id.`` () =
     let heading = 1.5
-    let actual =
-        soloIslandWorld
-        |> World.SetHeading heading
-    Assert.AreEqual(heading |> Angle.ToRadians, actual.Avatars.[avatarId].Heading)
+    let vesselSingleStatisticSource (_) (identifier) =
+        match identifier with
+        | VesselStatisticIdentifier.Heading ->
+            {MinimumValue=0.0; MaximumValue=6.3; CurrentValue=0.0} |> Some
+        | _ ->
+            raise (System.NotImplementedException "Kaboom get")
+            None
+    let expectedHeading = heading |> Angle.ToRadians
+    let vesselSingleStatisticSink (_) (identifier:VesselStatisticIdentifier, statistic:Statistic) =
+        Assert.AreEqual(VesselStatisticIdentifier.Heading, identifier)
+        Assert.AreEqual(expectedHeading, statistic.CurrentValue)
+    soloIslandWorld
+    |> World.SetHeading vesselSingleStatisticSource vesselSingleStatisticSink heading
+    |> ignore
+    
 
 [<Test>]
 let ``SetHeading.It does nothing when given an invalid avatar id`` () =
     let input = 
         {soloIslandWorld with AvatarId = bogusAvatarId}
-    let expected = input
+    let vesselSingleStatisticSource (_) (_) =
+        None
+    let vesselSingleStatisticSink (_) (_) =
+        raise (System.NotImplementedException "Kaboom set")
     let heading = 1.5
-    let actual =
-        input
-        |> World.SetHeading heading
-    Assert.AreEqual(expected, actual)
+    input
+    |> World.SetHeading vesselSingleStatisticSource vesselSingleStatisticSink heading
+    |> ignore
 
 
 [<Test>]
@@ -183,6 +195,8 @@ let ``Move.It moves the avatar one unit when give 1u for distance when given a v
             {MinimumValue=10.0; MaximumValue=10.0; CurrentValue=10.0} |> Some
         | VesselStatisticIdentifier.Speed ->
             {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=1.0} |> Some
+        | VesselStatisticIdentifier.Heading ->
+            {MinimumValue=0.0; MaximumValue=6.3; CurrentValue=0.0} |> Some
         | _ ->
             Assert.Fail("Dont call me.")
             None
@@ -220,6 +234,8 @@ let ``Move.It moves the avatar almost two units when give 2u for distance.`` () 
             {MinimumValue=10.0; MaximumValue=10.0; CurrentValue=10.0} |> Some
         | VesselStatisticIdentifier.Speed ->
             {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=1.0} |> Some
+        | VesselStatisticIdentifier.Heading ->
+            {MinimumValue=0.0; MaximumValue=6.3; CurrentValue=0.0} |> Some
         | _ ->
             Assert.Fail("Dont call me.")
             None
@@ -247,8 +263,6 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                 [avatarId,{
                     Messages = []
                     Position=(5.0, 5.0)
-                    //Speed=1.0
-                    Heading=0.0
                     Money = 0.0
                     Reputation = 0.0
                     Job = None
@@ -385,10 +399,15 @@ let ``HeadFor.It adds a message when the island name does not exist.`` () =
     let inputWorld = headForWorld
     let expectedAvatar = {inputWorld.Avatars.[avatarId] with Messages = [ "I don't know how to get to `yermom`." ]}
     let expected =
-        {inputWorld with Avatars= inputWorld.Avatars |> Map.add avatarId expectedAvatar}        
+        {inputWorld with Avatars= inputWorld.Avatars |> Map.add avatarId expectedAvatar}       
+    let vesselSingleStatisticSource (_) (_) =
+        raise (System.NotImplementedException "Kaboom get")
+        None
+    let vesselSingleStatisticSink (_) (_) =
+        raise (System.NotImplementedException "Kaboom set")
     let actual =
         inputWorld
-        |> World.HeadFor "yermom"
+        |> World.HeadFor vesselSingleStatisticSource vesselSingleStatisticSink "yermom"
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -396,10 +415,15 @@ let ``HeadFor.It adds a message when the island name exists but is not known.`` 
     let inputWorld = headForWorld
     let expectedAvatar = {inputWorld.Avatars.[avatarId] with Messages = [ "I don't know how to get to `Uno`." ]}
     let expected =
-        {inputWorld with Avatars= inputWorld.Avatars |> Map.add avatarId expectedAvatar}        
+        {inputWorld with Avatars= inputWorld.Avatars |> Map.add avatarId expectedAvatar}   
+    let vesselSingleStatisticSource (_) (_) =
+        raise (System.NotImplementedException "Kaboom get")
+        None
+    let vesselSingleStatisticSink (_) (_) =
+        raise (System.NotImplementedException "Kaboom set")
     let actual =
         inputWorld
-        |> World.HeadFor "Uno"
+        |> World.HeadFor vesselSingleStatisticSource vesselSingleStatisticSink "Uno"
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -407,10 +431,30 @@ let ``HeadFor.It sets the heading when the island name exists and is known.`` ()
     let inputWorld =
         headForWorld
         |> World.TransformIsland (0.0,0.0) (Island.AddVisit headForWorld.Avatars.[avatarId].Shipmates.[0].Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue avatarId >> Some)
-    let expected = {inputWorld with Avatars = inputWorld.Avatars |> Map.add avatarId {inputWorld.Avatars.[avatarId] with Messages=[ "You set your heading to 180.00°."; "You head for `Uno`." ]; Heading=System.Math.PI}}
+    let expected = 
+        {inputWorld with 
+            Avatars = 
+                inputWorld.Avatars 
+                |> Map.add avatarId 
+                    {inputWorld.Avatars.[avatarId] with 
+                        Messages=
+                            [ 
+                                "You set your heading to 0.00°." //note - value for heading not actually stored, but is really 180
+                                "You head for `Uno`." ]}}
+    let vesselSingleStatisticSource (_) (identifier) =
+        match identifier with
+        | VesselStatisticIdentifier.Heading ->
+            {MinimumValue=0.0; MaximumValue=6.3; CurrentValue=0.0} |> Some
+        | _ ->
+            raise (System.NotImplementedException "Kaboom get")
+            None
+    let expectedHeading = System.Math.PI
+    let vesselSingleStatisticSink (_) (identifier: VesselStatisticIdentifier, statistic: Statistic) =
+        Assert.AreEqual(VesselStatisticIdentifier.Heading, identifier)
+        Assert.AreEqual(expectedHeading, statistic.CurrentValue)
     let actual =
         inputWorld
-        |> World.HeadFor "Uno"
+        |> World.HeadFor vesselSingleStatisticSource vesselSingleStatisticSink "Uno"
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -496,6 +540,8 @@ let ``TransformAvatar.It transforms the avatar within the given world.`` () =
         match identifier with
         | VesselStatisticIdentifier.Speed ->
             {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=1.0} |> Some
+        | VesselStatisticIdentifier.Heading ->
+            {MinimumValue=0.0; MaximumValue=6.5; CurrentValue=0.0} |> Some
         | VesselStatisticIdentifier.FoulRate ->
             {MinimumValue=0.01; MaximumValue=0.01; CurrentValue=0.01} |> Some
         | _ ->
