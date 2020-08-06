@@ -69,6 +69,8 @@ let internal vesselSingleStatisticSourceStub (_) (identifier: VesselStatisticIde
         {MinimumValue=1.0; MaximumValue=1.0; CurrentValue=1.0} |> Some
     | VesselStatisticIdentifier.Speed ->
         {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=1.0} |> Some
+    | VesselStatisticIdentifier.Heading ->
+        {MinimumValue=0.0; MaximumValue=6.3; CurrentValue=0.0} |> Some
     | _ ->
         None
 

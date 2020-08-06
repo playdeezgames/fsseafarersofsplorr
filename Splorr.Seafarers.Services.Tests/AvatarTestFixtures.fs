@@ -15,6 +15,8 @@ let internal vesselSingleStatisticSource (_) (identifier) =
         {MinimumValue = 0.001; CurrentValue=0.001; MaximumValue=0.001} |> Some
     | VesselStatisticIdentifier.Speed ->
         {MinimumValue = 0.0; CurrentValue=1.0; MaximumValue=1.0} |> Some
+    | VesselStatisticIdentifier.Heading ->
+        {MinimumValue = 0.0; CurrentValue=0.0; MaximumValue=6.3} |> Some
     | _ ->
         None
 let internal vesselSingleStatisticSink (_) (_) = ()
