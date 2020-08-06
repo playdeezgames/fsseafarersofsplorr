@@ -6,7 +6,6 @@ open Splorr.Seafarers.Models
 
 [<Test>]
 let ``Create.It creates a vessel.`` () =
-    let inputTonnage = 1.0
     let inputAvatarId = "avatar"
     let inputTemplates : Map<VesselStatisticIdentifier, VesselStatisticTemplate> =
         Map.empty
@@ -20,8 +19,7 @@ let ``Create.It creates a vessel.`` () =
     let vesselStatisticSink (avatarId:string) (statistics:Map<VesselStatisticIdentifier, Statistic>) : unit =
         Assert.AreEqual(inputAvatarId, avatarId)
         Assert.AreEqual(expectedStatistics, statistics)
-    inputTonnage
-    |> Vessel.Create vesselStatisticTemplateSource vesselStatisticSink inputAvatarId
+    Vessel.Create vesselStatisticTemplateSource vesselStatisticSink inputAvatarId
 
 [<Test>]
 let ``TransformFouling.It transforms fouling on the port side when the port side is specified.`` () =

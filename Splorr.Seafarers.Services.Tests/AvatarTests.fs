@@ -11,44 +11,105 @@ let ``Create.It creates an avatar.`` () =
     let actual =
         avatar
     Assert.AreEqual((0.0,0.0), actual.Position)
-    Assert.AreEqual(1.0, actual.Speed)
     Assert.AreEqual(0.0, actual.Heading)
 
 
 [<Test>]
 let ``SetSpeed.It sets all stop when given less than zero.`` () =
-    let actual =
-        avatar
-        |> Avatar.SetSpeed (-1.0)
-    Assert.AreEqual(0.0, actual.Speed)
+    let input = avatarId
+    let inputSpeed = -1.0
+    let originalSpeed = 0.5
+    let vesselSingleStatisticSource (_) (identifier) = 
+        match identifier with
+        | VesselStatisticIdentifier.Speed ->
+            {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=originalSpeed} |> Some
+        | _ -> 
+            raise (System.NotImplementedException "Dont call me.")
+            None
+    let expectedSpeed = 0.0
+    let vesselSingleStatisticSink (_) (identifier: VesselStatisticIdentifier, statistic:Statistic) = 
+        Assert.AreEqual(VesselStatisticIdentifier.Speed,identifier)
+        Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
+    input
+    |> Avatar.SetSpeed vesselSingleStatisticSource vesselSingleStatisticSink inputSpeed
 
 [<Test>]
 let ``SetSpeed.It sets full speed when gives more than one.`` () =
-    let actual =
-        avatar
-        |> Avatar.SetSpeed (2.0)
-    Assert.AreEqual(1.0, actual.Speed)
+    let input = avatarId
+    let inputSpeed = 2.0
+    let originalSpeed = 0.5
+    let vesselSingleStatisticSource (_) (identifier) = 
+        match identifier with
+        | VesselStatisticIdentifier.Speed ->
+            {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=originalSpeed} |> Some
+        | _ -> 
+            raise (System.NotImplementedException "Dont call me.")
+            None
+    let expectedSpeed = 1.0
+    let vesselSingleStatisticSink (_) (identifier: VesselStatisticIdentifier, statistic:Statistic) = 
+        Assert.AreEqual(VesselStatisticIdentifier.Speed,identifier)
+        Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
+    input
+    |> Avatar.SetSpeed vesselSingleStatisticSource vesselSingleStatisticSink inputSpeed
 
 [<Test>]
 let ``SetSpeed.It sets half speed when given half speed.`` () =
-    let actual =
-        avatar
-        |> Avatar.SetSpeed (0.5)
-    Assert.AreEqual(0.5, actual.Speed)
+    let input = avatarId
+    let inputSpeed = 0.5
+    let originalSpeed = 1.0
+    let vesselSingleStatisticSource (_) (identifier) = 
+        match identifier with
+        | VesselStatisticIdentifier.Speed ->
+            {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=originalSpeed} |> Some
+        | _ -> 
+            raise (System.NotImplementedException "Dont call me.")
+            None
+    let expectedSpeed = 0.5
+    let vesselSingleStatisticSink (_) (identifier: VesselStatisticIdentifier, statistic:Statistic) = 
+        Assert.AreEqual(VesselStatisticIdentifier.Speed,identifier)
+        Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
+    input
+    |> Avatar.SetSpeed vesselSingleStatisticSource vesselSingleStatisticSink inputSpeed
+
 
 [<Test>]
-let ``SetSpeed.It sets full speed when given one.`` () =
-    let actual =
-        avatar
-        |> Avatar.SetSpeed (1.0)
-    Assert.AreEqual(1.0, actual.Speed)
+let ``SetSpeed.It sets full speed when given one.`` () =    
+    let input = avatarId
+    let inputSpeed = 1.0
+    let originalSpeed = 0.5
+    let vesselSingleStatisticSource (_) (identifier) = 
+        match identifier with
+        | VesselStatisticIdentifier.Speed ->
+            {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=originalSpeed} |> Some
+        | _ -> 
+            raise (System.NotImplementedException "Dont call me.")
+            None
+    let expectedSpeed = 1.0
+    let vesselSingleStatisticSink (_) (identifier: VesselStatisticIdentifier, statistic:Statistic) = 
+        Assert.AreEqual(VesselStatisticIdentifier.Speed,identifier)
+        Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
+    input
+    |> Avatar.SetSpeed vesselSingleStatisticSource vesselSingleStatisticSink inputSpeed
+
 
 [<Test>]
 let ``SetSpeed.It sets all stop when given zero.`` () =
-    let actual =
-        avatar
-        |> Avatar.SetSpeed (0.0)
-    Assert.AreEqual(0.0, actual.Speed)
+    let input = avatarId
+    let inputSpeed = 0.0
+    let originalSpeed = 0.5
+    let vesselSingleStatisticSource (_) (identifier) = 
+        match identifier with
+        | VesselStatisticIdentifier.Speed ->
+            {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=originalSpeed} |> Some
+        | _ -> 
+            raise (System.NotImplementedException "Dont call me.")
+            None
+    let expectedSpeed = 0.0
+    let vesselSingleStatisticSink (_) (identifier: VesselStatisticIdentifier, statistic:Statistic) = 
+        Assert.AreEqual(VesselStatisticIdentifier.Speed,identifier)
+        Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
+    input
+    |> Avatar.SetSpeed vesselSingleStatisticSource vesselSingleStatisticSink inputSpeed
 
 [<Test>]
 let ``SetHeading.It sets a given heading.`` () =
@@ -408,24 +469,19 @@ let ``GetUsedTonnage.It calculates the used tonnage based on inventory and item 
 
 [<Test>]
 let ``GetEffectiveSpeed.It returns full speed when there is no fouling.`` () =
-    let input = 
-        avatar
     let expected = 1.0
     let actual =
-        input
-        |> Avatar.GetEffectiveSpeed vesselSingleStatisticSource inputAvatarId
+        Avatar.GetEffectiveSpeed vesselSingleStatisticSource inputAvatarId
     Assert.AreEqual(expected, actual)
 
 let private fouledAvatar = avatar
 
 [<Test>]
 let ``GetEffectiveSpeed.It returns proportionally reduced speed when there is fouling.`` () =
-    let input = fouledAvatar
-    let expected = 0.5
+    let expected = 0.125
     let vesselSingleStatisticSource (_) (_) = {MinimumValue=0.0;MaximumValue=0.25;CurrentValue=0.25} |> Some
     let actual =
-        input
-        |> Avatar.GetEffectiveSpeed vesselSingleStatisticSource inputAvatarId
+        Avatar.GetEffectiveSpeed vesselSingleStatisticSource inputAvatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -553,4 +609,25 @@ let ``GetMaximumFouling.It returns the maximum fouling for the Avatar.`` () =
     let expected = 1.0
     let actual = 
         Avatar.GetMaximumFouling vesselSingleStatisticSource inputAvatarId
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``GetSpeed.It gets the speed of an avatar.`` () =
+    let actualSpeed = 
+        {
+            MinimumValue = 0.0
+            MaximumValue = 1.0
+            CurrentValue = 0.5
+        }
+    let vesselSingleStatisticSource (_) (identifier) =
+        match identifier with
+        | VesselStatisticIdentifier.Speed -> actualSpeed |> Some
+        | _ ->
+            raise (System.NotImplementedException "Kaboom get")
+            None
+    let inputAvatarId="avatar"
+    let expected = 0.5 |> Some
+    let actual =
+        inputAvatarId
+        |> Avatar.GetSpeed vesselSingleStatisticSource
     Assert.AreEqual(expected, actual)

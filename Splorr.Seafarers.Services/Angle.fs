@@ -4,28 +4,25 @@ open Splorr.Seafarers.Models
 open System
 
 module Angle =
+    let private Tau = Math.PI * 2.0
+    let private DegreesInACircle = 360.0
+    let private RadiansPerDegree = Tau / DegreesInACircle
+    let private DegreesPerRadian = DegreesInACircle / Tau
+
     let private Normalize 
             (radians : float) 
             : float =
         match Math.Atan2(Math.Sin(radians), Math.Cos(radians)) with
-        | r when r < 0.0 -> r + Math.PI*2.0
+        | r when r < 0.0 -> r + Tau
         | r -> r
 
-    let ToRadians 
-            (degrees : float) 
-            : float =
-        degrees*Math.PI/180.0
-        |> Normalize
+    let ToRadians =
+        (*) RadiansPerDegree
+        >> Normalize
 
-    let ToString 
-            (degrees : float) 
-            : string =
-        sprintf "%.2f\u00b0" degrees
+    let ToString =
+        sprintf "%.2f\u00b0"
 
-    let ToDegrees 
-            (radians : float) 
-            : float =
-        let radians = 
-            radians 
-            |> Normalize
-        radians * 180.0 / Math.PI
+    let ToDegrees =
+        Normalize
+        >> (*) DegreesPerRadian

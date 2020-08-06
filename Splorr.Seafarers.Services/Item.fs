@@ -3,8 +3,8 @@ open Splorr.Seafarers.Models
 
 module Item =
     let DetermineSalePrice 
-            (commodities    : Map<uint64, CommodityDescriptor>) 
-            (markets        : Map<uint64, Market>) 
+            (commodities    : Map<uint64, CommodityDescriptor>) //TODO: refactor me to use source?
+            (markets        : Map<uint64, Market>)  //TODO: refactor me to use source?
             (itemDescriptor : ItemDescriptor) 
             : float =
         itemDescriptor.Commodities
@@ -16,8 +16,8 @@ module Item =
         |> List.reduce (+)
 
     let DeterminePurchasePrice 
-            (commodities    : Map<uint64, CommodityDescriptor>) 
-            (markets        : Map<uint64, Market>) 
+            (commodities    : Map<uint64, CommodityDescriptor>)  //TODO: refactor me to use source?
+            (markets        : Map<uint64, Market>)  //TODO: refactor me to use source?
             (itemDescriptor : ItemDescriptor) 
             : float =
         itemDescriptor.Commodities

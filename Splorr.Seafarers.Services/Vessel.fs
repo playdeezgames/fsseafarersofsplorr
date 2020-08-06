@@ -1,12 +1,16 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
+type VesselStatisticTemplateSource = unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>
+type VesselStatisticSink           = string -> Map<VesselStatisticIdentifier, Statistic> -> unit
+type VesselSingleStatisticSource   = string->VesselStatisticIdentifier->Statistic option
+type VesselSingleStatisticSink     = string->VesselStatisticIdentifier*Statistic->unit
+
 module Vessel =
     let Create
-            (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
-            (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
+            (vesselStatisticTemplateSource : VesselStatisticTemplateSource)
+            (vesselStatisticSink           : VesselStatisticSink)
             (avatarId                      : string)
-            (tonnage                       : float) 
             : unit =
         vesselStatisticTemplateSource()
         |> Map.map
@@ -15,8 +19,8 @@ module Vessel =
         |> vesselStatisticSink avatarId
 
     let TransformFouling 
-            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
-            (vesselSingleStatisticSink   : string -> VesselStatisticIdentifier * Statistic -> unit)
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
             (avatarId                    : string)
             (side                        : Side) 
             (transform                   : Statistic -> Statistic)
@@ -29,8 +33,8 @@ module Vessel =
         |> Option.iter (fun s -> (statisticIdentifier, s |> transform) |> vesselSingleStatisticSink avatarId)
     
     let Befoul 
-            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
-            (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
             (avatarId                    : string)
             : unit =
         let foulRate = 

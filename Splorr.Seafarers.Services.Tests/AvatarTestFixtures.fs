@@ -13,6 +13,8 @@ let internal vesselSingleStatisticSource (_) (identifier) =
     match identifier with
     | VesselStatisticIdentifier.FoulRate ->
         {MinimumValue = 0.001; CurrentValue=0.001; MaximumValue=0.001} |> Some
+    | VesselStatisticIdentifier.Speed ->
+        {MinimumValue = 0.0; CurrentValue=1.0; MaximumValue=1.0} |> Some
     | _ ->
         None
 let internal vesselSingleStatisticSink (_) (_) = ()
@@ -20,6 +22,7 @@ let internal vesselSingleStatisticSink (_) (_) = ()
 
 let internal avatar =
     Avatar.Create vesselStatisticTemplateSourceStub vesselStatisticSinkStub avatarId statisticDescriptors [1UL] (0.0,0.0)
+let internal avatarId = "avatar"
 let internal avatarNoStats =
     {avatar with 
         Shipmates =

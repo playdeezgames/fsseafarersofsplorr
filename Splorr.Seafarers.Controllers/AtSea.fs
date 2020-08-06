@@ -56,7 +56,11 @@ module AtSea =
         |> Utility.DumpMessages messageSink
 
         let avatar = world.Avatars.[world.AvatarId]
-        let speedHue =DetermineSpeedHue avatar.Speed
+        let speed = 
+            world.AvatarId 
+            |> Avatar.GetSpeed vesselSingleStatisticSource 
+            |> Option.get
+        let speedHue =DetermineSpeedHue speed
         let shipmateZero = avatar.Shipmates.[0]
         [
             (Hue.Heading, "At Sea:" |> Line) |> Hued
@@ -66,8 +70,10 @@ module AtSea =
             (Hue.Label, "Heading: " |> Text) |> Hued
             (Hue.Value, avatar.Heading |> Angle.ToDegrees |> Angle.ToString |> sprintf "%s" |> Line) |> Hued
             (Hue.Label, "Speed: " |> Text) |> Hued
-            (speedHue, (avatar.Speed * 100.0) |> sprintf "%.0f%%" |> Text) |> Hued
-            avatar |> Avatar.GetEffectiveSpeed vesselSingleStatisticSource world.AvatarId |> sprintf "(Effective rate: %.2f)" |> Line
+            (speedHue, (speed * 100.0) |> sprintf "%.0f%%" |> Text) |> Hued
+            world.AvatarId 
+            |> Avatar.GetEffectiveSpeed vesselSingleStatisticSource 
+            |> sprintf "(Effective rate: %.2f)" |> Line
             (Hue.Subheading, "Nearby:" |> Line) |> Hued
         ]
         |> List.iter messageSink
@@ -229,7 +235,10 @@ module AtSea =
 
         | Some (Command.Set (Speed speed)) ->
             world
-            |> World.SetSpeed speed
+            |> World.SetSpeed 
+                vesselSingleStatisticSource
+                vesselSingleStatisticSink
+                speed
             |> Gamestate.AtSea
             |> Some
 

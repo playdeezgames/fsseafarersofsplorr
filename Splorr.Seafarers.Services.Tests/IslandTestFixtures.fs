@@ -60,7 +60,8 @@ let internal items =
             Tonnage = 1.0
         })]
     |> Map.ofList
-let shopIsland = commodityIsland
-let shopIslandItemSource = fun (_:Location) -> [1UL] |> Set.ofList
-let noShopIsland = commodityIsland
+let internal itemSource () = items
+let internal shopIsland = commodityIsland
+let internal shopIslandItemSource = fun (_:Location) -> [1UL] |> Set.ofList
+let internal noShopIsland = commodityIsland
 

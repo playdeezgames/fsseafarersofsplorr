@@ -160,16 +160,18 @@ module World =
         TransformAvatar (Avatar.AddMessages messages >> Some)
 
     let SetSpeed 
-            (speed    : float) 
-            (world    : World) : World = 
-        let avatarId = world.AvatarId
-        world.Avatars
-        |> Map.tryFind avatarId
-        |> Option.bind (Avatar.SetSpeed speed >> Some)
-        |> Option.fold 
-            (fun w a ->
-                {w with Avatars = w.Avatars |> Map.add avatarId a}
-                |> AddMessages [a.Speed |> sprintf "You set your speed to %f."]) world
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
+            (speed                       : float) 
+            (world                       : World) : World = 
+        world.AvatarId
+        |> Avatar.SetSpeed vesselSingleStatisticSource vesselSingleStatisticSink speed 
+        world.AvatarId
+        |> Avatar.GetSpeed vesselSingleStatisticSource
+        |> Option.fold
+            (fun w newSpeed ->
+                w
+                |> AddMessages [newSpeed |> sprintf "You set your speed to %.2f."]) world
 
     let SetHeading 
             (heading  : float) 
@@ -270,9 +272,8 @@ module World =
                 island
                 |> Island.AddVisit world.Avatars.[avatarId].Shipmates.[0].Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue avatarId//only when this counts as a new visit...
                 |> Island.GenerateJobs termSources random rewardRange destinations 
-            let items = itemSource()
             Island.GenerateCommodities commoditySource islandMarketSource islandMarketSink random location
-            Island.GenerateItems islandItemSource islandItemSink random items location
+            Island.GenerateItems islandItemSource islandItemSink random itemSource location
             let oldVisitCount =
                 island.AvatarVisits
                 |> Map.tryFind avatarId
@@ -393,15 +394,16 @@ module World =
 
 
     let BuyItems 
-            (islandMarketSource     : Location->Map<uint64, Market>) 
-            (islandSingleMarketSink : Location->(uint64 * Market)->unit) 
-            (vesselSingleStatisticSource:string->VesselStatisticIdentifier->Statistic option)
-            (commodities            : Map<uint64, CommodityDescriptor>) 
-            (items                  : Map<uint64, ItemDescriptor>) 
-            (location               : Location) 
-            (tradeQuantity          : TradeQuantity) 
-            (itemName               : string) 
-            (world                  : World) 
+            (islandMarketSource    : IslandMarketSource)
+            (islandSingleMarketSource    : IslandSingleMarketSource) 
+            (islandSingleMarketSink      : Location->(uint64 * Market)->unit) 
+            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
+            (commoditySource             : CommoditySource) 
+            (items                       : Map<uint64, ItemDescriptor>) 
+            (location                    : Location) 
+            (tradeQuantity               : TradeQuantity) 
+            (itemName                    : string) 
+            (world                       : World) 
             : World =
         let avatarId = world.AvatarId
         match items |> FindItemByName itemName, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
@@ -409,7 +411,7 @@ module World =
             let markets =
                 islandMarketSource location
             let unitPrice = 
-                Item.DetermineSalePrice commodities markets descriptor 
+                Item.DetermineSalePrice (commoditySource()) markets descriptor 
             let availableTonnage = vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Tonnage |> Option.map (fun x->x.CurrentValue) |> Option.get
             let usedTonnage =
                 avatar
@@ -430,7 +432,7 @@ module World =
                 world
                 |> AddMessages ["You don't have enough money to buy any of those."]
             else
-                Island.UpdateMarketForItemSale islandMarketSource islandSingleMarketSink commodities descriptor quantity location
+                Island.UpdateMarketForItemSale islandSingleMarketSource islandSingleMarketSink commoditySource descriptor quantity location
                 world
                 |> AddMessages [(quantity, descriptor.ItemName) ||> sprintf "You complete the purchase of %u %s."]
                 |> TransformAvatar (Avatar.SpendMoney price >> Avatar.AddInventory item quantity >> Some)
@@ -445,7 +447,7 @@ module World =
             (islandMarketSource       : Location -> Map<uint64, Market>) 
             (islandSingleMarketSource : Location -> uint64            -> Market option) 
             (islandSingleMarketSink   : Location -> (uint64 * Market) -> unit) 
-            (commodities              : Map<uint64, CommodityDescriptor>) 
+            (commoditySource          : CommoditySource) 
             (items                    : Map<uint64, ItemDescriptor>) 
             (location                 : Location) 
             (tradeQuantity            : TradeQuantity) 
@@ -470,9 +472,9 @@ module World =
             else
                 let markets = islandMarketSource location
                 let unitPrice = 
-                    Item.DeterminePurchasePrice commodities markets descriptor 
+                    Item.DeterminePurchasePrice (commoditySource()) markets descriptor 
                 let price = (quantity |> float) * unitPrice
-                Island.UpdateMarketForItemPurchase islandSingleMarketSource islandSingleMarketSink commodities descriptor quantity location
+                Island.UpdateMarketForItemPurchase islandSingleMarketSource islandSingleMarketSink commoditySource descriptor quantity location
                 world
                 |> AddMessages [(quantity, descriptor.ItemName) ||> sprintf "You complete the sale of %u %s."]
                 |> TransformAvatar (Avatar.EarnMoney price >> Avatar.RemoveInventory item quantity >> Some)

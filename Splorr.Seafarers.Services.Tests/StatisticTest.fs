@@ -145,4 +145,18 @@ let ``GetCurrentValue.It returns the current value of the given statistic.`` () 
         input
         |> Statistic.GetCurrentValue
     Assert.AreEqual(expected, actual)
-        
+      
+[<Test>]
+let ``SetCurrentValue.It sets the current value of the given statistic.`` () =
+    let inputMaximum    = 100.0
+    let inputMinimum    = 0.0
+    let originalCurrent = 50.0
+    let inputCurrent    = 75.0
+    let input =
+        Statistic.Create (inputMinimum, inputMaximum) originalCurrent
+    let expected = 
+        {input with CurrentValue = inputCurrent}
+    let actual =
+        input
+        |> Statistic.SetCurrentValue inputCurrent
+    Assert.AreEqual(expected, actual)

@@ -5,7 +5,6 @@ type Avatar =
         Messages     : string list//TODO: associate directly to avatarId
         Position     : Location//TODO: make this a Vessel statistics
         Heading      : float//TODO: make this a Vessel statistic - min 0, max 2pi
-        Speed        : float//TODO: make this a Vessel statistic - min 0, max 1
         Money        : float//TODO: make this a Shipmate statistic - min 0, max 1.7976931348623157e308
         Reputation   : float//TODO: make this a Shipmate statistic - min -1.7976931348623157e308, max 1.7976931348623157e308
         Job          : Job option //TODO: associate directly to avatarId
