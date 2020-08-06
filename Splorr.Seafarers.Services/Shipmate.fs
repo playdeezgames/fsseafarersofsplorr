@@ -29,14 +29,14 @@ module Shipmate =
             Statistics = Map.empty
         }
         |> List.foldBack 
-            (fun i a -> 
-                a
-                |> SetStatistic i.StatisticId (Statistic.Create (i.MinimumValue, i.MaximumValue) i.CurrentValue |> Some)) statisticDescriptors
+            (fun identifier shipMate -> 
+                shipMate
+                |> SetStatistic identifier.StatisticId (Statistic.Create (identifier.MinimumValue, identifier.MaximumValue) identifier.CurrentValue |> Some)) statisticDescriptors
 
     let TransformStatistic 
-            (identifier:ShipmateStatisticIdentifier) 
-            (transform:Statistic -> Statistic option) 
-            (mate:Shipmate) 
+            (identifier : ShipmateStatisticIdentifier) 
+            (transform  : Statistic -> Statistic option) 
+            (mate       : Shipmate) 
             : Shipmate =
         mate
         |> GetStatistic identifier

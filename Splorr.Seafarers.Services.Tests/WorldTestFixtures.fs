@@ -40,7 +40,6 @@ let internal emptyWorld =
                 Messages = []
                 Position = (0.0,0.0)
                 Heading = 0.0
-                Speed = 1.0
                 Money = 0.0
                 Reputation = 0.0
                 Job = None
@@ -76,6 +75,7 @@ let internal commodities =
         PurchaseFactor=1.0
         SaleFactor=1.0
         Discount=0.5}
+let internal commoditySource() = commodities
 
 let internal genericWorldItems = 
     Map.empty

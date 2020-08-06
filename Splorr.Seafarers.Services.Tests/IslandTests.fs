@@ -183,7 +183,6 @@ let ``GenerateCommodities.It generates commodities when the given island has no 
     input
     |> Island.GenerateCommodities commoditySource islandMarketSource islandMarketSink random
 
-
 [<Test>]
 let ``GenerateItems.It has no effect when the given island already has items in the shop.`` () =
     let input = (0.0,0.0)
@@ -191,7 +190,7 @@ let ``GenerateItems.It has no effect when the given island already has items in 
     let islandItemSink (_) (_) =
         Assert.Fail("This should not be called")
     input
-    |> Island.GenerateItems islandItemSource islandItemSink random items
+    |> Island.GenerateItems islandItemSource islandItemSink random itemSource
 
 
 [<Test>]
@@ -202,7 +201,7 @@ let ``GenerateItems.It generates the shop when the given island has no items in 
     let islandItemSink (_) (_) =
         counter <- counter + 1
     input
-    |> Island.GenerateItems islandItemSource islandItemSink random items
+    |> Island.GenerateItems islandItemSource islandItemSink random itemSource
     Assert.AreEqual(1,counter)
 
 [<Test>]
@@ -219,8 +218,10 @@ let ``UpdateMarketForItemSale.It updates market commodity demands based on the g
     let islandSingleMarketSink (_) (commodityId, market) =
         Assert.AreEqual(1UL, commodityId)
         Assert.AreEqual(expectedMarket, market)
+    let islandSingleMarketSource (_) (_) =
+        None
     input
-    |> Island.UpdateMarketForItemSale islandMarketSource islandSingleMarketSink commodities inputDescriptor inputQuantity
+    |> Island.UpdateMarketForItemSale islandSingleMarketSource islandSingleMarketSink commoditySource inputDescriptor inputQuantity
 
 
 [<Test>]
@@ -243,7 +244,7 @@ let ``UpdateMarketForItemPurchase.It updates market commodity supply based on th
         Assert.AreEqual(1UL, commodityId)
         Assert.AreEqual(expectedMarket, market)
     input
-    |> Island.UpdateMarketForItemPurchase islandSingleMarketSource islandMarketSink commodities inputDescriptor inputQuantity
+    |> Island.UpdateMarketForItemPurchase islandSingleMarketSource islandMarketSink commoditySource inputDescriptor inputQuantity
 
 //[<Test>]
 //let ``AddVisit..`` () =

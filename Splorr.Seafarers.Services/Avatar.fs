@@ -18,18 +18,17 @@ module Avatar =
                             item)}
 
     let Create 
-            (vesselStatisticTemplateSource: unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
-            (vesselStatisticSink: string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
-            (avatarId: string)
-            (statisticDescriptors : ShipmateStatisticTemplate list) 
-            (rationItems          : uint64 list) 
-            (position             : Location)
+            (vesselStatisticTemplateSource : VesselStatisticTemplateSource)
+            (vesselStatisticSink           : VesselStatisticSink)
+            (avatarId                      : string)
+            (statisticDescriptors          : ShipmateStatisticTemplate list) //TODO: from source?
+            (rationItems                   : uint64 list) 
+            (position                      : Location)
             : Avatar =
-        Vessel.Create vesselStatisticTemplateSource vesselStatisticSink avatarId 100.0
+        Vessel.Create vesselStatisticTemplateSource vesselStatisticSink avatarId
         {
             Messages = []
             Position = position
-            Speed = 1.0
             Heading = 0.0
             Money = 0.0
             Reputation = 0.0
@@ -40,22 +39,32 @@ module Avatar =
                 [| Shipmate.Create rationItems statisticDescriptors |]
         }
 
+    let GetSpeed
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (avatarId                    : string)
+            : float option =
+        VesselStatisticIdentifier.Speed
+        |> vesselSingleStatisticSource avatarId 
+        |> Option.map Statistic.GetCurrentValue
 
     let SetSpeed 
-            (speed  : float) 
-            (avatar : Avatar) 
-            : Avatar = //TODO: make speed a statistic
-        let clampedSpeed = 
-            match speed with
-            | x when x < 0.0 -> 0.0
-            | x when x > 1.0 -> 1.0
-            | x -> x
-        {avatar with Speed = clampedSpeed}
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
+            (speed                       : float) 
+            (avatarId                    : string) 
+            : unit =
+        vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Speed
+        |> Option.iter
+            (fun statistic ->
+                (VesselStatisticIdentifier.Speed, 
+                    statistic
+                    |> Statistic.SetCurrentValue speed)
+                |> vesselSingleStatisticSink avatarId)
 
     let SetHeading 
             (heading : float) 
             (avatar  : Avatar) 
-            : Avatar =
+            : Avatar = //TODO: make heading a vessel statistic
         {avatar with Heading = heading |> Angle.ToRadians}
 
     let private PurgeInventory (avatar:Avatar) : Avatar =
@@ -117,7 +126,7 @@ module Avatar =
 
     
     let GetCurrentFouling
-            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (avatarId                    : string)
             :float =
         let portFouling = 
@@ -131,7 +140,7 @@ module Avatar =
         portFouling + starboardFouling
     
     let GetMaximumFouling
-            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (avatarId                    : string)
             :float =
         let portFouling = 
@@ -145,12 +154,12 @@ module Avatar =
         portFouling + starboardFouling
 
     let GetEffectiveSpeed 
-            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (avatarId                    : string)
-            (avatar                      : Avatar) 
             : float =
         let currentValue = GetCurrentFouling vesselSingleStatisticSource avatarId
-        (avatar.Speed * (1.0 - currentValue))
+        let currentSpeed = GetSpeed vesselSingleStatisticSource avatarId |> Option.get
+        (currentSpeed * (1.0 - currentValue))
 
     let TransformShipmates 
             (transform : Shipmate -> Shipmate) 
@@ -162,12 +171,12 @@ module Avatar =
                 a |> TransformShipmate transform i) avatar
 
     let Move
-            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
-            (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
             (avatarId                    : string)
             (avatar                      : Avatar) 
             : Avatar =
-        let actualSpeed = avatar |> GetEffectiveSpeed vesselSingleStatisticSource avatarId
+        let actualSpeed = avatarId |> GetEffectiveSpeed vesselSingleStatisticSource
         Vessel.Befoul vesselSingleStatisticSource vesselSingleStatisticSink avatarId
         let newPosition = ((avatar.Position |> fst) + System.Math.Cos(avatar.Heading) * actualSpeed, (avatar.Position |> snd) + System.Math.Sin(avatar.Heading) * actualSpeed)
         {
@@ -211,7 +220,7 @@ module Avatar =
             |> AddMetric Metric.CompletedJob 1u
         | _ -> avatar
 
-    let private SetMoney //TODO: should money be a statistic?
+    let private SetMoney //TODO: should money be a statistic? yes
             (amount : float) 
             (avatar : Avatar) 
             : Avatar =
@@ -273,7 +282,7 @@ module Avatar =
         {avatar with Messages = List.append avatar.Messages messages}
 
     let GetUsedTonnage 
-            (items  : Map<uint64, ItemDescriptor>) 
+            (items  : Map<uint64, ItemDescriptor>) //TODO: to source
             (avatar : Avatar) 
             : float =
         (0.0, avatar.Inventory)
@@ -283,8 +292,8 @@ module Avatar =
                 result + (quantity |> float) * d.Tonnage)
 
     let CleanHull 
-            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
-            (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
             (avatarId                    : string)
             (side                        : Side) 
             (avatar                      : Avatar) : Avatar =

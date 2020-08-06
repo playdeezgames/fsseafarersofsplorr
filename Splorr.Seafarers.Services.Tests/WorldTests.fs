@@ -11,7 +11,6 @@ let ``Create.It creates a new world.`` () =
     let actual = soloIslandWorld
     Assert.AreEqual(0.0, actual.Avatars.[avatarId].Heading)
     Assert.AreEqual((5.0,5.0), actual.Avatars.[avatarId].Position)
-    Assert.AreEqual(1.0, actual.Avatars.[avatarId].Speed)
     Assert.AreEqual(1, actual.Islands.Count)
     Assert.AreNotEqual("", (actual.Islands |> Map.toList |> List.map snd |> List.head).Name)
 
@@ -38,48 +37,118 @@ let ``AddMessages.It appends new messages to previously existing messages in the
 
 [<Test>]
 let ``SetSpeed.It produces all stop in the avatar when less than zero is passed.`` () =
-    let actual =
-        soloIslandWorld
-        |> World.SetSpeed (-1.0)
-    Assert.AreEqual(0.0, actual.Avatars.[avatarId].Speed)
+    let vesselSingleStatisticSource (_) (identifier) =
+        match identifier with
+        | VesselStatisticIdentifier.Speed ->
+            {MinimumValue=0.0;MaximumValue=1.0; CurrentValue=1.0} |> Some
+        | _ -> 
+            raise (System.NotImplementedException "Kaboom get")
+            None
+    let expectedSpeed = 0.0
+    let vesselSingleStatisticSink (_) (identfier:VesselStatisticIdentifier, statistic:Statistic) = 
+        Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
+        Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
+    let inputSpeed = -1.0
+    soloIslandWorld
+    |> World.SetSpeed vesselSingleStatisticSource vesselSingleStatisticSink inputSpeed
+    |> ignore
 
 [<Test>]
 let ``SetSpeed.It produces full speed when greater than one is passed.`` () =
-    let actual =
-        soloIslandWorld
-        |> World.SetSpeed (2.0)
-    Assert.AreEqual(1.0, actual.Avatars.[avatarId].Speed)
+    let vesselSingleStatisticSource (_) (identifier) =
+        match identifier with
+        | VesselStatisticIdentifier.Speed ->
+            {MinimumValue=0.0;MaximumValue=1.0; CurrentValue=0.0} |> Some
+        | _ -> 
+            raise (System.NotImplementedException "Kaboom get")
+            None
+    let expectedSpeed = 1.0
+    let vesselSingleStatisticSink (_) (identfier:VesselStatisticIdentifier, statistic:Statistic) = 
+        Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
+        Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
+    let inputSpeed = 2.0
+    soloIslandWorld
+    |> World.SetSpeed vesselSingleStatisticSource vesselSingleStatisticSink inputSpeed
+    |> ignore
+
 
 [<Test>]
 let ``SetSpeed.It produces half speed when one half is passed.`` () =
-    let actual =
-        soloIslandWorld
-        |> World.SetSpeed (0.5)
-    Assert.AreEqual(0.5, actual.Avatars.[avatarId].Speed)
+    let vesselSingleStatisticSource (_) (identifier) =
+        match identifier with
+        | VesselStatisticIdentifier.Speed ->
+            {MinimumValue=0.0;MaximumValue=1.0; CurrentValue=0.0} |> Some
+        | _ -> 
+            raise (System.NotImplementedException "Kaboom get")
+            None
+    let expectedSpeed = 0.5
+    let vesselSingleStatisticSink (_) (identfier:VesselStatisticIdentifier, statistic:Statistic) = 
+        Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
+        Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
+    let inputSpeed = 0.5
+    soloIslandWorld
+    |> World.SetSpeed vesselSingleStatisticSource vesselSingleStatisticSink inputSpeed
+    |> ignore
+
 
 [<Test>]
 let ``SetSpeed.It does nothing when a bogus avatarid is passed.`` () =
     let inputWorld = 
         {soloIslandWorld with AvatarId = bogusAvatarId}
-    let expected = inputWorld
+    let vesselSingleStatisticSource (_) (identifier) =
+        match identifier with
+        | VesselStatisticIdentifier.Speed ->
+            None
+        | _ -> 
+            raise (System.NotImplementedException "Kaboom get")
+            None
+    let vesselSingleStatisticSink (_) (_) = 
+        //assert speed being set in here
+        raise (System.NotImplementedException "Kaboom set")
+    let inputSpeed = 1.0
     let actual =
         inputWorld
-        |> World.SetSpeed (1.0)
-    Assert.AreEqual(expected, actual)
+        |> World.SetSpeed vesselSingleStatisticSource vesselSingleStatisticSink inputSpeed
+    let expectedMessages = []
+    Assert.AreEqual(expectedMessages, actual.Avatars.[avatarId].Messages)
 
 [<Test>]
 let ``SetSpeed.It produces full speed when one is passed.`` () =
-    let actual =
-        soloIslandWorld
-        |> World.SetSpeed (1.0)
-    Assert.AreEqual(1.0, actual.Avatars.[avatarId].Speed)
+    let vesselSingleStatisticSource (_) (identifier) =
+        match identifier with
+        | VesselStatisticIdentifier.Speed ->
+            {MinimumValue=0.0;MaximumValue=1.0; CurrentValue=0.0} |> Some
+        | _ -> 
+            raise (System.NotImplementedException "Kaboom get")
+            None
+    let expectedSpeed = 1.0
+    let vesselSingleStatisticSink (_) (identfier:VesselStatisticIdentifier, statistic:Statistic) = 
+        Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
+        Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
+    let inputSpeed = 1.0
+    soloIslandWorld
+    |> World.SetSpeed vesselSingleStatisticSource vesselSingleStatisticSink inputSpeed
+    |> ignore
+
 
 [<Test>]
 let ``SetSpeed.It sets all stop when given zero`` () =
-    let actual =
-        soloIslandWorld
-        |> World.SetSpeed (0.0)
-    Assert.AreEqual(0.0, actual.Avatars.[avatarId].Speed)
+    let vesselSingleStatisticSource (_) (identifier) =
+        match identifier with
+        | VesselStatisticIdentifier.Speed ->
+            {MinimumValue=0.0;MaximumValue=1.0; CurrentValue=0.0} |> Some
+        | _ -> 
+            raise (System.NotImplementedException "Kaboom get")
+            None
+    let expectedSpeed = 0.0
+    let vesselSingleStatisticSink (_) (identfier:VesselStatisticIdentifier, statistic:Statistic) = 
+        Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
+        Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
+    let inputSpeed = 0.0
+    soloIslandWorld
+    |> World.SetSpeed vesselSingleStatisticSource vesselSingleStatisticSink inputSpeed
+    |> ignore
+
 
 [<Test>]
 let ``SetHeading.It sets a new heading when given a valid avatar id.`` () =
@@ -112,6 +181,8 @@ let ``Move.It moves the avatar one unit when give 1u for distance when given a v
             {MinimumValue=0.001; MaximumValue=0.001; CurrentValue=0.001} |> Some
         | VesselStatisticIdentifier.ViewDistance ->
             {MinimumValue=10.0; MaximumValue=10.0; CurrentValue=10.0} |> Some
+        | VesselStatisticIdentifier.Speed ->
+            {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=1.0} |> Some
         | _ ->
             Assert.Fail("Dont call me.")
             None
@@ -147,6 +218,8 @@ let ``Move.It moves the avatar almost two units when give 2u for distance.`` () 
             {MinimumValue=0.001; MaximumValue=0.001; CurrentValue=0.001} |> Some
         | VesselStatisticIdentifier.ViewDistance ->
             {MinimumValue=10.0; MaximumValue=10.0; CurrentValue=10.0} |> Some
+        | VesselStatisticIdentifier.Speed ->
+            {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=1.0} |> Some
         | _ ->
             Assert.Fail("Dont call me.")
             None
@@ -174,7 +247,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                 [avatarId,{
                     Messages = []
                     Position=(5.0, 5.0)
-                    Speed=1.0
+                    //Speed=1.0
                     Heading=0.0
                     Money = 0.0
                     Reputation = 0.0
@@ -421,11 +494,14 @@ let ``AcceptJob.It adds the given job to the avatar and eliminates it from the i
 let ``TransformAvatar.It transforms the avatar within the given world.`` () =
     let vesselSingleStatisticSource (_) (identifier) = 
         match identifier with
+        | VesselStatisticIdentifier.Speed ->
+            {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=1.0} |> Some
         | VesselStatisticIdentifier.FoulRate ->
             {MinimumValue=0.01; MaximumValue=0.01; CurrentValue=0.01} |> Some
         | _ ->
             None
-    let vesselSingleStatisticSink (_) (_) = ()
+    let vesselSingleStatisticSink (_) (_) =
+        raise (System.NotImplementedException "Kaboom set")
     let expectedAvatar = 
         genericWorld.Avatars.[avatarId] 
         |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink avatarId
@@ -513,7 +589,7 @@ let ``BuyItems.It gives a message when given a bogus island location.`` () =
         |> World.AddMessages ["You cannot buy items here."]
     let actual = 
         input 
-        |> World.BuyItems islandMarketSourceStub islandSingleMarketSinkStub vesselSingleStatisticSourceStub commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.BuyItems islandMarketSourceStub islandSingleMarketSourceStub islandSingleMarketSinkStub vesselSingleStatisticSourceStub commoditySource genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -527,7 +603,7 @@ let ``BuyItems.It gives a message when given a valid island location and a bogus
         |> World.AddMessages ["Round these parts, we don't sell things like that."]
     let actual = 
         input 
-        |> World.BuyItems islandMarketSourceStub islandSingleMarketSinkStub vesselSingleStatisticSourceStub commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.BuyItems islandMarketSourceStub islandSingleMarketSourceStub islandSingleMarketSinkStub vesselSingleStatisticSourceStub commoditySource genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -544,7 +620,7 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds.`` () =
         |> World.AddMessages ["You don't have enough money."]
     let actual = 
         input 
-        |> World.BuyItems islandMarketSource islandSingleMarketSinkStub vesselSingleStatisticSourceStub commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.BuyItems islandMarketSource islandSingleMarketSourceStub islandSingleMarketSinkStub vesselSingleStatisticSourceStub commoditySource genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -564,7 +640,7 @@ let ``BuyItems.It gives a message when the avatar has insufficient tonnage.`` ()
         |> World.AddMessages ["You don't have enough tonnage."]
     let actual = 
         input 
-        |> World.BuyItems islandMarketSource islandSingleMarketSinkStub vesselSingleStatisticSourceStub commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.BuyItems islandMarketSource islandSingleMarketSourceStub islandSingleMarketSinkStub vesselSingleStatisticSourceStub commoditySource genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -591,7 +667,7 @@ let ``BuyItems.It gives a message and completes the purchase when the avatar has
         |> World.AddMessages ["You complete the purchase of 2 item under test."]
     let actual = 
         input 
-        |> World.BuyItems islandMarketSource islandSingleMarketSink vesselSingleStatisticSourceStub commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.BuyItems islandMarketSource islandSingleMarketSourceStub islandSingleMarketSink vesselSingleStatisticSourceStub commoditySource genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -610,7 +686,7 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds for a s
         |> World.AddMessages ["You don't have enough money to buy any of those."]
     let actual = 
         input 
-        |> World.BuyItems islandMarketSource islandSingleMarketSink vesselSingleStatisticSourceStub commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.BuyItems islandMarketSource islandSingleMarketSourceStub islandSingleMarketSink vesselSingleStatisticSourceStub commoditySource genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -637,7 +713,7 @@ let ``BuyItems.It gives a message indicating purchased quantity and completes th
         |> World.AddMessages ["You complete the purchase of 100 item under test."]
     let actual = 
         input 
-        |> World.BuyItems islandMarketSource islandSingleMarketSink vesselSingleStatisticSourceStub commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.BuyItems islandMarketSource islandSingleMarketSourceStub islandSingleMarketSink vesselSingleStatisticSourceStub commoditySource genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 
@@ -652,7 +728,7 @@ let ``SellItems.It gives a message when given a bogus island location.`` () =
         |> World.AddMessages ["You cannot sell items here."]
     let actual = 
         input 
-        |> World.SellItems islandMarketSourceStub islandSingleMarketSourceStub islandSingleMarketSinkStub commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.SellItems islandMarketSourceStub islandSingleMarketSourceStub islandSingleMarketSinkStub commoditySource genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -666,7 +742,7 @@ let ``SellItems.It gives a message when given a valid island location and bogus 
         |> World.AddMessages ["Round these parts, we don't buy things like that."]
     let actual = 
         input 
-        |> World.SellItems islandMarketSourceStub islandSingleMarketSourceStub islandSingleMarketSinkStub commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.SellItems islandMarketSourceStub islandSingleMarketSourceStub islandSingleMarketSinkStub commoditySource genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -680,7 +756,7 @@ let ``SellItems.It gives a message when the avatar has insufficient items in inv
         |> World.AddMessages ["You don't have enough of those to sell."]
     let actual = 
         input 
-        |> World.SellItems islandMarketSourceStub islandSingleMarketSourceStub islandSingleMarketSinkStub commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.SellItems islandMarketSourceStub islandSingleMarketSourceStub islandSingleMarketSinkStub commoditySource genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -694,7 +770,7 @@ let ``SellItems.It gives a message when the avatar has no items in inventory and
         |> World.AddMessages ["You don't have any of those to sell."]
     let actual = 
         input 
-        |> World.SellItems islandMarketSourceStub islandSingleMarketSourceStub islandSingleMarketSinkStub commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.SellItems islandMarketSourceStub islandSingleMarketSourceStub islandSingleMarketSinkStub commoditySource genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -721,7 +797,7 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
         |> World.AddMessages ["You complete the sale of 2 item under test."]
     let actual = 
         input 
-        |> World.SellItems islandMarketSource islandSingleMarketSourceStub islandSingleMarketSink commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.SellItems islandMarketSource islandSingleMarketSourceStub islandSingleMarketSink commoditySource genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -748,7 +824,7 @@ let ``SellItems.It gives a message and completes the salewhen the avatar has suf
         |> World.AddMessages ["You complete the sale of 2 item under test."]
     let actual = 
         input 
-        |> World.SellItems islandMarketSource islandSingleMarketSourceStub islandSingleMarketSink commodities genericWorldItems inputLocation inputQuantity inputItemName
+        |> World.SellItems islandMarketSource islandSingleMarketSourceStub islandSingleMarketSink commoditySource genericWorldItems inputLocation inputQuantity inputItemName
     Assert.AreEqual(expected, actual)
 
 [<Test>]

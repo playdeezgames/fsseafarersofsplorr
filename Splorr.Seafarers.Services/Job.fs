@@ -6,7 +6,7 @@ type TermSource = unit -> string list
 
 module Job =
     let Create 
-            (termSources : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
+            (termSources  : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
             (random       : Random) 
             (rewardRange  : float * float) 
             (destinations : Set<Location>) 

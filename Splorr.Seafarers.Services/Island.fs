@@ -2,6 +2,16 @@
 open Splorr.Seafarers.Models
 open System
 
+type CommoditySource = unit -> Map<uint64, CommodityDescriptor>
+type ItemSource = unit -> Map<uint64, ItemDescriptor>
+type IslandMarketSource = Location -> Map<uint64, Market>
+type IslandMarketSink = Location -> Map<uint64, Market> -> unit
+type IslandItemSource = Location -> Set<uint64>
+type IslandItemSink   = Location -> Set<uint64>->unit
+type IslandSingleMarketSource = Location -> uint64 -> Market option
+type IslandSingleMarketSink = Location -> (uint64 * Market) -> unit
+
+
 module Island =
     let Create() : Island =
         {
@@ -113,9 +123,9 @@ module Island =
         (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + 3.0
 
     let GenerateCommodities 
-            (commoditySource    : unit -> Map<uint64, CommodityDescriptor>)
-            (islandMarketSource : Location->Map<uint64, Market>) 
-            (islandMarketSink   : Location->Map<uint64, Market>->unit) 
+            (commoditySource    : CommoditySource)
+            (islandMarketSource : IslandMarketSource) 
+            (islandMarketSink   : IslandMarketSink) 
             (random             : Random) 
             (location           : Location) 
             : unit =
@@ -136,12 +146,13 @@ module Island =
             |> islandMarketSink location
 
     let GenerateItems 
-            (islandItemSource : Location->Set<uint64>) 
-            (islandItemSink   : Location->Set<uint64>->unit) 
+            (islandItemSource : IslandItemSource) 
+            (islandItemSink   : IslandItemSink) 
             (random           : Random) 
-            (items            : Map<uint64, ItemDescriptor>) //TODO: make this a source
+            (itemSource       : ItemSource)
             (location         : Location) 
             : unit =
+        let items = itemSource()
         let islandItems = islandItemSource location
         if islandItems.IsEmpty then
             items
@@ -154,19 +165,22 @@ module Island =
             |> islandItemSink location
 
     let private ChangeMarketDemand 
-            (islandMarketSource     : Location->Map<uint64, Market>) //TODO: islandmarketsinglesource
-            (islandSingleMarketSink : Location->(uint64 * Market)->unit) 
-            (commodity              : uint64) 
-            (change                 : float) 
-            (location               : Location) 
+            (islandSingleMarketSource : IslandSingleMarketSource)
+            (islandSingleMarketSink   : IslandSingleMarketSink) 
+            (commodity                : uint64) 
+            (change                   : float) 
+            (location                 : Location) 
             : unit =
-        let markets = islandMarketSource location
-        let market = markets.[commodity]
-        islandSingleMarketSink location (commodity, market |> Market.ChangeDemand change)
+        commodity
+        |> islandSingleMarketSource location
+        |> Option.map (Market.ChangeDemand change)
+        |> Option.iter (fun market -> islandSingleMarketSink location (commodity, market))
+
+        
 
     let private ChangeMarketSupply 
-            (islandSingleMarketSource : Location -> uint64            -> Market option)
-            (islandSingleMarketSink   : Location -> (uint64 * Market) -> unit) 
+            (islandSingleMarketSource : IslandSingleMarketSource)
+            (islandSingleMarketSink   : IslandSingleMarketSink) 
             (commodity                : uint64) 
             (change                   : float) 
             (location                 : Location) 
@@ -177,27 +191,29 @@ module Island =
         |> Option.iter (fun market -> islandSingleMarketSink location (commodity, market))
 
     let UpdateMarketForItemSale 
-            (islandMarketSource     : Location->Map<uint64, Market>) 
-            (islandSingleMarketSink : Location->(uint64 * Market)->unit) 
-            (commodities            : Map<uint64,CommodityDescriptor>)  //TODO: come from a source
-            (descriptor             : ItemDescriptor) 
-            (quantitySold           : uint32) 
-            (location               : Location) 
+            (islandSingleMarketSource : IslandSingleMarketSource) 
+            (islandSingleMarketSink   : IslandSingleMarketSink) 
+            (commoditySource          : CommoditySource)
+            (descriptor               : ItemDescriptor) 
+            (quantitySold             : uint32) 
+            (location                 : Location) 
             : unit =
+        let commodities = commoditySource()
         descriptor.Commodities
         |> Map.iter 
             (fun commodity quantityContained -> 
                 let totalQuantity = quantityContained * (quantitySold |> float) * commodities.[commodity].SaleFactor
-                ChangeMarketDemand islandMarketSource islandSingleMarketSink commodity totalQuantity location)
+                ChangeMarketDemand islandSingleMarketSource islandSingleMarketSink commodity totalQuantity location)
 
     let UpdateMarketForItemPurchase 
-            (islandSingleMarketSource : Location -> uint64            -> Market option) 
-            (islandSingleMarketSink   : Location -> (uint64 * Market) -> unit) 
-            (commodities              : Map<uint64,CommodityDescriptor>) //TODO: come from a source
+            (islandSingleMarketSource : IslandSingleMarketSource) 
+            (islandSingleMarketSink   : IslandSingleMarketSink) 
+            (commoditySource          : CommoditySource)
             (descriptor               : ItemDescriptor) 
             (quantityPurchased        : uint32) 
             (location                 : Location) 
             : unit =
+        let commodities = commoditySource()
         descriptor.Commodities
         |> Map.iter 
             (fun commodity quantityContained -> 

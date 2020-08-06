@@ -54,7 +54,8 @@ let internal vesselStatisticTemplateSourceStub ()
         : Map<VesselStatisticIdentifier, VesselStatisticTemplate>= 
     Map.empty
 
-let internal vesselStatisticSinkStub (_) (_) = ()
+let internal vesselStatisticSinkStub (_) (_) = 
+    ()
 
 let internal vesselSingleStatisticSourceStub (_) (identifier: VesselStatisticIdentifier) = 
     match identifier with 
@@ -66,6 +67,8 @@ let internal vesselSingleStatisticSourceStub (_) (identifier: VesselStatisticIde
         {MinimumValue=10.0; MaximumValue=10.0; CurrentValue=10.0} |> Some
     | VesselStatisticIdentifier.DockDistance ->
         {MinimumValue=1.0; MaximumValue=1.0; CurrentValue=1.0} |> Some
+    | VesselStatisticIdentifier.Speed ->
+        {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=1.0} |> Some
     | _ ->
         None
 

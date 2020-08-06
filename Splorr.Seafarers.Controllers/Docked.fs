@@ -42,12 +42,12 @@ module Docked =
             |> Some
 
         | Some (Command.Buy (quantity, itemName))->
-            (Dock, location, world |> World.BuyItems islandMarketSource islandSingleMarketSink vesselSingleStatisticSource (commoditySource()) (itemSource()) location quantity itemName) 
+            (Dock, location, world |> World.BuyItems islandMarketSource islandSingleMarketSource islandSingleMarketSink vesselSingleStatisticSource commoditySource (itemSource()) location quantity itemName) 
             |> Gamestate.Docked
             |> Some            
 
         | Some (Command.Sell (quantity, itemName))->
-            (Dock, location, world |> World.SellItems islandMarketSource islandSingleMarketSource islandSingleMarketSink (commoditySource()) (itemSource()) location quantity itemName) 
+            (Dock, location, world |> World.SellItems islandMarketSource islandSingleMarketSource islandSingleMarketSink commoditySource (itemSource()) location quantity itemName) 
             |> Gamestate.Docked
             |> Some            
 
