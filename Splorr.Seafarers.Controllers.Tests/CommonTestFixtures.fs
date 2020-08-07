@@ -63,6 +63,10 @@ let internal vesselSingleStatisticSourceStub (_) (identifier: VesselStatisticIde
         {MinimumValue=0.001; MaximumValue=0.001; CurrentValue=0.001} |> Some
     | VesselStatisticIdentifier.Tonnage ->
         {MinimumValue=100.0; MaximumValue=100.0; CurrentValue=100.0} |> Some
+    | VesselStatisticIdentifier.PositionX ->
+        {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=0.0} |> Some
+    | VesselStatisticIdentifier.PositionY ->
+        {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=0.0} |> Some
     | VesselStatisticIdentifier.ViewDistance ->
         {MinimumValue=10.0; MaximumValue=10.0; CurrentValue=10.0} |> Some
     | VesselStatisticIdentifier.DockDistance ->

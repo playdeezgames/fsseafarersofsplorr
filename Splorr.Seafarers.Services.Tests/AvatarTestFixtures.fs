@@ -17,13 +17,17 @@ let internal vesselSingleStatisticSource (_) (identifier) =
         {MinimumValue = 0.0; CurrentValue=1.0; MaximumValue=1.0} |> Some
     | VesselStatisticIdentifier.Heading ->
         {MinimumValue = 0.0; CurrentValue=0.0; MaximumValue=6.3} |> Some
+    | VesselStatisticIdentifier.PositionX ->
+        {MinimumValue = 0.0; CurrentValue=50.0; MaximumValue=100.0} |> Some
+    | VesselStatisticIdentifier.PositionY ->
+        {MinimumValue = 0.0; CurrentValue=50.0; MaximumValue=100.0} |> Some
     | _ ->
         None
 let internal vesselSingleStatisticSink (_) (_) = ()
 
 
 let internal avatar =
-    Avatar.Create vesselStatisticTemplateSourceStub vesselStatisticSinkStub avatarId statisticDescriptors [1UL] (0.0,0.0)
+    Avatar.Create vesselStatisticTemplateSourceStub vesselStatisticSinkStub avatarId statisticDescriptors [1UL]
 let internal avatarId = "avatar"
 let internal avatarNoStats =
     {avatar with 

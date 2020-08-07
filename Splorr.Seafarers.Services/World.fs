@@ -105,10 +105,11 @@ module World =
         |> Map.tryFind world.AvatarId
         |> Option.fold 
             (fun w avatar -> 
+                let avatarPosition = Avatar.GetPosition vesselSingleStatisticSource w.AvatarId |> Option.get
                 w.Islands
                 |> Map.filter
                     (fun location island -> 
-                        (island.AvatarVisits.ContainsKey world.AvatarId |> not) && ((avatar.Position |> Location.DistanceTo location)<=viewDistance))
+                        (island.AvatarVisits.ContainsKey world.AvatarId |> not) && ((avatarPosition |> Location.DistanceTo location)<=viewDistance))
                 |> Map.fold
                     (fun a location _ ->
                         a
@@ -133,9 +134,7 @@ module World =
                         vesselStatisticSink
                         avatarId
                         configuration.StatisticDescriptors 
-                        configuration.RationItems 
-                        (configuration.WorldSize 
-                        |> Location.ScaleBy 0.5))
+                        configuration.RationItems)
             Islands = Map.empty
         }
         |> GenerateIslands nameSource configuration random 0u
@@ -299,8 +298,9 @@ module World =
             world
 
     let DistanceTo 
-            (islandName : string) 
-            (world      : World) 
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (islandName                  : string) 
+            (world                       : World) 
             : World =
         let location =
             world.Islands
@@ -310,10 +310,10 @@ module World =
                         Some k
                     else
                         None)
-        match location, world.Avatars |> Map.tryFind world.AvatarId with
-        | Some l, Some avatar ->
+        match location, Avatar.GetPosition vesselSingleStatisticSource world.AvatarId with
+        | Some l, Some avatarPosition ->
             world
-            |> AddMessages [ (islandName, Location.DistanceTo l avatar.Position ) ||> sprintf "Distance to `%s` is %f." ]
+            |> AddMessages [ (islandName, Location.DistanceTo l avatarPosition ) ||> sprintf "Distance to `%s` is %f." ]
         | _, Some _ ->
             world
             |> AddMessages [ islandName |> sprintf "I don't know how to get to `%s`." ]
@@ -334,10 +334,10 @@ module World =
                         Some k
                     else
                         None)
-        match location, world.Avatars |> Map.tryFind world.AvatarId with
-        | Some l, Some avatar ->
+        match location, Avatar.GetPosition vesselSingleStatisticSource world.AvatarId with
+        | Some l, Some avatarPosition ->
             world
-            |> SetHeading vesselSingleStatisticSource vesselSingleStatisticSink (Location.HeadingTo avatar.Position l |> Angle.ToDegrees)
+            |> SetHeading vesselSingleStatisticSource vesselSingleStatisticSink (Location.HeadingTo avatarPosition l |> Angle.ToDegrees)
             |> AddMessages [ islandName |> sprintf "You head for `%s`." ]
         | _, Some _ ->
             world

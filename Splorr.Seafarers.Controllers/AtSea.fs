@@ -25,10 +25,13 @@ module AtSea =
             vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.ViewDistance 
             |> Option.get 
             |> Statistic.GetCurrentValue
+        let avatarPosition =
+            Avatar.GetPosition vesselSingleStatisticSource world.AvatarId
+            |> Option.get
         world
-        |> World.GetNearbyLocations avatar.Position viewDistance
+        |> World.GetNearbyLocations avatarPosition viewDistance
         |> List.map (fun l -> (l,world.Islands.[l].CareenDistance))
-        |> List.exists (fun (l,d) -> Location.DistanceTo l avatar.Position < d)
+        |> List.exists (fun (l,d) -> Location.DistanceTo l avatarPosition < d)
 
     let private GetVisibleIslands 
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
@@ -39,11 +42,15 @@ module AtSea =
             vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.ViewDistance 
             |> Option.get 
             |> Statistic.GetCurrentValue
+        let avatarPosition =
+            world.AvatarId
+            |> Avatar.GetPosition vesselSingleStatisticSource
+            |> Option.get
         world
-        |> World.GetNearbyLocations avatar.Position viewDistance
+        |> World.GetNearbyLocations avatarPosition viewDistance
         |> List.map
             (fun location -> 
-                (location, Location.HeadingTo avatar.Position location |> Angle.ToDegrees |> Angle.ToString, Location.DistanceTo avatar.Position location, (world.Islands.[location] |> Island.GetDisplayName world.AvatarId)))
+                (location, Location.HeadingTo avatarPosition location |> Angle.ToDegrees |> Angle.ToString, Location.DistanceTo avatarPosition location, (world.Islands.[location] |> Island.GetDisplayName world.AvatarId)))
         |> List.sortBy (fun (_,_,d,_)->d)
 
     let private UpdateDisplay 
@@ -151,7 +158,7 @@ module AtSea =
 
         | Some (Command.DistanceTo name) ->
             world
-            |> World.DistanceTo name
+            |> World.DistanceTo vesselSingleStatisticSource name
             |> Gamestate.AtSea
             |> Some
 

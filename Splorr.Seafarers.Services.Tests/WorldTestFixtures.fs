@@ -22,6 +22,10 @@ let private vesselSingleStatisticSourceStub (_) (identifier:VesselStatisticIdent
     match identifier with
     | VesselStatisticIdentifier.ViewDistance ->
         {MinimumValue=10.0; CurrentValue=10.0; MaximumValue=10.0} |> Some
+    | VesselStatisticIdentifier.PositionX ->
+        {MinimumValue=0.0; CurrentValue=50.0; MaximumValue=100.0} |> Some
+    | VesselStatisticIdentifier.PositionY ->
+        {MinimumValue=0.0; CurrentValue=50.0; MaximumValue=100.0} |> Some
     | _ -> None
 let internal soloIslandWorld = 
     World.Create 
@@ -38,7 +42,6 @@ let internal emptyWorld =
         Avatars = 
             [avatarId,{
                 Messages = []
-                Position = (0.0,0.0)
                 Money = 0.0
                 Reputation = 0.0
                 Job = None
@@ -131,5 +134,5 @@ let internal jobWorld = genericDockedWorld |> World.AcceptJob 1u genericWorldIsl
 let internal jobLocation = jobWorld.Avatars.[avatarId].Job.Value.Destination
 
 let internal headForWorld =
-    {oneIslandWorld with Avatars =oneIslandWorld.Avatars |> Map.add avatarId {oneIslandWorld.Avatars.[avatarId] with Position = (1.0,0.0)}}
+    {oneIslandWorld with Avatars =oneIslandWorld.Avatars |> Map.add avatarId oneIslandWorld.Avatars.[avatarId] (*with Position = (1.0,0.0)*) }
 

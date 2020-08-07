@@ -2,8 +2,7 @@ namespace Splorr.Seafarers.Models
 
 type Avatar =
     {
-        Messages     : string list//TODO: associate directly to avatarId
-        Position     : Location//TODO: make this a Vessel statistics
+        Messages     : string list//TODO: associate directly to avatarId - new table
         Money        : float//TODO: make this a Shipmate statistic - min 0, max 1.7976931348623157e308
         Reputation   : float//TODO: make this a Shipmate statistic - min -1.7976931348623157e308, max 1.7976931348623157e308
         Job          : Job option //TODO: associate directly to avatarId

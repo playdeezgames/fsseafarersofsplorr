@@ -5,10 +5,11 @@ open Splorr.Seafarers.Services
 
 module IslandList =
     let private RunWorld 
-            (messageSink : MessageSink) 
-            (pageSize    : uint32) 
-            (page        : uint32) 
-            (world       : World) 
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (messageSink                 : MessageSink) 
+            (pageSize                    : uint32) 
+            (page                        : uint32) 
+            (world                       : World) 
             : unit = 
         [
             "" |> Line
@@ -35,14 +36,18 @@ module IslandList =
         ]
         |> List.iter messageSink
         if page < totalPages then
+            let avatarPosition = 
+                world.AvatarId
+                |> Avatar.GetPosition vesselSingleStatisticSource
+                |> Option.get
             knownIslands
             |> List.skip (skippedItems |> int)
             |> List.take ((Utility.Lesser pageSize (totalItems-skippedItems)) |> int)
             |> List.iter (fun (location, island) -> 
                 let distance =
-                    Location.DistanceTo world.Avatars.[world.AvatarId].Position location
+                    Location.DistanceTo avatarPosition location
                 let bearing =
-                    Location.HeadingTo world.Avatars.[world.AvatarId].Position location
+                    Location.HeadingTo avatarPosition location
                     |> Angle.ToDegrees
                     |> Angle.ToString
                 [
@@ -59,12 +64,13 @@ module IslandList =
     let private pageSize = 20u
 
     let Run 
-            (messageSink : MessageSink) 
-            (page        : uint32) 
-            (gamestate   : Gamestate) 
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (messageSink                 : MessageSink) 
+            (page                        : uint32) 
+            (gamestate                   : Gamestate) 
             : Gamestate option =
         gamestate 
         |> Gamestate.GetWorld
-        |> Option.iter (RunWorld messageSink pageSize page )
+        |> Option.iter (RunWorld vesselSingleStatisticSource messageSink pageSize page )
         gamestate
         |> Some
