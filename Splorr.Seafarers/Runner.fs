@@ -61,6 +61,7 @@ module Runner =
 
             | Gamestate.Chart (chartName, world) -> 
                 Chart.Run 
+                    vesselSingleStatisticSource
                     (configurationSource()).WorldSize 
                     messageSink 
                     chartName 
@@ -127,6 +128,7 @@ module Runner =
 
             | Gamestate.IslandList (page, state) -> 
                 IslandList.Run 
+                    vesselSingleStatisticSource
                     messageSink 
                     page 
                     state

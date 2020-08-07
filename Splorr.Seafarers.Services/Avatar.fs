@@ -23,12 +23,10 @@ module Avatar =
             (avatarId                      : string)
             (statisticDescriptors          : ShipmateStatisticTemplate list) //TODO: from source?
             (rationItems                   : uint64 list) 
-            (position                      : Location)
             : Avatar =
         Vessel.Create vesselStatisticTemplateSource vesselStatisticSink avatarId
         {
             Messages = []
-            Position = position
             Money = 0.0
             Reputation = 0.0
             Job = None
@@ -37,6 +35,24 @@ module Avatar =
             Shipmates =
                 [| Shipmate.Create rationItems statisticDescriptors |]
         }
+
+    let GetPosition
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (avatarId                    : string)
+            : Location option =
+        let positionX =
+            VesselStatisticIdentifier.PositionX
+            |> vesselSingleStatisticSource avatarId
+            |> Option.map Statistic.GetCurrentValue
+        let positionY = 
+            VesselStatisticIdentifier.PositionY
+            |> vesselSingleStatisticSource avatarId
+            |> Option.map Statistic.GetCurrentValue
+        match positionX, positionY with
+        | Some x, Some y ->
+            (x,y) |> Some
+        | _ ->
+            None
 
     let GetSpeed
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
@@ -54,6 +70,32 @@ module Avatar =
         |> vesselSingleStatisticSource avatarId 
         |> Option.map Statistic.GetCurrentValue
 
+    let SetPosition 
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
+            (position                    : Location) 
+            (avatarId                    : string) 
+            : unit =
+        match 
+            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PositionX, 
+            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PositionY 
+            with
+        | Some x, Some y ->
+            vesselSingleStatisticSink 
+                avatarId 
+                (VesselStatisticIdentifier.PositionX, 
+                    x 
+                    |> Statistic.SetCurrentValue 
+                        (position 
+                        |> fst))
+            vesselSingleStatisticSink 
+                avatarId 
+                (VesselStatisticIdentifier.PositionY, 
+                    x 
+                    |> Statistic.SetCurrentValue 
+                        (position 
+                        |> snd))
+        | _ -> ()
 
     let SetSpeed 
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
@@ -94,9 +136,15 @@ module Avatar =
         match avatar.Inventory.TryFind item with
         | Some count ->
             if count > quantity then
-                {avatar with Inventory = avatar.Inventory |> Map.add item (count-quantity)}
+                {avatar with 
+                    Inventory = 
+                        avatar.Inventory 
+                        |> Map.add item (count-quantity)}
             else
-                {avatar with Inventory = avatar.Inventory |> Map.remove item}
+                {avatar with 
+                    Inventory = 
+                        avatar.Inventory 
+                        |> Map.remove item}
         | None ->
             avatar
         |> PurgeInventory
@@ -200,11 +248,10 @@ module Avatar =
             |> Option.map Statistic.GetCurrentValue 
             |> Option.get
         Vessel.Befoul vesselSingleStatisticSource vesselSingleStatisticSink avatarId
-        let newPosition = ((avatar.Position |> fst) + System.Math.Cos(actualHeading) * actualSpeed, (avatar.Position |> snd) + System.Math.Sin(actualHeading) * actualSpeed)
-        {
-            avatar with 
-                Position = newPosition
-        }
+        let avatarPosition = GetPosition vesselSingleStatisticSource avatarId |> Option.get
+        let newPosition = ((avatarPosition |> fst) + System.Math.Cos(actualHeading) * actualSpeed, (avatarPosition |> snd) + System.Math.Sin(actualHeading) * actualSpeed)
+        SetPosition vesselSingleStatisticSource vesselSingleStatisticSink newPosition avatarId
+        avatar
         |> TransformShipmates (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some))
         |> AddMetric Metric.Moved 1u
         |> Eat

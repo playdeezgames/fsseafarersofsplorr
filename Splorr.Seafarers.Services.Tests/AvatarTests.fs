@@ -10,7 +10,8 @@ open AvatarTestFixtures
 let ``Create.It creates an avatar.`` () =
     let actual =
         avatar
-    Assert.AreEqual((0.0,0.0), actual.Position)
+    Assert.AreEqual([], actual.Messages)
+    Assert.AreEqual(1, actual.Shipmates.Length)
 
 [<Test>]
 let ``SetSpeed.It sets all stop when given less than zero.`` () =
@@ -128,16 +129,49 @@ let ``SetHeading.It sets a given heading.`` () =
     input
     |> Avatar.SetHeading vesselSingleStatisticSource vesselSingleStatisticSink inputHeading
 
+[<Test>]
+let ``SetPosition.It sets a given position.`` () =
+    let input = avatarId
+    let inputPosition = (10.0, 11.0)
+    let originalPosition = (8.0, 9.0)
+    let vesselSingleStatisticSource (_) (identifier) = 
+        match identifier with
+        | VesselStatisticIdentifier.PositionX ->
+            {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=originalPosition |> fst} |> Some
+        | VesselStatisticIdentifier.PositionY ->
+            {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=originalPosition |> snd} |> Some
+        | _ -> 
+            raise (System.NotImplementedException "Source - Dont call me.")
+            None
+    let expectedPosition = inputPosition
+    let vesselSingleStatisticSink (_) (identifier: VesselStatisticIdentifier, statistic:Statistic) = 
+        match identifier with
+        | VesselStatisticIdentifier.PositionX ->
+            Assert.AreEqual(expectedPosition |> fst, statistic.CurrentValue)
+        | VesselStatisticIdentifier.PositionY ->
+            Assert.AreEqual(expectedPosition |> snd, statistic.CurrentValue)
+        | _ ->
+            raise (System.NotImplementedException "Sink - Dont call me.")
+    input
+    |> Avatar.SetPosition vesselSingleStatisticSource vesselSingleStatisticSink inputPosition
+
 let private inputAvatarId = "avatar"
 
 [<Test>]
 let ``Move.It moves the avatar.`` () =
     let input = avatar
-    let expectedPosition = (1.0,0.0)
-    let actual =
-        input
-        |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId
-    Assert.AreEqual(expectedPosition, actual.Position)
+    let expectedPosition = (51.0,50.0)
+    let vesselSingleStatisticSink (_) (identifier:VesselStatisticIdentifier, statistic:Statistic) =
+        match identifier with
+        | VesselStatisticIdentifier.PositionX ->
+            Assert.AreEqual(expectedPosition |> fst,statistic.CurrentValue)
+        | VesselStatisticIdentifier.PositionY ->
+            Assert.AreEqual(expectedPosition |> snd,statistic.CurrentValue)
+        | _ ->
+            raise (System.NotImplementedException "Kaboom set")
+    input
+    |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId
+    |> ignore
 
 [<Test>]
 let ``Move.It removes a ration when the given avatar has rations and full satiety and full health.`` () =
@@ -640,6 +674,35 @@ let ``GetSpeed.It gets the speed of an avatar.`` () =
         |> Avatar.GetSpeed vesselSingleStatisticSource
     Assert.AreEqual(expected, actual)
 
+[<Test>]
+let ``GetPosition.It gets the position of an avatar.`` () =
+    let actualX = 
+        {
+            MinimumValue = 0.0
+            MaximumValue = 50.0
+            CurrentValue = 25.0
+        }
+    let actualY = 
+        {
+            MinimumValue = 50.0
+            MaximumValue = 100.0
+            CurrentValue = 75.0
+        }
+    let vesselSingleStatisticSource (_) (identifier) =
+        match identifier with
+        | VesselStatisticIdentifier.PositionX -> actualX |> Some
+        | VesselStatisticIdentifier.PositionY -> actualY |> Some
+        | _ ->
+            raise (System.NotImplementedException "Kaboom get")
+            None
+    let inputAvatarId="avatar"
+    let expected = 
+        (actualX.CurrentValue, actualY.CurrentValue) 
+        |> Some
+    let actual =
+        inputAvatarId
+        |> Avatar.GetPosition vesselSingleStatisticSource
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``GetHeading.It gets the heading of an avatar.`` () =

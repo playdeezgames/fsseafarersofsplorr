@@ -1,6 +1,7 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
 open Splorr.Seafarers.Models
+open Splorr.Seafarers.Services
 open System.Drawing
 open System
 
@@ -12,13 +13,13 @@ module Chart =
         ((location |> snd |> int) * scale - scale/2, (-(location |> fst |> int)) * scale - scale/2)
 
     let private outputChart 
-            (worldSize   : Location) 
-            (messageSink : MessageSink) 
-            (chartName   : string) 
-            (world       : World) 
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (worldSize                   : Location) 
+            (messageSink                 : MessageSink) 
+            (chartName                   : string) 
+            (world                       : World) 
             : unit =
         try
-            let avatar = world.Avatars.[world.AvatarId]
             let scale = 10
             let x, y = plotLocation scale worldSize
             use bmp = new Bitmap(x, -y)
@@ -51,7 +52,11 @@ module Chart =
                             |> Map.add index island.Name
                         else
                             leg) Map.empty
-            let avatarPosition = avatar.Position |> plotLocation scale
+            let avatarPosition = 
+                world.AvatarId
+                |> Avatar.GetPosition vesselSingleStatisticSource 
+                |> Option.get
+                |> plotLocation scale
             g.FillEllipse(avatarBrush, avatarPosition |> fst , avatarPosition |> snd, scale, scale)
             bmp.Save(chartName |> sprintf "%s.png", Imaging.ImageFormat.Png)
             let legendText =
@@ -89,10 +94,11 @@ module Chart =
             chartName
 
     let Run 
-            (worldSize:Location) 
-            (messageSink:MessageSink) 
-            (chartName:string) 
-            (world:World) 
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (worldSize                   : Location) 
+            (messageSink                 : MessageSink) 
+            (chartName                   : string) 
+            (world                       : World) 
             : Gamestate option =
         let chartName = 
             chartName 
@@ -101,6 +107,7 @@ module Chart =
             messageSink 
             chartName
         outputChart 
+            vesselSingleStatisticSource
             worldSize 
             messageSink 
             chartName 

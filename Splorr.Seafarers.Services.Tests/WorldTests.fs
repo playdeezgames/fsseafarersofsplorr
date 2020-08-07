@@ -9,7 +9,7 @@ open CommonTestFixtures
 [<Test>]
 let ``Create.It creates a new world.`` () =
     let actual = soloIslandWorld
-    Assert.AreEqual((5.0,5.0), actual.Avatars.[avatarId].Position)
+    //Assert.AreEqual((5.0,5.0), actual.Avatars.[avatarId].Position)
     Assert.AreEqual(1, actual.Islands.Count)
     Assert.AreNotEqual("", (actual.Islands |> Map.toList |> List.map snd |> List.head).Name)
 
@@ -186,6 +186,9 @@ let ``SetHeading.It does nothing when given an invalid avatar id`` () =
 let ``Move.It moves the avatar one unit when give 1u for distance when given a valid avatar id.`` () =
     let vesselSingleStatisticSource (_) (identifier) =
         match identifier with
+        | VesselStatisticIdentifier.PositionX
+        | VesselStatisticIdentifier.PositionY ->
+            {MinimumValue=0.0; CurrentValue=50.0; MaximumValue=100.0} |> Some
         | VesselStatisticIdentifier.PortFouling
         | VesselStatisticIdentifier.StarboardFouling ->
             {MinimumValue=0.0; CurrentValue=0.0; MaximumValue=0.25} |> Some
@@ -198,14 +201,26 @@ let ``Move.It moves the avatar one unit when give 1u for distance when given a v
         | VesselStatisticIdentifier.Heading ->
             {MinimumValue=0.0; MaximumValue=6.3; CurrentValue=0.0} |> Some
         | _ ->
-            Assert.Fail("Dont call me.")
+            Assert.Fail("Don't get me.")
             None
-    let vesselSingleStatisticSink (_) (_:VesselStatisticIdentifier, statistic:Statistic) : unit =
-        Assert.AreEqual(0.00050000000000000001, statistic.CurrentValue)
-    let actual =
-        soloIslandWorld
-        |> World.Move vesselSingleStatisticSource vesselSingleStatisticSink 1u
-    Assert.AreEqual((6.0,5.0), actual.Avatars.[avatarId].Position)
+    let mutable positionXCalls = 0
+    let mutable positionYCalls = 0
+    let vesselSingleStatisticSink (_) (identifier:VesselStatisticIdentifier, statistic:Statistic) : unit =
+        match identifier with
+        | VesselStatisticIdentifier.StarboardFouling
+        | VesselStatisticIdentifier.PortFouling ->
+            Assert.AreEqual(0.00050000000000000001, statistic.CurrentValue)
+        | VesselStatisticIdentifier.PositionX ->
+            positionXCalls <- positionXCalls + 1
+        | VesselStatisticIdentifier.PositionY ->
+            positionYCalls <- positionYCalls + 1
+        | _ ->
+            Assert.Fail("Don't set me.")
+    soloIslandWorld
+    |> World.Move vesselSingleStatisticSource vesselSingleStatisticSink 1u
+    |> ignore
+    Assert.AreEqual(1, positionXCalls)
+    Assert.AreEqual(1, positionYCalls)
 
 [<Test>]
 let ``Move.It does nothing when given an invalid avatar id`` () =
@@ -225,6 +240,9 @@ let ``Move.It does nothing when given an invalid avatar id`` () =
 let ``Move.It moves the avatar almost two units when give 2u for distance.`` () =
     let vesselSingleStatisticSource (_) (identifier) = 
         match identifier with
+        | VesselStatisticIdentifier.PositionX
+        | VesselStatisticIdentifier.PositionY ->
+            {MinimumValue=0.0; CurrentValue=50.0; MaximumValue=100.0} |> Some
         | VesselStatisticIdentifier.PortFouling
         | VesselStatisticIdentifier.StarboardFouling ->
             {MinimumValue=0.0; CurrentValue=0.0; MaximumValue=0.25} |> Some
@@ -239,12 +257,25 @@ let ``Move.It moves the avatar almost two units when give 2u for distance.`` () 
         | _ ->
             Assert.Fail("Dont call me.")
             None
-    let vesselSingleStatisticSink (_) (_:VesselStatisticIdentifier, statistic:Statistic) : unit =
-        Assert.AreEqual(0.00050000000000000001, statistic.CurrentValue)
-    let actual =
-        soloIslandWorld
-        |> World.Move vesselSingleStatisticSource vesselSingleStatisticSink 2u
-    Assert.AreEqual((7.0,5.0), actual.Avatars.[avatarId].Position)
+    let mutable positionXCalls = 0
+    let mutable positionYCalls = 0
+    let vesselSingleStatisticSink (_) (identifier:VesselStatisticIdentifier, statistic:Statistic) : unit =
+        match identifier with
+        | VesselStatisticIdentifier.StarboardFouling
+        | VesselStatisticIdentifier.PortFouling ->
+            Assert.AreEqual(0.00050000000000000001, statistic.CurrentValue)
+        | VesselStatisticIdentifier.PositionX ->
+            positionXCalls <- positionXCalls + 1
+        | VesselStatisticIdentifier.PositionY ->
+            positionYCalls <- positionYCalls + 1
+        | _ ->
+            Assert.Fail("Don't set me.")
+    soloIslandWorld
+    |> World.Move vesselSingleStatisticSource vesselSingleStatisticSink 2u
+    |> ignore
+    Assert.AreEqual(2, positionXCalls)
+    Assert.AreEqual(2, positionYCalls)
+    
 
 [<Test>]
 let ``GetNearbyLocations.It returns locations within a given distance from another given location.`` () =
@@ -256,13 +287,14 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
             CareenDistance = 0.0
         }
     let viewDistance = 5.0
+    let avatarPosition = (5.0, 5.0)
     let world =
         {
             AvatarId = avatarId
             Avatars = 
                 [avatarId,{
                     Messages = []
-                    Position=(5.0, 5.0)
+                    //Position=(5.0, 5.0)
                     Money = 0.0
                     Reputation = 0.0
                     Job = None
@@ -293,7 +325,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
         }
     let actual = 
         world
-        |> World.GetNearbyLocations world.Avatars.[avatarId].Position viewDistance
+        |> World.GetNearbyLocations avatarPosition viewDistance
     Assert.AreEqual(5, actual.Length)
     Assert.IsFalse (actual |> List.exists(fun i -> i=( 0.0,  0.0)))
     Assert.IsTrue  (actual |> List.exists(fun i -> i=( 5.0,  0.0)))
@@ -400,9 +432,14 @@ let ``HeadFor.It adds a message when the island name does not exist.`` () =
     let expectedAvatar = {inputWorld.Avatars.[avatarId] with Messages = [ "I don't know how to get to `yermom`." ]}
     let expected =
         {inputWorld with Avatars= inputWorld.Avatars |> Map.add avatarId expectedAvatar}       
-    let vesselSingleStatisticSource (_) (_) =
-        raise (System.NotImplementedException "Kaboom get")
-        None
+    let vesselSingleStatisticSource (_) (identifier) =
+        match identifier with
+        | VesselStatisticIdentifier.PositionX 
+        | VesselStatisticIdentifier.PositionY ->
+            {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=50.0}|> Some
+        | _ ->
+            Assert.Fail("Kaboom get")
+            None
     let vesselSingleStatisticSink (_) (_) =
         raise (System.NotImplementedException "Kaboom set")
     let actual =
@@ -416,9 +453,14 @@ let ``HeadFor.It adds a message when the island name exists but is not known.`` 
     let expectedAvatar = {inputWorld.Avatars.[avatarId] with Messages = [ "I don't know how to get to `Uno`." ]}
     let expected =
         {inputWorld with Avatars= inputWorld.Avatars |> Map.add avatarId expectedAvatar}   
-    let vesselSingleStatisticSource (_) (_) =
-        raise (System.NotImplementedException "Kaboom get")
-        None
+    let vesselSingleStatisticSource (_) (identifier) =
+        match identifier with
+        | VesselStatisticIdentifier.PositionX 
+        | VesselStatisticIdentifier.PositionY ->
+            {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=50.0}|> Some
+        | _ ->
+            Assert.Fail("Kaboom get")
+            None
     let vesselSingleStatisticSink (_) (_) =
         raise (System.NotImplementedException "Kaboom set")
     let actual =
@@ -445,8 +487,12 @@ let ``HeadFor.It sets the heading when the island name exists and is known.`` ()
         match identifier with
         | VesselStatisticIdentifier.Heading ->
             {MinimumValue=0.0; MaximumValue=6.3; CurrentValue=0.0} |> Some
+        | VesselStatisticIdentifier.PositionX ->
+            {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=1.0}|> Some
+        | VesselStatisticIdentifier.PositionY ->
+            {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=0.0}|> Some
         | _ ->
-            raise (System.NotImplementedException "Kaboom get")
+            Assert.Fail("Kaboom get")
             None
     let expectedHeading = System.Math.PI
     let vesselSingleStatisticSink (_) (identifier: VesselStatisticIdentifier, statistic: Statistic) =
@@ -538,6 +584,9 @@ let ``AcceptJob.It adds the given job to the avatar and eliminates it from the i
 let ``TransformAvatar.It transforms the avatar within the given world.`` () =
     let vesselSingleStatisticSource (_) (identifier) = 
         match identifier with
+        | VesselStatisticIdentifier.PositionX
+        | VesselStatisticIdentifier.PositionY ->
+            {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=50.0} |> Some
         | VesselStatisticIdentifier.Speed ->
             {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=1.0} |> Some
         | VesselStatisticIdentifier.Heading ->
@@ -546,15 +595,25 @@ let ``TransformAvatar.It transforms the avatar within the given world.`` () =
             {MinimumValue=0.01; MaximumValue=0.01; CurrentValue=0.01} |> Some
         | _ ->
             None
-    let vesselSingleStatisticSink (_) (_) =
-        raise (System.NotImplementedException "Kaboom set")
+    let mutable xPositionCalled = 0
+    let mutable yPositionCalled = 0
+    let vesselSingleStatisticSink (_) (identifier:VesselStatisticIdentifier,_) =
+        match identifier with
+        | VesselStatisticIdentifier.PositionX ->
+            xPositionCalled <- xPositionCalled + 1
+        | VesselStatisticIdentifier.PositionY ->
+            yPositionCalled <- yPositionCalled + 1
+        | _ ->
+            raise (System.NotImplementedException "Kaboom set")
     let expectedAvatar = 
         genericWorld.Avatars.[avatarId] 
-        |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink avatarId
+        |> Avatar.Move vesselSingleStatisticSource (fun (_) (_) -> ()) avatarId
     let actual =
         genericWorld
         |> World.TransformAvatar (Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink avatarId >> Some)
     Assert.AreEqual(expectedAvatar,actual.Avatars.[avatarId])
+    Assert.AreEqual(1, xPositionCalled)
+    Assert.AreEqual(1, yPositionCalled)
 
 [<Test>]
 let ``AbandonJob.It adds a message when the avatar has no job.`` () =
@@ -937,9 +996,18 @@ let ``DistanceTo.It adds a 'unknown island' message when given a bogus island na
     let expected =
         input
         |> World.TransformAvatar (Avatar.AddMessages [expectedMessage] >> Some)
+    let vesselSingleStatisticSource (_) (identifier) = 
+        match identifier with
+        | VesselStatisticIdentifier.PositionX ->
+            {MinimumValue = 0.0; MaximumValue=100.0; CurrentValue=50.0} |> Some
+        | VesselStatisticIdentifier.PositionY ->
+            {MinimumValue = 0.0; MaximumValue=100.0; CurrentValue=50.0} |> Some
+        | _ ->
+            Assert.Fail("Kaboom get")
+            None
     let actual =
         input
-        |> World.DistanceTo inputName
+        |> World.DistanceTo vesselSingleStatisticSource inputName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -950,9 +1018,18 @@ let ``DistanceTo.It adds a 'unknown island' message when given a valid island na
     let expected =
         input
         |> World.TransformAvatar (Avatar.AddMessages [expectedMessage] >> Some)
+    let vesselSingleStatisticSource (_) (identifier) = 
+        match identifier with
+        | VesselStatisticIdentifier.PositionX ->
+            {MinimumValue = 0.0; MaximumValue=100.0; CurrentValue=50.0} |> Some
+        | VesselStatisticIdentifier.PositionY ->
+            {MinimumValue = 0.0; MaximumValue=100.0; CurrentValue=50.0} |> Some
+        | _ ->
+            Assert.Fail("Kaboom get")
+            None
     let actual =
         input
-        |> World.DistanceTo inputName
+        |> World.DistanceTo vesselSingleStatisticSource inputName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -962,27 +1039,44 @@ let ``DistanceTo.It adds a 'distance to island' message when given a valid islan
     let input = 
         genericWorld
         |> World.TransformIsland inputLocation (Island.MakeKnown genericWorld.AvatarId >> Some)
-    let expectedMessage = (inputName, Location.DistanceTo inputLocation input.Avatars.[input.AvatarId].Position) ||> sprintf "Distance to `%s` is %f."
+    let avatarPosition = (0.0, 0.0)
+    let expectedMessage = (inputName, Location.DistanceTo inputLocation avatarPosition) ||> sprintf "Distance to `%s` is %f."
     let expected =
         input
         |> World.TransformAvatar (Avatar.AddMessages [expectedMessage] >> Some)
+    let vesselSingleStatisticSource (_) (identifier) = 
+        match identifier with
+        | VesselStatisticIdentifier.PositionX ->
+            {MinimumValue = 0.0; MaximumValue=100.0; CurrentValue=avatarPosition |> fst} |> Some
+        | VesselStatisticIdentifier.PositionY ->
+            {MinimumValue = 0.0; MaximumValue=100.0; CurrentValue=avatarPosition |> snd} |> Some
+        | _ ->
+            Assert.Fail("Kaboom get")
+            None
     let actual =
         input
-        |> World.DistanceTo inputName
+        |> World.DistanceTo vesselSingleStatisticSource inputName
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``UpdateChart.It does nothing when the given avatar is not near any nearby islands.`` () =
     let input =
         genericWorld
-        |> World.TransformAvatar 
-            (fun a -> 
-                {a with Position = genericWorldConfiguration.WorldSize |> Location.ScaleBy 10.0} |> Some)
     let expected =
         input
+    let vesselSingleStatisticSource (_) (identifier) = 
+        match identifier with
+        | VesselStatisticIdentifier.PositionX
+        | VesselStatisticIdentifier.PositionY ->
+            {MinimumValue=0.0; MaximumValue=11.0; CurrentValue=5.5} |> Some
+        | VesselStatisticIdentifier.ViewDistance ->
+            {MinimumValue=0.0; MaximumValue=0.0; CurrentValue=0.0} |> Some
+        | _ ->
+            Assert.Fail()
+            None
     let actual =
         input
-        |> World.UpdateCharts vesselSingleStatisticSourceStub
+        |> World.UpdateCharts vesselSingleStatisticSource
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -991,9 +1085,19 @@ let ``UpdateChart.It does nothing when the given avatar has already seen all nea
         genericWorld
     let expected =
         input
+    let vesselSingleStatisticSource (_) (identifier) = 
+        match identifier with
+        | VesselStatisticIdentifier.PositionX 
+        | VesselStatisticIdentifier.PositionY ->
+            {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=1000.0} |> Some
+        | VesselStatisticIdentifier.ViewDistance ->
+            {MinimumValue=10.0; MaximumValue=10.0; CurrentValue=10.0} |> Some
+        | _ -> 
+            raise (System.NotImplementedException "Kaboom get")
+            None
     let actual =
         input
-        |> World.UpdateCharts vesselSingleStatisticSourceStub
+        |> World.UpdateCharts vesselSingleStatisticSource
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -1004,10 +1108,29 @@ let ``UpdateChart.It does sets all nearby island to "seen" when given avatar is 
             (fun w k v -> 
                 w
                 |> World.TransformIsland k (fun _ -> {v with AvatarVisits = Map.empty} |> Some)) genericWorld
+    let vesselSingleStatisticSource (_) (identifier) = 
+        match identifier with
+        | VesselStatisticIdentifier.PositionX
+        | VesselStatisticIdentifier.PositionY ->
+            {MinimumValue=0.0; MaximumValue=11.0; CurrentValue=5.5} |> Some
+        | VesselStatisticIdentifier.ViewDistance ->
+            {MinimumValue=20.0; MaximumValue=20.0; CurrentValue=20.0} |> Some
+        | _ ->
+            Assert.Fail()
+            None
     let expected =
-        genericWorld
+        genericWorld.Islands
+        |> Map.fold 
+            (fun w k v -> 
+                w
+                |> World.TransformIsland k 
+                    (fun _ -> 
+                        {v with 
+                            AvatarVisits = 
+                                Map.empty
+                                |> Map.add avatarId {VisitCount=None; LastVisit=None}} |> Some)) genericWorld
     let actual =
         input
-        |> World.UpdateCharts vesselSingleStatisticSourceStub
+        |> World.UpdateCharts vesselSingleStatisticSource
     Assert.AreEqual(expected, actual)
 

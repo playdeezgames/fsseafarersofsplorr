@@ -21,6 +21,9 @@ let private vesselStatisticTemplateSourceStub () =
 let private vesselStatisticSinkStub (_) (_) = ()
 let private vesselSingleStatisticSourceStub (_) (identifier:VesselStatisticIdentifier) = 
     match identifier with
+    | VesselStatisticIdentifier.PositionX
+    | VesselStatisticIdentifier.PositionY ->
+        {MinimumValue=0.0; CurrentValue=100.0; MaximumValue=50.0} |> Some
     | VesselStatisticIdentifier.ViewDistance ->
         {MinimumValue=10.0; CurrentValue=10.0; MaximumValue=10.0} |> Some
     | _ -> None
