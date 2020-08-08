@@ -4,6 +4,7 @@ open Splorr.Seafarers.Controllers
 open System.Data.SQLite
 open Splorr.Seafarers.Models
 open System
+open NUnit.Framework
 
 let internal connectionString = 
     "Data Source=:memory:;Version=3;New=True;"
@@ -80,6 +81,18 @@ let internal vesselSingleStatisticSourceStub (_) (identifier: VesselStatisticIde
 
 let internal vesselSingleStatisticSinkStub (_) (_) = ()
 
+let internal avatarMessageSourceStub (_) = []
+let internal avatarMessageSinkStub (_) (_) = ()
+let internal avatarMessagePurgerStub (_) = ()
+
+let avatarExpectedMessagesSink (expected:string list) (_) (actual:string) : unit =
+    match expected |> List.tryFind (fun x -> x = actual) with
+    | Some _ ->
+        Assert.Pass ("Valid message received.")
+    | _ ->
+        Assert.Fail ("Invalid Message Received")
+
+
 let internal adverbSource()          : string list = [ "woefully" ]
 let internal adjectiveSource()       : string list = [ "tatty" ]
 let internal objectNameSource()      : string list = [ "thing" ]
@@ -90,3 +103,4 @@ let internal termSources =
     (adverbSource, adjectiveSource, objectNameSource, personNameSource, personAdjectiveSource, professionSource)
 
 let internal nameSource() = []
+

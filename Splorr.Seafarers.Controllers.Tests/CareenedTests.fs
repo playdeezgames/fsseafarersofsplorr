@@ -14,8 +14,9 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
         Assert.Fail("It will not reach for user input because the avatar is dead.")
         None
     let inputSide = Port
+    let expectedMessages = []
     let expected =
-        inputWorld.Avatars.[avatarId].Messages
+        expectedMessages
         |> Gamestate.GameOver
         |> Some
     let actual =
@@ -23,6 +24,8 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
         |> Careened.Run 
             vesselSingleStatisticSourceStub
             vesselSingleStatisticSinkStub
+            avatarMessageSourceStub
+            avatarMessagePurgerStub
             inputSource 
             sinkStub 
             inputSide
@@ -46,6 +49,8 @@ let ``Run.It returns ConfirmQuit when given Quit command.`` () =
         |> Careened.Run 
             vesselSingleStatisticSourceStub
             vesselSingleStatisticSinkStub
+            avatarMessageSourceStub
+            avatarMessagePurgerStub
             inputSource 
             sinkStub 
             inputSide
@@ -68,6 +73,8 @@ let ``Run.It returns InvalidInput when given invalid command.`` () =
         |> Careened.Run 
             vesselSingleStatisticSourceStub
             vesselSingleStatisticSinkStub
+            avatarMessageSourceStub
+            avatarMessagePurgerStub
             inputSource 
             sinkStub 
             inputSide
@@ -91,6 +98,8 @@ let ``Run.It returns Careened Help when given the Help command.`` () =
         |> Careened.Run 
             vesselSingleStatisticSourceStub
             vesselSingleStatisticSinkStub
+            avatarMessageSourceStub
+            avatarMessagePurgerStub
             inputSource 
             sinkStub 
             inputSide
@@ -114,6 +123,8 @@ let ``Run.It returns Careened Metrics when given the Metrics command.`` () =
         |> Careened.Run 
             vesselSingleStatisticSourceStub
             vesselSingleStatisticSinkStub
+            avatarMessageSourceStub
+            avatarMessagePurgerStub
             inputSource 
             sinkStub 
             inputSide
@@ -137,6 +148,8 @@ let ``Run.It returns Careened Inventory when given the Inventory command.`` () =
         |> Careened.Run 
             vesselSingleStatisticSourceStub
             vesselSingleStatisticSinkStub
+            avatarMessageSourceStub
+            avatarMessagePurgerStub
             inputSource 
             sinkStub 
             inputSide
@@ -160,7 +173,11 @@ let ``Run.It returns Status when given the command Status.`` () =
         |> Careened.Run 
             vesselSingleStatisticSourceStub
             vesselSingleStatisticSinkStub
-            inputSource sinkStub inputSide
+            avatarMessageSourceStub
+            avatarMessagePurgerStub
+            inputSource 
+            sinkStub 
+            inputSide
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -180,7 +197,11 @@ let ``Run.It returns At Sea when given the command Weigh Anchor.`` () =
         |> Careened.Run 
             vesselSingleStatisticSourceStub
             vesselSingleStatisticSinkStub
-            inputSource sinkStub inputSide
+            avatarMessageSourceStub
+            avatarMessagePurgerStub
+            inputSource
+            sinkStub
+            inputSide
     Assert.AreEqual(expected, actual)
 
 
@@ -209,6 +230,8 @@ let ``Run.It returns Careened with a cleaned hull when given the command Clean H
         |> Careened.Run 
             vesselSingleStatisticSourceStub
             vesselSingleStatisticSinkStub
+            avatarMessageSourceStub
+            avatarMessagePurgerStub
             inputSource 
             sinkStub 
             inputSide

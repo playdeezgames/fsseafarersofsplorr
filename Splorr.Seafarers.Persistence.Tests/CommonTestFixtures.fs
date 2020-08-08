@@ -154,6 +154,19 @@ let private setupTerms
     |> runCommands connection
 
 let internal ExistingAvatarId = "avatar"
+
+let private setupMessages
+        (connection:SQLiteConnection)
+        : unit =
+    [
+        Tables.Messages
+        ExistingAvatarId |> sprintf "INSERT INTO [Messages] ([AvatarId], [Message]) VALUES ('%s', 'message1');"
+        ExistingAvatarId |> sprintf "INSERT INTO [Messages] ([AvatarId], [Message]) VALUES ('%s', 'message2');"
+        ExistingAvatarId |> sprintf "INSERT INTO [Messages] ([AvatarId], [Message]) VALUES ('%s', 'message3');"
+    ]
+    |> runCommands connection
+
+
 let internal NewAvatarId = "newavatar"
 
 let internal SetupConnection() : SQLiteConnection = 
@@ -171,6 +184,7 @@ let internal SetupConnection() : SQLiteConnection =
         setupIslandItems
         setupIslandMarkets
         setupTerms
+        setupMessages
     ]
     |> List.iter (fun f -> f connection)
 

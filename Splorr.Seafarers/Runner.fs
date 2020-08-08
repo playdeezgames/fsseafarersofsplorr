@@ -24,6 +24,9 @@ module Runner =
             (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
             (vesselSingleStatisticSource   : string->VesselStatisticIdentifier->Statistic option)
             (vesselSingleStatisticSink     : string->VesselStatisticIdentifier*Statistic->unit)
+            (avatarMessageSource           : AvatarMessageSource)
+            (avatarMessageSink             : AvatarMessageSink)
+            (avatarMessagePurger           : AvatarMessagePurger)
             (random                        : Random) 
             (configurationSource           : unit -> WorldConfiguration) 
             (commandSource                 : CommandSource) 
@@ -44,6 +47,9 @@ module Runner =
                     islandListSink 
                     vesselSingleStatisticSource
                     vesselSingleStatisticSink
+                    avatarMessageSource
+                    avatarMessageSink
+                    avatarMessagePurger
                     random 
                     (configurationSource()).RewardRange 
                     commandSource 
@@ -54,6 +60,8 @@ module Runner =
                 Careened.Run 
                     vesselSingleStatisticSource
                     vesselSingleStatisticSink
+                    avatarMessageSource
+                    avatarMessagePurger
                     commandSource 
                     messageSink 
                     side 
@@ -82,6 +90,9 @@ module Runner =
                     islandSingleMarketSource
                     islandSingleMarketSink 
                     vesselSingleStatisticSource
+                    avatarMessageSource
+                    avatarMessageSink
+                    avatarMessagePurger
                     commandSource 
                     messageSink 
                     location 
@@ -93,6 +104,7 @@ module Runner =
                     itemSource 
                     islandMarketSource 
                     islandListSource 
+                    avatarMessageSource
                     messageSink 
                     location 
                     world
@@ -155,7 +167,7 @@ module Runner =
                     messageSink 
                     state
 
-            |> Gamestate.CheckForAvatarDeath
+            |> Gamestate.CheckForAvatarDeath avatarMessageSource
 
         match nextGamestate with
         | Some state ->
@@ -175,6 +187,9 @@ module Runner =
                 vesselStatisticSink
                 vesselSingleStatisticSource
                 vesselSingleStatisticSink
+                avatarMessageSource
+                avatarMessageSink
+                avatarMessagePurger
                 random 
                 configurationSource 
                 commandSource 
@@ -201,6 +216,9 @@ module Runner =
             (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
             (vesselSingleStatisticSource   : string->VesselStatisticIdentifier->Statistic option)
             (vesselSingleStatisticSink     : string->VesselStatisticIdentifier*Statistic->unit)
+            (avatarMessageSource           : AvatarMessageSource)
+            (avatarMessageSink             : AvatarMessageSink)
+            (avatarMessagePurger           : AvatarMessagePurger)
             : unit =
 
         Console.Title <- "Seafarers of SPLORR!!"
@@ -225,6 +243,9 @@ module Runner =
             vesselStatisticSink
             vesselSingleStatisticSource
             vesselSingleStatisticSink
+            avatarMessageSource
+            avatarMessageSink
+            avatarMessagePurger
             (Random()) 
             configurationSource
             (fun () -> CommandSource.Read Console.ReadLine) 

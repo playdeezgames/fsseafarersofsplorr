@@ -45,6 +45,11 @@ module Tables =
 		[Tonnage] REAL NOT NULL,
 		PRIMARY KEY([ItemId]));"
 
+    let Messages : string = "CREATE TABLE IF NOT EXISTS [Messages] (
+    	[MessageId]	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    	[AvatarId]	TEXT NOT NULL,
+    	[Message]	TEXT NOT NULL);"
+
     let RationItems : string = "CREATE TABLE IF NOT EXISTS [RationItems] (
         [ItemId] INTEGER,
 		[DefaultOrder] INTEGER NOT NULL,

@@ -18,3 +18,5 @@ let internal professionSource()      : string list = [ "poopsmith" ]
 let internal termSources = 
     (adverbSource, adjectiveSource, objectNameSource, personNameSource, personAdjectiveSource, professionSource)
 let internal nameSource() = []
+
+let internal avatarMessageSinkStub (_) (_) = ()

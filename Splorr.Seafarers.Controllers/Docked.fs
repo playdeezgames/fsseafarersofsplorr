@@ -5,12 +5,14 @@ open Splorr.Seafarers.Services
 
 module Docked = 
     let private UpdateDisplay 
+            (avatarMessageSource         : AvatarMessageSource)
             (messageSink : MessageSink) 
             (location    : Location) 
             (world       : World) 
             : unit =
         "" |> Line |> messageSink
-        world.Avatars.[world.AvatarId].Messages
+        world.AvatarId
+        |> avatarMessageSource
         |> Utility.DumpMessages messageSink
         let island =
             world.Islands.[location]
@@ -27,27 +29,53 @@ module Docked =
             (islandSingleMarketSource    : Location -> uint64 -> Market option) 
             (islandSingleMarketSink      : Location -> uint64 * Market -> unit) 
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+            (avatarMessageSink           : AvatarMessageSink)
+            (avatarMessagePurger         : AvatarMessagePurger)
             (command                     : Command option) 
             (location                    : Location) 
             (world                       : World) 
             : Gamestate option =
-        let world =
-            world
-            |> World.ClearMessages
+        world
+        |> World.ClearMessages avatarMessagePurger
 
         match command with
         | Some (Command.AcceptJob index) ->
-            (Dock, location, world |> World.AcceptJob index location)
+            (Dock, location, world |> World.AcceptJob avatarMessageSink index location)
             |> Gamestate.Docked
             |> Some
 
         | Some (Command.Buy (quantity, itemName))->
-            (Dock, location, world |> World.BuyItems islandMarketSource islandSingleMarketSource islandSingleMarketSink vesselSingleStatisticSource commoditySource (itemSource()) location quantity itemName) 
+            (Dock, 
+                location, 
+                    world 
+                    |> World.BuyItems 
+                        islandMarketSource 
+                        islandSingleMarketSource 
+                        islandSingleMarketSink 
+                        vesselSingleStatisticSource 
+                        avatarMessageSink 
+                        commoditySource 
+                        (itemSource()) 
+                        location 
+                        quantity 
+                        itemName) 
             |> Gamestate.Docked
             |> Some            
 
         | Some (Command.Sell (quantity, itemName))->
-            (Dock, location, world |> World.SellItems islandMarketSource islandSingleMarketSource islandSingleMarketSink commoditySource (itemSource()) location quantity itemName) 
+            (Dock, 
+                location, 
+                    world 
+                    |> World.SellItems 
+                        islandMarketSource 
+                        islandSingleMarketSource 
+                        islandSingleMarketSink 
+                        avatarMessageSink
+                        commoditySource 
+                        (itemSource()) 
+                        location 
+                        quantity 
+                        itemName) 
             |> Gamestate.Docked
             |> Some            
 
@@ -68,13 +96,14 @@ module Docked =
             |> Some
 
         | Some (Command.Abandon Job) ->
-            (Dock, location, world |> World.AbandonJob)
+            (Dock, location, world |> World.AbandonJob avatarMessageSink)
             |> Gamestate.Docked
             |> Some
 
         | Some Command.Undock ->
             world 
-            |> World.AddMessages [ "You undock." ]
+            |> World.AddMessages  avatarMessageSink [ "You undock." ]
+            world
             |> Gamestate.AtSea 
             |> Some
 
@@ -115,6 +144,9 @@ module Docked =
             (islandSingleMarketSource    : Location -> uint64 -> Market option) 
             (islandSingleMarketSink      : Location -> uint64 * Market -> unit) 
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+            (avatarMessageSource         : AvatarMessageSource)
+            (avatarMessageSink           : AvatarMessageSink)
+            (avatarMessagePurger         : AvatarMessagePurger)
             (commandSource               : CommandSource) 
             (messageSink                 : MessageSink) 
             (location                    : Location) 
@@ -122,6 +154,7 @@ module Docked =
             : Gamestate option =
         world
         |> UpdateDisplay 
+            avatarMessageSource
             messageSink 
             location 
         
@@ -133,13 +166,16 @@ module Docked =
             islandSingleMarketSource
             islandSingleMarketSink 
             vesselSingleStatisticSource
+            avatarMessageSink
+            avatarMessagePurger
             (commandSource()) 
             location 
 
     let internal RunBoilerplate 
-            (func     : Location -> World -> Gamestate option) 
-            (location : Location) 
-            (world    : World) 
+            (avatarMessageSource : AvatarMessageSource)
+            (func                : Location -> World -> Gamestate option) 
+            (location            : Location) 
+            (world               : World) 
             : Gamestate option =
         if world |> World.IsAvatarAlive then
             if world.Islands |> Map.containsKey location then
@@ -149,7 +185,8 @@ module Docked =
                 |> Gamestate.AtSea
                 |> Some
         else
-            world.Avatars.[world.AvatarId].Messages
+            world.AvatarId
+            |> avatarMessageSource
             |> Gamestate.GameOver
             |> Some
 
@@ -160,9 +197,13 @@ module Docked =
             (islandSingleMarketSource    : Location -> uint64 -> Market option) 
             (islandSingleMarketSink      : Location -> uint64 * Market -> unit) 
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+            (avatarMessageSource         : AvatarMessageSource)
+            (avatarMessageSink           : AvatarMessageSink)
+            (avatarMessagePurger         : AvatarMessagePurger)
             (commandSource               : CommandSource) 
             (messageSink                 : MessageSink) =
         RunBoilerplate 
+            avatarMessageSource
             (RunWithIsland 
                 commoditySource 
                 itemSource 
@@ -170,5 +211,8 @@ module Docked =
                 islandSingleMarketSource
                 islandSingleMarketSink 
                 vesselSingleStatisticSource
+                avatarMessageSource
+                avatarMessageSink
+                avatarMessagePurger
                 commandSource 
                 messageSink)

@@ -10,7 +10,6 @@ open AvatarTestFixtures
 let ``Create.It creates an avatar.`` () =
     let actual =
         avatar
-    Assert.AreEqual([], actual.Messages)
     Assert.AreEqual(1, actual.Shipmates.Length)
 
 [<Test>]
@@ -434,27 +433,21 @@ let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a OLD_AGE when given an avatar at max
     | Avatar.OLD_AGE -> Assert.Pass("It detected that the avatar is dead of old age")
     | _ -> Assert.Fail("It detected that the avatar is not dead")
 
-
-[<Test>]
-let ``ClearMessages.It removes all of the messages from a given avatar.`` () =
-    let input =
-        {avatar with Messages=["Please clear me!"]}
-    let expected =
-        {input with Messages=[]}
-    let actual =
-        input
-        |> Avatar.ClearMessages
-    Assert.AreEqual(expected.Messages, actual.Messages)
-
 [<Test>]
 let ``AddMessages.It adds messages to a given avatar.`` () =
-    let input = {avatar with Messages=["This is a previous message!"]}
-    let inputMessages = ["Here's a message!";"And another one!"]
-    let expectedMessages = List.append input.Messages inputMessages
-    let actual =
-        input
-        |> Avatar.AddMessages inputMessages
-    Assert.AreEqual(expectedMessages, actual.Messages)
+    let input = avatarId
+    let firstMessage = "Here's a message!"
+    let secondMessage = "And another one!"
+    let inputMessages = [firstMessage; secondMessage]
+    let avatarMessageSink (_) (message:string) =
+        match message with
+        | x when x = firstMessage || x = secondMessage ->
+            Assert.Pass("Got an expected message.")
+        | _ ->
+            Assert.Fail("Got an unexpected message.")
+    input
+    |> Avatar.AddMessages avatarMessageSink inputMessages
+
 
 [<Test>]
 let ``AddMetric.It creates a metric value when there is no previously existing metric value in the avatar's table.`` () = 

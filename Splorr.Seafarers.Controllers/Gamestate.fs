@@ -8,6 +8,8 @@ type DockedState =
     | Jobs
     | ItemList
 
+type AvatarMessageSource = string -> string list
+
 [<RequireQualifiedAccess>]
 type Gamestate = 
     | AtSea        of World
@@ -44,7 +46,8 @@ module Gamestate =
         | _ -> None
 
     let CheckForAvatarDeath 
-            (gamestate:Gamestate option) 
+            (avatarMessageSource : AvatarMessageSource)
+            (gamestate           :Gamestate option) 
             : Gamestate option =
         gamestate
         |> Option.bind
@@ -54,6 +57,7 @@ module Gamestate =
                 if w |> World.IsAvatarAlive then
                     g
                 else
-                    w.Avatars.[w.AvatarId].Messages
+                    w.AvatarId
+                    |> avatarMessageSource
                     |> Gamestate.GameOver
                     |> Some) gamestate

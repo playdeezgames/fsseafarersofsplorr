@@ -38,8 +38,6 @@ let internal deadWorld =
                         CurrentValue = statistic.MinimumValue} 
                     |> Some)) 0u
             >> Some)
-    |> World.ClearMessages
-    |> World.AddMessages ["Yer ded."]
 
 
 let internal emptyWorldconfiguration: WorldConfiguration =
@@ -101,6 +99,7 @@ let internal headForWorldUnvisited =
     |> World.Move 
         vesselSingleStatisticSourceStub 
         vesselSingleStatisticSinkStub 
+        avatarMessageSinkStub
         1u
 
 let private headForWorldIslandItemSource (_) = 
@@ -133,6 +132,7 @@ let internal headForWorldVisited =
         headForWorldIslandMarketSink 
         headForWorldIslandItemSource 
         headForWorldIslandItemSink 
+        avatarMessageSinkStub
         random 
         dockWorldconfiguration.RewardRange 
         (0.0, 0.0)

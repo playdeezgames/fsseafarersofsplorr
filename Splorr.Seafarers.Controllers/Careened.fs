@@ -7,17 +7,16 @@ open Splorr.Seafarers.Services
 module Careened = 
     let private UpdateDisplay 
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+            (avatarMessageSource         : AvatarMessageSource)
             (messageSink                 : MessageSink) 
             (side                        : Side)
             (world                       : World) 
             : unit =
         let avatarId = world.AvatarId
         "" |> Line |> messageSink
-        world.Avatars.[avatarId].Messages
+        avatarId
+        |> avatarMessageSource
         |> Utility.DumpMessages messageSink
-        let world =
-            world
-            |> World.ClearMessages
         let sideName =
             match side with
             | Port -> "port"
@@ -37,11 +36,13 @@ module Careened =
     let private HandleCommand 
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (vesselSingleStatisticSink   : string -> VesselStatisticIdentifier * Statistic -> unit)
+            (avatarMessagePurger         : AvatarMessagePurger)
             (command                     : Command option) 
-            (sink                        : MessageSink) 
             (side                        : Side) 
             (world                       : World) 
             : Gamestate option =
+        world
+        |> World.ClearMessages avatarMessagePurger
         match command with
         | Some Command.Metrics ->
             (side, world)
@@ -89,6 +90,8 @@ module Careened =
     let private RunAlive 
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (vesselSingleStatisticSink   : string -> VesselStatisticIdentifier*Statistic -> unit)
+            (avatarMessageSource         : AvatarMessageSource)
+            (avatarMessagePurger         : AvatarMessagePurger)
             (source:CommandSource) 
             (sink:MessageSink) 
             (side:Side) 
@@ -96,20 +99,23 @@ module Careened =
             : Gamestate option =
         UpdateDisplay 
             vesselSingleStatisticSource
+            avatarMessageSource
             sink 
             side 
             world
         HandleCommand
             vesselSingleStatisticSource
             vesselSingleStatisticSink
+            avatarMessagePurger
             (source())
-            sink
             side
             world
 
     let Run 
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (vesselSingleStatisticSink   : string -> VesselStatisticIdentifier*Statistic -> unit)
+            (avatarMessageSource         : AvatarMessageSource)
+            (avatarMessagePurger         : AvatarMessagePurger)
             (commandSource:CommandSource) 
             (messageSink:MessageSink) 
             (side:Side) 
@@ -119,11 +125,14 @@ module Careened =
             RunAlive 
                 vesselSingleStatisticSource
                 vesselSingleStatisticSink
+                avatarMessageSource
+                avatarMessagePurger
                 commandSource 
                 messageSink 
                 side 
                 world
         else
-            world.Avatars.[world.AvatarId].Messages
+            world.AvatarId
+            |> avatarMessageSource
             |> Gamestate.GameOver
             |> Some

@@ -116,6 +116,21 @@ let main argv =
     let termSources = 
         (adverbSource, adjectiveSource, objectNameSource, personNameSource, personAdjectiveSource, professionSource)
 
+    let avatarMessageSource(avatarId:string) : string list =
+        match connection |> Message.GetForAvatar avatarId with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+
+    let avatarMessageSink(avatarId:string) (message:string) : unit =
+        match connection |> Message.AddForAvatar (avatarId, message) with
+        | Ok _ -> ()
+        | Error x -> raise (System.InvalidOperationException x)
+
+    let avatarMessagePurger(avatarId:string) : unit =
+        match connection |> Message.ClearForAvatar avatarId with
+        | Ok _ -> ()
+        | Error x -> raise (System.InvalidOperationException x)
+
     try
         Runner.Run 
             switches 
@@ -134,6 +149,9 @@ let main argv =
             vesselStatisticSink
             vesselSingleStatisticSource
             vesselSingleStatisticSink
+            avatarMessageSource
+            avatarMessageSink
+            avatarMessagePurger
     finally
         connection.Close()
     0

@@ -14,12 +14,15 @@ let private functionUnderTest (itemMarketSource) (itemSingleMarketSink) =
         itemMarketSource 
         itemSingleMarketSink
 
-let private functionUnderTestStubbed = 
+let private functionUnderTestStubbed (avatarMessageSink: AvatarMessageSink)= 
     functionUnderTest 
         dockedItemMarketSourceStub 
         dockedItemSingleMarketSourceStub 
         dockedItemSingleMarketSinkStub 
         vesselSingleStatisticSourceStub
+        avatarMessageSourceStub
+        avatarMessageSink
+        avatarMessagePurgerStub
 
 [<Test>]
 let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
@@ -28,13 +31,17 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
     let inputSource(): Command option =
         Assert.Fail("It will not reach for user input because the avatar is dead.")
         None
+    let expectedMessages = []
     let expected =
-        input.Avatars.[avatarId].Messages
+        expectedMessages
         |> Gamestate.GameOver
         |> Some
     let actual =
         (inputLocation, input)
-        ||> functionUnderTestStubbed inputSource sinkStub 
+        ||> functionUnderTestStubbed
+            avatarMessageSinkStub
+            inputSource 
+            sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -42,9 +49,8 @@ let ``Run.It returns AtSea when given Undock Command.`` () =
     let input = dockWorld
     let inputLocation= dockLocation
     let inputSource = Command.Undock |> Some |> toSource
-    let expectedMessages = ["You undock."]
     let expectedAvatar = 
-        {input.Avatars.[avatarId] with Messages = expectedMessages}
+        input.Avatars.[avatarId]
     let expected = 
         {input with 
             Avatars = input.Avatars |> Map.add avatarId expectedAvatar} 
@@ -52,7 +58,10 @@ let ``Run.It returns AtSea when given Undock Command.`` () =
         |> Some
     let actual =
         (inputLocation, input)
-        ||> functionUnderTestStubbed inputSource sinkStub 
+        ||> functionUnderTestStubbed
+            avatarMessageSinkStub
+            inputSource 
+            sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -67,7 +76,10 @@ let ``Run.It returns ConfirmQuit when given Quit Command.`` () =
         |> Some
     let actual =
         (inputLocation, input)
-        ||> functionUnderTestStubbed inputSource sinkStub 
+        ||> functionUnderTestStubbed
+            avatarMessageSinkStub
+            inputSource 
+            sinkStub 
     Assert.AreEqual(expected,actual)
 
 [<Test>]
@@ -85,7 +97,10 @@ let ``Run.It returns Metrics when given Metrics Command.`` () =
         |> Some
     let actual =
         (inputLocation, input)
-        ||> functionUnderTestStubbed inputSource sinkStub 
+        ||> functionUnderTestStubbed
+            avatarMessageSinkStub
+            inputSource 
+            sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -103,7 +118,10 @@ let ``Run.It returns Help when given Help Command.`` () =
         |> Some
     let actual =
         (inputLocation, input)
-        ||> functionUnderTestStubbed inputSource sinkStub 
+        ||> functionUnderTestStubbed 
+            avatarMessageSinkStub
+            inputSource 
+            sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -121,7 +139,10 @@ let ``Run.It returns Inventory when given Inventory Command.`` () =
         |> Some
     let actual =
         (inputLocation, input)
-        ||> functionUnderTestStubbed inputSource sinkStub 
+        ||> functionUnderTestStubbed 
+            avatarMessageSinkStub
+            inputSource 
+            sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -138,7 +159,10 @@ let ``Run.It returns InvalidInput when given invalid Command.`` () =
         |> Some
     let actual =
         (inputLocation, input)
-        ||> functionUnderTestStubbed inputSource sinkStub 
+        ||> functionUnderTestStubbed 
+            avatarMessageSinkStub
+            inputSource 
+            sinkStub
     Assert.AreEqual(expected, actual)
 
 
@@ -156,7 +180,10 @@ let ``Run.It returns AtSea when given invalid docked location.`` () =
         |> Some
     let actual =
         (inputLocation, input)
-        ||> functionUnderTestStubbed inputSource sinkStub 
+        ||> functionUnderTestStubbed 
+            avatarMessageSinkStub
+            inputSource 
+            sinkStub
     Assert.AreEqual(expected,actual)
 
 [<Test>]
@@ -174,7 +201,10 @@ let ``Run.It returns Status when given the command Status.`` () =
         |> Some
     let actual =
         (inputLocation, input)
-        ||> functionUnderTestStubbed inputSource sinkStub 
+        ||> functionUnderTestStubbed 
+            avatarMessageSinkStub
+            inputSource 
+            sinkStub
     Assert.AreEqual(expected, actual)
 
 
@@ -192,7 +222,10 @@ let ``Run.It returns Docked (at Jobs) gamestate when given the command Jobs.`` (
         |> Some
     let actual =
         (inputLocation, input)
-        ||> functionUnderTestStubbed inputSource sinkStub  
+        ||> functionUnderTestStubbed 
+            avatarMessageSinkStub
+            inputSource 
+            sinkStub
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -202,7 +235,7 @@ let ``Run.It gives a message when given the Accept Job command and the given job
     let inputSource = 0u |> Command.AcceptJob |> Some |> toSource
     let expectedMessages = [ "That job is currently unavailable." ]
     let expectedAvatar =
-        {input.Avatars.[avatarId] with Messages = expectedMessages}
+        input.Avatars.[avatarId]
     let expectedWorld = 
         {input with 
             Avatars = input.Avatars |> Map.add avatarId expectedAvatar}
@@ -212,7 +245,11 @@ let ``Run.It gives a message when given the Accept Job command and the given job
         |> Some
     let actual =
         input
-        |> functionUnderTestStubbed inputSource sinkStub inputLocation
+        |> functionUnderTestStubbed 
+            avatarMessageSinkStub
+            inputSource 
+            sinkStub 
+            inputLocation
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -225,7 +262,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
         |> Some 
         |> toSource
     let expectedAvatar =
-        {input.Avatars.[avatarId] with Messages = ["You have no job to abandon."]}
+        input.Avatars.[avatarId]
     let expectedWorld = 
         {input with Avatars = input.Avatars |> Map.add avatarId expectedAvatar}
     let expected = 
@@ -234,7 +271,11 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
         |> Some
     let actual =
         input
-        |> functionUnderTestStubbed inputSource sinkStub inputLocation
+        |> functionUnderTestStubbed 
+            avatarMessageSinkStub
+            inputSource 
+            sinkStub 
+            inputLocation
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -242,12 +283,10 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
     let input = abandonJobWorld
     let inputLocation = dockLocation
     let inputSource = Job |> Command.Abandon |> Some |> toSource
-    let expectedMessages = ["You abandon your job."]
     let expectedAvatar = 
         {input.Avatars.[avatarId] with 
             Job=None
             Reputation = input.Avatars.[avatarId].Reputation-1.0
-            Messages = expectedMessages
             Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.AbandonedJob 1u}
     let expectedWorld = 
         {input with 
@@ -258,7 +297,11 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
         |> Some
     let actual =
         input
-        |> functionUnderTestStubbed inputSource sinkStub inputLocation
+        |> functionUnderTestStubbed 
+            avatarMessageSinkStub
+            inputSource 
+            sinkStub 
+            inputLocation
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -275,7 +318,10 @@ let ``Run.It returns Docked (at ItemList) gamestate when given the Items command
         |> Some
     let actual =
         (inputLocation, inputWorld)
-        ||> functionUnderTestStubbed inputSource (sinkStub)
+        ||> functionUnderTestStubbed 
+            avatarMessageSinkStub
+            inputSource 
+            (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -283,22 +329,25 @@ let ``Run.It adds a message when given the Buy command for a non-existent item.`
     let inputLocation = smallWorldIslandLocation
     let inputWorld = shopWorld
     let inputSource = (1u |> Specific, "non existent item") |> Command.Buy |> Some |> toSource
+    let expectedMessages = ["Round these parts, we don't sell things like that."]
     let expectedWorld =
         inputWorld
-        |> World.AddMessages ["Round these parts, we don't sell things like that."]
     let expected = 
         (Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
         |> Some
     let actual =
         (inputLocation, inputWorld)
-        ||> functionUnderTestStubbed inputSource (sinkStub)
+        ||> functionUnderTestStubbed 
+            (avatarExpectedMessagesSink expectedMessages)
+            inputSource 
+            (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It adds a message when given the Buy command and the avatar does not have enough money to complete the purchase.`` () =
     let inputLocation = smallWorldIslandLocation
-    let inputWorld = smallWorldDocked |> World.ClearMessages
+    let inputWorld = smallWorldDocked
     let inputSource = (1u |> Specific, "item under test") |> Command.Buy |> Some |> toSource
     let markets =
         Map.empty
@@ -309,16 +358,25 @@ let ``Run.It adds a message when given the Buy command and the avatar does not h
         |> Map.tryFind y
     let islandSingleMarketSink (_) (_) =
         Assert.Fail("This should not be called.")
+    let expectedMessages = ["You don't have enough money."]
     let expectedWorld =
         inputWorld
-        |> World.AddMessages ["You don't have enough money."]
     let expected = 
         (Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
         |> Some
     let actual =
         (inputLocation, inputWorld)
-        ||> functionUnderTest islandMarketSource islandSingleMarketSource islandSingleMarketSink vesselSingleStatisticSourceStub inputSource (sinkStub)
+        ||> functionUnderTest 
+            islandMarketSource 
+            islandSingleMarketSource 
+            islandSingleMarketSink 
+            vesselSingleStatisticSourceStub 
+            avatarMessageSourceStub
+            (avatarExpectedMessagesSink expectedMessages)
+            avatarMessagePurgerStub
+            inputSource 
+            (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -345,9 +403,9 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
         Assert.AreEqual(expectedDemand, market.Demand)
     let expectedIsland = 
         inputWorld.Islands.[inputLocation]
+    let expectedMessages = ["You complete the purchase of 1 item under test."]
     let expectedWorld =
         inputWorld
-        |> World.AddMessages ["You complete the purchase of 1 item under test."]
         |> World.TransformIsland inputLocation (fun _ -> expectedIsland |> Some)
         |> World.TransformAvatar (Avatar.AddInventory 1UL 1u >> Some)
         |> World.TransformAvatar (Avatar.SpendMoney expectedPrice >> Some)
@@ -357,7 +415,16 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
         |> Some
     let actual =
         (inputLocation, inputWorld)
-        ||> functionUnderTest islandMarketSource islandSingleMarketSource islandSingleMarketSink vesselSingleStatisticSourceStub inputSource (sinkStub)
+        ||> functionUnderTest 
+            islandMarketSource 
+            islandSingleMarketSource 
+            islandSingleMarketSink 
+            vesselSingleStatisticSourceStub 
+            avatarMessageSourceStub
+            (avatarExpectedMessagesSink expectedMessages)
+            avatarMessagePurgerStub
+            inputSource 
+            (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -365,16 +432,19 @@ let ``Run.It adds a message when given the Sell command for a non-existent item.
     let inputLocation = smallWorldIslandLocation
     let inputWorld = shopWorld
     let inputSource = (Specific 1u, "non existent item") |> Command.Sell |> Some |> toSource
+    let expectedMessages = ["Round these parts, we don't buy things like that."]
     let expectedWorld =
         inputWorld
-        |> World.AddMessages ["Round these parts, we don't buy things like that."]
     let expected = 
         (Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
         |> Some
     let actual =
         (inputLocation, inputWorld)
-        ||> functionUnderTestStubbed inputSource (sinkStub)
+        ||> functionUnderTestStubbed 
+            (avatarExpectedMessagesSink expectedMessages)
+            inputSource 
+            (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -382,16 +452,19 @@ let ``Run.It adds a message when given the Sell command and the avatar does not 
     let inputLocation = smallWorldIslandLocation
     let inputWorld = shopWorld
     let inputSource = (Specific 1u, "item under test") |> Command.Sell |> Some |> toSource
+    let expectedMessages = ["You don't have enough of those to sell."]
     let expectedWorld =
         inputWorld
-        |> World.AddMessages ["You don't have enough of those to sell."]
     let expected = 
         (Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
         |> Some
     let actual =
         (inputLocation, inputWorld)
-        ||> functionUnderTestStubbed inputSource (sinkStub)
+        ||> functionUnderTestStubbed 
+            (avatarExpectedMessagesSink expectedMessages)
+            inputSource 
+            (sinkStub)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -421,14 +494,13 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
         Assert.AreEqual(expectedMarket, market)
     let expectedIsland = 
         inputWorld.Islands.[inputLocation]
+    let expectedMessages = ["You complete the sale of 1 item under test.";"You complete the sale."]
     let expectedAvatar = 
         {inputAvatar with 
             Inventory = Map.empty
-            Money = 0.5
-            Messages = ["You complete the sale of 1 item under test."]}
+            Money = 0.5}
     let expectedWorld =
         inputWorld
-        |> World.AddMessages ["You complete the sale."]
         |> World.TransformIsland inputLocation (fun _ -> expectedIsland |> Some)
         |> World.TransformAvatar (fun _ -> expectedAvatar |> Some)
     let expected = 
@@ -437,6 +509,15 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
         |> Some
     let actual =
         (inputLocation, inputWorld)
-        ||> functionUnderTest islandMarketSource islandSingleMarketSource islandSingleMarketSink vesselSingleStatisticSourceStub inputSource (sinkStub)
+        ||> functionUnderTest 
+            islandMarketSource 
+            islandSingleMarketSource 
+            islandSingleMarketSink 
+            vesselSingleStatisticSourceStub 
+            avatarMessageSourceStub
+            (avatarExpectedMessagesSink expectedMessages)
+            avatarMessagePurgerStub
+            inputSource 
+            (sinkStub)
     Assert.AreEqual(expected, actual)
 
