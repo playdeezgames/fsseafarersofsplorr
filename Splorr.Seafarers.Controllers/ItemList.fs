@@ -52,12 +52,13 @@ module ItemList =
         |> Some
 
     let Run 
-            (commoditySource    : unit -> Map<uint64, CommodityDescriptor>) 
-            (itemSource         : unit -> Map<uint64, ItemDescriptor>) 
-            (islandMarketSource : Location -> Map<uint64,Market>) 
-            (islandItemSource   : Location -> Set<uint64>) 
-            (messageSink        : MessageSink) =
+            (commoditySource     : unit -> Map<uint64, CommodityDescriptor>) 
+            (itemSource          : unit -> Map<uint64, ItemDescriptor>) 
+            (islandMarketSource  : Location -> Map<uint64,Market>) 
+            (islandItemSource    : Location -> Set<uint64>)
+            (avatarMessageSource : AvatarMessageSource)
+            (messageSink         : MessageSink) =
         RunWithIsland commoditySource itemSource islandMarketSource islandItemSource messageSink
-        |> Docked.RunBoilerplate 
+        |> Docked.RunBoilerplate avatarMessageSource
     
 

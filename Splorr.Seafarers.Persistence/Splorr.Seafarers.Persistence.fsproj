@@ -10,6 +10,7 @@
     <Compile Include="IslandItem.fs" />
     <Compile Include="IslandMarket.fs" />
     <Compile Include="Item.fs" />
+    <Compile Include="Message.fs" />
     <Compile Include="ShipmateStatisticTemplate.fs" />
     <Compile Include="Term.fs" />
     <Compile Include="VesselStatisticTemplate.fs" />

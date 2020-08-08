@@ -1,6 +1,10 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
+type MessagePurger = string -> unit
+
+type AvatarMessageSink = string -> string -> unit
+
 module Avatar =
     let TransformShipmate 
             (transform : Shipmate->Shipmate) 
@@ -26,7 +30,6 @@ module Avatar =
             : Avatar =
         Vessel.Create vesselStatisticTemplateSource vesselStatisticSink avatarId
         {
-            Messages = []
             Money = 0.0
             Reputation = 0.0
             Job = None
@@ -339,16 +342,14 @@ module Avatar =
         else
             ALIVE
 
-    let ClearMessages 
-            (avatar : Avatar) 
-            : Avatar =
-        {avatar with Messages = []}
-
     let AddMessages 
-            (messages : string list) 
-            (avatar   : Avatar) 
-            : Avatar =
-        {avatar with Messages = List.append avatar.Messages messages}
+            (avatarMessageSink : AvatarMessageSink)
+            (messages          : string list) 
+            (avatarId          : string) 
+            : unit =
+        messages
+        |> List.iter (avatarMessageSink avatarId)
+
 
     let GetUsedTonnage 
             (items  : Map<uint64, ItemDescriptor>) //TODO: to source

@@ -127,11 +127,12 @@ let internal smallWorldDocked =
         smallWorldIslandMarketSink 
         smallWorldIslandItemSource 
         smallWorldIslandItemSink 
+        avatarMessageSinkStub
         random 
         smallWorldconfiguration.RewardRange 
         smallWorldIslandLocation
 
-let internal shopWorld = smallWorldDocked |> World.ClearMessages
+let internal shopWorld = smallWorldDocked
 
 let internal abandonJobWorld =
     dockWorld

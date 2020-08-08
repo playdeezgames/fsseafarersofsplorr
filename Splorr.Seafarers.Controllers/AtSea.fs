@@ -55,11 +55,13 @@ module AtSea =
 
     let private UpdateDisplay 
             (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
+            (avatarMessageSource         : AvatarMessageSource)
             (messageSink                 : MessageSink) 
             (world                       : World) 
             : unit =
         "" |> Line |> messageSink
-        world.Avatars.[world.AvatarId].Messages
+        world.AvatarId
+        |> avatarMessageSource
         |> Utility.DumpMessages messageSink
 
         let avatar = world.Avatars.[world.AvatarId]
@@ -118,14 +120,15 @@ module AtSea =
             (islandItemSink              : Location -> Set<uint64> -> unit) 
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (vesselSingleStatisticSink   : string -> VesselStatisticIdentifier * Statistic -> unit)
+            (avatarMessageSink           : AvatarMessageSink)
+            (avatarMessagePurger         : AvatarMessagePurger)
             (random                      : Random) 
             (rewardRange                 : float * float) 
             (command                     : Command option) 
             (world                       : World) 
             : Gamestate option =
-        let world =
-            world
-            |> World.ClearMessages
+        world
+        |> World.ClearMessages avatarMessagePurger
 
         let avatar = world.Avatars.[world.AvatarId]
 
@@ -152,13 +155,15 @@ module AtSea =
 
         | Some (Command.HeadFor name) ->
             world
-            |> World.HeadFor vesselSingleStatisticSource vesselSingleStatisticSink name
+            |> World.HeadFor vesselSingleStatisticSource vesselSingleStatisticSink avatarMessageSink name
+            world
             |> Gamestate.AtSea
             |> Some
 
         | Some (Command.DistanceTo name) ->
             world
-            |> World.DistanceTo vesselSingleStatisticSource name
+            |> World.DistanceTo vesselSingleStatisticSource avatarMessageSink name
+            world
             |> Gamestate.AtSea
             |> Some
 
@@ -169,7 +174,8 @@ module AtSea =
                 |> Some
             else
                 world
-                |> World.AddMessages [ "You cannot careen here." ]
+                |> World.AddMessages avatarMessageSink [ "You cannot careen here." ]
+                world
                 |> Gamestate.AtSea
                 |> Some
 
@@ -187,6 +193,7 @@ module AtSea =
                             islandMarketSink 
                             islandItemSource 
                             islandItemSink 
+                            avatarMessageSink
                             random 
                             rewardRange 
                             location)
@@ -194,7 +201,8 @@ module AtSea =
                 |> Some
             | None ->
                 world
-                |> World.AddMessages [ "There is no place to dock." ]
+                |> World.AddMessages avatarMessageSink [ "There is no place to dock." ]
+                world
                 |> Gamestate.AtSea
                 |> Some
 
@@ -205,7 +213,7 @@ module AtSea =
 
         | Some (Command.Abandon Job) ->
             world
-            |> World.AbandonJob
+            |> World.AbandonJob avatarMessageSink
             |> Gamestate.AtSea
             |> Some
 
@@ -234,13 +242,14 @@ module AtSea =
 
         | Some (Command.Move distance)->
             world
-            |> World.Move vesselSingleStatisticSource vesselSingleStatisticSink distance
+            |> World.Move vesselSingleStatisticSource vesselSingleStatisticSink avatarMessageSink distance
             |> Gamestate.AtSea
             |> Some
 
         | Some (Command.Set (SetCommand.Heading heading)) ->
             world
-            |> World.SetHeading vesselSingleStatisticSource vesselSingleStatisticSink heading
+            |> World.SetHeading vesselSingleStatisticSource vesselSingleStatisticSink avatarMessageSink heading
+            world
             |> Gamestate.AtSea
             |> Some
 
@@ -249,7 +258,9 @@ module AtSea =
             |> World.SetSpeed 
                 vesselSingleStatisticSource
                 vesselSingleStatisticSink
+                avatarMessageSink
                 speed
+            world
             |> Gamestate.AtSea
             |> Some
 
@@ -281,6 +292,9 @@ module AtSea =
             (islandItemSink              : Location -> Set<uint64>->unit) 
             (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
             (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
+            (avatarMessageSource         : AvatarMessageSource)
+            (avatarMessageSink           : AvatarMessageSink)
+            (avatarMessagePurger         : AvatarMessagePurger)
             (random                      : Random) 
             (rewardRange                 : float*float) 
             (commandSource               : CommandSource) 
@@ -289,6 +303,7 @@ module AtSea =
             : Gamestate option =
         UpdateDisplay 
             vesselSingleStatisticSource
+            avatarMessageSource
             messageSink 
             world
         HandleCommand
@@ -301,6 +316,8 @@ module AtSea =
             islandItemSink
             vesselSingleStatisticSource
             vesselSingleStatisticSink
+            avatarMessageSink
+            avatarMessagePurger
             random
             rewardRange
             (commandSource())
@@ -316,6 +333,9 @@ module AtSea =
             (islandItemSink              : Location -> Set<uint64>->unit) 
             (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
             (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
+            (avatarMessageSource         : AvatarMessageSource)
+            (avatarMessageSink           : AvatarMessageSink)
+            (avatarMessagePurger         : AvatarMessagePurger)
             (random                      : Random) 
             (rewardRange                 : float*float) 
             (commandSource               : CommandSource) 
@@ -333,12 +353,16 @@ module AtSea =
                 islandItemSink 
                 vesselSingleStatisticSource
                 vesselSingleStatisticSink
+                avatarMessageSource
+                avatarMessageSink
+                avatarMessagePurger
                 random 
                 rewardRange 
                 commandSource 
                 messageSink 
                 world
         else
-            world.Avatars.[world.AvatarId].Messages
+            world.AvatarId
+            |> avatarMessageSource
             |> Gamestate.GameOver
             |> Some
