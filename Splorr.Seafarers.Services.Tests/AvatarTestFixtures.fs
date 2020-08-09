@@ -33,17 +33,21 @@ let internal avatarNoStats =
     {avatar with 
         Shipmates =
             avatar.Shipmates
-            |> Array.map (fun x -> {x with Statistics = Map.empty})}
+            |> Map.map (fun _ x -> {x with Statistics = Map.empty})}
 let internal deadAvatar =
     avatar
-    |> Avatar.TransformShipmate (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Health (fun x-> {x with CurrentValue = x.MinimumValue} |> Some)) 0u
+    |> Avatar.TransformShipmate 
+        (Shipmate.TransformStatistic 
+            ShipmateStatisticIdentifier.Health (fun x-> {x with CurrentValue = x.MinimumValue} |> Some)) Primary
 let internal oldAvatar =
     avatar
-    |> Avatar.TransformShipmate (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Turn (fun x-> {x with CurrentValue = x.MaximumValue} |> Some)) 0u
+    |> Avatar.TransformShipmate 
+        (Shipmate.TransformStatistic 
+            ShipmateStatisticIdentifier.Turn (fun x-> {x with CurrentValue = x.MaximumValue} |> Some)) Primary
 let internal job =
     Job.Create termSources random rewardRange singleLocation
 let internal employedAvatar =
-    {avatar with Job = job |> Some; Money=10.0; Reputation=(-5.0)}
+    {avatar with Job = job |> Some} |> Avatar.EarnMoney 10.0 |> Avatar.SetReputation (-5.0)
 let internal rationedAvatar =
     {avatar with Inventory = Map.empty |> Map.add 1UL 1u}
 let internal hoarderAvatar =

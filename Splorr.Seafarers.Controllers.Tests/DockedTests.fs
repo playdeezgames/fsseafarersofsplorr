@@ -286,8 +286,8 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
     let expectedAvatar = 
         {input.Avatars.[avatarId] with 
             Job=None
-            Reputation = input.Avatars.[avatarId].Reputation-1.0
             Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.AbandonedJob 1u}
+        |> Avatar.SetReputation ((input.Avatars.[avatarId] |> Avatar.GetReputation)-1.0)
     let expectedWorld = 
         {input with 
             Avatars= input.Avatars |> Map.add avatarId expectedAvatar}
@@ -382,7 +382,7 @@ let ``Run.It adds a message when given the Buy command and the avatar does not h
 [<Test>]
 let ``Run.It adds a message and completes the purchase when given the Buy command and the avatar has enough money.`` () =
     let inputLocation = smallWorldIslandLocation
-    let inputAvatar = {shopWorld.Avatars.[avatarId] with Money = 1000000.0}
+    let inputAvatar = shopWorld.Avatars.[avatarId] |> Avatar.EarnMoney 1000000.0
     let inputWorld = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
     let inputSource = (1u |> Specific, "item under test") |> Command.Buy |> Some |> toSource
     let markets =
@@ -497,8 +497,8 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
     let expectedMessages = ["You complete the sale of 1 item under test.";"You complete the sale."]
     let expectedAvatar = 
         {inputAvatar with 
-            Inventory = Map.empty
-            Money = 0.5}
+            Inventory = Map.empty}
+        |> Avatar.SetMoney 0.5
     let expectedWorld =
         inputWorld
         |> World.TransformIsland inputLocation (fun _ -> expectedIsland |> Some)

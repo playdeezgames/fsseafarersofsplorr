@@ -39,7 +39,7 @@ let internal deadDockWorld =
                     ShipmateStatisticIdentifier.Health 
                     (fun x -> 
                         {x with CurrentValue = x.MinimumValue} 
-                        |> Some)) 0u)}
+                        |> Some)) Primary)}
 
 let internal deadDockLocation = dockLocation
 

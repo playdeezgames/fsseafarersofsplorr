@@ -1,6 +1,14 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
+type DemiseType =
+    | ZeroHealth
+    | OldAge
+
+type ShipmateStatus =
+    | Alive
+    | Dead of DemiseType
+
 module Shipmate =
     let SetStatistic 
             (identifier : ShipmateStatisticIdentifier) 
@@ -32,6 +40,16 @@ module Shipmate =
             (fun identifier shipMate -> 
                 shipMate
                 |> SetStatistic identifier.StatisticId (Statistic.Create (identifier.MinimumValue, identifier.MaximumValue) identifier.CurrentValue |> Some)) statisticDescriptors
+
+    let GetStatus
+            (shipmate : Shipmate)
+            : ShipmateStatus=
+        if shipmate.Statistics.[ShipmateStatisticIdentifier.Health].CurrentValue <= shipmate.Statistics.[ShipmateStatisticIdentifier.Health].MinimumValue then
+            ZeroHealth |> Dead
+        elif shipmate.Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue >= shipmate.Statistics.[ShipmateStatisticIdentifier.Turn].MaximumValue then
+            OldAge |> Dead
+        else
+            Alive
 
     let TransformStatistic 
             (identifier : ShipmateStatisticIdentifier) 

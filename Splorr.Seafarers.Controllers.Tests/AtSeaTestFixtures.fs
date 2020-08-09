@@ -36,7 +36,7 @@ let internal deadWorld =
                 (fun statistic-> 
                     {statistic with 
                         CurrentValue = statistic.MinimumValue} 
-                    |> Some)) 0u
+                    |> Some)) Primary
             >> Some)
 
 

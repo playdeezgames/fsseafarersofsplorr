@@ -1,7 +1,7 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
 open Splorr.Seafarers.Models
-open Splorr.Seafarers.Persistence
+open Splorr.Seafarers.Services
 
 module Status =
     let private RunWorld 
@@ -10,16 +10,16 @@ module Status =
             (world                       : World) 
             : unit =
         let avatar = world.Avatars.[world.AvatarId]
-        let shipmate = avatar.Shipmates.[0]
+        let shipmate = avatar.Shipmates.[Primary]
         let portFouling = vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.PortFouling |> Option.get
         let starboardFouling = vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.StarboardFouling |> Option.get
         [
             "" |> Line
             (Hue.Heading, "Status:" |> Line) |> Hued
             (Hue.Label, "Money: " |> Text) |> Hued
-            (Hue.Value, avatar.Money |> sprintf "%f" |> Line) |> Hued
+            (Hue.Value, avatar |> Avatar.GetMoney |> sprintf "%f" |> Line) |> Hued
             (Hue.Label, "Reputation: " |> Text) |> Hued
-            (Hue.Value, avatar.Reputation |> sprintf "%f" |> Line) |> Hued
+            (Hue.Value, avatar |> Avatar.GetReputation |> sprintf "%f" |> Line) |> Hued
             (Hue.Label, "Satiety: " |> Text) |> Hued
             (Hue.Value, (shipmate.Statistics.[ShipmateStatisticIdentifier.Satiety].CurrentValue, shipmate.Statistics.[ShipmateStatisticIdentifier.Satiety].MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
             (Hue.Label, "Health: " |> Text) |> Hued

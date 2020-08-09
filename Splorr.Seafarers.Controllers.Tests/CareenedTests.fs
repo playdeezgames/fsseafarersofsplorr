@@ -216,10 +216,10 @@ let ``Run.It returns Careened with a cleaned hull when given the command Clean H
         |> toSource
     let inputSide = Port
     let expectedTurn =
-        inputAvatar.Shipmates.[0].Statistics.[ShipmateStatisticIdentifier.Turn] |> Statistic.ChangeCurrentBy 1.0
+        inputAvatar.Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Turn] |> Statistic.ChangeCurrentBy 1.0
     let expectedAvatar =
         inputAvatar
-        |> Avatar.TransformShipmate (Shipmate.SetStatistic ShipmateStatisticIdentifier.Turn (expectedTurn |> Some)) 0u
+        |> Avatar.TransformShipmate (Shipmate.SetStatistic ShipmateStatisticIdentifier.Turn (expectedTurn |> Some)) Primary
         |> Avatar.AddMetric Metric.CleanedHull 1u
     let expected =
         (inputSide, {inputWorld with Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar})

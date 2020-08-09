@@ -169,11 +169,11 @@ let ``GetWorld.It returns None from the given GameOver Gamestate.`` () =
 let ``CheckForAvatarDeath.It returns the original gamestate when the avatar embedded therein is not dead.`` () =
     let avatarTransformHealth:Avatar -> Avatar option =
         Avatar.TransformShipmate 
-            (Shipmate.SetStatistic ShipmateStatisticIdentifier.Health ({MinimumValue=0.0; CurrentValue=1.0; MaximumValue=1.0}|>Some)) 0u
+            (Shipmate.SetStatistic ShipmateStatisticIdentifier.Health ({MinimumValue=0.0; CurrentValue=1.0; MaximumValue=1.0}|>Some)) Primary
         >> Some
     let avatarTransformTurn:Avatar -> Avatar option =
         Avatar.TransformShipmate 
-            (Shipmate.SetStatistic ShipmateStatisticIdentifier.Turn ({MinimumValue=0.0; CurrentValue=0.0; MaximumValue=1.0}|>Some)) 0u
+            (Shipmate.SetStatistic ShipmateStatisticIdentifier.Turn ({MinimumValue=0.0; CurrentValue=0.0; MaximumValue=1.0}|>Some)) Primary
         >> Some
     let input =
         world
@@ -206,11 +206,11 @@ let ``CheckForAvatarDeath.It returns the original gamestate when there is not a 
 let ``CheckForAvatarDeath.It returns gameover when the avatar embedded therein is dead.`` () =
     let avatarTransformHealth:Avatar -> Avatar option =
         Avatar.TransformShipmate 
-            (Shipmate.SetStatistic ShipmateStatisticIdentifier.Health ({MinimumValue=0.0; CurrentValue=0.0; MaximumValue=1.0}|>Some)) 0u
+            (Shipmate.SetStatistic ShipmateStatisticIdentifier.Health ({MinimumValue=0.0; CurrentValue=0.0; MaximumValue=1.0}|>Some)) Primary
         >> Some
     let avatarTransformTurn:Avatar -> Avatar option =
         Avatar.TransformShipmate 
-            (Shipmate.SetStatistic ShipmateStatisticIdentifier.Turn ({MinimumValue=0.0; CurrentValue=0.0; MaximumValue=1.0}|>Some)) 0u
+            (Shipmate.SetStatistic ShipmateStatisticIdentifier.Turn ({MinimumValue=0.0; CurrentValue=0.0; MaximumValue=1.0}|>Some)) Primary
         >> Some
     let input =
         world

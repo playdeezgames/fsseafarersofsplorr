@@ -44,7 +44,7 @@ module ItemList =
         let avatar = world.Avatars.[world.AvatarId]
         [
             (Hue.Label, "Money: " |> Text) |> Hued
-            (Hue.Value, avatar.Money |> sprintf "%f" |> Line) |> Hued
+            (Hue.Value, avatar |> Avatar.GetMoney |> sprintf "%f" |> Line) |> Hued
         ]
         |> List.iter messageSink
         (Dock, location, world)
