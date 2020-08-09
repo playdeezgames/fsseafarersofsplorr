@@ -74,7 +74,7 @@ module AtSea =
             |> Avatar.GetHeading vesselSingleStatisticSource 
             |> Option.get
         let speedHue =DetermineSpeedHue speed
-        let shipmateZero = avatar.Shipmates.[0]
+        let shipmateZero = avatar.Shipmates.[Primary]
         [
             (Hue.Heading, "At Sea:" |> Line) |> Hued
             (Hue.Label, "Turn: " |> Text) |> Hued

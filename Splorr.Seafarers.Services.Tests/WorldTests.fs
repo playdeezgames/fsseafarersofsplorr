@@ -300,20 +300,19 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
             AvatarId = avatarId
             Avatars = 
                 [avatarId,{
-                    Money = 0.0
-                    Reputation = 0.0
                     Job = None
                     Inventory = Map.empty
                     Metrics = Map.empty
                     Shipmates = 
-                        [|{
-                            Statistics = Map.empty
-                            RationItems = [1UL]
-                        }
-                        |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0)|>Some)
-                        |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0)|>Some)
-                        |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Turn (Statistic.Create (0.0, 15000.0) (0.0)|>Some)
-                        |]
+                        Map.empty
+                        |> Map.add Primary  
+                            ({
+                                Statistics = Map.empty
+                                RationItems = [1UL]
+                            }
+                            |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0)|>Some)
+                            |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0)|>Some)
+                            |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Turn (Statistic.Create (0.0, 15000.0) (0.0)|>Some))
                 }
                 ]|>Map.ofList
             Islands=
@@ -443,7 +442,7 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
     let inputWorld = oneIslandWorld
     let expectedIsland = 
         inputWorld.Islands.[(0.0, 0.0)] 
-        |> Island.AddVisit inputWorld.Avatars.[avatarId].Shipmates.[0].Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue avatarId
+        |> Island.AddVisit inputWorld.Avatars.[avatarId].Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue avatarId
     let expectedMessage = "You dock."
     let expectedAvatar = 
         {inputWorld.Avatars.[avatarId] with  
@@ -514,7 +513,7 @@ let ``HeadFor.It adds a message when the island name exists but is not known.`` 
 let ``HeadFor.It sets the heading when the island name exists and is known.`` () =
     let inputWorld =
         headForWorld
-        |> World.TransformIsland (0.0,0.0) (Island.AddVisit headForWorld.Avatars.[avatarId].Shipmates.[0].Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue avatarId >> Some)
+        |> World.TransformIsland (0.0,0.0) (Island.AddVisit headForWorld.Avatars.[avatarId].Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue avatarId >> Some)
     let firstExpectedMessage = "You set your heading to 0.00°." //note - value for heading not actually stored, but is really 180
     let secondExpectedMessage = "You head for `Uno`."
     let vesselSingleStatisticSource (_) (identifier) =
@@ -689,10 +688,10 @@ let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a
             Avatars = 
                 input.Avatars 
                 |> Map.add avatarId 
-                    {input.Avatars.[avatarId] with 
+                    ({input.Avatars.[avatarId] with 
                         Job = None
-                        Reputation = input.Avatars.[avatarId].Reputation - 1.0
-                        Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.AbandonedJob 1u}}
+                        Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.AbandonedJob 1u}
+                    |> Avatar.SetReputation ((input.Avatars.[avatarId] |> Avatar.GetReputation) - 1.0))}
     let actual = 
         input
         |> World.AbandonJob
@@ -730,12 +729,12 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
     let expectedAvatar = 
         {input.Avatars.[avatarId] with 
             Job = None;
-            Money = input.Avatars.[avatarId].Money + inputJob.Reward;
-            Reputation = input.Avatars.[avatarId].Reputation + 1.0
             Metrics = 
                 input.Avatars.[avatarId].Metrics 
                 |> Map.add Metric.VisitedIsland 2u
                 |> Map.add Metric.CompletedJob 1u}
+        |> Avatar.EarnMoney inputJob.Reward
+        |> Avatar.SetReputation ((input.Avatars.[avatarId] |> Avatar.GetReputation) + 1.0)
     let actual = 
         jobWorld
         |> World.Dock
@@ -837,8 +836,8 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds.`` () =
 [<Test>]
 let ``BuyItems.It gives a message when the avatar has insufficient tonnage.`` () =
     let inputAvatar = 
-        {shopWorld.Avatars.[avatarId] with
-            Money = 1000000.0}
+        shopWorld.Avatars.[avatarId]
+        |> Avatar.SetMoney 1000000.0
     let input = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
     let inputLocation = shopWorldLocation
     let inputQuantity = 1000u |> Specific
@@ -866,7 +865,7 @@ let ``BuyItems.It gives a message when the avatar has insufficient tonnage.`` ()
 
 [<Test>]
 let ``BuyItems.It gives a message and completes the purchase when the avatar has sufficient funds.`` () =
-    let inputAvatar = {shopWorld.Avatars.[avatarId] with Money = 1000000.0}
+    let inputAvatar = shopWorld.Avatars.[avatarId] |> Avatar.SetMoney 1000000.0
     let input = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
     let inputLocation = shopWorldLocation
     let inputQuantity = 2u |> Specific
@@ -880,8 +879,8 @@ let ``BuyItems.It gives a message and completes the purchase when the avatar has
         Assert.AreEqual(7.0, market.Demand)
     let expectedAvatar = 
         {input.Avatars.[avatarId] with
-            Money = 999998.0
             Inventory = Map.empty |> Map.add 1UL 2u}
+        |> Avatar.SetMoney 999998.0
     let expectedMessage = "You complete the purchase of 2 item under test."
     let expected =
         {input with
@@ -932,7 +931,7 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds for a s
 
 [<Test>]
 let ``BuyItems.It gives a message indicating purchased quantity and completes the purchase when the avatar has sufficient funds for at least one and has specified a maximum buy.`` () =
-    let inputAvatar = {shopWorld.Avatars.[avatarId] with Money = 100.0}
+    let inputAvatar = shopWorld.Avatars.[avatarId] |> Avatar.SetMoney 100.0
     let input = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
     let inputLocation = shopWorldLocation
     let inputQuantity = Maximum
@@ -946,8 +945,8 @@ let ``BuyItems.It gives a message indicating purchased quantity and completes th
         Assert.AreEqual(105.0, market.Demand)
     let expectedAvatar = 
         {input.Avatars.[avatarId] with
-            Money = 0.0
             Inventory = Map.empty |> Map.add 1UL 100u}
+        |> Avatar.SetMoney 0.0
     let expectedMessage = "You complete the purchase of 100 item under test."
     let expected =
         {input with
@@ -1076,8 +1075,8 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
         Assert.AreEqual(5.0, market.Demand)
     let expectedAvatar = 
         {input.Avatars.[avatarId] with
-            Money = 1.0
             Inventory = Map.empty}
+        |> Avatar.SetMoney 1.0
     let expectedMessage = "You complete the sale of 2 item under test."
     let expected =
         {input with
@@ -1112,8 +1111,8 @@ let ``SellItems.It gives a message and completes the salewhen the avatar has suf
         Assert.AreEqual(5.0, market.Demand)
     let expectedAvatar = 
         {input.Avatars.[avatarId] with
-            Money = 1.0
             Inventory = Map.empty}
+        |> Avatar.SetMoney 1.0
     let expectedMessage = "You complete the sale of 2 item under test."
     let expected =
         {input with
@@ -1178,7 +1177,7 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
         Assert.AreEqual(statistic.MinimumValue, statistic.CurrentValue)
     let expectedAvatar =
         inputAvatar
-        |> Avatar.TransformShipmate (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)) 0u
+        |> Avatar.TransformShipmate (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)) Primary
         |> Avatar.AddMetric Metric.CleanedHull 1u
     let expected =
         {inputWorld with

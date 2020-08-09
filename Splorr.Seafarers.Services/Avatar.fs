@@ -8,15 +8,15 @@ type AvatarMessageSink = string -> string -> unit
 module Avatar =
     let TransformShipmate 
             (transform : Shipmate->Shipmate) 
-            (index     : uint) 
+            (index     : ShipmateIdentifier) 
             (avatar    : Avatar) 
             : Avatar =
         {avatar with
             Shipmates = 
                 avatar.Shipmates
-                |> Array.mapi 
+                |> Map.map
                     (fun idx item -> 
-                        if (idx |> uint) = index then
+                        if idx = index then
                             item |> transform
                         else
                             item)}
@@ -30,13 +30,12 @@ module Avatar =
             : Avatar =
         Vessel.Create vesselStatisticTemplateSource vesselStatisticSink avatarId
         {
-            Money = 0.0
-            Reputation = 0.0
             Job = None
             Inventory = Map.empty
             Metrics = Map.empty
             Shipmates =
-                [| Shipmate.Create rationItems statisticDescriptors |]
+                Map.empty
+                |> Map.add Primary (Shipmate.Create rationItems statisticDescriptors)
         }
 
     let GetPosition
@@ -181,11 +180,11 @@ module Avatar =
             : Avatar =
         let shipmates, inventory, eaten =
             avatar.Shipmates
-            |> Array.fold 
-                (fun (s:Shipmate array,i,m) v -> 
+            |> Map.fold 
+                (fun (s:Map<ShipmateIdentifier,Shipmate>,i,m) k v -> 
                     let mate, inv, ate =
                         Shipmate.Eat i v
-                    ([| mate |] |> Array.append s,inv, if ate then m+1u else m)) ([||], avatar.Inventory, 0u)
+                    (s |> Map.add k mate,inv, if ate then m+1u else m)) (Map.empty, avatar.Inventory, 0u)
         {avatar with 
             Shipmates = shipmates
             Inventory = inventory}
@@ -232,9 +231,9 @@ module Avatar =
             (transform : Shipmate -> Shipmate) 
             (avatar    : Avatar) 
             : Avatar =
-        [0u..(avatar.Shipmates.Length-1) |> uint]
-        |> List.fold
-            (fun a i ->
+        avatar.Shipmates
+        |> Map.fold
+            (fun a i _ ->
                 a |> TransformShipmate transform i) avatar
 
     let Move
@@ -265,6 +264,40 @@ module Avatar =
             : Avatar =
         {avatar with Job = job |> Some}
 
+    let private SetPrimaryStatistic
+            (identifier: ShipmateStatisticIdentifier)
+            (amount : float) 
+            (avatar : Avatar) 
+            : Avatar =
+        avatar
+        |> TransformShipmate 
+            (Shipmate.TransformStatistic 
+                identifier 
+                (Statistic.SetCurrentValue amount >> Some)) Primary
+
+    let SetMoney = SetPrimaryStatistic ShipmateStatisticIdentifier.Money 
+
+    let SetReputation = SetPrimaryStatistic ShipmateStatisticIdentifier.Reputation 
+
+
+    let private GetPrimaryStatistic 
+            (identifier : ShipmateStatisticIdentifier) 
+            (avatar     : Avatar) 
+            : float =
+        avatar.Shipmates
+        |> Map.tryFind Primary
+        |> Option.map 
+            (fun shipmate ->
+                shipmate.Statistics
+                |> Map.tryFind identifier
+                |> Option.map (fun statistic -> statistic.CurrentValue)
+                |> Option.defaultValue 0.0)
+        |> Option.defaultValue 0.0
+
+    let GetMoney = GetPrimaryStatistic ShipmateStatisticIdentifier.Money
+
+    let GetReputation = GetPrimaryStatistic ShipmateStatisticIdentifier.Reputation
+    
     let AbandonJob 
             (avatar : Avatar) 
             : Avatar =
@@ -275,8 +308,8 @@ module Avatar =
                 {
                     a with 
                         Job = None
-                        Reputation = a.Reputation + reputationCostForAbandoningAJob
                 }
+                |> SetReputation ((a |> GetReputation) + reputationCostForAbandoningAJob)
                 |> IncrementMetric Metric.AbandonedJob) avatar
 
     let CompleteJob 
@@ -286,18 +319,14 @@ module Avatar =
         | Some job ->
             {avatar with 
                 Job = None
-                Money = avatar.Money + job.Reward
-                Reputation = avatar.Reputation + 1.0
             }
+            |> SetReputation ((avatar |> GetReputation) + 1.0)
+            |> TransformShipmate 
+                (Shipmate.TransformStatistic 
+                    ShipmateStatisticIdentifier.Money 
+                    (Statistic.ChangeCurrentBy job.Reward >> Some)) Primary
             |> AddMetric Metric.CompletedJob 1u
         | _ -> avatar
-
-    let private SetMoney //TODO: should money be a statistic? yes
-            (amount : float) 
-            (avatar : Avatar) 
-            : Avatar =
-        {avatar with 
-            Money = if amount < 0.0 then 0.0 else amount}
 
     let EarnMoney 
             (amount : float) 
@@ -306,7 +335,7 @@ module Avatar =
         if amount <= 0.0 then
             avatar
         else
-            avatar |> SetMoney (avatar.Money + amount)
+            avatar |> SetMoney ((avatar |> GetMoney) + amount)
 
     let SpendMoney 
             (amount : float) 
@@ -315,7 +344,7 @@ module Avatar =
         if amount < 0.0 then
             avatar
         else
-            avatar |> SetMoney (avatar.Money - amount)
+            avatar |> SetMoney ((avatar |> GetMoney) - amount)
 
     let GetItemCount 
             (item   : uint64) 
@@ -332,15 +361,6 @@ module Avatar =
             : Avatar =
         let newQuantity = (avatar |> GetItemCount item) + quantity
         {avatar with Inventory = avatar.Inventory |> Map.add item newQuantity}
-
-    let (|ALIVE|ZERO_HEALTH|OLD_AGE|)  //TODO: active patterns, while neat... just no. get rid of it and make a function instead.
-            (avatar : Avatar) =
-        if avatar.Shipmates.[0].Statistics.[ShipmateStatisticIdentifier.Health].CurrentValue <= avatar.Shipmates.[0].Statistics.[ShipmateStatisticIdentifier.Health].MinimumValue then
-            ZERO_HEALTH    
-        elif avatar.Shipmates.[0].Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue >= avatar.Shipmates.[0].Statistics.[ShipmateStatisticIdentifier.Turn].MaximumValue then
-            OLD_AGE
-        else
-            ALIVE
 
     let AddMessages 
             (avatarMessageSink : AvatarMessageSink)

@@ -41,20 +41,19 @@ let internal emptyWorld =
         AvatarId = avatarId
         Avatars = 
             [avatarId,{
-                Money = 0.0
-                Reputation = 0.0
                 Job = None
                 Inventory = Map.empty
                 Metrics = Map.empty
                 Shipmates = 
-                    [|{
-                        RationItems=[1UL]
-                        Statistics = Map.empty
-                    }
-                    |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0) |> Some)
-                    |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0) |> Some)
-                    |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Turn ({MinimumValue=0.0;CurrentValue=0.0;MaximumValue=15000.0} |> Some)
-                    |]
+                    Map.empty
+                    |> Map.add Primary
+                        ({
+                            RationItems=[1UL]
+                            Statistics = Map.empty
+                        }
+                        |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0) |> Some)
+                        |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0) |> Some)
+                        |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Turn ({MinimumValue=0.0;CurrentValue=0.0;MaximumValue=15000.0} |> Some))
             }
             ] 
             |> Map.ofList
@@ -114,7 +113,7 @@ let internal deadWorld =
             |> Map.add 
                 avatarId 
                 (genericWorld.Avatars.[avatarId] 
-                |> Avatar.TransformShipmate (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Health (fun x -> {x with CurrentValue=x.MinimumValue} |> Some)) 0u )}
+                |> Avatar.TransformShipmate (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Health (fun x -> {x with CurrentValue=x.MinimumValue} |> Some)) Primary )}
 
 let internal genericWorldIslandLocation = genericWorld.Islands |> Map.toList |> List.map fst |> List.head
 let internal genericWorldInvalidIslandLocation = ((genericWorldIslandLocation |> fst) + 1.0, genericWorldIslandLocation |> snd)

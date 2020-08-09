@@ -205,14 +205,11 @@ module World =
     let IsAvatarAlive 
             (world    : World) 
             : bool =
-        match world.Avatars |> Map.tryFind world.AvatarId with
-        | Some avatar -> 
-            match avatar with
-            | Avatar.ALIVE -> true
-            | Avatar.ZERO_HEALTH -> false
-            | Avatar.OLD_AGE -> false
-        | _ -> false
-        
+        world.Avatars 
+        |> Map.tryFind world.AvatarId
+        |> Option.map (fun avatar ->
+            (avatar.Shipmates.[Primary] |> Shipmate.GetStatus) = Alive)
+        |> Option.defaultValue false
 
     let rec Move 
             (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
@@ -289,7 +286,7 @@ module World =
                 |> Set.remove location
             let updatedIsland = 
                 island
-                |> Island.AddVisit world.Avatars.[avatarId].Shipmates.[0].Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue avatarId//only when this counts as a new visit...
+                |> Island.AddVisit world.Avatars.[avatarId].Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue avatarId//only when this counts as a new visit...
                 |> Island.GenerateJobs termSources random rewardRange destinations 
             Island.GenerateCommodities commoditySource islandMarketSource islandMarketSink random location
             Island.GenerateItems islandItemSource islandItemSink random itemSource location
@@ -456,10 +453,10 @@ module World =
             let quantity =
                 match tradeQuantity with
                 | Specific amount -> amount
-                | Maximum -> min (floor(availableTonnage / descriptor.Tonnage)) (floor(avatar.Money / unitPrice)) |> uint32
+                | Maximum -> min (floor(availableTonnage / descriptor.Tonnage)) (floor((avatar |> Avatar.GetMoney) / unitPrice)) |> uint32
             let price = (quantity |> float) * unitPrice
             let tonnageNeeded = (quantity |> float) * descriptor.Tonnage
-            if price > avatar.Money then
+            if price > (avatar |> Avatar.GetMoney) then
                 world
                 |> AddMessages avatarMessageSink ["You don't have enough money."]
                 world

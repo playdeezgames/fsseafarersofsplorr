@@ -50,6 +50,13 @@ let internal statisticDescriptors =
             CurrentValue=0.0
             MaximumValue=50000.0
         }
+        {
+            StatisticId = ShipmateStatisticIdentifier.Money
+            StatisticName="money"
+            MinimumValue=0.0
+            CurrentValue=0.0
+            MaximumValue=1000000000.0
+        }
     ]
 let internal vesselStatisticTemplateSourceStub () 
         : Map<VesselStatisticIdentifier, VesselStatisticTemplate>= 
