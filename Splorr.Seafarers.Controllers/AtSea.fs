@@ -120,6 +120,7 @@ module AtSea =
             (islandItemSink              : Location -> Set<uint64> -> unit) 
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (vesselSingleStatisticSink   : string -> VesselStatisticIdentifier * Statistic -> unit)
+            (shipmateRationItemSource    : ShipmateRationItemSource)
             (avatarMessageSink           : AvatarMessageSink)
             (avatarMessagePurger         : AvatarMessagePurger)
             (random                      : Random) 
@@ -242,7 +243,7 @@ module AtSea =
 
         | Some (Command.Move distance)->
             world
-            |> World.Move vesselSingleStatisticSource vesselSingleStatisticSink avatarMessageSink distance
+            |> World.Move vesselSingleStatisticSource vesselSingleStatisticSink shipmateRationItemSource avatarMessageSink distance
             |> Gamestate.AtSea
             |> Some
 
@@ -292,6 +293,7 @@ module AtSea =
             (islandItemSink              : Location -> Set<uint64>->unit) 
             (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
             (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
+            (shipmateRationItemSource    : ShipmateRationItemSource)
             (avatarMessageSource         : AvatarMessageSource)
             (avatarMessageSink           : AvatarMessageSink)
             (avatarMessagePurger         : AvatarMessagePurger)
@@ -316,6 +318,7 @@ module AtSea =
             islandItemSink
             vesselSingleStatisticSource
             vesselSingleStatisticSink
+            shipmateRationItemSource
             avatarMessageSink
             avatarMessagePurger
             random
@@ -333,6 +336,7 @@ module AtSea =
             (islandItemSink              : Location -> Set<uint64>->unit) 
             (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
             (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
+            (shipmateRationItemSource    : ShipmateRationItemSource)
             (avatarMessageSource         : AvatarMessageSource)
             (avatarMessageSink           : AvatarMessageSink)
             (avatarMessagePurger         : AvatarMessagePurger)
@@ -353,6 +357,7 @@ module AtSea =
                 islandItemSink 
                 vesselSingleStatisticSource
                 vesselSingleStatisticSink
+                shipmateRationItemSource
                 avatarMessageSource
                 avatarMessageSink
                 avatarMessagePurger

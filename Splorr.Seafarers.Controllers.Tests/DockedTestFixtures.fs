@@ -22,6 +22,7 @@ let internal dockWorld =
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
+        shipmateRationItemSinkStub
         dockWorldconfiguration 
         random 
         avatarId
@@ -89,6 +90,7 @@ let internal smallWorld =
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
+        shipmateRationItemSinkStub
         smallWorldconfiguration 
         random 
         avatarId

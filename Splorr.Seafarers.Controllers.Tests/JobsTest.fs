@@ -23,6 +23,7 @@ let private dockWorld =
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
+        shipmateRationItemSinkStub
         dockWorldconfiguration 
         random
         avatarId

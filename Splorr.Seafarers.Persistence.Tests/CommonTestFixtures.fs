@@ -144,12 +144,12 @@ let private setupTerms
         : unit =
     [
         Tables.Terms
-        "INSERT INTO [Terms] ([TermType], [Term]) VALUES ('adverb', 'woefully');"
-        "INSERT INTO [Terms] ([TermType], [Term]) VALUES ('adjective', 'tatty');"
-        "INSERT INTO [Terms] ([TermType], [Term]) VALUES ('object name', 'thing');"
-        "INSERT INTO [Terms] ([TermType], [Term]) VALUES ('person name', 'bob');"
-        "INSERT INTO [Terms] ([TermType], [Term]) VALUES ('person adjective', 'smelly');"
-        "INSERT INTO [Terms] ([TermType], [Term]) VALUES ('profession', 'monk');"
+        "REPLACE INTO [Terms] ([TermType], [Term]) VALUES ('adverb', 'woefully');"
+        "REPLACE INTO [Terms] ([TermType], [Term]) VALUES ('adjective', 'tatty');"
+        "REPLACE INTO [Terms] ([TermType], [Term]) VALUES ('object name', 'thing');"
+        "REPLACE INTO [Terms] ([TermType], [Term]) VALUES ('person name', 'bob');"
+        "REPLACE INTO [Terms] ([TermType], [Term]) VALUES ('person adjective', 'smelly');"
+        "REPLACE INTO [Terms] ([TermType], [Term]) VALUES ('profession', 'monk');"
     ]
     |> runCommands connection
 
@@ -160,12 +160,23 @@ let private setupMessages
         : unit =
     [
         Tables.Messages
-        ExistingAvatarId |> sprintf "INSERT INTO [Messages] ([AvatarId], [Message]) VALUES ('%s', 'message1');"
-        ExistingAvatarId |> sprintf "INSERT INTO [Messages] ([AvatarId], [Message]) VALUES ('%s', 'message2');"
-        ExistingAvatarId |> sprintf "INSERT INTO [Messages] ([AvatarId], [Message]) VALUES ('%s', 'message3');"
+        ExistingAvatarId |> sprintf "REPLACE INTO [Messages] ([AvatarId], [Message]) VALUES ('%s', 'message1');"
+        ExistingAvatarId |> sprintf "REPLACE INTO [Messages] ([AvatarId], [Message]) VALUES ('%s', 'message2');"
+        ExistingAvatarId |> sprintf "REPLACE INTO [Messages] ([AvatarId], [Message]) VALUES ('%s', 'message3');"
     ]
     |> runCommands connection
 
+let internal PrimaryShipmateId = "primary"
+
+let private setupShipmateRationItems
+        (connection: SQLiteConnection)
+        : unit = 
+    [
+        Tables.ShipmateRationItems
+        (ExistingAvatarId, PrimaryShipmateId) ||> sprintf "REPLACE INTO [ShipmateRationItems] ([AvatarId], [ShipmateId], [ItemId], [Order]) VALUES ('%s','%s',1,1);"
+        (ExistingAvatarId, PrimaryShipmateId) ||> sprintf "REPLACE INTO [ShipmateRationItems] ([AvatarId], [ShipmateId], [ItemId], [Order]) VALUES ('%s','%s',2,2);"
+    ]
+    |> runCommands connection
 
 let internal NewAvatarId = "newavatar"
 
@@ -185,6 +196,7 @@ let internal SetupConnection() : SQLiteConnection =
         setupIslandMarkets
         setupTerms
         setupMessages
+        setupShipmateRationItems
     ]
     |> List.iter (fun f -> f connection)
 

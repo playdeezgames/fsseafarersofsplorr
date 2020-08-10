@@ -55,6 +55,13 @@ module Tables =
 		[DefaultOrder] INTEGER NOT NULL,
         PRIMARY KEY([ItemId]));"
 
+    let ShipmateRationItems : string = "CREATE TABLE IF NOT EXISTS [ShipmateRationItems] (
+    	[AvatarId]	TEXT NOT NULL,
+    	[ShipmateId]	TEXT NOT NULL,
+    	[ItemId]	INTEGER NOT NULL,
+    	[Order]	INTEGER NOT NULL,
+    	PRIMARY KEY([AvatarId],[ShipmateId],[ItemId]));"
+
     let Terms : string = "CREATE TABLE [Terms] (
 		[TermType]	TEXT NOT NULL,
 		[Term]	TEXT NOT NULL,

@@ -33,6 +33,7 @@ let internal soloIslandWorld =
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
+        shipmateRationItemSinkStub
         soloIslandWorldConfiguration 
         random 
         avatarId
@@ -48,7 +49,6 @@ let internal emptyWorld =
                     Map.empty
                     |> Map.add Primary
                         ({
-                            RationItems=[1UL]
                             Statistics = Map.empty
                         }
                         |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0) |> Some)
@@ -103,6 +103,7 @@ let internal genericWorld =
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
+        shipmateRationItemSinkStub
         genericWorldConfiguration 
         random 
         avatarId

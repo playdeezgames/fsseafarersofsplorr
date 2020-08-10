@@ -24,6 +24,7 @@ let internal world =
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
+        shipmateRationItemSinkStub
         configuration 
         random 
         avatarId
@@ -57,6 +58,7 @@ let internal emptyWorld =
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
+        shipmateRationItemSinkStub
         emptyWorldconfiguration 
         random
         avatarId
@@ -78,6 +80,7 @@ let internal dockWorld =
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
+        shipmateRationItemSinkStub
         dockWorldconfiguration 
         random
         avatarId
@@ -90,6 +93,7 @@ let internal headForWorldUnvisited =
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
+        shipmateRationItemSinkStub
         dockWorldconfiguration 
         random
         avatarId
@@ -99,6 +103,7 @@ let internal headForWorldUnvisited =
     |> World.Move 
         vesselSingleStatisticSourceStub 
         vesselSingleStatisticSinkStub 
+        shipmateRationItemSourceStub
         avatarMessageSinkStub
         1u
 

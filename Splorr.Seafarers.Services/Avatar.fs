@@ -24,6 +24,7 @@ module Avatar =
     let Create 
             (vesselStatisticTemplateSource : VesselStatisticTemplateSource)
             (vesselStatisticSink           : VesselStatisticSink)
+            (shipmateRationItemSink        : ShipmateRationItemSink)
             (avatarId                      : string)
             (statisticDescriptors          : ShipmateStatisticTemplate list) //TODO: from source?
             (rationItems                   : uint64 list) 
@@ -35,7 +36,7 @@ module Avatar =
             Metrics = Map.empty
             Shipmates =
                 Map.empty
-                |> Map.add Primary (Shipmate.Create rationItems statisticDescriptors)
+                |> Map.add Primary (Shipmate.Create shipmateRationItemSink rationItems statisticDescriptors avatarId Primary)
         }
 
     let GetPosition
@@ -175,16 +176,18 @@ module Avatar =
         avatar
         |> AddMetric metric rateOfIncrement
 
-    let private Eat 
-            (avatar : Avatar) 
+    let private Eat
+            (shipmateRationItemSource : ShipmateRationItemSource)
+            (avatarId                 : string)
+            (avatar                   : Avatar) 
             : Avatar =
         let shipmates, inventory, eaten =
-            avatar.Shipmates
-            |> Map.fold 
-                (fun (s:Map<ShipmateIdentifier,Shipmate>,i,m) k v -> 
-                    let mate, inv, ate =
-                        Shipmate.Eat i v
-                    (s |> Map.add k mate,inv, if ate then m+1u else m)) (Map.empty, avatar.Inventory, 0u)
+            ((Map.empty, avatar.Inventory, 0u), avatar.Shipmates)
+            ||> Map.fold 
+                (fun (shipmates:Map<ShipmateIdentifier,Shipmate>,inventory,metric) identifier shipmate -> 
+                    let mate, updateInventory, ate =
+                        Shipmate.Eat shipmateRationItemSource inventory avatarId identifier shipmate
+                    (shipmates |> Map.add identifier mate,updateInventory, if ate then metric+1u else metric)) 
         {avatar with 
             Shipmates = shipmates
             Inventory = inventory}
@@ -239,6 +242,7 @@ module Avatar =
     let Move
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (vesselSingleStatisticSink   : VesselSingleStatisticSink)
+            (shipmateRationItemSource    : ShipmateRationItemSource)
             (avatarId                    : string)
             (avatar                      : Avatar) 
             : Avatar =
@@ -256,7 +260,7 @@ module Avatar =
         avatar
         |> TransformShipmates (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some))
         |> AddMetric Metric.Moved 1u
-        |> Eat
+        |> Eat shipmateRationItemSource avatarId
 
     let SetJob 
             (job    : Job) 

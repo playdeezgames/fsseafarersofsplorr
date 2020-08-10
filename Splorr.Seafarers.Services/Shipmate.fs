@@ -9,6 +9,9 @@ type ShipmateStatus =
     | Alive
     | Dead of DemiseType
 
+type ShipmateRationItemSource = string -> ShipmateIdentifier -> uint64 list
+type ShipmateRationItemSink = string -> ShipmateIdentifier -> uint64 list -> unit
+
 module Shipmate =
     let SetStatistic 
             (identifier : ShipmateStatisticIdentifier) 
@@ -29,11 +32,14 @@ module Shipmate =
         |> Map.tryFind identifier   
 
     let Create 
-            (rationItems          : uint64 list) 
-            (statisticDescriptors : ShipmateStatisticTemplate list) 
+            (shipmateRationItemSink : ShipmateRationItemSink)
+            (rationItems            : uint64 list) //TODO: becomes ShipmateRationItemTemplateSource
+            (statisticDescriptors   : ShipmateStatisticTemplate list) //TODO: becomes ShipmateStatisticTemplateSource
+            (avatarId               : string)
+            (shipmateId             : ShipmateIdentifier)
             : Shipmate =
+        shipmateRationItemSink avatarId shipmateId rationItems
         {
-            RationItems = rationItems
             Statistics = Map.empty
         }
         |> List.foldBack 
@@ -64,14 +70,18 @@ module Shipmate =
                 |> SetStatistic identifier (s |> transform) ) mate
 
     let Eat 
-            (inventory:Map<uint64, uint32>) 
-            (mate:Shipmate) 
+            (shipmateRationItemSource : ShipmateRationItemSource)
+            (inventory                : Map<uint64, uint32>) 
+            (avatarId                 : string)
+            (shipmateId               : ShipmateIdentifier)
+            (mate                     : Shipmate) 
             : Shipmate * Map<uint64, uint32> * bool =
         let satietyDecrease = -1.0
         let satietyIncrease = 1.0
         let rationConsumptionRate = 1u
+        let rationItems = shipmateRationItemSource avatarId shipmateId
         let rationItem =
-            mate.RationItems
+            rationItems
             |> List.tryPick 
                 (fun item -> 
                     match inventory |> Map.tryFind item with

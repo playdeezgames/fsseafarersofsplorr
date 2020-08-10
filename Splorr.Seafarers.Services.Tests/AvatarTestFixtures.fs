@@ -27,7 +27,7 @@ let internal vesselSingleStatisticSink (_) (_) = ()
 
 
 let internal avatar =
-    Avatar.Create vesselStatisticTemplateSourceStub vesselStatisticSinkStub avatarId statisticDescriptors [1UL]
+    Avatar.Create vesselStatisticTemplateSourceStub vesselStatisticSinkStub shipmateRationItemSinkStub avatarId statisticDescriptors [1UL]
 let internal avatarId = "avatar"
 let internal avatarNoStats =
     {avatar with 

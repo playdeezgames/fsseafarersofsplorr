@@ -121,7 +121,8 @@ module World =
             (nameSource                    : TermSource)
             (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
             (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
-            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+            (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
+            (shipmateRationItemSink        : ShipmateRationItemSink)
             (configuration                 : WorldConfiguration) 
             (random                        : Random) 
             (avatarId                      : string): World =
@@ -134,6 +135,7 @@ module World =
                     (Avatar.Create 
                         vesselStatisticTemplateSource
                         vesselStatisticSink
+                        shipmateRationItemSink
                         avatarId
                         configuration.StatisticDescriptors 
                         configuration.RationItems)
@@ -214,6 +216,7 @@ module World =
     let rec Move 
             (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
             (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
+            (shipmateRationItemSource    : ShipmateRationItemSource)
             (avatarMessageSink           : AvatarMessageSink)
             (distance                    : uint32) 
             (world                       : World) 
@@ -225,14 +228,14 @@ module World =
             |> AddMessages avatarMessageSink [ "Steady as she goes." ]
             let steppedWorld = 
                 world
-                |> TransformAvatar (Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink avatarId >> Some)
+                |> TransformAvatar (Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink shipmateRationItemSource avatarId >> Some)
                 |> UpdateCharts vesselSingleStatisticSource
             if IsAvatarAlive steppedWorld |> not then
                 steppedWorld
                 |> AddMessages avatarMessageSink [ "You die of old age!" ]
                 steppedWorld
             else
-                Move vesselSingleStatisticSource vesselSingleStatisticSink avatarMessageSink (x-1u) steppedWorld
+                Move vesselSingleStatisticSource vesselSingleStatisticSink shipmateRationItemSource avatarMessageSink (x-1u) steppedWorld
         | _ -> 
             world
 

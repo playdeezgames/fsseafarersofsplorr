@@ -33,13 +33,14 @@ let private random = Random()
 let private avatarId = ""
 
 let private nameSourceStub () = []
-
+let internal shipmateRationItemSinkStub (_) (_) (_) = ()
 let internal previousState = 
     World.Create
         nameSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
+        shipmateRationItemSinkStub
         configuration 
         random
         avatarId

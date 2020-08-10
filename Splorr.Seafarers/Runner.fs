@@ -24,6 +24,8 @@ module Runner =
             (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
             (vesselSingleStatisticSource   : string->VesselStatisticIdentifier->Statistic option)
             (vesselSingleStatisticSink     : string->VesselStatisticIdentifier*Statistic->unit)
+            (shipmateRationItemSource      : ShipmateRationItemSource)
+            (shipmateRationItemSink        : ShipmateRationItemSink)
             (avatarMessageSource           : AvatarMessageSource)
             (avatarMessageSink             : AvatarMessageSink)
             (avatarMessagePurger           : AvatarMessagePurger)
@@ -47,6 +49,7 @@ module Runner =
                     islandListSink 
                     vesselSingleStatisticSource
                     vesselSingleStatisticSink
+                    shipmateRationItemSource
                     avatarMessageSource
                     avatarMessageSink
                     avatarMessagePurger
@@ -151,6 +154,7 @@ module Runner =
                     vesselStatisticTemplateSource
                     vesselStatisticSink
                     vesselSingleStatisticSource
+                    shipmateRationItemSink
                     (configurationSource()) 
                     commandSource 
                     messageSink 
@@ -187,6 +191,8 @@ module Runner =
                 vesselStatisticSink
                 vesselSingleStatisticSource
                 vesselSingleStatisticSink
+                shipmateRationItemSource
+                shipmateRationItemSink
                 avatarMessageSource
                 avatarMessageSink
                 avatarMessagePurger
@@ -204,18 +210,20 @@ module Runner =
             (nameSource                    : TermSource)
             (termSources                   : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
             (configurationSource           : unit     -> WorldConfiguration) 
-            (commoditySource               : unit     -> Map<uint64, CommodityDescriptor>) 
-            (itemSource                    : unit     -> Map<uint64, ItemDescriptor>) 
-            (islandMarketSource            : Location -> Map<uint64, Market>) 
-            (islandSingleMarketSource      : Location -> uint64 -> Market option) 
-            (islandMarketSink              : Location -> Map<uint64, Market> -> unit) 
-            (islandSingleMarketSink        : Location -> uint64 * Market     -> unit) 
+            (commoditySource               : CommoditySource) 
+            (itemSource                    : ItemSource) 
+            (islandMarketSource            : IslandMarketSource) 
+            (islandSingleMarketSource      : IslandSingleMarketSource) 
+            (islandMarketSink              : IslandMarketSink) 
+            (islandSingleMarketSink        : IslandSingleMarketSink) 
             (islandListSource              : Location -> Set<uint64>) 
             (islandListSink                : Location -> Set<uint64>->unit) 
-            (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
-            (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
-            (vesselSingleStatisticSource   : string->VesselStatisticIdentifier->Statistic option)
-            (vesselSingleStatisticSink     : string->VesselStatisticIdentifier*Statistic->unit)
+            (vesselStatisticTemplateSource : VesselStatisticTemplateSource)
+            (vesselStatisticSink           : VesselStatisticSink)
+            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
+            (vesselSingleStatisticSink     : VesselSingleStatisticSink)
+            (shipmateRationItemSource      : ShipmateRationItemSource)
+            (shipmateRationItemSink        : ShipmateRationItemSink)
             (avatarMessageSource           : AvatarMessageSource)
             (avatarMessageSink             : AvatarMessageSink)
             (avatarMessagePurger           : AvatarMessagePurger)
@@ -243,6 +251,8 @@ module Runner =
             vesselStatisticSink
             vesselSingleStatisticSource
             vesselSingleStatisticSink
+            shipmateRationItemSource
+            shipmateRationItemSink
             avatarMessageSource
             avatarMessageSink
             avatarMessagePurger

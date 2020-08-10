@@ -28,6 +28,7 @@ let private world =
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
+        shipmateRationItemSinkStub
         configuration 
         random 
         avatarId
