@@ -131,6 +131,26 @@ let main argv =
         | Ok _ -> ()
         | Error x -> raise (System.InvalidOperationException x)
 
+    let shipmateIdentifierToString =
+        function
+        | Primary -> "primary"
+
+    let shipmateRationItemSource
+            (avatarId   : string) 
+            (shipmateId : ShipmateIdentifier) : uint64 list =
+        match connection |> ShipmateRationItem.GetForShipmate avatarId (shipmateId |> shipmateIdentifierToString) with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+
+    let shipmateRationItemSink
+            (avatarId   : string) 
+            (shipmateId : ShipmateIdentifier) 
+            (items      : uint64 list) 
+            : unit =
+        match connection |> ShipmateRationItem.SetForShipmate avatarId (shipmateId |> shipmateIdentifierToString) items with
+        | Ok _ -> ()
+        | Error x -> raise (System.InvalidOperationException x)
+
     try
         Runner.Run 
             switches 
@@ -149,6 +169,8 @@ let main argv =
             vesselStatisticSink
             vesselSingleStatisticSource
             vesselSingleStatisticSink
+            shipmateRationItemSource
+            shipmateRationItemSink
             avatarMessageSource
             avatarMessageSink
             avatarMessagePurger

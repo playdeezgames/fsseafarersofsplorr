@@ -22,3 +22,6 @@ let internal termSources =
 let internal nameSource() = []
 
 let internal avatarMessageSinkStub (_) (_) = ()
+
+let internal shipmateRationItemSinkStub (_) (_) (_) = ()
+let internal shipmateRationItemSourceStub (_) (_) = [1UL]

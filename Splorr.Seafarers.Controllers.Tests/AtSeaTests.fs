@@ -20,6 +20,7 @@ let private functionUnderTest
         atSeaIslandItemSink 
         vesselSingleStatisticSource
         vesselSingleStatisticSinkStub
+        shipmateRationItemSourceStub
         avatarMessageSourceStub
         avatarMessageSink
         avatarMessagePurgerStub

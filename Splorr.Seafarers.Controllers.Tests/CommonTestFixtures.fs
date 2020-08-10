@@ -111,3 +111,5 @@ let internal termSources =
 
 let internal nameSource() = []
 
+let internal shipmateRationItemSourceStub (_) (_) = [ 1UL ]
+let internal shipmateRationItemSinkStub (_) (_) (_) = ()

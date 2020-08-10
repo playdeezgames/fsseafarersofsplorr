@@ -23,6 +23,7 @@ let private world =
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
+        shipmateRationItemSinkStub
         configuration 
         random 
         avatarId
@@ -47,6 +48,7 @@ let ``Run.It returns Confirm Quit when given Quit command and there is no world.
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
+            shipmateRationItemSinkStub
             configuration 
             inputSource 
             sinkStub
@@ -73,6 +75,7 @@ let ``Run.It returns Main Menu when given Quit command and there is a world.`` (
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
+            shipmateRationItemSinkStub
             configuration 
             inputSource 
             sinkStub 
@@ -94,7 +97,10 @@ let ``Run.It returns Main Menu when given invalid command and there is no world.
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
-            configuration (fun()->None) sinkStub 
+            shipmateRationItemSinkStub
+            configuration 
+            (fun()->None) 
+            sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -115,6 +121,7 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
+            shipmateRationItemSinkStub
             configuration 
             (fun()->None) 
             sinkStub 
@@ -131,6 +138,7 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
+            shipmateRationItemSinkStub
             configuration 
             inputSource 
             sinkStub 
@@ -161,6 +169,7 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
+            shipmateRationItemSinkStub
             configuration 
             inputSource 
             sinkStub 
@@ -182,6 +191,7 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
+            shipmateRationItemSinkStub
             configuration 
             inputSource 
             sinkStub 
@@ -210,6 +220,7 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
+            shipmateRationItemSinkStub
             configuration 
             inputSource 
             sinkStub 
@@ -232,6 +243,7 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
+            shipmateRationItemSinkStub
             configuration 
             inputSource 
             sinkStub
@@ -254,6 +266,7 @@ let ``Run.It returns Main Menu with no world when given Resume command and there
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
+            shipmateRationItemSinkStub
             configuration 
             inputSource 
             sinkStub 

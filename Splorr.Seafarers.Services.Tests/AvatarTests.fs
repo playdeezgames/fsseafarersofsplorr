@@ -4,6 +4,7 @@ open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
+open CommonTestFixtures
 open AvatarTestFixtures
 
 [<Test>]
@@ -223,7 +224,7 @@ let ``Move.It moves the avatar.`` () =
         | _ ->
             raise (System.NotImplementedException "Kaboom set")
     input
-    |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId
+    |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink shipmateRationItemSourceStub inputAvatarId
     |> ignore
 
 [<Test>]
@@ -232,14 +233,14 @@ let ``Move.It removes a ration when the given avatar has rations and full satiet
         {avatar with 
             Inventory = Map.empty |> Map.add 1UL 2u
             Shipmates =
-                avatar.Shipmates
-                |> Map.map (fun _ x -> {x with RationItems = [0UL; 1UL]})}
+                avatar.Shipmates}
     let expectedSatiety = input.Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Satiety].CurrentValue
     let expectedHealth = input.Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Health].CurrentValue
     let expectedInventory = Map.empty |> Map.add 1u 1u
+    let shipmateRationItemSource (_) (_) = [0UL; 1UL]
     let actual =
         input
-        |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId
+        |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink shipmateRationItemSource inputAvatarId
     Assert.AreEqual(expectedInventory, actual.Inventory)
     Assert.AreEqual(expectedSatiety, actual.Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Satiety].CurrentValue)
     Assert.AreEqual(expectedHealth, actual.Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Health].CurrentValue)
@@ -255,7 +256,7 @@ let ``Move.It removes a ration and increases satiety when the given avatar has r
     let expectedInventory = Map.empty |> Map.add 1u 1u
     let actual =
         input
-        |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId
+        |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink shipmateRationItemSourceStub inputAvatarId
     Assert.AreEqual(expectedInventory, actual.Inventory)
     Assert.AreEqual(expectedSatiety, actual.Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Satiety].CurrentValue)
     Assert.AreEqual(expectedHealth, actual.Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Health].CurrentValue)
@@ -267,7 +268,7 @@ let ``Move.It lowers the avatar's satiety but not health when the given avatar h
     let expectedHealth = input.Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Health].CurrentValue
     let actual =
         input
-        |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId
+        |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink shipmateRationItemSourceStub inputAvatarId
     Assert.AreEqual(expectedSatiety, actual.Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Satiety].CurrentValue)
     Assert.AreEqual(expectedHealth, actual.Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Health].CurrentValue)
 
@@ -281,7 +282,7 @@ let ``Move.It lowers the avatar's maximum turn when the given avatar has no rati
     let expectedTurnMaximum = input.Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Turn].MaximumValue - 1.0
     let actual =
         input
-        |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId
+        |> Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink shipmateRationItemSourceStub inputAvatarId
     Assert.AreEqual(expectedSatiety, actual.Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Satiety].CurrentValue)
     Assert.AreEqual(expectedTurnMaximum, actual.Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Turn].MaximumValue)
 

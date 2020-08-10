@@ -224,7 +224,7 @@ let ``Move.It moves the avatar one unit when give 1u for distance when given a v
         | _ ->
             Assert.Fail("Don't set me.")
     soloIslandWorld
-    |> World.Move vesselSingleStatisticSource vesselSingleStatisticSink avatarMessageSinkStub 1u
+    |> World.Move vesselSingleStatisticSource vesselSingleStatisticSink shipmateRationItemSourceStub avatarMessageSinkStub 1u
     |> ignore
     Assert.AreEqual(1, positionXCalls)
     Assert.AreEqual(1, positionYCalls)
@@ -240,7 +240,7 @@ let ``Move.It does nothing when given an invalid avatar id`` () =
         {soloIslandWorld with AvatarId = bogusAvatarId}
     let actual =
         inputWorld
-        |> World.Move vesselSingleStatisticSource vesselSingleStatisticSink avatarMessageSinkStub 1u
+        |> World.Move vesselSingleStatisticSource vesselSingleStatisticSink shipmateRationItemSourceStub avatarMessageSinkStub 1u
     Assert.AreEqual(inputWorld, actual)
 
 [<Test>]
@@ -278,7 +278,7 @@ let ``Move.It moves the avatar almost two units when give 2u for distance.`` () 
         | _ ->
             Assert.Fail("Don't set me.")
     soloIslandWorld
-    |> World.Move vesselSingleStatisticSource vesselSingleStatisticSink avatarMessageSinkStub 2u
+    |> World.Move vesselSingleStatisticSource vesselSingleStatisticSink shipmateRationItemSourceStub avatarMessageSinkStub 2u
     |> ignore
     Assert.AreEqual(2, positionXCalls)
     Assert.AreEqual(2, positionYCalls)
@@ -308,7 +308,6 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
                         |> Map.add Primary  
                             ({
                                 Statistics = Map.empty
-                                RationItems = [1UL]
                             }
                             |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0)|>Some)
                             |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0)|>Some)
@@ -659,10 +658,10 @@ let ``TransformAvatar.It transforms the avatar within the given world.`` () =
             raise (System.NotImplementedException "Kaboom set")
     let expectedAvatar = 
         genericWorld.Avatars.[avatarId] 
-        |> Avatar.Move vesselSingleStatisticSource (fun (_) (_) -> ()) avatarId
+        |> Avatar.Move vesselSingleStatisticSource (fun (_) (_) -> ()) shipmateRationItemSourceStub avatarId
     let actual =
         genericWorld
-        |> World.TransformAvatar (Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink avatarId >> Some)
+        |> World.TransformAvatar (Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink shipmateRationItemSourceStub avatarId >> Some)
     Assert.AreEqual(expectedAvatar,actual.Avatars.[avatarId])
     Assert.AreEqual(1, xPositionCalled)
     Assert.AreEqual(1, yPositionCalled)

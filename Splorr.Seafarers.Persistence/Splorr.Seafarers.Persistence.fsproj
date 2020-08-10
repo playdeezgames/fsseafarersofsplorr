@@ -11,6 +11,7 @@
     <Compile Include="IslandMarket.fs" />
     <Compile Include="Item.fs" />
     <Compile Include="Message.fs" />
+    <Compile Include="ShipmateRationItem.fs" />
     <Compile Include="ShipmateStatisticTemplate.fs" />
     <Compile Include="Term.fs" />
     <Compile Include="VesselStatisticTemplate.fs" />
