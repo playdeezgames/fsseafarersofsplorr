@@ -6,15 +6,11 @@ open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
 open System
 open CommonTestFixtures
+open AtSeaTestFixtures
+
 
 let private configuration : WorldConfiguration = 
     {
-        AvatarDistances        = (10.0, 1.0)
-        MaximumGenerationTries = 1u
-        MinimumIslandDistance  = 1.0
-        RationItems            = [ 1UL ]
-        RewardRange            = (1.0, 10.0)
-        StatisticDescriptors   = []
         WorldSize              = (0.0, 0.0)
     }
 let private random = 
@@ -25,6 +21,9 @@ let private avatarId = ""
 let private world = 
     World.Create 
         nameSource
+        worldSingleStatisticSourceStub
+        shipmateStatisticTemplateSourceStub
+        rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub

@@ -61,7 +61,7 @@ module MainMenu =
             world
             |> Gamestate.AtSea
             |> Some
-        | Some Command.Abandon ->
+        | Some (Command.Abandon Game)->
             None
             |> Gamestate.MainMenu
             |> Some
@@ -71,16 +71,22 @@ module MainMenu =
             |> HandleInvalidCommand
 
     let private HandleCommandNoGame 
-            (nameSource                    : TermSource)
-            (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
-            (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
-            (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
-            (shipmateRationItemSink        : ShipmateRationItemSink)
-            (configuration                 : WorldConfiguration) =
+            (nameSource                      : TermSource)
+            (worldSingleStatisticSource      : WorldSingleStatisticSource)
+            (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
+            (rationItemSource                : RationItemSource)
+            (vesselStatisticTemplateSource   : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
+            (vesselStatisticSink             : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
+            (vesselSingleStatisticSource     : string -> VesselStatisticIdentifier -> Statistic option)
+            (shipmateRationItemSink          : ShipmateRationItemSink)
+            (configuration                   : WorldConfiguration) =
         function
         | Some (Command.Start avatarId)->
             World.Create 
                 nameSource
+                worldSingleStatisticSource
+                shipmateStatisticTemplateSource
+                rationItemSource
                 vesselStatisticTemplateSource
                 vesselStatisticSink
                 vesselSingleStatisticSource
@@ -99,15 +105,19 @@ module MainMenu =
             None
             |> HandleInvalidCommand
 
+
     let private HandleCommand
-            (nameSource                    : TermSource)
-            (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
-            (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
-            (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
-            (shipmateRationItemSink        : ShipmateRationItemSink)
-            (configuration                 : WorldConfiguration) 
-            (world                         : World option) 
-            (command                       : Command option) 
+            (nameSource                      : TermSource)
+            (worldSingleStatisticSource      : WorldSingleStatisticSource)
+            (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
+            (rationItemSource                : RationItemSource)
+            (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
+            (vesselStatisticSink             : VesselStatisticSink)
+            (vesselSingleStatisticSource     : VesselSingleStatisticSource)
+            (shipmateRationItemSink          : ShipmateRationItemSink)
+            (configuration                   : WorldConfiguration) 
+            (world                           : World option) 
+            (command                         : Command option) 
             : Gamestate option =
         match world with
         | Some w ->
@@ -115,6 +125,9 @@ module MainMenu =
         | _ ->
             HandleCommandNoGame 
                 nameSource
+                worldSingleStatisticSource
+                shipmateStatisticTemplateSource
+                rationItemSource
                 vesselStatisticTemplateSource
                 vesselStatisticSink
                 vesselSingleStatisticSource
@@ -123,21 +136,27 @@ module MainMenu =
                 command
 
     let Run 
-            (nameSource                    : TermSource)
-            (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
-            (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
-            (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
-            (shipmateRationItemSink        : ShipmateRationItemSink)
-            (configuration                 : WorldConfiguration) 
-            (commandSource                 : CommandSource) 
-            (messageSink                   : MessageSink) 
-            (world                         : World option) 
+            (nameSource                      : TermSource)
+            (worldSingleStatisticSource      : WorldSingleStatisticSource)
+            (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
+            (rationItemSource                : RationItemSource)
+            (vesselStatisticTemplateSource   : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
+            (vesselStatisticSink             : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
+            (vesselSingleStatisticSource     : string -> VesselStatisticIdentifier -> Statistic option)
+            (shipmateRationItemSink          : ShipmateRationItemSink)
+            (configuration                   : WorldConfiguration) 
+            (commandSource                   : CommandSource) 
+            (messageSink                     : MessageSink) 
+            (world                           : World option) 
             : Gamestate option =
         UpdateDisplay 
             messageSink 
             world.IsSome
         HandleCommand
             nameSource
+            worldSingleStatisticSource
+            shipmateStatisticTemplateSource
+            rationItemSource
             vesselStatisticTemplateSource
             vesselStatisticSink
             vesselSingleStatisticSource

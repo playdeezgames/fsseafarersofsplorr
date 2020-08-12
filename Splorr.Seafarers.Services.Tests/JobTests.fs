@@ -14,7 +14,7 @@ let singleDestination =
 [<Test>]
 let ``Create.It generates a job.`` () =
     let actual =
-        Job.Create termSources random rewardRange singleDestination
+        Job.Create termSources worldSingleStatisticSourceStub random singleDestination
     Assert.AreEqual((0.0,0.0), actual.Destination)
     Assert.GreaterOrEqual(actual.Reward,rewardRange |> fst);
     Assert.LessOrEqual(actual.Reward,rewardRange |> snd);
@@ -23,6 +23,6 @@ let ``Create.It generates a job.`` () =
 
 [<Test>]
 let ``Create.It throws an exception when an empty set of destinations is given.`` () =
-    Assert.Throws<System.ArgumentException>(fun () -> Job.Create termSources random rewardRange Set.empty |> ignore)
+    Assert.Throws<System.ArgumentException>(fun () -> Job.Create termSources worldSingleStatisticSourceStub random Set.empty |> ignore)
     |> ignore
 

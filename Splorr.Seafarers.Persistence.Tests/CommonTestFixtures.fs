@@ -139,6 +139,21 @@ let private setupVesselStatistics
         ]
     |> runCommands connection
 
+let private setupWorldStatistics 
+        (connection : SQLiteConnection) 
+    : unit =
+        System.Enum.GetValues(typedefof<WorldStatisticIdentifier>) 
+        :?> WorldStatisticIdentifier []
+        |> Array.toList
+        |> List.map
+            (fun id ->
+                sprintf "REPLACE INTO [WorldStatistics] ([StatisticId], [MinimumValue], [MaximumValue], [CurrentValue]) VALUES (%u, 0.0, 100.0, 50.0);" (id |> uint))
+        |> List.append
+            [
+                Tables.WorldStatistics
+            ]
+        |> runCommands connection
+
 let private setupTerms
         (connection : SQLiteConnection) 
         : unit =
@@ -197,6 +212,7 @@ let internal SetupConnection() : SQLiteConnection =
         setupTerms
         setupMessages
         setupShipmateRationItems
+        setupWorldStatistics
     ]
     |> List.iter (fun f -> f connection)
 

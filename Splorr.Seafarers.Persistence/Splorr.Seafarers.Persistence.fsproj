@@ -16,7 +16,9 @@
     <Compile Include="Term.fs" />
     <Compile Include="VesselStatisticTemplate.fs" />
     <Compile Include="VesselStatistic.fs" />
+    <Compile Include="RationItem.fs" />
     <Compile Include="WorldConfiguration.fs" />
+    <Compile Include="WorldStatistic.fs" />
   </ItemGroup>
 
   <ItemGroup>

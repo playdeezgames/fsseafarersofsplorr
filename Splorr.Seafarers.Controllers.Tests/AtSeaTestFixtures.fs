@@ -5,14 +5,18 @@ open Splorr.Seafarers.Services
 open CommonTestFixtures
 open System
 
+let internal worldSingleStatisticSourceStub (identfier: WorldStatisticIdentifier) : Statistic =
+    match identfier with
+    | WorldStatisticIdentifier.IslandGenerationRetries ->
+        {MinimumValue=10.0; MaximumValue=10.0; CurrentValue=10.0}
+    | WorldStatisticIdentifier.IslandDistance ->
+        {MinimumValue=30.0; MaximumValue=30.0; CurrentValue=30.0}
+    | WorldStatisticIdentifier.JobReward ->
+        {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
+    | _ ->
+        raise (System.NotImplementedException "soloIslandSingleStatisticSource")
 let internal configuration: WorldConfiguration =
     {
-        AvatarDistances        = (10.0, 1.0)
-        MaximumGenerationTries = 10u
-        MinimumIslandDistance  = 30.0
-        RationItems            = [1UL]
-        RewardRange            = (1.0, 10.0)
-        StatisticDescriptors   = statisticDescriptors
         WorldSize              = (10.0, 10.0)
     }
 
@@ -21,6 +25,9 @@ let private random = Random()
 let internal world = 
     World.Create 
         nameSource
+        worldSingleStatisticSourceStub
+        shipmateStatisticTemplateSourceStub
+        rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
@@ -40,21 +47,27 @@ let internal deadWorld =
                     |> Some)) Primary
             >> Some)
 
-
+let internal emptyWorldSingleStatisticSource (identfier: WorldStatisticIdentifier) : Statistic =
+    match identfier with
+    | WorldStatisticIdentifier.IslandGenerationRetries ->
+        {MinimumValue=0.0; MaximumValue=0.0; CurrentValue=0.0}
+    | WorldStatisticIdentifier.IslandDistance ->
+        {MinimumValue=30.0; MaximumValue=30.0; CurrentValue=30.0}
+    | WorldStatisticIdentifier.JobReward ->
+        {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
+    | _ ->
+        raise (System.NotImplementedException "soloIslandSingleStatisticSource")
 let internal emptyWorldconfiguration: WorldConfiguration =
     {
-        AvatarDistances        = (10.0, 1.0)
-        MaximumGenerationTries = 0u
-        MinimumIslandDistance  = 30.0
-        RationItems            = [ 1UL ]
-        RewardRange            = (1.0, 10.0)
-        StatisticDescriptors   = statisticDescriptors
         WorldSize              = (1.0, 1.0)
     }
 
 let internal emptyWorld = 
     World.Create 
         nameSource
+        emptyWorldSingleStatisticSource
+        shipmateStatisticTemplateSourceStub
+        rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
@@ -63,20 +76,27 @@ let internal emptyWorld =
         random
         avatarId
 
+let internal dockWorldSingleStatisticSource (identfier: WorldStatisticIdentifier) : Statistic =
+    match identfier with
+    | WorldStatisticIdentifier.IslandGenerationRetries ->
+        {MinimumValue=1.0; MaximumValue=1.0; CurrentValue=1.0}
+    | WorldStatisticIdentifier.IslandDistance ->
+        {MinimumValue=30.0; MaximumValue=30.0; CurrentValue=30.0}
+    | WorldStatisticIdentifier.JobReward ->
+        {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
+    | _ ->
+        raise (System.NotImplementedException "soloIslandSingleStatisticSource")
 let internal dockWorldconfiguration: WorldConfiguration =
     {
-        AvatarDistances        = (10.0,1.0)
-        MaximumGenerationTries = 1u
-        MinimumIslandDistance  = 30.0
-        RationItems            = [ 1UL ]
-        RewardRange            = (1.0, 10.0)
-        StatisticDescriptors   = statisticDescriptors
         WorldSize              = (0.0, 0.0)
     }
 
 let internal dockWorld = 
     World.Create 
         nameSource
+        dockWorldSingleStatisticSource
+        shipmateStatisticTemplateSourceStub
+        rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
@@ -90,6 +110,9 @@ let internal commoditySourceStub () = Map.empty
 let internal headForWorldUnvisited = 
     World.Create 
         nameSource
+        dockWorldSingleStatisticSource
+        shipmateStatisticTemplateSourceStub
+        rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
@@ -133,13 +156,13 @@ let internal headForWorldVisited =
         termSources
         commoditySourceStub 
         itemSourceStub 
+        dockWorldSingleStatisticSource
         headForWorldIslandMarketSource 
         headForWorldIslandMarketSink 
         headForWorldIslandItemSource 
         headForWorldIslandItemSink 
         avatarMessageSinkStub
         random 
-        dockWorldconfiguration.RewardRange 
         (0.0, 0.0)
 
 let internal abandonJobWorld =

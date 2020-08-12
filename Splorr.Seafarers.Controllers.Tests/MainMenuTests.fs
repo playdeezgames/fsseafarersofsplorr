@@ -5,21 +5,19 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
 open CommonTestFixtures
+open AtSeaTestFixtures
 
 let private configuration: WorldConfiguration =
     {
-        AvatarDistances        = (10.0, 1.0)
-        MaximumGenerationTries = 10u
-        MinimumIslandDistance  = 30.0
-        RationItems            = [ 1UL ]
-        RewardRange            = (1.0, 10.0)
-        StatisticDescriptors   = []
         WorldSize              = (10.0, 10.0)
     }
 
 let private world = 
     World.Create 
         nameSource
+        worldSingleStatisticSourceStub
+        shipmateStatisticTemplateSourceStub
+        rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
@@ -45,6 +43,9 @@ let ``Run.It returns Confirm Quit when given Quit command and there is no world.
         input
         |> MainMenu.Run 
             nameSource
+            worldSingleStatisticSourceStub
+            shipmateStatisticTemplateSourceStub
+            rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
@@ -72,6 +73,9 @@ let ``Run.It returns Main Menu when given Quit command and there is a world.`` (
         |> Some
         |> MainMenu.Run 
             nameSource
+            worldSingleStatisticSourceStub
+            shipmateStatisticTemplateSourceStub
+            rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
@@ -94,6 +98,9 @@ let ``Run.It returns Main Menu when given invalid command and there is no world.
         input
         |> MainMenu.Run 
             nameSource
+            worldSingleStatisticSourceStub
+            shipmateStatisticTemplateSourceStub
+            rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
@@ -118,6 +125,9 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
         |> Some
         |> MainMenu.Run 
             nameSource
+            worldSingleStatisticSourceStub
+            shipmateStatisticTemplateSourceStub
+            rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
@@ -135,6 +145,9 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
         input
         |> MainMenu.Run 
             nameSource
+            worldSingleStatisticSourceStub
+            shipmateStatisticTemplateSourceStub
+            rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
@@ -166,6 +179,9 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
         |> Some
         |> MainMenu.Run 
             nameSource
+            worldSingleStatisticSourceStub
+            shipmateStatisticTemplateSourceStub
+            rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
@@ -188,6 +204,9 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
         |> Some
         |> MainMenu.Run 
             nameSource
+            worldSingleStatisticSourceStub
+            shipmateStatisticTemplateSourceStub
+            rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
@@ -217,6 +236,9 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
         input
         |> MainMenu.Run 
             nameSource
+            worldSingleStatisticSourceStub
+            shipmateStatisticTemplateSourceStub
+            rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
@@ -240,6 +262,9 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
         |> Some
         |> MainMenu.Run 
             nameSource
+            worldSingleStatisticSourceStub
+            shipmateStatisticTemplateSourceStub
+            rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
@@ -263,6 +288,9 @@ let ``Run.It returns Main Menu with no world when given Resume command and there
         input
         |> MainMenu.Run 
             nameSource
+            worldSingleStatisticSourceStub
+            shipmateStatisticTemplateSourceStub
+            rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub

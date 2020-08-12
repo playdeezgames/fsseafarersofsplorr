@@ -5,21 +5,19 @@ open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
+open AtSeaTestFixtures
 
 let private dockWorldconfiguration: WorldConfiguration =
     {
-        AvatarDistances        = (10.0, 1.0)
-        MaximumGenerationTries = 1u
-        MinimumIslandDistance  = 30.0
-        RationItems            = [ 1UL ]
-        RewardRange            = (1.0, 10.0)
-        StatisticDescriptors   = []
         WorldSize              = (0.0, 0.0)
     }
 
 let private dockWorld = 
     World.Create 
         nameSource
+        dockWorldSingleStatisticSource
+        shipmateStatisticTemplateSourceStub
+        rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub

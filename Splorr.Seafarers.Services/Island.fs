@@ -61,17 +61,21 @@ module Island =
         | _ -> island
 
     let GenerateJobs 
-            (termSources  : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
-            (random       : Random) 
-            (rewardRange  : float*float) 
-            (destinations : Set<Location>) 
-            (island       : Island) 
+            (termSources                : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
+            (worldSingleStatisticSource : WorldSingleStatisticSource)
+            (random                     : Random) 
+            (destinations               : Set<Location>) 
+            (island                     : Island) 
             : Island =
         if island.Jobs.IsEmpty && not destinations.IsEmpty then
             {island with 
                 Jobs = 
                     [
-                        Job.Create termSources random rewardRange destinations
+                        Job.Create 
+                            termSources 
+                            worldSingleStatisticSource 
+                            random 
+                            destinations
                     ] 
                     |> List.append island.Jobs}
         else
