@@ -6,17 +6,12 @@ open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open System
+open AtSeaTestFixtures
 
 let private sink(_:Message) : unit = ()
 
 let private configuration: WorldConfiguration =
     {
-        AvatarDistances        = (10.0, 1.0)
-        MaximumGenerationTries = 10u
-        MinimumIslandDistance  = 30.0
-        RationItems            = [1UL]
-        RewardRange            = (1.0, 10.0)
-        StatisticDescriptors   = []
         WorldSize              = (10.0, 10.0)
     }
 
@@ -27,6 +22,9 @@ let private avatarId = ""
 let private world =  
     World.Create 
         nameSource
+        worldSingleStatisticSourceStub
+        shipmateStatisticTemplateSourceStub
+        rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub

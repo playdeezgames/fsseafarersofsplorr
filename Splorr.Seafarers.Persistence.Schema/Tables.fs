@@ -94,3 +94,11 @@ module Tables =
 		[AvatarViewDistance]	REAL NOT NULL,
 		[AvatarDockDistance]	REAL NOT NULL,
 		PRIMARY KEY([WorldConfigurationId]));"
+
+    let WorldStatistics : string = "CREATE TABLE IF NOT EXISTS [WorldStatistics] (
+		[StatisticId]	INTEGER NOT NULL,
+		[MinimumValue]	REAL NOT NULL,
+		[MaximumValue]	REAL NOT NULL CHECK(MaximumValue>=MinimumValue),
+		[CurrentValue]	REAL NOT NULL CHECK(CurrentValue>=MinimumValue AND CurrentValue<=MaximumValue),
+		PRIMARY KEY([StatisticId]));"
+

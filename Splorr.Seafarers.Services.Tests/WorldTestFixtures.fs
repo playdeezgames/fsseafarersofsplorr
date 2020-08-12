@@ -6,15 +6,19 @@ open CommonTestFixtures
 
 let internal bogusAvatarId = "bogus"
 let internal random = System.Random()
+let internal soloIslandSingleStatisticSource (identfier: WorldStatisticIdentifier) : Statistic =
+    match identfier with
+    | WorldStatisticIdentifier.IslandGenerationRetries ->
+        {MinimumValue=10.0; MaximumValue=10.0; CurrentValue=10.0}
+    | WorldStatisticIdentifier.IslandDistance ->
+        {MinimumValue=30.0; MaximumValue=30.0; CurrentValue=30.0}
+    | WorldStatisticIdentifier.JobReward ->
+        {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
+    | _ ->
+        raise (System.NotImplementedException "soloIslandSingleStatisticSource")
 let internal soloIslandWorldConfiguration: WorldConfiguration =
     {
-        AvatarDistances = (10.0,1.0)
         WorldSize=(10.0, 10.0)
-        MinimumIslandDistance=30.0 
-        MaximumGenerationTries=10u
-        RewardRange=(1.0,10.0)
-        RationItems = [1UL]
-        StatisticDescriptors = statisticDescriptors
     }
 let private vesselStatisticTemplateSourceStub () = Map.empty
 let private vesselStatisticSinkStub (_) (_) = ()
@@ -30,6 +34,9 @@ let private vesselSingleStatisticSourceStub (_) (identifier:VesselStatisticIdent
 let internal soloIslandWorld = 
     World.Create 
         nameSource
+        soloIslandSingleStatisticSource
+        shipmateStatisticTemplateSource
+        rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
@@ -64,7 +71,7 @@ let internal fabricatedDestinationList = [(0.0, 0.0)] |> Set.ofList
 let internal oneIslandWorld = 
     emptyWorld
     |> World.SetIsland (0.0,0.0) (Island.Create() |> Island.SetName "Uno" |> Some)
-    |> World.TransformIsland  (0.0,0.0) (fun i -> {i with Jobs = [ Job.Create termSources random defaultRewardrange fabricatedDestinationList ]} |> Some)
+    |> World.TransformIsland  (0.0,0.0) (fun i -> {i with Jobs = [ Job.Create termSources soloIslandSingleStatisticSource random fabricatedDestinationList ]} |> Some)
 
 let internal commodities = 
     Map.empty
@@ -86,20 +93,27 @@ let internal genericWorldItems =
         Occurrence=1.0
         Tonnage = 1.0
         }
+let internal genericWorldSingleStatisticSource (identfier: WorldStatisticIdentifier) : Statistic =
+    match identfier with
+    | WorldStatisticIdentifier.IslandGenerationRetries ->
+        {MinimumValue=500.0; MaximumValue=500.0; CurrentValue=500.0}
+    | WorldStatisticIdentifier.IslandDistance ->
+        {MinimumValue=5.0; MaximumValue=5.0; CurrentValue=5.0}
+    | WorldStatisticIdentifier.JobReward ->
+        {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
+    | _ ->
+        raise (System.NotImplementedException "soloIslandSingleStatisticSource")
 
 let internal genericWorldConfiguration: WorldConfiguration =
     {
-        AvatarDistances = (10.0,1.0)
         WorldSize=(11.0, 11.0)
-        MinimumIslandDistance=5.0 
-        MaximumGenerationTries=500u
-        RewardRange=(1.0,10.0)
-        RationItems = [1UL]
-        StatisticDescriptors = statisticDescriptors
     }
 let internal genericWorld = 
     World.Create 
         nameSource
+        genericWorldSingleStatisticSource
+        shipmateStatisticTemplateSource
+        rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
@@ -122,7 +136,20 @@ let private genericWorldIslandItemSource (_:Location) = Set.empty
 let private genericWorldIslandItemSink (_) (_) = ()
 let private genericWorldIslandMarketSource (_:Location) = Map.empty
 let private genericWorldIslandMarketSink (_) (_) = ()
-let internal genericDockedWorld = World.Dock termSources (fun()->commodities) (fun()->genericWorldItems) genericWorldIslandMarketSource genericWorldIslandMarketSink genericWorldIslandItemSource genericWorldIslandItemSink avatarMessageSinkStub random genericWorldConfiguration.RewardRange genericWorldIslandLocation genericWorld
+let internal genericDockedWorld = 
+    World.Dock 
+        termSources 
+        (fun()->commodities) 
+        (fun()->genericWorldItems) 
+        genericWorldSingleStatisticSource
+        genericWorldIslandMarketSource 
+        genericWorldIslandMarketSink 
+        genericWorldIslandItemSource 
+        genericWorldIslandItemSink 
+        avatarMessageSinkStub 
+        random 
+        genericWorldIslandLocation 
+        genericWorld
 
 let internal shopWorld = 
     genericDockedWorld
@@ -133,5 +160,12 @@ let internal jobWorld = genericDockedWorld |> World.AcceptJob avatarMessageSinkS
 let internal jobLocation = jobWorld.Avatars.[avatarId].Job.Value.Destination
 
 let internal headForWorld =
-    {oneIslandWorld with Avatars =oneIslandWorld.Avatars |> Map.add avatarId oneIslandWorld.Avatars.[avatarId] (*with Position = (1.0,0.0)*) }
+    {
+        oneIslandWorld with 
+            Avatars =
+                oneIslandWorld.Avatars 
+                |> Map.add 
+                    avatarId 
+                    oneIslandWorld.Avatars.[avatarId]
+    }
 

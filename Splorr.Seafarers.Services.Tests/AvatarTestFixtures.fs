@@ -27,7 +27,13 @@ let internal vesselSingleStatisticSink (_) (_) = ()
 
 
 let internal avatar =
-    Avatar.Create vesselStatisticTemplateSourceStub vesselStatisticSinkStub shipmateRationItemSinkStub avatarId statisticDescriptors [1UL]
+    Avatar.Create 
+        shipmateStatisticTemplateSource
+        rationItemSourceStub 
+        vesselStatisticTemplateSourceStub 
+        vesselStatisticSinkStub 
+        shipmateRationItemSinkStub 
+        avatarId 
 let internal avatarId = "avatar"
 let internal avatarNoStats =
     {avatar with 
@@ -45,7 +51,11 @@ let internal oldAvatar =
         (Shipmate.TransformStatistic 
             ShipmateStatisticIdentifier.Turn (fun x-> {x with CurrentValue = x.MaximumValue} |> Some)) Primary
 let internal job =
-    Job.Create termSources random rewardRange singleLocation
+    Job.Create 
+        termSources 
+        worldSingleStatisticSourceStub
+        random  
+        singleLocation
 let internal employedAvatar =
     {avatar with Job = job |> Some} |> Avatar.EarnMoney 10.0 |> Avatar.SetReputation (-5.0)
 let internal rationedAvatar =

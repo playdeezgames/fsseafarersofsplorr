@@ -22,12 +22,12 @@ module Avatar =
                             item)}
 
     let Create 
-            (vesselStatisticTemplateSource : VesselStatisticTemplateSource)
-            (vesselStatisticSink           : VesselStatisticSink)
-            (shipmateRationItemSink        : ShipmateRationItemSink)
-            (avatarId                      : string)
-            (statisticDescriptors          : ShipmateStatisticTemplate list) //TODO: from source?
-            (rationItems                   : uint64 list) 
+            (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
+            (rationItemSource                : RationItemSource)
+            (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
+            (vesselStatisticSink             : VesselStatisticSink)
+            (shipmateRationItemSink          : ShipmateRationItemSink)
+            (avatarId                        : string)
             : Avatar =
         Vessel.Create vesselStatisticTemplateSource vesselStatisticSink avatarId
         {
@@ -36,7 +36,7 @@ module Avatar =
             Metrics = Map.empty
             Shipmates =
                 Map.empty
-                |> Map.add Primary (Shipmate.Create shipmateRationItemSink rationItems statisticDescriptors avatarId Primary)
+                |> Map.add Primary (Shipmate.Create shipmateStatisticTemplateSource rationItemSource shipmateRationItemSink avatarId Primary)
         }
 
     let GetPosition

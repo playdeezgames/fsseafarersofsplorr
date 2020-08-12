@@ -41,7 +41,7 @@ let internal rewardRange = (1.0, 10.0)
 let internal singleDestination = [(0.0, 0.0)] |> Set.ofList
 
 let internal jobAvailableIsland = 
-    {visitedIsland with Jobs =[ Job.Create termSources random rewardRange singleDestination ]}
+    {visitedIsland with Jobs =[ Job.Create termSources worldSingleStatisticSourceStub random singleDestination ]}
 
 let internal noCommodityIsland = visitedIsland
 let internal commodityIsland = 

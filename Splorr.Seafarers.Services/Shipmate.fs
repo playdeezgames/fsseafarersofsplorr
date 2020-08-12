@@ -11,6 +11,8 @@ type ShipmateStatus =
 
 type ShipmateRationItemSource = string -> ShipmateIdentifier -> uint64 list
 type ShipmateRationItemSink = string -> ShipmateIdentifier -> uint64 list -> unit
+type RationItemSource = unit -> uint64 list
+type ShipmateStatisticTemplateSource = unit -> Map<ShipmateStatisticIdentifier, ShipmateStatisticTemplate>
 
 module Shipmate =
     let SetStatistic 
@@ -31,21 +33,27 @@ module Shipmate =
         mate.Statistics
         |> Map.tryFind identifier   
 
-    let Create 
-            (shipmateRationItemSink : ShipmateRationItemSink)
-            (rationItems            : uint64 list) //TODO: becomes ShipmateRationItemTemplateSource
-            (statisticDescriptors   : ShipmateStatisticTemplate list) //TODO: becomes ShipmateStatisticTemplateSource
-            (avatarId               : string)
-            (shipmateId             : ShipmateIdentifier)
+    let Create
+            (shipmateStatisticTemplateSource   : ShipmateStatisticTemplateSource)
+            (rationItemSource                  : RationItemSource)
+            (shipmateRationItemSink            : ShipmateRationItemSink)
+            (avatarId                          : string)
+            (shipmateId                        : ShipmateIdentifier)
             : Shipmate =
-        shipmateRationItemSink avatarId shipmateId rationItems
+        rationItemSource()
+        |> shipmateRationItemSink avatarId shipmateId 
         {
             Statistics = Map.empty
         }
         |> List.foldBack 
             (fun identifier shipMate -> 
                 shipMate
-                |> SetStatistic identifier.StatisticId (Statistic.Create (identifier.MinimumValue, identifier.MaximumValue) identifier.CurrentValue |> Some)) statisticDescriptors
+                |> SetStatistic 
+                    identifier.StatisticId 
+                    (Statistic.Create 
+                        (identifier.MinimumValue, identifier.MaximumValue) 
+                        identifier.CurrentValue 
+                        |> Some)) (shipmateStatisticTemplateSource() |> Map.toList |> List.map snd)
 
     let GetStatus
             (shipmate : Shipmate)

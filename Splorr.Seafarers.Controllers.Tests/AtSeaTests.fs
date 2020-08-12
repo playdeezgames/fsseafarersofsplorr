@@ -13,7 +13,8 @@ let private functionUnderTest
     AtSea.Run 
         termSources
         atSeaCommoditySource 
-        atSeaItemSource 
+        atSeaItemSource
+        worldSingleStatisticSourceStub
         atSeaIslandMarketSource 
         atSeaIslandMarketSink 
         atSeaIslandItemSource 
@@ -25,7 +26,6 @@ let private functionUnderTest
         avatarMessageSink
         avatarMessagePurgerStub
         random 
-        (0.0, 0.0)
 
 let private functionUsuallyUnderTest = functionUnderTest vesselSingleStatisticSourceStub avatarMessageSinkStub
 

@@ -7,18 +7,15 @@ open AtSeaTestFixtures
 
 let internal dockWorldconfiguration: WorldConfiguration =
     {
-        AvatarDistances        = (10.0, 1.0)
-        MaximumGenerationTries = 1u
-        MinimumIslandDistance  = 30.0
-        RationItems            = [ 1UL ]
-        RewardRange            = (1.0, 10.0)
-        StatisticDescriptors   = statisticDescriptors
         WorldSize              = (0.0, 0.0)
     }
 
 let internal dockWorld = 
     World.Create
         nameSource
+        dockWorldSingleStatisticSource
+        shipmateStatisticTemplateSourceStub
+        rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
@@ -73,20 +70,28 @@ let internal itemSource () : Map<uint64, ItemDescriptor> =
     ] 
     |> Map.ofList
 
+let internal smallWorldSingleStatisticSource (identfier: WorldStatisticIdentifier) : Statistic =
+    match identfier with
+    | WorldStatisticIdentifier.IslandGenerationRetries ->
+        {MinimumValue=500.0; MaximumValue=500.0; CurrentValue=500.0}
+    | WorldStatisticIdentifier.IslandDistance ->
+        {MinimumValue=5.0; MaximumValue=5.0; CurrentValue=5.0}
+    | WorldStatisticIdentifier.JobReward ->
+        {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
+    | _ ->
+        raise (System.NotImplementedException "soloIslandSingleStatisticSource")
+
 let internal smallWorldconfiguration: WorldConfiguration =
     {
-        AvatarDistances        = (10.0, 1.0)
-        MaximumGenerationTries = 500u
-        MinimumIslandDistance  = 5.0
-        RationItems            = [ 1UL ]
-        RewardRange            = (1.0, 10.0)
-        StatisticDescriptors   = statisticDescriptors
-        WorldSize              = (11.0, 11.0)
+        WorldSize   = (11.0, 11.0)
     }
 
 let internal smallWorld = 
     World.Create 
         nameSource
+        smallWorldSingleStatisticSource
+        shipmateStatisticTemplateSourceStub
+        rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
@@ -125,13 +130,13 @@ let internal smallWorldDocked =
         termSources
         commoditySource 
         itemSource
+        smallWorldSingleStatisticSource
         smallWorldIslandMarketSource 
         smallWorldIslandMarketSink 
         smallWorldIslandItemSource 
         smallWorldIslandItemSink 
         avatarMessageSinkStub
         random 
-        smallWorldconfiguration.RewardRange 
         smallWorldIslandLocation
 
 let internal shopWorld = smallWorldDocked

@@ -11,6 +11,10 @@ let internal statisticDescriptors =
         {StatisticId = ShipmateStatisticIdentifier.Money; StatisticName="money"; MinimumValue=0.0; CurrentValue=0.0;MaximumValue=1000000000.0}
         {StatisticId = ShipmateStatisticIdentifier.Reputation; StatisticName="reputation"; MinimumValue=(-1000000000.0); CurrentValue=0.0;MaximumValue=1000000000.0}
     ]
+let internal shipmateStatisticTemplateSource () =
+    statisticDescriptors
+    |> List.map (fun descriptor -> (descriptor.StatisticId, descriptor))
+    |> Map.ofList
 let internal adverbSource()          : string list = [ "woefully" ]
 let internal adjectiveSource()       : string list = [ "tatty" ]
 let internal objectNameSource()      : string list = [ "thing" ]
@@ -25,3 +29,11 @@ let internal avatarMessageSinkStub (_) (_) = ()
 
 let internal shipmateRationItemSinkStub (_) (_) (_) = ()
 let internal shipmateRationItemSourceStub (_) (_) = [1UL]
+let internal rationItemSourceStub () = [1UL]
+
+let internal worldSingleStatisticSourceStub (identifier:WorldStatisticIdentifier) : Statistic =
+    match identifier with 
+    | WorldStatisticIdentifier.JobReward ->
+        {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
+    | _ ->
+        raise (System.NotImplementedException "worldSingleStatisticSourceStub")

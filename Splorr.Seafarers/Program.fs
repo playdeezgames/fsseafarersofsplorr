@@ -151,6 +151,21 @@ let main argv =
         | Ok _ -> ()
         | Error x -> raise (System.InvalidOperationException x)
 
+    let rationItemSource () : uint64 list =
+        match connection |> RationItem.GetRationItems with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+
+    let shipmateStatisticTemplateSource () : Map<ShipmateStatisticIdentifier, ShipmateStatisticTemplate> =
+        match connection |> ShipmateStatisticTemplate.GetList with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+
+    let worldSingleStatisticSource (identifier: WorldStatisticIdentifier) : Statistic =
+        match connection |> WorldStatistic.Get identifier with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+
     try
         Runner.Run 
             switches 
@@ -159,6 +174,9 @@ let main argv =
             configurationSource
             commoditySource
             itemSource 
+            worldSingleStatisticSource
+            shipmateStatisticTemplateSource
+            rationItemSource
             islandMarketSource 
             islandSingleMarketSource
             islandMarketSink 

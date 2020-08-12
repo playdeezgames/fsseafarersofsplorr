@@ -5,14 +5,18 @@ open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
 open System
 
+let internal worldSingleStatisticSourceStub (identfier: WorldStatisticIdentifier) : Statistic =
+    match identfier with
+    | WorldStatisticIdentifier.IslandGenerationRetries ->
+        {MinimumValue=10.0; MaximumValue=10.0; CurrentValue=10.0}
+    | WorldStatisticIdentifier.IslandDistance ->
+        {MinimumValue=30.0; MaximumValue=30.0; CurrentValue=30.0}
+    | WorldStatisticIdentifier.JobReward ->
+        {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
+    | _ ->
+        raise (System.NotImplementedException "soloIslandSingleStatisticSource")
 let internal configuration: WorldConfiguration =
     {
-        AvatarDistances        = (10.0, 1.0)
-        MaximumGenerationTries = 10u
-        MinimumIslandDistance  = 30.0
-        RationItems            = [ 1UL ]
-        RewardRange            = (1.0, 10.0)
-        StatisticDescriptors   = []
         WorldSize              = (10.0, 10.0)
     }
 let private vesselStatisticTemplateSourceStub () = 
@@ -34,9 +38,14 @@ let private avatarId = ""
 
 let private nameSourceStub () = []
 let internal shipmateRationItemSinkStub (_) (_) (_) = ()
+let rationItemSourceStub () = [1UL]
+let shipmateStatisticTemplateSourceStub () = Map.empty
 let internal previousState = 
     World.Create
         nameSourceStub
+        worldSingleStatisticSourceStub
+        shipmateStatisticTemplateSourceStub
+        rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub

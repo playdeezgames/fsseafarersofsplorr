@@ -114,6 +114,7 @@ module AtSea =
             (termSources                 : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
             (commoditySource             : unit -> Map<uint64, CommodityDescriptor>) 
             (itemSource                  : unit -> Map<uint64, ItemDescriptor>) 
+            (worldSingleStatisticSource  : WorldSingleStatisticSource)
             (islandMarketSource          : Location -> Map<uint64, Market>) 
             (islandMarketSink            : Location -> Map<uint64, Market> -> unit) 
             (islandItemSource            : Location -> Set<uint64>) 
@@ -124,7 +125,6 @@ module AtSea =
             (avatarMessageSink           : AvatarMessageSink)
             (avatarMessagePurger         : AvatarMessagePurger)
             (random                      : Random) 
-            (rewardRange                 : float * float) 
             (command                     : Command option) 
             (world                       : World) 
             : Gamestate option =
@@ -190,13 +190,13 @@ module AtSea =
                             termSources
                             commoditySource 
                             itemSource
+                            worldSingleStatisticSource
                             islandMarketSource 
                             islandMarketSink 
                             islandItemSource 
                             islandItemSink 
                             avatarMessageSink
                             random 
-                            rewardRange 
                             location)
                 |> Gamestate.Docked
                 |> Some
@@ -287,6 +287,7 @@ module AtSea =
             (termSources                 : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
             (commoditySource             : unit -> Map<uint64, CommodityDescriptor>) 
             (itemSource                  : unit -> Map<uint64, ItemDescriptor>) 
+            (worldSingleStatisticSource  : WorldSingleStatisticSource)
             (islandMarketSource          : Location -> Map<uint64, Market>) 
             (islandMarketSink            : Location -> Map<uint64, Market>->unit) 
             (islandItemSource            : Location -> Set<uint64>) 
@@ -298,7 +299,6 @@ module AtSea =
             (avatarMessageSink           : AvatarMessageSink)
             (avatarMessagePurger         : AvatarMessagePurger)
             (random                      : Random) 
-            (rewardRange                 : float*float) 
             (commandSource               : CommandSource) 
             (messageSink                 : MessageSink) 
             (world                       : World) 
@@ -312,6 +312,7 @@ module AtSea =
             termSources
             commoditySource
             itemSource
+            worldSingleStatisticSource
             islandMarketSource
             islandMarketSink
             islandItemSource
@@ -322,7 +323,6 @@ module AtSea =
             avatarMessageSink
             avatarMessagePurger
             random
-            rewardRange
             (commandSource())
             world
 
@@ -330,6 +330,7 @@ module AtSea =
             (termSources                 : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
             (commoditySource             : unit -> Map<uint64, CommodityDescriptor>) 
             (itemSource                  : unit -> Map<uint64, ItemDescriptor>) 
+            (worldSingleStatisticSource  : WorldSingleStatisticSource)
             (islandMarketSource          : Location -> Map<uint64, Market>) 
             (islandMarketSink            : Location -> Map<uint64, Market>->unit) 
             (islandItemSource            : Location -> Set<uint64>) 
@@ -341,7 +342,6 @@ module AtSea =
             (avatarMessageSink           : AvatarMessageSink)
             (avatarMessagePurger         : AvatarMessagePurger)
             (random                      : Random) 
-            (rewardRange                 : float*float) 
             (commandSource               : CommandSource) 
             (messageSink                 : MessageSink) 
             (world                       : World) 
@@ -351,6 +351,7 @@ module AtSea =
                 termSources
                 commoditySource 
                 itemSource 
+                worldSingleStatisticSource
                 islandMarketSource 
                 islandMarketSink 
                 islandItemSource 
@@ -362,7 +363,6 @@ module AtSea =
                 avatarMessageSink
                 avatarMessagePurger
                 random 
-                rewardRange 
                 commandSource 
                 messageSink 
                 world

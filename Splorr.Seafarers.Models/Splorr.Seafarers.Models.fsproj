@@ -15,6 +15,7 @@
     <Compile Include="ShipmateStatisticTemplate.fs" />
     <Compile Include="VesselStatisticIdentifier.fs" />
     <Compile Include="VesselStatisticTemplate.fs" />
+    <Compile Include="WorldStatisticIdentifier.fs" />
     <Compile Include="Statistic.fs" />
     <Compile Include="Side.fs" />
     <Compile Include="Metric.fs" />

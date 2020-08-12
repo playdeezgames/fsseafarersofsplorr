@@ -79,21 +79,23 @@ module World =
             (fun w (l,n) -> w |> TransformIsland l (Island.SetName n >> Some)) world
 
     let rec private GenerateIslands  //TODO: move to world generator?
-            (nameSource    : TermSource)
-            (configuration : WorldConfiguration) 
-            (random        : Random) 
-            (currentTry    : uint32) 
-            (world         : World) 
+            (nameSource             : TermSource)
+            (configuration          : WorldConfiguration) 
+            (minimumIslandDistance  : float)
+            (random                 : Random) 
+            (maximumGenerationTries : uint32, 
+             currentTry             : uint32) 
+            (world                  : World) 
             : World =
-        if currentTry>=configuration.MaximumGenerationTries then
+        if currentTry>=maximumGenerationTries then
             world
             |> NameIslands nameSource random
         else
             let candidateLocation = (random.NextDouble() * (configuration.WorldSize |> fst), random.NextDouble() * (configuration.WorldSize |> snd))
-            if world.Islands |> Map.exists(fun k _ ->(Location.DistanceTo candidateLocation k) < configuration.MinimumIslandDistance) then
-                GenerateIslands nameSource configuration random (currentTry+1u) world
+            if world.Islands |> Map.exists(fun k _ ->(Location.DistanceTo candidateLocation k) < minimumIslandDistance) then
+                GenerateIslands nameSource configuration minimumIslandDistance random (maximumGenerationTries, currentTry+1u) world
             else
-                GenerateIslands nameSource configuration random 0u {world with Islands = world.Islands |> Map.add candidateLocation (Island.Create())}
+                GenerateIslands nameSource configuration minimumIslandDistance random (maximumGenerationTries, 0u) {world with Islands = world.Islands |> Map.add candidateLocation (Island.Create())}
 
     let UpdateCharts 
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
@@ -118,14 +120,26 @@ module World =
                         |> TransformIsland location (Island.MakeSeen world.AvatarId >> Some)) w) world
 
     let Create 
-            (nameSource                    : TermSource)
-            (vesselStatisticTemplateSource : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
-            (vesselStatisticSink           : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
-            (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
-            (shipmateRationItemSink        : ShipmateRationItemSink)
-            (configuration                 : WorldConfiguration) 
-            (random                        : Random) 
-            (avatarId                      : string): World =
+            (nameSource                      : TermSource)
+            (worldSingleStatisticSource      : WorldSingleStatisticSource)
+            (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
+            (rationItemSource                : RationItemSource)
+            (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
+            (vesselStatisticSink             : VesselStatisticSink)
+            (vesselSingleStatisticSource     : VesselSingleStatisticSource)
+            (shipmateRationItemSink          : ShipmateRationItemSink)
+            (configuration                   : WorldConfiguration) 
+            (random                          : Random) 
+            (avatarId                        : string): World =
+        let maximumGenerationRetries =
+            WorldStatisticIdentifier.IslandGenerationRetries
+            |> worldSingleStatisticSource 
+            |> Statistic.GetCurrentValue
+            |> uint
+        let minimumIslandDistance = 
+            WorldStatisticIdentifier.IslandDistance
+            |> worldSingleStatisticSource 
+            |> Statistic.GetCurrentValue
         {
             AvatarId = avatarId
             Avatars = 
@@ -133,19 +147,23 @@ module World =
                 |> Map.add 
                     avatarId 
                     (Avatar.Create 
+                        shipmateStatisticTemplateSource
+                        rationItemSource
                         vesselStatisticTemplateSource
                         vesselStatisticSink
                         shipmateRationItemSink
-                        avatarId
-                        configuration.StatisticDescriptors 
-                        configuration.RationItems)
+                        avatarId)
             Islands = Map.empty
         }
-        |> GenerateIslands nameSource configuration random 0u
+        |> GenerateIslands 
+            nameSource 
+            configuration 
+            minimumIslandDistance
+            random 
+            (maximumGenerationRetries, 0u)
         |> UpdateCharts vesselSingleStatisticSource
 
     let TransformAvatar 
-            
             (transform : Avatar -> Avatar option) 
             (world     : World) : World =
         let avatarId = world.AvatarId
@@ -265,18 +283,18 @@ module World =
             world
 
     let Dock 
-            (termSources        : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
-            (commoditySource    : unit ->Map<uint64, CommodityDescriptor>) 
-            (itemSource         : unit->Map<uint64, ItemDescriptor>) 
-            (islandMarketSource : Location->Map<uint64, Market>) 
-            (islandMarketSink   : Location->Map<uint64, Market>->unit) 
-            (islandItemSource   : Location->Set<uint64>) 
-            (islandItemSink     : Location->Set<uint64>->unit) 
-            (avatarMessageSink  : AvatarMessageSink)
-            (random             : Random) 
-            (rewardRange        : float*float) 
-            (location           : Location) 
-            (world              : World) 
+            (termSources                : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
+            (commoditySource            : CommoditySource) 
+            (itemSource                 : ItemSource) 
+            (worldSingleStatisticSource : WorldSingleStatisticSource)
+            (islandMarketSource         : IslandMarketSource) 
+            (islandMarketSink           : IslandMarketSink) 
+            (islandItemSource           : IslandItemSource) 
+            (islandItemSink             : IslandItemSink) 
+            (avatarMessageSink          : AvatarMessageSink)
+            (random                     : Random) 
+            (location                   : Location) 
+            (world                      : World) 
             : World =
         let avatarId = world.AvatarId
         match world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
@@ -290,7 +308,11 @@ module World =
             let updatedIsland = 
                 island
                 |> Island.AddVisit world.Avatars.[avatarId].Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue avatarId//only when this counts as a new visit...
-                |> Island.GenerateJobs termSources random rewardRange destinations 
+                |> Island.GenerateJobs 
+                    termSources 
+                    worldSingleStatisticSource 
+                    random 
+                    destinations 
             Island.GenerateCommodities commoditySource islandMarketSource islandMarketSink random location
             Island.GenerateItems islandItemSource islandItemSink random itemSource location
             let oldVisitCount =
