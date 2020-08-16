@@ -13,12 +13,12 @@ let internal worldSingleStatisticSourceStub (identfier: WorldStatisticIdentifier
         {MinimumValue=30.0; MaximumValue=30.0; CurrentValue=30.0}
     | WorldStatisticIdentifier.JobReward ->
         {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
+    | WorldStatisticIdentifier.PositionX ->
+        {MinimumValue=0.0; MaximumValue=10.0; CurrentValue=5.0}
+    | WorldStatisticIdentifier.PositionY ->
+        {MinimumValue=0.0; MaximumValue=10.0; CurrentValue=5.0}
     | _ ->
-        raise (System.NotImplementedException "soloIslandSingleStatisticSource")
-let internal configuration: WorldConfiguration =
-    {
-        WorldSize              = (10.0, 10.0)
-    }
+        raise (System.NotImplementedException "worldSingleStatisticSourceStub")
 
 let private random = Random()
 
@@ -27,25 +27,18 @@ let internal world =
         nameSource
         worldSingleStatisticSourceStub
         shipmateStatisticTemplateSourceStub
+        shipmateSingleStatisticSinkStub
         rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
         shipmateRationItemSinkStub
-        configuration 
         random 
         avatarId
 
 let internal deadWorld =
     world
-    |> World.TransformAvatar
-        (Avatar.TransformShipmate (Shipmate.TransformStatistic 
-                ShipmateStatisticIdentifier.Health 
-                (fun statistic-> 
-                    {statistic with 
-                        CurrentValue = statistic.MinimumValue} 
-                    |> Some)) Primary
-            >> Some)
+    
 
 let internal emptyWorldSingleStatisticSource (identfier: WorldStatisticIdentifier) : Statistic =
     match identfier with
@@ -55,24 +48,25 @@ let internal emptyWorldSingleStatisticSource (identfier: WorldStatisticIdentifie
         {MinimumValue=30.0; MaximumValue=30.0; CurrentValue=30.0}
     | WorldStatisticIdentifier.JobReward ->
         {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
+    | WorldStatisticIdentifier.PositionX ->
+        {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=5.0}
+    | WorldStatisticIdentifier.PositionY ->
+        {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=5.0}
+
     | _ ->
-        raise (System.NotImplementedException "soloIslandSingleStatisticSource")
-let internal emptyWorldconfiguration: WorldConfiguration =
-    {
-        WorldSize              = (1.0, 1.0)
-    }
+        raise (System.NotImplementedException "emptyWorldSingleStatisticSource")
 
 let internal emptyWorld = 
     World.Create 
         nameSource
         emptyWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
+        shipmateSingleStatisticSinkStub
         rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
         shipmateRationItemSinkStub
-        emptyWorldconfiguration 
         random
         avatarId
 
@@ -84,24 +78,23 @@ let internal dockWorldSingleStatisticSource (identfier: WorldStatisticIdentifier
         {MinimumValue=30.0; MaximumValue=30.0; CurrentValue=30.0}
     | WorldStatisticIdentifier.JobReward ->
         {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
+    | WorldStatisticIdentifier.PositionX ->
+        {MinimumValue=0.0; MaximumValue=0.0; CurrentValue=5.0}
+    | WorldStatisticIdentifier.PositionY ->
+        {MinimumValue=0.0; MaximumValue=0.0; CurrentValue=5.0}
     | _ ->
-        raise (System.NotImplementedException "soloIslandSingleStatisticSource")
-let internal dockWorldconfiguration: WorldConfiguration =
-    {
-        WorldSize              = (0.0, 0.0)
-    }
-
+        raise (System.NotImplementedException (sprintf "dockWorldSingleStatisticSource %s" (identfier.ToString())))
 let internal dockWorld = 
     World.Create 
         nameSource
         dockWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
+        shipmateSingleStatisticSinkStub
         rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
         shipmateRationItemSinkStub
-        dockWorldconfiguration 
         random
         avatarId
 
@@ -112,18 +105,21 @@ let internal headForWorldUnvisited =
         nameSource
         dockWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
+        shipmateRationItemSinkStub
         rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
         shipmateRationItemSinkStub
-        dockWorldconfiguration 
         random
         avatarId
     |> World.TransformIsland 
         (0.0,0.0) 
         (Island.SetName "yermom" >> Some)
     |> World.Move 
+        avatarShipmateSourceStub
+        shipmateSingleStatisticSourceStub
+        shipmateSingleStatisticSinkStub
         vesselSingleStatisticSourceStub 
         vesselSingleStatisticSinkStub 
         shipmateRationItemSourceStub
@@ -161,6 +157,8 @@ let internal headForWorldVisited =
         headForWorldIslandMarketSink 
         headForWorldIslandItemSource 
         headForWorldIslandItemSink 
+        shipmateSingleStatisticSourceStub
+        shipmateSingleStatisticSinkStub
         avatarMessageSinkStub
         random 
         (0.0, 0.0)

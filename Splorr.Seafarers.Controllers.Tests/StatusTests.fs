@@ -15,6 +15,7 @@ let ``Run.It returns the given gamestate.`` () =
     let actual =
         input
         |> Status.Run 
+            shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             sinkStub
     Assert.AreEqual(expected, actual)

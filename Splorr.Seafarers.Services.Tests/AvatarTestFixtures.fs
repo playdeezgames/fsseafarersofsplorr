@@ -25,10 +25,10 @@ let internal vesselSingleStatisticSource (_) (identifier) =
         None
 let internal vesselSingleStatisticSink (_) (_) = ()
 
-
 let internal avatar =
     Avatar.Create 
         shipmateStatisticTemplateSource
+        shipmateSingleStatisticSinkStub
         rationItemSourceStub 
         vesselStatisticTemplateSourceStub 
         vesselStatisticSinkStub 
@@ -36,20 +36,11 @@ let internal avatar =
         avatarId 
 let internal avatarId = "avatar"
 let internal avatarNoStats =
-    {avatar with 
-        Shipmates =
-            avatar.Shipmates
-            |> Map.map (fun _ x -> {x with Statistics = Map.empty})}
+    avatar
 let internal deadAvatar =
     avatar
-    |> Avatar.TransformShipmate 
-        (Shipmate.TransformStatistic 
-            ShipmateStatisticIdentifier.Health (fun x-> {x with CurrentValue = x.MinimumValue} |> Some)) Primary
 let internal oldAvatar =
     avatar
-    |> Avatar.TransformShipmate 
-        (Shipmate.TransformStatistic 
-            ShipmateStatisticIdentifier.Turn (fun x-> {x with CurrentValue = x.MaximumValue} |> Some)) Primary
 let internal job =
     Job.Create 
         termSources 
@@ -57,7 +48,7 @@ let internal job =
         random  
         singleLocation
 let internal employedAvatar =
-    {avatar with Job = job |> Some} |> Avatar.EarnMoney 10.0 |> Avatar.SetReputation (-5.0)
+    {avatar with Job = job |> Some}
 let internal rationedAvatar =
     {avatar with Inventory = Map.empty |> Map.add 1UL 1u}
 let internal hoarderAvatar =

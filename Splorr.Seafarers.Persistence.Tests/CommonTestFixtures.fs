@@ -55,17 +55,6 @@ let private setupItems
     ] 
     |> runCommands connection
 
-let private setupWorldConfiguration 
-        (connection : SQLiteConnection) 
-        : unit =
-    [
-        Tables.WorldConfiguration
-        "REPLACE INTO [WorldConfiguration] 
-        ([WorldConfigurationId],[RewardMinimum],[RewardMaximum],[WorldWidth],[WorldHeight],[MaximumGenerationTries],[MinimumIslandDistance],[AvatarViewDistance],[AvatarDockDistance]) 
-        VALUES (1,1,10,100,100,500,10,10,1);"
-    ]
-    |> runCommands connection
-
 let private setupShipmateStatisticTemplates 
         (connection : SQLiteConnection) 
         : unit =
@@ -141,18 +130,18 @@ let private setupVesselStatistics
 
 let private setupWorldStatistics 
         (connection : SQLiteConnection) 
-    : unit =
-        System.Enum.GetValues(typedefof<WorldStatisticIdentifier>) 
-        :?> WorldStatisticIdentifier []
-        |> Array.toList
-        |> List.map
-            (fun id ->
-                sprintf "REPLACE INTO [WorldStatistics] ([StatisticId], [MinimumValue], [MaximumValue], [CurrentValue]) VALUES (%u, 0.0, 100.0, 50.0);" (id |> uint))
-        |> List.append
-            [
-                Tables.WorldStatistics
-            ]
-        |> runCommands connection
+        : unit =
+    System.Enum.GetValues(typedefof<WorldStatisticIdentifier>) 
+    :?> WorldStatisticIdentifier []
+    |> Array.toList
+    |> List.map
+        (fun id ->
+            sprintf "REPLACE INTO [WorldStatistics] ([StatisticId], [MinimumValue], [MaximumValue], [CurrentValue]) VALUES (%u, 0.0, 100.0, 50.0);" (id |> uint))
+    |> List.append
+        [
+            Tables.WorldStatistics
+        ]
+    |> runCommands connection
 
 let private setupTerms
         (connection : SQLiteConnection) 
@@ -184,7 +173,7 @@ let private setupMessages
 let internal PrimaryShipmateId = "primary"
 
 let private setupShipmateRationItems
-        (connection: SQLiteConnection)
+        (connection : SQLiteConnection)
         : unit = 
     [
         Tables.ShipmateRationItems
@@ -192,6 +181,24 @@ let private setupShipmateRationItems
         (ExistingAvatarId, PrimaryShipmateId) ||> sprintf "REPLACE INTO [ShipmateRationItems] ([AvatarId], [ShipmateId], [ItemId], [Order]) VALUES ('%s','%s',2,2);"
     ]
     |> runCommands connection
+
+let private setupShipmateStatistics
+        (avatarId   : string)
+        (shipmateId : string)
+        (connection : SQLiteConnection)
+        : unit =
+    System.Enum.GetValues(typedefof<ShipmateStatisticIdentifier>) 
+    :?> ShipmateStatisticIdentifier []
+    |> Array.toList
+    |> List.map
+        (fun id ->
+            sprintf "REPLACE INTO [ShipmateStatistics] ([AvatarId], [ShipmateId], [StatisticId], [MinimumValue], [MaximumValue], [CurrentValue]) VALUES ('%s','%s',%u, 0.0, 100.0, 50.0);" avatarId shipmateId (id |> uint))
+    |> List.append
+        [
+            Tables.ShipmateStatistics
+        ]
+    |> runCommands connection
+
 
 let internal NewAvatarId = "newavatar"
 
@@ -202,7 +209,6 @@ let internal SetupConnection() : SQLiteConnection =
     [
         setupCommodities  
         setupItems
-        setupWorldConfiguration
         setupShipmateStatisticTemplates
         setupVesselStatisticTemplates
         setupVesselStatistics ExistingAvatarId
@@ -213,6 +219,7 @@ let internal SetupConnection() : SQLiteConnection =
         setupMessages
         setupShipmateRationItems
         setupWorldStatistics
+        setupShipmateStatistics ExistingAvatarId PrimaryShipmateId
     ]
     |> List.iter (fun f -> f connection)
 

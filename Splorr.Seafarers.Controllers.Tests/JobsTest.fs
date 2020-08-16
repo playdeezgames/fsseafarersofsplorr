@@ -7,22 +7,17 @@ open Splorr.Seafarers.Models
 open CommonTestFixtures
 open AtSeaTestFixtures
 
-let private dockWorldconfiguration: WorldConfiguration =
-    {
-        WorldSize              = (0.0, 0.0)
-    }
-
 let private dockWorld = 
     World.Create 
         nameSource
         dockWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
+        shipmateSingleStatisticSinkStub
         rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
         shipmateRationItemSinkStub
-        dockWorldconfiguration 
         random
         avatarId
 

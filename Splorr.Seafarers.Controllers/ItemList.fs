@@ -9,6 +9,7 @@ module ItemList =
             (itemSource         : unit -> Map<uint64, ItemDescriptor>) 
             (islandMarketSource : Location -> Map<uint64,Market>) 
             (islandItemSource   : Location -> Set<uint64>) 
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (messageSink        : MessageSink) 
             (location           : Location) 
             (world              : World) 
@@ -44,7 +45,7 @@ module ItemList =
         let avatar = world.Avatars.[world.AvatarId]
         [
             (Hue.Label, "Money: " |> Text) |> Hued
-            (Hue.Value, avatar |> Avatar.GetMoney |> sprintf "%f" |> Line) |> Hued
+            (Hue.Value, world.AvatarId |> Avatar.GetMoney shipmateSingleStatisticSource |> sprintf "%f" |> Line) |> Hued
         ]
         |> List.iter messageSink
         (Dock, location, world)
@@ -52,13 +53,14 @@ module ItemList =
         |> Some
 
     let Run 
-            (commoditySource     : unit -> Map<uint64, CommodityDescriptor>) 
-            (itemSource          : unit -> Map<uint64, ItemDescriptor>) 
-            (islandMarketSource  : Location -> Map<uint64,Market>) 
-            (islandItemSource    : Location -> Set<uint64>)
-            (avatarMessageSource : AvatarMessageSource)
-            (messageSink         : MessageSink) =
-        RunWithIsland commoditySource itemSource islandMarketSource islandItemSource messageSink
-        |> Docked.RunBoilerplate avatarMessageSource
+            (commoditySource               : unit -> Map<uint64, CommodityDescriptor>) 
+            (itemSource                    : unit -> Map<uint64, ItemDescriptor>) 
+            (islandMarketSource            : Location -> Map<uint64,Market>) 
+            (islandItemSource              : Location -> Set<uint64>)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (avatarMessageSource           : AvatarMessageSource)
+            (messageSink                   : MessageSink) =
+        RunWithIsland commoditySource itemSource islandMarketSource islandItemSource shipmateSingleStatisticSource messageSink
+        |> Docked.RunBoilerplate shipmateSingleStatisticSource avatarMessageSource
     
 

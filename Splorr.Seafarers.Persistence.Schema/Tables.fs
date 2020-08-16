@@ -55,6 +55,15 @@ module Tables =
 		[DefaultOrder] INTEGER NOT NULL,
         PRIMARY KEY([ItemId]));"
 
+    let ShipmateStatistics : string ="CREATE TABLE IF NOT EXISTS [ShipmateStatistics] (
+		[AvatarId]	TEXT NOT NULL,
+		[ShipmateId]	TEXT NOT NULL,
+		[StatisticId]	INTEGER NOT NULL,
+		[MinimumValue]	REAL NOT NULL,
+		[MaximumValue]	REAL NOT NULL CHECK(MaximumValue>=MinimumValue),
+		[CurrentValue]	REAL NOT NULL CHECK(CurrentValue>=MinimumValue AND CurrentValue<=MaximumValue),
+		PRIMARY KEY([AvatarId],[ShipmateId],[StatisticId]));"
+
     let ShipmateRationItems : string = "CREATE TABLE IF NOT EXISTS [ShipmateRationItems] (
     	[AvatarId]	TEXT NOT NULL,
     	[ShipmateId]	TEXT NOT NULL,
@@ -82,18 +91,6 @@ module Tables =
 		[MaximumValue]	REAL NOT NULL CHECK(MaximumValue>=MinimumValue),
 		[CurrentValue]	REAL NOT NULL CHECK(CurrentValue>=MinimumValue AND CurrentValue<=MaximumValue),
 		PRIMARY KEY([AvatarId], [StatisticId]));"
-
-    let WorldConfiguration : string = "CREATE TABLE IF NOT EXISTS [WorldConfiguration] (
-		[WorldConfigurationId]	INTEGER CHECK(WorldConfigurationId=1),
-		[RewardMinimum]	REAL NOT NULL,
-		[RewardMaximum]	REAL NOT NULL,
-		[WorldWidth]	REAL NOT NULL,
-		[WorldHeight]	REAL NOT NULL,
-		[MaximumGenerationTries]	INTEGER NOT NULL,
-		[MinimumIslandDistance]	REAL NOT NULL,
-		[AvatarViewDistance]	REAL NOT NULL,
-		[AvatarDockDistance]	REAL NOT NULL,
-		PRIMARY KEY([WorldConfigurationId]));"
 
     let WorldStatistics : string = "CREATE TABLE IF NOT EXISTS [WorldStatistics] (
 		[StatisticId]	INTEGER NOT NULL,

@@ -8,8 +8,9 @@ open CommonTestFixtures
 open AtSeaTestFixtures
 
 let private functionUnderTest 
-        (vesselSingleStatisticSource : VesselSingleStatisticSource) 
-        (avatarMessageSink           : AvatarMessageSink)= 
+        (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+        (vesselSingleStatisticSource   : VesselSingleStatisticSource) 
+        (avatarMessageSink             : AvatarMessageSink)= 
     AtSea.Run 
         termSources
         atSeaCommoditySource 
@@ -22,12 +23,19 @@ let private functionUnderTest
         vesselSingleStatisticSource
         vesselSingleStatisticSinkStub
         shipmateRationItemSourceStub
+        avatarShipmateSourceStub
+        shipmateSingleStatisticSource
+        shipmateSingleStatisticSinkStub
         avatarMessageSourceStub
         avatarMessageSink
         avatarMessagePurgerStub
         random 
 
-let private functionUsuallyUnderTest = functionUnderTest vesselSingleStatisticSourceStub avatarMessageSinkStub
+let private functionUsuallyUnderTest = 
+    functionUnderTest 
+        shipmateSingleStatisticSourceStub
+        vesselSingleStatisticSourceStub 
+        avatarMessageSinkStub
 
 [<Test>]
 let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
@@ -40,9 +48,20 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
         expectedMessages
         |> Gamestate.GameOver
         |> Some
+    let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
+        match identifier with
+        | ShipmateStatisticIdentifier.Health ->
+            Statistic.Create (0.0, 100.0) 0.0 |> Some
+        | _ ->
+            raise (System.NotImplementedException (identifier.ToString() |> sprintf "shipmateSingleStatisticSource - %s"))
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkStub
+        |> functionUnderTest 
+            shipmateSingleStatisticSource
+            vesselSingleStatisticSourceStub 
+            avatarMessageSinkStub 
+            inputSource 
+            sinkStub
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -99,6 +118,7 @@ let ``Run.It returns AtSea with new speed when given Set Speed command.`` () =
     let actual =
         input
         |> functionUnderTest 
+            shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub 
             (avatarExpectedMessagesSink expectedMessages)
             inputSource 
@@ -129,6 +149,7 @@ let ``Run.It returns AtSea with new heading when given Set Heading command.`` ()
     let actual =
         input
         |> functionUnderTest 
+            shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             (avatarExpectedMessagesSink expectedMessages)
             inputSource 
@@ -148,8 +169,6 @@ let ``Run.It moves the avatar when given Move command.`` () =
     let expectedAvatar =
         {input.Avatars.[avatarId] with 
             Metrics  = Map.empty |> Map.add Metric.Moved 1u}
-        |> Avatar.TransformShipmate (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Satiety (fun x -> {x with CurrentValue=99.0} |> Some)) Primary
-        |> Avatar.TransformShipmate (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some)) Primary
     let expected = 
         {input with 
             Avatars  = input.Avatars |> Map.add avatarId expectedAvatar} 
@@ -158,6 +177,7 @@ let ``Run.It moves the avatar when given Move command.`` () =
     let actual =
         input
         |> functionUnderTest 
+            shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             (avatarExpectedMessagesSink expectedMessages)
             inputSource 
@@ -267,6 +287,7 @@ let ``Run.It returns AtSea when given the Dock command and there is no sufficien
     let actual =
         input
         |> functionUnderTest 
+            shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             (avatarExpectedMessagesSink expectedMessages)
             inputSource 
@@ -280,7 +301,7 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
     let expectedLocation = (0.0, 0.0)
     let expectedIsland = 
         input.Islands.[expectedLocation] 
-        |> Island.AddVisit input.Avatars.[avatarId].Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue avatarId
+        |> Island.AddVisit 99.0 avatarId
     let expectedIslands = 
         input.Islands 
         |> Map.add expectedLocation expectedIsland
@@ -299,6 +320,7 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
     let actual =
         input
         |> functionUnderTest
+            shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             (avatarExpectedMessagesSink expectedMessages)
             inputSource 
@@ -324,6 +346,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
     let actual = 
         input
         |> functionUnderTest 
+            shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             (avatarExpectedMessagesSink expectedMessages)
             inputSource 
@@ -349,6 +372,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
     let actual = 
         input
         |> functionUnderTest
+            shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             (avatarExpectedMessagesSink expectedMessages)
             inputSource
@@ -373,6 +397,7 @@ let ``Run.It gives a message and changes heading when given a Head For command a
     let actual = 
         input
         |> functionUnderTest 
+            shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             (avatarExpectedMessagesSink expectedMessages)
             inputSource 
@@ -433,6 +458,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
     let actual =
         input
         |> functionUnderTest 
+            shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             (avatarExpectedMessagesSink expectedMessages)
             inputSource 
@@ -452,7 +478,6 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
         {input.Avatars.[avatarId] with 
             Job=None
             Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.AbandonedJob 1u}
-        |> Avatar.SetReputation ((input.Avatars.[avatarId] |> Avatar.GetReputation) - 1.0)
     let expected = 
         {input with 
             Avatars= input.Avatars |> Map.add avatarId expectedAvatar} 
@@ -461,6 +486,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
     let actual =
         input
         |> functionUnderTest 
+            shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             (avatarExpectedMessagesSink expectedMessages)
             inputSource 
@@ -509,6 +535,7 @@ let ``Run.It gives a message and returns AtSea when the avatar is too far away f
     let actual =
         input
         |> (functionUnderTest 
+                shipmateSingleStatisticSourceStub
                 vesselSingleStatisticSource
                 (avatarExpectedMessagesSink expectedMessages)) 
                     inputSource 
@@ -551,6 +578,7 @@ let ``Run.It adds a message when given a Distance To command with an island name
     let actual =
         input
         |> functionUnderTest
+            shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             (avatarExpectedMessagesSink expectedMessages)
             inputSource
@@ -578,6 +606,7 @@ let ``Run.It adds a message when given a Distance To command with an island name
     let actual =
         input
         |> functionUnderTest
+            shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             (avatarExpectedMessagesSink expectedMessages)
             inputSource

@@ -74,24 +74,25 @@ module MainMenu =
             (nameSource                      : TermSource)
             (worldSingleStatisticSource      : WorldSingleStatisticSource)
             (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
+            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
             (rationItemSource                : RationItemSource)
-            (vesselStatisticTemplateSource   : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
-            (vesselStatisticSink             : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
-            (vesselSingleStatisticSource     : string -> VesselStatisticIdentifier -> Statistic option)
+            (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
+            (vesselStatisticSink             : VesselStatisticSink)
+            (vesselSingleStatisticSource     : VesselSingleStatisticSource)
             (shipmateRationItemSink          : ShipmateRationItemSink)
-            (configuration                   : WorldConfiguration) =
+            =
         function
         | Some (Command.Start avatarId)->
             World.Create 
                 nameSource
                 worldSingleStatisticSource
                 shipmateStatisticTemplateSource
+                shipmateSingleStatisticSink
                 rationItemSource
                 vesselStatisticTemplateSource
                 vesselStatisticSink
                 vesselSingleStatisticSource
                 shipmateRationItemSink
-                configuration
                 (System.Random())
                 avatarId
             |> Gamestate.AtSea
@@ -110,12 +111,12 @@ module MainMenu =
             (nameSource                      : TermSource)
             (worldSingleStatisticSource      : WorldSingleStatisticSource)
             (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
+            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
             (rationItemSource                : RationItemSource)
             (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
             (vesselStatisticSink             : VesselStatisticSink)
             (vesselSingleStatisticSource     : VesselSingleStatisticSource)
             (shipmateRationItemSink          : ShipmateRationItemSink)
-            (configuration                   : WorldConfiguration) 
             (world                           : World option) 
             (command                         : Command option) 
             : Gamestate option =
@@ -127,24 +128,24 @@ module MainMenu =
                 nameSource
                 worldSingleStatisticSource
                 shipmateStatisticTemplateSource
+                shipmateSingleStatisticSink
                 rationItemSource
                 vesselStatisticTemplateSource
                 vesselStatisticSink
                 vesselSingleStatisticSource
                 shipmateRationItemSink
-                configuration 
                 command
 
     let Run 
             (nameSource                      : TermSource)
             (worldSingleStatisticSource      : WorldSingleStatisticSource)
             (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
+            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
             (rationItemSource                : RationItemSource)
             (vesselStatisticTemplateSource   : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
             (vesselStatisticSink             : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
             (vesselSingleStatisticSource     : string -> VesselStatisticIdentifier -> Statistic option)
             (shipmateRationItemSink          : ShipmateRationItemSink)
-            (configuration                   : WorldConfiguration) 
             (commandSource                   : CommandSource) 
             (messageSink                     : MessageSink) 
             (world                           : World option) 
@@ -156,12 +157,12 @@ module MainMenu =
             nameSource
             worldSingleStatisticSource
             shipmateStatisticTemplateSource
+            shipmateSingleStatisticSink
             rationItemSource
             vesselStatisticTemplateSource
             vesselStatisticSink
             vesselSingleStatisticSource
             shipmateRationItemSink
-            configuration
             world
             (commandSource())
 

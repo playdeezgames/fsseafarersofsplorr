@@ -5,6 +5,6 @@ type Island =
         Name           : string
         AvatarVisits   : Map<string, AvatarVisit>
         Jobs           : Job list
-        CareenDistance : float
+        CareenDistance : float //TODO: make into islandstatisticidentifier
     }
 

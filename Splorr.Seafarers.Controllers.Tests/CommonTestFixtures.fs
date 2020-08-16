@@ -3,6 +3,7 @@
 open Splorr.Seafarers.Controllers
 open System.Data.SQLite
 open Splorr.Seafarers.Models
+open Splorr.Seafarers.Services
 open System
 open NUnit.Framework
 
@@ -126,3 +127,25 @@ let internal worldSingleStatisticSourceStub (identifier: WorldStatisticIdentifie
         {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
     | _ ->
         raise (System.NotImplementedException "worldSingleStatisticSourceStub")
+
+let internal shipmateSingleStatisticSinkStub (_) (_) (_) =
+    ()
+
+let internal shipmateSingleStatisticSourceStub (_) (_) (identifier:ShipmateStatisticIdentifier) =
+    match identifier with
+    | ShipmateStatisticIdentifier.Satiety
+    | ShipmateStatisticIdentifier.Health ->
+        Statistic.Create (0.0, 100.0) 100.0 |> Some
+    | ShipmateStatisticIdentifier.Turn ->
+        Statistic.Create (0.0, 50000.0) 0.0 |> Some
+    | ShipmateStatisticIdentifier.Money ->
+        Statistic.Create (0.0, 1000000.0) 0.0 |> Some
+    | ShipmateStatisticIdentifier.Reputation ->
+        Statistic.Create (-1000.0, 1000.0) 0.0 |> Some
+    | _ -> 
+        raise (System.NotImplementedException (identifier.ToString() |> sprintf "shipmateSingleStatisticSourceStub %s"))
+        None
+    
+
+let internal avatarShipmateSourceStub (_) =
+    [Primary]

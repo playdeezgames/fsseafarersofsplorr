@@ -19,11 +19,20 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
         expectedMessages
         |> Gamestate.GameOver
         |> Some
+    let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
+        match identifier with
+        | ShipmateStatisticIdentifier.Health ->
+            Statistic.Create (0.0, 100.0) 0.0 |> Some
+        | _ ->
+            raise (System.NotImplementedException (identifier.ToString() |> sprintf "shipmateSingleStatisticSource - %s"))
     let actual =
         inputWorld
         |> Careened.Run 
             vesselSingleStatisticSourceStub
             vesselSingleStatisticSinkStub
+            avatarShipmateSourceStub
+            shipmateSingleStatisticSource
+            shipmateSingleStatisticSinkStub
             avatarMessageSourceStub
             avatarMessagePurgerStub
             inputSource 
@@ -49,6 +58,9 @@ let ``Run.It returns ConfirmQuit when given Quit command.`` () =
         |> Careened.Run 
             vesselSingleStatisticSourceStub
             vesselSingleStatisticSinkStub
+            avatarShipmateSourceStub
+            shipmateSingleStatisticSourceStub
+            shipmateSingleStatisticSinkStub
             avatarMessageSourceStub
             avatarMessagePurgerStub
             inputSource 
@@ -73,6 +85,9 @@ let ``Run.It returns InvalidInput when given invalid command.`` () =
         |> Careened.Run 
             vesselSingleStatisticSourceStub
             vesselSingleStatisticSinkStub
+            avatarShipmateSourceStub
+            shipmateSingleStatisticSourceStub
+            shipmateSingleStatisticSinkStub
             avatarMessageSourceStub
             avatarMessagePurgerStub
             inputSource 
@@ -98,6 +113,9 @@ let ``Run.It returns Careened Help when given the Help command.`` () =
         |> Careened.Run 
             vesselSingleStatisticSourceStub
             vesselSingleStatisticSinkStub
+            avatarShipmateSourceStub
+            shipmateSingleStatisticSourceStub
+            shipmateSingleStatisticSinkStub
             avatarMessageSourceStub
             avatarMessagePurgerStub
             inputSource 
@@ -123,6 +141,9 @@ let ``Run.It returns Careened Metrics when given the Metrics command.`` () =
         |> Careened.Run 
             vesselSingleStatisticSourceStub
             vesselSingleStatisticSinkStub
+            avatarShipmateSourceStub
+            shipmateSingleStatisticSourceStub
+            shipmateSingleStatisticSinkStub
             avatarMessageSourceStub
             avatarMessagePurgerStub
             inputSource 
@@ -148,6 +169,9 @@ let ``Run.It returns Careened Inventory when given the Inventory command.`` () =
         |> Careened.Run 
             vesselSingleStatisticSourceStub
             vesselSingleStatisticSinkStub
+            avatarShipmateSourceStub
+            shipmateSingleStatisticSourceStub
+            shipmateSingleStatisticSinkStub
             avatarMessageSourceStub
             avatarMessagePurgerStub
             inputSource 
@@ -173,6 +197,9 @@ let ``Run.It returns Status when given the command Status.`` () =
         |> Careened.Run 
             vesselSingleStatisticSourceStub
             vesselSingleStatisticSinkStub
+            avatarShipmateSourceStub
+            shipmateSingleStatisticSourceStub
+            shipmateSingleStatisticSinkStub
             avatarMessageSourceStub
             avatarMessagePurgerStub
             inputSource 
@@ -197,6 +224,9 @@ let ``Run.It returns At Sea when given the command Weigh Anchor.`` () =
         |> Careened.Run 
             vesselSingleStatisticSourceStub
             vesselSingleStatisticSinkStub
+            avatarShipmateSourceStub
+            shipmateSingleStatisticSourceStub
+            shipmateSingleStatisticSinkStub
             avatarMessageSourceStub
             avatarMessagePurgerStub
             inputSource
@@ -215,11 +245,8 @@ let ``Run.It returns Careened with a cleaned hull when given the command Clean H
         |> Some 
         |> toSource
     let inputSide = Port
-    let expectedTurn =
-        inputAvatar.Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Turn] |> Statistic.ChangeCurrentBy 1.0
     let expectedAvatar =
         inputAvatar
-        |> Avatar.TransformShipmate (Shipmate.SetStatistic ShipmateStatisticIdentifier.Turn (expectedTurn |> Some)) Primary
         |> Avatar.AddMetric Metric.CleanedHull 1u
     let expected =
         (inputSide, {inputWorld with Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar})
@@ -230,6 +257,9 @@ let ``Run.It returns Careened with a cleaned hull when given the command Clean H
         |> Careened.Run 
             vesselSingleStatisticSourceStub
             vesselSingleStatisticSinkStub
+            avatarShipmateSourceStub
+            shipmateSingleStatisticSourceStub
+            shipmateSingleStatisticSinkStub
             avatarMessageSourceStub
             avatarMessagePurgerStub
             inputSource 

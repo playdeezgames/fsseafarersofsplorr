@@ -4,25 +4,12 @@ open Splorr.Seafarers.Models
 type MessagePurger = string -> unit
 
 type AvatarMessageSink = string -> string -> unit
+type AvatarShipmateSource = string -> ShipmateIdentifier list
 
 module Avatar =
-    let TransformShipmate 
-            (transform : Shipmate->Shipmate) 
-            (index     : ShipmateIdentifier) 
-            (avatar    : Avatar) 
-            : Avatar =
-        {avatar with
-            Shipmates = 
-                avatar.Shipmates
-                |> Map.map
-                    (fun idx item -> 
-                        if idx = index then
-                            item |> transform
-                        else
-                            item)}
-
     let Create 
             (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
+            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
             (rationItemSource                : RationItemSource)
             (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
             (vesselStatisticSink             : VesselStatisticSink)
@@ -30,13 +17,17 @@ module Avatar =
             (avatarId                        : string)
             : Avatar =
         Vessel.Create vesselStatisticTemplateSource vesselStatisticSink avatarId
+        Shipmate.Create 
+            shipmateStatisticTemplateSource 
+            shipmateSingleStatisticSink
+            rationItemSource 
+            shipmateRationItemSink 
+            avatarId 
+            Primary
         {
             Job = None
             Inventory = Map.empty
             Metrics = Map.empty
-            Shipmates =
-                Map.empty
-                |> Map.add Primary (Shipmate.Create shipmateStatisticTemplateSource rationItemSource shipmateRationItemSink avatarId Primary)
         }
 
     let GetPosition
@@ -177,19 +168,27 @@ module Avatar =
         |> AddMetric metric rateOfIncrement
 
     let private Eat
-            (shipmateRationItemSource : ShipmateRationItemSource)
-            (avatarId                 : string)
-            (avatar                   : Avatar) 
+            (shipmateRationItemSource      : ShipmateRationItemSource)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (avatarShipmateSource          : AvatarShipmateSource)
+            (avatarId                      : string)
+            (avatar                        : Avatar) 
             : Avatar =
-        let shipmates, inventory, eaten =
-            ((Map.empty, avatar.Inventory, 0u), avatar.Shipmates)
-            ||> Map.fold 
-                (fun (shipmates:Map<ShipmateIdentifier,Shipmate>,inventory,metric) identifier shipmate -> 
-                    let mate, updateInventory, ate =
-                        Shipmate.Eat shipmateRationItemSource inventory avatarId identifier shipmate
-                    (shipmates |> Map.add identifier mate,updateInventory, if ate then metric+1u else metric)) 
+        let inventory, eaten =
+            ((avatar.Inventory, 0u), avatarShipmateSource avatarId)
+            ||> List.fold 
+                (fun (inventory,metric) identifier -> 
+                    let updateInventory, ate =
+                        Shipmate.Eat
+                            shipmateRationItemSource 
+                            shipmateSingleStatisticSource
+                            shipmateSingleStatisticSink
+                            inventory 
+                            avatarId 
+                            identifier
+                    (updateInventory, if ate then metric+1u else metric)) 
         {avatar with 
-            Shipmates = shipmates
             Inventory = inventory}
         |> AddMetric Metric.Ate eaten
 
@@ -231,15 +230,18 @@ module Avatar =
         (currentSpeed * (1.0 - currentValue))
 
     let TransformShipmates 
-            (transform : Shipmate -> Shipmate) 
-            (avatar    : Avatar) 
-            : Avatar =
-        avatar.Shipmates
-        |> Map.fold
-            (fun a i _ ->
-                a |> TransformShipmate transform i) avatar
+            (avatarShipmateSource : AvatarShipmateSource)
+            (transform            : ShipmateIdentifier -> unit) 
+            (avatarId             : string) 
+            : unit =
+        avatarId
+        |> avatarShipmateSource
+        |> List.iter transform
 
     let Move
+            (avatarShipmateSource        : AvatarShipmateSource)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (vesselSingleStatisticSink   : VesselSingleStatisticSink)
             (shipmateRationItemSource    : ShipmateRationItemSource)
@@ -257,10 +259,26 @@ module Avatar =
         let avatarPosition = GetPosition vesselSingleStatisticSource avatarId |> Option.get
         let newPosition = ((avatarPosition |> fst) + System.Math.Cos(actualHeading) * actualSpeed, (avatarPosition |> snd) + System.Math.Sin(actualHeading) * actualSpeed)
         SetPosition vesselSingleStatisticSource vesselSingleStatisticSink newPosition avatarId
+        TransformShipmates
+            avatarShipmateSource
+            (fun identifier -> 
+                Shipmate.TransformStatistic 
+                    shipmateSingleStatisticSource
+                    shipmateSingleStatisticSink
+                    ShipmateStatisticIdentifier.Turn 
+                    (Statistic.ChangeCurrentBy 1.0 >> Some)
+                    avatarId
+                    identifier
+                ())
+            avatarId
         avatar
-        |> TransformShipmates (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some))
         |> AddMetric Metric.Moved 1u
-        |> Eat shipmateRationItemSource avatarId
+        |> Eat 
+            shipmateRationItemSource 
+            shipmateSingleStatisticSource
+            shipmateSingleStatisticSink
+            avatarShipmateSource
+            avatarId
 
     let SetJob 
             (job    : Job) 
@@ -269,15 +287,19 @@ module Avatar =
         {avatar with Job = job |> Some}
 
     let private SetPrimaryStatistic
-            (identifier: ShipmateStatisticIdentifier)
-            (amount : float) 
-            (avatar : Avatar) 
-            : Avatar =
-        avatar
-        |> TransformShipmate 
-            (Shipmate.TransformStatistic 
-                identifier 
-                (Statistic.SetCurrentValue amount >> Some)) Primary
+            (identifier                    : ShipmateStatisticIdentifier)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (amount                        : float) 
+            (avatarId                      : string)
+            : unit =
+        Shipmate.TransformStatistic 
+            shipmateSingleStatisticSource
+            shipmateSingleStatisticSink
+            identifier 
+            (Statistic.SetCurrentValue amount >> Some) 
+            avatarId
+            Primary
 
     let SetMoney = SetPrimaryStatistic ShipmateStatisticIdentifier.Money 
 
@@ -286,16 +308,14 @@ module Avatar =
 
     let private GetPrimaryStatistic 
             (identifier : ShipmateStatisticIdentifier) 
-            (avatar     : Avatar) 
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (avatarId     : string) 
             : float =
-        avatar.Shipmates
-        |> Map.tryFind Primary
-        |> Option.map 
-            (fun shipmate ->
-                shipmate.Statistics
-                |> Map.tryFind identifier
-                |> Option.map (fun statistic -> statistic.CurrentValue)
-                |> Option.defaultValue 0.0)
+        shipmateSingleStatisticSource 
+            avatarId 
+            Primary 
+            identifier
+        |> Option.map (fun statistic -> statistic.CurrentValue)
         |> Option.defaultValue 0.0
 
     let GetMoney = GetPrimaryStatistic ShipmateStatisticIdentifier.Money
@@ -303,52 +323,83 @@ module Avatar =
     let GetReputation = GetPrimaryStatistic ShipmateStatisticIdentifier.Reputation
     
     let AbandonJob 
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (avatarId: string)
             (avatar : Avatar) 
             : Avatar =
         let reputationCostForAbandoningAJob = -1.0
         avatar.Job
         |> Option.fold 
             (fun a _ -> 
+                SetReputation 
+                    shipmateSingleStatisticSource 
+                    shipmateSingleStatisticSink 
+                    ((GetReputation 
+                        shipmateSingleStatisticSource 
+                        avatarId) + 
+                            reputationCostForAbandoningAJob) 
+                    avatarId
                 {
                     a with 
                         Job = None
                 }
-                |> SetReputation ((a |> GetReputation) + reputationCostForAbandoningAJob)
                 |> IncrementMetric Metric.AbandonedJob) avatar
 
     let CompleteJob 
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (avatarId:string)
             (avatar : Avatar) 
             : Avatar =
         match avatar.Job with
         | Some job ->
+            SetReputation 
+                shipmateSingleStatisticSource 
+                shipmateSingleStatisticSink 
+                ((GetReputation 
+                    shipmateSingleStatisticSource 
+                    avatarId) + 
+                        1.0)
+                avatarId
+            Shipmate.TransformStatistic 
+                shipmateSingleStatisticSource
+                shipmateSingleStatisticSink
+                ShipmateStatisticIdentifier.Money 
+                (Statistic.ChangeCurrentBy job.Reward >> Some)
+                avatarId
+                Primary
             {avatar with 
                 Job = None
             }
-            |> SetReputation ((avatar |> GetReputation) + 1.0)
-            |> TransformShipmate 
-                (Shipmate.TransformStatistic 
-                    ShipmateStatisticIdentifier.Money 
-                    (Statistic.ChangeCurrentBy job.Reward >> Some)) Primary
             |> AddMetric Metric.CompletedJob 1u
         | _ -> avatar
 
     let EarnMoney 
-            (amount : float) 
-            (avatar : Avatar) 
-            : Avatar =
-        if amount <= 0.0 then
-            avatar
-        else
-            avatar |> SetMoney ((avatar |> GetMoney) + amount)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (amount                        : float) 
+            (avatarId                      : string)
+            : unit =
+        if amount > 0.0 then
+            SetMoney 
+                shipmateSingleStatisticSource
+                shipmateSingleStatisticSink
+                ((GetMoney shipmateSingleStatisticSource avatarId) + amount)
+                avatarId
 
     let SpendMoney 
-            (amount : float) 
-            (avatar : Avatar) 
-            : Avatar =
-        if amount < 0.0 then
-            avatar
-        else
-            avatar |> SetMoney ((avatar |> GetMoney) - amount)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (amount                        : float) 
+            (avatarId                      : string)
+            : unit =
+        if amount > 0.0 then
+            SetMoney 
+                shipmateSingleStatisticSource
+                shipmateSingleStatisticSink
+                ((GetMoney shipmateSingleStatisticSource avatarId) - amount)
+                avatarId
 
     let GetItemCount 
             (item   : uint64) 
@@ -386,12 +437,23 @@ module Avatar =
                 result + (quantity |> float) * d.Tonnage)
 
     let CleanHull 
+            (avatarShipmateSource        : AvatarShipmateSource)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (vesselSingleStatisticSink   : VesselSingleStatisticSink)
             (avatarId                    : string)
             (side                        : Side) 
             (avatar                      : Avatar) : Avatar =
         Vessel.TransformFouling vesselSingleStatisticSource vesselSingleStatisticSink avatarId side (fun x-> {x with CurrentValue = x.MinimumValue})
+        TransformShipmates 
+            avatarShipmateSource 
+            (Shipmate.TransformStatistic
+                shipmateSingleStatisticSource
+                shipmateSingleStatisticSink
+                ShipmateStatisticIdentifier.Turn 
+                (Statistic.ChangeCurrentBy 1.0 >> Some)
+                avatarId)
+            avatarId
         avatar
-        |> TransformShipmates (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Turn (Statistic.ChangeCurrentBy 1.0 >> Some))
         |> IncrementMetric Metric.CleanedHull

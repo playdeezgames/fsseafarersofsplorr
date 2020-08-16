@@ -12,12 +12,12 @@
     <Compile Include="Item.fs" />
     <Compile Include="Message.fs" />
     <Compile Include="ShipmateRationItem.fs" />
+    <Compile Include="ShipmateStatistic.fs" />
     <Compile Include="ShipmateStatisticTemplate.fs" />
     <Compile Include="Term.fs" />
     <Compile Include="VesselStatisticTemplate.fs" />
     <Compile Include="VesselStatistic.fs" />
     <Compile Include="RationItem.fs" />
-    <Compile Include="WorldConfiguration.fs" />
     <Compile Include="WorldStatistic.fs" />
   </ItemGroup>
 
