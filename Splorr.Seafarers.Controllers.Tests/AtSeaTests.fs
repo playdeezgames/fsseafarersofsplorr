@@ -168,7 +168,7 @@ let ``Run.It moves the avatar when given Move command.`` () =
     let expectedPosition = (6.0,5.0)
     let expectedAvatar =
         {input.Avatars.[avatarId] with 
-            Metrics  = Map.empty |> Map.add Metric.Moved 1u}
+            Metrics  = Map.empty |> Map.add Metric.Moved 1UL}
     let expected = 
         {input with 
             Avatars  = input.Avatars |> Map.add avatarId expectedAvatar} 
@@ -308,7 +308,7 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
     let expectedMessages = ["You dock."]
     let expectedAvatar = 
         {input.Avatars.[avatarId] with 
-            Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.VisitedIsland 1u}
+            Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.VisitedIsland 1UL}
     let expectedWorld = 
         {input with 
             Avatars = input.Avatars |> Map.add avatarId expectedAvatar
@@ -477,7 +477,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
     let expectedAvatar = 
         {input.Avatars.[avatarId] with 
             Job=None
-            Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.AbandonedJob 1u}
+            Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.AbandonedJob 1UL}
     let expected = 
         {input with 
             Avatars= input.Avatars |> Map.add avatarId expectedAvatar} 

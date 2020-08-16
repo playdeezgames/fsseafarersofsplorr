@@ -227,14 +227,14 @@ let ``Parse.It returns Buy (Specific 3,"foo") command when given ["buy";"3";"foo
     let actual =
         [ "buy";"3";"foo"]
         |> CommandSource.Parse
-    Assert.AreEqual((3u |> Specific, "foo") |> Command.Buy |> Some, actual)
+    Assert.AreEqual((3UL |> Specific, "foo") |> Command.Buy |> Some, actual)
 
 [<Test>]
 let ``Parse.It returns Buy (Specific 3,"foo bar") command when given ["buy";"3";"foo";"bar"]`` () =
     let actual =
         [ "buy";"3";"foo bar"]
         |> CommandSource.Parse
-    Assert.AreEqual((3u |> Specific, "foo bar") |> Command.Buy |> Some, actual)
+    Assert.AreEqual((3UL |> Specific, "foo bar") |> Command.Buy |> Some, actual)
 
 [<Test>]
 let ``Parse.It returns Buy (Maximum,"foo") command when given ["buy";"maximum";"foo"]`` () =
@@ -262,14 +262,14 @@ let ``Parse.It returns Sell (Specific 3u,"foo") command when given ["sell";"3";"
     let actual =
         [ "sell";"3";"foo"]
         |> CommandSource.Parse
-    Assert.AreEqual((Specific 3u, "foo") |> Command.Sell |> Some, actual)
+    Assert.AreEqual((Specific 3UL, "foo") |> Command.Sell |> Some, actual)
 
 [<Test>]
 let ``Parse.It returns Sell (Specific 3,"foo bar") command when given ["sell";"3";"foo";"bar"]`` () =
     let actual =
         [ "sell";"3";"foo bar"]
         |> CommandSource.Parse
-    Assert.AreEqual((Specific 3u, "foo bar") |> Command.Sell |> Some, actual)
+    Assert.AreEqual((Specific 3UL, "foo bar") |> Command.Sell |> Some, actual)
 
 [<Test>]
 let ``Parse.It returns Careen (Port) command when given ["careen";"to";"port"]`` () =

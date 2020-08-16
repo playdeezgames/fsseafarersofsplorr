@@ -268,7 +268,7 @@ let ``Move.It moves the avatar.`` () =
 let ``Move.It removes a ration when the given avatar has rations and full satiety.`` () =
     let input = 
         {avatar with 
-            Inventory = Map.empty |> Map.add 1UL 2u}
+            Inventory = Map.empty |> Map.add 1UL 2UL}
     let expectedInventory = Map.empty |> Map.add 1u 1u
     let shipmateRationItemSource (_) (_) = [0UL; 1UL]
     let avatarShipmateSource (_) = 
@@ -307,7 +307,7 @@ let ``Move.It removes a ration when the given avatar has rations and full satiet
 let ``Move.It removes a ration and increases satiety when the given avatar has rations and less than full satiety.`` () =
     let input = 
         {avatar with 
-            Inventory = Map.empty |> Map.add 1UL 2u}
+            Inventory = Map.empty |> Map.add 1UL 2UL}
     let expectedInventory = Map.empty |> Map.add 1u 1u
     let avatarShipmateSource (_) = 
         [ Primary ]
@@ -349,7 +349,7 @@ let ``Move.It lowers the avatar's satiety but does not affect turns when the giv
         {input with
             Metrics =
                 Map.empty
-                |> Map.add Metric.Moved 1u}
+                |> Map.add Metric.Moved 1UL}
     let avatarShipmateSource (_) = 
         [ Primary ]
     let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
@@ -391,7 +391,7 @@ let ``Move.It lowers the avatar's maximum turn when the given avatar has no rati
         {input with
             Metrics =
                 Map.empty
-                |> Map.add Metric.Moved 1u}
+                |> Map.add Metric.Moved 1UL}
     let avatarShipmateSource (_) = 
         [ Primary ]
     let mutable sinkCalls = 0u
@@ -459,7 +459,7 @@ let ``AbandonJob.It set job to None when the given avatar has a job.`` () =
     let expected = 
         {input with 
             Job=None
-            Metrics = input.Metrics |> Map.add Metric.AbandonedJob 1u}
+            Metrics = input.Metrics |> Map.add Metric.AbandonedJob 1UL}
     let shipmateSingleStatisticSource (_) (_) (identifier) =
         match identifier with
         | ShipmateStatisticIdentifier.Reputation ->
@@ -505,7 +505,7 @@ let ``CompleteJob.It sets job to None, adds reward money, adds reputation and me
     let expected = 
         {input with 
             Job = None
-            Metrics = input.Metrics |> Map.add Metric.CompletedJob 1u}
+            Metrics = input.Metrics |> Map.add Metric.CompletedJob 1UL}
     let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
         match identifier with
         | ShipmateStatisticIdentifier.Money ->
@@ -660,7 +660,7 @@ let ``EarnMoney.It updates the avatars money by adding the given amount.`` () =
 let ``AddInventory.It adds a given number of given items to the given avatar's inventory.`` () =
     let input = employedAvatar
     let inputItem = 1UL
-    let inputQuantity = 2u
+    let inputQuantity = 2UL
     let expected =
         {input with Inventory = input.Inventory |> Map.add inputItem inputQuantity}
     let actual =
@@ -689,7 +689,8 @@ let ``GetItemCount.It returns the item count when the given avatar has an entry 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
-let ``RemoveInventory.It does nothing.When given a quantity of 0 items to remove or the given avatar has no items.`` ([<Values(0u, 1u)>]inputQuantity:uint32) =
+let ``RemoveInventory.It does nothing.When given a quantity of 0 items to remove or the given avatar has no items.`` 
+        ([<Values(0UL, 1UL)>]inputQuantity:uint64) =
     let input = avatar
     let inputItem = 1UL
     let expected =
@@ -703,7 +704,7 @@ let ``RemoveInventory.It does nothing.When given a quantity of 0 items to remove
 let ``RemoveInventory.It reduces the given avatars inventory to 0 when the given number of items exceed the avatar's inventory.``() =
     let input = rationedAvatar 
     let inputItem = 1UL
-    let inputQuantity = 2u
+    let inputQuantity = 2UL
     let expected =
         {input with Inventory = Map.empty}
     let actual = 
@@ -715,9 +716,9 @@ let ``RemoveInventory.It reduces the given avatars inventory to 0 when the given
 let ``RemoveInventory.It reduces the given avatar's inventory by the given amount.``() =
     let input = hoarderAvatar 
     let inputItem = 1UL
-    let inputQuantity = 20u
+    let inputQuantity = 20UL
     let expected =
-        {input with Inventory = input.Inventory |> Map.add 1UL 80u}
+        {input with Inventory = input.Inventory |> Map.add 1UL 80UL}
     let actual = 
         input
         |> Avatar.RemoveInventory inputItem inputQuantity
@@ -795,7 +796,7 @@ let ``AddMessages.It adds messages to a given avatar.`` () =
 let ``AddMetric.It creates a metric value when there is no previously existing metric value in the avatar's table.`` () = 
     let input = avatar
     let inputMetric = Metric.Moved
-    let inputValue = 1u
+    let inputValue = 1UL
     let expected = {input with Metrics = input.Metrics |> Map.add inputMetric inputValue}
     let actual =
         input
@@ -804,10 +805,10 @@ let ``AddMetric.It creates a metric value when there is no previously existing m
 
 [<Test>]
 let ``AddMetric.It adds to a metric value when there is a previously existing metric value in the avatar's table.`` () = 
-    let input = {avatar with Metrics = Map.empty |> Map.add Metric.Moved 1u}
+    let input = {avatar with Metrics = Map.empty |> Map.add Metric.Moved 1UL}
     let inputMetric = Metric.Moved
-    let inputValue = 1u
-    let expectedValue = 2u
+    let inputValue = 1UL
+    let expectedValue = 2UL
     let expected = {input with Metrics = input.Metrics |> Map.add inputMetric expectedValue}
     let actual =
         input
@@ -820,8 +821,8 @@ let ``GetUsedTonnage.It calculates the used tonnage based on inventory and item 
         {avatar with
             Inventory =
                 Map.empty
-                |> Map.add 1UL 2u
-                |> Map.add 2UL 3u}
+                |> Map.add 1UL 2UL
+                |> Map.add 2UL 3UL}
     let inputItems =
         Map.empty
         |> Map.add 1UL {
@@ -870,7 +871,7 @@ let ``CleanHull.It cleans the hull of the given avatar.`` () =
         Assert.AreEqual(statistic.MinimumValue, statistic.CurrentValue)
     let expected =
         input
-        |> Avatar.AddMetric Metric.CleanedHull 1u
+        |> Avatar.AddMetric Metric.CleanedHull 1UL
     let avatarShipmateSource (_) =
         [ Primary ]
     let shipmateSingleStatisticSource (_) (_) (identifier: ShipmateStatisticIdentifier) =

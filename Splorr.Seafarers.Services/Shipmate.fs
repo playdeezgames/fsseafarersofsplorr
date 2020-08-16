@@ -15,6 +15,7 @@ type RationItemSource = unit -> uint64 list
 type ShipmateStatisticTemplateSource = unit -> Map<ShipmateStatisticIdentifier, ShipmateStatisticTemplate>
 type ShipmateSingleStatisticSink = string -> ShipmateIdentifier -> (ShipmateStatisticIdentifier * Statistic option) -> unit
 type ShipmateSingleStatisticSource = string -> ShipmateIdentifier -> ShipmateStatisticIdentifier -> Statistic option
+type AvatarInventory = Map<uint64,uint64>
 
 module Shipmate =
     let Create
@@ -62,16 +63,16 @@ module Shipmate =
                 shipmateSingleStatisticSink avatarId shipmateId (identifier, (s |> transform) ) )
 
     let Eat 
-            (shipmateRationItemSource : ShipmateRationItemSource)
+            (shipmateRationItemSource      : ShipmateRationItemSource)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (inventory                : Map<uint64, uint32>) 
-            (avatarId                 : string)
-            (shipmateId               : ShipmateIdentifier)
-            : Map<uint64, uint32> * bool =
+            (inventory                     : AvatarInventory) 
+            (avatarId                      : string)
+            (shipmateId                    : ShipmateIdentifier)
+            : AvatarInventory * bool =
         let satietyDecrease = -1.0
         let satietyIncrease = 1.0
-        let rationConsumptionRate = 1u
+        let rationConsumptionRate = 1UL
         let rationItems = shipmateRationItemSource avatarId shipmateId
         let rationItem =
             rationItems
@@ -94,7 +95,7 @@ module Shipmate =
             let updatedInventory =
                 inventory
                 |> Map.add item (inventory.[item] - rationConsumptionRate)
-                |> Map.filter (fun k v -> v > 0u)
+                |> Map.filter (fun k v -> v > 0UL)
             (updatedInventory, true)
         | _ ->
             let satiety = 

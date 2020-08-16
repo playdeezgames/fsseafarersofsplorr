@@ -120,11 +120,11 @@ module Avatar =
                 |> vesselSingleStatisticSink avatarId)
 
     let private PurgeInventory (avatar:Avatar) : Avatar =
-        {avatar with Inventory = avatar.Inventory |> Map.filter (fun _ v -> v>0u)}
+        {avatar with Inventory = avatar.Inventory |> Map.filter (fun _ v -> v>0UL)}
 
     let RemoveInventory 
             (item     : uint64) 
-            (quantity : uint32) 
+            (quantity : uint64) 
             (avatar   : Avatar) 
             : Avatar =
         match avatar.Inventory.TryFind item with
@@ -145,25 +145,25 @@ module Avatar =
 
     let AddMetric 
             (metric : Metric) 
-            (amount : uint) 
+            (amount : uint64) 
             (avatar : Avatar) 
             : Avatar =
         let newValue =
             avatar.Metrics
             |> Map.tryFind metric
-            |> Option.defaultValue 0u
+            |> Option.defaultValue 0UL
             |> (+) amount
         {avatar with
             Metrics = 
                 avatar.Metrics 
                 |> Map.add metric newValue
-                |> Map.filter (fun _ v -> v>0u)}
+                |> Map.filter (fun _ v -> v>0UL)}
 
     let private IncrementMetric 
             (metric : Metric) 
             (avatar : Avatar) 
             : Avatar =
-        let rateOfIncrement = 1u
+        let rateOfIncrement = 1UL
         avatar
         |> AddMetric metric rateOfIncrement
 
@@ -176,7 +176,7 @@ module Avatar =
             (avatar                        : Avatar) 
             : Avatar =
         let inventory, eaten =
-            ((avatar.Inventory, 0u), avatarShipmateSource avatarId)
+            ((avatar.Inventory, 0UL), avatarShipmateSource avatarId)
             ||> List.fold 
                 (fun (inventory,metric) identifier -> 
                     let updateInventory, ate =
@@ -187,7 +187,7 @@ module Avatar =
                             inventory 
                             avatarId 
                             identifier
-                    (updateInventory, if ate then metric+1u else metric)) 
+                    (updateInventory, if ate then metric+1UL else metric)) 
         {avatar with 
             Inventory = inventory}
         |> AddMetric Metric.Ate eaten
@@ -272,7 +272,7 @@ module Avatar =
                 ())
             avatarId
         avatar
-        |> AddMetric Metric.Moved 1u
+        |> AddMetric Metric.Moved 1UL
         |> Eat 
             shipmateRationItemSource 
             shipmateSingleStatisticSource
@@ -372,7 +372,7 @@ module Avatar =
             {avatar with 
                 Job = None
             }
-            |> AddMetric Metric.CompletedJob 1u
+            |> AddMetric Metric.CompletedJob 1UL
         | _ -> avatar
 
     let EarnMoney 
@@ -404,14 +404,14 @@ module Avatar =
     let GetItemCount 
             (item   : uint64) 
             (avatar : Avatar) 
-            : uint32 =
+            : uint64 =
         match avatar.Inventory.TryFind item with
         | Some x -> x
-        | None -> 0u
+        | None -> 0UL
 
     let AddInventory 
             (item     : uint64) 
-            (quantity : uint32) 
+            (quantity : uint64) 
             (avatar   : Avatar) 
             : Avatar =
         let newQuantity = (avatar |> GetItemCount item) + quantity

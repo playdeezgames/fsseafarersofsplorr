@@ -23,7 +23,7 @@ let ``Run.It returns the given gamestate.`` () =
 let ``Run.It works when all of the metrics have counters.`` () =
     let inputMetrics = 
         (System.Enum.GetValues(typedefof<Metric>)) :?> (Metric array)
-        |> Array.map (fun m -> (m, 1u))
+        |> Array.map (fun m -> (m, 1UL))
         |> Map.ofArray
     let inputAvatar =
         {world.Avatars.[avatarId] with Metrics = inputMetrics}

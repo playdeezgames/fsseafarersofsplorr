@@ -4,7 +4,7 @@ open System
 
 type TradeQuantity =
     | Maximum
-    | Specific of uint32
+    | Specific of uint64
 
 type AvatarMessagePurger = string -> unit
 
@@ -369,7 +369,7 @@ module World =
             |> TransformIsland location 
                 (fun _ -> updatedIsland |> Some)
             |> Option.foldBack (DoJobCompletion shipmateSingleStatisticSource shipmateSingleStatisticSink avatarMessageSink location) avatar.Job
-            |> TransformAvatar (Avatar.AddMetric Metric.VisitedIsland (if newVisitCount > oldVisitCount then 1u else 0u) >> Some)//...should this add to the metric
+            |> TransformAvatar (Avatar.AddMetric Metric.VisitedIsland (if newVisitCount > oldVisitCount then 1UL else 0UL) >> Some)//...should this add to the metric
         | _, Some _ -> 
             world
             |> AddMessages (avatarMessageSink : AvatarMessageSink) [ "There is no place to dock there." ]
@@ -451,7 +451,7 @@ module World =
                 |> TransformIsland job.Destination (Island.MakeKnown avatarId >> Some)
                 |> TransformAvatar 
                     (Avatar.SetJob job 
-                    >> Avatar.AddMetric Metric.AcceptedJob 1u
+                    >> Avatar.AddMetric Metric.AcceptedJob 1UL
                     >> Some)
             | _ ->
                 world
@@ -520,7 +520,7 @@ module World =
             let quantity =
                 match tradeQuantity with
                 | Specific amount -> amount
-                | Maximum -> min (floor(availableTonnage / descriptor.Tonnage)) (floor((world.AvatarId |> Avatar.GetMoney shipmateSingleStatisticSource) / unitPrice)) |> uint32
+                | Maximum -> min (floor(availableTonnage / descriptor.Tonnage)) (floor((world.AvatarId |> Avatar.GetMoney shipmateSingleStatisticSource) / unitPrice)) |> uint64
             let price = (quantity |> float) * unitPrice
             let tonnageNeeded = (quantity |> float) * descriptor.Tonnage
             if price > (world.AvatarId |> Avatar.GetMoney shipmateSingleStatisticSource) then
@@ -531,7 +531,7 @@ module World =
                 world
                 |> AddMessages avatarMessageSink ["You don't have enough tonnage."]
                 world
-            elif quantity = 0u then
+            elif quantity = 0UL then
                 world
                 |> AddMessages avatarMessageSink ["You don't have enough money to buy any of those."]
                 world
@@ -586,7 +586,7 @@ module World =
                 world
                 |> AddMessages avatarMessageSink ["You don't have enough of those to sell."]
                 world
-            elif quantity = 0u then
+            elif quantity = 0UL then
                 world
                 |> AddMessages avatarMessageSink ["You don't have any of those to sell."]
                 world
