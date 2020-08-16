@@ -62,7 +62,6 @@ let main argv =
 
     let commoditySource = Persister.parameterlessFetcher connection Commodity.GetList
     let itemSource = Persister.parameterlessFetcher connection Item.GetList
-    let configurationSource = Persister.parameterlessFetcher connection WorldConfiguration.Get
 
     let vesselStatisticTemplateSource = Persister.parameterlessFetcher connection VesselStatisticTemplate.GetList
     let vesselStatisticSink (avatarId:string) (statistics:Map<VesselStatisticIdentifier, Statistic>) : unit =
@@ -135,6 +134,11 @@ let main argv =
         function
         | Primary -> "primary"
 
+    let stringToShipmateIdentifier =
+        function
+        | "primary" -> Primary
+        | x -> raise (System.NotImplementedException (x |> sprintf "stringToShipmateIdentifier %s"))
+
     let shipmateRationItemSource
             (avatarId   : string) 
             (shipmateId : ShipmateIdentifier) : uint64 list =
@@ -166,12 +170,28 @@ let main argv =
         | Ok x -> x
         | Error x -> raise (System.InvalidOperationException x)
 
+    let avatarShipmateSource (avatarId: string) : ShipmateIdentifier list =
+        match connection |> ShipmateStatistic.GetShipmatesForAvatar avatarId with
+        | Ok x -> 
+            x
+            |> List.map (stringToShipmateIdentifier)
+        | Error x -> raise (System.InvalidOperationException x)
+
+    let shipmateSingleStatisticSource (avatarId: string) (shipmateId:ShipmateIdentifier) (identifier: ShipmateStatisticIdentifier) : Statistic option =
+        match connection |> ShipmateStatistic.GetStatisticForShipmate avatarId (shipmateId |> shipmateIdentifierToString) identifier with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+
+    let shipmateSingleStatisticSink (avatarId: string) (shipmateId:ShipmateIdentifier) (identifier: ShipmateStatisticIdentifier, statistic: Statistic option) : unit =
+        match connection |> ShipmateStatistic.SetStatisticForShipmate avatarId (shipmateId |> shipmateIdentifierToString) (identifier, statistic) with
+        | Ok _ -> ()
+        | Error x -> raise (System.InvalidOperationException x)
+
     try
         Runner.Run 
             switches 
             islandNameSource
             termSources
-            configurationSource
             commoditySource
             itemSource 
             worldSingleStatisticSource
@@ -189,6 +209,9 @@ let main argv =
             vesselSingleStatisticSink
             shipmateRationItemSource
             shipmateRationItemSink
+            avatarShipmateSource
+            shipmateSingleStatisticSource
+            shipmateSingleStatisticSink
             avatarMessageSource
             avatarMessageSink
             avatarMessagePurger

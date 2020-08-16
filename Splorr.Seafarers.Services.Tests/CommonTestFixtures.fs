@@ -37,3 +37,10 @@ let internal worldSingleStatisticSourceStub (identifier:WorldStatisticIdentifier
         {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
     | _ ->
         raise (System.NotImplementedException "worldSingleStatisticSourceStub")
+
+let internal shipmateSingleStatisticSourceStub (_) (_) (_) = 
+    None
+let internal shipmateSingleStatisticSinkStub (_) (_) (_) =
+    ()
+let internal avatarShipmateSourceStub (_) =
+    []

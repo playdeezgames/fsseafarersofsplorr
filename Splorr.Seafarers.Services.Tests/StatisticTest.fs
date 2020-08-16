@@ -145,6 +145,21 @@ let ``GetCurrentValue.It returns the current value of the given statistic.`` () 
         input
         |> Statistic.GetCurrentValue
     Assert.AreEqual(expected, actual)
+
+
+[<Test>]
+let ``GetMaximumValue.It returns the maximum value of the given statistic.`` () =
+    let inputMaximum = 100.0
+    let inputMinimum = 0.0
+    let inputCurrent = 50.0
+    let input =
+        Statistic.Create (inputMinimum, inputMaximum) inputCurrent
+    let expected = inputMaximum
+    let actual =
+        input
+        |> Statistic.GetMaximumValue
+    Assert.AreEqual(expected, actual)
+
       
 [<Test>]
 let ``SetCurrentValue.It sets the current value of the given statistic.`` () =
@@ -160,3 +175,29 @@ let ``SetCurrentValue.It sets the current value of the given statistic.`` () =
         input
         |> Statistic.SetCurrentValue inputCurrent
     Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``CreateFromTemplate.It creates a statistic from a statistic template.`` () =
+        let inputMinimum = 1.0
+        let inputCurrent = 2.0
+        let inputMaximum = 3.0
+        let input :StatisticTemplate<ShipmateStatisticIdentifier> = 
+            {
+                StatisticId = ShipmateStatisticIdentifier.Health
+                StatisticName = ""
+                MinimumValue = inputMinimum
+                CurrentValue = inputCurrent
+                MaximumValue = inputMaximum
+            }
+        let expected : Statistic =
+            {
+                MinimumValue = inputMinimum
+                CurrentValue = inputCurrent
+                MaximumValue = inputMaximum
+            }
+        let actual =
+            input
+            |> Statistic.CreateFromTemplate
+        Assert.AreEqual(expected, actual)
+
+        

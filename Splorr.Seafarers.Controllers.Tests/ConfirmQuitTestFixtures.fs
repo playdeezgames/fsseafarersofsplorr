@@ -13,12 +13,12 @@ let internal worldSingleStatisticSourceStub (identfier: WorldStatisticIdentifier
         {MinimumValue=30.0; MaximumValue=30.0; CurrentValue=30.0}
     | WorldStatisticIdentifier.JobReward ->
         {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
+    | WorldStatisticIdentifier.PositionX ->
+        {MinimumValue=0.0; MaximumValue=10.0; CurrentValue=5.0}
+    | WorldStatisticIdentifier.PositionY ->
+        {MinimumValue=0.0; MaximumValue=10.0; CurrentValue=5.0}
     | _ ->
-        raise (System.NotImplementedException "soloIslandSingleStatisticSource")
-let internal configuration: WorldConfiguration =
-    {
-        WorldSize              = (10.0, 10.0)
-    }
+        raise (System.NotImplementedException "worldSingleStatisticSourceStub")
 let private vesselStatisticTemplateSourceStub () = 
     Map.empty
 
@@ -40,17 +40,18 @@ let private nameSourceStub () = []
 let internal shipmateRationItemSinkStub (_) (_) (_) = ()
 let rationItemSourceStub () = [1UL]
 let shipmateStatisticTemplateSourceStub () = Map.empty
+let shipmateSingleStatisticSinkStub (_) (_) (_) = ()
 let internal previousState = 
     World.Create
         nameSourceStub
         worldSingleStatisticSourceStub
         shipmateStatisticTemplateSourceStub
+        shipmateSingleStatisticSinkStub
         rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
         shipmateRationItemSinkStub
-        configuration 
         random
         avatarId
     |> Gamestate.AtSea

@@ -9,10 +9,6 @@ open CommonTestFixtures
 open AtSeaTestFixtures
 
 
-let private configuration : WorldConfiguration = 
-    {
-        WorldSize              = (0.0, 0.0)
-    }
 let private random = 
     Random()
 
@@ -23,12 +19,12 @@ let private world =
         nameSource
         worldSingleStatisticSourceStub
         shipmateStatisticTemplateSourceStub
+        shipmateSingleStatisticSinkStub
         rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
         shipmateRationItemSinkStub
-        configuration 
         random 
         avatarId
 
@@ -167,25 +163,17 @@ let ``GetWorld.It returns None from the given GameOver Gamestate.`` () =
 
 [<Test>]
 let ``CheckForAvatarDeath.It returns the original gamestate when the avatar embedded therein is not dead.`` () =
-    let avatarTransformHealth:Avatar -> Avatar option =
-        Avatar.TransformShipmate 
-            (Shipmate.SetStatistic ShipmateStatisticIdentifier.Health ({MinimumValue=0.0; CurrentValue=1.0; MaximumValue=1.0}|>Some)) Primary
-        >> Some
-    let avatarTransformTurn:Avatar -> Avatar option =
-        Avatar.TransformShipmate 
-            (Shipmate.SetStatistic ShipmateStatisticIdentifier.Turn ({MinimumValue=0.0; CurrentValue=0.0; MaximumValue=1.0}|>Some)) Primary
-        >> Some
     let input =
         world
-        |> World.TransformAvatar avatarTransformHealth
-        |> World.TransformAvatar avatarTransformTurn
         |> Gamestate.AtSea
         |> Some
     let expected =
         input
     let actual =
         input
-        |> Gamestate.CheckForAvatarDeath avatarMessageSourceStub
+        |> Gamestate.CheckForAvatarDeath
+            shipmateSingleStatisticSourceStub
+            avatarMessageSourceStub
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -198,31 +186,31 @@ let ``CheckForAvatarDeath.It returns the original gamestate when there is not a 
         input
     let actual =
         input
-        |> Gamestate.CheckForAvatarDeath avatarMessageSourceStub
+        |> Gamestate.CheckForAvatarDeath
+            shipmateSingleStatisticSourceStub
+            avatarMessageSourceStub
     Assert.AreEqual(expected, actual)
 
 
 [<Test>]
 let ``CheckForAvatarDeath.It returns gameover when the avatar embedded therein is dead.`` () =
-    let avatarTransformHealth:Avatar -> Avatar option =
-        Avatar.TransformShipmate 
-            (Shipmate.SetStatistic ShipmateStatisticIdentifier.Health ({MinimumValue=0.0; CurrentValue=0.0; MaximumValue=1.0}|>Some)) Primary
-        >> Some
-    let avatarTransformTurn:Avatar -> Avatar option =
-        Avatar.TransformShipmate 
-            (Shipmate.SetStatistic ShipmateStatisticIdentifier.Turn ({MinimumValue=0.0; CurrentValue=0.0; MaximumValue=1.0}|>Some)) Primary
-        >> Some
     let input =
         world
-        |> World.TransformAvatar avatarTransformHealth
-        |> World.TransformAvatar avatarTransformTurn
         |> Gamestate.AtSea
         |> Some
     let expected =
         []
         |> Gamestate.GameOver
         |> Some
+    let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
+        match identifier with
+        | ShipmateStatisticIdentifier.Health ->
+            Statistic.Create (0.0, 100.0) 0.0 |> Some
+        | _ ->
+            raise (System.NotImplementedException (identifier.ToString() |> sprintf "shipmateSingleStatisticSource - %s"))
     let actual =
         input
-        |> Gamestate.CheckForAvatarDeath avatarMessageSourceStub
+        |> Gamestate.CheckForAvatarDeath 
+            shipmateSingleStatisticSource
+            avatarMessageSourceStub
     Assert.AreEqual(expected, actual)

@@ -80,7 +80,7 @@ module World =
 
     let rec private GenerateIslands  //TODO: move to world generator?
             (nameSource             : TermSource)
-            (configuration          : WorldConfiguration) 
+            (worldSize              : Location) 
             (minimumIslandDistance  : float)
             (random                 : Random) 
             (maximumGenerationTries : uint32, 
@@ -91,11 +91,11 @@ module World =
             world
             |> NameIslands nameSource random
         else
-            let candidateLocation = (random.NextDouble() * (configuration.WorldSize |> fst), random.NextDouble() * (configuration.WorldSize |> snd))
+            let candidateLocation = (random.NextDouble() * (worldSize |> fst), random.NextDouble() * (worldSize |> snd))
             if world.Islands |> Map.exists(fun k _ ->(Location.DistanceTo candidateLocation k) < minimumIslandDistance) then
-                GenerateIslands nameSource configuration minimumIslandDistance random (maximumGenerationTries, currentTry+1u) world
+                GenerateIslands nameSource worldSize minimumIslandDistance random (maximumGenerationTries, currentTry+1u) world
             else
-                GenerateIslands nameSource configuration minimumIslandDistance random (maximumGenerationTries, 0u) {world with Islands = world.Islands |> Map.add candidateLocation (Island.Create())}
+                GenerateIslands nameSource worldSize minimumIslandDistance random (maximumGenerationTries, 0u) {world with Islands = world.Islands |> Map.add candidateLocation (Island.Create())}
 
     let UpdateCharts 
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
@@ -123,12 +123,12 @@ module World =
             (nameSource                      : TermSource)
             (worldSingleStatisticSource      : WorldSingleStatisticSource)
             (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
+            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
             (rationItemSource                : RationItemSource)
             (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
             (vesselStatisticSink             : VesselStatisticSink)
             (vesselSingleStatisticSource     : VesselSingleStatisticSource)
             (shipmateRationItemSink          : ShipmateRationItemSink)
-            (configuration                   : WorldConfiguration) 
             (random                          : Random) 
             (avatarId                        : string): World =
         let maximumGenerationRetries =
@@ -140,6 +140,13 @@ module World =
             WorldStatisticIdentifier.IslandDistance
             |> worldSingleStatisticSource 
             |> Statistic.GetCurrentValue
+        let worldSize =
+            (WorldStatisticIdentifier.PositionX
+            |> worldSingleStatisticSource 
+            |> Statistic.GetMaximumValue,
+                WorldStatisticIdentifier.PositionY
+                |> worldSingleStatisticSource 
+                |> Statistic.GetMaximumValue)
         {
             AvatarId = avatarId
             Avatars = 
@@ -148,6 +155,7 @@ module World =
                     avatarId 
                     (Avatar.Create 
                         shipmateStatisticTemplateSource
+                        shipmateSingleStatisticSink
                         rationItemSource
                         vesselStatisticTemplateSource
                         vesselStatisticSink
@@ -157,7 +165,7 @@ module World =
         }
         |> GenerateIslands 
             nameSource 
-            configuration 
+            worldSize 
             minimumIslandDistance
             random 
             (maximumGenerationRetries, 0u)
@@ -219,19 +227,19 @@ module World =
                 world
                 |> AddMessages avatarMessageSink [newHeading |> Angle.ToDegrees |> Angle.ToString |> sprintf "You set your heading to %s." ])
 
-    //a bool is not sufficient!
-    //an avatar may be dead because of health
-    //an avatar may be dead because of turns
-    let IsAvatarAlive 
+    let IsAvatarAlive
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (world    : World) 
             : bool =
-        world.Avatars 
-        |> Map.tryFind world.AvatarId
-        |> Option.map (fun avatar ->
-            (avatar.Shipmates.[Primary] |> Shipmate.GetStatus) = Alive)
-        |> Option.defaultValue false
+        (Shipmate.GetStatus 
+            shipmateSingleStatisticSource
+            world.AvatarId
+            Primary) = Alive
 
-    let rec Move 
+    let rec Move
+            (avatarShipmateSource        : AvatarShipmateSource)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
             (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
             (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
             (shipmateRationItemSource    : ShipmateRationItemSource)
@@ -246,14 +254,33 @@ module World =
             |> AddMessages avatarMessageSink [ "Steady as she goes." ]
             let steppedWorld = 
                 world
-                |> TransformAvatar (Avatar.Move vesselSingleStatisticSource vesselSingleStatisticSink shipmateRationItemSource avatarId >> Some)
+                |> TransformAvatar 
+                    (Avatar.Move 
+                        avatarShipmateSource
+                        shipmateSingleStatisticSource
+                        shipmateSingleStatisticSink
+                        vesselSingleStatisticSource 
+                        vesselSingleStatisticSink 
+                        shipmateRationItemSource avatarId 
+                    >> Some)
                 |> UpdateCharts vesselSingleStatisticSource
-            if IsAvatarAlive steppedWorld |> not then
+            if IsAvatarAlive 
+                    shipmateSingleStatisticSource 
+                    steppedWorld |> not then
                 steppedWorld
                 |> AddMessages avatarMessageSink [ "You die of old age!" ]
                 steppedWorld
             else
-                Move vesselSingleStatisticSource vesselSingleStatisticSink shipmateRationItemSource avatarMessageSink (x-1u) steppedWorld
+                Move
+                    avatarShipmateSource
+                    shipmateSingleStatisticSource
+                    shipmateSingleStatisticSink
+                    vesselSingleStatisticSource 
+                    vesselSingleStatisticSink 
+                    shipmateRationItemSource 
+                    avatarMessageSink 
+                    (x-1u) 
+                    steppedWorld
         | _ -> 
             world
 
@@ -268,33 +295,38 @@ module World =
         |> List.filter (fun i -> Location.DistanceTo from i <= maximumDistance)
 
 
-    let private DoJobCompletion 
-            (avatarMessageSink : AvatarMessageSink)
-            (location          : Location) 
-            (job               : Job) 
-            (world             : World) 
+    let private DoJobCompletion
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (avatarMessageSink             : AvatarMessageSink)
+            (location                      : Location) 
+            (job                           : Job) 
+            (world                         : World) 
             : World = 
         if location = job.Destination then
             world
             |> AddMessages avatarMessageSink [ "You complete your job." ]
             world
-            |> TransformAvatar (Avatar.CompleteJob >> Some)
+            |> TransformAvatar 
+                (Avatar.CompleteJob shipmateSingleStatisticSource shipmateSingleStatisticSink world.AvatarId >> Some)
         else
             world
 
     let Dock 
-            (termSources                : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
-            (commoditySource            : CommoditySource) 
-            (itemSource                 : ItemSource) 
-            (worldSingleStatisticSource : WorldSingleStatisticSource)
-            (islandMarketSource         : IslandMarketSource) 
-            (islandMarketSink           : IslandMarketSink) 
-            (islandItemSource           : IslandItemSource) 
-            (islandItemSink             : IslandItemSink) 
-            (avatarMessageSink          : AvatarMessageSink)
-            (random                     : Random) 
-            (location                   : Location) 
-            (world                      : World) 
+            (termSources                   : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
+            (commoditySource               : CommoditySource) 
+            (itemSource                    : ItemSource) 
+            (worldSingleStatisticSource    : WorldSingleStatisticSource)
+            (islandMarketSource            : IslandMarketSource) 
+            (islandMarketSink              : IslandMarketSink) 
+            (islandItemSource              : IslandItemSource) 
+            (islandItemSink                : IslandItemSink) 
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (avatarMessageSink             : AvatarMessageSink)
+            (random                        : Random) 
+            (location                      : Location) 
+            (world                         : World) 
             : World =
         let avatarId = world.AvatarId
         match world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
@@ -305,9 +337,15 @@ module World =
                 |> List.map fst
                 |> Set.ofList
                 |> Set.remove location
+            let turn = 
+                shipmateSingleStatisticSource 
+                    avatarId 
+                    Primary 
+                    ShipmateStatisticIdentifier.Turn
+                |> Option.get
             let updatedIsland = 
                 island
-                |> Island.AddVisit world.Avatars.[avatarId].Shipmates.[Primary].Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue avatarId//only when this counts as a new visit...
+                |> Island.AddVisit turn.CurrentValue avatarId//only when this counts as a new visit...
                 |> Island.GenerateJobs 
                     termSources 
                     worldSingleStatisticSource 
@@ -330,7 +368,7 @@ module World =
             world
             |> TransformIsland location 
                 (fun _ -> updatedIsland |> Some)
-            |> Option.foldBack (DoJobCompletion avatarMessageSink location) avatar.Job
+            |> Option.foldBack (DoJobCompletion shipmateSingleStatisticSource shipmateSingleStatisticSink avatarMessageSink location) avatar.Job
             |> TransformAvatar (Avatar.AddMetric Metric.VisitedIsland (if newVisitCount > oldVisitCount then 1u else 0u) >> Some)//...should this add to the metric
         | _, Some _ -> 
             world
@@ -427,8 +465,10 @@ module World =
             world
 
     let AbandonJob
-            (avatarMessageSink : AvatarMessageSink)
-            (world             : World) 
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (avatarMessageSink             : AvatarMessageSink)
+            (world                         : World) 
             : World =
         let avatarId = world.AvatarId
         match world.Avatars |> Map.tryFind avatarId |> Option.bind (fun a -> a.Job) with
@@ -436,7 +476,7 @@ module World =
             world
             |> AddMessages avatarMessageSink [ "You abandon your job." ]
             world
-            |> TransformAvatar (Avatar.AbandonJob >> Some)
+            |> TransformAvatar (Avatar.AbandonJob shipmateSingleStatisticSource shipmateSingleStatisticSink world.AvatarId>> Some)
         | _ ->
             world
             |> AddMessages avatarMessageSink [ "You have no job to abandon." ]
@@ -452,17 +492,19 @@ module World =
 
 
     let BuyItems 
-            (islandMarketSource          : IslandMarketSource)
-            (islandSingleMarketSource    : IslandSingleMarketSource) 
-            (islandSingleMarketSink      : Location->(uint64 * Market)->unit) 
-            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
-            (avatarMessageSink           : AvatarMessageSink)
-            (commoditySource             : CommoditySource) 
-            (items                       : Map<uint64, ItemDescriptor>) 
-            (location                    : Location) 
-            (tradeQuantity               : TradeQuantity) 
-            (itemName                    : string) 
-            (world                       : World) 
+            (islandMarketSource            : IslandMarketSource)
+            (islandSingleMarketSource      : IslandSingleMarketSource) 
+            (islandSingleMarketSink        : Location->(uint64 * Market)->unit) 
+            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (avatarMessageSink             : AvatarMessageSink)
+            (commoditySource               : CommoditySource) 
+            (items                         : Map<uint64, ItemDescriptor>) 
+            (location                      : Location) 
+            (tradeQuantity                 : TradeQuantity) 
+            (itemName                      : string) 
+            (world                         : World) 
             : World =
         let avatarId = world.AvatarId
         match items |> FindItemByName itemName, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
@@ -478,10 +520,10 @@ module World =
             let quantity =
                 match tradeQuantity with
                 | Specific amount -> amount
-                | Maximum -> min (floor(availableTonnage / descriptor.Tonnage)) (floor((avatar |> Avatar.GetMoney) / unitPrice)) |> uint32
+                | Maximum -> min (floor(availableTonnage / descriptor.Tonnage)) (floor((world.AvatarId |> Avatar.GetMoney shipmateSingleStatisticSource) / unitPrice)) |> uint32
             let price = (quantity |> float) * unitPrice
             let tonnageNeeded = (quantity |> float) * descriptor.Tonnage
-            if price > (avatar |> Avatar.GetMoney) then
+            if price > (world.AvatarId |> Avatar.GetMoney shipmateSingleStatisticSource) then
                 world
                 |> AddMessages avatarMessageSink ["You don't have enough money."]
                 world
@@ -498,7 +540,16 @@ module World =
                 world
                 |> AddMessages avatarMessageSink [(quantity, descriptor.ItemName) ||> sprintf "You complete the purchase of %u %s."]
                 world
-                |> TransformAvatar (Avatar.SpendMoney price >> Avatar.AddInventory item quantity >> Some)//TODO: once this returns unit, this whole function returns unit
+                |> TransformAvatar 
+                    (fun a -> 
+                        Avatar.SpendMoney 
+                            shipmateSingleStatisticSource
+                            shipmateSingleStatisticSink
+                            price 
+                            world.AvatarId
+                        a
+                        |> Avatar.AddInventory item quantity 
+                        |> Some)//TODO: once this returns unit, this whole function returns unit
         | None, Some island, Some _ ->
             world
             |> AddMessages avatarMessageSink ["Round these parts, we don't sell things like that."]
@@ -512,6 +563,8 @@ module World =
             (islandMarketSource       : Location -> Map<uint64, Market>) 
             (islandSingleMarketSource : Location -> uint64            -> Market option) 
             (islandSingleMarketSink   : Location -> (uint64 * Market) -> unit) 
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
             (avatarMessageSink        : AvatarMessageSink)
             (commoditySource          : CommoditySource) //TODO: this should move to top of parameter list
             (items                    : Map<uint64, ItemDescriptor>) //TODO: this should move to top and become source
@@ -546,7 +599,14 @@ module World =
                 world
                 |> AddMessages avatarMessageSink [(quantity, descriptor.ItemName) ||> sprintf "You complete the sale of %u %s."]
                 world
-                |> TransformAvatar (Avatar.EarnMoney price >> Avatar.RemoveInventory item quantity >> Some)
+                |> TransformAvatar 
+                    (fun a -> 
+                        Avatar.EarnMoney 
+                            shipmateSingleStatisticSource
+                            shipmateSingleStatisticSink
+                            price 
+                            world.AvatarId
+                        a |> Avatar.RemoveInventory item quantity |> Some)
         | None, Some island, Some _ ->
             world
             |> AddMessages avatarMessageSink ["Round these parts, we don't buy things like that."]
@@ -556,11 +616,14 @@ module World =
             |> AddMessages avatarMessageSink ["You cannot sell items here."]
             world
 
-    let CleanHull 
-            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
-            (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
-            (side     : Side) 
-            (world    : World) 
+    let CleanHull
+            (avatarShipmateSource          : AvatarShipmateSource)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
+            (vesselSingleStatisticSink     : VesselSingleStatisticSink)
+            (side                          : Side) 
+            (world                         : World) 
             : World =
         let avatarId = world.AvatarId
         world.Avatars
@@ -568,4 +631,10 @@ module World =
         |> Option.fold
             (fun w _ -> 
                 w
-                |> TransformAvatar (Avatar.CleanHull vesselSingleStatisticSource vesselSingleStatisticSink avatarId side >> Some)) world
+                |> TransformAvatar 
+                    (Avatar.CleanHull 
+                        avatarShipmateSource
+                        shipmateSingleStatisticSource
+                        shipmateSingleStatisticSink
+                        vesselSingleStatisticSource 
+                        vesselSingleStatisticSink avatarId side >> Some)) world

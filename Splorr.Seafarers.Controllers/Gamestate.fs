@@ -46,15 +46,16 @@ module Gamestate =
         | _ -> None
 
     let CheckForAvatarDeath 
-            (avatarMessageSource : AvatarMessageSource)
-            (gamestate           :Gamestate option) 
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (avatarMessageSource           : AvatarMessageSource)
+            (gamestate                     : Gamestate option) 
             : Gamestate option =
         gamestate
         |> Option.bind
             (GetWorld)
         |> Option.fold 
             (fun g w -> 
-                if w |> World.IsAvatarAlive then
+                if w |> World.IsAvatarAlive shipmateSingleStatisticSource then
                     g
                 else
                     w.AvatarId

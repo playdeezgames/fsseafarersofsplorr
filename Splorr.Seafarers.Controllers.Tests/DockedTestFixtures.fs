@@ -5,22 +5,17 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open AtSeaTestFixtures
 
-let internal dockWorldconfiguration: WorldConfiguration =
-    {
-        WorldSize              = (0.0, 0.0)
-    }
-
 let internal dockWorld = 
     World.Create
         nameSource
         dockWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
+        shipmateSingleStatisticSinkStub
         rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
         shipmateRationItemSinkStub
-        dockWorldconfiguration 
         random 
         avatarId
 
@@ -32,12 +27,7 @@ let internal deadDockWorld =
             Map.empty 
             |> Map.add 
                 avatarId 
-                (dockWorld.Avatars.[avatarId] 
-                |> Avatar.TransformShipmate (Shipmate.TransformStatistic 
-                    ShipmateStatisticIdentifier.Health 
-                    (fun x -> 
-                        {x with CurrentValue = x.MinimumValue} 
-                        |> Some)) Primary)}
+                (dockWorld.Avatars.[avatarId])}
 
 let internal deadDockLocation = dockLocation
 
@@ -70,33 +60,32 @@ let internal itemSource () : Map<uint64, ItemDescriptor> =
     ] 
     |> Map.ofList
 
-let internal smallWorldSingleStatisticSource (identfier: WorldStatisticIdentifier) : Statistic =
-    match identfier with
+let internal smallWorldSingleStatisticSource (identifier: WorldStatisticIdentifier) : Statistic =
+    match identifier with
     | WorldStatisticIdentifier.IslandGenerationRetries ->
         {MinimumValue=500.0; MaximumValue=500.0; CurrentValue=500.0}
     | WorldStatisticIdentifier.IslandDistance ->
         {MinimumValue=5.0; MaximumValue=5.0; CurrentValue=5.0}
     | WorldStatisticIdentifier.JobReward ->
         {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
+    | WorldStatisticIdentifier.PositionX ->
+        {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=0.5}
+    | WorldStatisticIdentifier.PositionY ->
+        {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=0.5}
     | _ ->
-        raise (System.NotImplementedException "soloIslandSingleStatisticSource")
-
-let internal smallWorldconfiguration: WorldConfiguration =
-    {
-        WorldSize   = (11.0, 11.0)
-    }
+        raise (System.NotImplementedException (sprintf "smallWorldSingleStatisticSource - %s" (identifier.ToString())))
 
 let internal smallWorld = 
     World.Create 
         nameSource
         smallWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
+        shipmateSingleStatisticSinkStub
         rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
         shipmateRationItemSinkStub
-        smallWorldconfiguration 
         random 
         avatarId
 
@@ -135,6 +124,8 @@ let internal smallWorldDocked =
         smallWorldIslandMarketSink 
         smallWorldIslandItemSource 
         smallWorldIslandItemSink 
+        shipmateSingleStatisticSourceStub
+        shipmateSingleStatisticSinkStub
         avatarMessageSinkStub
         random 
         smallWorldIslandLocation

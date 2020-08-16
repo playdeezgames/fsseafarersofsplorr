@@ -21,6 +21,7 @@ let ``Run.It returns Docked (at Shop) gamestate.`` () =
             atSeaItemSource 
             atSeaIslandMarketSource 
             atSeaIslandItemSource 
+            shipmateSingleStatisticSourceStub
             avatarMessageSourceStub
             sinkStub
     Assert.AreEqual(expected, actual)

@@ -13,77 +13,62 @@ type ShipmateRationItemSource = string -> ShipmateIdentifier -> uint64 list
 type ShipmateRationItemSink = string -> ShipmateIdentifier -> uint64 list -> unit
 type RationItemSource = unit -> uint64 list
 type ShipmateStatisticTemplateSource = unit -> Map<ShipmateStatisticIdentifier, ShipmateStatisticTemplate>
+type ShipmateSingleStatisticSink = string -> ShipmateIdentifier -> (ShipmateStatisticIdentifier * Statistic option) -> unit
+type ShipmateSingleStatisticSource = string -> ShipmateIdentifier -> ShipmateStatisticIdentifier -> Statistic option
 
 module Shipmate =
-    let SetStatistic 
-            (identifier : ShipmateStatisticIdentifier) 
-            (statistic  : Statistic option) 
-            (mate       : Shipmate) 
-            : Shipmate =
-        match statistic with
-        | Some stat ->
-            {mate with Statistics = mate.Statistics |> Map.add identifier stat}
-        | None -> 
-            {mate with Statistics = mate.Statistics |> Map.remove identifier}
-
-    let GetStatistic 
-            (identifier : ShipmateStatisticIdentifier) 
-            (mate       : Shipmate) 
-            : Statistic option =
-        mate.Statistics
-        |> Map.tryFind identifier   
-
     let Create
             (shipmateStatisticTemplateSource   : ShipmateStatisticTemplateSource)
+            (shipmateSingleStatisticSink       : ShipmateSingleStatisticSink)
             (rationItemSource                  : RationItemSource)
             (shipmateRationItemSink            : ShipmateRationItemSink)
             (avatarId                          : string)
             (shipmateId                        : ShipmateIdentifier)
-            : Shipmate =
+            : unit =
         rationItemSource()
         |> shipmateRationItemSink avatarId shipmateId 
-        {
-            Statistics = Map.empty
-        }
-        |> List.foldBack 
-            (fun identifier shipMate -> 
-                shipMate
-                |> SetStatistic 
-                    identifier.StatisticId 
-                    (Statistic.Create 
-                        (identifier.MinimumValue, identifier.MaximumValue) 
-                        identifier.CurrentValue 
-                        |> Some)) (shipmateStatisticTemplateSource() |> Map.toList |> List.map snd)
+        shipmateStatisticTemplateSource()
+        |> Map.iter
+            (fun identifier statisticTemplate ->
+                shipmateSingleStatisticSink avatarId shipmateId (identifier, statisticTemplate |> Statistic.CreateFromTemplate |> Some))
 
     let GetStatus
-            (shipmate : Shipmate)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (avatarId                      : string)
+            (shipmateId                    : ShipmateIdentifier)
             : ShipmateStatus=
-        if shipmate.Statistics.[ShipmateStatisticIdentifier.Health].CurrentValue <= shipmate.Statistics.[ShipmateStatisticIdentifier.Health].MinimumValue then
+        let health = shipmateSingleStatisticSource avatarId shipmateId ShipmateStatisticIdentifier.Health |> Option.get
+        if health.CurrentValue <= health.MinimumValue then
             ZeroHealth |> Dead
-        elif shipmate.Statistics.[ShipmateStatisticIdentifier.Turn].CurrentValue >= shipmate.Statistics.[ShipmateStatisticIdentifier.Turn].MaximumValue then
-            OldAge |> Dead
         else
-            Alive
+            let turn = shipmateSingleStatisticSource avatarId shipmateId ShipmateStatisticIdentifier.Turn |> Option.get
+            if turn.CurrentValue >= turn.MaximumValue then
+                OldAge |> Dead
+            else
+                Alive
 
     let TransformStatistic 
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
             (identifier : ShipmateStatisticIdentifier) 
             (transform  : Statistic -> Statistic option) 
-            (mate       : Shipmate) 
-            : Shipmate =
-        mate
-        |> GetStatistic identifier
-        |> Option.fold
-            (fun a s -> 
-                a 
-                |> SetStatistic identifier (s |> transform) ) mate
+            (avatarId: string)
+            (shipmateId: ShipmateIdentifier) 
+            : unit =
+        identifier
+        |> shipmateSingleStatisticSource avatarId shipmateId
+        |> Option.iter
+            (fun s -> 
+                shipmateSingleStatisticSink avatarId shipmateId (identifier, (s |> transform) ) )
 
     let Eat 
             (shipmateRationItemSource : ShipmateRationItemSource)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
             (inventory                : Map<uint64, uint32>) 
             (avatarId                 : string)
             (shipmateId               : ShipmateIdentifier)
-            (mate                     : Shipmate) 
-            : Shipmate * Map<uint64, uint32> * bool =
+            : Map<uint64, uint32> * bool =
         let satietyDecrease = -1.0
         let satietyIncrease = 1.0
         let rationConsumptionRate = 1u
@@ -99,18 +84,40 @@ module Shipmate =
         
         match rationItem with
         | Some item ->
-            let updatedMate = 
-                mate
-                |> TransformStatistic ShipmateStatisticIdentifier.Satiety (Statistic.ChangeCurrentBy satietyIncrease >> Some)
+            TransformStatistic 
+                shipmateSingleStatisticSource
+                shipmateSingleStatisticSink
+                ShipmateStatisticIdentifier.Satiety 
+                (Statistic.ChangeCurrentBy satietyIncrease >> Some)
+                avatarId
+                shipmateId
             let updatedInventory =
                 inventory
                 |> Map.add item (inventory.[item] - rationConsumptionRate)
                 |> Map.filter (fun k v -> v > 0u)
-            (updatedMate, updatedInventory, true)
+            (updatedInventory, true)
         | _ ->
-            if mate.Statistics.[ShipmateStatisticIdentifier.Satiety].CurrentValue > mate.Statistics.[ShipmateStatisticIdentifier.Satiety].MinimumValue then
-                (mate
-                |> TransformStatistic ShipmateStatisticIdentifier.Satiety (Statistic.ChangeCurrentBy (satietyDecrease) >> Some), inventory, false)
+            let satiety = 
+                shipmateSingleStatisticSource 
+                    avatarId
+                    shipmateId
+                    ShipmateStatisticIdentifier.Satiety
+                |> Option.get
+            if satiety.CurrentValue > satiety.MinimumValue then
+                TransformStatistic 
+                    shipmateSingleStatisticSource
+                    shipmateSingleStatisticSink
+                    ShipmateStatisticIdentifier.Satiety 
+                    (Statistic.ChangeCurrentBy (satietyDecrease) >> Some) 
+                    avatarId
+                    shipmateId
+                (inventory, false)
             else
-                (mate
-                |> TransformStatistic ShipmateStatisticIdentifier.Turn (Statistic.ChangeMaximumBy (satietyDecrease) >> Some), inventory, false)
+                TransformStatistic 
+                    shipmateSingleStatisticSource
+                    shipmateSingleStatisticSink
+                    ShipmateStatisticIdentifier.Turn 
+                    (Statistic.ChangeMaximumBy (satietyDecrease) >> Some)
+                    avatarId
+                    shipmateId
+                (inventory, false)

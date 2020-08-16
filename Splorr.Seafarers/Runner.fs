@@ -28,12 +28,14 @@ module Runner =
             (vesselSingleStatisticSource     : VesselSingleStatisticSource)
             (vesselSingleStatisticSink       : VesselSingleStatisticSink)
             (shipmateRationItemSource        : ShipmateRationItemSource)
+            (avatarShipmateSource            : AvatarShipmateSource)
+            (shipmateSingleStatisticSource   : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
             (shipmateRationItemSink          : ShipmateRationItemSink)
             (avatarMessageSource             : AvatarMessageSource)
             (avatarMessageSink               : AvatarMessageSink)
             (avatarMessagePurger             : AvatarMessagePurger)
             (random                          : Random) 
-            (configurationSource             : unit -> WorldConfiguration) 
             (commandSource                   : CommandSource) 
             (messageSink                     : MessageSink) 
             (gamestate                       : Gamestate) 
@@ -54,6 +56,9 @@ module Runner =
                     vesselSingleStatisticSource
                     vesselSingleStatisticSink
                     shipmateRationItemSource
+                    avatarShipmateSource
+                    shipmateSingleStatisticSource
+                    shipmateSingleStatisticSink
                     avatarMessageSource
                     avatarMessageSink
                     avatarMessagePurger
@@ -66,6 +71,9 @@ module Runner =
                 Careened.Run 
                     vesselSingleStatisticSource
                     vesselSingleStatisticSink
+                    avatarShipmateSource
+                    shipmateSingleStatisticSource
+                    shipmateSingleStatisticSink
                     avatarMessageSource
                     avatarMessagePurger
                     commandSource 
@@ -76,7 +84,7 @@ module Runner =
             | Gamestate.Chart (chartName, world) -> 
                 Chart.Run 
                     vesselSingleStatisticSource
-                    (configurationSource()).WorldSize 
+                    worldSingleStatisticSource
                     messageSink 
                     chartName 
                     world
@@ -96,6 +104,8 @@ module Runner =
                     islandSingleMarketSource
                     islandSingleMarketSink 
                     vesselSingleStatisticSource
+                    shipmateSingleStatisticSource
+                    shipmateSingleStatisticSink
                     avatarMessageSource
                     avatarMessageSink
                     avatarMessagePurger
@@ -110,6 +120,7 @@ module Runner =
                     itemSource 
                     islandMarketSource 
                     islandItemSource 
+                    shipmateSingleStatisticSource
                     avatarMessageSource
                     messageSink 
                     location 
@@ -156,12 +167,12 @@ module Runner =
                     nameSource
                     worldSingleStatisticSource
                     shipmateStatisticTemplateSource
+                    shipmateSingleStatisticSink
                     rationItemSource
                     vesselStatisticTemplateSource
                     vesselStatisticSink
                     vesselSingleStatisticSource
                     shipmateRationItemSink
-                    (configurationSource()) 
                     commandSource 
                     messageSink 
                     world
@@ -173,11 +184,14 @@ module Runner =
 
             | Gamestate.Status state -> 
                 Status.Run 
+                    shipmateSingleStatisticSource
                     vesselSingleStatisticSource
                     messageSink 
                     state
 
-            |> Gamestate.CheckForAvatarDeath avatarMessageSource
+            |> Gamestate.CheckForAvatarDeath 
+                shipmateSingleStatisticSource
+                avatarMessageSource
 
         match nextGamestate with
         | Some state ->
@@ -201,12 +215,14 @@ module Runner =
                 vesselSingleStatisticSource
                 vesselSingleStatisticSink
                 shipmateRationItemSource
+                avatarShipmateSource
+                shipmateSingleStatisticSource
+                shipmateSingleStatisticSink
                 shipmateRationItemSink
                 avatarMessageSource
                 avatarMessageSink
                 avatarMessagePurger
                 random 
-                configurationSource 
                 commandSource 
                 messageSink 
                 state
@@ -218,7 +234,6 @@ module Runner =
             (switches                        : Set<string>) 
             (nameSource                      : TermSource)
             (termSources                     : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
-            (configurationSource             : unit     -> WorldConfiguration) 
             (commoditySource                 : CommoditySource) 
             (itemSource                      : ItemSource) 
             (worldSingleStatisticSource      : WorldSingleStatisticSource)
@@ -236,6 +251,9 @@ module Runner =
             (vesselSingleStatisticSink       : VesselSingleStatisticSink)
             (shipmateRationItemSource        : ShipmateRationItemSource)
             (shipmateRationItemSink          : ShipmateRationItemSink)
+            (avatarShipmateSource            : AvatarShipmateSource)
+            (shipmateSingleStatisticSource   : ShipmateSingleStatisticSource)
+            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
             (avatarMessageSource             : AvatarMessageSource)
             (avatarMessageSink               : AvatarMessageSink)
             (avatarMessagePurger             : AvatarMessagePurger)
@@ -267,12 +285,14 @@ module Runner =
             vesselSingleStatisticSource
             vesselSingleStatisticSink
             shipmateRationItemSource
+            avatarShipmateSource
+            shipmateSingleStatisticSource
+            shipmateSingleStatisticSink
             shipmateRationItemSink
             avatarMessageSource
             avatarMessageSink
             avatarMessagePurger
             (Random()) 
-            configurationSource
             (fun () -> CommandSource.Read Console.ReadLine) 
             MessageSink.Write
 

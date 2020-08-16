@@ -14,12 +14,12 @@ let internal soloIslandSingleStatisticSource (identfier: WorldStatisticIdentifie
         {MinimumValue=30.0; MaximumValue=30.0; CurrentValue=30.0}
     | WorldStatisticIdentifier.JobReward ->
         {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
+    | WorldStatisticIdentifier.PositionX ->
+        {MinimumValue=0.0; MaximumValue=10.0; CurrentValue=5.5}
+    | WorldStatisticIdentifier.PositionY ->
+        {MinimumValue=0.0; MaximumValue=10.0; CurrentValue=5.5}
     | _ ->
         raise (System.NotImplementedException "soloIslandSingleStatisticSource")
-let internal soloIslandWorldConfiguration: WorldConfiguration =
-    {
-        WorldSize=(10.0, 10.0)
-    }
 let private vesselStatisticTemplateSourceStub () = Map.empty
 let private vesselStatisticSinkStub (_) (_) = ()
 let private vesselSingleStatisticSourceStub (_) (identifier:VesselStatisticIdentifier) =
@@ -36,12 +36,12 @@ let internal soloIslandWorld =
         nameSource
         soloIslandSingleStatisticSource
         shipmateStatisticTemplateSource
+        shipmateSingleStatisticSinkStub
         rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
         shipmateRationItemSinkStub
-        soloIslandWorldConfiguration 
         random 
         avatarId
 let internal emptyWorld = 
@@ -52,15 +52,6 @@ let internal emptyWorld =
                 Job = None
                 Inventory = Map.empty
                 Metrics = Map.empty
-                Shipmates = 
-                    Map.empty
-                    |> Map.add Primary
-                        ({
-                            Statistics = Map.empty
-                        }
-                        |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Satiety (Statistic.Create (0.0, 100.0) (100.0) |> Some)
-                        |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Health (Statistic.Create (0.0, 100.0) (100.0) |> Some)
-                        |> Shipmate.SetStatistic ShipmateStatisticIdentifier.Turn ({MinimumValue=0.0;CurrentValue=0.0;MaximumValue=15000.0} |> Some))
             }
             ] 
             |> Map.ofList
@@ -101,34 +92,28 @@ let internal genericWorldSingleStatisticSource (identfier: WorldStatisticIdentif
         {MinimumValue=5.0; MaximumValue=5.0; CurrentValue=5.0}
     | WorldStatisticIdentifier.JobReward ->
         {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
+    | WorldStatisticIdentifier.PositionX ->
+        {MinimumValue=0.0; MaximumValue=11.0; CurrentValue=5.5}
+    | WorldStatisticIdentifier.PositionY ->
+        {MinimumValue=0.0; MaximumValue=11.0; CurrentValue=5.5}
     | _ ->
         raise (System.NotImplementedException "soloIslandSingleStatisticSource")
 
-let internal genericWorldConfiguration: WorldConfiguration =
-    {
-        WorldSize=(11.0, 11.0)
-    }
 let internal genericWorld = 
     World.Create 
         nameSource
         genericWorldSingleStatisticSource
         shipmateStatisticTemplateSource
+        shipmateSingleStatisticSinkStub
         rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
         shipmateRationItemSinkStub
-        genericWorldConfiguration 
         random 
         avatarId
 let internal deadWorld =
-    {genericWorld with 
-        Avatars = 
-            genericWorld.Avatars 
-            |> Map.add 
-                avatarId 
-                (genericWorld.Avatars.[avatarId] 
-                |> Avatar.TransformShipmate (Shipmate.TransformStatistic ShipmateStatisticIdentifier.Health (fun x -> {x with CurrentValue=x.MinimumValue} |> Some)) Primary )}
+    genericWorld
 
 let internal genericWorldIslandLocation = genericWorld.Islands |> Map.toList |> List.map fst |> List.head
 let internal genericWorldInvalidIslandLocation = ((genericWorldIslandLocation |> fst) + 1.0, genericWorldIslandLocation |> snd)
@@ -136,6 +121,15 @@ let private genericWorldIslandItemSource (_:Location) = Set.empty
 let private genericWorldIslandItemSink (_) (_) = ()
 let private genericWorldIslandMarketSource (_:Location) = Map.empty
 let private genericWorldIslandMarketSink (_) (_) = ()
+let private genericWorldShipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
+    match identifier with
+    | ShipmateStatisticIdentifier.Turn ->
+        Statistic.Create(0.0, 50000.0) 0.0 |> Some
+    | _ ->
+        raise (System.NotImplementedException "genericWorldShipmateSingleStatisticSource")
+        None
+let private genericWorldShipmateSingleStatisticSink (_) (_) (_) = 
+    ()
 let internal genericDockedWorld = 
     World.Dock 
         termSources 
@@ -146,6 +140,8 @@ let internal genericDockedWorld =
         genericWorldIslandMarketSink 
         genericWorldIslandItemSource 
         genericWorldIslandItemSink 
+        genericWorldShipmateSingleStatisticSource
+        genericWorldShipmateSingleStatisticSink
         avatarMessageSinkStub 
         random 
         genericWorldIslandLocation 

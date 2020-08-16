@@ -10,11 +10,6 @@ open AtSeaTestFixtures
 
 let private sink(_:Message) : unit = ()
 
-let private configuration: WorldConfiguration =
-    {
-        WorldSize              = (10.0, 10.0)
-    }
-
 let private random = Random()
 
 let private avatarId = ""
@@ -24,12 +19,12 @@ let private world =
         nameSource
         worldSingleStatisticSourceStub
         shipmateStatisticTemplateSourceStub
+        shipmateSingleStatisticSinkStub
         rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
         shipmateRationItemSinkStub
-        configuration 
         random 
         avatarId
 

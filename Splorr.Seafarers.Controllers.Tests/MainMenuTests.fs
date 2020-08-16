@@ -7,22 +7,17 @@ open Splorr.Seafarers.Models
 open CommonTestFixtures
 open AtSeaTestFixtures
 
-let private configuration: WorldConfiguration =
-    {
-        WorldSize              = (10.0, 10.0)
-    }
-
 let private world = 
     World.Create 
         nameSource
         worldSingleStatisticSourceStub
         shipmateStatisticTemplateSourceStub
+        shipmateSingleStatisticSinkStub
         rationItemSourceStub
         vesselStatisticTemplateSourceStub
         vesselStatisticSinkStub
         vesselSingleStatisticSourceStub
         shipmateRationItemSinkStub
-        configuration 
         random 
         avatarId
 
@@ -45,12 +40,12 @@ let ``Run.It returns Confirm Quit when given Quit command and there is no world.
             nameSource
             worldSingleStatisticSourceStub
             shipmateStatisticTemplateSourceStub
+            shipmateSingleStatisticSinkStub
             rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
             shipmateRationItemSinkStub
-            configuration 
             inputSource 
             sinkStub
     Assert.AreEqual(expected, actual)
@@ -75,12 +70,12 @@ let ``Run.It returns Main Menu when given Quit command and there is a world.`` (
             nameSource
             worldSingleStatisticSourceStub
             shipmateStatisticTemplateSourceStub
+            shipmateSingleStatisticSinkStub
             rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
             shipmateRationItemSinkStub
-            configuration 
             inputSource 
             sinkStub 
     Assert.AreEqual(expected, actual)
@@ -100,12 +95,12 @@ let ``Run.It returns Main Menu when given invalid command and there is no world.
             nameSource
             worldSingleStatisticSourceStub
             shipmateStatisticTemplateSourceStub
+            shipmateSingleStatisticSinkStub
             rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
             shipmateRationItemSinkStub
-            configuration 
             (fun()->None) 
             sinkStub 
     Assert.AreEqual(expected, actual)
@@ -127,12 +122,12 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
             nameSource
             worldSingleStatisticSourceStub
             shipmateStatisticTemplateSourceStub
+            shipmateSingleStatisticSinkStub
             rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
             shipmateRationItemSinkStub
-            configuration 
             (fun()->None) 
             sinkStub 
     Assert.AreEqual(expected, actual)
@@ -147,12 +142,12 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
             nameSource
             worldSingleStatisticSourceStub
             shipmateStatisticTemplateSourceStub
+            shipmateSingleStatisticSinkStub
             rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
             shipmateRationItemSinkStub
-            configuration 
             inputSource 
             sinkStub 
     //the command creates a world, which has randomness in the generation
@@ -181,12 +176,12 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
             nameSource
             worldSingleStatisticSourceStub
             shipmateStatisticTemplateSourceStub
+            shipmateSingleStatisticSinkStub
             rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
             shipmateRationItemSinkStub
-            configuration 
             inputSource 
             sinkStub 
     Assert.AreEqual(expected, actual)
@@ -206,12 +201,12 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
             nameSource
             worldSingleStatisticSourceStub
             shipmateStatisticTemplateSourceStub
+            shipmateSingleStatisticSinkStub
             rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
             shipmateRationItemSinkStub
-            configuration 
             inputSource 
             sinkStub 
     Assert.AreEqual(expected, actual)
@@ -238,12 +233,12 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
             nameSource
             worldSingleStatisticSourceStub
             shipmateStatisticTemplateSourceStub
+            shipmateSingleStatisticSinkStub
             rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
             shipmateRationItemSinkStub
-            configuration 
             inputSource 
             sinkStub 
     Assert.AreEqual(expected, actual)
@@ -264,12 +259,12 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
             nameSource
             worldSingleStatisticSourceStub
             shipmateStatisticTemplateSourceStub
+            shipmateSingleStatisticSinkStub
             rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
             shipmateRationItemSinkStub
-            configuration 
             inputSource 
             sinkStub
     Assert.AreEqual(expected, actual)
@@ -290,12 +285,12 @@ let ``Run.It returns Main Menu with no world when given Resume command and there
             nameSource
             worldSingleStatisticSourceStub
             shipmateStatisticTemplateSourceStub
+            shipmateSingleStatisticSinkStub
             rationItemSourceStub
             vesselStatisticTemplateSourceStub
             vesselStatisticSinkStub
             vesselSingleStatisticSourceStub
             shipmateRationItemSinkStub
-            configuration 
             inputSource 
             sinkStub 
     Assert.AreEqual(expected, actual)

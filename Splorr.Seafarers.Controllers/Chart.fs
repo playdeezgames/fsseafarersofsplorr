@@ -95,7 +95,7 @@ module Chart =
 
     let Run 
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
-            (worldSize                   : Location) 
+            (worldSingleStatisticSource  : WorldSingleStatisticSource) 
             (messageSink                 : MessageSink) 
             (chartName                   : string) 
             (world                       : World) 
@@ -108,7 +108,8 @@ module Chart =
             chartName
         outputChart 
             vesselSingleStatisticSource
-            worldSize 
+            (worldSingleStatisticSource WorldStatisticIdentifier.PositionX |> Statistic.GetMaximumValue, 
+                worldSingleStatisticSource WorldStatisticIdentifier.PositionY |> Statistic.GetMaximumValue) 
             messageSink 
             chartName 
             world
