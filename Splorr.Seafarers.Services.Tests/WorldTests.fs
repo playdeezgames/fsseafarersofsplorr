@@ -516,7 +516,7 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
     let expectedMessage = "You dock."
     let expectedAvatar = 
         {inputWorld.Avatars.[avatarId] with  
-            Metrics = inputWorld.Avatars.[avatarId].Metrics |> Map.add Metric.VisitedIsland 1u}
+            Metrics = inputWorld.Avatars.[avatarId].Metrics |> Map.add Metric.VisitedIsland 1UL}
     let expected = 
         {inputWorld with 
             Islands = inputWorld.Islands |> Map.add (0.0, 0.0) expectedIsland
@@ -702,7 +702,7 @@ let ``AcceptJob.It adds the given job to the avatar and eliminates it from the i
     let expectedAvatar = 
         inputWorld.Avatars.[avatarId]
         |> Avatar.SetJob inputJob
-        |> Avatar.AddMetric Metric.AcceptedJob 1u
+        |> Avatar.AddMetric Metric.AcceptedJob 1UL
     let expectedIsland = 
         {inputWorld.Islands.[inputLocation] with Jobs = []}
     let expectedDestination =
@@ -821,7 +821,7 @@ let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a
                 |> Map.add avatarId 
                     ({input.Avatars.[avatarId] with 
                         Job = None
-                        Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.AbandonedJob 1u})}
+                        Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.AbandonedJob 1UL})}
     let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
         match identifier with 
         | ShipmateStatisticIdentifier.Reputation ->
@@ -849,7 +849,7 @@ let ``Dock.It does not modify avatar when given avatar has a job for a different
     let expectedMessage = "You dock."
     let expectedAvatar =
         {input.Avatars.[avatarId] with 
-            Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.VisitedIsland 1u}
+            Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.VisitedIsland 1UL}
     let shipmateSingleStatisticSource (_) (_) (identifier: ShipmateStatisticIdentifier) =
         match identifier with
         | ShipmateStatisticIdentifier.Turn ->
@@ -889,8 +889,8 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
             Job = None;
             Metrics = 
                 input.Avatars.[avatarId].Metrics 
-                |> Map.add Metric.VisitedIsland 2u
-                |> Map.add Metric.CompletedJob 1u}
+                |> Map.add Metric.VisitedIsland 2UL
+                |> Map.add Metric.CompletedJob 1UL}
     let shipmateSingleStatisticSource (_) (_) (identifier: ShipmateStatisticIdentifier) =
         match identifier with
         | ShipmateStatisticIdentifier.Turn ->
@@ -931,7 +931,7 @@ let vesselSingleStatisticSourceStub (_) (identifier) =
 let ``BuyItems.It gives a message when given a bogus island location.`` () =
     let input = shopWorld
     let inputLocation = shopWorldBogusLocation
-    let inputQuantity = 2u |> Specific
+    let inputQuantity = 2UL |> Specific
     let inputItemName = "item under test"
     let expectedMessage = "You cannot buy items here."
     let expected =
@@ -962,7 +962,7 @@ let ``BuyItems.It gives a message when given a bogus island location.`` () =
 let ``BuyItems.It gives a message when given a valid island location and a bogus item to buy.`` () =
     let input = shopWorld
     let inputLocation = shopWorldLocation
-    let inputQuantity = 2u |> Specific
+    let inputQuantity = 2UL |> Specific
     let inputItemName = "bogus item"
     let expectedMessage = "Round these parts, we don't sell things like that."
     let expected =
@@ -993,7 +993,7 @@ let ``BuyItems.It gives a message when given a valid island location and a bogus
 let ``BuyItems.It gives a message when the avatar has insufficient funds.`` () =
     let input = shopWorld
     let inputLocation = shopWorldLocation
-    let inputQuantity = 2u |> Specific
+    let inputQuantity = 2UL |> Specific
     let inputItemName = "item under test"
     let islandMarketSource (_) =
         Map.empty
@@ -1035,7 +1035,7 @@ let ``BuyItems.It gives a message when the avatar has insufficient tonnage.`` ()
         shopWorld.Avatars.[avatarId]
     let input = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
     let inputLocation = shopWorldLocation
-    let inputQuantity = 1000u |> Specific
+    let inputQuantity = 1000UL |> Specific
     let inputItemName = "item under test"
     let islandMarketSource (_) =
         Map.empty
@@ -1076,7 +1076,7 @@ let ``BuyItems.It gives a message and completes the purchase when the avatar has
     let inputAvatar = shopWorld.Avatars.[avatarId]
     let input = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
     let inputLocation = shopWorldLocation
-    let inputQuantity = 2u |> Specific
+    let inputQuantity = 2UL |> Specific
     let inputItemName = "item under test"
     let islandMarketSource (_) =
         Map.empty
@@ -1087,7 +1087,7 @@ let ``BuyItems.It gives a message and completes the purchase when the avatar has
         Assert.AreEqual(7.0, market.Demand)
     let expectedAvatar = 
         {input.Avatars.[avatarId] with
-            Inventory = Map.empty |> Map.add 1UL 2u}
+            Inventory = Map.empty |> Map.add 1UL 2UL}
     let expectedMessage = "You complete the purchase of 2 item under test."
     let expected =
         {input with
@@ -1180,7 +1180,7 @@ let ``BuyItems.It gives a message indicating purchased quantity and completes th
         Assert.AreEqual(105.0, market.Demand)
     let expectedAvatar = 
         {input.Avatars.[avatarId] with
-            Inventory = Map.empty |> Map.add 1UL 100u}
+            Inventory = Map.empty |> Map.add 1UL 100UL}
     let expectedMessage = "You complete the purchase of 100 item under test."
     let expected =
         {input with
@@ -1220,7 +1220,7 @@ let ``BuyItems.It gives a message indicating purchased quantity and completes th
 let ``SellItems.It gives a message when given a bogus island location.`` () =
     let input = shopWorld
     let inputLocation = shopWorldBogusLocation
-    let inputQuantity = 2u |> Specific
+    let inputQuantity = 2UL |> Specific
     let inputItemName = "item under test"
     let expectedMessage = "You cannot sell items here."
     let expected =
@@ -1245,7 +1245,7 @@ let ``SellItems.It gives a message when given a bogus island location.`` () =
 let ``SellItems.It gives a message when given a valid island location and bogus item to buy.`` () =
     let input = shopWorld
     let inputLocation = shopWorldLocation
-    let inputQuantity = 2u |> Specific
+    let inputQuantity = 2UL |> Specific
     let inputItemName = "bogus item"
     let expectedMessage = "Round these parts, we don't buy things like that."
     let expected =
@@ -1270,7 +1270,7 @@ let ``SellItems.It gives a message when given a valid island location and bogus 
 let ``SellItems.It gives a message when the avatar has insufficient items in inventory.`` () =
     let input = shopWorld
     let inputLocation = shopWorldLocation
-    let inputQuantity = 2u |> Specific
+    let inputQuantity = 2UL |> Specific
     let inputItemName = "item under test"
     let expectedMessage = "You don't have enough of those to sell."
     let expected =
@@ -1318,10 +1318,10 @@ let ``SellItems.It gives a message when the avatar has no items in inventory and
 
 [<Test>]
 let ``SellItems.It gives a message and completes the sale when the avatar has sufficient quantity.`` () =
-    let inputAvatar = {shopWorld.Avatars.[avatarId] with Inventory = Map.empty |> Map.add 1UL 2u}
+    let inputAvatar = {shopWorld.Avatars.[avatarId] with Inventory = Map.empty |> Map.add 1UL 2UL}
     let input = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
     let inputLocation = shopWorldLocation
-    let inputQuantity = 2u |> Specific
+    let inputQuantity = 2UL |> Specific
     let inputItemName = "item under test"
     let islandMarketSource (_) =
         Map.empty
@@ -1368,7 +1368,7 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
 
 [<Test>]
 let ``SellItems.It gives a message and completes the salewhen the avatar has sufficient quantity and specified a maximum sell.`` () =
-    let inputAvatar = {shopWorld.Avatars.[avatarId] with Inventory = Map.empty |> Map.add 1UL 2u}
+    let inputAvatar = {shopWorld.Avatars.[avatarId] with Inventory = Map.empty |> Map.add 1UL 2UL}
     let input = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
     let inputLocation = shopWorldLocation
     let inputQuantity = Maximum
@@ -1492,7 +1492,7 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
         Assert.AreEqual(statistic.MinimumValue, statistic.CurrentValue)
     let expectedAvatar =
         inputAvatar
-        |> Avatar.AddMetric Metric.CleanedHull 1u
+        |> Avatar.AddMetric Metric.CleanedHull 1UL
     let expected =
         {inputWorld with
             Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar}

@@ -247,7 +247,7 @@ let ``Run.It returns Careened with a cleaned hull when given the command Clean H
     let inputSide = Port
     let expectedAvatar =
         inputAvatar
-        |> Avatar.AddMetric Metric.CleanedHull 1u
+        |> Avatar.AddMetric Metric.CleanedHull 1UL
     let expected =
         (inputSide, {inputWorld with Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar})
         |> Gamestate.Careened

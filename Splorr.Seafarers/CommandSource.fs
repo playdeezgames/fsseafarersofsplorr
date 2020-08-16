@@ -127,7 +127,7 @@ module CommandSource=
         | "0" :: tail ->
             None
         | number :: tail ->
-            match UInt32.TryParse(number) with
+            match UInt64.TryParse(number) with
             | true, quantity ->
                 let itemName = System.String.Join(" ", tail)
                 (quantity |> Specific, itemName)
@@ -149,7 +149,7 @@ module CommandSource=
             |> Command.Sell
             |> Some
         | number :: tail ->
-            match UInt32.TryParse(number) with
+            match UInt64.TryParse(number) with
             | true, quantity ->
                 let itemName = System.String.Join(" ", tail)
                 (Specific quantity, itemName)

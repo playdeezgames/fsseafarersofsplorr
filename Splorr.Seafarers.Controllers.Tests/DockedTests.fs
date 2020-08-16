@@ -308,7 +308,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
     let expectedAvatar = 
         {input.Avatars.[avatarId] with 
             Job=None
-            Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.AbandonedJob 1u}
+            Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.AbandonedJob 1UL}
     let expectedWorld = 
         {input with 
             Avatars= input.Avatars |> Map.add avatarId expectedAvatar}
@@ -351,7 +351,7 @@ let ``Run.It returns Docked (at ItemList) gamestate when given the Items command
 let ``Run.It adds a message when given the Buy command for a non-existent item.`` () =
     let inputLocation = smallWorldIslandLocation
     let inputWorld = shopWorld
-    let inputSource = (1u |> Specific, "non existent item") |> Command.Buy |> Some |> toSource
+    let inputSource = (1UL |> Specific, "non existent item") |> Command.Buy |> Some |> toSource
     let expectedMessages = ["Round these parts, we don't sell things like that."]
     let expectedWorld =
         inputWorld
@@ -372,7 +372,7 @@ let ``Run.It adds a message when given the Buy command for a non-existent item.`
 let ``Run.It adds a message when given the Buy command and the avatar does not have enough money to complete the purchase.`` () =
     let inputLocation = smallWorldIslandLocation
     let inputWorld = smallWorldDocked
-    let inputSource = (1u |> Specific, "item under test") |> Command.Buy |> Some |> toSource
+    let inputSource = (1UL |> Specific, "item under test") |> Command.Buy |> Some |> toSource
     let markets =
         Map.empty
         |> Map.add 1UL {Demand=5.0; Supply=5.0}
@@ -410,7 +410,7 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
     let inputLocation = smallWorldIslandLocation
     let inputAvatar = shopWorld.Avatars.[avatarId]
     let inputWorld = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
-    let inputSource = (1u |> Specific, "item under test") |> Command.Buy |> Some |> toSource
+    let inputSource = (1UL |> Specific, "item under test") |> Command.Buy |> Some |> toSource
     let markets =
         Map.empty
         |> Map.add 1UL {Demand=5.0; Supply=5.0}
@@ -433,7 +433,7 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
     let expectedWorld =
         inputWorld
         |> World.TransformIsland inputLocation (fun _ -> expectedIsland |> Some)
-        |> World.TransformAvatar (Avatar.AddInventory 1UL 1u >> Some)
+        |> World.TransformAvatar (Avatar.AddInventory 1UL 1UL >> Some)
     let expected = 
         (Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
@@ -473,7 +473,7 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
 let ``Run.It adds a message when given the Sell command for a non-existent item.`` () =
     let inputLocation = smallWorldIslandLocation
     let inputWorld = shopWorld
-    let inputSource = (Specific 1u, "non existent item") |> Command.Sell |> Some |> toSource
+    let inputSource = (Specific 1UL, "non existent item") |> Command.Sell |> Some |> toSource
     let expectedMessages = ["Round these parts, we don't buy things like that."]
     let expectedWorld =
         inputWorld
@@ -494,7 +494,7 @@ let ``Run.It adds a message when given the Sell command for a non-existent item.
 let ``Run.It adds a message when given the Sell command and the avatar does not sufficient items to sell.`` () =
     let inputLocation = smallWorldIslandLocation
     let inputWorld = shopWorld
-    let inputSource = (Specific 1u, "item under test") |> Command.Sell |> Some |> toSource
+    let inputSource = (Specific 1UL, "item under test") |> Command.Sell |> Some |> toSource
     let expectedMessages = ["You don't have enough of those to sell."]
     let expectedWorld =
         inputWorld
@@ -514,7 +514,7 @@ let ``Run.It adds a message when given the Sell command and the avatar does not 
 [<Test>]
 let ``Run.It adds a message and completes the sale when given the Sell command and the avatar sufficient items to sell.`` () =
     let inputLocation = smallWorldIslandLocation
-    let inputItems = [(1UL, 1u)] |> Map.ofList
+    let inputItems = [(1UL, 1UL)] |> Map.ofList
     let inputAvatar = {shopWorld.Avatars.[avatarId] with Inventory = inputItems}
     let markets =
         Map.empty
@@ -526,7 +526,7 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
     let inputWorld = 
         {shopWorld with 
             Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
-    let inputSource = (Specific 1u, "item under test") |> Command.Sell |> Some |> toSource
+    let inputSource = (Specific 1UL, "item under test") |> Command.Sell |> Some |> toSource
     let commodities = commoditySource()
     let expectedSupply = 
         markets.[1UL].Supply + commodities.[1UL].PurchaseFactor

@@ -207,7 +207,7 @@ let ``GenerateItems.It generates the shop when the given island has no items in 
 [<Test>]
 let ``UpdateMarketForItemSale.It updates market commodity demands based on the given number of units sold.`` () =
     let input = (0.0, 0.0)
-    let inputQuantity = 1u
+    let inputQuantity = 1UL
     let inputDescriptor = items.[1UL]
     let market = {Supply=1.0;Demand=1.0}
     let islandMarketSource (_) =
@@ -227,7 +227,7 @@ let ``UpdateMarketForItemSale.It updates market commodity demands based on the g
 [<Test>]
 let ``UpdateMarketForItemPurchase.It updates market commodity supply based on the given number of units purchased.`` () =
     let input = (0.0, 0.0)
-    let inputQuantity = 1u
+    let inputQuantity = 1UL
     let inputDescriptor = items.[1UL]
     let market = {Supply=1.0; Demand=1.0}
     let islandMarketSource (_) =

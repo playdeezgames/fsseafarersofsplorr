@@ -199,7 +199,7 @@ module Island =
             (islandSingleMarketSink   : IslandSingleMarketSink) 
             (commoditySource          : CommoditySource)
             (descriptor               : ItemDescriptor) 
-            (quantitySold             : uint32) 
+            (quantitySold             : uint64) 
             (location                 : Location) 
             : unit =
         let commodities = commoditySource()
@@ -214,7 +214,7 @@ module Island =
             (islandSingleMarketSink   : IslandSingleMarketSink) 
             (commoditySource          : CommoditySource)
             (descriptor               : ItemDescriptor) 
-            (quantityPurchased        : uint32) 
+            (quantityPurchased        : uint64) 
             (location                 : Location) 
             : unit =
         let commodities = commoditySource()
