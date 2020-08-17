@@ -1,14 +1,17 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
+type SwitchSource = unit -> Set<string>
+
 module ConfirmQuit = 
     let private onStreamSwitch = "on-stream"
 
     let Run 
-            (switches : Set<string>) 
-            (source   : CommandSource) 
-            (sink     : MessageSink) 
-            (state    : Gamestate) 
+            (switchSource : SwitchSource) 
+            (source       : CommandSource) 
+            (sink         : MessageSink) 
+            (state        : Gamestate) 
             : Gamestate option =
+        let switches = switchSource()
         if switches.Contains onStreamSwitch then
             [
                 "" |> Line

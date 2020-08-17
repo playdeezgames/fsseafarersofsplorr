@@ -8,7 +8,7 @@ module Runner =
 
 
     let rec private Loop 
-            (switches                        : Set<string>) //TODO: to source
+            (switchSource                    : SwitchSource) //TODO: to source
             (nameSource                      : TermSource)
             (termSources                     : TermSources)
             (commoditySource                 : CommoditySource)
@@ -94,7 +94,7 @@ module Runner =
 
             | Gamestate.ConfirmQuit state -> 
                 ConfirmQuit.Run 
-                    switches 
+                    switchSource 
                     commandSource 
                     messageSink 
                     state
@@ -202,7 +202,7 @@ module Runner =
         match nextGamestate with
         | Some state ->
             Loop 
-                switches 
+                switchSource 
                 nameSource
                 termSources
                 commoditySource 
@@ -239,9 +239,15 @@ module Runner =
             ()
     
     let Run 
-            (switches                        : Set<string>) 
+            (avatarInventorySink             : AvatarInventorySink)
+            (avatarInventorySource           : AvatarInventorySource)
+            (avatarMessagePurger             : AvatarMessagePurger)
+            (avatarMessageSink               : AvatarMessageSink)
+            (avatarMessageSource             : AvatarMessageSource)
+
+            (switchSource                    : SwitchSource) 
             (nameSource                      : TermSource)
-            (termSources                     : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
+            (termSources                     : TermSources)
             (commoditySource                 : CommoditySource) 
             (itemSource                      : ItemSource) 
             (worldSingleStatisticSource      : WorldSingleStatisticSource)
@@ -260,13 +266,8 @@ module Runner =
             (shipmateRationItemSource        : ShipmateRationItemSource)
             (shipmateRationItemSink          : ShipmateRationItemSink)
             (avatarShipmateSource            : AvatarShipmateSource)
-            (avatarInventorySource           : AvatarInventorySource)
-            (avatarInventorySink             : AvatarInventorySink)
             (shipmateSingleStatisticSource   : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
-            (avatarMessageSource             : AvatarMessageSource)
-            (avatarMessageSink               : AvatarMessageSink)
-            (avatarMessagePurger             : AvatarMessagePurger)
             : unit =
 
         Console.Title <- "Seafarers of SPLORR!!"
@@ -276,7 +277,7 @@ module Runner =
         None
         |> Gamestate.MainMenu
         |> Loop 
-            switches 
+            switchSource 
             nameSource
             termSources
             commoditySource 

@@ -33,47 +33,78 @@ let main argv =
 
     use connection = bootstrapConnection()
 
-    let islandItemSource (location:Location) =
+    let islandItemSource 
+            (location:Location) =
         match location |> IslandItem.GetForIsland connection with
         | Ok x -> x
         | Error x -> raise (System.InvalidOperationException x)
 
-    let islandItemSink (location:Location) (items:Set<uint64>) =
+    let islandItemSink 
+            (location:Location) 
+            (items:Set<uint64>) =
         IslandItem.CreateForIsland connection location items
         |> ignore
 
-    let islandMarketSource (location:Location) =
+    let islandMarketSource 
+            (location:Location) =
         match location |> IslandMarket.GetForIsland connection with
         | Ok x -> x
         | Error x -> raise (System.InvalidOperationException x)
 
-    let islandSingleMarketSource (location:Location) (itemId:uint64) =
+    let islandSingleMarketSource 
+            (location:Location) 
+            (itemId:uint64) =
         match location |> IslandMarket.GetMarketForIsland connection itemId with
         | Ok x -> x
         | Error x -> raise (System.InvalidOperationException x)
 
-    let islandMarketSink (location:Location) (markets:Map<uint64, Market>)=
+    let islandMarketSink 
+            (location:Location) 
+            (markets:Map<uint64, Market>)=
         IslandMarket.CreateForIsland connection location markets
         |> ignore
 
-    let islandSingleMarketSink (location:Location) (data:uint64 * Market)=
+    let islandSingleMarketSink 
+            (location:Location) 
+            (data:uint64 * Market)=
         IslandMarket.SetForIsland connection location data
         |> ignore
 
-    let commoditySource = Persister.parameterlessFetcher connection Commodity.GetList
-    let itemSource = Persister.parameterlessFetcher connection Item.GetList
+    let commoditySource = 
+        Persister.parameterlessFetcher 
+            connection 
+            Commodity.GetList
 
-    let vesselStatisticTemplateSource = Persister.parameterlessFetcher connection VesselStatisticTemplate.GetList
-    let vesselStatisticSink (avatarId:string) (statistics:Map<VesselStatisticIdentifier, Statistic>) : unit =
+    let itemSource = 
+        Persister.parameterlessFetcher 
+            connection 
+            Item.GetList
+
+    let vesselStatisticTemplateSource = 
+        Persister.parameterlessFetcher 
+            connection 
+            VesselStatisticTemplate.GetList
+
+    let vesselStatisticSink 
+            (avatarId:string) 
+            (statistics:Map<VesselStatisticIdentifier, Statistic>) 
+            : unit =
         VesselStatistic.SetForAvatar avatarId statistics connection
         |> ignore
 
-    let vesselSingleStatisticSource (avatarId:string) (identifier:VesselStatisticIdentifier) : Statistic option =
+    let vesselSingleStatisticSource 
+            (avatarId:string) 
+            (identifier:VesselStatisticIdentifier) 
+            : Statistic option =
         match VesselStatistic.GetStatisticForAvatar avatarId identifier connection with
         | Ok x -> x
         | Error x -> raise (System.InvalidOperationException x)
 
-    let vesselSingleStatisticSink (avatarId: string) (identifier:VesselStatisticIdentifier, statistic:Statistic) : unit =
+    let vesselSingleStatisticSink 
+            (avatarId: string) 
+            (identifier:VesselStatisticIdentifier, 
+                statistic:Statistic) 
+            : unit =
         VesselStatistic.SetStatisticForAvatar avatarId (identifier, statistic) connection
         |> ignore
 
@@ -113,19 +144,31 @@ let main argv =
         | Error x -> raise (System.InvalidOperationException x)
 
     let termSources = 
-        (adverbSource, adjectiveSource, objectNameSource, personNameSource, personAdjectiveSource, professionSource)
+        (adverbSource, 
+            adjectiveSource, 
+            objectNameSource, 
+            personNameSource, 
+            personAdjectiveSource, 
+            professionSource)
 
-    let avatarMessageSource(avatarId:string) : string list =
+    let avatarMessageSource
+            (avatarId:string) 
+            : string list =
         match connection |> Message.GetForAvatar avatarId with
         | Ok x -> x
         | Error x -> raise (System.InvalidOperationException x)
 
-    let avatarMessageSink(avatarId:string) (message:string) : unit =
+    let avatarMessageSink
+            (avatarId:string) 
+            (message:string) 
+            : unit =
         match connection |> Message.AddForAvatar (avatarId, message) with
         | Ok _ -> ()
         | Error x -> raise (System.InvalidOperationException x)
 
-    let avatarMessagePurger(avatarId:string) : unit =
+    let avatarMessagePurger
+            (avatarId:string) 
+            : unit =
         match connection |> Message.ClearForAvatar avatarId with
         | Ok _ -> ()
         | Error x -> raise (System.InvalidOperationException x)
@@ -155,51 +198,77 @@ let main argv =
         | Ok _ -> ()
         | Error x -> raise (System.InvalidOperationException x)
 
-    let rationItemSource () : uint64 list =
+    let rationItemSource () 
+            : uint64 list =
         match connection |> RationItem.GetRationItems with
         | Ok x -> x
         | Error x -> raise (System.InvalidOperationException x)
 
-    let shipmateStatisticTemplateSource () : Map<ShipmateStatisticIdentifier, ShipmateStatisticTemplate> =
+    let shipmateStatisticTemplateSource () 
+            : Map<ShipmateStatisticIdentifier, ShipmateStatisticTemplate> =
         match connection |> ShipmateStatisticTemplate.GetList with
         | Ok x -> x
         | Error x -> raise (System.InvalidOperationException x)
 
-    let worldSingleStatisticSource (identifier: WorldStatisticIdentifier) : Statistic =
+    let worldSingleStatisticSource 
+            (identifier: WorldStatisticIdentifier) 
+            : Statistic =
         match connection |> WorldStatistic.Get identifier with
         | Ok x -> x
         | Error x -> raise (System.InvalidOperationException x)
 
-    let avatarShipmateSource (avatarId: string) : ShipmateIdentifier list =
+    let avatarShipmateSource 
+            (avatarId: string) 
+            : ShipmateIdentifier list =
         match connection |> ShipmateStatistic.GetShipmatesForAvatar avatarId with
         | Ok x -> 
             x
             |> List.map (stringToShipmateIdentifier)
         | Error x -> raise (System.InvalidOperationException x)
 
-    let shipmateSingleStatisticSource (avatarId: string) (shipmateId:ShipmateIdentifier) (identifier: ShipmateStatisticIdentifier) : Statistic option =
+    let shipmateSingleStatisticSource 
+            (avatarId: string) 
+            (shipmateId:ShipmateIdentifier) 
+            (identifier: ShipmateStatisticIdentifier) 
+            : Statistic option =
         match connection |> ShipmateStatistic.GetStatisticForShipmate avatarId (shipmateId |> shipmateIdentifierToString) identifier with
         | Ok x -> x
         | Error x -> raise (System.InvalidOperationException x)
 
-    let shipmateSingleStatisticSink (avatarId: string) (shipmateId:ShipmateIdentifier) (identifier: ShipmateStatisticIdentifier, statistic: Statistic option) : unit =
+    let shipmateSingleStatisticSink 
+            (avatarId: string) 
+            (shipmateId:ShipmateIdentifier) 
+            (identifier: ShipmateStatisticIdentifier, 
+                statistic: Statistic option) 
+            : unit =
         match connection |> ShipmateStatistic.SetStatisticForShipmate avatarId (shipmateId |> shipmateIdentifierToString) (identifier, statistic) with
         | Ok _ -> ()
         | Error x -> raise (System.InvalidOperationException x)
 
-    let avatarInventorySource (avatarId:string) =
+    let avatarInventorySource 
+            (avatarId:string) =
         match connection |> AvatarInventory.GetForAvatar avatarId with
         | Ok x -> x
         | Error x -> raise (System.InvalidOperationException x)
 
-    let avatarInventorySink (avatarId:string) (inventory:Map<uint64, uint64>) =
+    let avatarInventorySink 
+            (avatarId:string) 
+            (inventory:Map<uint64, uint64>) =
         match connection |> AvatarInventory.SetForAvatar avatarId inventory with
         | Ok () -> ()
         | Error x -> raise (System.InvalidOperationException x)
 
+    let switchSource () = switches
+
     try
         Runner.Run 
-            switches 
+            avatarInventorySink
+            avatarInventorySource
+            avatarMessagePurger
+            avatarMessageSink
+            avatarMessageSource
+
+            switchSource 
             islandNameSource
             termSources
             commoditySource
@@ -220,13 +289,8 @@ let main argv =
             shipmateRationItemSource
             shipmateRationItemSink
             avatarShipmateSource
-            avatarInventorySource
-            avatarInventorySink
             shipmateSingleStatisticSource
             shipmateSingleStatisticSink
-            avatarMessageSource
-            avatarMessageSink
-            avatarMessagePurger
     finally
         connection.Close()
     0

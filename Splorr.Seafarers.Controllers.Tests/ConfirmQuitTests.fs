@@ -15,7 +15,7 @@ let ``Run function.When Yes command passed, return None.`` () =
     let expected = None
     let actual = 
         input
-        |> ConfirmQuit.Run Set.empty inputSource sinkStub 
+        |> ConfirmQuit.Run (fun ()->Set.empty) inputSource sinkStub 
     Assert.AreEqual(expected, actual)
     
 [<Test>]
@@ -29,7 +29,7 @@ let ``Run function.When "on-stream" switch is set, return previous State and do 
         |> Some
     let actual = 
         input
-        |> ConfirmQuit.Run (Set.empty |> Set.add "on-stream") inputSource sinkStub 
+        |> ConfirmQuit.Run (fun () -> Set.empty |> Set.add "on-stream") inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -44,7 +44,7 @@ let ``Run function.When No command passed, return previous State.`` () =
         |> Some
     let actual = 
         input
-        |> ConfirmQuit.Run Set.empty inputSource sinkStub 
+        |> ConfirmQuit.Run (fun () -> Set.empty) inputSource sinkStub 
     Assert.AreEqual(expected, actual)
     
 [<Test>]
@@ -59,7 +59,7 @@ let ``Run function.When invalid command passed, return ConfirmQuit.`` () =
         |> Some
     let actual = 
         input
-        |> ConfirmQuit.Run Set.empty inputSource sinkStub 
+        |> ConfirmQuit.Run (fun () -> Set.empty) inputSource sinkStub 
     Assert.AreEqual(expected, actual)
 
 
@@ -77,5 +77,5 @@ let ``Run.It initiates Confirm Quit Help when given the Help command.`` () =
         |> Some
     let actual =
         input
-        |> ConfirmQuit.Run Set.empty inputSource sinkStub
+        |> ConfirmQuit.Run (fun () -> Set.empty) inputSource sinkStub
     Assert.AreEqual(expected, actual)
