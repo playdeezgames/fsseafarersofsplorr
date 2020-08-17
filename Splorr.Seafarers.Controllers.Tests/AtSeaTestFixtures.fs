@@ -116,8 +116,11 @@ let internal headForWorldUnvisited =
     |> World.TransformIsland 
         (0.0,0.0) 
         (Island.SetName "yermom" >> Some)
+
     |> World.Move 
         avatarShipmateSourceStub
+        avatarInventorySourceStub
+        avatarInventorySinkStub
         shipmateSingleStatisticSourceStub
         shipmateSingleStatisticSinkStub
         vesselSingleStatisticSourceStub 

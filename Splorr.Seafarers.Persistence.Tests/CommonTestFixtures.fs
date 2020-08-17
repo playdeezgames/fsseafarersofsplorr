@@ -199,6 +199,14 @@ let private setupShipmateStatistics
         ]
     |> runCommands connection
 
+let private setupAvatarInventories
+        (connection : SQLiteConnection)
+        : unit =
+    [
+        Tables.AvatarInventories
+        (ExistingAvatarId, ExistingAvatarId, ExistingAvatarId) |||> sprintf "REPLACE INTO [AvatarInventories]([AvatarId], [ItemId], [ItemCount]) VALUES ('%s', 1, 2), ('%s', 2, 3), ('%s', 3, 1)"
+    ]
+    |> runCommands connection
 
 let internal NewAvatarId = "newavatar"
 
@@ -220,6 +228,7 @@ let internal SetupConnection() : SQLiteConnection =
         setupShipmateRationItems
         setupWorldStatistics
         setupShipmateStatistics ExistingAvatarId PrimaryShipmateId
+        setupAvatarInventories
     ]
     |> List.iter (fun f -> f connection)
 

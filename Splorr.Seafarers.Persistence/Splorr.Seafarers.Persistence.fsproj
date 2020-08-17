@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Utility.fs" />
+    <Compile Include="AvatarInventory.fs" />
     <Compile Include="Commodity.fs" />
     <Compile Include="IslandItem.fs" />
     <Compile Include="IslandMarket.fs" />

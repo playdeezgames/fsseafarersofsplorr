@@ -94,7 +94,6 @@ let ``Create.It creates an avatar.`` () =
     let actual =
         avatar
     Assert.AreEqual(None, actual.Job)
-    Assert.AreEqual(Map.empty, actual.Inventory)
     Assert.AreEqual(Map.empty, actual.Metrics)
 
 [<Test>]
@@ -253,9 +252,15 @@ let ``Move.It moves the avatar.`` () =
             Assert.AreEqual(expectedPosition |> snd,statistic.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "Kaboom set")
+    let avatarInventorySource (_) =
+        Map.empty
+    let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
+        Assert.AreEqual(Map.empty, inventory)
     input
     |> Avatar.Move 
         avatarShipmateSourceStub
+        avatarInventorySource
+        avatarInventorySink
         shipmateSingleStatisticSourceStub
         shipmateSingleStatisticSinkStub 
         vesselSingleStatisticSource 
@@ -267,9 +272,9 @@ let ``Move.It moves the avatar.`` () =
 [<Test>]
 let ``Move.It removes a ration when the given avatar has rations and full satiety.`` () =
     let input = 
-        {avatar with 
-            Inventory = Map.empty |> Map.add 1UL 2UL}
-    let expectedInventory = Map.empty |> Map.add 1u 1u
+        avatar
+    let originalInventory = Map.empty |> Map.add 1UL 2UL
+    let expectedInventory = Map.empty |> Map.add 1UL 1UL
     let shipmateRationItemSource (_) (_) = [0UL; 1UL]
     let avatarShipmateSource (_) = 
         [ Primary ]
@@ -291,24 +296,29 @@ let ``Move.It removes a ration when the given avatar has rations and full satiet
             Assert.AreEqual(100.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let actual =
-        input
-        |> Avatar.Move 
-            avatarShipmateSource
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            vesselSingleStatisticSource 
-            vesselSingleStatisticSink 
-            shipmateRationItemSource 
-            inputAvatarId
-    Assert.AreEqual(expectedInventory, actual.Inventory)
+    let avatarInventorySource (_) =
+        originalInventory
+    let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
+        Assert.AreEqual(expectedInventory, inventory)
+    input
+    |> Avatar.Move 
+        avatarShipmateSource
+        avatarInventorySource
+        avatarInventorySink
+        shipmateSingleStatisticSource
+        shipmateSingleStatisticSink
+        vesselSingleStatisticSource 
+        vesselSingleStatisticSink 
+        shipmateRationItemSource 
+        inputAvatarId
+    |> ignore
 
 [<Test>]
 let ``Move.It removes a ration and increases satiety when the given avatar has rations and less than full satiety.`` () =
     let input = 
-        {avatar with 
-            Inventory = Map.empty |> Map.add 1UL 2UL}
-    let expectedInventory = Map.empty |> Map.add 1u 1u
+        avatar
+    let originalInventory = Map.empty |> Map.add 1UL 2UL
+    let expectedInventory = Map.empty |> Map.add 1UL 1UL
     let avatarShipmateSource (_) = 
         [ Primary ]
     let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
@@ -329,22 +339,27 @@ let ``Move.It removes a ration and increases satiety when the given avatar has r
             Assert.AreEqual(51.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
+    let avatarInventorySource (_) =
+        originalInventory
+    let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
+        Assert.AreEqual(expectedInventory, inventory)
+    input
+    |> Avatar.Move 
+        avatarShipmateSource
+        avatarInventorySource
+        avatarInventorySink
+        shipmateSingleStatisticSource
+        shipmateSingleStatisticSink
+        vesselSingleStatisticSource 
+        vesselSingleStatisticSink 
+        shipmateRationItemSourceStub 
+        inputAvatarId
+    |> ignore
 
-    let actual =
-        input
-        |> Avatar.Move 
-            avatarShipmateSource
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            vesselSingleStatisticSource 
-            vesselSingleStatisticSink 
-            shipmateRationItemSourceStub 
-            inputAvatarId
-    Assert.AreEqual(expectedInventory, actual.Inventory)
 
 [<Test>]
 let ``Move.It lowers the avatar's satiety but does not affect turns when the given avatar has no rations.`` () =
-    let input = {avatar with Inventory = Map.empty}
+    let input = avatar
     let expectedAvatar = 
         {input with
             Metrics =
@@ -370,23 +385,28 @@ let ``Move.It lowers the avatar's satiety but does not affect turns when the giv
             Assert.AreEqual(49.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let actual =
-        input
-        |> Avatar.Move 
-            avatarShipmateSource
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            vesselSingleStatisticSource 
-            vesselSingleStatisticSink 
-            shipmateRationItemSourceStub 
-            inputAvatarId
-    Assert.AreEqual(expectedAvatar, actual)
+    let avatarInventorySource (_) =
+        Map.empty
+    let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
+        Assert.AreEqual(Map.empty, inventory)
+    input
+    |> Avatar.Move 
+        avatarShipmateSource
+        avatarInventorySource
+        avatarInventorySink
+        shipmateSingleStatisticSource
+        shipmateSingleStatisticSink
+        vesselSingleStatisticSource 
+        vesselSingleStatisticSink 
+        shipmateRationItemSourceStub 
+        inputAvatarId
+    |> ignore
+
 
 [<Test>]
 let ``Move.It lowers the avatar's maximum turn when the given avatar has no rations and minimum satiety.`` () =
     let input = 
-        {avatar with 
-            Inventory = Map.empty}
+        avatar
     let expectedAvatar = 
         {input with
             Metrics =
@@ -422,10 +442,16 @@ let ``Move.It lowers the avatar's maximum turn when the given avatar has no rati
             sinkCalls <- sinkCalls + 1u
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
+    let avatarInventorySource (_) =
+        Map.empty
+    let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
+        Assert.AreEqual(Map.empty, inventory)
     let actual =
         input
         |> Avatar.Move 
             avatarShipmateSource
+            avatarInventorySource
+            avatarInventorySink
             shipmateSingleStatisticSource
             shipmateSingleStatisticSink
             vesselSingleStatisticSource 
@@ -658,71 +684,107 @@ let ``EarnMoney.It updates the avatars money by adding the given amount.`` () =
 
 [<Test>]
 let ``AddInventory.It adds a given number of given items to the given avatar's inventory.`` () =
-    let input = employedAvatar
+    let input = avatarId
     let inputItem = 1UL
     let inputQuantity = 2UL
-    let expected =
-        {input with Inventory = input.Inventory |> Map.add inputItem inputQuantity}
-    let actual =
-        input
-        |> Avatar.AddInventory inputItem inputQuantity
-    Assert.AreEqual(expected, actual)
+    let avatarInventorySource (_) =
+        Map.empty
+    let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
+        Assert.AreEqual(1, inventory.Count)
+        Assert.AreEqual(inputQuantity, inventory.[inputItem])
+    input
+    |> Avatar.AddInventory 
+        avatarInventorySource
+        avatarInventorySink
+        inputItem 
+        inputQuantity
+
 
 [<Test>]
 let ``GetItemCount.It returns zero when the given avatar has no entry for the given item.`` () =
-    let input = avatar
+    let input = avatarId
     let inputItem = 1UL
     let expected = 0u
+    let avatarInventorySource (_) =
+        Map.empty
     let actual =
         input
-        |> Avatar.GetItemCount inputItem
+        |> Avatar.GetItemCount 
+            avatarInventorySource
+            inputItem
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``GetItemCount.It returns the item count when the given avatar has an entry for the given item.`` () =
-    let input = rationedAvatar
+    let input = avatarId
     let inputItem = 1UL
-    let expected = rationedAvatar.Inventory.[inputItem]
+    let expected = 2UL
+    let avatarInventorySource (_) =
+        Map.empty
+        |> Map.add inputItem expected
     let actual =
         input
-        |> Avatar.GetItemCount inputItem
+        |> Avatar.GetItemCount 
+            avatarInventorySource
+            inputItem
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``RemoveInventory.It does nothing.When given a quantity of 0 items to remove or the given avatar has no items.`` 
         ([<Values(0UL, 1UL)>]inputQuantity:uint64) =
-    let input = avatar
+    let input = avatarId
     let inputItem = 1UL
     let expected =
         input
-    let actual = 
-        input
-        |> Avatar.RemoveInventory inputItem inputQuantity
-    Assert.AreEqual(expected, actual)
+    let avatarInventorySource (_) =
+        Map.empty
+    let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
+        Assert.AreEqual(Map.empty, inventory)
+    input
+    |> Avatar.RemoveInventory 
+        avatarInventorySource
+        avatarInventorySink
+        inputItem 
+        inputQuantity
 
 [<Test>]
 let ``RemoveInventory.It reduces the given avatars inventory to 0 when the given number of items exceed the avatar's inventory.``() =
-    let input = rationedAvatar 
+    let input = avatarId
     let inputItem = 1UL
     let inputQuantity = 2UL
-    let expected =
-        {input with Inventory = Map.empty}
-    let actual = 
-        input
-        |> Avatar.RemoveInventory inputItem inputQuantity
-    Assert.AreEqual(expected, actual)
+    let originalQuantity = inputQuantity - 1UL
+    let avatarInventorySource (_) =
+        Map.empty
+        |> Map.add inputItem originalQuantity
+    let expectedQuantity = 0UL
+    let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
+        Assert.AreEqual(0, inventory.Count)
+    input
+    |> Avatar.RemoveInventory 
+        avatarInventorySource
+        avatarInventorySink
+        inputItem 
+        inputQuantity
 
 [<Test>]
 let ``RemoveInventory.It reduces the given avatar's inventory by the given amount.``() =
-    let input = hoarderAvatar 
+    let input = avatarId 
     let inputItem = 1UL
     let inputQuantity = 20UL
-    let expected =
-        {input with Inventory = input.Inventory |> Map.add 1UL 80UL}
-    let actual = 
-        input
-        |> Avatar.RemoveInventory inputItem inputQuantity
-    Assert.AreEqual(expected, actual)
+    let originalQuantity = inputQuantity + inputQuantity
+    let avatarInventorySource (_) =
+        Map.empty
+        |> Map.add inputItem originalQuantity
+    let expectedQuantity = originalQuantity - inputQuantity
+    let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
+        Assert.AreEqual(1, inventory.Count)
+        Assert.AreEqual(expectedQuantity, inventory.[inputItem])
+    input
+    |> Avatar.RemoveInventory 
+        avatarInventorySource
+        avatarInventorySink
+        inputItem 
+        inputQuantity
 
 
 [<Test>]//TODO - bad name
@@ -818,11 +880,7 @@ let ``AddMetric.It adds to a metric value when there is a previously existing me
 [<Test>]
 let ``GetUsedTonnage.It calculates the used tonnage based on inventory and item descriptors.`` () =
     let input = 
-        {avatar with
-            Inventory =
-                Map.empty
-                |> Map.add 1UL 2UL
-                |> Map.add 2UL 3UL}
+        avatarId
     let inputItems =
         Map.empty
         |> Map.add 1UL {
@@ -839,10 +897,16 @@ let ``GetUsedTonnage.It calculates the used tonnage based on inventory and item 
                         Occurrence  =0.0
                         Tonnage     =3.0
                         }
-    let expected = 11.0
+    let expected = 15.0
+    let avatarInventorySource (_) =
+        Map.empty
+        |> Map.add 1UL 3UL
+        |> Map.add 2UL 4UL
     let actual =
         input
-        |> Avatar.GetUsedTonnage inputItems
+        |> Avatar.GetUsedTonnage 
+            avatarInventorySource
+            inputItems
     Assert.AreEqual(expected, actual)
 
 [<Test>]

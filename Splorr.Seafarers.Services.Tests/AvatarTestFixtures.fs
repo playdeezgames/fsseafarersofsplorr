@@ -50,6 +50,6 @@ let internal job =
 let internal employedAvatar =
     {avatar with Job = job |> Some}
 let internal rationedAvatar =
-    {avatar with Inventory = Map.empty |> Map.add 1UL 1UL}
+    avatar
 let internal hoarderAvatar =
-    {avatar with Inventory = Map.empty |> Map.add 1UL 100UL}
+    avatar

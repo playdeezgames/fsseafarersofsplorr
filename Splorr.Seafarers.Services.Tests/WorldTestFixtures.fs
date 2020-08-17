@@ -50,7 +50,6 @@ let internal emptyWorld =
         Avatars = 
             [avatarId,{
                 Job = None
-                Inventory = Map.empty
                 Metrics = Map.empty
             }
             ] 

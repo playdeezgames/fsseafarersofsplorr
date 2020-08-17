@@ -24,6 +24,8 @@ let private functionUnderTest
         vesselSingleStatisticSinkStub
         shipmateRationItemSourceStub
         avatarShipmateSourceStub
+        avatarInventorySourceStub
+        avatarInventorySinkStub
         shipmateSingleStatisticSource
         shipmateSingleStatisticSinkStub
         avatarMessageSourceStub

@@ -5,6 +5,8 @@ type MessagePurger = string -> unit
 
 type AvatarMessageSink = string -> string -> unit
 type AvatarShipmateSource = string -> ShipmateIdentifier list
+type AvatarInventorySource = string -> AvatarInventory
+type AvatarInventorySink = string -> AvatarInventory -> unit
 
 module Avatar =
     let Create 
@@ -26,7 +28,6 @@ module Avatar =
             Primary
         {
             Job = None
-            Inventory = Map.empty
             Metrics = Map.empty
         }
 
@@ -119,29 +120,27 @@ module Avatar =
                     |> Statistic.SetCurrentValue (heading |> Angle.ToRadians))
                 |> vesselSingleStatisticSink avatarId)
 
-    let private PurgeInventory (avatar:Avatar) : Avatar =
-        {avatar with Inventory = avatar.Inventory |> Map.filter (fun _ v -> v>0UL)}
-
     let RemoveInventory 
-            (item     : uint64) 
-            (quantity : uint64) 
-            (avatar   : Avatar) 
-            : Avatar =
-        match avatar.Inventory.TryFind item with
+            (avatarInventorySource : AvatarInventorySource)
+            (avatarInventorySink   : AvatarInventorySink)
+            (item                  : uint64) 
+            (quantity              : uint64) 
+            (avatarId              : string) 
+            : unit =
+        let inventory = 
+            avatarId 
+            |>  avatarInventorySource
+        match inventory.TryFind item with
         | Some count ->
             if count > quantity then
-                {avatar with 
-                    Inventory = 
-                        avatar.Inventory 
-                        |> Map.add item (count-quantity)}
+                inventory
+                |> Map.add item (count-quantity)
             else
-                {avatar with 
-                    Inventory = 
-                        avatar.Inventory 
-                        |> Map.remove item}
-        | None ->
-            avatar
-        |> PurgeInventory
+                inventory 
+                |> Map.remove item
+        | _ ->
+            inventory
+        |> avatarInventorySink avatarId
 
     let AddMetric 
             (metric : Metric) 
@@ -172,11 +171,13 @@ module Avatar =
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
             (avatarShipmateSource          : AvatarShipmateSource)
+            (avatarInventorySource         : AvatarInventorySource)
+            (avatarInventorySink           : AvatarInventorySink)
             (avatarId                      : string)
             (avatar                        : Avatar) 
             : Avatar =
         let inventory, eaten =
-            ((avatar.Inventory, 0UL), avatarShipmateSource avatarId)
+            ((avatarInventorySource avatarId, 0UL), avatarShipmateSource avatarId)
             ||> List.fold 
                 (fun (inventory,metric) identifier -> 
                     let updateInventory, ate =
@@ -188,8 +189,9 @@ module Avatar =
                             avatarId 
                             identifier
                     (updateInventory, if ate then metric+1UL else metric)) 
-        {avatar with 
-            Inventory = inventory}
+        inventory
+        |> avatarInventorySink avatarId
+        avatar
         |> AddMetric Metric.Ate eaten
 
     
@@ -239,14 +241,16 @@ module Avatar =
         |> List.iter transform
 
     let Move
-            (avatarShipmateSource        : AvatarShipmateSource)
+            (avatarShipmateSource          : AvatarShipmateSource)
+            (avatarInventorySource         : AvatarInventorySource)
+            (avatarInventorySink           : AvatarInventorySink)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
-            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
-            (shipmateRationItemSource    : ShipmateRationItemSource)
-            (avatarId                    : string)
-            (avatar                      : Avatar) 
+            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
+            (vesselSingleStatisticSink     : VesselSingleStatisticSink)
+            (shipmateRationItemSource      : ShipmateRationItemSource)
+            (avatarId                      : string)
+            (avatar                        : Avatar) 
             : Avatar =
         let actualSpeed = 
             avatarId 
@@ -268,8 +272,7 @@ module Avatar =
                     ShipmateStatisticIdentifier.Turn 
                     (Statistic.ChangeCurrentBy 1.0 >> Some)
                     avatarId
-                    identifier
-                ())
+                    identifier)
             avatarId
         avatar
         |> AddMetric Metric.Moved 1UL
@@ -278,6 +281,8 @@ module Avatar =
             shipmateSingleStatisticSource
             shipmateSingleStatisticSink
             avatarShipmateSource
+            avatarInventorySource
+            avatarInventorySink
             avatarId
 
     let SetJob 
@@ -402,20 +407,26 @@ module Avatar =
                 avatarId
 
     let GetItemCount 
-            (item   : uint64) 
-            (avatar : Avatar) 
+            (avatarInventorySource : AvatarInventorySource)
+            (item                  : uint64) 
+            (avatarId              : string) 
             : uint64 =
-        match avatar.Inventory.TryFind item with
+        match avatarId |> avatarInventorySource |> Map.tryFind item with
         | Some x -> x
         | None -> 0UL
 
     let AddInventory 
-            (item     : uint64) 
-            (quantity : uint64) 
-            (avatar   : Avatar) 
-            : Avatar =
-        let newQuantity = (avatar |> GetItemCount item) + quantity
-        {avatar with Inventory = avatar.Inventory |> Map.add item newQuantity}
+            (avatarInventorySource : AvatarInventorySource)
+            (avatarInventorySink   : AvatarInventorySink)
+            (item                  : uint64) 
+            (quantity              : uint64) 
+            (avatarId              : string) 
+            : unit =
+        let newQuantity = (avatarId |> GetItemCount avatarInventorySource item) + quantity
+        avatarId
+        |> avatarInventorySource
+        |> Map.add item newQuantity
+        |> avatarInventorySink avatarId
 
     let AddMessages 
             (avatarMessageSink : AvatarMessageSink)
@@ -426,25 +437,26 @@ module Avatar =
         |> List.iter (avatarMessageSink avatarId)
 
 
-    let GetUsedTonnage 
-            (items  : Map<uint64, ItemDescriptor>) //TODO: to source
-            (avatar : Avatar) 
+    let GetUsedTonnage
+            (avatarInventorySource : AvatarInventorySource)
+            (items                 : Map<uint64, ItemDescriptor>) //TODO: to source
+            (avatarId              : string) 
             : float =
-        (0.0, avatar.Inventory)
+        (0.0, avatarId |> avatarInventorySource)
         ||> Map.fold
             (fun result item quantity -> 
                 let d = items.[item]
                 result + (quantity |> float) * d.Tonnage)
 
     let CleanHull 
-            (avatarShipmateSource        : AvatarShipmateSource)
+            (avatarShipmateSource          : AvatarShipmateSource)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
-            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
-            (avatarId                    : string)
-            (side                        : Side) 
-            (avatar                      : Avatar) : Avatar =
+            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
+            (vesselSingleStatisticSink     : VesselSingleStatisticSink)
+            (avatarId                      : string)
+            (side                          : Side) 
+            (avatar                        : Avatar) : Avatar =
         Vessel.TransformFouling vesselSingleStatisticSource vesselSingleStatisticSink avatarId side (fun x-> {x with CurrentValue = x.MinimumValue})
         TransformShipmates 
             avatarShipmateSource 

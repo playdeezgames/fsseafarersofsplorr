@@ -124,6 +124,8 @@ module AtSea =
             (vesselSingleStatisticSink     : string -> VesselStatisticIdentifier * Statistic -> unit)
             (shipmateRationItemSource      : ShipmateRationItemSource)
             (avatarShipmateSource          : AvatarShipmateSource)
+            (avatarInventorySource         : AvatarInventorySource)
+            (avatarInventorySink           : AvatarInventorySink)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
             (avatarMessageSink             : AvatarMessageSink)
@@ -254,6 +256,8 @@ module AtSea =
             world
             |> World.Move 
                 avatarShipmateSource
+                avatarInventorySource
+                avatarInventorySink
                 shipmateSingleStatisticSource
                 shipmateSingleStatisticSink
                 vesselSingleStatisticSource 
@@ -313,6 +317,8 @@ module AtSea =
             (vesselSingleStatisticSink     : string->VesselStatisticIdentifier*Statistic->unit)
             (shipmateRationItemSource      : ShipmateRationItemSource)
             (avatarShipmateSource          : AvatarShipmateSource)
+            (avatarInventorySource         : AvatarInventorySource)
+            (avatarInventorySink           : AvatarInventorySink)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
             (avatarMessageSource           : AvatarMessageSource)
@@ -342,6 +348,8 @@ module AtSea =
             vesselSingleStatisticSink
             shipmateRationItemSource
             avatarShipmateSource
+            avatarInventorySource
+            avatarInventorySink
             shipmateSingleStatisticSource
             shipmateSingleStatisticSink
             avatarMessageSink
@@ -352,17 +360,19 @@ module AtSea =
 
     let Run 
             (termSources                   : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
-            (commoditySource               : unit -> Map<uint64, CommodityDescriptor>) 
-            (itemSource                    : unit -> Map<uint64, ItemDescriptor>) 
+            (commoditySource               : CommoditySource) 
+            (itemSource                    : ItemSource) 
             (worldSingleStatisticSource    : WorldSingleStatisticSource)
             (islandMarketSource            : Location -> Map<uint64, Market>) 
             (islandMarketSink              : Location -> Map<uint64, Market>->unit) 
             (islandItemSource              : Location -> Set<uint64>) 
             (islandItemSink                : Location -> Set<uint64>->unit) 
-            (vesselSingleStatisticSource   : string->VesselStatisticIdentifier->Statistic option)
-            (vesselSingleStatisticSink     : string->VesselStatisticIdentifier*Statistic->unit)
+            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
+            (vesselSingleStatisticSink     : VesselSingleStatisticSink)
             (shipmateRationItemSource      : ShipmateRationItemSource)
             (avatarShipmateSource          : AvatarShipmateSource)
+            (avatarInventorySource         : AvatarInventorySource)
+            (avatarInventorySink           : AvatarInventorySink)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
             (avatarMessageSource           : AvatarMessageSource)
@@ -387,6 +397,8 @@ module AtSea =
                 vesselSingleStatisticSink
                 shipmateRationItemSource
                 avatarShipmateSource
+                avatarInventorySource
+                avatarInventorySink
                 shipmateSingleStatisticSource
                 shipmateSingleStatisticSink
                 avatarMessageSource

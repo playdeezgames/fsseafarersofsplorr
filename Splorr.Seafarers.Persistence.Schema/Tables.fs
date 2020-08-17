@@ -99,3 +99,9 @@ module Tables =
 		[CurrentValue]	REAL NOT NULL CHECK(CurrentValue>=MinimumValue AND CurrentValue<=MaximumValue),
 		PRIMARY KEY([StatisticId]));"
 
+    let AvatarInventories : string ="CREATE TABLE IF NOT EXISTS [AvatarInventories] (
+    	[AvatarId]	TEXT NOT NULL,
+    	[ItemId]	INTEGER NOT NULL,
+    	[ItemCount]	INTEGER NOT NULL CHECK(ItemCount>0),
+    	PRIMARY KEY([AvatarId],[ItemId]));"
+
