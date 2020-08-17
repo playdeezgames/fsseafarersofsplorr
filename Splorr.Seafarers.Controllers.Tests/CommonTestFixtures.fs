@@ -149,3 +149,8 @@ let internal shipmateSingleStatisticSourceStub (_) (_) (identifier:ShipmateStati
 
 let internal avatarShipmateSourceStub (_) =
     [Primary]
+
+let internal avatarInventorySourceStub (_) =
+    Map.empty
+let internal avatarInventorySinkStub (_) (_) =
+    ()

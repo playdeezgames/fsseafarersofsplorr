@@ -237,15 +237,17 @@ module World =
             Primary) = Alive
 
     let rec Move
-            (avatarShipmateSource        : AvatarShipmateSource)
+            (avatarShipmateSource          : AvatarShipmateSource)
+            (avatarInventorySource         : AvatarInventorySource)
+            (avatarInventorySink           : AvatarInventorySink)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (vesselSingleStatisticSource : string->VesselStatisticIdentifier->Statistic option)
-            (vesselSingleStatisticSink   : string->VesselStatisticIdentifier*Statistic->unit)
-            (shipmateRationItemSource    : ShipmateRationItemSource)
-            (avatarMessageSink           : AvatarMessageSink)
-            (distance                    : uint32) 
-            (world                       : World) 
+            (vesselSingleStatisticSource   : string->VesselStatisticIdentifier->Statistic option)
+            (vesselSingleStatisticSink     : string->VesselStatisticIdentifier*Statistic->unit)
+            (shipmateRationItemSource      : ShipmateRationItemSource)
+            (avatarMessageSink             : AvatarMessageSink)
+            (distance                      : uint32) 
+            (world                         : World) 
             : World =
         let avatarId = world.AvatarId
         match distance, world.Avatars |> Map.tryFind avatarId with
@@ -257,6 +259,8 @@ module World =
                 |> TransformAvatar 
                     (Avatar.Move 
                         avatarShipmateSource
+                        avatarInventorySource
+                        avatarInventorySink
                         shipmateSingleStatisticSource
                         shipmateSingleStatisticSink
                         vesselSingleStatisticSource 
@@ -273,6 +277,8 @@ module World =
             else
                 Move
                     avatarShipmateSource
+                    avatarInventorySource
+                    avatarInventorySink
                     shipmateSingleStatisticSource
                     shipmateSingleStatisticSink
                     vesselSingleStatisticSource 
@@ -498,6 +504,8 @@ module World =
             (vesselSingleStatisticSource   : VesselSingleStatisticSource)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (avatarInventorySource         : AvatarInventorySource)
+            (avatarInventorySink           : AvatarInventorySink)
             (avatarMessageSink             : AvatarMessageSink)
             (commoditySource               : CommoditySource) 
             (items                         : Map<uint64, ItemDescriptor>) 
@@ -515,8 +523,10 @@ module World =
                 Item.DetermineSalePrice (commoditySource()) markets descriptor 
             let availableTonnage = vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Tonnage |> Option.map (fun x->x.CurrentValue) |> Option.get
             let usedTonnage =
-                avatar
-                |> Avatar.GetUsedTonnage items
+                avatarId
+                |> Avatar.GetUsedTonnage
+                    avatarInventorySource
+                    items
             let quantity =
                 match tradeQuantity with
                 | Specific amount -> amount
@@ -542,13 +552,18 @@ module World =
                 world
                 |> TransformAvatar 
                     (fun a -> 
-                        Avatar.SpendMoney 
+                        world.AvatarId
+                        |> Avatar.SpendMoney 
                             shipmateSingleStatisticSource
                             shipmateSingleStatisticSink
                             price 
-                            world.AvatarId
+                        world.AvatarId
+                        |> Avatar.AddInventory 
+                            avatarInventorySource
+                            avatarInventorySink
+                            item 
+                            quantity 
                         a
-                        |> Avatar.AddInventory item quantity 
                         |> Some)//TODO: once this returns unit, this whole function returns unit
         | None, Some island, Some _ ->
             world
@@ -560,18 +575,20 @@ module World =
             world
 
     let SellItems 
-            (islandMarketSource       : Location -> Map<uint64, Market>) 
-            (islandSingleMarketSource : Location -> uint64            -> Market option) 
-            (islandSingleMarketSink   : Location -> (uint64 * Market) -> unit) 
+            (islandMarketSource            : Location -> Map<uint64, Market>) 
+            (islandSingleMarketSource      : Location -> uint64            -> Market option) 
+            (islandSingleMarketSink        : Location -> (uint64 * Market) -> unit) 
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (avatarMessageSink        : AvatarMessageSink)
-            (commoditySource          : CommoditySource) //TODO: this should move to top of parameter list
-            (items                    : Map<uint64, ItemDescriptor>) //TODO: this should move to top and become source
-            (location                 : Location) 
-            (tradeQuantity            : TradeQuantity) 
-            (itemName                 : string) 
-            (world                    : World) 
+            (avatarInventorySource         : AvatarInventorySource)
+            (avatarInventorySink           : AvatarInventorySink)
+            (avatarMessageSink             : AvatarMessageSink)
+            (commoditySource               : CommoditySource) //TODO: this should move to top of parameter list
+            (items                         : Map<uint64, ItemDescriptor>) //TODO: this should move to top and become source
+            (location                      : Location) 
+            (tradeQuantity                 : TradeQuantity) 
+            (itemName                      : string) 
+            (world                         : World) 
             : World =
         let avatarId = world.AvatarId
         match items |> FindItemByName itemName, world.Islands |> Map.tryFind location, world.Avatars |> Map.tryFind avatarId with
@@ -580,9 +597,9 @@ module World =
                 match tradeQuantity with
                 | Specific q -> q
                 | Maximum -> 
-                    avatar 
-                    |> Avatar.GetItemCount item
-            if quantity > (avatar |> Avatar.GetItemCount item) then
+                    avatarId 
+                    |> Avatar.GetItemCount avatarInventorySource item
+            if quantity > (avatarId |> Avatar.GetItemCount avatarInventorySource item) then
                 world
                 |> AddMessages avatarMessageSink ["You don't have enough of those to sell."]
                 world
@@ -606,7 +623,14 @@ module World =
                             shipmateSingleStatisticSink
                             price 
                             world.AvatarId
-                        a |> Avatar.RemoveInventory item quantity |> Some)
+                        world.AvatarId
+                        |> Avatar.RemoveInventory 
+                            avatarInventorySource
+                            avatarInventorySink
+                            item 
+                            quantity 
+                        a
+                        |> Some)
         | None, Some island, Some _ ->
             world
             |> AddMessages avatarMessageSink ["Round these parts, we don't buy things like that."]

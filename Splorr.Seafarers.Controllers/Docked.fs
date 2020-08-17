@@ -31,6 +31,8 @@ module Docked =
             (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (avatarInventorySource         : AvatarInventorySource)
+            (avatarInventorySink           : AvatarInventorySink)
             (avatarMessageSink             : AvatarMessageSink)
             (avatarMessagePurger           : AvatarMessagePurger)
             (command                       : Command option) 
@@ -57,6 +59,8 @@ module Docked =
                         vesselSingleStatisticSource 
                         shipmateSingleStatisticSource
                         shipmateSingleStatisticSink
+                        avatarInventorySource
+                        avatarInventorySink
                         avatarMessageSink 
                         commoditySource 
                         (itemSource()) 
@@ -76,6 +80,8 @@ module Docked =
                         islandSingleMarketSink 
                         shipmateSingleStatisticSource
                         shipmateSingleStatisticSink
+                        avatarInventorySource
+                        avatarInventorySink
                         avatarMessageSink
                         commoditySource 
                         (itemSource()) 
@@ -158,6 +164,8 @@ module Docked =
             (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (avatarInventorySource         : AvatarInventorySource)
+            (avatarInventorySink           : AvatarInventorySink)
             (avatarMessageSource           : AvatarMessageSource)
             (avatarMessageSink             : AvatarMessageSink)
             (avatarMessagePurger           : AvatarMessagePurger)
@@ -182,6 +190,8 @@ module Docked =
             vesselSingleStatisticSource
             shipmateSingleStatisticSource
             shipmateSingleStatisticSink
+            avatarInventorySource
+            avatarInventorySink
             avatarMessageSink
             avatarMessagePurger
             (commandSource()) 
@@ -216,6 +226,8 @@ module Docked =
             (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (avatarInventorySource         : AvatarInventorySource)
+            (avatarInventorySink           : AvatarInventorySink)
             (avatarMessageSource           : AvatarMessageSource)
             (avatarMessageSink             : AvatarMessageSink)
             (avatarMessagePurger           : AvatarMessagePurger)
@@ -233,6 +245,8 @@ module Docked =
                 vesselSingleStatisticSource  
                 shipmateSingleStatisticSource
                 shipmateSingleStatisticSink  
+                avatarInventorySource
+                avatarInventorySink
                 avatarMessageSource          
                 avatarMessageSink            
                 avatarMessagePurger          

@@ -24,6 +24,8 @@ let private functionUnderTestStubbed
         vesselSingleStatisticSourceStub
         shipmateSingleStatisticSource
         shipmateSingleStatisticSinkStub
+        avatarInventorySourceStub
+        avatarInventorySinkStub
         avatarMessageSourceStub
         avatarMessageSink
         avatarMessagePurgerStub
@@ -398,6 +400,8 @@ let ``Run.It adds a message when given the Buy command and the avatar does not h
             vesselSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             shipmateSingleStatisticSinkStub
+            avatarInventorySourceStub
+            avatarInventorySinkStub
             avatarMessageSourceStub
             (avatarExpectedMessagesSink expectedMessages)
             avatarMessagePurgerStub
@@ -433,7 +437,6 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
     let expectedWorld =
         inputWorld
         |> World.TransformIsland inputLocation (fun _ -> expectedIsland |> Some)
-        |> World.TransformAvatar (Avatar.AddInventory 1UL 1UL >> Some)
     let expected = 
         (Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
@@ -462,6 +465,8 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
             vesselSingleStatisticSourceStub 
             shipmateSingleStatisticSource
             shipmateSingleStatisticSink
+            avatarInventorySourceStub
+            avatarInventorySinkStub
             avatarMessageSourceStub
             (avatarExpectedMessagesSink expectedMessages)
             avatarMessagePurgerStub
@@ -515,7 +520,7 @@ let ``Run.It adds a message when given the Sell command and the avatar does not 
 let ``Run.It adds a message and completes the sale when given the Sell command and the avatar sufficient items to sell.`` () =
     let inputLocation = smallWorldIslandLocation
     let inputItems = [(1UL, 1UL)] |> Map.ofList
-    let inputAvatar = {shopWorld.Avatars.[avatarId] with Inventory = inputItems}
+    let inputAvatar = shopWorld.Avatars.[avatarId]
     let markets =
         Map.empty
         |> Map.add 1UL {Supply = 5.0; Demand =5.0}
@@ -540,8 +545,7 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
         inputWorld.Islands.[inputLocation]
     let expectedMessages = ["You complete the sale of 1 item under test.";"You complete the sale."]
     let expectedAvatar = 
-        {inputAvatar with 
-            Inventory = Map.empty}
+        inputAvatar
     let expectedWorld =
         inputWorld
         |> World.TransformIsland inputLocation (fun _ -> expectedIsland |> Some)
@@ -550,6 +554,8 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
         (Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
         |> Some
+    let avatarInventorySource (_) = Map.empty |> Map.add 1UL 1UL
+    let avatarInventorySink (_) (inventory:Map<uint64, uint64>) = Assert.AreEqual(Map.empty, inventory)
     let actual =
         (inputLocation, inputWorld)
         ||> functionUnderTest 
@@ -559,6 +565,8 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
             vesselSingleStatisticSourceStub 
             shipmateSingleStatisticSourceStub
             shipmateSingleStatisticSinkStub
+            avatarInventorySource
+            avatarInventorySink
             avatarMessageSourceStub
             (avatarExpectedMessagesSink expectedMessages)
             avatarMessagePurgerStub

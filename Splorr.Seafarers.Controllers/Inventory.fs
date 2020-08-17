@@ -5,8 +5,9 @@ open Splorr.Seafarers.Services
 
 module Inventory =
     let private RunWorld 
-            (itemSource                  : unit -> Map<uint64, ItemDescriptor>)
-            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+            (itemSource                  : ItemSource)
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (avatarInventorySource       : AvatarInventorySource)
             (messageSink                 : MessageSink) 
             (world                       : World) 
             : unit =
@@ -20,10 +21,10 @@ module Inventory =
             (Hue.Label, "---------------------+--------+---------" |> Line ) |> Hued
         ]
         |> List.iter messageSink
-        let avatar = world.Avatars.[world.AvatarId]
         let items = itemSource()
         let inventoryEmpty =
-            avatar.Inventory
+            world.AvatarId
+            |> avatarInventorySource
             |> Map.fold
                 (fun _ item quantity -> 
                     let descriptor = items.[item]
@@ -44,7 +45,11 @@ module Inventory =
             vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.Tonnage
             |> Option.map Statistic.GetCurrentValue
             |> Option.get
-        let usedTonnage = avatar |> Avatar.GetUsedTonnage items
+        let usedTonnage = 
+            world.AvatarId 
+            |> Avatar.GetUsedTonnage 
+                avatarInventorySource
+                items
         [
             (Hue.Sublabel, "Cargo Limit: " |> Text) |> Hued
             (Hue.Value, usedTonnage |> sprintf "%.1f" |> Text) |> Hued
@@ -56,11 +61,17 @@ module Inventory =
     let Run 
             (itemSource                  : unit -> Map<uint64, ItemDescriptor>) 
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+            (avatarInventorySource       : AvatarInventorySource)
             (messageSink                 : MessageSink) 
             (gamestate                   : Gamestate) 
             : Gamestate option =
         gamestate 
         |> Gamestate.GetWorld
-        |> Option.iter (RunWorld itemSource vesselSingleStatisticSource messageSink)
+        |> Option.iter 
+            (RunWorld 
+                itemSource 
+                vesselSingleStatisticSource 
+                avatarInventorySource
+                messageSink)
         gamestate
         |> Some

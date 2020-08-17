@@ -187,6 +187,16 @@ let main argv =
         | Ok _ -> ()
         | Error x -> raise (System.InvalidOperationException x)
 
+    let avatarInventorySource (avatarId:string) =
+        match connection |> AvatarInventory.GetForAvatar avatarId with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+
+    let avatarInventorySink (avatarId:string) (inventory:Map<uint64, uint64>) =
+        match connection |> AvatarInventory.SetForAvatar avatarId inventory with
+        | Ok () -> ()
+        | Error x -> raise (System.InvalidOperationException x)
+
     try
         Runner.Run 
             switches 
@@ -210,6 +220,8 @@ let main argv =
             shipmateRationItemSource
             shipmateRationItemSink
             avatarShipmateSource
+            avatarInventorySource
+            avatarInventorySink
             shipmateSingleStatisticSource
             shipmateSingleStatisticSink
             avatarMessageSource

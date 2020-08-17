@@ -29,6 +29,8 @@ module Runner =
             (vesselSingleStatisticSink       : VesselSingleStatisticSink)
             (shipmateRationItemSource        : ShipmateRationItemSource)
             (avatarShipmateSource            : AvatarShipmateSource)
+            (avatarInventorySource           : AvatarInventorySource)
+            (avatarInventorySink             : AvatarInventorySink)
             (shipmateSingleStatisticSource   : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
             (shipmateRationItemSink          : ShipmateRationItemSink)
@@ -57,6 +59,8 @@ module Runner =
                     vesselSingleStatisticSink
                     shipmateRationItemSource
                     avatarShipmateSource
+                    avatarInventorySource
+                    avatarInventorySink
                     shipmateSingleStatisticSource
                     shipmateSingleStatisticSink
                     avatarMessageSource
@@ -106,6 +110,8 @@ module Runner =
                     vesselSingleStatisticSource
                     shipmateSingleStatisticSource
                     shipmateSingleStatisticSink
+                    avatarInventorySource
+                    avatarInventorySink
                     avatarMessageSource
                     avatarMessageSink
                     avatarMessagePurger
@@ -152,6 +158,7 @@ module Runner =
                 Inventory.Run 
                     itemSource 
                     vesselSingleStatisticSource
+                    avatarInventorySource
                     messageSink 
                     gameState
 
@@ -216,6 +223,8 @@ module Runner =
                 vesselSingleStatisticSink
                 shipmateRationItemSource
                 avatarShipmateSource
+                avatarInventorySource
+                avatarInventorySink
                 shipmateSingleStatisticSource
                 shipmateSingleStatisticSink
                 shipmateRationItemSink
@@ -252,6 +261,8 @@ module Runner =
             (shipmateRationItemSource        : ShipmateRationItemSource)
             (shipmateRationItemSink          : ShipmateRationItemSink)
             (avatarShipmateSource            : AvatarShipmateSource)
+            (avatarInventorySource           : AvatarInventorySource)
+            (avatarInventorySink             : AvatarInventorySink)
             (shipmateSingleStatisticSource   : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
             (avatarMessageSource             : AvatarMessageSource)
@@ -286,6 +297,8 @@ module Runner =
             vesselSingleStatisticSink
             shipmateRationItemSource
             avatarShipmateSource
+            avatarInventorySource
+            avatarInventorySink
             shipmateSingleStatisticSource
             shipmateSingleStatisticSink
             shipmateRationItemSink
