@@ -55,7 +55,7 @@ module AtSea =
 
     let private UpdateDisplay 
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (vesselSingleStatisticSource   : string->VesselStatisticIdentifier->Statistic option)
+            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
             (avatarMessageSource           : AvatarMessageSource)
             (messageSink                   : MessageSink) 
             (world                         : World) 
@@ -112,24 +112,24 @@ module AtSea =
                 |> List.iter messageSink)
 
     let private HandleCommand 
-            (termSources                   : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
-            (commoditySource               : unit -> Map<uint64, CommodityDescriptor>) 
-            (itemSource                    : unit -> Map<uint64, ItemDescriptor>) 
-            (worldSingleStatisticSource    : WorldSingleStatisticSource)
-            (islandMarketSource            : Location -> Map<uint64, Market>) 
-            (islandMarketSink              : Location -> Map<uint64, Market> -> unit) 
-            (islandItemSource              : Location -> Set<uint64>) 
-            (islandItemSink                : Location -> Set<uint64> -> unit) 
-            (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
-            (vesselSingleStatisticSink     : string -> VesselStatisticIdentifier * Statistic -> unit)
-            (shipmateRationItemSource      : ShipmateRationItemSource)
-            (avatarShipmateSource          : AvatarShipmateSource)
-            (avatarInventorySource         : AvatarInventorySource)
             (avatarInventorySink           : AvatarInventorySink)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (avatarMessageSink             : AvatarMessageSink)
+            (avatarInventorySource         : AvatarInventorySource)
             (avatarMessagePurger           : AvatarMessagePurger)
+            (avatarMessageSink             : AvatarMessageSink)
+            (avatarShipmateSource          : AvatarShipmateSource)
+            (commoditySource               : CommoditySource) 
+            (islandItemSink                : IslandItemSink) 
+            (islandItemSource              : IslandItemSource) 
+            (islandMarketSink              : IslandMarketSink) 
+            (islandMarketSource            : IslandMarketSource) 
+            (itemSource                    : ItemSource) 
+            (shipmateRationItemSource      : ShipmateRationItemSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (termSources                   : TermSources)
+            (vesselSingleStatisticSink     : VesselSingleStatisticSink)
+            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
+            (worldSingleStatisticSource    : WorldSingleStatisticSource)
             (random                        : Random) 
             (command                       : Command option) 
             (world                         : World) 
@@ -305,16 +305,16 @@ module AtSea =
             |> Some
 
     let private RunAlive 
-            (termSources                   : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
-            (commoditySource               : unit -> Map<uint64, CommodityDescriptor>) 
-            (itemSource                    : unit -> Map<uint64, ItemDescriptor>) 
+            (termSources                   : TermSources)
+            (commoditySource               : CommoditySource) 
+            (itemSource                    : ItemSource) 
             (worldSingleStatisticSource    : WorldSingleStatisticSource)
-            (islandMarketSource            : Location -> Map<uint64, Market>) 
-            (islandMarketSink              : Location -> Map<uint64, Market>->unit) 
-            (islandItemSource              : Location -> Set<uint64>) 
-            (islandItemSink                : Location -> Set<uint64>->unit) 
-            (vesselSingleStatisticSource   : string->VesselStatisticIdentifier->Statistic option)
-            (vesselSingleStatisticSink     : string->VesselStatisticIdentifier*Statistic->unit)
+            (islandMarketSource            : IslandMarketSource) 
+            (islandMarketSink              : IslandMarketSink) 
+            (islandItemSource              : IslandItemSource) 
+            (islandItemSink                : IslandItemSink) 
+            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
+            (vesselSingleStatisticSink     : VesselSingleStatisticSink)
             (shipmateRationItemSource      : ShipmateRationItemSource)
             (avatarShipmateSource          : AvatarShipmateSource)
             (avatarInventorySource         : AvatarInventorySource)
@@ -336,48 +336,48 @@ module AtSea =
             messageSink 
             world
         HandleCommand
-            termSources
-            commoditySource
-            itemSource
-            worldSingleStatisticSource
-            islandMarketSource
-            islandMarketSink
-            islandItemSource
-            islandItemSink
-            vesselSingleStatisticSource
-            vesselSingleStatisticSink
-            shipmateRationItemSource
-            avatarShipmateSource
-            avatarInventorySource
             avatarInventorySink
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            avatarMessageSink
+            avatarInventorySource
             avatarMessagePurger
+            avatarMessageSink
+            avatarShipmateSource
+            commoditySource
+            islandItemSink
+            islandItemSource
+            islandMarketSink
+            islandMarketSource
+            itemSource
+            shipmateRationItemSource
+            shipmateSingleStatisticSink
+            shipmateSingleStatisticSource
+            termSources
+            vesselSingleStatisticSink
+            vesselSingleStatisticSource
+            worldSingleStatisticSource
             random
             (commandSource())
             world
 
     let Run 
-            (termSources                   : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
-            (commoditySource               : CommoditySource) 
-            (itemSource                    : ItemSource) 
-            (worldSingleStatisticSource    : WorldSingleStatisticSource)
-            (islandMarketSource            : Location -> Map<uint64, Market>) 
-            (islandMarketSink              : Location -> Map<uint64, Market>->unit) 
-            (islandItemSource              : Location -> Set<uint64>) 
-            (islandItemSink                : Location -> Set<uint64>->unit) 
-            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
-            (vesselSingleStatisticSink     : VesselSingleStatisticSink)
-            (shipmateRationItemSource      : ShipmateRationItemSource)
-            (avatarShipmateSource          : AvatarShipmateSource)
-            (avatarInventorySource         : AvatarInventorySource)
             (avatarInventorySink           : AvatarInventorySink)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (avatarMessageSource           : AvatarMessageSource)
-            (avatarMessageSink             : AvatarMessageSink)
+            (avatarInventorySource         : AvatarInventorySource)
             (avatarMessagePurger           : AvatarMessagePurger)
+            (avatarMessageSink             : AvatarMessageSink)
+            (avatarMessageSource           : AvatarMessageSource)
+            (avatarShipmateSource          : AvatarShipmateSource)
+            (commoditySource               : CommoditySource) 
+            (islandItemSink                : IslandItemSink) 
+            (islandItemSource              : IslandItemSource) 
+            (islandMarketSink              : IslandMarketSink) 
+            (islandMarketSource            : IslandMarketSource) 
+            (itemSource                    : ItemSource) 
+            (shipmateRationItemSource      : ShipmateRationItemSource)
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (termSources                   : TermSources)
+            (vesselSingleStatisticSink     : VesselSingleStatisticSink)
+            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
+            (worldSingleStatisticSource    : WorldSingleStatisticSource)
             (random                        : Random) 
             (commandSource                 : CommandSource) 
             (messageSink                   : MessageSink) 

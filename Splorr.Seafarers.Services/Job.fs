@@ -3,11 +3,12 @@ open Splorr.Seafarers.Models
 open System
 
 type TermSource = unit -> string list
+type TermSources = TermSource * TermSource * TermSource * TermSource * TermSource * TermSource
 type WorldSingleStatisticSource = WorldStatisticIdentifier -> Statistic
 
 module Job =
     let Create 
-            (termSources                : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
+            (termSources                : TermSources)
             (worldSingleStatisticSource : WorldSingleStatisticSource)
             (random                     : Random) 
             (destinations               : Set<Location>) 

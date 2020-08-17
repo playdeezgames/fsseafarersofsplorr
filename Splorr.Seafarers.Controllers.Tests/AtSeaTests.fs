@@ -12,25 +12,25 @@ let private functionUnderTest
         (vesselSingleStatisticSource   : VesselSingleStatisticSource) 
         (avatarMessageSink             : AvatarMessageSink)= 
     AtSea.Run 
-        termSources
-        atSeaCommoditySource 
-        atSeaItemSource
-        worldSingleStatisticSourceStub
-        atSeaIslandMarketSource 
-        atSeaIslandMarketSink 
-        atSeaIslandItemSource 
-        atSeaIslandItemSink 
-        vesselSingleStatisticSource
-        vesselSingleStatisticSinkStub
-        shipmateRationItemSourceStub
-        avatarShipmateSourceStub
-        avatarInventorySourceStub
         avatarInventorySinkStub
-        shipmateSingleStatisticSource
-        shipmateSingleStatisticSinkStub
-        avatarMessageSourceStub
-        avatarMessageSink
+        avatarInventorySourceStub
         avatarMessagePurgerStub
+        avatarMessageSink
+        avatarMessageSourceStub
+        avatarShipmateSourceStub
+        atSeaCommoditySource 
+        atSeaIslandItemSink 
+        atSeaIslandItemSource 
+        atSeaIslandMarketSink 
+        atSeaIslandMarketSource 
+        atSeaItemSource
+        shipmateRationItemSourceStub
+        shipmateSingleStatisticSinkStub
+        shipmateSingleStatisticSource
+        termSources
+        vesselSingleStatisticSinkStub
+        vesselSingleStatisticSource
+        worldSingleStatisticSourceStub
         random 
 
 let private functionUsuallyUnderTest = 

@@ -1,7 +1,6 @@
 ﻿namespace Splorr.Seafarers
 
 open Splorr.Seafarers.Controllers
-open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open System
 
@@ -9,9 +8,9 @@ module Runner =
 
 
     let rec private Loop 
-            (switches                        : Set<string>) 
+            (switches                        : Set<string>) //TODO: to source
             (nameSource                      : TermSource)
-            (termSources                     : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
+            (termSources                     : TermSources)
             (commoditySource                 : CommoditySource)
             (itemSource                      : ItemSource)
             (worldSingleStatisticSource      : WorldSingleStatisticSource)
@@ -47,25 +46,25 @@ module Runner =
             match gamestate with
             | Gamestate.AtSea world -> 
                 AtSea.Run 
-                    termSources
-                    commoditySource 
-                    itemSource 
-                    worldSingleStatisticSource
-                    islandMarketSource
-                    islandMarketSink 
-                    islandItemSource 
-                    islandItemSink 
-                    vesselSingleStatisticSource
-                    vesselSingleStatisticSink
-                    shipmateRationItemSource
-                    avatarShipmateSource
-                    avatarInventorySource
                     avatarInventorySink
-                    shipmateSingleStatisticSource
-                    shipmateSingleStatisticSink
-                    avatarMessageSource
-                    avatarMessageSink
+                    avatarInventorySource
                     avatarMessagePurger
+                    avatarMessageSink
+                    avatarMessageSource
+                    avatarShipmateSource
+                    commoditySource 
+                    islandItemSink 
+                    islandItemSource 
+                    islandMarketSink 
+                    islandMarketSource
+                    itemSource 
+                    shipmateRationItemSource
+                    shipmateSingleStatisticSink
+                    shipmateSingleStatisticSource
+                    termSources
+                    vesselSingleStatisticSink
+                    vesselSingleStatisticSource
+                    worldSingleStatisticSource
                     random 
                     commandSource 
                     messageSink 
