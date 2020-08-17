@@ -137,15 +137,15 @@ module MainMenu =
                 command
 
     let Run 
-            (nameSource                      : TermSource)
-            (worldSingleStatisticSource      : WorldSingleStatisticSource)
-            (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
-            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
             (rationItemSource                : RationItemSource)
-            (vesselStatisticTemplateSource   : unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>)
-            (vesselStatisticSink             : string -> Map<VesselStatisticIdentifier, Statistic> -> unit)
-            (vesselSingleStatisticSource     : string -> VesselStatisticIdentifier -> Statistic option)
             (shipmateRationItemSink          : ShipmateRationItemSink)
+            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
+            (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
+            (termNameSource                  : TermSource)
+            (vesselSingleStatisticSource     : VesselSingleStatisticSource)
+            (vesselStatisticSink             : VesselStatisticSink)
+            (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
+            (worldSingleStatisticSource      : WorldSingleStatisticSource)
             (commandSource                   : CommandSource) 
             (messageSink                     : MessageSink) 
             (world                           : World option) 
@@ -154,7 +154,7 @@ module MainMenu =
             messageSink 
             world.IsSome
         HandleCommand
-            nameSource
+            termNameSource
             worldSingleStatisticSource
             shipmateStatisticTemplateSource
             shipmateSingleStatisticSink

@@ -16,7 +16,7 @@ let private avatarId = ""
 
 let private world = 
     World.Create 
-        nameSource
+        termNameSource
         worldSingleStatisticSourceStub
         shipmateStatisticTemplateSourceStub
         shipmateSingleStatisticSinkStub
@@ -172,8 +172,8 @@ let ``CheckForAvatarDeath.It returns the original gamestate when the avatar embe
     let actual =
         input
         |> Gamestate.CheckForAvatarDeath
-            shipmateSingleStatisticSourceStub
             avatarMessageSourceStub
+            shipmateSingleStatisticSourceStub
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -187,8 +187,8 @@ let ``CheckForAvatarDeath.It returns the original gamestate when there is not a 
     let actual =
         input
         |> Gamestate.CheckForAvatarDeath
-            shipmateSingleStatisticSourceStub
             avatarMessageSourceStub
+            shipmateSingleStatisticSourceStub
     Assert.AreEqual(expected, actual)
 
 
@@ -211,6 +211,6 @@ let ``CheckForAvatarDeath.It returns gameover when the avatar embedded therein i
     let actual =
         input
         |> Gamestate.CheckForAvatarDeath 
-            shipmateSingleStatisticSource
             avatarMessageSourceStub
+            shipmateSingleStatisticSource
     Assert.AreEqual(expected, actual)

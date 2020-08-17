@@ -59,9 +59,9 @@ module Inventory =
         |> List.iter messageSink
 
     let Run 
-            (itemSource                  : unit -> Map<uint64, ItemDescriptor>) 
-            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (avatarInventorySource       : AvatarInventorySource)
+            (itemSource                  : ItemSource) 
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (messageSink                 : MessageSink) 
             (gamestate                   : Gamestate) 
             : Gamestate option =

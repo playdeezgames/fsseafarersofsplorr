@@ -24,7 +24,7 @@ let private random = Random()
 
 let internal world = 
     World.Create 
-        nameSource
+        termNameSource
         worldSingleStatisticSourceStub
         shipmateStatisticTemplateSourceStub
         shipmateSingleStatisticSinkStub
@@ -58,7 +58,7 @@ let internal emptyWorldSingleStatisticSource (identfier: WorldStatisticIdentifie
 
 let internal emptyWorld = 
     World.Create 
-        nameSource
+        termNameSource
         emptyWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
         shipmateSingleStatisticSinkStub
@@ -86,7 +86,7 @@ let internal dockWorldSingleStatisticSource (identfier: WorldStatisticIdentifier
         raise (System.NotImplementedException (sprintf "dockWorldSingleStatisticSource %s" (identfier.ToString())))
 let internal dockWorld = 
     World.Create 
-        nameSource
+        termNameSource
         dockWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
         shipmateSingleStatisticSinkStub
@@ -102,7 +102,7 @@ let internal commoditySourceStub () = Map.empty
 
 let internal headForWorldUnvisited = 
     World.Create 
-        nameSource
+        termNameSource
         dockWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
         shipmateRationItemSinkStub

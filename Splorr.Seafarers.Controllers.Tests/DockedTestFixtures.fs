@@ -7,7 +7,7 @@ open AtSeaTestFixtures
 
 let internal dockWorld = 
     World.Create
-        nameSource
+        termNameSource
         dockWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
         shipmateSingleStatisticSinkStub
@@ -77,7 +77,7 @@ let internal smallWorldSingleStatisticSource (identifier: WorldStatisticIdentifi
 
 let internal smallWorld = 
     World.Create 
-        nameSource
+        termNameSource
         smallWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
         shipmateSingleStatisticSinkStub

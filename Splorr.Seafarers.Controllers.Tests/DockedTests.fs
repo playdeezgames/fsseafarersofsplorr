@@ -7,28 +7,40 @@ open CommonTestFixtures
 open DockedTestFixtures
 open Splorr.Seafarers.Services
 
-let private functionUnderTest (itemMarketSource) (itemSingleMarketSink) =  
+let private functionUnderTest
+        (avatarInventorySink           : AvatarInventorySink)
+        (avatarInventorySource         : AvatarInventorySource)
+        (avatarMessageSink             : AvatarMessageSink)
+        (islandMarketSource            : IslandMarketSource) 
+        (islandSingleMarketSink        : IslandSingleMarketSink) 
+        (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+        =
     Docked.Run 
+        avatarInventorySink
+        avatarInventorySource
+        avatarMessagePurgerStub
+        avatarMessageSink
+        avatarMessageSourceStub
         commoditySource 
+        islandMarketSource 
+        islandSingleMarketSink
+        dockedItemSingleMarketSourceStub
         itemSource 
-        itemMarketSource 
-        itemSingleMarketSink
+        shipmateSingleStatisticSinkStub
+        shipmateSingleStatisticSource
+        vesselSingleStatisticSourceStub
 
 let private functionUnderTestStubbed 
+        (avatarMessageSink             : AvatarMessageSink) 
         (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-        (avatarMessageSink             : AvatarMessageSink)= 
+        =
     functionUnderTest 
-        dockedItemMarketSourceStub 
-        dockedItemSingleMarketSourceStub 
-        dockedItemSingleMarketSinkStub 
-        vesselSingleStatisticSourceStub
-        shipmateSingleStatisticSource
-        shipmateSingleStatisticSinkStub
-        avatarInventorySourceStub
         avatarInventorySinkStub
-        avatarMessageSourceStub
+        avatarInventorySourceStub
         avatarMessageSink
-        avatarMessagePurgerStub
+        dockedItemMarketSourceStub 
+        dockedItemSingleMarketSinkStub 
+        shipmateSingleStatisticSource
 
 [<Test>]
 let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
@@ -51,8 +63,8 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed
-            shipmateSingleStatisticSource
             avatarMessageSinkStub
+            shipmateSingleStatisticSource
             inputSource 
             sinkStub 
     Assert.AreEqual(expected, actual)
@@ -72,8 +84,8 @@ let ``Run.It returns AtSea when given Undock Command.`` () =
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed
-            shipmateSingleStatisticSourceStub
             avatarMessageSinkStub
+            shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub 
     Assert.AreEqual(expected, actual)
@@ -91,8 +103,8 @@ let ``Run.It returns ConfirmQuit when given Quit Command.`` () =
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed
-            shipmateSingleStatisticSourceStub
             avatarMessageSinkStub
+            shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub 
     Assert.AreEqual(expected,actual)
@@ -113,8 +125,8 @@ let ``Run.It returns Metrics when given Metrics Command.`` () =
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed
-            shipmateSingleStatisticSourceStub
             avatarMessageSinkStub
+            shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub 
     Assert.AreEqual(expected, actual)
@@ -135,8 +147,8 @@ let ``Run.It returns Help when given Help Command.`` () =
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
-            shipmateSingleStatisticSourceStub
             avatarMessageSinkStub
+            shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub 
     Assert.AreEqual(expected, actual)
@@ -157,8 +169,8 @@ let ``Run.It returns Inventory when given Inventory Command.`` () =
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
-            shipmateSingleStatisticSourceStub
             avatarMessageSinkStub
+            shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub 
     Assert.AreEqual(expected, actual)
@@ -178,8 +190,8 @@ let ``Run.It returns InvalidInput when given invalid Command.`` () =
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
-            shipmateSingleStatisticSourceStub
             avatarMessageSinkStub
+            shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub
     Assert.AreEqual(expected, actual)
@@ -200,8 +212,8 @@ let ``Run.It returns AtSea when given invalid docked location.`` () =
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
-            shipmateSingleStatisticSourceStub
             avatarMessageSinkStub
+            shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub
     Assert.AreEqual(expected,actual)
@@ -222,8 +234,8 @@ let ``Run.It returns Status when given the command Status.`` () =
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
-            shipmateSingleStatisticSourceStub
             avatarMessageSinkStub
+            shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub
     Assert.AreEqual(expected, actual)
@@ -244,8 +256,8 @@ let ``Run.It returns Docked (at Jobs) gamestate when given the command Jobs.`` (
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
-            shipmateSingleStatisticSourceStub
             avatarMessageSinkStub
+            shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub
     Assert.AreEqual(expected, actual)
@@ -268,8 +280,8 @@ let ``Run.It gives a message when given the Accept Job command and the given job
     let actual =
         input
         |> functionUnderTestStubbed 
-            shipmateSingleStatisticSourceStub
             avatarMessageSinkStub
+            shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub 
             inputLocation
@@ -295,8 +307,8 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
     let actual =
         input
         |> functionUnderTestStubbed 
-            shipmateSingleStatisticSourceStub
             avatarMessageSinkStub
+            shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub 
             inputLocation
@@ -321,8 +333,8 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
     let actual =
         input
         |> functionUnderTestStubbed 
-            shipmateSingleStatisticSourceStub
             avatarMessageSinkStub
+            shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub 
             inputLocation
@@ -343,8 +355,8 @@ let ``Run.It returns Docked (at ItemList) gamestate when given the Items command
     let actual =
         (inputLocation, inputWorld)
         ||> functionUnderTestStubbed 
-            shipmateSingleStatisticSourceStub
             avatarMessageSinkStub
+            shipmateSingleStatisticSourceStub
             inputSource 
             (sinkStub)
     Assert.AreEqual(expected, actual)
@@ -364,8 +376,8 @@ let ``Run.It adds a message when given the Buy command for a non-existent item.`
     let actual =
         (inputLocation, inputWorld)
         ||> functionUnderTestStubbed 
-            shipmateSingleStatisticSourceStub
             (avatarExpectedMessagesSink expectedMessages)
+            shipmateSingleStatisticSourceStub
             inputSource 
             (sinkStub)
     Assert.AreEqual(expected, actual)
@@ -394,17 +406,12 @@ let ``Run.It adds a message when given the Buy command and the avatar does not h
     let actual =
         (inputLocation, inputWorld)
         ||> functionUnderTest 
-            islandMarketSource 
-            islandSingleMarketSource 
-            islandSingleMarketSink 
-            vesselSingleStatisticSourceStub
-            shipmateSingleStatisticSourceStub
-            shipmateSingleStatisticSinkStub
-            avatarInventorySourceStub
             avatarInventorySinkStub
-            avatarMessageSourceStub
+            avatarInventorySourceStub
             (avatarExpectedMessagesSink expectedMessages)
-            avatarMessagePurgerStub
+            islandMarketSource 
+            islandSingleMarketSink 
+            shipmateSingleStatisticSourceStub
             inputSource 
             (sinkStub)
     Assert.AreEqual(expected, actual)
@@ -419,9 +426,6 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
         Map.empty
         |> Map.add 1UL {Demand=5.0; Supply=5.0}
     let islandMarketSource (_) = markets
-    let islandSingleMarketSource x y =
-        islandMarketSource x
-        |> Map.tryFind y
     let commodities = commoditySource()
     let smallWorldItems = itemSource()
     let expectedPrice = Item.DetermineSalePrice commodities markets smallWorldItems.[1UL]
@@ -452,24 +456,15 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
         | _ ->
             raise (System.NotImplementedException (identifier.ToString() |> sprintf "shipmateSingleStatisticSource - %s"))
             None
-    let shipmateSingleStatisticSink (_) (_) (identifier:ShipmateStatisticIdentifier, statistic: Statistic option) =
-        match identifier with
-        | _ ->
-            raise (System.NotImplementedException (identifier.ToString() |> sprintf "shipmateSingleStatisticSink - %s"))
     let actual =
         (inputLocation, inputWorld)
         ||> functionUnderTest 
-            islandMarketSource 
-            islandSingleMarketSource 
-            islandSingleMarketSink 
-            vesselSingleStatisticSourceStub 
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            avatarInventorySourceStub
             avatarInventorySinkStub
-            avatarMessageSourceStub
+            avatarInventorySourceStub
             (avatarExpectedMessagesSink expectedMessages)
-            avatarMessagePurgerStub
+            islandMarketSource 
+            islandSingleMarketSink 
+            shipmateSingleStatisticSource
             inputSource 
             (sinkStub)
     Assert.AreEqual(expected, actual)
@@ -489,8 +484,8 @@ let ``Run.It adds a message when given the Sell command for a non-existent item.
     let actual =
         (inputLocation, inputWorld)
         ||> functionUnderTestStubbed 
-            shipmateSingleStatisticSourceStub
             (avatarExpectedMessagesSink expectedMessages)
+            shipmateSingleStatisticSourceStub
             inputSource 
             (sinkStub)
     Assert.AreEqual(expected, actual)
@@ -510,8 +505,8 @@ let ``Run.It adds a message when given the Sell command and the avatar does not 
     let actual =
         (inputLocation, inputWorld)
         ||> functionUnderTestStubbed 
-            shipmateSingleStatisticSourceStub
             (avatarExpectedMessagesSink expectedMessages)
+            shipmateSingleStatisticSourceStub
             inputSource 
             (sinkStub)
     Assert.AreEqual(expected, actual)
@@ -559,17 +554,12 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
     let actual =
         (inputLocation, inputWorld)
         ||> functionUnderTest 
-            islandMarketSource 
-            islandSingleMarketSource 
-            islandSingleMarketSink 
-            vesselSingleStatisticSourceStub 
-            shipmateSingleStatisticSourceStub
-            shipmateSingleStatisticSinkStub
-            avatarInventorySource
             avatarInventorySink
-            avatarMessageSourceStub
+            avatarInventorySource
             (avatarExpectedMessagesSink expectedMessages)
-            avatarMessagePurgerStub
+            islandMarketSource 
+            islandSingleMarketSink 
+            shipmateSingleStatisticSourceStub
             inputSource 
             (sinkStub)
     Assert.AreEqual(expected, actual)

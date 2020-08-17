@@ -114,7 +114,7 @@ let internal professionSource()      : string list = [ "poopsmith" ]
 let internal termSources = 
     (adverbSource, adjectiveSource, objectNameSource, personNameSource, personAdjectiveSource, professionSource)
 
-let internal nameSource() = []
+let internal termNameSource() = []
 
 let internal shipmateRationItemSourceStub (_) (_) = [ 1UL ]
 let internal shipmateRationItemSinkStub (_) (_) (_) = ()

@@ -218,19 +218,19 @@ module Docked =
             |> Some
 
     let Run 
-            (commoditySource               : unit -> Map<uint64, CommodityDescriptor>) 
-            (itemSource                    : unit -> Map<uint64, ItemDescriptor>) 
-            (islandMarketSource            : Location -> Map<uint64,Market>) 
-            (islandSingleMarketSource      : Location -> uint64 -> Market option) 
-            (islandSingleMarketSink        : Location -> uint64 * Market -> unit) 
-            (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (avatarInventorySource         : AvatarInventorySource)
             (avatarInventorySink           : AvatarInventorySink)
-            (avatarMessageSource           : AvatarMessageSource)
-            (avatarMessageSink             : AvatarMessageSink)
+            (avatarInventorySource         : AvatarInventorySource)
             (avatarMessagePurger           : AvatarMessagePurger)
+            (avatarMessageSink             : AvatarMessageSink)
+            (avatarMessageSource           : AvatarMessageSource)
+            (commoditySource               : CommoditySource) 
+            (islandMarketSource            : IslandMarketSource) 
+            (islandSingleMarketSink        : IslandSingleMarketSink) 
+            (islandSingleMarketSource      : IslandSingleMarketSource) 
+            (itemSource                    : ItemSource) 
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
             (commandSource                 : CommandSource) 
             (messageSink                   : MessageSink) =
         RunBoilerplate 

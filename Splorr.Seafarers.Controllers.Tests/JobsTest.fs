@@ -9,7 +9,7 @@ open AtSeaTestFixtures
 
 let private dockWorld = 
     World.Create 
-        nameSource
+        termNameSource
         dockWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
         shipmateSingleStatisticSinkStub

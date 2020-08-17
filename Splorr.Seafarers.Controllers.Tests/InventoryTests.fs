@@ -19,8 +19,8 @@ let ``Run.It returns the given gamestate.`` () =
     let actual =
         input
         |> Inventory.Run 
+            avatarInventorySourceStub
             atSeaItemSource 
             vesselSingleStatisticSourceStub 
-            avatarInventorySourceStub
             sinkStub
     Assert.AreEqual(expected, actual)

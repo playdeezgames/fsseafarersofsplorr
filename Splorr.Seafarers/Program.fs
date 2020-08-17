@@ -138,7 +138,7 @@ let main argv =
         | Ok x -> x
         | Error x -> raise (System.InvalidOperationException x)
 
-    let islandNameSource() : string list =
+    let termNameSource() : string list =
         match connection |> Term.GetForTermType "island name" with
         | Ok x -> x
         | Error x -> raise (System.InvalidOperationException x)
@@ -267,30 +267,29 @@ let main argv =
             avatarMessagePurger
             avatarMessageSink
             avatarMessageSource
-
-            switchSource 
-            islandNameSource
-            termSources
-            commoditySource
-            itemSource 
-            worldSingleStatisticSource
-            shipmateStatisticTemplateSource
-            rationItemSource
-            islandMarketSource 
-            islandSingleMarketSource
-            islandMarketSink 
-            islandSingleMarketSink 
-            islandItemSource 
-            islandItemSink 
-            vesselStatisticTemplateSource
-            vesselStatisticSink
-            vesselSingleStatisticSource
-            vesselSingleStatisticSink
-            shipmateRationItemSource
-            shipmateRationItemSink
             avatarShipmateSource
-            shipmateSingleStatisticSource
+            commoditySource
+            islandItemSink 
+            islandItemSource 
+            islandMarketSink 
+            islandMarketSource 
+            islandSingleMarketSink 
+            islandSingleMarketSource
+            itemSource 
+            rationItemSource
+            shipmateRationItemSink
+            shipmateRationItemSource
             shipmateSingleStatisticSink
+            shipmateSingleStatisticSource
+            shipmateStatisticTemplateSource
+            switchSource 
+            termNameSource
+            termSources
+            vesselSingleStatisticSink
+            vesselSingleStatisticSource
+            vesselStatisticSink
+            vesselStatisticTemplateSource
+            worldSingleStatisticSource
     finally
         connection.Close()
     0

@@ -124,13 +124,13 @@ module Careened =
             world
 
     let Run 
-            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
-            (vesselSingleStatisticSink   : string -> VesselStatisticIdentifier*Statistic -> unit)
+            (avatarMessagePurger           : AvatarMessagePurger)
+            (avatarMessageSource           : AvatarMessageSource)
             (avatarShipmateSource          : AvatarShipmateSource)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (avatarMessageSource         : AvatarMessageSource)
-            (avatarMessagePurger         : AvatarMessagePurger)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (vesselSingleStatisticSink     : VesselSingleStatisticSink)
+            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
             (commandSource:CommandSource) 
             (messageSink:MessageSink) 
             (side:Side) 

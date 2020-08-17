@@ -7,6 +7,16 @@ open Splorr.Seafarers.Controllers
 open CommonTestFixtures
 open AtSeaTestFixtures
 
+let private functionUnderTest = 
+    Careened.Run 
+        avatarMessagePurgerStub
+        avatarMessageSourceStub
+        avatarShipmateSourceStub
+        shipmateSingleStatisticSinkStub
+        shipmateSingleStatisticSourceStub
+        vesselSingleStatisticSinkStub
+        vesselSingleStatisticSourceStub
+
 [<Test>]
 let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
     let inputWorld = deadWorld
@@ -28,13 +38,13 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
     let actual =
         inputWorld
         |> Careened.Run 
-            vesselSingleStatisticSourceStub
-            vesselSingleStatisticSinkStub
-            avatarShipmateSourceStub
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSinkStub
-            avatarMessageSourceStub
             avatarMessagePurgerStub
+            avatarMessageSourceStub
+            avatarShipmateSourceStub
+            shipmateSingleStatisticSinkStub
+            shipmateSingleStatisticSource
+            vesselSingleStatisticSinkStub
+            vesselSingleStatisticSourceStub
             inputSource 
             sinkStub 
             inputSide
@@ -55,14 +65,7 @@ let ``Run.It returns ConfirmQuit when given Quit command.`` () =
         |> Some
     let actual =
         inputWorld
-        |> Careened.Run 
-            vesselSingleStatisticSourceStub
-            vesselSingleStatisticSinkStub
-            avatarShipmateSourceStub
-            shipmateSingleStatisticSourceStub
-            shipmateSingleStatisticSinkStub
-            avatarMessageSourceStub
-            avatarMessagePurgerStub
+        |> functionUnderTest
             inputSource 
             sinkStub 
             inputSide
@@ -82,14 +85,7 @@ let ``Run.It returns InvalidInput when given invalid command.`` () =
         |> Some
     let actual =
         inputWorld
-        |> Careened.Run 
-            vesselSingleStatisticSourceStub
-            vesselSingleStatisticSinkStub
-            avatarShipmateSourceStub
-            shipmateSingleStatisticSourceStub
-            shipmateSingleStatisticSinkStub
-            avatarMessageSourceStub
-            avatarMessagePurgerStub
+        |> functionUnderTest
             inputSource 
             sinkStub 
             inputSide
@@ -110,14 +106,7 @@ let ``Run.It returns Careened Help when given the Help command.`` () =
         |> Some
     let actual =
         inputWorld
-        |> Careened.Run 
-            vesselSingleStatisticSourceStub
-            vesselSingleStatisticSinkStub
-            avatarShipmateSourceStub
-            shipmateSingleStatisticSourceStub
-            shipmateSingleStatisticSinkStub
-            avatarMessageSourceStub
-            avatarMessagePurgerStub
+        |> functionUnderTest
             inputSource 
             sinkStub 
             inputSide
@@ -138,14 +127,7 @@ let ``Run.It returns Careened Metrics when given the Metrics command.`` () =
         |> Some
     let actual =
         inputWorld
-        |> Careened.Run 
-            vesselSingleStatisticSourceStub
-            vesselSingleStatisticSinkStub
-            avatarShipmateSourceStub
-            shipmateSingleStatisticSourceStub
-            shipmateSingleStatisticSinkStub
-            avatarMessageSourceStub
-            avatarMessagePurgerStub
+        |> functionUnderTest
             inputSource 
             sinkStub 
             inputSide
@@ -166,14 +148,7 @@ let ``Run.It returns Careened Inventory when given the Inventory command.`` () =
         |> Some
     let actual =
         inputWorld
-        |> Careened.Run 
-            vesselSingleStatisticSourceStub
-            vesselSingleStatisticSinkStub
-            avatarShipmateSourceStub
-            shipmateSingleStatisticSourceStub
-            shipmateSingleStatisticSinkStub
-            avatarMessageSourceStub
-            avatarMessagePurgerStub
+        |> functionUnderTest
             inputSource 
             sinkStub 
             inputSide
@@ -194,14 +169,7 @@ let ``Run.It returns Status when given the command Status.`` () =
         |> Some
     let actual =
         inputWorld
-        |> Careened.Run 
-            vesselSingleStatisticSourceStub
-            vesselSingleStatisticSinkStub
-            avatarShipmateSourceStub
-            shipmateSingleStatisticSourceStub
-            shipmateSingleStatisticSinkStub
-            avatarMessageSourceStub
-            avatarMessagePurgerStub
+        |> functionUnderTest
             inputSource 
             sinkStub 
             inputSide
@@ -221,14 +189,7 @@ let ``Run.It returns At Sea when given the command Weigh Anchor.`` () =
         |> Some
     let actual =
         inputWorld
-        |> Careened.Run 
-            vesselSingleStatisticSourceStub
-            vesselSingleStatisticSinkStub
-            avatarShipmateSourceStub
-            shipmateSingleStatisticSourceStub
-            shipmateSingleStatisticSinkStub
-            avatarMessageSourceStub
-            avatarMessagePurgerStub
+        |> functionUnderTest
             inputSource
             sinkStub
             inputSide
@@ -254,14 +215,7 @@ let ``Run.It returns Careened with a cleaned hull when given the command Clean H
         |> Some
     let actual =
         inputWorld
-        |> Careened.Run 
-            vesselSingleStatisticSourceStub
-            vesselSingleStatisticSinkStub
-            avatarShipmateSourceStub
-            shipmateSingleStatisticSourceStub
-            shipmateSingleStatisticSinkStub
-            avatarMessageSourceStub
-            avatarMessagePurgerStub
+        |> functionUnderTest
             inputSource 
             sinkStub 
             inputSide

@@ -46,8 +46,8 @@ module Gamestate =
         | _ -> None
 
     let CheckForAvatarDeath 
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (avatarMessageSource           : AvatarMessageSource)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (gamestate                     : Gamestate option) 
             : Gamestate option =
         gamestate
