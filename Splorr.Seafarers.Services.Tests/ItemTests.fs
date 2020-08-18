@@ -10,7 +10,6 @@ let internal markets =
     [(1UL,{Demand=3.0;Supply=2.0})] |> Map.ofList
 let internal itemDescriptor = 
     {
-        ItemId = 1UL
         ItemName=""
         Commodities = [(1UL, 1.0)]|>Map.ofList
         Occurrence=0.0

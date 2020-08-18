@@ -53,7 +53,6 @@ let internal commoditySource = fun () -> commodities
 let internal items =
     [(1UL, 
         {
-            ItemId = 1UL
             ItemName = "rations"
             Commodities=[(1UL, 1.0)]|>Map.ofList
             Occurrence=1.0

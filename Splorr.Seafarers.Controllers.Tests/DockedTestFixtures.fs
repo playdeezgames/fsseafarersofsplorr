@@ -49,7 +49,6 @@ let internal itemSource () : Map<uint64, ItemDescriptor> =
     [
         1UL, 
             {
-                ItemId = 1UL
                 ItemName="item under test"
                 Commodities=
                     Map.empty 

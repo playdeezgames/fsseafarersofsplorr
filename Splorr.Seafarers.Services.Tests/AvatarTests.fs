@@ -885,14 +885,12 @@ let ``GetUsedTonnage.It calculates the used tonnage based on inventory and item 
     let inputItems =
         Map.empty
         |> Map.add 1UL {
-                        ItemId = 1UL
                         ItemName =""
                         Commodities =Map.empty
                         Occurrence  =0.0
                         Tonnage     =1.0
                         }
         |> Map.add 2UL {
-                        ItemId = 1UL
                         ItemName =""
                         Commodities =Map.empty
                         Occurrence  =0.0
