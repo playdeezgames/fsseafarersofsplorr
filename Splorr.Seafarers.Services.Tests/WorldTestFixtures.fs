@@ -65,7 +65,6 @@ let internal oneIslandWorld =
 let internal commodities = 
     Map.empty
     |> Map.add 1UL {
-        CommodityId = 1UL
         CommodityName=""
         BasePrice=1.0
         PurchaseFactor=1.0

@@ -36,7 +36,6 @@ let internal commoditySource() : Map<uint64, CommodityDescriptor> =
     [
         1UL, 
             {
-                CommodityId    = 1UL
                 CommodityName  = "commodity under test"
                 BasePrice      = 1.0
                 PurchaseFactor = 1.0
