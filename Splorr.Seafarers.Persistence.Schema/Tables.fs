@@ -1,13 +1,17 @@
 ﻿namespace Splorr.Seafarers.Persistence.Schema
 
 module Tables =
-    let ShipmateStatisticTemplates : string = "CREATE TABLE IF NOT EXISTS [ShipmateStatisticTemplates] (
-		[StatisticId]	INTEGER,
-		[StatisticName]	TEXT NOT NULL,
-		[MinimumValue]	REAL NOT NULL,
-		[MaximumValue]	REAL NOT NULL CHECK(MaximumValue>=MinimumValue),
-		[CurrentValue]	REAL NOT NULL CHECK(CurrentValue>=MinimumValue AND CurrentValue<=MaximumValue),
-		PRIMARY KEY([StatisticId]));"
+    let AvatarInventories : string ="CREATE TABLE IF NOT EXISTS [AvatarInventories] (
+		[AvatarId]	TEXT NOT NULL,
+		[ItemId]	INTEGER NOT NULL,
+		[ItemCount]	INTEGER NOT NULL CHECK(ItemCount>0),
+		PRIMARY KEY([AvatarId],[ItemId]));"
+
+    let AvatarMetrics : string = "CREATE TABLE IF NOT EXISTS [AvatarMetrics] (
+    	[AvatarId]	TEXT NOT NULL,
+    	[MetricId]	INTEGER NOT NULL,
+    	[MetricValue]	INTEGER NOT NULL CHECK([MetricValue]>0),
+    	PRIMARY KEY([AvatarId],[MetricId]));"
 
     let Commodities = "CREATE TABLE IF NOT EXISTS [Commodities] (
 	    [CommodityId] INTEGER,
@@ -55,6 +59,21 @@ module Tables =
 		[DefaultOrder] INTEGER NOT NULL,
         PRIMARY KEY([ItemId]));"
 
+    let ShipmateRationItems : string = "CREATE TABLE IF NOT EXISTS [ShipmateRationItems] (
+		[AvatarId]	TEXT NOT NULL,
+		[ShipmateId]	TEXT NOT NULL,
+		[ItemId]	INTEGER NOT NULL,
+		[Order]	INTEGER NOT NULL,
+		PRIMARY KEY([AvatarId],[ShipmateId],[ItemId]));"
+
+    let ShipmateStatisticTemplates : string = "CREATE TABLE IF NOT EXISTS [ShipmateStatisticTemplates] (
+		[StatisticId]	INTEGER,
+		[StatisticName]	TEXT NOT NULL,
+		[MinimumValue]	REAL NOT NULL,
+		[MaximumValue]	REAL NOT NULL CHECK(MaximumValue>=MinimumValue),
+		[CurrentValue]	REAL NOT NULL CHECK(CurrentValue>=MinimumValue AND CurrentValue<=MaximumValue),
+		PRIMARY KEY([StatisticId]));"
+
     let ShipmateStatistics : string ="CREATE TABLE IF NOT EXISTS [ShipmateStatistics] (
 		[AvatarId]	TEXT NOT NULL,
 		[ShipmateId]	TEXT NOT NULL,
@@ -63,13 +82,6 @@ module Tables =
 		[MaximumValue]	REAL NOT NULL CHECK(MaximumValue>=MinimumValue),
 		[CurrentValue]	REAL NOT NULL CHECK(CurrentValue>=MinimumValue AND CurrentValue<=MaximumValue),
 		PRIMARY KEY([AvatarId],[ShipmateId],[StatisticId]));"
-
-    let ShipmateRationItems : string = "CREATE TABLE IF NOT EXISTS [ShipmateRationItems] (
-    	[AvatarId]	TEXT NOT NULL,
-    	[ShipmateId]	TEXT NOT NULL,
-    	[ItemId]	INTEGER NOT NULL,
-    	[Order]	INTEGER NOT NULL,
-    	PRIMARY KEY([AvatarId],[ShipmateId],[ItemId]));"
 
     let Terms : string = "CREATE TABLE [Terms] (
 		[TermType]	TEXT NOT NULL,
@@ -99,9 +111,4 @@ module Tables =
 		[CurrentValue]	REAL NOT NULL CHECK(CurrentValue>=MinimumValue AND CurrentValue<=MaximumValue),
 		PRIMARY KEY([StatisticId]));"
 
-    let AvatarInventories : string ="CREATE TABLE IF NOT EXISTS [AvatarInventories] (
-    	[AvatarId]	TEXT NOT NULL,
-    	[ItemId]	INTEGER NOT NULL,
-    	[ItemCount]	INTEGER NOT NULL CHECK(ItemCount>0),
-    	PRIMARY KEY([AvatarId],[ItemId]));"
 

@@ -260,6 +260,30 @@ let main argv =
 
     let switchSource () = switches
 
+    let avatarSingleMetricSink
+            (avatarId : string)
+            (metric   : Metric, 
+                value : uint64)
+            : unit =
+        match connection |> AvatarMetric.SetMetricForAvatar avatarId (metric, value) with
+        | Ok () -> ()
+        | Error x -> raise (System.InvalidOperationException x)
+
+    let avatarSingleMetricSource
+            (avatarId : string)
+            (metric   : Metric)
+            : uint64 =
+        match connection |> AvatarMetric.GetMetricForAvatar avatarId metric with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+
+    let avatarMetricSource
+            (avatarId : string)
+            : Map<Metric, uint64> =
+        match connection |> AvatarMetric.GetForAvatar avatarId with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
+
     try
         Runner.Run 
             avatarInventorySink
@@ -267,7 +291,10 @@ let main argv =
             avatarMessagePurger
             avatarMessageSink
             avatarMessageSource
+            avatarMetricSource
             avatarShipmateSource
+            avatarSingleMetricSink
+            avatarSingleMetricSource
             commoditySource
             islandItemSink 
             islandItemSource 

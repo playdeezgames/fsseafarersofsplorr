@@ -7,11 +7,14 @@ open Splorr.Seafarers.Controllers
 open CommonTestFixtures
 open AtSeaTestFixtures
 
-let private functionUnderTest = 
+let private functionUnderTest 
+        (avatarSingleMetricSink : AvatarSingleMetricSink)= 
     Careened.Run 
         avatarMessagePurgerStub
         avatarMessageSourceStub
         avatarShipmateSourceStub
+        avatarSingleMetricSink
+        avatarSingleMetricSourceStub
         shipmateSingleStatisticSinkStub
         shipmateSingleStatisticSourceStub
         vesselSingleStatisticSinkStub
@@ -41,6 +44,8 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
             avatarMessagePurgerStub
             avatarMessageSourceStub
             avatarShipmateSourceStub
+            avatarSingleMetricSinkExplode
+            avatarSingleMetricSourceStub
             shipmateSingleStatisticSinkStub
             shipmateSingleStatisticSource
             vesselSingleStatisticSinkStub
@@ -66,6 +71,7 @@ let ``Run.It returns ConfirmQuit when given Quit command.`` () =
     let actual =
         inputWorld
         |> functionUnderTest
+            avatarSingleMetricSinkExplode
             inputSource 
             sinkStub 
             inputSide
@@ -86,6 +92,7 @@ let ``Run.It returns InvalidInput when given invalid command.`` () =
     let actual =
         inputWorld
         |> functionUnderTest
+            avatarSingleMetricSinkExplode
             inputSource 
             sinkStub 
             inputSide
@@ -107,6 +114,7 @@ let ``Run.It returns Careened Help when given the Help command.`` () =
     let actual =
         inputWorld
         |> functionUnderTest
+            avatarSingleMetricSinkExplode
             inputSource 
             sinkStub 
             inputSide
@@ -128,6 +136,7 @@ let ``Run.It returns Careened Metrics when given the Metrics command.`` () =
     let actual =
         inputWorld
         |> functionUnderTest
+            avatarSingleMetricSinkExplode
             inputSource 
             sinkStub 
             inputSide
@@ -149,6 +158,7 @@ let ``Run.It returns Careened Inventory when given the Inventory command.`` () =
     let actual =
         inputWorld
         |> functionUnderTest
+            avatarSingleMetricSinkExplode
             inputSource 
             sinkStub 
             inputSide
@@ -170,6 +180,7 @@ let ``Run.It returns Status when given the command Status.`` () =
     let actual =
         inputWorld
         |> functionUnderTest
+            avatarSingleMetricSinkExplode
             inputSource 
             sinkStub 
             inputSide
@@ -190,6 +201,7 @@ let ``Run.It returns At Sea when given the command Weigh Anchor.`` () =
     let actual =
         inputWorld
         |> functionUnderTest
+            avatarSingleMetricSinkExplode
             inputSource
             sinkStub
             inputSide
@@ -208,7 +220,6 @@ let ``Run.It returns Careened with a cleaned hull when given the command Clean H
     let inputSide = Port
     let expectedAvatar =
         inputAvatar
-        |> Avatar.AddMetric Metric.CleanedHull 1UL
     let expected =
         (inputSide, {inputWorld with Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar})
         |> Gamestate.Careened
@@ -216,6 +227,7 @@ let ``Run.It returns Careened with a cleaned hull when given the command Clean H
     let actual =
         inputWorld
         |> functionUnderTest
+            (assertAvatarSingleMetricSink [Metric.CleanedHull, 1UL])
             inputSource 
             sinkStub 
             inputSide

@@ -208,6 +208,22 @@ let private setupAvatarInventories
     ]
     |> runCommands connection
 
+let private setupAvatarMetrics
+        (avatarId   : string)
+        (connection : SQLiteConnection)
+        : unit =
+    System.Enum.GetValues(typedefof<Metric>) 
+    :?> Metric []
+    |> Array.toList
+    |> List.map
+        (fun id ->
+            sprintf "REPLACE INTO [AvatarMetrics] ([AvatarId], [MetricId], [MetricValue]) VALUES ('%s', %u, 1);" avatarId (id |> uint))
+    |> List.append
+        [
+            Tables.AvatarMetrics
+        ]
+    |> runCommands connection
+
 let internal NewAvatarId = "newavatar"
 
 let internal SetupConnection() : SQLiteConnection = 
@@ -229,6 +245,7 @@ let internal SetupConnection() : SQLiteConnection =
         setupWorldStatistics
         setupShipmateStatistics ExistingAvatarId PrimaryShipmateId
         setupAvatarInventories
+        setupAvatarMetrics ExistingAvatarId
     ]
     |> List.iter (fun f -> f connection)
 

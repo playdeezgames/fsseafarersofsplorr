@@ -117,6 +117,8 @@ module AtSea =
             (avatarMessagePurger           : AvatarMessagePurger)
             (avatarMessageSink             : AvatarMessageSink)
             (avatarShipmateSource          : AvatarShipmateSource)
+            (avatarSingleMetricSink        : AvatarSingleMetricSink)
+            (avatarSingleMetricSource      : AvatarSingleMetricSource)
             (commoditySource               : CommoditySource) 
             (islandItemSink                : IslandItemSink) 
             (islandItemSource              : IslandItemSource) 
@@ -193,6 +195,8 @@ module AtSea =
                     location, 
                         world 
                         |> World.Dock 
+                            avatarSingleMetricSink
+                            avatarSingleMetricSource
                             termSources
                             commoditySource 
                             itemSource
@@ -223,9 +227,11 @@ module AtSea =
         | Some (Command.Abandon Job) ->
             world
             |> World.AbandonJob 
-                shipmateSingleStatisticSource
-                shipmateSingleStatisticSink
                 avatarMessageSink
+                avatarSingleMetricSink
+                avatarSingleMetricSource
+                shipmateSingleStatisticSink
+                shipmateSingleStatisticSource
             |> Gamestate.AtSea
             |> Some
 
@@ -255,15 +261,17 @@ module AtSea =
         | Some (Command.Move distance)->
             world
             |> World.Move 
-                avatarShipmateSource
-                avatarInventorySource
                 avatarInventorySink
-                shipmateSingleStatisticSource
-                shipmateSingleStatisticSink
-                vesselSingleStatisticSource 
-                vesselSingleStatisticSink 
-                shipmateRationItemSource 
+                avatarInventorySource
                 avatarMessageSink 
+                avatarShipmateSource
+                avatarSingleMetricSink
+                avatarSingleMetricSource
+                shipmateRationItemSource 
+                shipmateSingleStatisticSink
+                shipmateSingleStatisticSource
+                vesselSingleStatisticSink 
+                vesselSingleStatisticSource 
                 distance
             |> Gamestate.AtSea
             |> Some
@@ -304,26 +312,28 @@ module AtSea =
             |> Gamestate.ErrorMessage
             |> Some
 
-    let private RunAlive 
-            (termSources                   : TermSources)
-            (commoditySource               : CommoditySource) 
-            (itemSource                    : ItemSource) 
-            (worldSingleStatisticSource    : WorldSingleStatisticSource)
-            (islandMarketSource            : IslandMarketSource) 
-            (islandMarketSink              : IslandMarketSink) 
-            (islandItemSource              : IslandItemSource) 
-            (islandItemSink                : IslandItemSink) 
-            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
-            (vesselSingleStatisticSink     : VesselSingleStatisticSink)
-            (shipmateRationItemSource      : ShipmateRationItemSource)
-            (avatarShipmateSource          : AvatarShipmateSource)
-            (avatarInventorySource         : AvatarInventorySource)
+    let private RunAlive
             (avatarInventorySink           : AvatarInventorySink)
+            (avatarInventorySource         : AvatarInventorySource)
+            (avatarMessagePurger           : AvatarMessagePurger)
+            (avatarMessageSink             : AvatarMessageSink)
+            (avatarMessageSource           : AvatarMessageSource)
+            (avatarShipmateSource          : AvatarShipmateSource)
+            (avatarSingleMetricSink        : AvatarSingleMetricSink)
+            (avatarSingleMetricSource      : AvatarSingleMetricSource)
+            (commoditySource               : CommoditySource) 
+            (islandItemSink                : IslandItemSink) 
+            (islandItemSource              : IslandItemSource) 
+            (islandMarketSink              : IslandMarketSink) 
+            (islandMarketSource            : IslandMarketSource) 
+            (itemSource                    : ItemSource) 
+            (shipmateRationItemSource      : ShipmateRationItemSource)
+            (termSources                   : TermSources)
+            (vesselSingleStatisticSink     : VesselSingleStatisticSink)
+            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
+            (worldSingleStatisticSource    : WorldSingleStatisticSource)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (avatarMessageSource           : AvatarMessageSource)
-            (avatarMessageSink             : AvatarMessageSink)
-            (avatarMessagePurger           : AvatarMessagePurger)
             (random                        : Random) 
             (commandSource                 : CommandSource) 
             (messageSink                   : MessageSink) 
@@ -341,6 +351,8 @@ module AtSea =
             avatarMessagePurger
             avatarMessageSink
             avatarShipmateSource
+            avatarSingleMetricSink
+            avatarSingleMetricSource
             commoditySource
             islandItemSink
             islandItemSource
@@ -365,6 +377,8 @@ module AtSea =
             (avatarMessageSink             : AvatarMessageSink)
             (avatarMessageSource           : AvatarMessageSource)
             (avatarShipmateSource          : AvatarShipmateSource)
+            (avatarSingleMetricSink        : AvatarSingleMetricSink)
+            (avatarSingleMetricSource      : AvatarSingleMetricSource)
             (commoditySource               : CommoditySource) 
             (islandItemSink                : IslandItemSink) 
             (islandItemSource              : IslandItemSource) 
@@ -384,26 +398,28 @@ module AtSea =
             (world                         : World) 
             : Gamestate option =
         if world |> World.IsAvatarAlive shipmateSingleStatisticSource then
-            RunAlive 
-                termSources
-                commoditySource 
-                itemSource 
-                worldSingleStatisticSource
-                islandMarketSource 
-                islandMarketSink 
-                islandItemSource 
-                islandItemSink 
-                vesselSingleStatisticSource
-                vesselSingleStatisticSink
-                shipmateRationItemSource
-                avatarShipmateSource
-                avatarInventorySource
+            RunAlive
                 avatarInventorySink
+                avatarInventorySource
+                avatarMessagePurger
+                avatarMessageSink
+                avatarMessageSource
+                avatarShipmateSource
+                avatarSingleMetricSink
+                avatarSingleMetricSource
+                commoditySource 
+                islandItemSink 
+                islandItemSource 
+                islandMarketSink 
+                islandMarketSource 
+                itemSource 
+                shipmateRationItemSource
+                termSources
+                vesselSingleStatisticSink
+                vesselSingleStatisticSource
+                worldSingleStatisticSource
                 shipmateSingleStatisticSource
                 shipmateSingleStatisticSink
-                avatarMessageSource
-                avatarMessageSink
-                avatarMessagePurger
                 random 
                 commandSource 
                 messageSink 

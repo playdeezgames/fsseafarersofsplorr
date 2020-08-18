@@ -117,16 +117,18 @@ let internal headForWorldUnvisited =
         (0.0,0.0) 
         (Island.SetName "yermom" >> Some)
 
-    |> World.Move 
-        avatarShipmateSourceStub
-        avatarInventorySourceStub
+    |> World.Move
         avatarInventorySinkStub
-        shipmateSingleStatisticSourceStub
-        shipmateSingleStatisticSinkStub
-        vesselSingleStatisticSourceStub 
-        vesselSingleStatisticSinkStub 
-        shipmateRationItemSourceStub
+        avatarInventorySourceStub
         avatarMessageSinkStub
+        avatarShipmateSourceStub
+        avatarSingleMetricSinkStub
+        avatarSingleMetricSourceStub
+        shipmateRationItemSourceStub
+        shipmateSingleStatisticSinkStub
+        shipmateSingleStatisticSourceStub
+        vesselSingleStatisticSinkStub 
+        vesselSingleStatisticSourceStub 
         1u
 
 let private headForWorldIslandItemSource (_) = 
@@ -152,6 +154,8 @@ let private itemSourceStub() = Map.empty
 let internal headForWorldVisited = 
     headForWorldUnvisited
     |> World.Dock 
+        avatarSingleMetricSinkStub
+        avatarSingleMetricSourceStub
         termSources
         commoditySourceStub 
         itemSourceStub 

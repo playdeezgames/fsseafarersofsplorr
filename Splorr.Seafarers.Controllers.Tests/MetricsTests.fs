@@ -16,17 +16,15 @@ let ``Run.It returns the given gamestate.`` () =
     let expected =previousGameState |> Some
     let actual =
         input
-        |> Metrics.Run sinkStub
+        |> Metrics.Run
+            avatarMetricSourceStub
+            sinkStub
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.It works when all of the metrics have counters.`` () =
-    let inputMetrics = 
-        (System.Enum.GetValues(typedefof<Metric>)) :?> (Metric array)
-        |> Array.map (fun m -> (m, 1UL))
-        |> Map.ofArray
     let inputAvatar =
-        {world.Avatars.[avatarId] with Metrics = inputMetrics}
+        world.Avatars.[avatarId]
     let inputWorld =
         {world with Avatars =world.Avatars |> Map.add avatarId inputAvatar}
     let input = 
@@ -35,6 +33,8 @@ let ``Run.It works when all of the metrics have counters.`` () =
     let expected = input |> Some
     let actual =
         input
-        |> Metrics.Run sinkStub
+        |> Metrics.Run 
+            avatarMetricSourceStub
+            sinkStub
     Assert.AreEqual(expected, actual)
 

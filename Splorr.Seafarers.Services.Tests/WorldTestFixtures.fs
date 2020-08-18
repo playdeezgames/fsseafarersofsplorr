@@ -50,7 +50,6 @@ let internal emptyWorld =
         Avatars = 
             [avatarId,{
                 Job = None
-                Metrics = Map.empty
             }
             ] 
             |> Map.ofList
@@ -130,7 +129,9 @@ let private genericWorldShipmateSingleStatisticSource (_) (_) (identifier:Shipma
 let private genericWorldShipmateSingleStatisticSink (_) (_) (_) = 
     ()
 let internal genericDockedWorld = 
-    World.Dock 
+    World.Dock
+        avatarSingleMetricSinkStub
+        avatarSingleMetricSourceStub
         termSources 
         (fun()->commodities) 
         (fun()->genericWorldItems) 
@@ -151,7 +152,14 @@ let internal shopWorld =
 let internal shopWorldLocation = genericWorldIslandLocation
 let internal shopWorldBogusLocation = genericWorldInvalidIslandLocation
 
-let internal jobWorld = genericDockedWorld |> World.AcceptJob avatarMessageSinkStub 1u genericWorldIslandLocation
+let internal jobWorld = 
+    genericDockedWorld 
+    |> World.AcceptJob 
+        avatarMessageSinkStub 
+        avatarSingleMetricSinkStub
+        avatarSingleMetricSourceStub
+        1u 
+        genericWorldIslandLocation
 let internal jobLocation = jobWorld.Avatars.[avatarId].Job.Value.Destination
 
 let internal headForWorld =

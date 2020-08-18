@@ -18,6 +18,8 @@ let private functionUnderTest
         avatarMessageSink
         avatarMessageSourceStub
         avatarShipmateSourceStub
+        avatarSingleMetricSinkExplode
+        avatarSingleMetricSourceStub
         atSeaCommoditySource 
         atSeaIslandItemSink 
         atSeaIslandItemSource 
@@ -169,8 +171,7 @@ let ``Run.It moves the avatar when given Move command.`` () =
     let expectedMessages = ["Steady as she goes."]
     let expectedPosition = (6.0,5.0)
     let expectedAvatar =
-        {input.Avatars.[avatarId] with 
-            Metrics  = Map.empty |> Map.add Metric.Moved 1UL}
+        input.Avatars.[avatarId]
     let expected = 
         {input with 
             Avatars  = input.Avatars |> Map.add avatarId expectedAvatar} 
@@ -309,8 +310,7 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
         |> Map.add expectedLocation expectedIsland
     let expectedMessages = ["You dock."]
     let expectedAvatar = 
-        {input.Avatars.[avatarId] with 
-            Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.VisitedIsland 1UL}
+        input.Avatars.[avatarId]
     let expectedWorld = 
         {input with 
             Avatars = input.Avatars |> Map.add avatarId expectedAvatar
@@ -478,8 +478,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
     let expectedMessages = ["You abandon your job."]
     let expectedAvatar = 
         {input.Avatars.[avatarId] with 
-            Job=None
-            Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.AbandonedJob 1UL}
+            Job=None}
     let expected = 
         {input with 
             Avatars= input.Avatars |> Map.add avatarId expectedAvatar} 
