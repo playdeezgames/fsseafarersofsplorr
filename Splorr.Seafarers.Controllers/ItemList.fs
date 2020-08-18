@@ -61,6 +61,8 @@ module ItemList =
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (messageSink                   : MessageSink) =
         RunWithIsland commoditySource itemSource islandMarketSource islandItemSource shipmateSingleStatisticSource messageSink
-        |> Docked.RunBoilerplate shipmateSingleStatisticSource avatarMessageSource
+        |> Docked.RunBoilerplate 
+            avatarMessageSource
+            shipmateSingleStatisticSource 
     
 

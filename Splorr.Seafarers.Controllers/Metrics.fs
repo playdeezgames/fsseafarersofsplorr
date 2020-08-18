@@ -2,6 +2,8 @@
 
 open Splorr.Seafarers.Models
 
+type AvatarMetricSource = string -> Map<Metric, uint64>
+
 module Metrics = 
     let private GetMetricDisplayName 
             (metric : Metric) 
@@ -16,9 +18,10 @@ module Metrics =
         | Metric.CleanedHull   -> "cleaned a hull"
         | _ -> raise (System.NotImplementedException (metric.ToString() |> sprintf "'%s' is a metric with no name!"))
 
-    let private RunWorld 
-            (messageSink : MessageSink) 
-            (avatar      : Avatar) 
+    let private RunWorld
+            (avatarMetricSource : AvatarMetricSource)
+            (messageSink        : MessageSink) 
+            (avatarId           : string) 
             : unit = 
         [
             "" |> Line
@@ -28,10 +31,11 @@ module Metrics =
             "-------------------------+-------" |> Line
         ]
         |> List.iter messageSink
-        if avatar.Metrics.IsEmpty then
+        let metrics = avatarMetricSource avatarId
+        if metrics.IsEmpty then
             (Hue.Usage, "(none)" |> Line) |> Hued |> messageSink
         else
-            avatar.Metrics
+            metrics
             |> Map.iter
                 (fun metric value -> 
                     [
@@ -42,13 +46,18 @@ module Metrics =
                     |> List.iter messageSink)
 
     let Run 
-            (messageSink : MessageSink) 
-            (gamestate   : Gamestate) 
+            (avatarMetricSource : AvatarMetricSource)
+            (messageSink        : MessageSink) 
+            (gamestate          : Gamestate) 
             : Gamestate option =
         gamestate 
         |> Gamestate.GetWorld 
-        |> Option.bind (fun w->w.Avatars |> Map.tryFind w.AvatarId)
-        |> Option.iter (RunWorld messageSink)
+        |> Option.iter 
+            (fun w -> 
+                RunWorld 
+                    avatarMetricSource
+                    messageSink 
+                    w.AvatarId)
         gamestate
         |> Some
 

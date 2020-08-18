@@ -154,3 +154,25 @@ let internal avatarInventorySourceStub (_) =
     Map.empty
 let internal avatarInventorySinkStub (_) (_) =
     ()
+
+let internal avatarSingleMetricSinkStub (_) (actual:Metric * uint64) = ()
+let internal avatarSingleMetricSinkExplode (_) (actual:Metric * uint64) =
+    raise (System.NotImplementedException (sprintf "avatarSingleMetricSinkExplode - %s %u" ((actual|>fst).ToString()) (actual |> snd)))
+let internal assertAvatarSingleMetricSink (expected:(Metric * uint64) list) (_) (actual:Metric * uint64) =
+    let found = 
+        expected
+        |> List.tryPick
+            (fun e -> 
+                if e = actual then
+                    Some ()
+                else
+                    None)
+    if found.IsNone then
+        Assert.Fail(sprintf "assertAvatarSingleMetricSink %s %u" ((actual |> fst).ToString()) (actual |> snd))
+let internal avatarSingleMetricSourceStub (_) (_) =
+    0UL
+
+let internal avatarMetricSourceStub (_) =
+    (System.Enum.GetValues(typedefof<Metric>)) :?> (Metric array)
+    |> Array.map (fun m -> (m, 1UL))
+    |> Map.ofArray

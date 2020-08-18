@@ -94,7 +94,6 @@ let ``Create.It creates an avatar.`` () =
     let actual =
         avatar
     Assert.AreEqual(None, actual.Job)
-    Assert.AreEqual(Map.empty, actual.Metrics)
 
 [<Test>]
 let ``SetSpeed.It sets all stop when given less than zero.`` () =
@@ -256,16 +255,17 @@ let ``Move.It moves the avatar.`` () =
         Map.empty
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(Map.empty, inventory)
-    input
-    |> Avatar.Move 
-        avatarShipmateSourceStub
-        avatarInventorySource
+    Avatar.Move 
         avatarInventorySink
-        shipmateSingleStatisticSourceStub
-        shipmateSingleStatisticSinkStub 
-        vesselSingleStatisticSource 
-        vesselSingleStatisticSink 
+        avatarInventorySource
+        avatarShipmateSourceStub
+        (assertAvatarSingleMetricSink [(Metric.Moved, 1UL);(Metric.Ate, 0UL)])
+        avatarSingleMetricSourceStub
         shipmateRationItemSourceStub 
+        shipmateSingleStatisticSinkStub 
+        shipmateSingleStatisticSourceStub
+        vesselSingleStatisticSink 
+        vesselSingleStatisticSource 
         inputAvatarId
     |> ignore
 
@@ -300,18 +300,18 @@ let ``Move.It removes a ration when the given avatar has rations and full satiet
         originalInventory
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(expectedInventory, inventory)
-    input
-    |> Avatar.Move 
-        avatarShipmateSource
-        avatarInventorySource
+    Avatar.Move 
         avatarInventorySink
-        shipmateSingleStatisticSource
-        shipmateSingleStatisticSink
-        vesselSingleStatisticSource 
-        vesselSingleStatisticSink 
+        avatarInventorySource
+        avatarShipmateSource
+        (assertAvatarSingleMetricSink [(Metric.Moved, 1UL);(Metric.Ate, 1UL)])
+        avatarSingleMetricSourceStub
         shipmateRationItemSource 
+        shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
+        vesselSingleStatisticSink 
+        vesselSingleStatisticSource 
         inputAvatarId
-    |> ignore
 
 [<Test>]
 let ``Move.It removes a ration and increases satiety when the given avatar has rations and less than full satiety.`` () =
@@ -343,28 +343,26 @@ let ``Move.It removes a ration and increases satiety when the given avatar has r
         originalInventory
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(expectedInventory, inventory)
-    input
-    |> Avatar.Move 
-        avatarShipmateSource
-        avatarInventorySource
+    Avatar.Move 
         avatarInventorySink
-        shipmateSingleStatisticSource
-        shipmateSingleStatisticSink
-        vesselSingleStatisticSource 
-        vesselSingleStatisticSink 
+        avatarInventorySource
+        avatarShipmateSource
+        (assertAvatarSingleMetricSink [(Metric.Moved, 1UL);(Metric.Ate, 1UL)])
+        avatarSingleMetricSourceStub
         shipmateRationItemSourceStub 
+        shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
+        vesselSingleStatisticSink 
+        vesselSingleStatisticSource 
         inputAvatarId
-    |> ignore
+    
 
 
 [<Test>]
 let ``Move.It lowers the avatar's satiety but does not affect turns when the given avatar has no rations.`` () =
     let input = avatar
     let expectedAvatar = 
-        {input with
-            Metrics =
-                Map.empty
-                |> Map.add Metric.Moved 1UL}
+        input
     let avatarShipmateSource (_) = 
         [ Primary ]
     let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
@@ -389,29 +387,24 @@ let ``Move.It lowers the avatar's satiety but does not affect turns when the giv
         Map.empty
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(Map.empty, inventory)
-    input
-    |> Avatar.Move 
-        avatarShipmateSource
-        avatarInventorySource
+    Avatar.Move 
         avatarInventorySink
-        shipmateSingleStatisticSource
-        shipmateSingleStatisticSink
-        vesselSingleStatisticSource 
-        vesselSingleStatisticSink 
+        avatarInventorySource
+        avatarShipmateSource
+        (assertAvatarSingleMetricSink [(Metric.Moved, 1UL);(Metric.Ate, 0UL)])
+        avatarSingleMetricSourceStub
         shipmateRationItemSourceStub 
+        shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
+        vesselSingleStatisticSink 
+        vesselSingleStatisticSource 
         inputAvatarId
-    |> ignore
 
 
 [<Test>]
 let ``Move.It lowers the avatar's maximum turn when the given avatar has no rations and minimum satiety.`` () =
     let input = 
         avatar
-    let expectedAvatar = 
-        {input with
-            Metrics =
-                Map.empty
-                |> Map.add Metric.Moved 1UL}
     let avatarShipmateSource (_) = 
         [ Primary ]
     let mutable sinkCalls = 0u
@@ -446,19 +439,19 @@ let ``Move.It lowers the avatar's maximum turn when the given avatar has no rati
         Map.empty
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(Map.empty, inventory)
-    let actual =
-        input
-        |> Avatar.Move 
-            avatarShipmateSource
-            avatarInventorySource
-            avatarInventorySink
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            vesselSingleStatisticSource 
-            vesselSingleStatisticSink 
-            shipmateRationItemSourceStub 
-            inputAvatarId
-    Assert.AreEqual(expectedAvatar, actual)
+    Avatar.Move 
+        avatarInventorySink
+        avatarInventorySource
+        avatarShipmateSource
+        (assertAvatarSingleMetricSink [(Metric.Moved, 1UL);(Metric.Ate, 0UL)])
+        avatarSingleMetricSourceStub
+        shipmateRationItemSourceStub 
+        shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
+        vesselSingleStatisticSink 
+        vesselSingleStatisticSource 
+        inputAvatarId
+
 
 [<Test>]
 let ``SetJob.It sets the job of the given avatar.`` () =
@@ -474,8 +467,10 @@ let ``AbandonJob.It does nothing when the given avatar has no job.`` () =
     let actual =
         input
         |> Avatar.AbandonJob
-            shipmateSingleStatisticSourceStub
+            avatarSingleMetricSinkExplode
+            avatarSingleMetricSourceStub
             shipmateSingleStatisticSinkStub
+            shipmateSingleStatisticSourceStub
             avatarId
     Assert.AreEqual(expected, actual)
 
@@ -484,8 +479,7 @@ let ``AbandonJob.It set job to None when the given avatar has a job.`` () =
     let input = employedAvatar
     let expected = 
         {input with 
-            Job=None
-            Metrics = input.Metrics |> Map.add Metric.AbandonedJob 1UL}
+            Job=None}
     let shipmateSingleStatisticSource (_) (_) (identifier) =
         match identifier with
         | ShipmateStatisticIdentifier.Reputation ->
@@ -502,8 +496,10 @@ let ``AbandonJob.It set job to None when the given avatar has a job.`` () =
     let actual =
         input
         |> Avatar.AbandonJob
-            shipmateSingleStatisticSource
+            (assertAvatarSingleMetricSink [(Metric.AbandonedJob, 1UL)])
+            avatarSingleMetricSourceStub
             shipmateSingleStatisticSink
+            shipmateSingleStatisticSource
             avatarId
     Assert.AreEqual(expected, actual)
     
@@ -519,8 +515,10 @@ let ``CompleteJob.It does nothing when the given avatar has no job.`` () =
     let actual = 
         input
         |> Avatar.CompleteJob
-            shipmateSingleStatisticSource
+            avatarSingleMetricSinkExplode
+            avatarSingleMetricSourceStub
             shipmateSingleStatisticSink
+            shipmateSingleStatisticSource
             avatarId
     Assert.AreEqual(expected, actual)
 
@@ -530,8 +528,7 @@ let ``CompleteJob.It sets job to None, adds reward money, adds reputation and me
     let inputJob = employedAvatar.Job.Value
     let expected = 
         {input with 
-            Job = None
-            Metrics = input.Metrics |> Map.add Metric.CompletedJob 1UL}
+            Job = None}
     let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
         match identifier with
         | ShipmateStatisticIdentifier.Money ->
@@ -552,8 +549,10 @@ let ``CompleteJob.It sets job to None, adds reward money, adds reputation and me
     let actual = 
         input
         |> Avatar.CompleteJob
-            shipmateSingleStatisticSource
+            (assertAvatarSingleMetricSink [(Metric.CompletedJob, 1UL)])
+            avatarSingleMetricSourceStub
             shipmateSingleStatisticSink
+            shipmateSingleStatisticSource
             avatarId
     Assert.AreEqual(expected, actual)
 
@@ -569,8 +568,8 @@ let ``SpendMoney.It has no effect when given a negative amount to spend.`` () =
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
     input
     |> Avatar.SpendMoney 
-        shipmateSingleStatisticSource
         shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
         inputAmount
 
 
@@ -585,8 +584,8 @@ let ``EarnMoney.It has no effect when given a negative amount to earn.`` () =
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
     input
     |> Avatar.EarnMoney 
-        shipmateSingleStatisticSource
         shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
         inputAmount
 
 
@@ -609,8 +608,8 @@ let ``SpendMoney.It has no effect when the given avatar has no money.`` () =
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
     input
     |> Avatar.SpendMoney 
-        shipmateSingleStatisticSource
         shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
         inputAmount
 
 [<Test>]
@@ -632,8 +631,8 @@ let ``SpendMoney.It reduces the avatar's money to zero when the given amount exc
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
     input
     |> Avatar.SpendMoney 
-        shipmateSingleStatisticSource
         shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
         inputAmount
 
 [<Test>]
@@ -655,8 +654,8 @@ let ``SpendMoney.It updates the avatars money when the given amount is less than
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
     input
     |> Avatar.SpendMoney 
-        shipmateSingleStatisticSource
         shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
         inputAmount
 
 [<Test>]
@@ -678,8 +677,8 @@ let ``EarnMoney.It updates the avatars money by adding the given amount.`` () =
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
     input
     |> Avatar.EarnMoney 
-        shipmateSingleStatisticSource
         shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
         inputAmount
 
 [<Test>]
@@ -694,8 +693,8 @@ let ``AddInventory.It adds a given number of given items to the given avatar's i
         Assert.AreEqual(inputQuantity, inventory.[inputItem])
     input
     |> Avatar.AddInventory 
-        avatarInventorySource
         avatarInventorySink
+        avatarInventorySource
         inputItem 
         inputQuantity
 
@@ -856,26 +855,28 @@ let ``AddMessages.It adds messages to a given avatar.`` () =
 
 [<Test>]
 let ``AddMetric.It creates a metric value when there is no previously existing metric value in the avatar's table.`` () = 
-    let input = avatar
+    let input = avatarId
     let inputMetric = Metric.Moved
     let inputValue = 1UL
-    let expected = {input with Metrics = input.Metrics |> Map.add inputMetric inputValue}
-    let actual =
-        input
-        |> Avatar.AddMetric inputMetric inputValue
-    Assert.AreEqual(expected, actual)
+    input
+    |> Avatar.AddMetric
+        (assertAvatarSingleMetricSink [(Metric.Moved, 1UL)])
+        avatarSingleMetricSourceStub
+        inputMetric 
+        inputValue
 
 [<Test>]
 let ``AddMetric.It adds to a metric value when there is a previously existing metric value in the avatar's table.`` () = 
-    let input = {avatar with Metrics = Map.empty |> Map.add Metric.Moved 1UL}
+    let input = avatarId
     let inputMetric = Metric.Moved
     let inputValue = 1UL
     let expectedValue = 2UL
-    let expected = {input with Metrics = input.Metrics |> Map.add inputMetric expectedValue}
-    let actual =
-        input
-        |> Avatar.AddMetric inputMetric inputValue
-    Assert.AreEqual(expected, actual)
+    input
+    |> Avatar.AddMetric 
+        (assertAvatarSingleMetricSink [(Metric.Moved, 1UL)])
+        avatarSingleMetricSourceStub
+        inputMetric 
+        inputValue
 
 [<Test>]
 let ``GetUsedTonnage.It calculates the used tonnage based on inventory and item descriptors.`` () =
@@ -928,14 +929,11 @@ let ``GetEffectiveSpeed.It returns proportionally reduced speed when there is fo
 
 [<Test>]
 let ``CleanHull.It cleans the hull of the given avatar.`` () =
-    let input = fouledAvatar
+    let input = avatarId
     let inputSide = Port
     let vesselSingleStatisticSource (_) (_) = {MinimumValue=0.0;MaximumValue=0.5;CurrentValue=0.5} |> Some
     let vesselSingleStatisticSink (_) (_:VesselStatisticIdentifier, statistic:Statistic) : unit =
         Assert.AreEqual(statistic.MinimumValue, statistic.CurrentValue)
-    let expected =
-        input
-        |> Avatar.AddMetric Metric.CleanedHull 1UL
     let avatarShipmateSource (_) =
         [ Primary ]
     let shipmateSingleStatisticSource (_) (_) (identifier: ShipmateStatisticIdentifier) =
@@ -951,17 +949,16 @@ let ``CleanHull.It cleans the hull of the given avatar.`` () =
             Assert.AreEqual(1.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "Kaboom shipmateSingleStatisticSink")
-    let actual =
-        input
-        |> Avatar.CleanHull
-            avatarShipmateSource
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            vesselSingleStatisticSource 
-            vesselSingleStatisticSink 
-            inputAvatarId 
-            inputSide
-    Assert.AreEqual(expected, actual)
+    Avatar.CleanHull
+        avatarShipmateSource
+        (assertAvatarSingleMetricSink [(Metric.CleanedHull, 1UL)])
+        avatarSingleMetricSourceStub
+        shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
+        vesselSingleStatisticSink 
+        vesselSingleStatisticSource 
+        inputSide
+        inputAvatarId 
 
 [<Test>]
 let ``TransformStatistic.It replaces the statistic when that statistic is originally present in the avatar.`` () =

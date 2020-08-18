@@ -13,7 +13,10 @@ module Runner =
             (avatarMessagePurger             : AvatarMessagePurger)
             (avatarMessageSink               : AvatarMessageSink)
             (avatarMessageSource             : AvatarMessageSource)
+            (avatarMetricSource              : AvatarMetricSource)
             (avatarShipmateSource            : AvatarShipmateSource)
+            (avatarSingleMetricSink          : AvatarSingleMetricSink)
+            (avatarSingleMetricSource        : AvatarSingleMetricSource)
             (commoditySource                 : CommoditySource)
             (islandItemSink                  : IslandItemSink) 
             (islandItemSource                : IslandItemSource) 
@@ -52,6 +55,8 @@ module Runner =
                     avatarMessageSink
                     avatarMessageSource
                     avatarShipmateSource
+                    avatarSingleMetricSink
+                    avatarSingleMetricSource
                     commoditySource 
                     islandItemSink 
                     islandItemSource 
@@ -75,6 +80,8 @@ module Runner =
                     avatarMessagePurger
                     avatarMessageSource
                     avatarShipmateSource
+                    avatarSingleMetricSink
+                    avatarSingleMetricSource
                     shipmateSingleStatisticSink
                     shipmateSingleStatisticSource
                     vesselSingleStatisticSink
@@ -106,6 +113,8 @@ module Runner =
                     avatarMessagePurger
                     avatarMessageSink
                     avatarMessageSource
+                    avatarSingleMetricSink
+                    avatarSingleMetricSource
                     commoditySource 
                     islandMarketSource 
                     islandSingleMarketSink 
@@ -185,6 +194,7 @@ module Runner =
 
             | Gamestate.Metrics state -> 
                 Metrics.Run 
+                    avatarMetricSource
                     messageSink 
                     state
 
@@ -207,7 +217,10 @@ module Runner =
                 avatarMessagePurger
                 avatarMessageSink
                 avatarMessageSource
+                avatarMetricSource
                 avatarShipmateSource
+                avatarSingleMetricSink
+                avatarSingleMetricSource
                 commoditySource 
                 islandItemSink 
                 islandItemSource 
@@ -244,7 +257,10 @@ module Runner =
             (avatarMessagePurger             : AvatarMessagePurger)
             (avatarMessageSink               : AvatarMessageSink)
             (avatarMessageSource             : AvatarMessageSource)
+            (avatarMetricSource              : AvatarMetricSource)
             (avatarShipmateSource            : AvatarShipmateSource)
+            (avatarSingleMetricSink          : AvatarSingleMetricSink)
+            (avatarSingleMetricSource        : AvatarSingleMetricSource)
             (commoditySource                 : CommoditySource) 
             (islandItemSink                  : IslandItemSink) 
             (islandItemSource                : IslandItemSource) 
@@ -281,7 +297,10 @@ module Runner =
             avatarMessagePurger
             avatarMessageSink
             avatarMessageSource
+            avatarMetricSource
             avatarShipmateSource
+            avatarSingleMetricSink
+            avatarSingleMetricSource
             commoditySource 
             islandItemSink 
             islandItemSource 

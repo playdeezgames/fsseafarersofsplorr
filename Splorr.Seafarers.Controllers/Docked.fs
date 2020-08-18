@@ -23,18 +23,20 @@ module Docked =
         |> List.iter messageSink
 
     let private HandleCommand
-            (commoditySource               : unit -> Map<uint64, CommodityDescriptor>) 
-            (itemSource                    : unit -> Map<uint64, ItemDescriptor>) 
-            (islandMarketSource            : Location -> Map<uint64, Market>) 
-            (islandSingleMarketSource      : Location -> uint64 -> Market option) 
-            (islandSingleMarketSink        : Location -> uint64 * Market -> unit) 
-            (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (avatarInventorySource         : AvatarInventorySource)
             (avatarInventorySink           : AvatarInventorySink)
-            (avatarMessageSink             : AvatarMessageSink)
+            (avatarInventorySource         : AvatarInventorySource)
             (avatarMessagePurger           : AvatarMessagePurger)
+            (avatarMessageSink             : AvatarMessageSink)
+            (avatarSingleMetricSink        : AvatarSingleMetricSink)
+            (avatarSingleMetricSource      : AvatarSingleMetricSource)
+            (commoditySource               : CommoditySource) 
+            (islandMarketSource            : IslandMarketSource) 
+            (islandSingleMarketSink        : IslandSingleMarketSink) 
+            (islandSingleMarketSource      : IslandSingleMarketSource) 
+            (itemSource                    : ItemSource) 
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
             (command                       : Command option) 
             (location                      : Location) 
             (world                         : World) 
@@ -44,7 +46,15 @@ module Docked =
 
         match command with
         | Some (Command.AcceptJob index) ->
-            (Dock, location, world |> World.AcceptJob avatarMessageSink index location)
+            (Dock, 
+                location, 
+                world 
+                |> World.AcceptJob 
+                    avatarMessageSink 
+                    avatarSingleMetricSink
+                    avatarSingleMetricSource
+                    index 
+                    location)
             |> Gamestate.Docked
             |> Some
 
@@ -112,9 +122,12 @@ module Docked =
                 location, 
                 world 
                 |> World.AbandonJob 
-                    shipmateSingleStatisticSource
+                    avatarMessageSink
+                    avatarSingleMetricSink
+                    avatarSingleMetricSource
                     shipmateSingleStatisticSink
-                    avatarMessageSink)
+                    shipmateSingleStatisticSource
+                    )
             |> Gamestate.Docked
             |> Some
 
@@ -156,19 +169,21 @@ module Docked =
             |> Some
 
     let private RunWithIsland 
-            (commoditySource               : unit -> Map<uint64, CommodityDescriptor>) 
-            (itemSource                    : unit -> Map<uint64, ItemDescriptor>) 
-            (islandMarketSource            : Location -> Map<uint64, Market>) 
-            (islandSingleMarketSource      : Location -> uint64 -> Market option) 
-            (islandSingleMarketSink        : Location -> uint64 * Market -> unit) 
-            (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (avatarInventorySource         : AvatarInventorySource)
             (avatarInventorySink           : AvatarInventorySink)
-            (avatarMessageSource           : AvatarMessageSource)
-            (avatarMessageSink             : AvatarMessageSink)
+            (avatarInventorySource         : AvatarInventorySource)
             (avatarMessagePurger           : AvatarMessagePurger)
+            (avatarMessageSink             : AvatarMessageSink)
+            (avatarMessageSource           : AvatarMessageSource)
+            (avatarSingleMetricSink        : AvatarSingleMetricSink)
+            (avatarSingleMetricSource      : AvatarSingleMetricSource)
+            (commoditySource               : CommoditySource) 
+            (islandMarketSource            : IslandMarketSource) 
+            (islandSingleMarketSink        : IslandSingleMarketSink) 
+            (islandSingleMarketSource      : IslandSingleMarketSource) 
+            (itemSource                    : ItemSource) 
+            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
             (commandSource                 : CommandSource) 
             (messageSink                   : MessageSink) 
             (location                      : Location) 
@@ -182,24 +197,26 @@ module Docked =
         
         world   
         |> HandleCommand 
-            commoditySource 
-            itemSource 
-            islandMarketSource 
-            islandSingleMarketSource
-            islandSingleMarketSink 
-            vesselSingleStatisticSource
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            avatarInventorySource
             avatarInventorySink
-            avatarMessageSink
+            avatarInventorySource
             avatarMessagePurger
+            avatarMessageSink
+            avatarSingleMetricSink
+            avatarSingleMetricSource
+            commoditySource 
+            islandMarketSource 
+            islandSingleMarketSink 
+            islandSingleMarketSource
+            itemSource 
+            shipmateSingleStatisticSink
+            shipmateSingleStatisticSource
+            vesselSingleStatisticSource
             (commandSource()) 
             location 
 
     let internal RunBoilerplate 
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (avatarMessageSource           : AvatarMessageSource)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (func                          : Location -> World -> Gamestate option) 
             (location                      : Location) 
             (world                         : World) 
@@ -223,6 +240,8 @@ module Docked =
             (avatarMessagePurger           : AvatarMessagePurger)
             (avatarMessageSink             : AvatarMessageSink)
             (avatarMessageSource           : AvatarMessageSource)
+            (avatarSingleMetricSink        : AvatarSingleMetricSink)
+            (avatarSingleMetricSource      : AvatarSingleMetricSource)
             (commoditySource               : CommoditySource) 
             (islandMarketSource            : IslandMarketSource) 
             (islandSingleMarketSink        : IslandSingleMarketSink) 
@@ -234,21 +253,23 @@ module Docked =
             (commandSource                 : CommandSource) 
             (messageSink                   : MessageSink) =
         RunBoilerplate 
-            shipmateSingleStatisticSource
             avatarMessageSource
+            shipmateSingleStatisticSource
             (RunWithIsland 
-                commoditySource              
-                itemSource                   
-                islandMarketSource           
-                islandSingleMarketSource     
-                islandSingleMarketSink       
-                vesselSingleStatisticSource  
-                shipmateSingleStatisticSource
-                shipmateSingleStatisticSink  
-                avatarInventorySource
                 avatarInventorySink
-                avatarMessageSource          
-                avatarMessageSink            
+                avatarInventorySource
                 avatarMessagePurger          
+                avatarMessageSink            
+                avatarMessageSource          
+                avatarSingleMetricSink
+                avatarSingleMetricSource
+                commoditySource              
+                islandMarketSource           
+                islandSingleMarketSink       
+                islandSingleMarketSource     
+                itemSource                   
+                shipmateSingleStatisticSink  
+                shipmateSingleStatisticSource
+                vesselSingleStatisticSource  
                 commandSource                
                 messageSink)                 

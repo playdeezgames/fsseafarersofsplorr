@@ -34,15 +34,17 @@ module Careened =
         |> List.iter messageSink
 
     let private HandleCommand
+            (avatarMessagePurger           : AvatarMessagePurger)
             (avatarShipmateSource          : AvatarShipmateSource)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (avatarSingleMetricSink        : AvatarSingleMetricSink)
+            (avatarSingleMetricSource      : AvatarSingleMetricSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
-            (vesselSingleStatisticSink   : string -> VesselStatisticIdentifier * Statistic -> unit)
-            (avatarMessagePurger         : AvatarMessagePurger)
-            (command                     : Command option) 
-            (side                        : Side) 
-            (world                       : World) 
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (vesselSingleStatisticSink     : VesselSingleStatisticSink)
+            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
+            (command                       : Command option) 
+            (side                          : Side) 
+            (world                         : World) 
             : Gamestate option =
         world
         |> World.ClearMessages avatarMessagePurger
@@ -73,14 +75,17 @@ module Careened =
             |> Gamestate.Help
             |> Some
         | Some Command.CleanHull ->
-            (side, world 
+            world 
             |> World.CleanHull
                 avatarShipmateSource
-                shipmateSingleStatisticSource
+                avatarSingleMetricSink
+                avatarSingleMetricSource
                 shipmateSingleStatisticSink
-                vesselSingleStatisticSource
+                shipmateSingleStatisticSource
                 vesselSingleStatisticSink
-                (if side=Port then Starboard else Port))
+                vesselSingleStatisticSource
+                (if side=Port then Starboard else Port)
+            (side, world)
             |> Gamestate.Careened
             |> Some
         | Some Command.WeighAnchor ->
@@ -94,13 +99,15 @@ module Careened =
             |> Some
 
     let private RunAlive
+            (avatarMessagePurger           : AvatarMessagePurger)
+            (avatarMessageSource           : AvatarMessageSource)
             (avatarShipmateSource          : AvatarShipmateSource)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (avatarSingleMetricSink        : AvatarSingleMetricSink)
+            (avatarSingleMetricSource      : AvatarSingleMetricSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
-            (vesselSingleStatisticSink   : string -> VesselStatisticIdentifier*Statistic -> unit)
-            (avatarMessageSource         : AvatarMessageSource)
-            (avatarMessagePurger         : AvatarMessagePurger)
+            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
+            (vesselSingleStatisticSink     : VesselSingleStatisticSink)
+            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
             (source:CommandSource) 
             (sink:MessageSink) 
             (side:Side) 
@@ -113,12 +120,14 @@ module Careened =
             side 
             world
         HandleCommand
-            avatarShipmateSource
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            vesselSingleStatisticSource
-            vesselSingleStatisticSink
             avatarMessagePurger
+            avatarShipmateSource
+            avatarSingleMetricSink
+            avatarSingleMetricSource
+            shipmateSingleStatisticSink
+            shipmateSingleStatisticSource
+            vesselSingleStatisticSink
+            vesselSingleStatisticSource
             (source())
             side
             world
@@ -127,6 +136,8 @@ module Careened =
             (avatarMessagePurger           : AvatarMessagePurger)
             (avatarMessageSource           : AvatarMessageSource)
             (avatarShipmateSource          : AvatarShipmateSource)
+            (avatarSingleMetricSink        : AvatarSingleMetricSink)
+            (avatarSingleMetricSource      : AvatarSingleMetricSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (vesselSingleStatisticSink     : VesselSingleStatisticSink)
@@ -138,13 +149,15 @@ module Careened =
             : Gamestate option =
         if world |> World.IsAvatarAlive shipmateSingleStatisticSource then
             RunAlive 
-                avatarShipmateSource
-                shipmateSingleStatisticSource
-                shipmateSingleStatisticSink
-                vesselSingleStatisticSource
-                vesselSingleStatisticSink
-                avatarMessageSource
                 avatarMessagePurger
+                avatarMessageSource
+                avatarShipmateSource
+                avatarSingleMetricSink
+                avatarSingleMetricSource
+                shipmateSingleStatisticSink
+                shipmateSingleStatisticSource
+                vesselSingleStatisticSink
+                vesselSingleStatisticSource
                 commandSource 
                 messageSink 
                 side 

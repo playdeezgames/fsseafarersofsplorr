@@ -1,6 +1,7 @@
 ﻿module CommonTestFixtures
 
 open Splorr.Seafarers.Models
+open NUnit.Framework
 
 let internal avatarId = ""
 let internal statisticDescriptors =
@@ -44,3 +45,18 @@ let internal shipmateSingleStatisticSinkStub (_) (_) (_) =
     ()
 let internal avatarShipmateSourceStub (_) =
     []
+let internal avatarSingleMetricSinkStub (_) (actual:Metric * uint64) = ()
+let internal avatarSingleMetricSinkExplode (_) (actual:Metric * uint64) =
+    raise (System.NotImplementedException (sprintf "avatarSingleMetricSinkExplode - %s %u" ((actual|>fst).ToString()) (actual |> snd)))
+let internal assertAvatarSingleMetricSink (expected:(Metric * uint64) list) (_) (actual:Metric * uint64) =
+    let found = 
+        expected
+        |> List.tryPick
+            (fun e -> 
+                if e = actual then
+                    Some ()
+                else
+                    None)
+    if found.IsNone then
+        Assert.Fail(sprintf "assertAvatarSingleMetricSink %s %u" ((actual |> fst).ToString()) (actual |> snd))
+let internal avatarSingleMetricSourceStub (_) (_) = 0UL

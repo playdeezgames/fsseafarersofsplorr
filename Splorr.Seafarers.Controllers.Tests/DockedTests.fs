@@ -11,6 +11,7 @@ let private functionUnderTest
         (avatarInventorySink           : AvatarInventorySink)
         (avatarInventorySource         : AvatarInventorySource)
         (avatarMessageSink             : AvatarMessageSink)
+        (avatarSingleMetricSink        : AvatarSingleMetricSink)
         (islandMarketSource            : IslandMarketSource) 
         (islandSingleMarketSink        : IslandSingleMarketSink) 
         (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
@@ -21,6 +22,8 @@ let private functionUnderTest
         avatarMessagePurgerStub
         avatarMessageSink
         avatarMessageSourceStub
+        avatarSingleMetricSink
+        avatarSingleMetricSourceStub
         commoditySource 
         islandMarketSource 
         islandSingleMarketSink
@@ -32,12 +35,14 @@ let private functionUnderTest
 
 let private functionUnderTestStubbed 
         (avatarMessageSink             : AvatarMessageSink) 
+        (avatarSingleMetricSink        : AvatarSingleMetricSink)
         (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
         =
     functionUnderTest 
         avatarInventorySinkStub
         avatarInventorySourceStub
         avatarMessageSink
+        avatarSingleMetricSink
         dockedItemMarketSourceStub 
         dockedItemSingleMarketSinkStub 
         shipmateSingleStatisticSource
@@ -64,6 +69,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
         (inputLocation, input)
         ||> functionUnderTestStubbed
             avatarMessageSinkStub
+            avatarSingleMetricSinkExplode
             shipmateSingleStatisticSource
             inputSource 
             sinkStub 
@@ -85,6 +91,7 @@ let ``Run.It returns AtSea when given Undock Command.`` () =
         (inputLocation, input)
         ||> functionUnderTestStubbed
             avatarMessageSinkStub
+            avatarSingleMetricSinkExplode
             shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub 
@@ -104,6 +111,7 @@ let ``Run.It returns ConfirmQuit when given Quit Command.`` () =
         (inputLocation, input)
         ||> functionUnderTestStubbed
             avatarMessageSinkStub
+            avatarSingleMetricSinkExplode
             shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub 
@@ -126,6 +134,7 @@ let ``Run.It returns Metrics when given Metrics Command.`` () =
         (inputLocation, input)
         ||> functionUnderTestStubbed
             avatarMessageSinkStub
+            avatarSingleMetricSinkExplode
             shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub 
@@ -148,6 +157,7 @@ let ``Run.It returns Help when given Help Command.`` () =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
             avatarMessageSinkStub
+            avatarSingleMetricSinkExplode
             shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub 
@@ -170,6 +180,7 @@ let ``Run.It returns Inventory when given Inventory Command.`` () =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
             avatarMessageSinkStub
+            avatarSingleMetricSinkExplode
             shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub 
@@ -191,6 +202,7 @@ let ``Run.It returns InvalidInput when given invalid Command.`` () =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
             avatarMessageSinkStub
+            avatarSingleMetricSinkExplode
             shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub
@@ -213,6 +225,7 @@ let ``Run.It returns AtSea when given invalid docked location.`` () =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
             avatarMessageSinkStub
+            avatarSingleMetricSinkExplode
             shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub
@@ -235,6 +248,7 @@ let ``Run.It returns Status when given the command Status.`` () =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
             avatarMessageSinkStub
+            avatarSingleMetricSinkExplode
             shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub
@@ -257,6 +271,7 @@ let ``Run.It returns Docked (at Jobs) gamestate when given the command Jobs.`` (
         (inputLocation, input)
         ||> functionUnderTestStubbed 
             avatarMessageSinkStub
+            avatarSingleMetricSinkExplode
             shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub
@@ -281,6 +296,7 @@ let ``Run.It gives a message when given the Accept Job command and the given job
         input
         |> functionUnderTestStubbed 
             avatarMessageSinkStub
+            avatarSingleMetricSinkExplode
             shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub 
@@ -308,6 +324,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
         input
         |> functionUnderTestStubbed 
             avatarMessageSinkStub
+            avatarSingleMetricSinkExplode
             shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub 
@@ -321,8 +338,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
     let inputSource = Job |> Command.Abandon |> Some |> toSource
     let expectedAvatar = 
         {input.Avatars.[avatarId] with 
-            Job=None
-            Metrics = input.Avatars.[avatarId].Metrics |> Map.add Metric.AbandonedJob 1UL}
+            Job=None}
     let expectedWorld = 
         {input with 
             Avatars= input.Avatars |> Map.add avatarId expectedAvatar}
@@ -334,6 +350,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
         input
         |> functionUnderTestStubbed 
             avatarMessageSinkStub
+            (assertAvatarSingleMetricSink [Metric.AbandonedJob, 1UL])
             shipmateSingleStatisticSourceStub
             inputSource 
             sinkStub 
@@ -356,6 +373,7 @@ let ``Run.It returns Docked (at ItemList) gamestate when given the Items command
         (inputLocation, inputWorld)
         ||> functionUnderTestStubbed 
             avatarMessageSinkStub
+            avatarSingleMetricSinkExplode
             shipmateSingleStatisticSourceStub
             inputSource 
             (sinkStub)
@@ -377,6 +395,7 @@ let ``Run.It adds a message when given the Buy command for a non-existent item.`
         (inputLocation, inputWorld)
         ||> functionUnderTestStubbed 
             (avatarExpectedMessagesSink expectedMessages)
+            avatarSingleMetricSinkExplode
             shipmateSingleStatisticSourceStub
             inputSource 
             (sinkStub)
@@ -409,6 +428,7 @@ let ``Run.It adds a message when given the Buy command and the avatar does not h
             avatarInventorySinkStub
             avatarInventorySourceStub
             (avatarExpectedMessagesSink expectedMessages)
+            avatarSingleMetricSinkExplode
             islandMarketSource 
             islandSingleMarketSink 
             shipmateSingleStatisticSourceStub
@@ -462,6 +482,7 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
             avatarInventorySinkStub
             avatarInventorySourceStub
             (avatarExpectedMessagesSink expectedMessages)
+            avatarSingleMetricSinkExplode
             islandMarketSource 
             islandSingleMarketSink 
             shipmateSingleStatisticSource
@@ -485,6 +506,7 @@ let ``Run.It adds a message when given the Sell command for a non-existent item.
         (inputLocation, inputWorld)
         ||> functionUnderTestStubbed 
             (avatarExpectedMessagesSink expectedMessages)
+            avatarSingleMetricSinkExplode
             shipmateSingleStatisticSourceStub
             inputSource 
             (sinkStub)
@@ -506,6 +528,7 @@ let ``Run.It adds a message when given the Sell command and the avatar does not 
         (inputLocation, inputWorld)
         ||> functionUnderTestStubbed 
             (avatarExpectedMessagesSink expectedMessages)
+            avatarSingleMetricSinkExplode
             shipmateSingleStatisticSourceStub
             inputSource 
             (sinkStub)
@@ -557,6 +580,7 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
             avatarInventorySink
             avatarInventorySource
             (avatarExpectedMessagesSink expectedMessages)
+            avatarSingleMetricSinkExplode
             islandMarketSource 
             islandSingleMarketSink 
             shipmateSingleStatisticSourceStub
