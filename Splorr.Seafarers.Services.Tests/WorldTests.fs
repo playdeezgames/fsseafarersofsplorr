@@ -905,7 +905,7 @@ let ``Dock.It does not modify avatar when given avatar has a job for a different
     let actual = 
         jobWorld
         |> World.Dock
-            (assertAvatarSingleMetricSink [Metric.VisitedIsland, 0UL])
+            (assertAvatarSingleMetricSink [Metric.VisitedIsland, 0UL; Metric.VisitedIsland, 1UL])
             avatarSingleMetricSourceStub
             termSources 
             (fun()->commodities) 

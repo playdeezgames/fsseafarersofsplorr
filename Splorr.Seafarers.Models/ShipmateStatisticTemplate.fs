@@ -1,3 +1,3 @@
 ﻿namespace Splorr.Seafarers.Models
 
-type ShipmateStatisticTemplate = StatisticTemplate<ShipmateStatisticIdentifier>
+type ShipmateStatisticTemplate = StatisticTemplate
