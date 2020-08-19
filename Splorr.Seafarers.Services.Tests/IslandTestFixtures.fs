@@ -23,7 +23,7 @@ let internal visitedIslandNoLastVisit =
 let internal seenIsland =
     {
         Island.Name    = "Island"
-        AvatarVisits   = Map.empty |> Map.add avatarId {VisitCount=None;LastVisit=Some 0.0}
+        AvatarVisits   = Map.empty |> Map.add avatarId {VisitCount=None;LastVisit=Some 0L}
         Jobs           = []
         CareenDistance = 0.0
     }
@@ -31,7 +31,7 @@ let internal seenIsland =
 let internal visitedIsland =
     {
         Island.Name    = "Island"
-        AvatarVisits   = Map.empty |> Map.add avatarId {VisitCount=1u |> Some;LastVisit=Some 0.0}
+        AvatarVisits   = Map.empty |> Map.add avatarId {VisitCount=1u |> Some;LastVisit=Some 0L}
         Jobs           = []
         CareenDistance = 0.0
     }
@@ -47,13 +47,12 @@ let internal noCommodityIsland = visitedIsland
 let internal commodityIsland = 
     noCommodityIsland
 let internal commodities = 
-    [(1UL, {CommodityId = 1UL; CommodityName="grain"; PurchaseFactor=1.0; SaleFactor=1.0; Discount=0.5; BasePrice=1.0})]
+    [(1UL, {CommodityName="grain"; PurchaseFactor=1.0; SaleFactor=1.0; Discount=0.5; BasePrice=1.0})]
     |> Map.ofList
 let internal commoditySource = fun () -> commodities
 let internal items =
     [(1UL, 
         {
-            ItemId = 1UL
             ItemName = "rations"
             Commodities=[(1UL, 1.0)]|>Map.ofList
             Occurrence=1.0

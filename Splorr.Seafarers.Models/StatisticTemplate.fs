@@ -1,8 +1,7 @@
 ﻿namespace Splorr.Seafarers.Models
 
-type StatisticTemplate<'T> =
+type StatisticTemplate =
     {
-        StatisticId   : 'T
         StatisticName : string
         MinimumValue  : float
         MaximumValue  : float

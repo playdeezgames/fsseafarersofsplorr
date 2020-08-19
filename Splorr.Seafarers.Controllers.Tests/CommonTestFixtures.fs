@@ -30,38 +30,33 @@ let internal avatarId : string = ""
 
 let internal statisticDescriptors =
     [
-        {
-            StatisticId = ShipmateStatisticIdentifier.Satiety
+        (ShipmateStatisticIdentifier.Satiety,{
             StatisticName="satiety"
             MinimumValue=0.0
             CurrentValue=100.0
             MaximumValue=100.0
-        }
-        {
-            StatisticId = ShipmateStatisticIdentifier.Health
+        })
+        (ShipmateStatisticIdentifier.Health,{
             StatisticName="health"
             MinimumValue=0.0
             CurrentValue=100.0
             MaximumValue=100.0
-        }
-        {
-            StatisticId = ShipmateStatisticIdentifier.Turn
+        })
+        (ShipmateStatisticIdentifier.Turn,{
             StatisticName="turn"
             MinimumValue=0.0
             CurrentValue=0.0
             MaximumValue=50000.0
-        }
-        {
-            StatisticId = ShipmateStatisticIdentifier.Money
+        })
+        (ShipmateStatisticIdentifier.Money,{
             StatisticName="money"
             MinimumValue=0.0
             CurrentValue=0.0
             MaximumValue=1000000000.0
-        }
+        })
     ]
 let internal shipmateStatisticTemplateSourceStub () =
     statisticDescriptors
-    |> List.map (fun x -> (x.StatisticId, x))
     |> Map.ofList
 let internal vesselStatisticTemplateSourceStub () 
         : Map<VesselStatisticIdentifier, VesselStatisticTemplate>= 

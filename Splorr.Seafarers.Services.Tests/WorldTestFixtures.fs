@@ -65,7 +65,6 @@ let internal oneIslandWorld =
 let internal commodities = 
     Map.empty
     |> Map.add 1UL {
-        CommodityId = 1UL
         CommodityName=""
         BasePrice=1.0
         PurchaseFactor=1.0
@@ -76,7 +75,6 @@ let internal commoditySource() = commodities
 let internal genericWorldItems = 
     Map.empty
     |> Map.add 1UL {
-        ItemId = 1UL
         ItemName="item under test"
         Commodities= Map.empty |> Map.add 1UL 1.0
         Occurrence=1.0

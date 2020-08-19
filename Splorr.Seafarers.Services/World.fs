@@ -357,15 +357,9 @@ module World =
                 |> List.map fst
                 |> Set.ofList
                 |> Set.remove location
-            let turn = 
-                shipmateSingleStatisticSource 
-                    avatarId 
-                    Primary 
-                    ShipmateStatisticIdentifier.Turn
-                |> Option.get
             let updatedIsland = 
                 island
-                |> Island.AddVisit turn.CurrentValue avatarId//only when this counts as a new visit...
+                |> Island.AddVisit (DateTimeOffset.Now.ToUnixTimeSeconds()) avatarId
                 |> Island.GenerateJobs 
                     termSources 
                     worldSingleStatisticSource 

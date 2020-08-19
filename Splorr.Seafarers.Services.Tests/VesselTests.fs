@@ -9,7 +9,7 @@ let ``Create.It creates a vessel.`` () =
     let inputAvatarId = "avatar"
     let inputTemplates : Map<VesselStatisticIdentifier, VesselStatisticTemplate> =
         Map.empty
-        |> Map.add VesselStatisticIdentifier.Tonnage {StatisticId=VesselStatisticIdentifier.Tonnage; StatisticName=""; MinimumValue=0.0; MaximumValue=0.0; CurrentValue=0.0}
+        |> Map.add VesselStatisticIdentifier.Tonnage {StatisticName=""; MinimumValue=0.0; MaximumValue=0.0; CurrentValue=0.0}
     let expectedStatistics =
         inputTemplates
         |> Map.map

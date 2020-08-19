@@ -19,7 +19,6 @@ module Item =
                             |> Map.add (reader.GetInt64(4) |> uint64) (reader.GetDouble(5))}
                 | None ->
                     {
-                        ItemId = itemId
                         ItemName = reader.GetString(1)
                         Occurrence = reader.GetDouble(2)
                         Tonnage = reader.GetDouble(3)

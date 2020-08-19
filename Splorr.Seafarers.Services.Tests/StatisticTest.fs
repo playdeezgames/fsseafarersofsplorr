@@ -181,9 +181,8 @@ let ``CreateFromTemplate.It creates a statistic from a statistic template.`` () 
         let inputMinimum = 1.0
         let inputCurrent = 2.0
         let inputMaximum = 3.0
-        let input :StatisticTemplate<ShipmateStatisticIdentifier> = 
+        let input :StatisticTemplate = 
             {
-                StatisticId = ShipmateStatisticIdentifier.Health
                 StatisticName = ""
                 MinimumValue = inputMinimum
                 CurrentValue = inputCurrent

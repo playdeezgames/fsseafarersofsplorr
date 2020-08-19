@@ -6,15 +6,14 @@ open NUnit.Framework
 let internal avatarId = ""
 let internal statisticDescriptors =
     [
-        {StatisticId = ShipmateStatisticIdentifier.Satiety; StatisticName="satiety"; MinimumValue=0.0; CurrentValue=100.0;MaximumValue=100.0}
-        {StatisticId = ShipmateStatisticIdentifier.Health; StatisticName="health"; MinimumValue=0.0; CurrentValue=100.0;MaximumValue=100.0}
-        {StatisticId = ShipmateStatisticIdentifier.Turn; StatisticName="turn"; MinimumValue=0.0; CurrentValue=0.0;MaximumValue=50000.0}
-        {StatisticId = ShipmateStatisticIdentifier.Money; StatisticName="money"; MinimumValue=0.0; CurrentValue=0.0;MaximumValue=1000000000.0}
-        {StatisticId = ShipmateStatisticIdentifier.Reputation; StatisticName="reputation"; MinimumValue=(-1000000000.0); CurrentValue=0.0;MaximumValue=1000000000.0}
+        ShipmateStatisticIdentifier.Satiety, {StatisticName="satiety"; MinimumValue=0.0; CurrentValue=100.0;MaximumValue=100.0}
+        ShipmateStatisticIdentifier.Health, {StatisticName="health"; MinimumValue=0.0; CurrentValue=100.0;MaximumValue=100.0}
+        ShipmateStatisticIdentifier.Turn, {StatisticName="turn"; MinimumValue=0.0; CurrentValue=0.0;MaximumValue=50000.0}
+        ShipmateStatisticIdentifier.Money, {StatisticName="money"; MinimumValue=0.0; CurrentValue=0.0;MaximumValue=1000000000.0}
+        ShipmateStatisticIdentifier.Reputation, {StatisticName="reputation"; MinimumValue=(-1000000000.0); CurrentValue=0.0;MaximumValue=1000000000.0}
     ]
 let internal shipmateStatisticTemplateSource () =
     statisticDescriptors
-    |> List.map (fun descriptor -> (descriptor.StatisticId, descriptor))
     |> Map.ofList
 let internal adverbSource()          : string list = [ "woefully" ]
 let internal adjectiveSource()       : string list = [ "tatty" ]

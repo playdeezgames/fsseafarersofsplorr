@@ -38,26 +38,32 @@ module Island =
             "(unknown)"
     
     let AddVisit 
-            (turn     : float) 
-            (avatarId : string) 
-            (island   : Island) 
+            (epochSeconds : int64) //TODO: to time source(if the tests fail intermittently)?
+            (avatarId     : string) 
+            (island       : Island) 
             : Island =
         match island.AvatarVisits |> Map.tryFind avatarId with
         | None ->
             {island with 
                 AvatarVisits = 
                     island.AvatarVisits 
-                    |> Map.add avatarId {VisitCount = 1u |> Some; LastVisit = Some turn}}
+                    |> Map.add avatarId {VisitCount = 1u |> Some; LastVisit = Some epochSeconds}}
         | Some x when x.LastVisit.IsNone ->
             {island with
                 AvatarVisits =
                     island.AvatarVisits
-                    |> Map.add avatarId {VisitCount = ((x.VisitCount |> Option.defaultValue 0u)+1u) |> Some; LastVisit = Some turn}}
-        | Some x when x.LastVisit.IsSome && x.LastVisit.Value<turn ->
+                    |> Map.add avatarId 
+                        {
+                            VisitCount = ((x.VisitCount |> Option.defaultValue 0u)+1u) |> Some
+                            LastVisit = Some epochSeconds}}
+        | Some x when x.LastVisit.IsSome && x.LastVisit.Value < epochSeconds ->
             {island with
                 AvatarVisits =
                     island.AvatarVisits
-                    |> Map.add avatarId {VisitCount = ((x.VisitCount |> Option.defaultValue 0u)+1u) |> Some; LastVisit = Some turn}}
+                    |> Map.add avatarId 
+                        {
+                            VisitCount = ((x.VisitCount |> Option.defaultValue 0u)+1u) |> Some
+                            LastVisit = Some epochSeconds}}
         | _ -> island
 
     let GenerateJobs 
