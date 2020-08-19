@@ -33,6 +33,7 @@ let private vesselSingleStatisticSourceStub (_) (identifier:VesselStatisticIdent
     | _ -> None
 let internal soloIslandWorld = 
     World.Create 
+        avatarJobSinkStub
         nameSource
         soloIslandSingleStatisticSource
         shipmateStatisticTemplateSource
@@ -47,12 +48,6 @@ let internal soloIslandWorld =
 let internal emptyWorld = 
     {
         AvatarId = avatarId
-        Avatars = 
-            [avatarId,{
-                Job = None
-            }
-            ] 
-            |> Map.ofList
         Islands = Map.empty
     }
 let internal defaultRewardrange = (1.0,10.0)
@@ -62,24 +57,29 @@ let internal oneIslandWorld =
     |> World.SetIsland (0.0,0.0) (Island.Create() |> Island.SetName "Uno" |> Some)
     |> World.TransformIsland  (0.0,0.0) (fun i -> {i with Jobs = [ Job.Create termSources soloIslandSingleStatisticSource random fabricatedDestinationList ]} |> Some)
 
-let internal commodities = 
+let internal commoditySource() = 
     Map.empty
-    |> Map.add 1UL {
-        CommodityName=""
-        BasePrice=1.0
-        PurchaseFactor=1.0
-        SaleFactor=1.0
-        Discount=0.5}
-let internal commoditySource() = commodities
-
-let internal genericWorldItems = 
-    Map.empty
-    |> Map.add 1UL {
-        ItemName="item under test"
-        Commodities= Map.empty |> Map.add 1UL 1.0
-        Occurrence=1.0
-        Tonnage = 1.0
+    |> Map.add 
+        1UL 
+        {
+            CommodityName=""
+            BasePrice=1.0
+            PurchaseFactor=1.0
+            SaleFactor=1.0
+            Discount=0.5
         }
+
+let internal genericWorldItemSource () = 
+    Map.empty
+    |> Map.add 
+        1UL 
+        {
+            ItemName="item under test"
+            Commodities= Map.empty |> Map.add 1UL 1.0
+            Occurrence=1.0
+            Tonnage = 1.0
+        }
+
 let internal genericWorldSingleStatisticSource (identfier: WorldStatisticIdentifier) : Statistic =
     match identfier with
     | WorldStatisticIdentifier.IslandGenerationRetries ->
@@ -97,6 +97,7 @@ let internal genericWorldSingleStatisticSource (identfier: WorldStatisticIdentif
 
 let internal genericWorld = 
     World.Create 
+        avatarJobSinkStub
         nameSource
         genericWorldSingleStatisticSource
         shipmateStatisticTemplateSource
@@ -128,19 +129,21 @@ let private genericWorldShipmateSingleStatisticSink (_) (_) (_) =
     ()
 let internal genericDockedWorld = 
     World.Dock
+        avatarJobSinkStub
+        avatarJobSourceStub
+        avatarMessageSinkStub 
         avatarSingleMetricSinkStub
         avatarSingleMetricSourceStub
-        termSources 
-        (fun()->commodities) 
-        (fun()->genericWorldItems) 
-        genericWorldSingleStatisticSource
-        genericWorldIslandMarketSource 
-        genericWorldIslandMarketSink 
-        genericWorldIslandItemSource 
+        commoditySource
         genericWorldIslandItemSink 
-        genericWorldShipmateSingleStatisticSource
+        genericWorldIslandItemSource 
+        genericWorldIslandMarketSink 
+        genericWorldIslandMarketSource 
+        genericWorldItemSource 
         genericWorldShipmateSingleStatisticSink
-        avatarMessageSinkStub 
+        genericWorldShipmateSingleStatisticSource
+        termSources 
+        genericWorldSingleStatisticSource
         random 
         genericWorldIslandLocation 
         genericWorld
@@ -153,20 +156,15 @@ let internal shopWorldBogusLocation = genericWorldInvalidIslandLocation
 let internal jobWorld = 
     genericDockedWorld 
     |> World.AcceptJob 
+        avatarJobSinkStub
+        avatarJobSourceStub
         avatarMessageSinkStub 
         avatarSingleMetricSinkStub
         avatarSingleMetricSourceStub
         1u 
         genericWorldIslandLocation
-let internal jobLocation = jobWorld.Avatars.[avatarId].Job.Value.Destination
+
 
 let internal headForWorld =
-    {
-        oneIslandWorld with 
-            Avatars =
-                oneIslandWorld.Avatars 
-                |> Map.add 
-                    avatarId 
-                    oneIslandWorld.Avatars.[avatarId]
-    }
+    oneIslandWorld
 

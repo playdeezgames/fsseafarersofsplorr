@@ -171,3 +171,6 @@ let internal avatarMetricSourceStub (_) =
     (System.Enum.GetValues(typedefof<Metric>)) :?> (Metric array)
     |> Array.map (fun m -> (m, 1UL))
     |> Map.ofArray
+
+let avatarJobSinkStub (_) (_) = ()
+let avatarJobSourceStub (_) = None

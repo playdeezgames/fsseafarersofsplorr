@@ -9,6 +9,7 @@ open AtSeaTestFixtures
 
 let private world = 
     World.Create 
+        avatarJobSinkStub
         termNameSource
         worldSingleStatisticSourceStub
         shipmateStatisticTemplateSourceStub
@@ -34,9 +35,11 @@ let ``Run.It returns Confirm Quit when given Quit command and there is no world.
         |> Gamestate.MainMenu 
         |> Gamestate.ConfirmQuit 
         |> Some
+    let avatarJobSink (_) (_) = Assert.Fail("avatarJobSink")
     let actual =
         input
         |> MainMenu.Run 
+            avatarJobSink
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub
@@ -63,10 +66,12 @@ let ``Run.It returns Main Menu when given Quit command and there is a world.`` (
             |> Some 
             |> Gamestate.MainMenu) 
         |> Gamestate.ErrorMessage |> Some
+    let avatarJobSink (_) (_) = Assert.Fail("avatarJobSink")
     let actual =
         input
         |> Some
         |> MainMenu.Run 
+            avatarJobSink
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub
@@ -89,9 +94,11 @@ let ``Run.It returns Main Menu when given invalid command and there is no world.
             |> Gamestate.MainMenu) 
         |> Gamestate.ErrorMessage 
         |> Some
+    let avatarJobSink (_) (_) = Assert.Fail("avatarJobSink")
     let actual =
         input
-        |> MainMenu.Run 
+        |> MainMenu.Run
+            avatarJobSink
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub
@@ -115,10 +122,12 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
             |> Gamestate.MainMenu) 
         |> Gamestate.ErrorMessage 
         |> Some
+    let avatarJobSink (_) (_) = Assert.Fail("avatarJobSink")
     let actual =
         input
         |> Some
         |> MainMenu.Run 
+            avatarJobSink
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub
@@ -136,9 +145,11 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
 let ``Run.It returns At Sea when given Start command and there is no world.`` () =
     let input = None
     let inputSource = System.Guid.NewGuid().ToString() |> Command.Start |> Some |> toSource
+    let avatarJobSink (_) (_) = Assert.Fail("avatarJobSink")
     let actual =
         input
         |> MainMenu.Run 
+            avatarJobSink
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub
@@ -169,10 +180,12 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
             |> Gamestate.MainMenu) 
         |> Gamestate.ErrorMessage 
         |> Some
+    let avatarJobSink (_) (_) = Assert.Fail("avatarJobSink")
     let actual =
         input
         |> Some
         |> MainMenu.Run 
+            avatarJobSink
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub
@@ -194,10 +207,12 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
         None 
         |> Gamestate.MainMenu 
         |> Some
+    let avatarJobSink (_) (_) = Assert.Fail("avatarJobSink")
     let actual =
         input
         |> Some
         |> MainMenu.Run 
+            avatarJobSink
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub
@@ -227,9 +242,11 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
             |> Gamestate.MainMenu) 
         |> Gamestate.ErrorMessage 
         |> Some
+    let avatarJobSink (_) (_) = Assert.Fail("avatarJobSink")
     let actual =
         input
         |> MainMenu.Run 
+            avatarJobSink
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub
@@ -252,10 +269,12 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
         input 
         |> Gamestate.AtSea 
         |> Some
+    let avatarJobSink (_) (_) = Assert.Fail("avatarJobSink")
     let actual =
         input
         |> Some
         |> MainMenu.Run 
+            avatarJobSink
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub
@@ -279,9 +298,11 @@ let ``Run.It returns Main Menu with no world when given Resume command and there
             |> Gamestate.MainMenu) 
         |> Gamestate.ErrorMessage 
         |> Some
+    let avatarJobSink (_) (_) = Assert.Fail("avatarJobSink")
     let actual =
         input
         |> MainMenu.Run 
+            avatarJobSink
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub

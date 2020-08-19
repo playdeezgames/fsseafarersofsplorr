@@ -5,12 +5,12 @@ open Splorr.Seafarers.Services
 
 module Status =
     let private RunWorld 
+            (avatarJobSource               : AvatarJobSource)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
             (messageSink                   : MessageSink) 
             (world                         : World) 
             : unit =
-        let avatar = world.Avatars.[world.AvatarId]
         let portFouling = vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.PortFouling |> Option.get
         let satiety = shipmateSingleStatisticSource world.AvatarId Primary ShipmateStatisticIdentifier.Satiety |> Option.get
         let health = shipmateSingleStatisticSource world.AvatarId Primary ShipmateStatisticIdentifier.Health |> Option.get
@@ -32,7 +32,8 @@ module Status =
             (Hue.Value, (starboardFouling.CurrentValue, starboardFouling.MaximumValue) ||> sprintf "%.2f/%.2f" |> Line) |> Hued
         ]
         |> List.iter messageSink
-        world.Avatars.[world.AvatarId].Job
+        world.AvatarId
+        |> avatarJobSource
         |> Option.iter
             (fun job ->
                 let island = 
@@ -49,6 +50,7 @@ module Status =
                 |> List.iter messageSink)
 
     let Run 
+            (avatarJobSource               : AvatarJobSource)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
             (messageSink                   : MessageSink) 
@@ -56,7 +58,12 @@ module Status =
             : Gamestate option =
         gamestate
         |> Gamestate.GetWorld
-        |> Option.iter (RunWorld shipmateSingleStatisticSource vesselSingleStatisticSource messageSink)
+        |> Option.iter 
+            (RunWorld 
+                avatarJobSource
+                shipmateSingleStatisticSource 
+                vesselSingleStatisticSource 
+                messageSink)
         gamestate
         |> Some
 

@@ -8,6 +8,7 @@ open AtSeaTestFixtures
 
 let internal dockWorld = 
     World.Create
+        avatarJobSinkStub
         termNameSource
         dockWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
@@ -23,12 +24,7 @@ let internal dockWorld =
 let internal dockLocation : Location = (0.0, 0.0)
 
 let internal deadDockWorld =
-    {dockWorld with 
-        Avatars = 
-            Map.empty 
-            |> Map.add 
-                avatarId 
-                (dockWorld.Avatars.[avatarId])}
+    dockWorld
 
 let internal deadDockLocation = dockLocation
 
@@ -76,6 +72,7 @@ let internal smallWorldSingleStatisticSource (identifier: WorldStatisticIdentifi
 
 let internal smallWorld = 
     World.Create 
+        avatarJobSinkStub
         termNameSource
         smallWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
@@ -115,19 +112,21 @@ let private smallWorldIslandMarketSink (_) (_) = ()
 let internal smallWorldDocked = 
     smallWorld 
     |> World.Dock
+        avatarJobSinkStub
+        avatarJobSourceStub
+        avatarMessageSinkStub
         avatarSingleMetricSinkStub
         avatarSingleMetricSourceStub
-        termSources
         commoditySource 
-        itemSource
-        smallWorldSingleStatisticSource
-        smallWorldIslandMarketSource 
-        smallWorldIslandMarketSink 
-        smallWorldIslandItemSource 
         smallWorldIslandItemSink 
-        shipmateSingleStatisticSourceStub
+        smallWorldIslandItemSource 
+        smallWorldIslandMarketSink 
+        smallWorldIslandMarketSource 
+        itemSource
         shipmateSingleStatisticSinkStub
-        avatarMessageSinkStub
+        shipmateSingleStatisticSourceStub
+        termSources
+        smallWorldSingleStatisticSource
         random 
         smallWorldIslandLocation
 
@@ -135,7 +134,7 @@ let internal shopWorld = smallWorldDocked
 
 let internal abandonJobWorld =
     dockWorld
-    |> World.TransformAvatar (fun avatar -> {avatar with Job=Some { FlavorText="";Reward=0.0; Destination=(0.0,0.0)}} |> Some)
+    
 
 let internal dockedItemMarketSourceStub (_) = 
     Map.empty

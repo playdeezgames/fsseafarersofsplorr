@@ -284,10 +284,23 @@ let main argv =
         | Ok x -> x
         | Error x -> raise (System.InvalidOperationException x)
 
+    let avatarJobSink
+            (avatarId: string)
+            (job : Job option)
+            : unit =
+        raise (System.NotImplementedException "avatarJobSink")
+
+    let avatarJobSource 
+            (avatarId:string) 
+            : Job option =
+        raise (System.NotImplementedException "avatarJobSource")
+
     try
         Runner.Run 
             avatarInventorySink
             avatarInventorySource
+            avatarJobSink
+            avatarJobSource
             avatarMessagePurger
             avatarMessageSink
             avatarMessageSource

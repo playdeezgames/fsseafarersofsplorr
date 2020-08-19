@@ -14,6 +14,8 @@ let private functionUnderTest
     AtSea.Run 
         avatarInventorySinkStub
         avatarInventorySourceStub
+        avatarJobSinkStub
+        avatarJobSourceStub
         avatarMessagePurgerStub
         avatarMessageSink
         avatarMessageSourceStub
@@ -112,11 +114,8 @@ let ``Run.It returns AtSea with new speed when given Set Speed command.`` () =
         |> Some 
         |> toSource
     let expectedMessages = ["You set your speed to 1.00."]//note - the statistic sink does not actually track speed, so this value is "wrong" but the behavior is correct
-    let expectedAvatar = 
-        input.Avatars.[avatarId]
     let expected = 
-        {input with 
-            Avatars = input.Avatars |> Map.add avatarId expectedAvatar}
+        input
         |> Gamestate.AtSea 
         |> Some
     let actual =
@@ -143,11 +142,8 @@ let ``Run.It returns AtSea with new heading when given Set Heading command.`` ()
         [
             "You set your heading to 0.00\u00b0." //note - because of stub function the actual heading is not stored, just testing that a message is added
         ]
-    let expectedAvatar = 
-        input.Avatars.[avatarId]
     let expected = 
-        {input with 
-            Avatars = input.Avatars |> Map.add avatarId expectedAvatar}
+        input
         |> Gamestate.AtSea 
         |> Some
     let actual =
@@ -170,11 +166,8 @@ let ``Run.It moves the avatar when given Move command.`` () =
         |> toSource
     let expectedMessages = ["Steady as she goes."]
     let expectedPosition = (6.0,5.0)
-    let expectedAvatar =
-        input.Avatars.[avatarId]
     let expected = 
-        {input with 
-            Avatars  = input.Avatars |> Map.add avatarId expectedAvatar} 
+        input
         |> Gamestate.AtSea 
         |> Some
     let actual =
@@ -280,11 +273,8 @@ let ``Run.It returns AtSea when given the Dock command and there is no sufficien
         |> Some 
         |> toSource
     let expectedMessages = ["There is no place to dock."]
-    let expectedAvatar =
-        input.Avatars.[avatarId]
     let expected = 
-        {input with 
-            Avatars = input.Avatars |> Map.add avatarId expectedAvatar}
+        input
         |>Gamestate.AtSea
         |>Some
     let actual =
@@ -309,12 +299,8 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
         input.Islands 
         |> Map.add expectedLocation expectedIsland
     let expectedMessages = ["You dock."]
-    let expectedAvatar = 
-        input.Avatars.[avatarId]
     let expectedWorld = 
-        {input with 
-            Avatars = input.Avatars |> Map.add avatarId expectedAvatar
-            Islands = expectedIslands }
+        input
     let expected = 
         (Dock, expectedLocation, expectedWorld)
         |>Gamestate.Docked
@@ -338,11 +324,8 @@ let ``Run.It gives a message when given a Head For command and the given island 
         |> Some 
         |> toSource
     let expectedMessages = ["I don't know how to get to `foo`."]
-    let expectedAvatar = 
-        input.Avatars.[avatarId]
     let expected = 
-        {input with 
-            Avatars= input.Avatars |> Map.add avatarId expectedAvatar} 
+        input
         |> Gamestate.AtSea 
         |> Some
     let actual = 
@@ -364,11 +347,8 @@ let ``Run.It gives a message when given a Head For command and the given island 
         |> Some 
         |> toSource
     let expectedMessages = ["I don't know how to get to `yermom`."]
-    let expectedAvatar = 
-        input.Avatars.[avatarId]
     let expected = 
-        {input with 
-            Avatars=input.Avatars |> Map.add avatarId expectedAvatar} 
+        input
         |> Gamestate.AtSea 
         |> Some
     let actual = 
@@ -390,10 +370,8 @@ let ``Run.It gives a message and changes heading when given a Head For command a
             "You set your heading to 0.00\u00b0." //heading not actually set because of stub functions, so really just test that a message is added
             "You head for `yermom`."
         ]
-    let expectedAvatar = input.Avatars.[avatarId]
     let expected = 
-        {input with 
-            Avatars = input.Avatars |> Map.add avatarId expectedAvatar} 
+        input
         |> Gamestate.AtSea 
         |> Some
     let actual = 
@@ -450,11 +428,8 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
         |> Some 
         |> toSource
     let expectedMessages = ["You have no job to abandon."]
-    let expectedAvatar =
-        input.Avatars.[avatarId]
     let expected = 
-        {input with 
-            Avatars = input.Avatars |> Map.add avatarId expectedAvatar} 
+        input
         |> Gamestate.AtSea 
         |> Some
     let actual =
@@ -476,12 +451,8 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
         |> Some 
         |> toSource
     let expectedMessages = ["You abandon your job."]
-    let expectedAvatar = 
-        {input.Avatars.[avatarId] with 
-            Job=None}
     let expected = 
-        {input with 
-            Avatars= input.Avatars |> Map.add avatarId expectedAvatar} 
+        input
         |> Gamestate.AtSea 
         |> Some
     let actual =
@@ -497,12 +468,8 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
 [<Test>]
 let ``Run.It gives a message and returns AtSea when the avatar is too far away from an island to careen.`` () =
     let inputPosition = (10.0, 10.0)
-    let inputAvatar = 
-        dockWorld.Avatars.[avatarId]
     let input = 
-        {dockWorld with
-            Avatars = 
-                dockWorld.Avatars |> Map.add avatarId inputAvatar}
+        dockWorld
     let inputSource = 
         Port
         |> Command.Careen

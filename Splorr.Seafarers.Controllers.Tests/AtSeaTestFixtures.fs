@@ -22,8 +22,12 @@ let internal worldSingleStatisticSourceStub (identfier: WorldStatisticIdentifier
 
 let private random = Random()
 
+let internal avatarJobSinkStub (_) (_) = ()
+let internal avatarJobSourceStub (_) = None
+
 let internal world = 
     World.Create 
+        avatarInventorySinkStub
         termNameSource
         worldSingleStatisticSourceStub
         shipmateStatisticTemplateSourceStub
@@ -58,6 +62,7 @@ let internal emptyWorldSingleStatisticSource (identfier: WorldStatisticIdentifie
 
 let internal emptyWorld = 
     World.Create 
+        avatarJobSinkStub
         termNameSource
         emptyWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
@@ -86,6 +91,7 @@ let internal dockWorldSingleStatisticSource (identfier: WorldStatisticIdentifier
         raise (System.NotImplementedException (sprintf "dockWorldSingleStatisticSource %s" (identfier.ToString())))
 let internal dockWorld = 
     World.Create 
+        avatarJobSinkStub
         termNameSource
         dockWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
@@ -102,6 +108,7 @@ let internal commoditySourceStub () = Map.empty
 
 let internal headForWorldUnvisited = 
     World.Create 
+        avatarJobSinkStub
         termNameSource
         dockWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
@@ -154,36 +161,27 @@ let private itemSourceStub() = Map.empty
 let internal headForWorldVisited = 
     headForWorldUnvisited
     |> World.Dock 
+        avatarJobSinkStub
+        avatarJobSourceStub
+        avatarMessageSinkStub
         avatarSingleMetricSinkStub
         avatarSingleMetricSourceStub
-        termSources
         commoditySourceStub 
-        itemSourceStub 
-        dockWorldSingleStatisticSource
-        headForWorldIslandMarketSource 
-        headForWorldIslandMarketSink 
-        headForWorldIslandItemSource 
         headForWorldIslandItemSink 
-        shipmateSingleStatisticSourceStub
+        headForWorldIslandItemSource 
+        headForWorldIslandMarketSink 
+        headForWorldIslandMarketSource 
+        itemSourceStub 
         shipmateSingleStatisticSinkStub
-        avatarMessageSinkStub
+        shipmateSingleStatisticSourceStub
+        termSources
+        dockWorldSingleStatisticSource
         random 
         (0.0, 0.0)
 
 let internal abandonJobWorld =
     dockWorld
-    |> World.TransformAvatar 
-        (fun avatar -> 
-            {avatar with 
-                Job = 
-                    { 
-                        FlavorText  = ""
-                        Reward      = 0.0
-                        Destination = (0.0, 0.0)  
-                    } 
-                    |> Some
-            }
-            |>Some)
+    
 
 let internal atSeaIslandItemSource (_) = 
     Set.empty
