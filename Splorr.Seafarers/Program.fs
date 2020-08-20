@@ -288,12 +288,16 @@ let main argv =
             (avatarId: string)
             (job : Job option)
             : unit =
-        raise (System.NotImplementedException "avatarJobSink")
+        match connection |> AvatarJob.SetForAvatar avatarId job with
+        | Ok () -> ()
+        | Error x -> raise (System.InvalidOperationException x)
 
     let avatarJobSource 
             (avatarId:string) 
             : Job option =
-        raise (System.NotImplementedException "avatarJobSource")
+        match connection |> AvatarJob.GetForAvatar avatarId with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
 
     try
         Runner.Run 
