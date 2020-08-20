@@ -12,7 +12,7 @@ let ``GetForAvatar.It returns None for an avatar that does not have a job assign
     use connection = SetupConnection()
     try
         let inputAvatarId = NewAvatarId
-        match connection |> AvatarJob.GetForAvatar inputAvatarId with
+        match AvatarJob.GetForAvatar connection inputAvatarId with
         | Ok actual     -> 
             Assert.True(actual.IsNone)
         | Error message -> 
@@ -26,7 +26,7 @@ let ``GetForAvatar.It returns the assigned job for an avatar that has a job assi
     use connection = SetupConnection()
     try
         let inputAvatarId = ExistingAvatarId
-        match connection |> AvatarJob.GetForAvatar inputAvatarId with
+        match AvatarJob.GetForAvatar connection inputAvatarId with
         | Ok (Some actual)     -> 
             Assert.AreEqual("flavor", actual.FlavorText)
             Assert.AreEqual(1.0, actual.Reward)
@@ -55,7 +55,7 @@ let ``SetForAvatar.It stores a job when given one for an avatar that does not ha
         command.Parameters.AddWithValue("$avatarId", inputAvatarId) |> ignore
         let initialCount = command.ExecuteScalar()
         Assert.AreEqual(0, initialCount)
-        match connection |> AvatarJob.SetForAvatar inputAvatarId inputJob with
+        match AvatarJob.SetForAvatar connection inputAvatarId inputJob with
         | Ok ()     -> 
             let finalCount = command.ExecuteScalar()
             Assert.AreEqual(1, finalCount)
@@ -75,7 +75,7 @@ let ``SetForAvatar.It eliminates a job when given None for an avatar that has a 
         command.Parameters.AddWithValue("$avatarId", inputAvatarId) |> ignore
         let initialCount = command.ExecuteScalar()
         Assert.AreEqual(1, initialCount)
-        match connection |> AvatarJob.SetForAvatar inputAvatarId inputJob with
+        match AvatarJob.SetForAvatar connection inputAvatarId inputJob with
         | Ok ()     -> 
             let finalCount = command.ExecuteScalar()
             Assert.AreEqual(0, finalCount)

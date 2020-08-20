@@ -14,8 +14,7 @@ let ``GetShipmatesForAvatar.It retrieves a list of shipmates for an existing ava
         let expected : Result<string list, string> =
             [ PrimaryShipmateId ] |> Ok
         let actual =
-            connection
-            |> ShipmateStatistic.GetShipmatesForAvatar inputAvatarId
+            ShipmateStatistic.GetShipmatesForAvatar connection inputAvatarId
         Assert.AreEqual(expected, actual)
     finally
         connection.Close()
@@ -31,8 +30,7 @@ let ``GetStatisticForShipmate.It gets the statistic for an existing shipmate.`` 
         let expected : Result<Statistic option, string> =
             {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=50.0} |> Some |> Ok
         let actual =
-            connection
-            |> ShipmateStatistic.GetStatisticForShipmate inputAvatarId inputShipmateId inputStatisticId
+            ShipmateStatistic.GetStatisticForShipmate connection inputAvatarId inputShipmateId inputStatisticId
         Assert.AreEqual(expected, actual)
     finally
         connection.Close()
@@ -54,7 +52,7 @@ let ``SetStatisticForShipmate.It create the given statistic for the given shipma
 
         let expected: Result<unit, string> = () |> Ok
         let actual =
-            ShipmateStatistic.SetStatisticForShipmate inputAvatarId inputShipmateId (inputIdentifier, inputStatistic) connection
+            ShipmateStatistic.SetStatisticForShipmate connection inputAvatarId inputShipmateId (inputIdentifier, inputStatistic)
         Assert.AreEqual(expected, actual)
 
         let finalCount = command.ExecuteScalar() :?> int64
@@ -80,7 +78,7 @@ let ``SetStatisticForShipmate.It removes the given statistic for the given shipm
 
         let expected: Result<unit, string> = () |> Ok
         let actual =
-            ShipmateStatistic.SetStatisticForShipmate inputAvatarId inputShipmateId (inputIdentifier, inputStatistic) connection
+            ShipmateStatistic.SetStatisticForShipmate connection inputAvatarId inputShipmateId (inputIdentifier, inputStatistic)
         Assert.AreEqual(expected, actual)
 
         let finalCount = command.ExecuteScalar() :?> int64

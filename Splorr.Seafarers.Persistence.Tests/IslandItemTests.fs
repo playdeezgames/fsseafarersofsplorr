@@ -19,8 +19,7 @@ let ``GetForIsland.It retrieves the items sold on a particular island.`` () =
         |> Set.ofList 
         |> Ok
     let actual =
-        input
-        |> IslandItem.GetForIsland connection
+        IslandItem.GetForIsland connection input 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -33,8 +32,7 @@ let ``GetForIsland.It returns an error when an island is not found at the locati
         Set.empty 
         |> Ok
     let actual =
-        input
-        |> IslandItem.GetForIsland connection
+        IslandItem.GetForIsland connection input 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -47,8 +45,7 @@ let ``ExistForIsland.It returns true when items are found for a given island loc
         true 
         |> Ok
     let actual =
-        input
-        |> IslandItem.ExistForIsland connection
+        IslandItem.ExistForIsland connection input 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -61,8 +58,7 @@ let ``ExistForIsland.It returns false when items are not found for a given islan
         false 
         |> Ok
     let actual =
-        input
-        |> IslandItem.ExistForIsland connection
+        IslandItem.ExistForIsland connection input 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -78,7 +74,7 @@ let ``CreateForIsland.It makes new records when no previous records exist.`` () 
         () 
         |> Ok
     let actualInitialCount = 
-        match IslandItem.GetForIsland connection inputLocation with
+        match IslandItem.GetForIsland connection inputLocation  with
         | Ok x -> 
             x.Count
         | Error message -> 
@@ -86,11 +82,10 @@ let ``CreateForIsland.It makes new records when no previous records exist.`` () 
             0
     Assert.AreEqual(0, actualInitialCount)
     let actual =
-        input
-        |> IslandItem.CreateForIsland connection inputLocation
+        IslandItem.CreateForIsland connection inputLocation input 
     Assert.AreEqual(expected, actual)
     let actualFinalCount = 
-        match IslandItem.GetForIsland connection inputLocation with
+        match IslandItem.GetForIsland connection inputLocation  with
         | Ok x -> 
             x.Count
         | Error message -> 
@@ -109,7 +104,7 @@ let ``CreateForIsland.It removes old records when previous records exist.`` () =
         () 
         |> Ok
     let actualInitialCount = 
-        match IslandItem.GetForIsland connection inputLocation with
+        match IslandItem.GetForIsland connection inputLocation  with
         | Ok x -> 
             x.Count
         | Error message -> 
@@ -117,8 +112,7 @@ let ``CreateForIsland.It removes old records when previous records exist.`` () =
             0
     Assert.AreEqual(3, actualInitialCount)
     let actual =
-        input
-        |> IslandItem.CreateForIsland connection inputLocation
+        IslandItem.CreateForIsland connection inputLocation input 
     Assert.AreEqual(expected, actual)
     let actualFinalCount = 
         match IslandItem.GetForIsland connection inputLocation with
@@ -150,11 +144,10 @@ let ``CreateForIsland.It replaces old records when previous records exist.`` () 
             0
     Assert.AreEqual(3, actualInitialCount)
     let actual =
-        input
-        |> IslandItem.CreateForIsland connection inputLocation
+        IslandItem.CreateForIsland connection inputLocation input 
     Assert.AreEqual(expected, actual)
     let actualFinalCount = 
-        match IslandItem.GetForIsland connection inputLocation with
+        match IslandItem.GetForIsland connection inputLocation  with
         | Ok x -> 
             x.Count
         | Error message -> 

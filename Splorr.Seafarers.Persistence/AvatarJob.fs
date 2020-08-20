@@ -14,8 +14,8 @@ module AvatarJob =
         }
 
     let GetForAvatar 
-            (avatarId   : string) 
             (connection : SQLiteConnection) 
+            (avatarId   : string) 
             : Result<Job option, string> =
         connection
         |> Utility.GetList 
@@ -27,9 +27,9 @@ module AvatarJob =
             (List.tryHead)
 
     let SetForAvatar 
+            (connection : SQLiteConnection) 
             (avatarId   : string) 
             (job        : Job option)
-            (connection : SQLiteConnection) 
             : Result<unit, string> =
         match job with
         | None ->

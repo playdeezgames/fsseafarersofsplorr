@@ -12,8 +12,8 @@ module Message =
         command.Parameters.AddWithValue("$avatarId", avatarId) |> ignore
 
     let GetForAvatar
-            (avatarId   : string)
             (connection : SQLiteConnection)
+            (avatarId   : string)
             : Result<string list, string> =
         connection
         |> Utility.GetList 
@@ -22,8 +22,8 @@ module Message =
             convertor
 
     let ClearForAvatar
-            (avatarId   : string)
             (connection : SQLiteConnection)
+            (avatarId   : string)
             : Result<unit, string> =
         try
             use command = new SQLiteCommand("DELETE FROM [Messages] WHERE [AvatarId] = $avatarId;", connection)
@@ -37,9 +37,9 @@ module Message =
             |> Error
 
     let AddForAvatar
+            (connection : SQLiteConnection)
             (avatarId   : string, 
              message    : string)
-            (connection : SQLiteConnection)
             : Result<unit, string> =
         try
             use command = new SQLiteCommand("INSERT INTO [Messages] ([AvatarId], [Message]) VALUES($avatarId, $message);", connection)

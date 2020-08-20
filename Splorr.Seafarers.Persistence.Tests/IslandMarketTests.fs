@@ -24,8 +24,7 @@ let ``GetMarketForIsland.It returns the market when the given item has a value f
     let expected : Result<Market option,string> =
         ({Supply=1.0; Demand=1.0} |> Some) |> Ok
     let actual =
-        input 
-        |> IslandMarket.GetMarketForIsland connection inputCommodityId
+        IslandMarket.GetMarketForIsland connection input inputCommodityId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -36,8 +35,7 @@ let ``GetMarketForIsland.It returns nothing when the given item has no value for
     let expected : Result<Market option,string> =
         None |> Ok
     let actual =
-        input 
-        |> IslandMarket.GetMarketForIsland connection inputCommodityId
+        IslandMarket.GetMarketForIsland connection input inputCommodityId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
