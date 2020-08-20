@@ -145,7 +145,8 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
 let ``Run.It returns At Sea when given Start command and there is no world.`` () =
     let input = None
     let inputSource = System.Guid.NewGuid().ToString() |> Command.Start |> Some |> toSource
-    let avatarJobSink (_) (_) = Assert.Fail("avatarJobSink")
+    let avatarJobSink (_) (actual:Job option) = 
+        Assert.AreEqual(None, actual)
     let actual =
         input
         |> MainMenu.Run 

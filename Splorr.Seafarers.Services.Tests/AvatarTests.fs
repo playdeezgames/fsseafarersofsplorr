@@ -91,22 +91,19 @@ let ``SetReputation.It assigns the amount of reputation of the primary shipmate.
 
 [<Test>]
 let ``Create.It creates an avatar.`` () =
-    let avatarJobSink (_) (_) = 
-        Assert.Fail("avatarJobSink")
+    let avatarJobSink (_) (actual) = 
+        Assert.AreEqual(None, actual)
     let rationItemSource () = 
-        Assert.Fail("rationItemSource")
         []
-    let shipmateRationItemSink (_) (_) (_) = 
-        Assert.Fail("shipmateRationItemSink")
+    let shipmateRationItemSink (_) (_) (actual) = 
+        Assert.AreEqual([], actual)
     let shipmateSingleStatisticSink (_) (_) (_) = 
         Assert.Fail("shipmateSingleStatisticSink")
     let shipmateStatisticTemplateSource () = 
-        Assert.Fail("shipmateStatisticTemplateSource")
         Map.empty
-    let vesselStatisticSink (_) (_) = 
-        Assert.Fail("vesselStatisticSink")
+    let vesselStatisticSink (_) (actual) = 
+        Assert.AreEqual(Map.empty, actual)
     let vesselStatisticTemplateSource () = 
-        Assert.Fail("vesselStatisticTemplateSource")
         Map.empty
     Avatar.Create
         avatarJobSink                   
@@ -471,7 +468,6 @@ let ``AbandonJob.It does nothing when the given avatar has no job.`` () =
     let avatarJobSink (_) (_) =
         Assert.Fail("avatarJobSink")
     let avatarJobSource (_) =
-        Assert.Fail("avatarJobSource")
         None
     input
     |> Avatar.AbandonJob
@@ -497,11 +493,16 @@ let ``AbandonJob.It set job to None when the given avatar has a job.`` () =
             Assert.AreEqual(-1.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let avatarJobSink (_) (_) =
-        Assert.Fail("avatarJobSink")
+    let avatarJobSink (_) (job:Job option) =
+        let expected : Job option = None
+        Assert.AreEqual(expected, job)
     let avatarJobSource (_) =
-        Assert.Fail("avatarJobSource")
-        None
+        {
+            FlavorText  = ""
+            Reward      = 0.0
+            Destination = (0.0, 0.0)
+        }
+        |> Some
     Avatar.AbandonJob
         avatarJobSink
         avatarJobSource
@@ -522,7 +523,6 @@ let ``CompleteJob.It does nothing when the given avatar has no job.`` () =
     let avatarJobSink (_) (_) =
         Assert.Fail("avatarJobSink")
     let avatarJobSource (_) =
-        Assert.Fail("avatarJobSource")
         None
     Avatar.CompleteJob
         avatarJobSink
@@ -558,11 +558,12 @@ let ``CompleteJob.It sets job to None, adds reward money, adds reputation and me
             Assert.AreEqual(1.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let avatarJobSink (_) (_) =
-        Assert.Fail("avatarJobSink")
+    let avatarJobSink (_) (job: Job option) =
+        let expected : Job option = None
+        Assert.AreEqual(expected, job)
     let avatarJobSource (_) =
-        Assert.Fail("avatarJobSource")
-        None
+        inputJob 
+        |> Some
     Avatar.CompleteJob
         avatarJobSink
         avatarJobSource
