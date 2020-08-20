@@ -91,9 +91,30 @@ let ``SetReputation.It assigns the amount of reputation of the primary shipmate.
 
 [<Test>]
 let ``Create.It creates an avatar.`` () =
-    let actual =
-        avatar
-    Assert.AreEqual(None, actual.Job)
+    let avatarJobSink (_) (actual) = 
+        Assert.AreEqual(None, actual)
+    let rationItemSource () = 
+        []
+    let shipmateRationItemSink (_) (_) (actual) = 
+        Assert.AreEqual([], actual)
+    let shipmateSingleStatisticSink (_) (_) (_) = 
+        Assert.Fail("shipmateSingleStatisticSink")
+    let shipmateStatisticTemplateSource () = 
+        Map.empty
+    let vesselStatisticSink (_) (actual) = 
+        Assert.AreEqual(Map.empty, actual)
+    let vesselStatisticTemplateSource () = 
+        Map.empty
+    Avatar.Create
+        avatarJobSink                   
+        rationItemSource                
+        shipmateRationItemSink          
+        shipmateSingleStatisticSink     
+        shipmateStatisticTemplateSource 
+        vesselStatisticSink             
+        vesselStatisticTemplateSource   
+        avatarId                        
+        
 
 [<Test>]
 let ``SetSpeed.It sets all stop when given less than zero.`` () =
@@ -241,7 +262,6 @@ let private inputAvatarId = "avatar"
 
 [<Test>]
 let ``Move.It moves the avatar.`` () =
-    let input = avatar
     let expectedPosition = (51.0,50.0)
     let vesselSingleStatisticSink (_) (identifier:VesselStatisticIdentifier, statistic:Statistic) =
         match identifier with
@@ -267,12 +287,9 @@ let ``Move.It moves the avatar.`` () =
         vesselSingleStatisticSink 
         vesselSingleStatisticSource 
         inputAvatarId
-    |> ignore
 
 [<Test>]
 let ``Move.It removes a ration when the given avatar has rations and full satiety.`` () =
-    let input = 
-        avatar
     let originalInventory = Map.empty |> Map.add 1UL 2UL
     let expectedInventory = Map.empty |> Map.add 1UL 1UL
     let shipmateRationItemSource (_) (_) = [0UL; 1UL]
@@ -315,8 +332,6 @@ let ``Move.It removes a ration when the given avatar has rations and full satiet
 
 [<Test>]
 let ``Move.It removes a ration and increases satiety when the given avatar has rations and less than full satiety.`` () =
-    let input = 
-        avatar
     let originalInventory = Map.empty |> Map.add 1UL 2UL
     let expectedInventory = Map.empty |> Map.add 1UL 1UL
     let avatarShipmateSource (_) = 
@@ -360,9 +375,6 @@ let ``Move.It removes a ration and increases satiety when the given avatar has r
 
 [<Test>]
 let ``Move.It lowers the avatar's satiety but does not affect turns when the given avatar has no rations.`` () =
-    let input = avatar
-    let expectedAvatar = 
-        input
     let avatarShipmateSource (_) = 
         [ Primary ]
     let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
@@ -403,8 +415,6 @@ let ``Move.It lowers the avatar's satiety but does not affect turns when the giv
 
 [<Test>]
 let ``Move.It lowers the avatar's maximum turn when the given avatar has no rations and minimum satiety.`` () =
-    let input = 
-        avatar
     let avatarShipmateSource (_) = 
         [ Primary ]
     let mutable sinkCalls = 0u
@@ -452,34 +462,24 @@ let ``Move.It lowers the avatar's maximum turn when the given avatar has no rati
         vesselSingleStatisticSource 
         inputAvatarId
 
-
-[<Test>]
-let ``SetJob.It sets the job of the given avatar.`` () =
-    let actual =
-        avatar
-        |> Avatar.SetJob job
-    Assert.AreEqual(job |> Some, actual.Job)
-
 [<Test>]
 let ``AbandonJob.It does nothing when the given avatar has no job.`` () =
-    let input = avatar
-    let expected = input
-    let actual =
-        input
-        |> Avatar.AbandonJob
-            avatarSingleMetricSinkExplode
-            avatarSingleMetricSourceStub
-            shipmateSingleStatisticSinkStub
-            shipmateSingleStatisticSourceStub
-            avatarId
-    Assert.AreEqual(expected, actual)
+    let input = avatarId
+    let avatarJobSink (_) (_) =
+        Assert.Fail("avatarJobSink")
+    let avatarJobSource (_) =
+        None
+    input
+    |> Avatar.AbandonJob
+        avatarJobSink
+        avatarJobSource
+        avatarSingleMetricSinkExplode
+        avatarSingleMetricSourceStub
+        shipmateSingleStatisticSinkStub
+        shipmateSingleStatisticSourceStub
 
 [<Test>]
 let ``AbandonJob.It set job to None when the given avatar has a job.`` () =
-    let input = employedAvatar
-    let expected = 
-        {input with 
-            Job=None}
     let shipmateSingleStatisticSource (_) (_) (identifier) =
         match identifier with
         | ShipmateStatisticIdentifier.Reputation ->
@@ -493,42 +493,48 @@ let ``AbandonJob.It set job to None when the given avatar has a job.`` () =
             Assert.AreEqual(-1.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let actual =
-        input
-        |> Avatar.AbandonJob
-            (assertAvatarSingleMetricSink [(Metric.AbandonedJob, 1UL)])
-            avatarSingleMetricSourceStub
-            shipmateSingleStatisticSink
-            shipmateSingleStatisticSource
-            avatarId
-    Assert.AreEqual(expected, actual)
+    let avatarJobSink (_) (job:Job option) =
+        let expected : Job option = None
+        Assert.AreEqual(expected, job)
+    let avatarJobSource (_) =
+        {
+            FlavorText  = ""
+            Reward      = 0.0
+            Destination = (0.0, 0.0)
+        }
+        |> Some
+    Avatar.AbandonJob
+        avatarJobSink
+        avatarJobSource
+        (assertAvatarSingleMetricSink [(Metric.AbandonedJob, 1UL)])
+        avatarSingleMetricSourceStub
+        shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
+        avatarId
+    
     
 [<Test>]
 let ``CompleteJob.It does nothing when the given avatar has no job.`` () =
-    let input = avatar
-    let expected = input
     let shipmateSingleStatisticSource (_) (_) (_) =
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSource")
         None
     let shipmateSingleStatisticSink (_) (_) (_) =
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let actual = 
-        input
-        |> Avatar.CompleteJob
-            avatarSingleMetricSinkExplode
-            avatarSingleMetricSourceStub
-            shipmateSingleStatisticSink
-            shipmateSingleStatisticSource
-            avatarId
-    Assert.AreEqual(expected, actual)
+    let avatarJobSink (_) (_) =
+        Assert.Fail("avatarJobSink")
+    let avatarJobSource (_) =
+        None
+    Avatar.CompleteJob
+        avatarJobSink
+        avatarJobSource
+        avatarSingleMetricSinkExplode
+        avatarSingleMetricSourceStub
+        shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
+        avatarId
 
 [<Test>]
 let ``CompleteJob.It sets job to None, adds reward money, adds reputation and metrics when the given avatar has a job.`` () =
-    let input = employedAvatar
-    let inputJob = employedAvatar.Job.Value
-    let expected = 
-        {input with 
-            Job = None}
     let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
         match identifier with
         | ShipmateStatisticIdentifier.Money ->
@@ -538,6 +544,12 @@ let ``CompleteJob.It sets job to None, adds reward money, adds reputation and me
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSource")
             None
+    let inputJob = 
+        {
+            Reward = 10.0
+            FlavorText=""
+            Destination=(0.0, 0.0)
+        }
     let shipmateSingleStatisticSink (_) (_) (identifier:ShipmateStatisticIdentifier, statistic: Statistic option) =
         match identifier with
         | ShipmateStatisticIdentifier.Money ->
@@ -546,21 +558,25 @@ let ``CompleteJob.It sets job to None, adds reward money, adds reputation and me
             Assert.AreEqual(1.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let actual = 
-        input
-        |> Avatar.CompleteJob
-            (assertAvatarSingleMetricSink [(Metric.CompletedJob, 1UL)])
-            avatarSingleMetricSourceStub
-            shipmateSingleStatisticSink
-            shipmateSingleStatisticSource
-            avatarId
-    Assert.AreEqual(expected, actual)
+    let avatarJobSink (_) (job: Job option) =
+        let expected : Job option = None
+        Assert.AreEqual(expected, job)
+    let avatarJobSource (_) =
+        inputJob 
+        |> Some
+    Avatar.CompleteJob
+        avatarJobSink
+        avatarJobSource
+        (assertAvatarSingleMetricSink [(Metric.CompletedJob, 1UL)])
+        avatarSingleMetricSourceStub
+        shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
+        avatarId
 
 [<Test>]
 let ``SpendMoney.It has no effect when given a negative amount to spend.`` () =
     let input = avatarId
     let inputAmount = -1.0
-    let expected = input
     let shipmateSingleStatisticSource (_) (_) (_) =
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSource")
         None
@@ -915,8 +931,6 @@ let ``GetEffectiveSpeed.It returns full speed when there is no fouling.`` () =
         Avatar.GetEffectiveSpeed vesselSingleStatisticSource inputAvatarId
     Assert.AreEqual(expected, actual)
 
-let private fouledAvatar = avatar
-
 [<Test>]
 let ``GetEffectiveSpeed.It returns proportionally reduced speed when there is fouling.`` () =
     let expected = 0.125
@@ -960,7 +974,6 @@ let ``CleanHull.It cleans the hull of the given avatar.`` () =
 
 [<Test>]
 let ``TransformStatistic.It replaces the statistic when that statistic is originally present in the avatar.`` () =
-    let input = avatar
     let inputHealth = Statistic.Create (5.0,10.0) 5.0
     let shipmateSingleStatisticSource (_) (_) (identifier: ShipmateStatisticIdentifier) =
         match identifier with 

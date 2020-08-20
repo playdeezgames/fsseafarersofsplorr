@@ -16,8 +16,8 @@ module ShipmateStatistic =
             })
 
     let GetShipmatesForAvatar 
-            (avatarId   : string) 
             (connection : SQLiteConnection) 
+            (avatarId   : string) 
             : Result<string list, string> =
         connection
         |> Utility.GetList 
@@ -26,10 +26,10 @@ module ShipmateStatistic =
             (fun reader -> reader.GetString(0))
 
     let GetStatisticForShipmate
+            (connection : SQLiteConnection) 
             (avatarId   : string) 
             (shipmateId : string)
             (identifier : ShipmateStatisticIdentifier) 
-            (connection : SQLiteConnection) 
             : Result<Statistic option,string> =
         let commandFilter (command: SQLiteCommand) =
             command.Parameters.AddWithValue("$avatarId", avatarId) |> ignore
@@ -45,10 +45,10 @@ module ShipmateStatistic =
                 |> List.tryHead)
 
     let SetStatisticForShipmate
+            (connection: SQLiteConnection) 
             (avatarId: string)
             (shipmateId: string)
             (identifier: ShipmateStatisticIdentifier, statistic:Statistic option)
-            (connection: SQLiteConnection) 
             : Result<unit, string> =
         try
             use command = new SQLiteCommand ("DELETE FROM [ShipmateStatistics] WHERE [AvatarId] = $avatarId AND [ShipmateId] = $shipmateId AND [StatisticId] = $statisticId;", connection)

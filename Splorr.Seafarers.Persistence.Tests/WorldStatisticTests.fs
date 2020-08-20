@@ -15,7 +15,7 @@ let ``Get.It returns the given statistic for the world.`` () =
         let expected : Result<Statistic, string> =
             expectedStatistic |> Ok
         let actual =
-            WorldStatistic.Get inputIdentifier connection
+            WorldStatistic.Get connection inputIdentifier 
         Assert.AreEqual(expected, actual)
     finally
         connection.Close()

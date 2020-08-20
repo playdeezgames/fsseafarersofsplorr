@@ -5,8 +5,8 @@ open System
 
 module Term =
     let GetForTermType 
-            (termType:string) 
             (connection:SQLiteConnection) 
+            (termType:string) 
             : Result<string list, string> =
         let commandSideEffect (command: SQLiteCommand) =
             command.Parameters.AddWithValue("$termType", termType) |> ignore

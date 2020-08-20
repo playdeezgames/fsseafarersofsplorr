@@ -20,7 +20,6 @@ module AtSea =
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (world : World) 
             : bool =
-        let avatar = world.Avatars.[world.AvatarId]
         let viewDistance =
             vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.ViewDistance 
             |> Option.get 
@@ -37,7 +36,6 @@ module AtSea =
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (world : World) 
             : (Location * string * float * string) list =
-        let avatar = world.Avatars.[world.AvatarId]
         let viewDistance =
             vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.ViewDistance 
             |> Option.get 
@@ -54,9 +52,9 @@ module AtSea =
         |> List.sortBy (fun (_,_,d,_)->d)
 
     let private UpdateDisplay 
+            (avatarMessageSource           : AvatarMessageSource)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (vesselSingleStatisticSource   : VesselSingleStatisticSource)
-            (avatarMessageSource           : AvatarMessageSource)
             (messageSink                   : MessageSink) 
             (world                         : World) 
             : unit =
@@ -65,7 +63,6 @@ module AtSea =
         |> avatarMessageSource
         |> Utility.DumpMessages messageSink
 
-        let avatar = world.Avatars.[world.AvatarId]
         let speed = 
             world.AvatarId 
             |> Avatar.GetSpeed vesselSingleStatisticSource 
@@ -111,9 +108,11 @@ module AtSea =
                 ]
                 |> List.iter messageSink)
 
-    let private HandleCommand 
+    let private HandleCommand
             (avatarInventorySink           : AvatarInventorySink)
             (avatarInventorySource         : AvatarInventorySource)
+            (avatarJobSink                 : AvatarJobSink)
+            (avatarJobSource               : AvatarJobSource)
             (avatarMessagePurger           : AvatarMessagePurger)
             (avatarMessageSink             : AvatarMessageSink)
             (avatarShipmateSource          : AvatarShipmateSource)
@@ -138,8 +137,6 @@ module AtSea =
             : Gamestate option =
         world
         |> World.ClearMessages avatarMessagePurger
-
-        let avatar = world.Avatars.[world.AvatarId]
 
         let canCareen = 
             CanCareen vesselSingleStatisticSource world
@@ -195,19 +192,21 @@ module AtSea =
                     location, 
                         world 
                         |> World.Dock 
+                            avatarJobSink
+                            avatarJobSource
+                            avatarMessageSink
                             avatarSingleMetricSink
                             avatarSingleMetricSource
-                            termSources
                             commoditySource 
-                            itemSource
-                            worldSingleStatisticSource
-                            islandMarketSource 
-                            islandMarketSink 
-                            islandItemSource 
                             islandItemSink 
-                            shipmateSingleStatisticSource
+                            islandItemSource 
+                            islandMarketSink 
+                            islandMarketSource 
+                            itemSource
                             shipmateSingleStatisticSink
-                            avatarMessageSink
+                            shipmateSingleStatisticSource
+                            termSources
+                            worldSingleStatisticSource
                             random 
                             location)
                 |> Gamestate.Docked
@@ -227,6 +226,8 @@ module AtSea =
         | Some (Command.Abandon Job) ->
             world
             |> World.AbandonJob 
+                avatarJobSink
+                avatarJobSource
                 avatarMessageSink
                 avatarSingleMetricSink
                 avatarSingleMetricSource
@@ -315,6 +316,8 @@ module AtSea =
     let private RunAlive
             (avatarInventorySink           : AvatarInventorySink)
             (avatarInventorySource         : AvatarInventorySource)
+            (avatarJobSink                 : AvatarJobSink)
+            (avatarJobSource               : AvatarJobSource)
             (avatarMessagePurger           : AvatarMessagePurger)
             (avatarMessageSink             : AvatarMessageSink)
             (avatarMessageSource           : AvatarMessageSource)
@@ -340,14 +343,16 @@ module AtSea =
             (world                         : World) 
             : Gamestate option =
         UpdateDisplay 
+            avatarMessageSource
             shipmateSingleStatisticSource
             vesselSingleStatisticSource
-            avatarMessageSource
             messageSink 
             world
         HandleCommand
             avatarInventorySink
             avatarInventorySource
+            avatarJobSink
+            avatarJobSource
             avatarMessagePurger
             avatarMessageSink
             avatarShipmateSource
@@ -373,6 +378,8 @@ module AtSea =
     let Run 
             (avatarInventorySink           : AvatarInventorySink)
             (avatarInventorySource         : AvatarInventorySource)
+            (avatarJobSink                 : AvatarJobSink)
+            (avatarJobSource               : AvatarJobSource)
             (avatarMessagePurger           : AvatarMessagePurger)
             (avatarMessageSink             : AvatarMessageSink)
             (avatarMessageSource           : AvatarMessageSource)
@@ -401,6 +408,8 @@ module AtSea =
             RunAlive
                 avatarInventorySink
                 avatarInventorySource
+                avatarJobSink
+                avatarJobSource
                 avatarMessagePurger
                 avatarMessageSink
                 avatarMessageSource

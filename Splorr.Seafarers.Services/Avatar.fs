@@ -9,17 +9,20 @@ type AvatarInventorySource = string -> AvatarInventory
 type AvatarInventorySink = string -> AvatarInventory -> unit
 type AvatarSingleMetricSource = string -> Metric -> uint64
 type AvatarSingleMetricSink = string -> Metric * uint64 -> unit
+type AvatarJobSource = string -> Job option
+type AvatarJobSink = string -> Job option -> unit
 
 module Avatar =
     let Create 
-            (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
-            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
+            (avatarJobSink                   : AvatarJobSink)
             (rationItemSource                : RationItemSource)
-            (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
-            (vesselStatisticSink             : VesselStatisticSink)
             (shipmateRationItemSink          : ShipmateRationItemSink)
+            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
+            (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
+            (vesselStatisticSink             : VesselStatisticSink)
+            (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
             (avatarId                        : string)
-            : Avatar =
+            : unit =
         Vessel.Create vesselStatisticTemplateSource vesselStatisticSink avatarId
         Shipmate.Create 
             shipmateStatisticTemplateSource 
@@ -28,9 +31,8 @@ module Avatar =
             shipmateRationItemSink 
             avatarId 
             Primary
-        {
-            Job = None
-        }
+        avatarJobSink avatarId None
+
 
     let GetPosition
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
@@ -297,12 +299,6 @@ module Avatar =
             shipmateSingleStatisticSink
             shipmateSingleStatisticSource
 
-    let SetJob 
-            (job    : Job) 
-            (avatar : Avatar) 
-            : Avatar =
-        {avatar with Job = job |> Some}
-
     let private SetPrimaryStatistic
             (identifier                    : ShipmateStatisticIdentifier)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
@@ -340,17 +336,19 @@ module Avatar =
     let GetReputation = GetPrimaryStatistic ShipmateStatisticIdentifier.Reputation
     
     let AbandonJob 
+            (avatarJobSink                 : AvatarJobSink)
+            (avatarJobSource               : AvatarJobSource)
             (avatarSingleMetricSink        : AvatarSingleMetricSink)
             (avatarSingleMetricSource      : AvatarSingleMetricSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (avatarId: string)
-            (avatar : Avatar) 
-            : Avatar =
+            : unit =
         let reputationCostForAbandoningAJob = -1.0
-        avatar.Job
-        |> Option.fold 
-            (fun a _ -> 
+        avatarId
+        |> avatarJobSource
+        |> Option.iter
+            (fun _ -> 
                 avatarId
                 |> SetReputation 
                     shipmateSingleStatisticSource 
@@ -365,20 +363,18 @@ module Avatar =
                     avatarSingleMetricSink
                     avatarSingleMetricSource
                     Metric.AbandonedJob
-                {
-                    a with 
-                        Job = None
-                }) avatar
+                avatarJobSink avatarId None)
 
     let CompleteJob
+            (avatarJobSink                 : AvatarJobSink)
+            (avatarJobSource               : AvatarJobSource)
             (avatarSingleMetricSink        : AvatarSingleMetricSink)
             (avatarSingleMetricSource      : AvatarSingleMetricSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (avatarId:string)
-            (avatar : Avatar) 
-            : Avatar =
-        match avatar.Job with
+            : unit =
+        match avatarId |> avatarJobSource with
         | Some job ->
             SetReputation 
                 shipmateSingleStatisticSource 
@@ -401,10 +397,9 @@ module Avatar =
                 avatarSingleMetricSource
                 Metric.CompletedJob 
                 1UL
-            {avatar with 
-                Job = None
-            }
-        | _ -> avatar
+            None
+            |> avatarJobSink avatarId
+        | _ -> ()
 
     let EarnMoney 
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)

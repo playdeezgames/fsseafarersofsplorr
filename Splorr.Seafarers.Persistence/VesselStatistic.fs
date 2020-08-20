@@ -16,9 +16,9 @@ module VesselStatistic =
 
     
     let SetStatisticForAvatar 
+            (connection          : SQLiteConnection) 
             (avatarId            : string) 
             (identifiedStatistic : VesselStatisticIdentifier * Statistic) 
-            (connection          : SQLiteConnection) 
             : Result<unit, string> =
         try
             let identifier, statistic = identifiedStatistic
@@ -34,9 +34,9 @@ module VesselStatistic =
         | ex -> ex.ToString() |> Error
 
     let GetStatisticForAvatar 
+            (connection : SQLiteConnection) 
             (avatarId   : string) 
             (identifier : VesselStatisticIdentifier) 
-            (connection : SQLiteConnection) 
             : Result<Statistic option,string> =
         let commandFilter (command: SQLiteCommand) =
             command.Parameters.AddWithValue("$avatarId", avatarId) |> ignore
@@ -51,8 +51,8 @@ module VesselStatistic =
                 |> List.tryHead)
 
     let GetForAvatar 
-            (avatarId   : string) 
             (connection : SQLiteConnection) 
+            (avatarId   : string) 
             : Result<Map<VesselStatisticIdentifier, Statistic>, string> =
         let commandFilter (command: SQLiteCommand) =
             command.Parameters.AddWithValue("$avatarId", avatarId) |> ignore
@@ -65,9 +65,9 @@ module VesselStatistic =
                 |> Map.ofList)
 
     let SetForAvatar 
+            (connection : SQLiteConnection) 
             (avatarId   : string) 
             (statistics : Map<VesselStatisticIdentifier, Statistic>) 
-            (connection : SQLiteConnection) 
             : Result<unit, string> =
         try
             statistics

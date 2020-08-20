@@ -21,7 +21,7 @@ let ``SetStatisticForAvatar.It create the given statistic for the given avatar w
 
         let expected: Result<unit, string> = () |> Ok
         let actual =
-            VesselStatistic.SetStatisticForAvatar inputAvatarId (inputIdentifier, inputStatistic) connection
+            VesselStatistic.SetStatisticForAvatar connection inputAvatarId (inputIdentifier, inputStatistic) 
         Assert.AreEqual(expected, actual)
 
         let finalCount = command.ExecuteScalar() :?> int64
@@ -44,7 +44,7 @@ let ``SetStatisticForAvatar.It replaces the given statistic for the given avatar
 
         let expected: Result<unit, string> = () |> Ok
         let actual =
-            VesselStatistic.SetStatisticForAvatar inputAvatarId (inputIdentifier, inputStatistic) connection
+            VesselStatistic.SetStatisticForAvatar connection inputAvatarId (inputIdentifier, inputStatistic) 
         Assert.AreEqual(expected, actual)
 
         let finalCount = command.ExecuteScalar() :?> int64
@@ -63,7 +63,7 @@ let ``GetStatisticForAvatar.It returns the given statistic for the given avatar 
         let expected : Result<Statistic option, string> =
             expectedStatistic |> Ok
         let actual =
-            VesselStatistic.GetStatisticForAvatar inputAvatarId inputIdentifier connection
+            VesselStatistic.GetStatisticForAvatar connection inputAvatarId inputIdentifier 
         Assert.AreEqual(expected, actual)
     finally
         connection.Close()
@@ -79,7 +79,7 @@ let ``GetStatisticForAvatar.It returns none for the given avatar when the statis
         let expected : Result<Statistic option, string> =
             expectedStatistic |> Ok
         let actual =
-            VesselStatistic.GetStatisticForAvatar inputAvatarId inputIdentifier connection
+            VesselStatistic.GetStatisticForAvatar connection inputAvatarId inputIdentifier 
         Assert.AreEqual(expected, actual)
     finally
         connection.Close()
@@ -89,7 +89,7 @@ let ``GetForAvatar.It returns a list of statistics for a given avatar.`` () =
     use connection = SetupConnection()
     try
         let inputAvatarId = ExistingAvatarId
-        match connection |> VesselStatistic.GetForAvatar inputAvatarId with
+        match VesselStatistic.GetForAvatar connection inputAvatarId with
         | Ok actual ->
             let expectedCount = System.Enum.GetValues(typedefof<VesselStatisticIdentifier>).Length
             Assert.AreEqual(expectedCount, actual.Count)
@@ -114,13 +114,13 @@ let ``SetForAvatar.It creates the vessel statistics for a given avatar when that
             |> Map.add VesselStatisticIdentifier.Heading ({MinimumValue=0.0; MaximumValue=6.3; CurrentValue=0.0})
             |> Map.add VesselStatisticIdentifier.ViewDistance ({MinimumValue=10.0; MaximumValue=10.0; CurrentValue=10.0})
             |> Map.add VesselStatisticIdentifier.DockDistance ({MinimumValue=1.0; MaximumValue=1.0; CurrentValue=1.0})
-        match connection |> VesselStatistic.GetForAvatar inputAvatarId with
+        match VesselStatistic.GetForAvatar connection inputAvatarId with
         | Ok x ->
             Assert.AreEqual(0, x.Count)
         | Error message ->  Assert.Fail message
-        match connection |> VesselStatistic.SetForAvatar inputAvatarId inputVesselStatistics with
+        match VesselStatistic.SetForAvatar connection inputAvatarId inputVesselStatistics with
         | Ok () ->
-            match connection |> VesselStatistic.GetForAvatar inputAvatarId with
+            match VesselStatistic.GetForAvatar connection inputAvatarId with
             | Ok x ->
                 Assert.AreEqual(System.Enum.GetValues(typedefof<VesselStatisticIdentifier>).Length, x.Count)
             | Error message ->  Assert.Fail message

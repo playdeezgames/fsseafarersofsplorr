@@ -21,6 +21,7 @@
     <Compile Include="CommonTestFixtures.fs" />
     <Compile Include="ShipmateStatisticTemplateTests.fs" />
     <Compile Include="AvatarInventoryTests.fs" />
+    <Compile Include="AvatarJobTests.fs" />
     <Compile Include="AvatarMetricTests.fs" />
     <Compile Include="CommodityTests.fs" />
     <Compile Include="IslandItemTests.fs" />

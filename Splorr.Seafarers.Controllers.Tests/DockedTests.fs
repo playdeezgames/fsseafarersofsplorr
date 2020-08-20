@@ -19,6 +19,8 @@ let private functionUnderTest
     Docked.Run 
         avatarInventorySink
         avatarInventorySource
+        avatarJobSinkStub
+        avatarJobSourceStub
         avatarMessagePurgerStub
         avatarMessageSink
         avatarMessageSourceStub
@@ -80,11 +82,8 @@ let ``Run.It returns AtSea when given Undock Command.`` () =
     let input = dockWorld
     let inputLocation= dockLocation
     let inputSource = Command.Undock |> Some |> toSource
-    let expectedAvatar = 
-        input.Avatars.[avatarId]
     let expected = 
-        {input with 
-            Avatars = input.Avatars |> Map.add avatarId expectedAvatar} 
+        input
         |> Gamestate.AtSea 
         |> Some
     let actual =
@@ -283,11 +282,8 @@ let ``Run.It gives a message when given the Accept Job command and the given job
     let inputLocation = smallWorldIslandLocation
     let inputSource = 0u |> Command.AcceptJob |> Some |> toSource
     let expectedMessages = [ "That job is currently unavailable." ]
-    let expectedAvatar =
-        input.Avatars.[avatarId]
     let expectedWorld = 
-        {input with 
-            Avatars = input.Avatars |> Map.add avatarId expectedAvatar}
+        input
     let expected = 
         (Dock, inputLocation,  expectedWorld) 
         |> Gamestate.Docked 
@@ -312,10 +308,8 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
         |> Command.Abandon 
         |> Some 
         |> toSource
-    let expectedAvatar =
-        input.Avatars.[avatarId]
     let expectedWorld = 
-        {input with Avatars = input.Avatars |> Map.add avatarId expectedAvatar}
+        input
     let expected = 
         (Dock, inputLocation, expectedWorld) 
         |> Gamestate.Docked 
@@ -336,12 +330,8 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
     let input = abandonJobWorld
     let inputLocation = dockLocation
     let inputSource = Job |> Command.Abandon |> Some |> toSource
-    let expectedAvatar = 
-        {input.Avatars.[avatarId] with 
-            Job=None}
     let expectedWorld = 
-        {input with 
-            Avatars= input.Avatars |> Map.add avatarId expectedAvatar}
+        input
     let expected = 
         (Dock, inputLocation, expectedWorld) 
         |> Gamestate.Docked 
@@ -439,8 +429,7 @@ let ``Run.It adds a message when given the Buy command and the avatar does not h
 [<Test>]
 let ``Run.It adds a message and completes the purchase when given the Buy command and the avatar has enough money.`` () =
     let inputLocation = smallWorldIslandLocation
-    let inputAvatar = shopWorld.Avatars.[avatarId]
-    let inputWorld = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
+    let inputWorld = shopWorld
     let inputSource = (1UL |> Specific, "item under test") |> Command.Buy |> Some |> toSource
     let markets =
         Map.empty
@@ -538,7 +527,6 @@ let ``Run.It adds a message when given the Sell command and the avatar does not 
 let ``Run.It adds a message and completes the sale when given the Sell command and the avatar sufficient items to sell.`` () =
     let inputLocation = smallWorldIslandLocation
     let inputItems = [(1UL, 1UL)] |> Map.ofList
-    let inputAvatar = shopWorld.Avatars.[avatarId]
     let markets =
         Map.empty
         |> Map.add 1UL {Supply = 5.0; Demand =5.0}
@@ -547,8 +535,7 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
         islandMarketSource x
         |> Map.tryFind y
     let inputWorld = 
-        {shopWorld with 
-            Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
+        shopWorld
     let inputSource = (Specific 1UL, "item under test") |> Command.Sell |> Some |> toSource
     let commodities = commoditySource()
     let expectedSupply = 
@@ -562,12 +549,9 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
     let expectedIsland = 
         inputWorld.Islands.[inputLocation]
     let expectedMessages = ["You complete the sale of 1 item under test.";"You complete the sale."]
-    let expectedAvatar = 
-        inputAvatar
     let expectedWorld =
         inputWorld
         |> World.TransformIsland inputLocation (fun _ -> expectedIsland |> Some)
-        |> World.TransformAvatar (fun _ -> expectedAvatar |> Some)
     let expected = 
         (Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked

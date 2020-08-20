@@ -16,6 +16,7 @@ let private avatarId = ""
 
 let private world =  
     World.Create 
+        avatarJobSinkStub
         termNameSource
         worldSingleStatisticSourceStub
         shipmateStatisticTemplateSourceStub

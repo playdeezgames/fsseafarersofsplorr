@@ -9,7 +9,7 @@ let ``GetForAvatar.It retrieves the inventory for an existing avatar.`` () =
     use connection = SetupConnection()
     try
         let inputAvatarId = ExistingAvatarId
-        match connection |> AvatarInventory.GetForAvatar inputAvatarId with
+        match AvatarInventory.GetForAvatar connection inputAvatarId with
         | Ok actual     -> 
             Assert.AreEqual(3, actual.Count)
             Assert.AreEqual(2UL, actual.[1UL])
@@ -25,9 +25,9 @@ let ``SetForAvatar.It removes the inventory for an existing avatar when given an
     use connection = SetupConnection()
     try
         let inputAvatarId = ExistingAvatarId
-        match connection |> AvatarInventory.SetForAvatar inputAvatarId Map.empty with
+        match AvatarInventory.SetForAvatar connection inputAvatarId Map.empty with
         | Ok ()     -> 
-            match connection |> AvatarInventory.GetForAvatar inputAvatarId with
+            match AvatarInventory.GetForAvatar connection inputAvatarId with
             | Ok result ->
                 Assert.True(result |> Map.isEmpty)
             | _ -> Assert.Fail("Didn't retrieve the inventory.")
@@ -44,9 +44,9 @@ let ``SetForAvatar.It sets the inventory for a non-existing avatar when given an
         let inputInventory = 
             Map.empty
             |> Map.add 1UL 1UL
-        match connection |> AvatarInventory.SetForAvatar inputAvatarId inputInventory with
+        match AvatarInventory.SetForAvatar connection inputAvatarId inputInventory with
         | Ok ()     -> 
-            match connection |> AvatarInventory.GetForAvatar inputAvatarId with
+            match AvatarInventory.GetForAvatar connection inputAvatarId with
             | Ok result ->
                 Assert.AreEqual(1, result.Count)
                 Assert.AreEqual(1UL, result.[1UL])

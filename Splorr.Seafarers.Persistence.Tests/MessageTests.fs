@@ -17,8 +17,7 @@ let ``GetForAvatar.It returns a list of messages for an avatar that has messages
             ]
             |> Ok
         let actual =
-            connection
-            |> Message.GetForAvatar inputAvatarId
+            Message.GetForAvatar connection inputAvatarId
         Assert.AreEqual(expected, actual)
     finally
         connection.Close()
@@ -32,8 +31,7 @@ let ``GetForAvatar.It returns no messages for an avatar that has no messages.`` 
             [ ]
             |> Ok
         let actual =
-            connection
-            |> Message.GetForAvatar inputAvatarId
+            Message.GetForAvatar connection inputAvatarId
         Assert.AreEqual(expected, actual)
     finally
         connection.Close()
@@ -47,10 +45,9 @@ let ``ClearForAvatar.It clears out messages for an avatar that has messages.`` (
             ()
             |> Ok
         let actual =
-            connection
-            |> Message.ClearForAvatar inputAvatarId
+            Message.ClearForAvatar connection inputAvatarId
         Assert.AreEqual(expected, actual)
-        match connection |> Message.GetForAvatar inputAvatarId with
+        match Message.GetForAvatar connection inputAvatarId with
         | Ok [] ->
             Assert.Pass("There should be no messages for the given avatar.")
         | _ ->
@@ -68,10 +65,9 @@ let ``AddToAvatar.It adds messages for a given avatar id.`` () =
             ()
             |> Ok
         let actual =
-            connection
-            |> Message.AddForAvatar (inputAvatarId, inputMessage)
+            Message.AddForAvatar connection (inputAvatarId, inputMessage)
         Assert.AreEqual(expected, actual)
-        match connection |> Message.GetForAvatar inputAvatarId with
+        match Message.GetForAvatar connection inputAvatarId with
         | Ok [ inputMessage ] ->
             Assert.Pass("There should be no messages for the given avatar.")
         | _ ->

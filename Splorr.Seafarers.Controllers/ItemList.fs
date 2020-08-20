@@ -42,7 +42,6 @@ module ItemList =
             ]
             |> List.iter messageSink
             ())
-        let avatar = world.Avatars.[world.AvatarId]
         [
             (Hue.Label, "Money: " |> Text) |> Hued
             (Hue.Value, world.AvatarId |> Avatar.GetMoney shipmateSingleStatisticSource |> sprintf "%f" |> Line) |> Hued

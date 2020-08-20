@@ -10,8 +10,8 @@ module AvatarMetric =
         (reader.GetInt32(0) |> enum<Metric>, reader.GetInt64(1) |> uint64)
 
     let GetForAvatar 
-            (avatarId   : string)
             (connection : SQLiteConnection) 
+            (avatarId   : string)
             : Result<Map<Metric, uint64>, string> =
         connection
         |> Utility.GetList 
@@ -23,10 +23,10 @@ module AvatarMetric =
             Map.ofList
 
     let SetMetricForAvatar
+            (connection : SQLiteConnection)
             (avatarId   : string)
             (metric     : Metric,
                 value   : uint64)
-            (connection : SQLiteConnection)
             : Result<unit, string> =
         try
             if value>0UL then
@@ -47,9 +47,9 @@ module AvatarMetric =
             ex.ToString() |> Error
 
     let GetMetricForAvatar
+            (connection : SQLiteConnection)
             (avatarId: string)
             (metric: Metric)
-            (connection : SQLiteConnection)
             : Result<uint64, string> =
         try
             use command = new SQLiteCommand("SELECT [MetricValue] FROM [AvatarMetrics] WHERE [AvatarId]=$avatarId AND [MetricId]=$metricId", connection)

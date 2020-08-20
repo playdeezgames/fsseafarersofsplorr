@@ -15,8 +15,7 @@ let ``Create.It creates a new world.`` () =
 
 [<Test>]
 let ``ClearMessages.It removes any messages from the given avatar in the world.`` () =
-    let inputAvatar = soloIslandWorld.Avatars.[avatarId] 
-    let inputWorld = {soloIslandWorld with Avatars = soloIslandWorld.Avatars |> Map.add avatarId inputAvatar}
+    let inputWorld = soloIslandWorld
     let mutable counter = 0
     let avatarMessagePurger (_) =
         counter <- counter + 1
@@ -36,8 +35,7 @@ let ``AddMessages.It appends new messages to previously existing messages in the
     let firstMessage = "three"
     let secondMessage = "four"
     let newMessages = [ firstMessage; secondMessage]
-    let inputAvatar = soloIslandWorld.Avatars.[avatarId]
-    let inputWorld = {soloIslandWorld with Avatars= soloIslandWorld.Avatars |> Map.add avatarId inputAvatar}
+    let inputWorld = soloIslandWorld
     inputWorld
     |> World.AddMessages (avatarExpectedMessagesSink newMessages) newMessages
 
@@ -267,46 +265,6 @@ let ``Move.It moves the avatar one unit when give 1u for distance when given a v
     Assert.AreEqual(1, positionYCalls)
 
 [<Test>]
-let ``Move.It does nothing when given an invalid avatar id`` () =
-    let vesselSingleStatisticSource (_) (_) =
-        Assert.Fail("Dont ask for vessel statistics")
-        None
-    let vesselSingleStatisticSink (_) (_) : unit =
-        Assert.Fail("Dont try to set a vessel statistic")
-    let inputWorld =
-        {soloIslandWorld with AvatarId = bogusAvatarId}
-    let avatarShipmateSource (_) = 
-        raise (System.NotImplementedException "kaboom avatarShipmateSource")
-        []
-    let shipmateSingleStatisticSource (_) (_) (_) =
-        raise (System.NotImplementedException "kaboom shipmateSingleStatisticSource")
-        None
-    let shipmateSingleStatisticSink (_) (_) (_) =
-        raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let avatarInventorySource (_) =
-        raise (System.NotImplementedException "avatarInventorySource")
-        Map.empty
-    let avatarInventorySink (_) (_) =
-        raise (System.NotImplementedException "avatarInventorySink")
-        ()
-    let actual =
-        inputWorld
-        |> World.Move 
-            avatarInventorySink
-            avatarInventorySource
-            avatarMessageSinkStub 
-            avatarShipmateSource
-            avatarSingleMetricSinkExplode
-            avatarSingleMetricSourceStub
-            shipmateRationItemSourceStub 
-            shipmateSingleStatisticSink
-            shipmateSingleStatisticSource
-            vesselSingleStatisticSink 
-            vesselSingleStatisticSource 
-            1u
-    Assert.AreEqual(inputWorld, actual)
-
-[<Test>]
 let ``Move.It moves the avatar almost two units when give 2u for distance.`` () =
     let vesselSingleStatisticSource (_) (identifier) = 
         match identifier with
@@ -398,11 +356,6 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
     let world =
         {
             AvatarId = avatarId
-            Avatars = 
-                [avatarId,{
-                    Job = None
-                }
-                ]|>Map.ofList
             Islands=
                 Map.empty
                 |> Map.add ( 0.0,  0.0) blankIsland
@@ -482,22 +435,29 @@ let private islandMarketSinkStub (_) (_) = ()
 
 [<Test>]
 let ``Dock.It does nothing when given an invalid avatar id.`` () =
+    let avatarJobSink (_) (_) =
+        Assert.Fail("avatarJobSink")
+    let avatarJobSource (_) =
+        Assert.Fail("avatarJobSource")
+        None
     let actual = 
         {emptyWorld with AvatarId = bogusAvatarId}
         |> World.Dock 
+            avatarJobSink
+            avatarJobSource
+            avatarMessageSinkStub
             avatarSingleMetricSinkExplode
             avatarSingleMetricSourceStub
-            termSources 
-            (fun()->commodities) 
-            (fun()->genericWorldItems) 
-            worldSingleStatisticSourceStub
-            islandMarketSourceStub 
-            islandMarketSinkStub 
-            islandItemSourceStub 
+            commoditySource
             islandItemSinkStub 
-            shipmateSingleStatisticSourceStub
+            islandItemSourceStub 
+            islandMarketSinkStub 
+            islandMarketSourceStub 
+            genericWorldItemSource
             shipmateSingleStatisticSinkStub
-            avatarMessageSinkStub
+            shipmateSingleStatisticSourceStub
+            termSources 
+            worldSingleStatisticSourceStub
             random 
             (0.0, 0.0)
     Assert.AreEqual({emptyWorld with AvatarId = bogusAvatarId}, actual)
@@ -509,26 +469,31 @@ let private avatarExpectedMessageSink (expected:string) (_) (actual:string) =
 let ``Dock.It adds a message when the given location has no island.`` () =
     let inputWorld = emptyWorld
     let expectedMessage = "There is no place to dock there."
-    let expectedAvatar = inputWorld.Avatars.[avatarId]
     let expected =
-        {inputWorld with 
-            Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar}
+        inputWorld
+    let avatarJobSink (_) (_) =
+        Assert.Fail("avatarJobSink")
+    let avatarJobSource (_) =
+        Assert.Fail("avatarJobSource")
+        None
     let actual = 
         inputWorld
         |> World.Dock
+            avatarJobSink
+            avatarJobSource
+            (avatarExpectedMessageSink expectedMessage)
             avatarSingleMetricSinkExplode
             avatarSingleMetricSourceStub
-            termSources 
-            (fun()->commodities) 
-            (fun()->genericWorldItems) 
-            worldSingleStatisticSourceStub
-            islandMarketSourceStub 
-            islandMarketSinkStub 
-            islandItemSourceStub 
+            commoditySource
             islandItemSinkStub 
-            shipmateSingleStatisticSourceStub
+            islandItemSourceStub 
+            islandMarketSinkStub 
+            islandMarketSourceStub 
+            genericWorldItemSource 
             shipmateSingleStatisticSinkStub
-            (avatarExpectedMessageSink expectedMessage)
+            shipmateSingleStatisticSourceStub
+            termSources 
+            worldSingleStatisticSourceStub
             random 
             (0.0, 0.0)
     Assert.AreEqual(expected, actual)
@@ -542,12 +507,9 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
             (System.DateTimeOffset.Now.ToUnixTimeSeconds())
             avatarId
     let expectedMessage = "You dock."
-    let expectedAvatar = 
-        inputWorld.Avatars.[avatarId]
     let expected = 
         {inputWorld with 
-            Islands = inputWorld.Islands |> Map.add (0.0, 0.0) expectedIsland
-            Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar} 
+            Islands = inputWorld.Islands |> Map.add (0.0, 0.0) expectedIsland} 
     let shipmateSingleStatisticSource (_) (_) (identifier: ShipmateStatisticIdentifier) =
         match identifier with
         | ShipmateStatisticIdentifier.Turn ->
@@ -559,22 +521,28 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
         match identifier with
         | _ ->
             raise (System.NotImplementedException (identifier.ToString() |> sprintf "kaboom get %s"))
+    let avatarJobSink (_) (_) =
+        Assert.Fail("avatarJobSink")
+    let avatarJobSource (_) =
+        None
     let actual = 
         inputWorld
         |> World.Dock
+            avatarJobSink
+            avatarJobSource
+            (avatarExpectedMessageSink expectedMessage)
             (assertAvatarSingleMetricSink [Metric.VisitedIsland, 1UL])
             avatarSingleMetricSourceStub
-            termSources 
             (fun()->Map.empty) 
-            (fun()->Map.empty) 
-            worldSingleStatisticSourceStub
-            islandMarketSourceStub 
-            islandMarketSinkStub 
-            islandItemSourceStub 
             islandItemSinkStub 
-            shipmateSingleStatisticSource
+            islandItemSourceStub 
+            islandMarketSinkStub 
+            islandMarketSourceStub 
+            (fun()->Map.empty) 
             shipmateSingleStatisticSink
-            (avatarExpectedMessageSink expectedMessage)
+            shipmateSingleStatisticSource
+            termSources 
+            worldSingleStatisticSourceStub
             random 
             (0.0, 0.0)
     Assert.AreEqual(expected, actual)
@@ -656,9 +624,15 @@ let ``HeadFor.It sets the heading when the island name exists and is known.`` ()
 
 [<Test>]
 let ``AcceptJob.It does nothing when given an invalid island location.`` () =
+    let avatarJobSink (_) (_) =
+        Assert.Fail("avatarJobSink")
+    let avatarJobSource (_) =
+        None
     let actual =
         genericDockedWorld
         |> World.AcceptJob 
+            avatarJobSink
+            avatarJobSource
             avatarMessageSinkStub 
             avatarSingleMetricSinkExplode
             avatarSingleMetricSourceStub
@@ -671,9 +645,15 @@ let ``AcceptJob.It adds a message to the world when given an 0 job index for the
     let inputWorld = genericDockedWorld
     let expectedMessage = "That job is currently unavailable."
     let expected = inputWorld
+    let avatarJobSink (_) (_) =
+        Assert.Fail("avatarJobSink")
+    let avatarJobSource (_) =
+        None
     let actual =
         inputWorld
         |> World.AcceptJob 
+            avatarJobSink
+            avatarJobSource
             (avatarExpectedMessageSink expectedMessage)
             avatarSingleMetricSinkExplode
             avatarSingleMetricSourceStub
@@ -686,12 +666,17 @@ let ``AcceptJob.It adds a message to the world when given an 0 job index for the
 let ``AcceptJob.It adds a message to the world when given an invalid job index for the given valid island location.`` () =
     let inputWorld = genericDockedWorld
     let expectedMessage = "That job is currently unavailable."
-    let expectedAvatar = inputWorld.Avatars.[avatarId]
     let expected =
-        {inputWorld with Avatars= inputWorld.Avatars |> Map.add avatarId expectedAvatar}        
+        inputWorld
+    let avatarJobSink (_) (_) =
+        Assert.Fail("avatarJobSink")
+    let avatarJobSource (_) =
+        None
     let actual =
         inputWorld
         |> World.AcceptJob 
+            avatarJobSink
+            avatarJobSource
             (avatarExpectedMessageSink expectedMessage)
             avatarSingleMetricSinkExplode
             avatarSingleMetricSourceStub
@@ -700,32 +685,27 @@ let ``AcceptJob.It adds a message to the world when given an invalid job index f
     Assert.AreEqual (expected, actual)
 
 [<Test>]
-let ``AcceptJob.It does nothing when given an invalid avatar id.`` () =
-    let inputWorld = 
-        {genericDockedWorld with AvatarId = bogusAvatarId}
-    let actual =
-        inputWorld
-        |> World.AcceptJob
-            avatarMessageSinkStub
-            avatarSingleMetricSinkExplode
-            avatarSingleMetricSourceStub
-            1u 
-            genericWorldIslandLocation
-    Assert.AreEqual (inputWorld, actual)
-
-[<Test>]
 let ``AcceptJob.It adds a message to the world when the job is valid but the avatar already has a job.`` () =
     let inputWorld = 
         genericDockedWorld
-        |> World.TransformAvatar
-            (fun avatar -> {avatar with Job =Some {FlavorText="";Destination=(0.0,0.0); Reward=0.0}}|>Some)
     let expectedMessage = "You must complete or abandon your current job before taking on a new one."
-    let expectedAvatar = inputWorld.Avatars.[avatarId]
     let expected =
-        {inputWorld with Avatars= inputWorld.Avatars |> Map.add avatarId expectedAvatar}        
+        inputWorld
+    let avatarJobSink (_) (_) =
+        Assert.Fail("avatarJobSink")
+    let avatarJobSource (_) =
+        {
+            FlavorText  = ""
+            Reward      = 0.0
+            Destination = (0.0, 0.0)
+        }
+        |> Some
+        
     let actual =
         inputWorld
         |> World.AcceptJob 
+            avatarJobSink
+            avatarJobSource
             (avatarExpectedMessageSink expectedMessage)
             avatarSingleMetricSinkExplode
             avatarSingleMetricSourceStub
@@ -741,23 +721,32 @@ let ``AcceptJob.It adds the given job to the avatar and eliminates it from the i
     let inputJob = inputWorld.Islands.[inputLocation].Jobs.Head
     let inputDestination = inputWorld.Islands.[inputJob.Destination]
     let expectedMessage = "You accepted the job!"
-    let expectedAvatar = 
-        inputWorld.Avatars.[avatarId]
-        |> Avatar.SetJob inputJob
     let expectedIsland = 
         {inputWorld.Islands.[inputLocation] with Jobs = []}
     let expectedDestination =
         {inputDestination with 
-            AvatarVisits = Map.empty |> Map.add avatarId {VisitCount=0u |> Some;LastVisit=None}}
+            AvatarVisits = 
+                Map.empty 
+                |> Map.add 
+                    avatarId 
+                    {
+                        VisitCount=
+                            0u |> Some
+                        LastVisit = None}}
+    let avatarJobSink (_) (actual: Job option) =
+        Assert.True(actual.IsSome)
+    let avatarJobSource (_) =
+        None
     let actual =
         inputWorld
         |> World.AcceptJob 
+            avatarJobSink
+            avatarJobSource
             (avatarExpectedMessageSink expectedMessage)
             (assertAvatarSingleMetricSink [Metric.AcceptedJob, 1UL])
             avatarSingleMetricSourceStub
             1u 
             inputLocation
-    Assert.AreEqual(expectedAvatar, actual.Avatars.[avatarId])
     Assert.AreEqual(expectedIsland, actual.Islands.[inputLocation])
     Assert.AreEqual(expectedDestination, actual.Islands.[inputJob.Destination])
 
@@ -809,8 +798,6 @@ let ``TransformAvatar.It transforms the avatar within the given world.`` () =
         Map.empty
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(Map.empty, inventory)
-    let expectedAvatar = 
-        genericWorld.Avatars.[avatarId] 
     Avatar.Move 
             avatarInventorySink
             avatarInventorySource
@@ -830,8 +817,7 @@ let ``TransformAvatar.It transforms the avatar within the given world.`` () =
 let ``AbandonJob.It adds a message when the avatar has no job.`` () =
     let input = genericDockedWorld
     let expectedMessage = "You have no job to abandon."
-    let expectedAvatar = input.Avatars.[avatarId]
-    let expected = {input with Avatars = input.Avatars |> Map.add avatarId expectedAvatar}
+    let expected = input
     let shipmateSingleStatisticSource (_) (_) (identifier: ShipmateStatisticIdentifier) =
         match identifier with
         | _ ->
@@ -841,9 +827,15 @@ let ``AbandonJob.It adds a message when the avatar has no job.`` () =
         match identifier with
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
+    let avatarJobSink (_) (_) =
+        Assert.Fail("avatarJobSink")
+    let avatarJobSource (_) =
+        None
     let actual = 
         input
         |> World.AbandonJob
+            avatarJobSink
+            avatarJobSource
             (avatarExpectedMessageSink expectedMessage)
             (assertAvatarSingleMetricSink [Metric.AcceptedJob, 1UL])
             avatarSingleMetricSourceStub
@@ -856,12 +848,7 @@ let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a
     let input = jobWorld
     let expectedMessage = "You abandon your job."
     let expected = 
-        {input with 
-            Avatars = 
-                input.Avatars 
-                |> Map.add avatarId 
-                    ({input.Avatars.[avatarId] with 
-                        Job = None})}
+        input
     let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
         match identifier with 
         | ShipmateStatisticIdentifier.Reputation ->
@@ -875,9 +862,20 @@ let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a
             Assert.AreEqual(-1.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
+    let avatarJobSink (_) (actual) =
+        Assert.AreEqual(None, actual)
+    let avatarJobSource (_) =
+        {
+            FlavorText  = ""
+            Reward      = 0.0
+            Destination = (0.0,0.0)
+        } 
+        |> Some
     let actual = 
         input
         |> World.AbandonJob
+            avatarJobSink
+            avatarJobSource
             (avatarExpectedMessageSink expectedMessage)
             (assertAvatarSingleMetricSink [Metric.AbandonedJob, 1UL])
             avatarSingleMetricSourceStub
@@ -887,10 +885,7 @@ let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a
 
 [<Test>]
 let ``Dock.It does not modify avatar when given avatar has a job for a different destination.`` () =
-    let input = jobWorld
     let expectedMessage = "You dock."
-    let expectedAvatar =
-        input.Avatars.[avatarId]
     let shipmateSingleStatisticSource (_) (_) (identifier: ShipmateStatisticIdentifier) =
         match identifier with
         | ShipmateStatisticIdentifier.Turn ->
@@ -902,34 +897,43 @@ let ``Dock.It does not modify avatar when given avatar has a job for a different
         match identifier with
         | _ ->
             raise (System.NotImplementedException (identifier.ToString() |> sprintf "kaboom get %s"))
-    let actual = 
-        jobWorld
-        |> World.Dock
-            (assertAvatarSingleMetricSink [Metric.VisitedIsland, 0UL; Metric.VisitedIsland, 1UL])
-            avatarSingleMetricSourceStub
-            termSources 
-            (fun()->commodities) 
-            (fun()->genericWorldItems) 
-            worldSingleStatisticSourceStub
-            islandMarketSourceStub 
-            islandMarketSinkStub 
-            islandItemSourceStub 
-            islandItemSinkStub 
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            (avatarExpectedMessageSink expectedMessage)
-            random 
-            genericWorldIslandLocation
-    Assert.AreEqual(expectedAvatar, actual.Avatars.[avatarId])
+    let avatarJobSink (_) (_) =
+        Assert.Fail("avatarJobSink")
+    let avatarJobSource (_) =
+        {
+            FlavorText=""
+            Reward=0.0
+            Destination=(99.0, 99.0)
+        }
+        |> Some
+    jobWorld
+    |> World.Dock
+        avatarJobSink
+        avatarJobSource
+        (avatarExpectedMessageSink expectedMessage)
+        (assertAvatarSingleMetricSink [Metric.VisitedIsland, 0UL; Metric.VisitedIsland, 1UL])
+        avatarSingleMetricSourceStub
+        commoditySource
+        islandItemSinkStub 
+        islandItemSourceStub 
+        islandMarketSinkStub 
+        islandMarketSourceStub 
+        genericWorldItemSource 
+        shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
+        termSources 
+        worldSingleStatisticSourceStub
+        random 
+        genericWorldIslandLocation
+    |> ignore
 
 [<Test>]
 let ``Dock.It adds a message and completes the job when given avatar has a job for this location.`` () =
-    let input = jobWorld
-    let inputJob = jobWorld.Avatars.[avatarId].Job.Value
-    let expectedMessages = ["You complete your job."; "You dock."]
-    let expectedAvatar = 
-        {input.Avatars.[avatarId] with 
-            Job = None}
+    let expectedMessages = 
+        [
+            "You complete your job."
+            "You dock."
+        ]
     let shipmateSingleStatisticSource (_) (_) (identifier: ShipmateStatisticIdentifier) =
         match identifier with
         | ShipmateStatisticIdentifier.Turn ->
@@ -941,25 +945,36 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
         match identifier with
         | _ ->
             raise (System.NotImplementedException (identifier.ToString() |> sprintf "kaboom get %s"))
-    let actual = 
-        jobWorld
-        |> World.Dock
-            avatarSingleMetricSinkExplode
-            avatarSingleMetricSourceStub
-            termSources 
-            (fun()->commodities) 
-            (fun()->genericWorldItems) 
-            worldSingleStatisticSourceStub
-            islandMarketSourceStub 
-            islandMarketSinkStub 
-            islandItemSourceStub 
-            islandItemSinkStub 
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            (avatarExpectedMessagesSink expectedMessages)
-            random 
-            jobLocation
-    Assert.AreEqual(expectedAvatar, actual.Avatars.[avatarId])
+    let avatarJobSink (_) (_) =
+        Assert.Fail("avatarJobSink")
+    let jobLocation = 
+        jobWorld.Islands
+        |> Map.toList
+        |> List.head
+        |> fst
+    let avatarJobSource (_) =
+        Assert.Fail("avatarJobSource")
+        None
+    jobWorld
+    |> World.Dock
+        avatarJobSink
+        avatarJobSource
+        (avatarExpectedMessagesSink expectedMessages)
+        avatarSingleMetricSinkExplode
+        avatarSingleMetricSourceStub
+        commoditySource 
+        islandItemSinkStub 
+        islandItemSourceStub 
+        islandMarketSinkStub 
+        islandMarketSourceStub 
+        genericWorldItemSource 
+        shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
+        termSources 
+        worldSingleStatisticSourceStub
+        random 
+        jobLocation
+    |> ignore
 
 let islandSingleMarketSinkStub (_) (_) = ()
 let vesselSingleStatisticSourceStub (_) (identifier) = 
@@ -988,24 +1003,22 @@ let ``BuyItems.It gives a message when given a bogus island location.`` () =
     let avatarInventorySink (_) (_) =
         raise (System.NotImplementedException "avatarInventorySink")
         ()
-    let actual = 
-        input 
-        |> World.BuyItems 
-            islandMarketSourceStub 
-            islandSingleMarketSourceStub 
-            islandSingleMarketSinkStub 
-            vesselSingleStatisticSourceStub 
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            avatarInventorySource
-            avatarInventorySink
-            (avatarExpectedMessageSink expectedMessage)
-            commoditySource 
-            genericWorldItems 
-            inputLocation 
-            inputQuantity 
-            inputItemName
-    Assert.AreEqual(expected, actual)
+    input 
+    |> World.BuyItems 
+        avatarInventorySink
+        avatarInventorySource
+        (avatarExpectedMessageSink expectedMessage)
+        commoditySource 
+        islandMarketSourceStub 
+        islandSingleMarketSinkStub 
+        islandSingleMarketSourceStub 
+        genericWorldItemSource
+        shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
+        vesselSingleStatisticSourceStub 
+        inputLocation 
+        inputQuantity 
+        inputItemName
 
 [<Test>]
 let ``BuyItems.It gives a message when given a valid island location and a bogus item to buy.`` () =
@@ -1027,24 +1040,22 @@ let ``BuyItems.It gives a message when given a valid island location and a bogus
     let avatarInventorySink (_) (_) =
         raise (System.NotImplementedException "avatarInventorySink")
         ()
-    let actual = 
-        input 
-        |> World.BuyItems 
-            islandMarketSourceStub 
-            islandSingleMarketSourceStub 
-            islandSingleMarketSinkStub 
-            vesselSingleStatisticSourceStub 
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            avatarInventorySource
-            avatarInventorySink
-            (avatarExpectedMessageSink expectedMessage)
-            commoditySource 
-            genericWorldItems 
-            inputLocation 
-            inputQuantity 
-            inputItemName
-    Assert.AreEqual(expected, actual)
+    input 
+    |> World.BuyItems 
+        avatarInventorySink
+        avatarInventorySource
+        (avatarExpectedMessageSink expectedMessage)
+        commoditySource 
+        islandMarketSourceStub 
+        islandSingleMarketSinkStub 
+        islandSingleMarketSourceStub 
+        genericWorldItemSource
+        shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
+        vesselSingleStatisticSourceStub 
+        inputLocation 
+        inputQuantity 
+        inputItemName
 
 [<Test>]
 let ``BuyItems.It gives a message when the avatar has insufficient funds.`` () =
@@ -1073,30 +1084,26 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds.`` () =
         Map.empty
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(Map.empty, inventory)
-    let actual = 
-        input 
-        |> World.BuyItems 
-            islandMarketSource 
-            islandSingleMarketSourceStub 
-            islandSingleMarketSinkStub 
-            vesselSingleStatisticSourceStub 
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            avatarInventorySource
-            avatarInventorySink
-            (avatarExpectedMessageSink expectedMessage)
-            commoditySource 
-            genericWorldItems 
-            inputLocation 
-            inputQuantity 
-            inputItemName
-    Assert.AreEqual(expected, actual)
+    input 
+    |> World.BuyItems 
+        avatarInventorySink
+        avatarInventorySource
+        (avatarExpectedMessageSink expectedMessage)
+        commoditySource 
+        islandMarketSource 
+        islandSingleMarketSinkStub 
+        islandSingleMarketSourceStub 
+        genericWorldItemSource
+        shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
+        vesselSingleStatisticSourceStub 
+        inputLocation 
+        inputQuantity 
+        inputItemName
 
 [<Test>]
 let ``BuyItems.It gives a message when the avatar has insufficient tonnage.`` () =
-    let inputAvatar = 
-        shopWorld.Avatars.[avatarId]
-    let input = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
+    let input = shopWorld
     let inputLocation = shopWorldLocation
     let inputQuantity = 1000UL |> Specific
     let inputItemName = "item under test"
@@ -1121,29 +1128,26 @@ let ``BuyItems.It gives a message when the avatar has insufficient tonnage.`` ()
         Map.empty
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(Map.empty, inventory)
-    let actual = 
-        input 
-        |> World.BuyItems
-            islandMarketSource 
-            islandSingleMarketSourceStub
-            islandSingleMarketSinkStub
-            vesselSingleStatisticSourceStub
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            avatarInventorySource
-            avatarInventorySink
-            (avatarExpectedMessageSink expectedMessage)
-            commoditySource
-            genericWorldItems
-            inputLocation
-            inputQuantity
-            inputItemName
-    Assert.AreEqual(expected, actual)
+    input 
+    |> World.BuyItems
+        avatarInventorySink
+        avatarInventorySource
+        (avatarExpectedMessageSink expectedMessage)
+        commoditySource
+        islandMarketSource 
+        islandSingleMarketSinkStub
+        islandSingleMarketSourceStub
+        genericWorldItemSource
+        shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
+        vesselSingleStatisticSourceStub
+        inputLocation
+        inputQuantity
+        inputItemName
 
 [<Test>]
 let ``BuyItems.It gives a message and completes the purchase when the avatar has sufficient funds.`` () =
-    let inputAvatar = shopWorld.Avatars.[avatarId]
-    let input = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
+    let input = shopWorld
     let inputLocation = shopWorldLocation
     let inputQuantity = 2UL |> Specific
     let inputItemName = "item under test"
@@ -1154,12 +1158,9 @@ let ``BuyItems.It gives a message and completes the purchase when the avatar has
         Assert.AreEqual(1UL, commodityId)
         Assert.AreEqual(5.0, market.Supply)
         Assert.AreEqual(7.0, market.Demand)
-    let expectedAvatar = 
-        input.Avatars.[avatarId]
     let expectedMessage = "You complete the purchase of 2 item under test."
     let expected =
-        {input with
-            Avatars = input.Avatars |> Map.add avatarId expectedAvatar}
+        input
     let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
         match identifier with
         | ShipmateStatisticIdentifier.Money ->
@@ -1177,24 +1178,22 @@ let ``BuyItems.It gives a message and completes the purchase when the avatar has
         Map.empty
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(Map.empty |> Map.add 1UL 2UL, inventory)
-    let actual = 
-        input 
-        |> World.BuyItems 
-            islandMarketSource 
-            islandSingleMarketSourceStub 
-            islandSingleMarketSink 
-            vesselSingleStatisticSourceStub 
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            avatarInventorySource
-            avatarInventorySink
-            (avatarExpectedMessageSink expectedMessage)
-            commoditySource 
-            genericWorldItems 
-            inputLocation 
-            inputQuantity 
-            inputItemName
-    Assert.AreEqual(expected, actual)
+    input 
+    |> World.BuyItems 
+        avatarInventorySink
+        avatarInventorySource
+        (avatarExpectedMessageSink expectedMessage)
+        commoditySource 
+        islandMarketSource 
+        islandSingleMarketSink 
+        islandSingleMarketSourceStub 
+        genericWorldItemSource
+        shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
+        vesselSingleStatisticSourceStub 
+        inputLocation 
+        inputQuantity 
+        inputItemName
 
 [<Test>]
 let ``BuyItems.It gives a message when the avatar has insufficient funds for a single unit when specifying a maximum buy.`` () =
@@ -1225,29 +1224,26 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds for a s
         Map.empty
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(Map.empty, inventory)
-    let actual = 
-        input 
-        |> World.BuyItems
-            islandMarketSource 
-            islandSingleMarketSourceStub 
-            islandSingleMarketSink 
-            vesselSingleStatisticSourceStub 
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            avatarInventorySource
-            avatarInventorySink
-            (avatarExpectedMessageSink expectedMessage)
-            commoditySource 
-            genericWorldItems 
-            inputLocation 
-            inputQuantity 
-            inputItemName
-    Assert.AreEqual(expected, actual)
+    input 
+    |> World.BuyItems
+        avatarInventorySink
+        avatarInventorySource
+        (avatarExpectedMessageSink expectedMessage)
+        commoditySource 
+        islandMarketSource 
+        islandSingleMarketSink 
+        islandSingleMarketSourceStub 
+        genericWorldItemSource
+        shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
+        vesselSingleStatisticSourceStub 
+        inputLocation 
+        inputQuantity 
+        inputItemName
 
 [<Test>]
 let ``BuyItems.It gives a message indicating purchased quantity and completes the purchase when the avatar has sufficient funds for at least one and has specified a maximum buy.`` () =
-    let inputAvatar = shopWorld.Avatars.[avatarId]
-    let input = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
+    let input = shopWorld
     let inputLocation = shopWorldLocation
     let inputQuantity = Maximum
     let inputItemName = "item under test"
@@ -1258,12 +1254,9 @@ let ``BuyItems.It gives a message indicating purchased quantity and completes th
         Assert.AreEqual(1UL, commodityId)
         Assert.AreEqual(5.0, market.Supply)
         Assert.AreEqual(105.0, market.Demand)
-    let expectedAvatar = 
-        input.Avatars.[avatarId]
     let expectedMessage = "You complete the purchase of 100 item under test."
     let expected =
-        {input with
-            Avatars = input.Avatars |> Map.add avatarId expectedAvatar}
+        input
     let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
         match identifier with
         | ShipmateStatisticIdentifier.Money ->
@@ -1281,24 +1274,22 @@ let ``BuyItems.It gives a message indicating purchased quantity and completes th
         Map.empty
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(Map.empty |> Map.add 1UL 100UL, inventory)
-    let actual = 
-        input 
-        |> World.BuyItems 
-            islandMarketSource 
-            islandSingleMarketSourceStub 
-            islandSingleMarketSink 
-            vesselSingleStatisticSourceStub 
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            avatarInventorySource
-            avatarInventorySink
-            (avatarExpectedMessageSink expectedMessage)
-            commoditySource 
-            genericWorldItems 
-            inputLocation 
-            inputQuantity 
-            inputItemName
-    Assert.AreEqual(expected, actual)
+    input 
+    |> World.BuyItems 
+        avatarInventorySink
+        avatarInventorySource
+        (avatarExpectedMessageSink expectedMessage)
+        commoditySource 
+        islandMarketSource 
+        islandSingleMarketSink 
+        islandSingleMarketSourceStub 
+        genericWorldItemSource
+        shipmateSingleStatisticSink
+        shipmateSingleStatisticSource
+        vesselSingleStatisticSourceStub 
+        inputLocation 
+        inputQuantity 
+        inputItemName
 
 
 [<Test>]
@@ -1319,16 +1310,16 @@ let ``SellItems.It gives a message when given a bogus island location.`` () =
     let actual = 
         input 
         |> World.SellItems 
-            islandMarketSourceStub 
-            islandSingleMarketSourceStub 
-            islandSingleMarketSinkStub 
-            shipmateSingleStatisticSourceStub
-            shipmateSingleStatisticSinkStub
-            avatarInventorySource
             avatarInventorySink
+            avatarInventorySource
             (avatarExpectedMessageSink expectedMessage)
             commoditySource 
-            genericWorldItems 
+            islandMarketSourceStub 
+            islandSingleMarketSinkStub 
+            islandSingleMarketSourceStub 
+            genericWorldItemSource
+            shipmateSingleStatisticSinkStub
+            shipmateSingleStatisticSourceStub
             inputLocation 
             inputQuantity 
             inputItemName
@@ -1352,16 +1343,16 @@ let ``SellItems.It gives a message when given a valid island location and bogus 
     let actual = 
         input 
         |> World.SellItems 
-            islandMarketSourceStub 
-            islandSingleMarketSourceStub 
-            islandSingleMarketSinkStub 
-            shipmateSingleStatisticSourceStub
-            shipmateSingleStatisticSinkStub
-            avatarInventorySource
             avatarInventorySink
+            avatarInventorySource
             (avatarExpectedMessageSink expectedMessage)
             commoditySource 
-            genericWorldItems 
+            islandMarketSourceStub 
+            islandSingleMarketSinkStub 
+            islandSingleMarketSourceStub 
+            genericWorldItemSource
+            shipmateSingleStatisticSinkStub
+            shipmateSingleStatisticSourceStub
             inputLocation 
             inputQuantity 
             inputItemName
@@ -1383,16 +1374,16 @@ let ``SellItems.It gives a message when the avatar has insufficient items in inv
     let actual = 
         input 
         |> World.SellItems 
-            islandMarketSourceStub 
-            islandSingleMarketSourceStub 
-            islandSingleMarketSinkStub 
-            shipmateSingleStatisticSourceStub
-            shipmateSingleStatisticSinkStub
-            avatarInventorySource
             avatarInventorySink
+            avatarInventorySource
             (avatarExpectedMessageSink expectedMessage)
             commoditySource 
-            genericWorldItems 
+            islandMarketSourceStub 
+            islandSingleMarketSinkStub 
+            islandSingleMarketSourceStub 
+            genericWorldItemSource 
+            shipmateSingleStatisticSinkStub
+            shipmateSingleStatisticSourceStub
             inputLocation 
             inputQuantity 
             inputItemName
@@ -1414,16 +1405,16 @@ let ``SellItems.It gives a message when the avatar has no items in inventory and
     let actual = 
         input 
         |> World.SellItems 
-            islandMarketSourceStub 
-            islandSingleMarketSourceStub 
-            islandSingleMarketSinkStub 
-            shipmateSingleStatisticSourceStub
-            shipmateSingleStatisticSinkStub
-            avatarInventorySource
             avatarInventorySink
+            avatarInventorySource
             (avatarExpectedMessageSink expectedMessage)
             commoditySource 
-            genericWorldItems 
+            islandMarketSourceStub 
+            islandSingleMarketSinkStub 
+            islandSingleMarketSourceStub 
+            genericWorldItemSource 
+            shipmateSingleStatisticSinkStub
+            shipmateSingleStatisticSourceStub
             inputLocation 
             inputQuantity 
             inputItemName
@@ -1431,8 +1422,7 @@ let ``SellItems.It gives a message when the avatar has no items in inventory and
 
 [<Test>]
 let ``SellItems.It gives a message and completes the sale when the avatar has sufficient quantity.`` () =
-    let inputAvatar = shopWorld.Avatars.[avatarId]
-    let input = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
+    let input = shopWorld
     let inputLocation = shopWorldLocation
     let inputQuantity = 2UL |> Specific
     let inputItemName = "item under test"
@@ -1443,12 +1433,9 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
         Assert.AreEqual(1UL, commodityId)
         Assert.AreEqual(7.0, market.Supply)
         Assert.AreEqual(5.0, market.Demand)
-    let expectedAvatar = 
-        input.Avatars.[avatarId]
     let expectedMessage = "You complete the sale of 2 item under test."
     let expected =
-        {input with
-            Avatars = input.Avatars |> Map.add avatarId expectedAvatar}
+        input
     let shipmateSingleStatisticSource (_) (_) (identifier: ShipmateStatisticIdentifier) =
         match identifier with
         | ShipmateStatisticIdentifier.Money ->
@@ -1470,16 +1457,16 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
     let actual = 
         input 
         |> World.SellItems 
-            islandMarketSource 
-            islandSingleMarketSourceStub 
-            islandSingleMarketSink 
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            avatarInventorySource
             avatarInventorySink
+            avatarInventorySource
             (avatarExpectedMessageSink expectedMessage)
             commoditySource 
-            genericWorldItems 
+            islandMarketSource 
+            islandSingleMarketSink 
+            islandSingleMarketSourceStub 
+            genericWorldItemSource 
+            shipmateSingleStatisticSink
+            shipmateSingleStatisticSource
             inputLocation 
             inputQuantity 
             inputItemName
@@ -1487,8 +1474,7 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
 
 [<Test>]
 let ``SellItems.It gives a message and completes the sale when the avatar has sufficient quantity and specified a maximum sell.`` () =
-    let inputAvatar = shopWorld.Avatars.[avatarId]
-    let input = {shopWorld with Avatars = shopWorld.Avatars |> Map.add avatarId inputAvatar}
+    let input = shopWorld
     let inputLocation = shopWorldLocation
     let inputQuantity = Maximum
     let inputItemName = "item under test"
@@ -1499,12 +1485,9 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
         Assert.AreEqual(1UL, commodityId)
         Assert.AreEqual(7.0, market.Supply)
         Assert.AreEqual(5.0, market.Demand)
-    let expectedAvatar = 
-        input.Avatars.[avatarId]
     let expectedMessage = "You complete the sale of 2 item under test."
     let expected =
-        {input with
-            Avatars = input.Avatars |> Map.add avatarId expectedAvatar}
+        input
     let shipmateSingleStatisticSource (_) (_) (identifier: ShipmateStatisticIdentifier) =
         match identifier with
         | ShipmateStatisticIdentifier.Money ->
@@ -1526,16 +1509,16 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
     let actual = 
         input 
         |> World.SellItems 
-            islandMarketSource 
-            islandSingleMarketSourceStub 
-            islandSingleMarketSink 
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
-            avatarInventorySource
             avatarInventorySink
+            avatarInventorySource
             (avatarExpectedMessageSink expectedMessage)
             commoditySource 
-            genericWorldItems 
+            islandMarketSource 
+            islandSingleMarketSink 
+            islandSingleMarketSourceStub 
+            genericWorldItemSource 
+            shipmateSingleStatisticSink
+            shipmateSingleStatisticSource
             inputLocation 
             inputQuantity 
             inputItemName
@@ -1603,11 +1586,8 @@ let ``CleanHull.It returns the original world when given a bogus avatar id and w
 [<Test>]
 let ``CleanHull.It returns a cleaned hull when given a particular avatar id and world.`` () =
     let inputSide = Port
-    let inputAvatar =
-        genericWorld.Avatars.[avatarId]
     let inputWorld = 
-        {genericWorld with
-            Avatars = genericWorld.Avatars |> Map.add avatarId inputAvatar}
+        genericWorld
     let vesselSingleStatisticSource (_) (_) =
         {MinimumValue = 0.0; MaximumValue=0.25; CurrentValue = 0.25} |> Some
     let vesselSingleStatisticSink (_) (_, statistic:Statistic) =

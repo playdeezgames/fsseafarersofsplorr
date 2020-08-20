@@ -15,8 +15,8 @@ module WorldStatistic =
             })
 
     let Get
-            (identifier : WorldStatisticIdentifier) 
             (connection : SQLiteConnection) 
+            (identifier : WorldStatisticIdentifier) 
             : Result<Statistic,string> =
         let commandFilter (command: SQLiteCommand) =
             command.Parameters.AddWithValue("$statisticId", identifier) |> ignore

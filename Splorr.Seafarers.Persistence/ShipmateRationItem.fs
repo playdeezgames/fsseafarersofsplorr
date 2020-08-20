@@ -4,9 +4,9 @@ open System.Data.SQLite
 
 module ShipmateRationItem =
     let GetForShipmate
+            (connection : SQLiteConnection) 
             (avatarId   : string)
             (shipmateId : string)
-            (connection : SQLiteConnection) 
             : Result<uint64 list, string> =
         let commandSideEffect (command: SQLiteCommand) =
             command.Parameters.AddWithValue("$avatarId", avatarId) |> ignore
@@ -17,11 +17,11 @@ module ShipmateRationItem =
         |> Utility.GetList "SELECT [ItemId] FROM [ShipmateRationItems] WHERE [AvatarId]= $avatarId AND [ShipmateId]= $shipmateId ORDER BY [Order];" commandSideEffect convertor
         
     let private SetEntryForShipmate
+            (connection  : SQLiteConnection)
             (avatarId    : string)
             (shipmateId  : string)
             (itemId      : uint64,
              order       : int)
-            (connection  : SQLiteConnection)
             : unit =
         use command = new SQLiteCommand("REPLACE INTO [ShipmateRationItems] ([AvatarId], [ShipmateId], [ItemId], [Order]) VALUES ($avatarId, $shipmateId, $itemId, $order);", connection)
         command.Parameters.AddWithValue("$avatarId",avatarId) |> ignore
@@ -32,10 +32,10 @@ module ShipmateRationItem =
         ()
 
     let SetForShipmate
+            (connection  : SQLiteConnection)
             (avatarId    : string)
             (shipmateId  : string)
             (rationItems : uint64 list)
-            (connection  : SQLiteConnection)
             : Result<unit, string> =
         use command = new SQLiteCommand("DELETE FROM [ShipmateRationItems] WHERE [AvatarId]=$avatarId and [ShipmateId]=$shipmateId;", connection)
         command.Parameters.AddWithValue("$avatarId", avatarId) |> ignore
@@ -44,5 +44,5 @@ module ShipmateRationItem =
         [1..(rationItems.Length)]
         |> List.zip rationItems
         |> List.iter
-            (fun entry -> SetEntryForShipmate avatarId shipmateId entry connection)
+            (fun entry -> SetEntryForShipmate connection avatarId shipmateId entry)
         () |> Ok

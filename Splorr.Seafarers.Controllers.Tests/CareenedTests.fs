@@ -210,18 +210,14 @@ let ``Run.It returns At Sea when given the command Weigh Anchor.`` () =
 
 [<Test>]
 let ``Run.It returns Careened with a cleaned hull when given the command Clean Hull.`` () =
-    let inputAvatar = 
-        world.Avatars.[avatarId]
-    let inputWorld = {world with Avatars = world.Avatars |> Map.add avatarId inputAvatar}
+    let inputWorld = world
     let inputSource = 
         Command.CleanHull
         |> Some 
         |> toSource
     let inputSide = Port
-    let expectedAvatar =
-        inputAvatar
     let expected =
-        (inputSide, {inputWorld with Avatars = inputWorld.Avatars |> Map.add avatarId expectedAvatar})
+        (inputSide, inputWorld)
         |> Gamestate.Careened
         |> Some
     let actual =

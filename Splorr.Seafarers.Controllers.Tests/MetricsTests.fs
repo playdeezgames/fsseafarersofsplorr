@@ -23,10 +23,8 @@ let ``Run.It returns the given gamestate.`` () =
 
 [<Test>]
 let ``Run.It works when all of the metrics have counters.`` () =
-    let inputAvatar =
-        world.Avatars.[avatarId]
     let inputWorld =
-        {world with Avatars =world.Avatars |> Map.add avatarId inputAvatar}
+        world
     let input = 
         inputWorld
         |> Gamestate.AtSea

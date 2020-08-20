@@ -16,13 +16,10 @@ let bootstrapConnection ()
     destination
 
 module private Persister =
-    let parameterlessFetcher
-            (connection : SQLiteConnection) 
-            (fetcher    : SQLiteConnection -> Result<'T,string>) 
-            : unit -> 'T =
-        match connection |> fetcher with
-        | Ok x -> (fun () -> x)
-        | Error x ->  raise (System.InvalidOperationException x)      
+    let unpackOrThrow (result:Result<'T,string>) : 'T =
+        match result with
+        | Ok x -> x
+        | Error x -> raise (System.InvalidOperationException x)
 
 [<EntryPoint>]
 let main argv =
@@ -33,115 +30,89 @@ let main argv =
 
     use connection = bootstrapConnection()
 
-    let islandItemSource 
-            (location:Location) =
-        match location |> IslandItem.GetForIsland connection with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+    let islandItemSource = 
+        IslandItem.GetForIsland connection
+        >> Persister.unpackOrThrow
 
     let islandItemSink 
             (location:Location) 
-            (items:Set<uint64>) =
-        IslandItem.CreateForIsland connection location items
-        |> ignore
+            =
+        IslandItem.CreateForIsland connection location
+        >> Persister.unpackOrThrow
 
-    let islandMarketSource 
-            (location:Location) =
-        match location |> IslandMarket.GetForIsland connection with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+    let islandMarketSource =
+        IslandMarket.GetForIsland connection
+        >> Persister.unpackOrThrow
 
     let islandSingleMarketSource 
-            (location:Location) 
-            (itemId:uint64) =
-        match location |> IslandMarket.GetMarketForIsland connection itemId with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+            (location: Location)=
+        IslandMarket.GetMarketForIsland connection location
+        >> Persister.unpackOrThrow
 
     let islandMarketSink 
-            (location:Location) 
-            (markets:Map<uint64, Market>)=
-        IslandMarket.CreateForIsland connection location markets
-        |> ignore
+            (location:Location)=
+        IslandMarket.CreateForIsland connection location
+        >> Persister.unpackOrThrow
 
     let islandSingleMarketSink 
-            (location:Location) 
-            (data:uint64 * Market)=
-        IslandMarket.SetForIsland connection location data
-        |> ignore
+            (location:Location) =
+        IslandMarket.SetForIsland connection location
+        >> Persister.unpackOrThrow
 
-    let commoditySource = 
-        Persister.parameterlessFetcher 
-            connection 
-            Commodity.GetList
+    let commoditySource () = 
+        Commodity.GetList connection
+        |> Persister.unpackOrThrow
 
-    let itemSource = 
-        Persister.parameterlessFetcher 
-            connection 
-            Item.GetList
+    let itemSource () = 
+        Item.GetList connection
+        |> Persister.unpackOrThrow
 
-    let vesselStatisticTemplateSource = 
-        Persister.parameterlessFetcher 
-            connection 
-            VesselStatisticTemplate.GetList
+    let vesselStatisticTemplateSource () = 
+        VesselStatisticTemplate.GetList connection
+        |> Persister.unpackOrThrow
 
     let vesselStatisticSink 
-            (avatarId:string) 
-            (statistics:Map<VesselStatisticIdentifier, Statistic>) 
-            : unit =
-        VesselStatistic.SetForAvatar avatarId statistics connection
-        |> ignore
+            (avatarId:string) =
+        VesselStatistic.SetForAvatar connection avatarId
+        >> Persister.unpackOrThrow
 
     let vesselSingleStatisticSource 
-            (avatarId:string) 
-            (identifier:VesselStatisticIdentifier) 
-            : Statistic option =
-        match VesselStatistic.GetStatisticForAvatar avatarId identifier connection with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+            (avatarId:string)=
+        VesselStatistic.GetStatisticForAvatar connection avatarId
+        >> Persister.unpackOrThrow
 
     let vesselSingleStatisticSink 
-            (avatarId: string) 
-            (identifier:VesselStatisticIdentifier, 
-                statistic:Statistic) 
-            : unit =
-        VesselStatistic.SetStatisticForAvatar avatarId (identifier, statistic) connection
-        |> ignore
+            (avatarId: string)=
+        VesselStatistic.SetStatisticForAvatar connection avatarId
+        >> Persister.unpackOrThrow
 
-    let adverbSource() : string list =
-        match connection |> Term.GetForTermType "adverb" with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+    let adverbSource () =
+        Term.GetForTermType connection "adverb"
+        |> Persister.unpackOrThrow
 
-    let adjectiveSource() : string list =
-        match connection |> Term.GetForTermType "adjective" with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+    let adjectiveSource() =
+        Term.GetForTermType connection "adjective"
+        |> Persister.unpackOrThrow
 
     let objectNameSource() : string list =
-        match connection |> Term.GetForTermType "object name" with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+        Term.GetForTermType connection "object name"
+        |> Persister.unpackOrThrow
 
     let personNameSource() : string list =
-        match connection |> Term.GetForTermType "person name" with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+        Term.GetForTermType connection "person name"
+        |> Persister.unpackOrThrow
 
     let personAdjectiveSource() : string list =
-        match connection |> Term.GetForTermType "person adjective" with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+        Term.GetForTermType connection "person adjective"
+        |> Persister.unpackOrThrow
 
     let professionSource() : string list =
-        match connection |> Term.GetForTermType "profession" with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+        Term.GetForTermType connection "profession"
+        |> Persister.unpackOrThrow
 
     let termNameSource() : string list =
-        match connection |> Term.GetForTermType "island name" with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+        Term.GetForTermType connection "island name"
+        |> Persister.unpackOrThrow
 
     let termSources = 
         (adverbSource, 
@@ -151,27 +122,19 @@ let main argv =
             personAdjectiveSource, 
             professionSource)
 
-    let avatarMessageSource
-            (avatarId:string) 
-            : string list =
-        match connection |> Message.GetForAvatar avatarId with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+    let avatarMessageSource =
+        Message.GetForAvatar connection
+        >> Persister.unpackOrThrow
 
     let avatarMessageSink
             (avatarId:string) 
-            (message:string) 
-            : unit =
-        match connection |> Message.AddForAvatar (avatarId, message) with
-        | Ok _ -> ()
-        | Error x -> raise (System.InvalidOperationException x)
+            (message:string )=
+        Message.AddForAvatar connection (avatarId, message)
+        |> Persister.unpackOrThrow
 
-    let avatarMessagePurger
-            (avatarId:string) 
-            : unit =
-        match connection |> Message.ClearForAvatar avatarId with
-        | Ok _ -> ()
-        | Error x -> raise (System.InvalidOperationException x)
+    let avatarMessagePurger=
+        Message.ClearForAvatar connection
+        >> Persister.unpackOrThrow
 
     let shipmateIdentifierToString =
         function
@@ -183,111 +146,87 @@ let main argv =
         | x -> raise (System.NotImplementedException (x |> sprintf "stringToShipmateIdentifier %s"))
 
     let shipmateRationItemSource
-            (avatarId   : string) 
-            (shipmateId : ShipmateIdentifier) : uint64 list =
-        match connection |> ShipmateRationItem.GetForShipmate avatarId (shipmateId |> shipmateIdentifierToString) with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+            (avatarId   : string) =
+        shipmateIdentifierToString
+        >> ShipmateRationItem.GetForShipmate connection avatarId
+        >> Persister.unpackOrThrow
 
     let shipmateRationItemSink
             (avatarId   : string) 
-            (shipmateId : ShipmateIdentifier) 
-            (items      : uint64 list) 
-            : unit =
-        match connection |> ShipmateRationItem.SetForShipmate avatarId (shipmateId |> shipmateIdentifierToString) items with
-        | Ok _ -> ()
-        | Error x -> raise (System.InvalidOperationException x)
+            (shipmateId : ShipmateIdentifier)=
+        ShipmateRationItem.SetForShipmate connection avatarId (shipmateId |> shipmateIdentifierToString)
+        >> Persister.unpackOrThrow
 
     let rationItemSource () 
             : uint64 list =
-        match connection |> RationItem.GetRationItems with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+        connection |> RationItem.GetRationItems
+        |> Persister.unpackOrThrow
 
     let shipmateStatisticTemplateSource () 
             : Map<ShipmateStatisticIdentifier, ShipmateStatisticTemplate> =
-        match connection |> ShipmateStatisticTemplate.GetList with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+        connection |> ShipmateStatisticTemplate.GetList
+        |> Persister.unpackOrThrow
 
-    let worldSingleStatisticSource 
-            (identifier: WorldStatisticIdentifier) 
-            : Statistic =
-        match connection |> WorldStatistic.Get identifier with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+    let worldSingleStatisticSource =
+        WorldStatistic.Get connection
+        >> Persister.unpackOrThrow
 
-    let avatarShipmateSource 
-            (avatarId: string) 
-            : ShipmateIdentifier list =
-        match connection |> ShipmateStatistic.GetShipmatesForAvatar avatarId with
-        | Ok x -> 
-            x
-            |> List.map (stringToShipmateIdentifier)
-        | Error x -> raise (System.InvalidOperationException x)
+    let avatarShipmateSource =
+        ShipmateStatistic.GetShipmatesForAvatar connection
+        >> Persister.unpackOrThrow
+        >> List.map stringToShipmateIdentifier
 
     let shipmateSingleStatisticSource 
             (avatarId: string) 
-            (shipmateId:ShipmateIdentifier) 
-            (identifier: ShipmateStatisticIdentifier) 
-            : Statistic option =
-        match connection |> ShipmateStatistic.GetStatisticForShipmate avatarId (shipmateId |> shipmateIdentifierToString) identifier with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+            (shipmateId:ShipmateIdentifier)=
+        ShipmateStatistic.GetStatisticForShipmate connection avatarId (shipmateId |> shipmateIdentifierToString)
+        >> Persister.unpackOrThrow
 
     let shipmateSingleStatisticSink 
             (avatarId: string) 
-            (shipmateId:ShipmateIdentifier) 
-            (identifier: ShipmateStatisticIdentifier, 
-                statistic: Statistic option) 
-            : unit =
-        match connection |> ShipmateStatistic.SetStatisticForShipmate avatarId (shipmateId |> shipmateIdentifierToString) (identifier, statistic) with
-        | Ok _ -> ()
-        | Error x -> raise (System.InvalidOperationException x)
+            (shipmateId:ShipmateIdentifier)=
+        ShipmateStatistic.SetStatisticForShipmate connection avatarId (shipmateId |> shipmateIdentifierToString)
+        >> Persister.unpackOrThrow
 
-    let avatarInventorySource 
-            (avatarId:string) =
-        match connection |> AvatarInventory.GetForAvatar avatarId with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+    let avatarInventorySource =
+        AvatarInventory.GetForAvatar connection
+        >> Persister.unpackOrThrow
 
-    let avatarInventorySink 
-            (avatarId:string) 
-            (inventory:Map<uint64, uint64>) =
-        match connection |> AvatarInventory.SetForAvatar avatarId inventory with
-        | Ok () -> ()
-        | Error x -> raise (System.InvalidOperationException x)
+    let avatarInventorySink (avatarId:string) =
+        AvatarInventory.SetForAvatar connection avatarId
+        >> Persister.unpackOrThrow
 
     let switchSource () = switches
 
     let avatarSingleMetricSink
             (avatarId : string)
-            (metric   : Metric, 
-                value : uint64)
-            : unit =
-        match connection |> AvatarMetric.SetMetricForAvatar avatarId (metric, value) with
-        | Ok () -> ()
-        | Error x -> raise (System.InvalidOperationException x)
+            =
+        AvatarMetric.SetMetricForAvatar connection avatarId
+        >> Persister.unpackOrThrow
 
     let avatarSingleMetricSource
-            (avatarId : string)
-            (metric   : Metric)
-            : uint64 =
-        match connection |> AvatarMetric.GetMetricForAvatar avatarId metric with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+            (avatarId : string) =
+        AvatarMetric.GetMetricForAvatar connection avatarId
+        >> Persister.unpackOrThrow
 
-    let avatarMetricSource
-            (avatarId : string)
-            : Map<Metric, uint64> =
-        match connection |> AvatarMetric.GetForAvatar avatarId with
-        | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+    let avatarMetricSource=
+        AvatarMetric.GetForAvatar connection
+        >> Persister.unpackOrThrow
+
+    let avatarJobSink (avatarId: string) =
+        AvatarJob.SetForAvatar connection avatarId
+        >> Persister.unpackOrThrow
+
+    let avatarJobSource =
+        AvatarJob.GetForAvatar connection
+        >> Persister.unpackOrThrow
 
     try
         Runner.Run 
             avatarInventorySink
             avatarInventorySource
+            avatarJobSink
+            avatarJobSource
             avatarMessagePurger
             avatarMessageSink
             avatarMessageSource

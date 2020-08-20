@@ -25,6 +25,8 @@ module Docked =
     let private HandleCommand
             (avatarInventorySink           : AvatarInventorySink)
             (avatarInventorySource         : AvatarInventorySource)
+            (avatarJobSink                 : AvatarJobSink)
+            (avatarJobSource               : AvatarJobSource)
             (avatarMessagePurger           : AvatarMessagePurger)
             (avatarMessageSink             : AvatarMessageSink)
             (avatarSingleMetricSink        : AvatarSingleMetricSink)
@@ -49,7 +51,9 @@ module Docked =
             (Dock, 
                 location, 
                 world 
-                |> World.AcceptJob 
+                |> World.AcceptJob
+                    avatarJobSink
+                    avatarJobSource
                     avatarMessageSink 
                     avatarSingleMetricSink
                     avatarSingleMetricSource
@@ -59,24 +63,25 @@ module Docked =
             |> Some
 
         | Some (Command.Buy (quantity, itemName))->
+            world 
+            |> World.BuyItems 
+                avatarInventorySink
+                avatarInventorySource
+                avatarMessageSink 
+                commoditySource 
+                islandMarketSource 
+                islandSingleMarketSink 
+                islandSingleMarketSource 
+                itemSource 
+                shipmateSingleStatisticSink
+                shipmateSingleStatisticSource
+                vesselSingleStatisticSource 
+                location 
+                quantity 
+                itemName
             (Dock, 
                 location, 
-                    world 
-                    |> World.BuyItems 
-                        islandMarketSource 
-                        islandSingleMarketSource 
-                        islandSingleMarketSink 
-                        vesselSingleStatisticSource 
-                        shipmateSingleStatisticSource
-                        shipmateSingleStatisticSink
-                        avatarInventorySource
-                        avatarInventorySink
-                        avatarMessageSink 
-                        commoditySource 
-                        (itemSource()) 
-                        location 
-                        quantity 
-                        itemName) 
+                    world) 
             |> Gamestate.Docked
             |> Some            
 
@@ -85,16 +90,16 @@ module Docked =
                 location, 
                     world 
                     |> World.SellItems 
-                        islandMarketSource 
-                        islandSingleMarketSource 
-                        islandSingleMarketSink 
-                        shipmateSingleStatisticSource
-                        shipmateSingleStatisticSink
-                        avatarInventorySource
                         avatarInventorySink
+                        avatarInventorySource
                         avatarMessageSink
                         commoditySource 
-                        (itemSource()) 
+                        islandMarketSource 
+                        islandSingleMarketSink 
+                        islandSingleMarketSource 
+                        itemSource 
+                        shipmateSingleStatisticSink
+                        shipmateSingleStatisticSource
                         location 
                         quantity 
                         itemName) 
@@ -122,6 +127,8 @@ module Docked =
                 location, 
                 world 
                 |> World.AbandonJob 
+                    avatarJobSink
+                    avatarJobSource
                     avatarMessageSink
                     avatarSingleMetricSink
                     avatarSingleMetricSource
@@ -171,6 +178,8 @@ module Docked =
     let private RunWithIsland 
             (avatarInventorySink           : AvatarInventorySink)
             (avatarInventorySource         : AvatarInventorySource)
+            (avatarJobSink                 : AvatarJobSink)
+            (avatarJobSource               : AvatarJobSource)
             (avatarMessagePurger           : AvatarMessagePurger)
             (avatarMessageSink             : AvatarMessageSink)
             (avatarMessageSource           : AvatarMessageSource)
@@ -199,6 +208,8 @@ module Docked =
         |> HandleCommand 
             avatarInventorySink
             avatarInventorySource
+            avatarJobSink
+            avatarJobSource
             avatarMessagePurger
             avatarMessageSink
             avatarSingleMetricSink
@@ -237,6 +248,8 @@ module Docked =
     let Run 
             (avatarInventorySink           : AvatarInventorySink)
             (avatarInventorySource         : AvatarInventorySource)
+            (avatarJobSink                 : AvatarJobSink)
+            (avatarJobSource               : AvatarJobSource)
             (avatarMessagePurger           : AvatarMessagePurger)
             (avatarMessageSink             : AvatarMessageSink)
             (avatarMessageSource           : AvatarMessageSource)
@@ -258,6 +271,8 @@ module Docked =
             (RunWithIsland 
                 avatarInventorySink
                 avatarInventorySource
+                avatarJobSink
+                avatarJobSource
                 avatarMessagePurger          
                 avatarMessageSink            
                 avatarMessageSource          

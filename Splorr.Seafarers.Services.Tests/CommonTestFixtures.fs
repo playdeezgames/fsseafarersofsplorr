@@ -59,3 +59,5 @@ let internal assertAvatarSingleMetricSink (expected:(Metric * uint64) list) (_) 
     if found.IsNone then
         Assert.Fail(sprintf "assertAvatarSingleMetricSink %s %u" ((actual |> fst).ToString()) (actual |> snd))
 let internal avatarSingleMetricSourceStub (_) (_) = 0UL
+let internal avatarJobSinkStub (_) (_) = ()
+let internal avatarJobSourceStub (_) = None

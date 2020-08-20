@@ -10,8 +10,8 @@ module AvatarInventory =
         (reader.GetInt64(0) |> uint64, reader.GetInt64(1) |> uint64)        
 
     let GetForAvatar 
-            (avatarId   : string) 
             (connection : SQLiteConnection) 
+            (avatarId   : string) 
             : Result<Map<uint64, uint64>, string> =
         connection
         |> Utility.GetList 
@@ -23,9 +23,9 @@ module AvatarInventory =
             (Map.ofList)
 
     let SetForAvatar
+            (connection:SQLiteConnection)
             (avatarId:string)
             (inventory:Map<uint64, uint64>)
-            (connection:SQLiteConnection)
             : Result<unit, string> =
         try
             use command = new SQLiteCommand("DELETE FROM [AvatarInventories] WHERE [AvatarId] = $avatarId", connection)

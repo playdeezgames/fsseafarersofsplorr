@@ -9,7 +9,7 @@ let ``GetForTermType.It returns a list of terms that apply to a given term type.
     use connection = SetupConnection()
     try
         let inputTermType = "adverb"
-        match connection |> Term.GetForTermType inputTermType with
+        match Term.GetForTermType connection inputTermType with
         | Ok actual     -> 
             Assert.AreEqual(1, actual.Length)
         | Error message -> 
@@ -23,7 +23,7 @@ let ``GetForTermType.It returns an empty list of terms for a non-existent term t
     use connection = SetupConnection()
     try
         let inputTermType = "split infinitives"
-        match connection |> Term.GetForTermType inputTermType with
+        match Term.GetForTermType connection inputTermType with
         | Ok actual     -> 
             Assert.True(actual.IsEmpty)
         | Error message -> 

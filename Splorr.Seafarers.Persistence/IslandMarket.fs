@@ -21,8 +21,8 @@ module IslandMarket =
 
     let GetMarketForIsland 
             (connection  : SQLiteConnection) 
-            (commodityId : uint64) 
             (location    : Location) 
+            (commodityId : uint64) 
             : Result<Market option,string> =
         let commandSideEffect (command: SQLiteCommand) =
             command.Parameters.AddWithValue("$islandX", location |> fst) |> ignore

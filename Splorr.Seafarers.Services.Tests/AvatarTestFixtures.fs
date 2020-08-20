@@ -25,31 +25,10 @@ let internal vesselSingleStatisticSource (_) (identifier) =
         None
 let internal vesselSingleStatisticSink (_) (_) = ()
 
-let internal avatar =
-    Avatar.Create 
-        shipmateStatisticTemplateSource
-        shipmateSingleStatisticSinkStub
-        rationItemSourceStub 
-        vesselStatisticTemplateSourceStub 
-        vesselStatisticSinkStub 
-        shipmateRationItemSinkStub 
-        avatarId 
 let internal avatarId = "avatar"
-let internal avatarNoStats =
-    avatar
-let internal deadAvatar =
-    avatar
-let internal oldAvatar =
-    avatar
 let internal job =
     Job.Create 
         termSources 
         worldSingleStatisticSourceStub
         random  
         singleLocation
-let internal employedAvatar =
-    {avatar with Job = job |> Some}
-let internal rationedAvatar =
-    avatar
-let internal hoarderAvatar =
-    avatar
