@@ -1,7 +1,7 @@
 ﻿namespace Splorr.Seafarers.Models
 
-type AvatarVisit =
+type AvatarVisit = //TODO: these become avatar island metrics!
     {
-        VisitCount : uint32 option
-        LastVisit  : int64 option
+        VisitCount : uint64 option
+        LastVisit  : uint64 option
     }

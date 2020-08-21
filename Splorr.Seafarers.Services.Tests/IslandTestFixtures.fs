@@ -23,7 +23,7 @@ let internal visitedIslandNoLastVisit =
 let internal seenIsland =
     {
         Island.Name    = "Island"
-        AvatarVisits   = Map.empty |> Map.add avatarId {VisitCount=None;LastVisit=Some 0L}
+        AvatarVisits   = Map.empty |> Map.add avatarId {VisitCount=None;LastVisit=Some 0UL}
         Jobs           = []
         CareenDistance = 0.0
     }
@@ -31,7 +31,7 @@ let internal seenIsland =
 let internal visitedIsland =
     {
         Island.Name    = "Island"
-        AvatarVisits   = Map.empty |> Map.add avatarId {VisitCount=1u |> Some;LastVisit=Some 0L}
+        AvatarVisits   = Map.empty |> Map.add avatarId {VisitCount=1UL |> Some;LastVisit=Some 0UL}
         Jobs           = []
         CareenDistance = 0.0
     }

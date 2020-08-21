@@ -38,7 +38,7 @@ module Island =
             "(unknown)"
     
     let AddVisit 
-            (epochSeconds : int64) //TODO: to time source(if the tests fail intermittently)?
+            (epochSeconds : uint64) //TODO: to time source(if the tests fail intermittently)?
             (avatarId     : string) 
             (island       : Island) 
             : Island =
@@ -47,14 +47,14 @@ module Island =
             {island with 
                 AvatarVisits = 
                     island.AvatarVisits 
-                    |> Map.add avatarId {VisitCount = 1u |> Some; LastVisit = Some epochSeconds}}
+                    |> Map.add avatarId {VisitCount = 1UL |> Some; LastVisit = Some epochSeconds}}
         | Some x when x.LastVisit.IsNone ->
             {island with
                 AvatarVisits =
                     island.AvatarVisits
                     |> Map.add avatarId 
                         {
-                            VisitCount = ((x.VisitCount |> Option.defaultValue 0u)+1u) |> Some
+                            VisitCount = ((x.VisitCount |> Option.defaultValue 0UL)+1UL) |> Some
                             LastVisit = Some epochSeconds}}
         | Some x when x.LastVisit.IsSome && x.LastVisit.Value < epochSeconds ->
             {island with
@@ -62,7 +62,7 @@ module Island =
                     island.AvatarVisits
                     |> Map.add avatarId 
                         {
-                            VisitCount = ((x.VisitCount |> Option.defaultValue 0u)+1u) |> Some
+                            VisitCount = ((x.VisitCount |> Option.defaultValue 0UL)+1UL) |> Some
                             LastVisit = Some epochSeconds}}
         | _ -> island
 
@@ -107,12 +107,12 @@ module Island =
             {island with 
                 AvatarVisits =
                     island.AvatarVisits
-                    |> Map.add avatarId {VisitCount=0u |> Some; LastVisit=None}}
+                    |> Map.add avatarId {VisitCount=0UL |> Some; LastVisit=None}}
         | Some x when x.VisitCount = None -> //TODO: i dislike this copypasta
             {island with 
                 AvatarVisits =
                     island.AvatarVisits
-                    |> Map.add avatarId {VisitCount=0u |> Some; LastVisit=None}}
+                    |> Map.add avatarId {VisitCount=0UL |> Some; LastVisit=None}}
         | _ -> island
 
     let MakeSeen 

@@ -348,7 +348,7 @@ module World =
                 |> Set.remove location
             let updatedIsland = 
                 island
-                |> Island.AddVisit (DateTimeOffset.Now.ToUnixTimeSeconds()) avatarId
+                |> Island.AddVisit (DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64) avatarId
                 |> Island.GenerateJobs 
                     termSources 
                     worldSingleStatisticSource 
@@ -360,12 +360,12 @@ module World =
                 island.AvatarVisits
                 |> Map.tryFind avatarId
                 |> Option.bind (fun x -> x.VisitCount)
-                |> Option.defaultValue 0u
+                |> Option.defaultValue 0UL
             let newVisitCount =
                 updatedIsland.AvatarVisits
                 |> Map.tryFind avatarId
                 |> Option.bind (fun x -> x.VisitCount)
-                |> Option.defaultValue 0u
+                |> Option.defaultValue 0UL
             world
             |> AddMessages (avatarMessageSink : AvatarMessageSink) [ "You dock." ]
             avatarId

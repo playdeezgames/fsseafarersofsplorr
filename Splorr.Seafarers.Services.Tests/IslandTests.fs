@@ -27,13 +27,13 @@ let ``GetDisplayName.It returns the island's name when there is a visit count.``
     let name = "Uno"
     let actual = 
         {Island.Create() with 
-            AvatarVisits = Map.empty |> Map.add avatarId {VisitCount=0u |> Some; LastVisit=None}
+            AvatarVisits = Map.empty |> Map.add avatarId {VisitCount=0UL |> Some; LastVisit=None}
             } |> Island.SetName name |> Island.GetDisplayName avatarId
     Assert.AreEqual(name, actual)
 
 [<Test>]
 let ``AddVisit.It increases visit count to one and sets last visit to given turn when there is no last visit and no visit count.`` () =
-    let turn = 100L
+    let turn = 100UL
     let actual =
         unvisitedIsland
         |> Island.AddVisit turn avatarId
@@ -42,7 +42,7 @@ let ``AddVisit.It increases visit count to one and sets last visit to given turn
 
 [<Test>]
 let ``AddVisit.It increases visit count by one and sets last visit to given turn when there is no last visit.`` () =
-    let turn = 100L
+    let turn = 100UL
     let actual = 
         visitedIslandNoLastVisit
         |> Island.AddVisit turn avatarId
@@ -51,9 +51,9 @@ let ``AddVisit.It increases visit count by one and sets last visit to given turn
 
 [<Test>]
 let ``AddVisit.It increases visit count by one and sets last visit to given turn when the given turn is after the last visit.`` () =
-    let turn = 100L
+    let turn = 100UL
     let expected = 
-        (visitedIsland.AvatarVisits.[avatarId].VisitCount.Value + 1u) |> Some
+        (visitedIsland.AvatarVisits.[avatarId].VisitCount.Value + 1UL) |> Some
     let actual = 
         visitedIsland
         |> Island.AddVisit turn avatarId
@@ -62,7 +62,7 @@ let ``AddVisit.It increases visit count by one and sets last visit to given turn
 
 [<Test>]
 let ``AddVisit.It does not update visit count when given turn was prior or equal to last visit.`` () =
-    let turn = 0L
+    let turn = 0UL
     let actual = 
         visitedIsland
         |> Island.AddVisit turn avatarId
@@ -125,7 +125,7 @@ let ``MakeKnown.It mutates the island's visit count to Some 0 when the given isl
     let input = unvisitedIsland
     let expected = 
         {input with
-            AvatarVisits = Map.empty |> Map.add avatarId {VisitCount=0u |> Some;LastVisit=None}}
+            AvatarVisits = Map.empty |> Map.add avatarId {VisitCount=0UL |> Some;LastVisit=None}}
     let actual =
         input
         |> Island.MakeKnown avatarId

@@ -504,7 +504,7 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
     let expectedIsland = 
         inputWorld.Islands.[(0.0, 0.0)] 
         |> Island.AddVisit 
-            (System.DateTimeOffset.Now.ToUnixTimeSeconds())
+            (System.DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64)
             avatarId
     let expectedMessage = "You dock."
     let expected = 
@@ -596,7 +596,7 @@ let ``HeadFor.It sets the heading when the island name exists and is known.`` ()
         |> World.TransformIsland 
             (0.0,0.0) 
             (Island.AddVisit 
-                99L avatarId >> Some)
+                99UL avatarId >> Some)
     let firstExpectedMessage = "You set your heading to 0.00°." //note - value for heading not actually stored, but is really 180
     let secondExpectedMessage = "You head for `Uno`."
     let vesselSingleStatisticSource (_) (identifier) =
@@ -731,7 +731,7 @@ let ``AcceptJob.It adds the given job to the avatar and eliminates it from the i
                     avatarId 
                     {
                         VisitCount=
-                            0u |> Some
+                            0UL |> Some
                         LastVisit = None}}
     let avatarJobSink (_) (actual: Job option) =
         Assert.True(actual.IsSome)
