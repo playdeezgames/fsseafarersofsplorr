@@ -33,6 +33,7 @@ let private vesselSingleStatisticSourceStub (_) (identifier:VesselStatisticIdent
     | _ -> None
 let internal soloIslandWorld = 
     World.Create 
+        avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
         nameSource
         soloIslandSingleStatisticSource
@@ -97,6 +98,7 @@ let internal genericWorldSingleStatisticSource (identfier: WorldStatisticIdentif
 
 let internal genericWorld = 
     World.Create 
+        avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
         nameSource
         genericWorldSingleStatisticSource
@@ -129,6 +131,8 @@ let private genericWorldShipmateSingleStatisticSink (_) (_) (_) =
     ()
 let internal genericDockedWorld = 
     World.Dock
+        avatarIslandSingleMetricSinkStub
+        avatarIslandSingleMetricSourceStub
         avatarJobSinkStub
         avatarJobSourceStub
         avatarMessageSinkStub 
@@ -156,6 +160,8 @@ let internal shopWorldBogusLocation = genericWorldInvalidIslandLocation
 let internal jobWorld = 
     genericDockedWorld 
     |> World.AcceptJob 
+        avatarIslandSingleMetricSinkStub
+        avatarIslandSingleMetricSourceStub
         avatarJobSinkStub
         avatarJobSourceStub
         avatarMessageSinkStub 

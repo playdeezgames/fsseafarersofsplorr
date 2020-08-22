@@ -5,10 +5,11 @@ open Splorr.Seafarers.Services
 
 module Docked = 
     let private UpdateDisplay 
-            (avatarMessageSource         : AvatarMessageSource)
-            (messageSink : MessageSink) 
-            (location    : Location) 
-            (world       : World) 
+            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (avatarMessageSource            : AvatarMessageSource)
+            (messageSink                    : MessageSink) 
+            (location                       : Location) 
+            (world                          : World) 
             : unit =
         "" |> Line |> messageSink
         world.AvatarId
@@ -17,31 +18,33 @@ module Docked =
         let island =
             world.Islands.[location]
         [
-            (Hue.Flavor, sprintf "You have visited %u times." (island.AvatarVisits |> Map.tryFind world.AvatarId |> Option.bind (fun x->x.VisitCount) |> Option.defaultValue 0UL) |> Line) |> Hued
+            (Hue.Flavor, sprintf "You have visited %u times." (avatarIslandSingleMetricSource world.AvatarId location AvatarIslandMetricIdentifier.VisitCount |> Option.defaultValue 0UL) |> Line) |> Hued
             (Hue.Heading, sprintf "You are docked at '%s':" island.Name |> Line) |> Hued
         ]
         |> List.iter messageSink
 
     let private HandleCommand
-            (avatarInventorySink           : AvatarInventorySink)
-            (avatarInventorySource         : AvatarInventorySource)
-            (avatarJobSink                 : AvatarJobSink)
-            (avatarJobSource               : AvatarJobSource)
-            (avatarMessagePurger           : AvatarMessagePurger)
-            (avatarMessageSink             : AvatarMessageSink)
-            (avatarSingleMetricSink        : AvatarSingleMetricSink)
-            (avatarSingleMetricSource      : AvatarSingleMetricSource)
-            (commoditySource               : CommoditySource) 
-            (islandMarketSource            : IslandMarketSource) 
-            (islandSingleMarketSink        : IslandSingleMarketSink) 
-            (islandSingleMarketSource      : IslandSingleMarketSource) 
-            (itemSource                    : ItemSource) 
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
-            (command                       : Command option) 
-            (location                      : Location) 
-            (world                         : World) 
+            (avatarInventorySink            : AvatarInventorySink)
+            (avatarInventorySource          : AvatarInventorySource)
+            (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
+            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (avatarJobSink                  : AvatarJobSink)
+            (avatarJobSource                : AvatarJobSource)
+            (avatarMessagePurger            : AvatarMessagePurger)
+            (avatarMessageSink              : AvatarMessageSink)
+            (avatarSingleMetricSink         : AvatarSingleMetricSink)
+            (avatarSingleMetricSource       : AvatarSingleMetricSource)
+            (commoditySource                : CommoditySource) 
+            (islandMarketSource             : IslandMarketSource) 
+            (islandSingleMarketSink         : IslandSingleMarketSink) 
+            (islandSingleMarketSource       : IslandSingleMarketSource) 
+            (itemSource                     : ItemSource) 
+            (shipmateSingleStatisticSink    : ShipmateSingleStatisticSink)
+            (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
+            (vesselSingleStatisticSource    : VesselSingleStatisticSource)
+            (command                        : Command option) 
+            (location                       : Location) 
+            (world                          : World) 
             : Gamestate option =
         world
         |> World.ClearMessages avatarMessagePurger
@@ -52,6 +55,8 @@ module Docked =
                 location, 
                 world 
                 |> World.AcceptJob
+                    avatarIslandSingleMetricSink
+                    avatarIslandSingleMetricSource
                     avatarJobSink
                     avatarJobSource
                     avatarMessageSink 
@@ -176,30 +181,33 @@ module Docked =
             |> Some
 
     let private RunWithIsland 
-            (avatarInventorySink           : AvatarInventorySink)
-            (avatarInventorySource         : AvatarInventorySource)
-            (avatarJobSink                 : AvatarJobSink)
-            (avatarJobSource               : AvatarJobSource)
-            (avatarMessagePurger           : AvatarMessagePurger)
-            (avatarMessageSink             : AvatarMessageSink)
-            (avatarMessageSource           : AvatarMessageSource)
-            (avatarSingleMetricSink        : AvatarSingleMetricSink)
-            (avatarSingleMetricSource      : AvatarSingleMetricSource)
-            (commoditySource               : CommoditySource) 
-            (islandMarketSource            : IslandMarketSource) 
-            (islandSingleMarketSink        : IslandSingleMarketSink) 
-            (islandSingleMarketSource      : IslandSingleMarketSource) 
-            (itemSource                    : ItemSource) 
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
-            (commandSource                 : CommandSource) 
-            (messageSink                   : MessageSink) 
-            (location                      : Location) 
-            (world                         : World) 
+            (avatarInventorySink            : AvatarInventorySink)
+            (avatarInventorySource          : AvatarInventorySource)
+            (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
+            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (avatarJobSink                  : AvatarJobSink)
+            (avatarJobSource                : AvatarJobSource)
+            (avatarMessagePurger            : AvatarMessagePurger)
+            (avatarMessageSink              : AvatarMessageSink)
+            (avatarMessageSource            : AvatarMessageSource)
+            (avatarSingleMetricSink         : AvatarSingleMetricSink)
+            (avatarSingleMetricSource       : AvatarSingleMetricSource)
+            (commoditySource                : CommoditySource) 
+            (islandMarketSource             : IslandMarketSource) 
+            (islandSingleMarketSink         : IslandSingleMarketSink) 
+            (islandSingleMarketSource       : IslandSingleMarketSource) 
+            (itemSource                     : ItemSource) 
+            (shipmateSingleStatisticSink    : ShipmateSingleStatisticSink)
+            (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
+            (vesselSingleStatisticSource    : VesselSingleStatisticSource)
+            (commandSource                  : CommandSource) 
+            (messageSink                    : MessageSink) 
+            (location                       : Location) 
+            (world                          : World) 
             : Gamestate option =
         world
         |> UpdateDisplay 
+            avatarIslandSingleMetricSource
             avatarMessageSource
             messageSink 
             location 
@@ -208,6 +216,8 @@ module Docked =
         |> HandleCommand 
             avatarInventorySink
             avatarInventorySource
+            avatarIslandSingleMetricSink
+            avatarIslandSingleMetricSource
             avatarJobSink
             avatarJobSource
             avatarMessagePurger
@@ -246,31 +256,35 @@ module Docked =
             |> Some
 
     let Run 
-            (avatarInventorySink           : AvatarInventorySink)
-            (avatarInventorySource         : AvatarInventorySource)
-            (avatarJobSink                 : AvatarJobSink)
-            (avatarJobSource               : AvatarJobSource)
-            (avatarMessagePurger           : AvatarMessagePurger)
-            (avatarMessageSink             : AvatarMessageSink)
-            (avatarMessageSource           : AvatarMessageSource)
-            (avatarSingleMetricSink        : AvatarSingleMetricSink)
-            (avatarSingleMetricSource      : AvatarSingleMetricSource)
-            (commoditySource               : CommoditySource) 
-            (islandMarketSource            : IslandMarketSource) 
-            (islandSingleMarketSink        : IslandSingleMarketSink) 
-            (islandSingleMarketSource      : IslandSingleMarketSource) 
-            (itemSource                    : ItemSource) 
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
-            (commandSource                 : CommandSource) 
-            (messageSink                   : MessageSink) =
+            (avatarInventorySink            : AvatarInventorySink)
+            (avatarInventorySource          : AvatarInventorySource)
+            (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
+            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (avatarJobSink                  : AvatarJobSink)
+            (avatarJobSource                : AvatarJobSource)
+            (avatarMessagePurger            : AvatarMessagePurger)
+            (avatarMessageSink              : AvatarMessageSink)
+            (avatarMessageSource            : AvatarMessageSource)
+            (avatarSingleMetricSink         : AvatarSingleMetricSink)
+            (avatarSingleMetricSource       : AvatarSingleMetricSource)
+            (commoditySource                : CommoditySource) 
+            (islandMarketSource             : IslandMarketSource) 
+            (islandSingleMarketSink         : IslandSingleMarketSink) 
+            (islandSingleMarketSource       : IslandSingleMarketSource) 
+            (itemSource                     : ItemSource) 
+            (shipmateSingleStatisticSink    : ShipmateSingleStatisticSink)
+            (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
+            (vesselSingleStatisticSource    : VesselSingleStatisticSource)
+            (commandSource                  : CommandSource) 
+            (messageSink                    : MessageSink) =
         RunBoilerplate 
             avatarMessageSource
             shipmateSingleStatisticSource
             (RunWithIsland 
                 avatarInventorySink
                 avatarInventorySource
+                avatarIslandSingleMetricSink
+                avatarIslandSingleMetricSource
                 avatarJobSink
                 avatarJobSource
                 avatarMessagePurger          

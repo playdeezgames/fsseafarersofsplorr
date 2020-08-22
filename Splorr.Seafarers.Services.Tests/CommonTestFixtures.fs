@@ -61,3 +61,5 @@ let internal assertAvatarSingleMetricSink (expected:(Metric * uint64) list) (_) 
 let internal avatarSingleMetricSourceStub (_) (_) = 0UL
 let internal avatarJobSinkStub (_) (_) = ()
 let internal avatarJobSourceStub (_) = None
+let internal avatarIslandSingleMetricSinkStub (_) (_) (_) (_) = ()
+let internal avatarIslandSingleMetricSourceStub (_) (_) (_) = None

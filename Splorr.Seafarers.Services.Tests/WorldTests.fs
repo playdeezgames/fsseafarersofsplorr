@@ -250,6 +250,7 @@ let ``Move.It moves the avatar one unit when give 1u for distance when given a v
     |> World.Move 
         avatarInventorySink
         avatarInventorySource
+        avatarIslandSingleMetricSinkStub
         avatarMessageSinkStub 
         avatarShipmateSource
         (assertAvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL])
@@ -327,6 +328,7 @@ let ``Move.It moves the avatar almost two units when give 2u for distance.`` () 
     |> World.Move 
         avatarInventorySink
         avatarInventorySource
+        avatarIslandSingleMetricSinkStub
         avatarMessageSinkStub 
         avatarShipmateSource
         (assertAvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL])
@@ -347,7 +349,6 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
     let blankIsland =
         {
             Name = ""
-            AvatarVisits = Map.empty
             Jobs = []
             CareenDistance = 0.0
         }
@@ -440,9 +441,16 @@ let ``Dock.It does nothing when given an invalid avatar id.`` () =
     let avatarJobSource (_) =
         Assert.Fail("avatarJobSource")
         None
+    let avatarIslandSingleMetricSink (_) (_) (_) (_) =
+        Assert.Fail("avatarIslandSingleMetricSink")
+    let avatarIslandSingleMetricSource (_) (_) (_) =
+        Assert.Fail("avatarIslandSingleMetricSource")
+        None
     let actual = 
         {emptyWorld with AvatarId = bogusAvatarId}
         |> World.Dock 
+            avatarIslandSingleMetricSink
+            avatarIslandSingleMetricSource
             avatarJobSink
             avatarJobSource
             avatarMessageSinkStub
@@ -476,9 +484,16 @@ let ``Dock.It adds a message when the given location has no island.`` () =
     let avatarJobSource (_) =
         Assert.Fail("avatarJobSource")
         None
+    let avatarIslandSingleMetricSink (_) (_) (_) (_) =
+        Assert.Fail("avatarIslandSingleMetricSink")
+    let avatarIslandSingleMetricSource (_) (_) (_) =
+        Assert.Fail("avatarIslandSingleMetricSource")
+        None
     let actual = 
         inputWorld
         |> World.Dock
+            avatarIslandSingleMetricSink
+            avatarIslandSingleMetricSource
             avatarJobSink
             avatarJobSource
             (avatarExpectedMessageSink expectedMessage)
@@ -503,9 +518,6 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
     let inputWorld = oneIslandWorld
     let expectedIsland = 
         inputWorld.Islands.[(0.0, 0.0)] 
-        |> Island.AddVisit 
-            (System.DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64)
-            avatarId
     let expectedMessage = "You dock."
     let expected = 
         {inputWorld with 
@@ -525,9 +537,41 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
         Assert.Fail("avatarJobSink")
     let avatarJobSource (_) =
         None
+    let expectedVisitTime = 
+        System.DateTimeOffset.Now.ToUnixTimeSeconds()
+        |> uint64
+    let avatarIslandSingleMetricSink (_) (_) (identifier:AvatarIslandMetricIdentifier) (value:uint64) =
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount ->
+            Assert.AreEqual(1UL, value)
+        | AvatarIslandMetricIdentifier.LastVisit ->
+            Assert.GreaterOrEqual(value, expectedVisitTime)
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
+    let mutable counter:int = 0
+    let avatarIslandSingleMetricSource(_) (_) (identifier:AvatarIslandMetricIdentifier) = 
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount ->
+            counter <- counter + 1
+            match counter with
+            | 1
+            | 2 ->
+                None
+            | 3 ->
+                Some 1UL
+            | _ ->
+                Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
+                None
+        | AvatarIslandMetricIdentifier.LastVisit ->
+            None
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
+            None
     let actual = 
         inputWorld
         |> World.Dock
+            avatarIslandSingleMetricSink
+            avatarIslandSingleMetricSource
             avatarJobSink
             avatarJobSource
             (avatarExpectedMessageSink expectedMessage)
@@ -561,8 +605,12 @@ let ``HeadFor.It adds a message when the island name does not exist.`` () =
             None
     let vesselSingleStatisticSink (_) (_) =
         raise (System.NotImplementedException "Kaboom set")
+    let avatarIslandSingleMetricSource (_) (_) (_) =
+        Assert.Fail("avatarIslandSingleMetricSource")
+        None
     inputWorld
     |> World.HeadFor 
+        avatarIslandSingleMetricSource
         vesselSingleStatisticSource 
         vesselSingleStatisticSink 
         (avatarExpectedMessageSink expectedMessage)
@@ -582,8 +630,16 @@ let ``HeadFor.It adds a message when the island name exists but is not known.`` 
             None
     let vesselSingleStatisticSink (_) (_) =
         raise (System.NotImplementedException "Kaboom set")
+    let avatarIslandSingleMetricSource(_) (_) (identifier:AvatarIslandMetricIdentifier) = 
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount ->
+            None
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
+            None
     inputWorld
     |> World.HeadFor 
+        avatarIslandSingleMetricSource
         vesselSingleStatisticSource 
         vesselSingleStatisticSink 
         (avatarExpectedMessageSink expectedMessage)
@@ -593,10 +649,6 @@ let ``HeadFor.It adds a message when the island name exists but is not known.`` 
 let ``HeadFor.It sets the heading when the island name exists and is known.`` () =
     let inputWorld =
         headForWorld
-        |> World.TransformIsland 
-            (0.0,0.0) 
-            (Island.AddVisit 
-                99UL avatarId >> Some)
     let firstExpectedMessage = "You set your heading to 0.00°." //note - value for heading not actually stored, but is really 180
     let secondExpectedMessage = "You head for `Uno`."
     let vesselSingleStatisticSource (_) (identifier) =
@@ -614,8 +666,16 @@ let ``HeadFor.It sets the heading when the island name exists and is known.`` ()
     let vesselSingleStatisticSink (_) (identifier: VesselStatisticIdentifier, statistic: Statistic) =
         Assert.AreEqual(VesselStatisticIdentifier.Heading, identifier)
         Assert.AreEqual(expectedHeading, statistic.CurrentValue)
+    let avatarIslandSingleMetricSource(_) (_) (identifier:AvatarIslandMetricIdentifier) = 
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount ->
+            0UL |> Some
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
+            None
     inputWorld
     |> World.HeadFor 
+        avatarIslandSingleMetricSource
         vesselSingleStatisticSource 
         vesselSingleStatisticSink 
         (avatarExpectedMessagesSink [firstExpectedMessage; secondExpectedMessage])
@@ -628,9 +688,16 @@ let ``AcceptJob.It does nothing when given an invalid island location.`` () =
         Assert.Fail("avatarJobSink")
     let avatarJobSource (_) =
         None
+    let avatarIslandSingleMetricSink (_) (_) (_) (_) =
+        Assert.Fail("avatarIslandSingleMetricSink")
+    let avatarIslandSingleMetricSource (_) (_) (_) =
+        Assert.Fail("avatarIslandSingleMetricSource")
+        None
     let actual =
         genericDockedWorld
         |> World.AcceptJob 
+            avatarIslandSingleMetricSink
+            avatarIslandSingleMetricSource
             avatarJobSink
             avatarJobSource
             avatarMessageSinkStub 
@@ -649,9 +716,16 @@ let ``AcceptJob.It adds a message to the world when given an 0 job index for the
         Assert.Fail("avatarJobSink")
     let avatarJobSource (_) =
         None
+    let avatarIslandSingleMetricSink (_) (_) (_) (_) =
+        Assert.Fail("avatarIslandSingleMetricSink")
+    let avatarIslandSingleMetricSource (_) (_) (_) =
+        Assert.Fail("avatarIslandSingleMetricSource")
+        None
     let actual =
         inputWorld
         |> World.AcceptJob 
+            avatarIslandSingleMetricSink
+            avatarIslandSingleMetricSource
             avatarJobSink
             avatarJobSource
             (avatarExpectedMessageSink expectedMessage)
@@ -672,9 +746,16 @@ let ``AcceptJob.It adds a message to the world when given an invalid job index f
         Assert.Fail("avatarJobSink")
     let avatarJobSource (_) =
         None
+    let avatarIslandSingleMetricSink (_) (_) (_) (_) =
+        Assert.Fail("avatarIslandSingleMetricSink")
+    let avatarIslandSingleMetricSource (_) (_) (_) =
+        Assert.Fail("avatarIslandSingleMetricSource")
+        None
     let actual =
         inputWorld
         |> World.AcceptJob 
+            avatarIslandSingleMetricSink
+            avatarIslandSingleMetricSource
             avatarJobSink
             avatarJobSource
             (avatarExpectedMessageSink expectedMessage)
@@ -700,10 +781,16 @@ let ``AcceptJob.It adds a message to the world when the job is valid but the ava
             Destination = (0.0, 0.0)
         }
         |> Some
-        
+    let avatarIslandSingleMetricSink (_) (_) (_) (_) =
+        Assert.Fail("avatarIslandSingleMetricSink")
+    let avatarIslandSingleMetricSource (_) (_) (_) =
+        Assert.Fail("avatarIslandSingleMetricSource")
+        None
     let actual =
         inputWorld
         |> World.AcceptJob 
+            avatarIslandSingleMetricSink
+            avatarIslandSingleMetricSource
             avatarJobSink
             avatarJobSource
             (avatarExpectedMessageSink expectedMessage)
@@ -724,22 +811,22 @@ let ``AcceptJob.It adds the given job to the avatar and eliminates it from the i
     let expectedIsland = 
         {inputWorld.Islands.[inputLocation] with Jobs = []}
     let expectedDestination =
-        {inputDestination with 
-            AvatarVisits = 
-                Map.empty 
-                |> Map.add 
-                    avatarId 
-                    {
-                        VisitCount=
-                            0UL |> Some
-                        LastVisit = None}}
+        inputDestination
     let avatarJobSink (_) (actual: Job option) =
         Assert.True(actual.IsSome)
     let avatarJobSource (_) =
         None
+    let avatarIslandSingleMetricSink (_) (_) (_) (_) =
+        ()
+    let avatarIslandSingleMetricSource(_) (_) (identifier:AvatarIslandMetricIdentifier) = 
+        match identifier with
+        | _ ->
+            None
     let actual =
         inputWorld
         |> World.AcceptJob 
+            avatarIslandSingleMetricSink
+            avatarIslandSingleMetricSource
             avatarJobSink
             avatarJobSource
             (avatarExpectedMessageSink expectedMessage)
@@ -906,8 +993,16 @@ let ``Dock.It does not modify avatar when given avatar has a job for a different
             Destination=(99.0, 99.0)
         }
         |> Some
+    let avatarIslandSingleMetricSink (_) (_) (_) (_) =
+        ()
+    let avatarIslandSingleMetricSource(_) (_) (identifier:AvatarIslandMetricIdentifier) = 
+        match identifier with
+        | _ ->
+            None
     jobWorld
     |> World.Dock
+        avatarIslandSingleMetricSink
+        avatarIslandSingleMetricSource
         avatarJobSink
         avatarJobSource
         (avatarExpectedMessageSink expectedMessage)
@@ -955,8 +1050,16 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
     let avatarJobSource (_) =
         Assert.Fail("avatarJobSource")
         None
+    let avatarIslandSingleMetricSink (_) (_) (_) (_) =
+        ()
+    let avatarIslandSingleMetricSource(_) (_) (identifier:AvatarIslandMetricIdentifier) = 
+        match identifier with
+        | _ ->
+            None
     jobWorld
     |> World.Dock
+        avatarIslandSingleMetricSink
+        avatarIslandSingleMetricSource
         avatarJobSink
         avatarJobSource
         (avatarExpectedMessagesSink expectedMessages)
@@ -1627,8 +1730,12 @@ let ``DistanceTo.It adds a 'unknown island' message when given a bogus island na
         | _ ->
             Assert.Fail("Kaboom get")
             None
+    let avatarIslandSingleMetricSource (_) (_) (_) =
+        Assert.Fail("avatarIslandSingleMetricSource")
+        None
     input
     |> World.DistanceTo 
+        avatarIslandSingleMetricSource
         vesselSingleStatisticSource 
         (avatarExpectedMessageSink expectedMessage)
         inputName
@@ -1647,8 +1754,16 @@ let ``DistanceTo.It adds a 'unknown island' message when given a valid island na
         | _ ->
             Assert.Fail("Kaboom get")
             None
+    let avatarIslandSingleMetricSource(_) (_) (identifier:AvatarIslandMetricIdentifier) = 
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount ->
+            None
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
+            None
     input
     |> World.DistanceTo 
+        avatarIslandSingleMetricSource
         vesselSingleStatisticSource 
         (avatarExpectedMessageSink expectedMessage)
         inputName
@@ -1659,7 +1774,6 @@ let ``DistanceTo.It adds a 'distance to island' message when given a valid islan
     let inputName = ((genericWorld.Islands |> Map.toList).Head |> snd).Name
     let input = 
         genericWorld
-        |> World.TransformIsland inputLocation (Island.MakeKnown genericWorld.AvatarId >> Some)
     let avatarPosition = (0.0, 0.0)
     let expectedMessage = (inputName, Location.DistanceTo inputLocation avatarPosition) ||> sprintf "Distance to `%s` is %f."
     let vesselSingleStatisticSource (_) (identifier) = 
@@ -1671,8 +1785,16 @@ let ``DistanceTo.It adds a 'distance to island' message when given a valid islan
         | _ ->
             Assert.Fail("Kaboom get")
             None
+    let avatarIslandSingleMetricSource(_) (_) (identifier:AvatarIslandMetricIdentifier) = 
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount ->
+            0UL |> Some
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
+            None
     input
     |> World.DistanceTo 
+        avatarIslandSingleMetricSource
         vesselSingleStatisticSource
         (avatarExpectedMessageSink expectedMessage)
         inputName
@@ -1681,8 +1803,6 @@ let ``DistanceTo.It adds a 'distance to island' message when given a valid islan
 let ``UpdateChart.It does nothing when the given avatar is not near any nearby islands.`` () =
     let input =
         genericWorld
-    let expected =
-        input
     let vesselSingleStatisticSource (_) (identifier) = 
         match identifier with
         | VesselStatisticIdentifier.PositionX
@@ -1693,17 +1813,22 @@ let ``UpdateChart.It does nothing when the given avatar is not near any nearby i
         | _ ->
             Assert.Fail()
             None
-    let actual =
-        input
-        |> World.UpdateCharts vesselSingleStatisticSource
-    Assert.AreEqual(expected, actual)
+    let avatarIslandSingleMetricSink(_) (_) (identifier: AvatarIslandMetricIdentifier) (value:uint64)= 
+        match identifier with
+        | AvatarIslandMetricIdentifier.Seen ->
+            Assert.AreEqual(1UL, value)
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
+    input
+    |> World.UpdateCharts 
+        avatarIslandSingleMetricSink
+        vesselSingleStatisticSource
+
 
 [<Test>]
 let ``UpdateChart.It does nothing when the given avatar has already seen all nearby islands.`` () =
     let input =
         genericWorld
-    let expected =
-        input
     let vesselSingleStatisticSource (_) (identifier) = 
         match identifier with
         | VesselStatisticIdentifier.PositionX 
@@ -1714,19 +1839,22 @@ let ``UpdateChart.It does nothing when the given avatar has already seen all nea
         | _ -> 
             raise (System.NotImplementedException "Kaboom get")
             None
-    let actual =
-        input
-        |> World.UpdateCharts vesselSingleStatisticSource
-    Assert.AreEqual(expected, actual)
+    let avatarIslandSingleMetricSink(_) (_) (identifier: AvatarIslandMetricIdentifier) (value:uint64)= 
+        match identifier with
+        | AvatarIslandMetricIdentifier.Seen ->
+            Assert.AreEqual(1UL, value)
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
+    input
+    |> World.UpdateCharts 
+        avatarIslandSingleMetricSink
+        vesselSingleStatisticSource
+
 
 [<Test>]
 let ``UpdateChart.It does sets all nearby island to "seen" when given avatar is near previously unseen islands.`` () =
     let input =
-        genericWorld.Islands
-        |> Map.fold 
-            (fun w k v -> 
-                w
-                |> World.TransformIsland k (fun _ -> {v with AvatarVisits = Map.empty} |> Some)) genericWorld
+        genericWorld
     let vesselSingleStatisticSource (_) (identifier) = 
         match identifier with
         | VesselStatisticIdentifier.PositionX
@@ -1737,19 +1865,15 @@ let ``UpdateChart.It does sets all nearby island to "seen" when given avatar is 
         | _ ->
             Assert.Fail()
             None
-    let expected =
-        genericWorld.Islands
-        |> Map.fold 
-            (fun w k v -> 
-                w
-                |> World.TransformIsland k 
-                    (fun _ -> 
-                        {v with 
-                            AvatarVisits = 
-                                Map.empty
-                                |> Map.add avatarId {VisitCount=None; LastVisit=None}} |> Some)) genericWorld
-    let actual =
-        input
-        |> World.UpdateCharts vesselSingleStatisticSource
-    Assert.AreEqual(expected, actual)
+    let avatarIslandSingleMetricSink(_) (_) (identifier: AvatarIslandMetricIdentifier) (value:uint64)= 
+        match identifier with
+        | AvatarIslandMetricIdentifier.Seen ->
+            Assert.AreEqual(1UL, value)
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
+    input
+    |> World.UpdateCharts 
+        avatarIslandSingleMetricSink
+        vesselSingleStatisticSource
+
 

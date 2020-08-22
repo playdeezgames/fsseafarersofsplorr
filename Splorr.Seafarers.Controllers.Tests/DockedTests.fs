@@ -19,6 +19,8 @@ let private functionUnderTest
     Docked.Run 
         avatarInventorySink
         avatarInventorySource
+        avatarIslandSingleMetricSinkStub
+        avatarIslandSingleMetricSourceStub
         avatarJobSinkStub
         avatarJobSourceStub
         avatarMessagePurgerStub

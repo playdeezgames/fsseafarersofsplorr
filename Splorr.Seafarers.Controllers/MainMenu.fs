@@ -70,7 +70,8 @@ module MainMenu =
             |> Some
             |> HandleInvalidCommand
 
-    let private HandleCommandNoGame 
+    let private HandleCommandNoGame
+            (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
             (avatarJobSink                   : AvatarJobSink)
             (nameSource                      : TermSource)
             (worldSingleStatisticSource      : WorldSingleStatisticSource)
@@ -85,6 +86,7 @@ module MainMenu =
         function
         | Some (Command.Start avatarId)->
             World.Create 
+                avatarIslandSingleMetricSink
                 avatarJobSink
                 nameSource
                 worldSingleStatisticSource
@@ -110,6 +112,7 @@ module MainMenu =
 
 
     let private HandleCommand
+            (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
             (avatarJobSink                   : AvatarJobSink)
             (nameSource                      : TermSource)
             (worldSingleStatisticSource      : WorldSingleStatisticSource)
@@ -128,6 +131,7 @@ module MainMenu =
             HandleCommandInGame w command
         | _ ->
             HandleCommandNoGame 
+                avatarIslandSingleMetricSink
                 avatarJobSink
                 nameSource
                 worldSingleStatisticSource
@@ -141,6 +145,7 @@ module MainMenu =
                 command
 
     let Run 
+            (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
             (avatarJobSink                   : AvatarJobSink)
             (rationItemSource                : RationItemSource)
             (shipmateRationItemSink          : ShipmateRationItemSink)
@@ -159,6 +164,7 @@ module MainMenu =
             messageSink 
             world.IsSome
         HandleCommand
+            avatarIslandSingleMetricSink
             avatarJobSink
             termNameSource
             worldSingleStatisticSource

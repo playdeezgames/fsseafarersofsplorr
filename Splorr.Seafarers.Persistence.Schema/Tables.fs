@@ -7,6 +7,14 @@ module Tables =
 		[ItemCount]	INTEGER NOT NULL CHECK(ItemCount>0),
 		PRIMARY KEY([AvatarId],[ItemId]));"
 
+    let AvatarIslandMetrics : string = "CREATE TABLE IF NOT EXISTS [AvatarIslandMetrics] (
+    	[AvatarId]	TEXT NOT NULL,
+    	[IslandX]	REAL NOT NULL,
+    	[IslandY]	REAL NOT NULL,
+    	[MetricId]	INTEGER NOT NULL,
+    	[MetricValue]	INTEGER NOT NULL,
+    	PRIMARY KEY([AvatarId],[IslandX],[IslandY],[MetricId]));"
+
     let AvatarJobs : string = "CREATE TABLE IF NOT EXISTS [AvatarJobs] (
     	[AvatarId]	TEXT NOT NULL,
     	[DestinationX]	REAL NOT NULL,

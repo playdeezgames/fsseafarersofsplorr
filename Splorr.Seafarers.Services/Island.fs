@@ -10,13 +10,14 @@ type IslandItemSource = Location -> Set<uint64>
 type IslandItemSink   = Location -> Set<uint64>->unit
 type IslandSingleMarketSource = Location -> uint64 -> Market option
 type IslandSingleMarketSink = Location -> (uint64 * Market) -> unit
-
+type AvatarIslandSingleMetricSource = string -> Location -> AvatarIslandMetricIdentifier -> uint64 option
+type AvatarIslandSingleMetricSink = string -> Location -> AvatarIslandMetricIdentifier -> uint64 -> unit
 
 module Island =
-    let Create() : Island =
+    let Create() 
+        : Island =
         {
             Name           = ""
-            AvatarVisits   = Map.empty
             Jobs           = []
             CareenDistance = 0.1 //TODO: dont hardcode this
         }
@@ -28,43 +29,38 @@ module Island =
         {island with Name = name}
 
     let GetDisplayName 
-            (avatarId : string) 
-            (island   : Island) 
+            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (avatarId                       : string) 
+            (location                       : Location)
+            (island                         : Island) 
             : string =
-        match island.AvatarVisits |> Map.tryFind avatarId with
-        | Some x when x.VisitCount.IsSome ->
+        match avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount with
+        | Some x ->
             island.Name
         | _ ->
             "(unknown)"
     
     let AddVisit 
-            (epochSeconds : uint64) //TODO: to time source(if the tests fail intermittently)?
-            (avatarId     : string) 
-            (island       : Island) 
-            : Island =
-        match island.AvatarVisits |> Map.tryFind avatarId with
-        | None ->
-            {island with 
-                AvatarVisits = 
-                    island.AvatarVisits 
-                    |> Map.add avatarId {VisitCount = 1UL |> Some; LastVisit = Some epochSeconds}}
-        | Some x when x.LastVisit.IsNone ->
-            {island with
-                AvatarVisits =
-                    island.AvatarVisits
-                    |> Map.add avatarId 
-                        {
-                            VisitCount = ((x.VisitCount |> Option.defaultValue 0UL)+1UL) |> Some
-                            LastVisit = Some epochSeconds}}
-        | Some x when x.LastVisit.IsSome && x.LastVisit.Value < epochSeconds ->
-            {island with
-                AvatarVisits =
-                    island.AvatarVisits
-                    |> Map.add avatarId 
-                        {
-                            VisitCount = ((x.VisitCount |> Option.defaultValue 0UL)+1UL) |> Some
-                            LastVisit = Some epochSeconds}}
-        | _ -> island
+            (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
+            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (epochSeconds                   : uint64) //TODO: to time source(if the tests fail intermittently)?
+            (avatarId                       : string) 
+            (location                       : Location)
+            : unit =
+        let visitCount = avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
+        let lastVisit = avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.LastVisit
+        match visitCount, lastVisit with
+        | None, _ ->
+            avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount 1UL
+            avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit epochSeconds
+        | Some x, None ->
+            avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount (x+1UL)
+            avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit epochSeconds
+        | Some x, Some y when y < epochSeconds ->
+            avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount (x+1UL)
+            avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit epochSeconds
+        | _ -> 
+            ()
 
     let GenerateJobs 
             (termSources                : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
@@ -98,35 +94,16 @@ module Island =
                 (fun (idx, _)->idx=index)
         {island with Jobs = left |> List.map snd}, taken |> List.map snd |> List.tryHead
 
-    let MakeKnown 
-            (avatarId : string) 
-            (island   : Island) 
-            : Island =
-        match island.AvatarVisits |> Map.tryFind avatarId with
-        | None ->
-            {island with 
-                AvatarVisits =
-                    island.AvatarVisits
-                    |> Map.add avatarId {VisitCount=0UL |> Some; LastVisit=None}}
-        | Some x when x.VisitCount = None -> //TODO: i dislike this copypasta
-            {island with 
-                AvatarVisits =
-                    island.AvatarVisits
-                    |> Map.add avatarId {VisitCount=0UL |> Some; LastVisit=None}}
-        | _ -> island
-
-    let MakeSeen 
-            (avatarId : string) 
-            (island   : Island) 
-            : Island =
-        match island.AvatarVisits |> Map.tryFind avatarId with
-        | None ->
-            {island with 
-                AvatarVisits =
-                    island.AvatarVisits
-                    |> Map.add avatarId {VisitCount=None; LastVisit=None}}
-        | _ -> island
-
+    let MakeKnown
+            (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
+            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (avatarId                       : string) 
+            (location                       : Location)
+            : unit =
+        let visitCount = avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
+        if visitCount.IsNone then
+            avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount 0UL
+        
     let private SupplyDemandGenerator 
             (random:Random) 
             : float = //TODO: move this function out!

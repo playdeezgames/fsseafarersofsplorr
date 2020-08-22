@@ -98,9 +98,10 @@ module World =
                 GenerateIslands nameSource worldSize minimumIslandDistance random (maximumGenerationTries, 0u) {world with Islands = world.Islands |> Map.add candidateLocation (Island.Create())}
 
     let UpdateCharts 
-            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
-            (world    : World) 
-            : World =
+            (avatarIslandSingleMetricSink : AvatarIslandSingleMetricSink)
+            (vesselSingleStatisticSource  : VesselSingleStatisticSource)
+            (world                        : World) 
+            : unit =
         let viewDistance = 
             vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.ViewDistance 
             |> Option.get 
@@ -113,13 +114,13 @@ module World =
         world.Islands
         |> Map.filter
             (fun location island -> 
-                (island.AvatarVisits.ContainsKey world.AvatarId |> not) && ((avatarPosition |> Location.DistanceTo location)<=viewDistance))
-        |> Map.fold
-            (fun a location _ ->
-                a
-                |> TransformIsland location (Island.MakeSeen world.AvatarId >> Some)) world
+                ((avatarPosition |> Location.DistanceTo location)<=viewDistance))
+        |> Map.iter
+            (fun location _ ->
+                avatarIslandSingleMetricSink world.AvatarId location AvatarIslandMetricIdentifier.Seen 1UL)
 
     let Create 
+            (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
             (avatarJobSink                   : AvatarJobSink)
             (nameSource                      : TermSource)
             (worldSingleStatisticSource      : WorldSingleStatisticSource)
@@ -157,17 +158,22 @@ module World =
             vesselStatisticSink
             vesselStatisticTemplateSource
             avatarId
-        {
-            AvatarId = avatarId
-            Islands = Map.empty
-        }
-        |> GenerateIslands 
-            nameSource 
-            worldSize 
-            minimumIslandDistance
-            random 
-            (maximumGenerationRetries, 0u)
-        |> UpdateCharts vesselSingleStatisticSource
+        let world = 
+            {
+                AvatarId = avatarId
+                Islands = Map.empty
+            }
+            |> GenerateIslands 
+                nameSource 
+                worldSize 
+                minimumIslandDistance
+                random 
+                (maximumGenerationRetries, 0u)
+        world
+        |> UpdateCharts 
+            avatarIslandSingleMetricSink
+            vesselSingleStatisticSource
+        world
 
     let ClearMessages 
             (avatarMessagePurger : AvatarMessagePurger) 
@@ -226,6 +232,7 @@ module World =
     let rec Move
             (avatarInventorySink           : AvatarInventorySink)
             (avatarInventorySource         : AvatarInventorySource)
+            (avatarIslandSingleMetricSink  : AvatarIslandSingleMetricSink)
             (avatarMessageSink             : AvatarMessageSink)
             (avatarShipmateSource          : AvatarShipmateSource)
             (avatarSingleMetricSink        : AvatarSingleMetricSink)
@@ -255,19 +262,21 @@ module World =
                 vesselSingleStatisticSink 
                 vesselSingleStatisticSource 
                 avatarId 
-            let steppedWorld = 
-                world
-                |> UpdateCharts vesselSingleStatisticSource
+            world
+            |> UpdateCharts 
+                avatarIslandSingleMetricSink
+                vesselSingleStatisticSource
             if IsAvatarAlive 
                     shipmateSingleStatisticSource 
-                    steppedWorld |> not then
-                steppedWorld
+                    world |> not then
+                world
                 |> AddMessages avatarMessageSink [ "You die of old age!" ]
-                steppedWorld
+                world
             else
                 Move
                     avatarInventorySink
                     avatarInventorySource
+                    avatarIslandSingleMetricSink
                     avatarMessageSink 
                     avatarShipmateSource
                     avatarSingleMetricSink
@@ -278,7 +287,7 @@ module World =
                     vesselSingleStatisticSink 
                     vesselSingleStatisticSource 
                     (x-1u) 
-                    steppedWorld
+                    world
         | _ -> 
             world
 
@@ -318,24 +327,26 @@ module World =
             |> AddMessages avatarMessageSink [ "You complete your job." ]
 
     let Dock
-            (avatarJobSink                 : AvatarJobSink)
-            (avatarJobSource               : AvatarJobSource)
-            (avatarMessageSink             : AvatarMessageSink)
-            (avatarSingleMetricSink        : AvatarSingleMetricSink)
-            (avatarSingleMetricSource      : AvatarSingleMetricSource)
-            (commoditySource               : CommoditySource) 
-            (islandItemSink                : IslandItemSink) 
-            (islandItemSource              : IslandItemSource) 
-            (islandMarketSink              : IslandMarketSink) 
-            (islandMarketSource            : IslandMarketSource) 
-            (itemSource                    : ItemSource) 
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (termSources                   : TermSources)
-            (worldSingleStatisticSource    : WorldSingleStatisticSource)
-            (random                        : Random) 
-            (location                      : Location) 
-            (world                         : World) 
+            (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
+            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (avatarJobSink                  : AvatarJobSink)
+            (avatarJobSource                : AvatarJobSource)
+            (avatarMessageSink              : AvatarMessageSink)
+            (avatarSingleMetricSink         : AvatarSingleMetricSink)
+            (avatarSingleMetricSource       : AvatarSingleMetricSource)
+            (commoditySource                : CommoditySource) 
+            (islandItemSink                 : IslandItemSink) 
+            (islandItemSource               : IslandItemSource) 
+            (islandMarketSink               : IslandMarketSink) 
+            (islandMarketSource             : IslandMarketSource) 
+            (itemSource                     : ItemSource) 
+            (shipmateSingleStatisticSink    : ShipmateSingleStatisticSink)
+            (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
+            (termSources                    : TermSources)
+            (worldSingleStatisticSource     : WorldSingleStatisticSource)
+            (random                         : Random) 
+            (location                       : Location) 
+            (world                          : World) 
             : World =
         let avatarId = world.AvatarId
         match world.Islands |> Map.tryFind location with
@@ -346,9 +357,20 @@ module World =
                 |> List.map fst
                 |> Set.ofList
                 |> Set.remove location
+            let oldVisitCount =
+                avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
+                |> Option.defaultValue 0UL
+            Island.AddVisit
+                avatarIslandSingleMetricSink
+                avatarIslandSingleMetricSource
+                (DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64)
+                avatarId
+                location
+            let newVisitCount =
+                avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
+                |> Option.defaultValue 0UL
             let updatedIsland = 
                 island
-                |> Island.AddVisit (DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64) avatarId
                 |> Island.GenerateJobs 
                     termSources 
                     worldSingleStatisticSource 
@@ -356,16 +378,6 @@ module World =
                     destinations 
             Island.GenerateCommodities commoditySource islandMarketSource islandMarketSink random location
             Island.GenerateItems islandItemSource islandItemSink random itemSource location
-            let oldVisitCount =
-                island.AvatarVisits
-                |> Map.tryFind avatarId
-                |> Option.bind (fun x -> x.VisitCount)
-                |> Option.defaultValue 0UL
-            let newVisitCount =
-                updatedIsland.AvatarVisits
-                |> Map.tryFind avatarId
-                |> Option.bind (fun x -> x.VisitCount)
-                |> Option.defaultValue 0UL
             world
             |> AddMessages (avatarMessageSink : AvatarMessageSink) [ "You dock." ]
             avatarId
@@ -397,16 +409,17 @@ module World =
             world
 
     let DistanceTo 
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
-            (avatarMessageSink           : AvatarMessageSink)
-            (islandName                  : string) 
-            (world                       : World) 
+            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (vesselSingleStatisticSource    : VesselSingleStatisticSource)
+            (avatarMessageSink              : AvatarMessageSink)
+            (islandName                     : string) 
+            (world                          : World) 
             : unit =
         let location =
             world.Islands
             |> Map.tryPick 
                 (fun k v -> 
-                    if v.Name = islandName && (v.AvatarVisits.ContainsKey world.AvatarId) && v.AvatarVisits.[world.AvatarId].VisitCount.IsSome then
+                    if v.Name = islandName && (avatarIslandSingleMetricSource world.AvatarId k AvatarIslandMetricIdentifier.VisitCount).IsSome then
                         Some k
                     else
                         None)
@@ -421,17 +434,18 @@ module World =
             ()
 
     let HeadFor
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
-            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
-            (avatarMessageSink           : AvatarMessageSink)
-            (islandName                  : string) 
-            (world                       : World) 
+            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (vesselSingleStatisticSource    : VesselSingleStatisticSource)
+            (vesselSingleStatisticSink      : VesselSingleStatisticSink)
+            (avatarMessageSink              : AvatarMessageSink)
+            (islandName                     : string) 
+            (world                          : World) 
             : unit =
         let location =
             world.Islands
             |> Map.tryPick 
                 (fun k v -> 
-                    if v.Name = islandName && (v.AvatarVisits.ContainsKey world.AvatarId) && v.AvatarVisits.[world.AvatarId].VisitCount.IsSome then
+                    if v.Name = islandName && (avatarIslandSingleMetricSource world.AvatarId k AvatarIslandMetricIdentifier.VisitCount).IsSome then
                         Some k
                     else
                         None)
@@ -449,14 +463,16 @@ module World =
             ()
 
     let AcceptJob 
-            (avatarJobSink            : AvatarJobSink)
-            (avatarJobSource          : AvatarJobSource)
-            (avatarMessageSink        : AvatarMessageSink)
-            (avatarSingleMetricSink   : AvatarSingleMetricSink)
-            (avatarSingleMetricSource : AvatarSingleMetricSource)
-            (jobIndex                 : uint32) 
-            (location                 : Location) 
-            (world                    : World) 
+            (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
+            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (avatarJobSink                  : AvatarJobSink)
+            (avatarJobSource                : AvatarJobSource)
+            (avatarMessageSink              : AvatarMessageSink)
+            (avatarSingleMetricSink         : AvatarSingleMetricSink)
+            (avatarSingleMetricSource       : AvatarSingleMetricSource)
+            (jobIndex                       : uint32) 
+            (location                       : Location) 
+            (world                          : World) 
             : World =
         let avatarId = world.AvatarId
         match jobIndex, world.Islands |> Map.tryFind location, avatarJobSource avatarId with
@@ -476,9 +492,13 @@ module World =
                     Metric.AcceptedJob 
                     1UL
                 avatarJobSink avatarId (job|>Some)
+                Island.MakeKnown
+                    avatarIslandSingleMetricSink
+                    avatarIslandSingleMetricSource
+                    avatarId
+                    location
                 world
                 |> SetIsland location (isle |> Some)
-                |> TransformIsland job.Destination (Island.MakeKnown avatarId >> Some)
             | _ ->
                 world
                 |> AddMessages avatarMessageSink [ "That job is currently unavailable." ]
