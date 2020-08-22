@@ -505,7 +505,7 @@ module World =
                     avatarIslandSingleMetricSink
                     avatarIslandSingleMetricSource
                     avatarId
-                    location
+                    job.Destination
                 world
                 |> SetIsland location (isle |> Some)
             | _ ->

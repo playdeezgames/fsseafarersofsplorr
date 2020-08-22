@@ -236,21 +236,19 @@ let main argv =
         AvatarIslandMetric.GetMetricForAvatarIsland connection avatarId location
         >> Persister.unpackOrThrow
 
-    let islandLocationByNameSource
-            (name:string)
-            : Location option =
-        raise (System.NotImplementedException "islandLocationByNameSource")
+    let islandLocationByNameSource =
+        Island.GetByName connection
+        >> Persister.unpackOrThrow
 
     let islandSingleNameSink 
             (location:Location)
-            (name:string option)
-            : unit =
-        raise (System.NotImplementedException "islandSingleNameSink")
+            =
+        Island.SetName connection location
+        >> Persister.unpackOrThrow
 
-    let islandSingleNameSource
-            (location:Location)
-            : string option =
-        raise (System.NotImplementedException "islandSingleNameSource")
+    let islandSingleNameSource =
+        Island.GetName connection
+        >> Persister.unpackOrThrow
 
     try
         Runner.Run 

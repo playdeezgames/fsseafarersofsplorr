@@ -57,6 +57,12 @@ module Tables =
     	[Supply]	REAL NOT NULL,
     	[Demand]	REAL NOT NULL,
     	PRIMARY KEY([IslandX],[IslandY],[CommodityId]));"
+
+    let Islands : string = "CREATE TABLE IF NOT EXISTS [Islands] (
+    	[IslandX]	REAL NOT NULL,
+    	[IslandY]	REAL NOT NULL,
+    	[IslandName]	TEXT NOT NULL,
+    	PRIMARY KEY([IslandX],[IslandY]));"
     
     let Items : string = "CREATE TABLE IF NOT EXISTS [Items] (
 		[ItemId] INTEGER,
