@@ -73,21 +73,23 @@ module MainMenu =
     let private HandleCommandNoGame
             (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
             (avatarJobSink                   : AvatarJobSink)
+            (islandSingleNameSink            : IslandSingleNameSink)
             (nameSource                      : TermSource)
-            (worldSingleStatisticSource      : WorldSingleStatisticSource)
-            (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
-            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
             (rationItemSource                : RationItemSource)
-            (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
-            (vesselStatisticSink             : VesselStatisticSink)
-            (vesselSingleStatisticSource     : VesselSingleStatisticSource)
             (shipmateRationItemSink          : ShipmateRationItemSink)
+            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
+            (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
+            (vesselSingleStatisticSource     : VesselSingleStatisticSource)
+            (vesselStatisticSink             : VesselStatisticSink)
+            (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
+            (worldSingleStatisticSource      : WorldSingleStatisticSource)
             =
         function
         | Some (Command.Start avatarId)->
             World.Create 
                 avatarIslandSingleMetricSink
                 avatarJobSink
+                islandSingleNameSink
                 nameSource
                 worldSingleStatisticSource
                 shipmateStatisticTemplateSource
@@ -114,11 +116,12 @@ module MainMenu =
     let private HandleCommand
             (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
             (avatarJobSink                   : AvatarJobSink)
+            (islandSingleNameSink            : IslandSingleNameSink)
             (nameSource                      : TermSource)
             (worldSingleStatisticSource      : WorldSingleStatisticSource)
+            (rationItemSource                : RationItemSource)
             (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
             (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
-            (rationItemSource                : RationItemSource)
             (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
             (vesselStatisticSink             : VesselStatisticSink)
             (vesselSingleStatisticSource     : VesselSingleStatisticSource)
@@ -133,20 +136,22 @@ module MainMenu =
             HandleCommandNoGame 
                 avatarIslandSingleMetricSink
                 avatarJobSink
+                islandSingleNameSink
                 nameSource
-                worldSingleStatisticSource
-                shipmateStatisticTemplateSource
-                shipmateSingleStatisticSink
                 rationItemSource
-                vesselStatisticTemplateSource
-                vesselStatisticSink
-                vesselSingleStatisticSource
                 shipmateRationItemSink
+                shipmateSingleStatisticSink
+                shipmateStatisticTemplateSource
+                vesselSingleStatisticSource
+                vesselStatisticSink
+                vesselStatisticTemplateSource
+                worldSingleStatisticSource
                 command
 
     let Run 
             (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
             (avatarJobSink                   : AvatarJobSink)
+            (islandSingleNameSink            : IslandSingleNameSink)
             (rationItemSource                : RationItemSource)
             (shipmateRationItemSink          : ShipmateRationItemSink)
             (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
@@ -166,11 +171,12 @@ module MainMenu =
         HandleCommand
             avatarIslandSingleMetricSink
             avatarJobSink
+            islandSingleNameSink
             termNameSource
             worldSingleStatisticSource
+            rationItemSource
             shipmateStatisticTemplateSource
             shipmateSingleStatisticSink
-            rationItemSource
             vesselStatisticTemplateSource
             vesselStatisticSink
             vesselSingleStatisticSource

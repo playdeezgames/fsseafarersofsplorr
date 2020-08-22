@@ -9,13 +9,7 @@ open CommonTestFixtures
 [<Test>]
 let ``Create.It returns a new island.`` () =
     let actual = Island.Create()
-    Assert.AreEqual("", actual.Name)
-
-[<Test>]
-let ``SetName.It sets the name of a given island to a given name.`` () =
-    let name = "Uno"
-    let actual = Island.Create() |> Island.SetName name
-    Assert.AreEqual(name, actual.Name)
+    Assert.AreEqual([], actual.Jobs)
 
 [<Test>]
 let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =
@@ -27,13 +21,15 @@ let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
             None
+    let islandSingleNameSource (_) =
+        Assert.Fail("islandSingleNameSource")
+        None
     let actual = 
-        Island.Create() 
-        |> Island.SetName "Uno" 
+        inputLocation
         |> Island.GetDisplayName 
             avatarIslandSingleMetricSource
+            islandSingleNameSource
             avatarId
-            inputLocation
     Assert.AreEqual("(unknown)", actual)
 
 [<Test>]
@@ -47,11 +43,16 @@ let ``GetDisplayName.It returns the island's name when there is a visit count.``
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
             None
+    let islandSingleNameSource (location:Location) =
+        if location = inputLocation then
+            name
+            |> Some
+        else
+            None
     let actual = 
-        Island.Create()
-        |> Island.SetName name 
-        |> Island.GetDisplayName 
+        Island.GetDisplayName 
             avatarIslandSingleMetricSource
+            islandSingleNameSource
             avatarId
             inputLocation
     Assert.AreEqual(name, actual)

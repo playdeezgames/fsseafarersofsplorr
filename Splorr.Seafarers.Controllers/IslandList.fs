@@ -6,6 +6,7 @@ open Splorr.Seafarers.Services
 module IslandList =
     let private RunWorld 
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (islandSingleNameSource         : IslandSingleNameSource)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (messageSink                    : MessageSink) 
             (pageSize                       : uint32) 
@@ -25,7 +26,7 @@ module IslandList =
                     avatarIslandSingleMetricSource world.AvatarId location AvatarIslandMetricIdentifier.VisitCount 
                     |> Option.map (fun _ -> true)
                     |> Option.defaultValue false)
-            |> List.sortBy(fun (_,x)->x.Name)
+            |> List.sortBy(fun (l,_)->islandSingleNameSource l |> Option.get)
         let totalItems = knownIslands |> List.length |> uint32
         let totalPages = (totalItems + (pageSize-1u)) / pageSize
         let skippedItems = page * pageSize
@@ -52,7 +53,7 @@ module IslandList =
                     |> Angle.ToDegrees
                     |> Angle.ToString
                 [
-                    (Hue.Value, island.Name |> sprintf "%s" |> Text) |> Hued
+                    (Hue.Value, islandSingleNameSource location |> Option.get |> sprintf "%s" |> Text) |> Hued
                     (Hue.Sublabel, " Bearing:" |> Text) |> Hued
                     (Hue.Value, bearing |> sprintf "%s" |> Text) |> Hued
                     (Hue.Sublabel, " Distance:" |> Text) |> Hued
@@ -66,6 +67,7 @@ module IslandList =
 
     let Run 
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (islandSingleNameSource         : IslandSingleNameSource)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (messageSink                    : MessageSink) 
             (page                           : uint32) 
@@ -76,6 +78,7 @@ module IslandList =
         |> Option.iter 
             (RunWorld 
                 avatarIslandSingleMetricSource
+                islandSingleNameSource
                 vesselSingleStatisticSource 
                 messageSink 
                 pageSize 

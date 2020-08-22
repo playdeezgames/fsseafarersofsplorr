@@ -7,6 +7,7 @@ module Docked =
     let private UpdateDisplay 
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (avatarMessageSource            : AvatarMessageSource)
+            (islandSingleNameSource         : IslandSingleNameSource)
             (messageSink                    : MessageSink) 
             (location                       : Location) 
             (world                          : World) 
@@ -19,7 +20,7 @@ module Docked =
             world.Islands.[location]
         [
             (Hue.Flavor, sprintf "You have visited %u times." (avatarIslandSingleMetricSource world.AvatarId location AvatarIslandMetricIdentifier.VisitCount |> Option.defaultValue 0UL) |> Line) |> Hued
-            (Hue.Heading, sprintf "You are docked at '%s':" island.Name |> Line) |> Hued
+            (Hue.Heading, sprintf "You are docked at '%s':" (islandSingleNameSource location |> Option.get) |> Line) |> Hued
         ]
         |> List.iter messageSink
 
@@ -196,6 +197,7 @@ module Docked =
             (islandMarketSource             : IslandMarketSource) 
             (islandSingleMarketSink         : IslandSingleMarketSink) 
             (islandSingleMarketSource       : IslandSingleMarketSource) 
+            (islandSingleNameSource         : IslandSingleNameSource)
             (itemSource                     : ItemSource) 
             (shipmateSingleStatisticSink    : ShipmateSingleStatisticSink)
             (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
@@ -209,6 +211,7 @@ module Docked =
         |> UpdateDisplay 
             avatarIslandSingleMetricSource
             avatarMessageSource
+            islandSingleNameSource
             messageSink 
             location 
         
@@ -271,6 +274,7 @@ module Docked =
             (islandMarketSource             : IslandMarketSource) 
             (islandSingleMarketSink         : IslandSingleMarketSink) 
             (islandSingleMarketSource       : IslandSingleMarketSource) 
+            (islandSingleNameSource         : IslandSingleNameSource)
             (itemSource                     : ItemSource) 
             (shipmateSingleStatisticSink    : ShipmateSingleStatisticSink)
             (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
@@ -295,7 +299,8 @@ module Docked =
                 commoditySource              
                 islandMarketSource           
                 islandSingleMarketSink       
-                islandSingleMarketSource     
+                islandSingleMarketSource
+                islandSingleNameSource
                 itemSource                   
                 shipmateSingleStatisticSink  
                 shipmateSingleStatisticSource

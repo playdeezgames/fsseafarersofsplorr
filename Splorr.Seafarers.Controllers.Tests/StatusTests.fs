@@ -16,6 +16,7 @@ let ``Run.It returns the given gamestate.`` () =
         input
         |> Status.Run 
             avatarJobSourceStub
+            islandSingleNameSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             sinkStub

@@ -9,6 +9,7 @@ let internal dockWorld =
     World.Create
         avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
+        islandSingleNameSinkStub
         termNameSource
         dockWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
@@ -74,6 +75,7 @@ let internal smallWorld =
     World.Create 
         avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
+        islandSingleNameSinkStub
         termNameSource
         smallWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub

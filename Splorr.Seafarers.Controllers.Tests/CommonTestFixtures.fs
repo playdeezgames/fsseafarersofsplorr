@@ -177,3 +177,7 @@ let avatarJobSourceStub (_) = None
 
 let avatarIslandSingleMetricSinkStub (_) (_) (_) (_) = ()
 let avatarIslandSingleMetricSourceStub (_) (_) (_) = None
+
+let islandSingleNameSinkStub (_) (_) = ()
+let islandSingleNameSourceStub (_) = None
+let islandLocationByNameSourceStub (_) = None

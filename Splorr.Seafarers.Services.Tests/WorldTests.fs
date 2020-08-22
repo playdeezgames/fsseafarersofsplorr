@@ -9,9 +9,7 @@ open CommonTestFixtures
 [<Test>]
 let ``Create.It creates a new world.`` () =
     let actual = soloIslandWorld
-    //Assert.AreEqual((5.0,5.0), actual.Avatars.[avatarId].Position)
     Assert.AreEqual(1, actual.Islands.Count)
-    Assert.AreNotEqual("", (actual.Islands |> Map.toList |> List.map snd |> List.head).Name)
 
 [<Test>]
 let ``ClearMessages.It removes any messages from the given avatar in the world.`` () =
@@ -348,7 +346,6 @@ let ``Move.It moves the avatar almost two units when give 2u for distance.`` () 
 let ``GetNearbyLocations.It returns locations within a given distance from another given location.`` () =
     let blankIsland =
         {
-            Name = ""
             Jobs = []
             CareenDistance = 0.0
         }
@@ -387,17 +384,15 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
 let ``SetIsland.It adds an island to a world when given an island where there was none.`` () =
     let actual = 
         emptyWorld
-        |> World.SetIsland (0.0,0.0) (Island.Create() |> Island.SetName "Uno" |> Some)
+        |> World.SetIsland (0.0,0.0) (Island.Create() |> Some)
     Assert.AreEqual(1, actual.Islands.Count)
-    Assert.AreEqual("Uno", actual.Islands.[(0.0,0.0)].Name)
 
 [<Test>]
 let ``SetIsland.It replaces an island to a world when given an island where there was one before.`` () =
     let actual =
         oneIslandWorld
-        |> World.SetIsland (0.0,0.0) (Island.Create() |> Island.SetName "Dos" |> Some)
+        |> World.SetIsland (0.0,0.0) (Island.Create() |> Some)
     Assert.AreEqual(1, actual.Islands.Count)
-    Assert.AreEqual("Dos", actual.Islands.[(0.0,0.0)].Name)
 
 [<Test>]
 let ``SetIsland.It removes an island to a world when given none where there was one before.`` () =
@@ -410,9 +405,7 @@ let ``SetIsland.It removes an island to a world when given none where there was 
 let ``TransformIsland.It applies a transform function to an existing island and updates the island to the transformed value.`` () =
     let actual =
         oneIslandWorld
-        |> World.TransformIsland (0.0,0.0) (Island.SetName "Dos" >> Some)
     Assert.AreEqual(1, actual.Islands.Count)
-    Assert.AreEqual("Dos", actual.Islands.[(0.0,0.0)].Name)
 
 [<Test>]
 let ``TransformIsland.It applies a transform function to an existing island and removes the island when the transformer returns None.`` () =
@@ -425,7 +418,7 @@ let ``TransformIsland.It applies a transform function to an existing island and 
 let ``TransformIsland.It does nothing when the location given does not have an existing island.`` () =
     let actual =
         emptyWorld
-        |> World.TransformIsland (0.0, 0.0) (fun _-> Island.Create() |> Island.SetName "Uno" |> Some)
+        |> World.TransformIsland (0.0, 0.0) (fun _-> Island.Create() |> Some)
     Assert.AreEqual(0, actual.Islands.Count)
 
 let private islandItemSourceStub (_) = Set.empty
@@ -608,12 +601,15 @@ let ``HeadFor.It adds a message when the island name does not exist.`` () =
     let avatarIslandSingleMetricSource (_) (_) (_) =
         Assert.Fail("avatarIslandSingleMetricSource")
         None
+    let islandLocationByNameSource (_) =
+        None
     inputWorld
     |> World.HeadFor 
         avatarIslandSingleMetricSource
+        (avatarExpectedMessageSink expectedMessage)
+        islandLocationByNameSource
         vesselSingleStatisticSource 
         vesselSingleStatisticSink 
-        (avatarExpectedMessageSink expectedMessage)
         "yermom"
 
 [<Test>]
@@ -637,12 +633,18 @@ let ``HeadFor.It adds a message when the island name exists but is not known.`` 
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
             None
+    let islandLocationByNameSource (_) =
+        inputWorld.Islands
+        |> Map.toList
+        |> List.map fst
+        |> List.tryHead
     inputWorld
     |> World.HeadFor 
         avatarIslandSingleMetricSource
+        (avatarExpectedMessageSink expectedMessage)
+        islandLocationByNameSource
         vesselSingleStatisticSource 
         vesselSingleStatisticSink 
-        (avatarExpectedMessageSink expectedMessage)
         "Uno"
 
 [<Test>]
@@ -673,12 +675,18 @@ let ``HeadFor.It sets the heading when the island name exists and is known.`` ()
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
             None
+    let islandLocationByNameSource (_) =
+        inputWorld.Islands
+        |> Map.toList
+        |> List.map fst
+        |> List.tryHead
     inputWorld
     |> World.HeadFor 
         avatarIslandSingleMetricSource
+        (avatarExpectedMessagesSink [firstExpectedMessage; secondExpectedMessage])
+        islandLocationByNameSource
         vesselSingleStatisticSource 
         vesselSingleStatisticSink 
-        (avatarExpectedMessagesSink [firstExpectedMessage; secondExpectedMessage])
         "Uno"
 
 
@@ -1733,16 +1741,19 @@ let ``DistanceTo.It adds a 'unknown island' message when given a bogus island na
     let avatarIslandSingleMetricSource (_) (_) (_) =
         Assert.Fail("avatarIslandSingleMetricSource")
         None
+    let islandLocationByNameSource (_) =
+        None
     input
     |> World.DistanceTo 
         avatarIslandSingleMetricSource
-        vesselSingleStatisticSource 
         (avatarExpectedMessageSink expectedMessage)
+        islandLocationByNameSource
+        vesselSingleStatisticSource 
         inputName
 
 [<Test>]
 let ``DistanceTo.It adds a 'unknown island' message when given a valid island name that is not known.`` () =
-    let inputName = ((genericWorld.Islands |> Map.toList).Head |> snd).Name
+    let inputName = "yermom"
     let input = genericWorld
     let expectedMessage = inputName |> sprintf "I don't know how to get to `%s`."
     let vesselSingleStatisticSource (_) (identifier) = 
@@ -1761,17 +1772,27 @@ let ``DistanceTo.It adds a 'unknown island' message when given a valid island na
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
             None
+    let islandLocationByNameSource (name:string) =
+        if name = inputName then
+            input.Islands
+            |> Map.toList
+            |> List.map fst
+            |> List.head
+            |> Some
+        else
+            None
     input
     |> World.DistanceTo 
         avatarIslandSingleMetricSource
-        vesselSingleStatisticSource 
         (avatarExpectedMessageSink expectedMessage)
+        islandLocationByNameSource
+        vesselSingleStatisticSource 
         inputName
 
 [<Test>]
 let ``DistanceTo.It adds a 'distance to island' message when given a valid island name that is known.`` () =
     let inputLocation = (genericWorld.Islands |> Map.toList).Head |> fst
-    let inputName = ((genericWorld.Islands |> Map.toList).Head |> snd).Name
+    let inputName = "yermom"
     let input = 
         genericWorld
     let avatarPosition = (0.0, 0.0)
@@ -1792,11 +1813,18 @@ let ``DistanceTo.It adds a 'distance to island' message when given a valid islan
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
             None
+    let islandLocationByNameSource (name:string) =
+        if name = inputName then
+            inputLocation
+            |> Some
+        else
+            None
     input
     |> World.DistanceTo 
         avatarIslandSingleMetricSource
-        vesselSingleStatisticSource
         (avatarExpectedMessageSink expectedMessage)
+        islandLocationByNameSource
+        vesselSingleStatisticSource
         inputName
 
 [<Test>]

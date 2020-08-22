@@ -6,6 +6,7 @@ open Splorr.Seafarers.Services
 module Status =
     let private RunWorld 
             (avatarJobSource               : AvatarJobSource)
+            (islandSingleNameSource        : IslandSingleNameSource)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
             (messageSink                   : MessageSink) 
@@ -43,7 +44,7 @@ module Status =
                     (Hue.Sublabel, "Description: " |> Text) |> Hued
                     (Hue.Flavor, job.FlavorText |> sprintf "%s" |> Line) |> Hued
                     (Hue.Sublabel, "Destination: " |> Text) |> Hued
-                    (Hue.Value, island.Name |> sprintf "%s" |> Line) |> Hued
+                    (Hue.Value, job.Destination |> islandSingleNameSource |> Option.get |> sprintf "%s" |> Line) |> Hued
                     (Hue.Sublabel, "Reward: " |> Text) |> Hued
                     (Hue.Value, job.Reward |> sprintf "%f" |> Line) |> Hued
                 ]
@@ -51,6 +52,7 @@ module Status =
 
     let Run 
             (avatarJobSource               : AvatarJobSource)
+            (islandSingleNameSource        : IslandSingleNameSource)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
             (messageSink                   : MessageSink) 
@@ -61,6 +63,7 @@ module Status =
         |> Option.iter 
             (RunWorld 
                 avatarJobSource
+                islandSingleNameSource
                 shipmateSingleStatisticSource 
                 vesselSingleStatisticSource 
                 messageSink)

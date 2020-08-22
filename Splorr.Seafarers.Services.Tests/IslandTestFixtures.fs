@@ -6,28 +6,24 @@ open CommonTestFixtures
 
 let internal unvisitedIsland = 
     {
-        Island.Name = "Island"
         Jobs = []
         CareenDistance = 0.0
     }
 
 let internal visitedIslandNoLastVisit = 
     {
-        Island.Name    = "Island"
         Jobs           = []
         CareenDistance = 0.0
     }
 
 let internal seenIsland =
     {
-        Island.Name    = "Island"
         Jobs           = []
         CareenDistance = 0.0
     }
 
 let internal visitedIsland =
     {
-        Island.Name    = "Island"
         Jobs           = []
         CareenDistance = 0.0
     }

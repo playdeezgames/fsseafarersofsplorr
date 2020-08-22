@@ -11,6 +11,7 @@ let private dockWorld =
     World.Create 
         avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
+        islandSingleNameSinkStub
         termNameSource
         dockWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
@@ -35,6 +36,8 @@ let ``Run.It returns Docked with the given location and world.`` () =
         |> Some
     let actual =
         (inputLocation, inputWorld)
-        ||> Jobs.Run sinkStub
+        ||> Jobs.Run 
+            islandSingleNameSourceStub
+            sinkStub
     Assert.AreEqual(expected, actual)
 

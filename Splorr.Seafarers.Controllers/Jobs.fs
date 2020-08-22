@@ -5,10 +5,11 @@ open Splorr.Seafarers.Services
 
 module Jobs = 
     let private RunIsland 
-            (messageSink : MessageSink) 
-            (location    : Location) 
-            (islands     : Map<Location,Island>) 
-            (island      : Island) 
+            (islandSingleNameSource : IslandSingleNameSource)
+            (messageSink            : MessageSink) 
+            (location               : Location) 
+            (islands                : Map<Location,Island>) 
+            (island                 : Island) 
             : unit =
         [
             "" |> Line
@@ -28,7 +29,7 @@ module Jobs =
                     Location.DistanceTo location job.Destination
                 [
                     (Hue.Label, index |> sprintf "%d. " |> Text) |> Hued
-                    (Hue.Value, island.Name |> sprintf "%s " |> Text) |> Hued
+                    (Hue.Value, job.Destination |> islandSingleNameSource |> Option.get |> sprintf "%s " |> Text) |> Hued
                     (Hue.Sublabel, "Bearing: " |> Text) |> Hued
                     (Hue.Value, bearing |> sprintf "%s " |> Text) |> Hued
                     (Hue.Sublabel, "Distance: " |> Text) |> Hued
@@ -43,13 +44,19 @@ module Jobs =
 
         
     let Run  
-            (messageSink : MessageSink) 
-            (location    : Location)
-            (world       : World) 
+            (islandSingleNameSource : IslandSingleNameSource)
+            (messageSink            : MessageSink) 
+            (location               : Location)
+            (world                  : World) 
             : Gamestate option =
         world.Islands 
         |> Map.tryFind location
-        |> Option.iter (RunIsland messageSink location world.Islands)
+        |> Option.iter 
+            (RunIsland 
+                islandSingleNameSource
+                messageSink 
+                location 
+                world.Islands)
         (Dock, location, world)
         |> Gamestate.Docked
         |> Some
