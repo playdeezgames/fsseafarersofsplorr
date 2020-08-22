@@ -7,6 +7,7 @@ type TradeQuantity =
     | Specific of uint64
 
 type AvatarMessagePurger = string -> unit
+type IslandLocationByNameSource = string -> Location option
 
 module World =
     let private GenerateIslandName //TODO: move to world generator?
@@ -65,20 +66,23 @@ module World =
         |> SetIsland location) world
 
     let private NameIslands  //TODO: move to world generator?
-            (nameSource : TermSource)
-            (random     : Random) 
-            (world      : World) 
-            : World =
+            (islandSingleNameSink : IslandSingleNameSink)
+            (nameSource           : TermSource)
+            (random               : Random) 
+            (world                : World) 
+            : unit =
         GenerateIslandNames 
             random 
             (world.Islands.Count) 
             (nameSource() |> Set.ofList)
         |> Utility.SortListRandomly random
         |> List.zip (world.Islands |> Map.toList |> List.map fst)
-        |> List.fold
-            (fun w (l,n) -> w |> TransformIsland l (Island.SetName n >> Some)) world
+        |> List.iter
+            (fun (l,n) -> 
+                islandSingleNameSink l (Some n))
 
     let rec private GenerateIslands  //TODO: move to world generator?
+            (islandSingleNameSink   : IslandSingleNameSink)
             (nameSource             : TermSource)
             (worldSize              : Location) 
             (minimumIslandDistance  : float)
@@ -89,13 +93,14 @@ module World =
             : World =
         if currentTry>=maximumGenerationTries then
             world
-            |> NameIslands nameSource random
+            |> NameIslands islandSingleNameSink nameSource random
+            world
         else
             let candidateLocation = (random.NextDouble() * (worldSize |> fst), random.NextDouble() * (worldSize |> snd))
             if world.Islands |> Map.exists(fun k _ ->(Location.DistanceTo candidateLocation k) < minimumIslandDistance) then
-                GenerateIslands nameSource worldSize minimumIslandDistance random (maximumGenerationTries, currentTry+1u) world
+                GenerateIslands islandSingleNameSink nameSource worldSize minimumIslandDistance random (maximumGenerationTries, currentTry+1u) world
             else
-                GenerateIslands nameSource worldSize minimumIslandDistance random (maximumGenerationTries, 0u) {world with Islands = world.Islands |> Map.add candidateLocation (Island.Create())}
+                GenerateIslands islandSingleNameSink nameSource worldSize minimumIslandDistance random (maximumGenerationTries, 0u) {world with Islands = world.Islands |> Map.add candidateLocation (Island.Create())}
 
     let UpdateCharts 
             (avatarIslandSingleMetricSink : AvatarIslandSingleMetricSink)
@@ -122,6 +127,7 @@ module World =
     let Create 
             (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
             (avatarJobSink                   : AvatarJobSink)
+            (islandSingleNameSink   : IslandSingleNameSink)
             (nameSource                      : TermSource)
             (worldSingleStatisticSource      : WorldSingleStatisticSource)
             (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
@@ -164,6 +170,7 @@ module World =
                 Islands = Map.empty
             }
             |> GenerateIslands 
+                islandSingleNameSink
                 nameSource 
                 worldSize 
                 minimumIslandDistance
@@ -410,17 +417,18 @@ module World =
 
     let DistanceTo 
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
-            (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (avatarMessageSink              : AvatarMessageSink)
+            (islandLocationByNameSource     : IslandLocationByNameSource)
+            (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (islandName                     : string) 
             (world                          : World) 
             : unit =
         let location =
-            world.Islands
-            |> Map.tryPick 
-                (fun k v -> 
-                    if v.Name = islandName && (avatarIslandSingleMetricSource world.AvatarId k AvatarIslandMetricIdentifier.VisitCount).IsSome then
-                        Some k
+            islandLocationByNameSource islandName
+            |> Option.bind
+                (fun l ->
+                    if (avatarIslandSingleMetricSource world.AvatarId l AvatarIslandMetricIdentifier.VisitCount).IsSome then
+                        Some l
                     else
                         None)
         match location, Avatar.GetPosition vesselSingleStatisticSource world.AvatarId with
@@ -435,18 +443,19 @@ module World =
 
     let HeadFor
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (avatarMessageSink              : AvatarMessageSink)
+            (islandLocationByNameSource     : IslandLocationByNameSource)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (vesselSingleStatisticSink      : VesselSingleStatisticSink)
-            (avatarMessageSink              : AvatarMessageSink)
             (islandName                     : string) 
             (world                          : World) 
             : unit =
         let location =
-            world.Islands
-            |> Map.tryPick 
-                (fun k v -> 
-                    if v.Name = islandName && (avatarIslandSingleMetricSource world.AvatarId k AvatarIslandMetricIdentifier.VisitCount).IsSome then
-                        Some k
+            islandLocationByNameSource islandName
+            |> Option.bind
+                (fun l ->
+                    if (avatarIslandSingleMetricSource world.AvatarId l AvatarIslandMetricIdentifier.VisitCount).IsSome then
+                        Some l
                     else
                         None)
         match location, Avatar.GetPosition vesselSingleStatisticSource world.AvatarId with

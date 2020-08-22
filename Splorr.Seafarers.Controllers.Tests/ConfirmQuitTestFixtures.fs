@@ -43,10 +43,12 @@ let shipmateStatisticTemplateSourceStub () = Map.empty
 let shipmateSingleStatisticSinkStub (_) (_) (_) = ()
 let avatarJobSinkStub (_) (_) = ()
 let avatarIslandSingleMetricSinkStub (_) (_) (_) (_) = ()
+let islandSingleNameSinkStub (_) (_) = ()
 let internal previousState = 
     World.Create
         avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
+        islandSingleNameSinkStub
         nameSourceStub
         worldSingleStatisticSourceStub
         shipmateStatisticTemplateSourceStub

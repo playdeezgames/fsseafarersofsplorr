@@ -14,6 +14,7 @@ module Chart =
 
     let private outputChart 
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (islandSingleNameSource         : IslandSingleNameSource)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (worldSize                      : Location) 
             (messageSink                    : MessageSink) 
@@ -47,7 +48,7 @@ module Chart =
                             let yOffset = if (-y)>bmp.Height/2 then 10.0f else (-20.0f)
                             g.DrawString(index|>sprintf "%u", font, textBrush, (x |> float32), (y |> float32) + yOffset)
                             leg
-                            |> Map.add index island.Name
+                            |> Map.add index (islandSingleNameSource location |> Option.get)
                         else
                             leg) Map.empty
             let avatarPosition = 
@@ -93,6 +94,7 @@ module Chart =
 
     let Run 
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (islandSingleNameSource         : IslandSingleNameSource)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (worldSingleStatisticSource     : WorldSingleStatisticSource) 
             (messageSink                    : MessageSink) 
@@ -107,6 +109,7 @@ module Chart =
             chartName
         outputChart 
             avatarIslandSingleMetricSource
+            islandSingleNameSource
             vesselSingleStatisticSource
             (worldSingleStatisticSource WorldStatisticIdentifier.PositionX |> Statistic.GetMaximumValue, 
                 worldSingleStatisticSource WorldStatisticIdentifier.PositionY |> Statistic.GetMaximumValue) 

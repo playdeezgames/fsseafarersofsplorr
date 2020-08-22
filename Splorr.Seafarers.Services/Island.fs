@@ -11,32 +11,28 @@ type IslandItemSink   = Location -> Set<uint64>->unit
 type IslandSingleMarketSource = Location -> uint64 -> Market option
 type IslandSingleMarketSink = Location -> (uint64 * Market) -> unit
 type AvatarIslandSingleMetricSource = string -> Location -> AvatarIslandMetricIdentifier -> uint64 option
-type AvatarIslandSingleMetricSink = string -> Location -> AvatarIslandMetricIdentifier -> uint64 -> unit
+type AvatarIslandSingleMetricSink = string -> Location -> AvatarIslandMetricIdentifier -> uint64 -> unit //TODO:value needs to become uint64 option
+type IslandSingleNameSource = Location -> string option
+type IslandSingleNameSink = Location -> string option -> unit
 
 module Island =
     let Create() 
         : Island =
         {
-            Name           = ""
             Jobs           = []
             CareenDistance = 0.1 //TODO: dont hardcode this
         }
 
-    let SetName 
-            (name   : string) 
-            (island : Island) 
-            : Island =
-        {island with Name = name}
-
     let GetDisplayName 
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (islandSingleNameSource         : IslandSingleNameSource)
             (avatarId                       : string) 
             (location                       : Location)
-            (island                         : Island) 
             : string =
         match avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount with
         | Some x ->
-            island.Name
+            islandSingleNameSource location
+            |> Option.get
         | _ ->
             "(unknown)"
     

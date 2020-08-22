@@ -18,6 +18,7 @@ let private world =
     World.Create 
         avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
+        islandSingleNameSinkStub
         termNameSource
         worldSingleStatisticSourceStub
         shipmateStatisticTemplateSourceStub

@@ -35,6 +35,7 @@ let internal soloIslandWorld =
     World.Create 
         avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
+        islandSingleNameSinkStub
         nameSource
         soloIslandSingleStatisticSource
         shipmateStatisticTemplateSource
@@ -55,7 +56,7 @@ let internal defaultRewardrange = (1.0,10.0)
 let internal fabricatedDestinationList = [(0.0, 0.0)] |> Set.ofList
 let internal oneIslandWorld = 
     emptyWorld
-    |> World.SetIsland (0.0,0.0) (Island.Create() |> Island.SetName "Uno" |> Some)
+    |> World.SetIsland (0.0,0.0) (Island.Create() |> Some)
     |> World.TransformIsland  (0.0,0.0) (fun i -> {i with Jobs = [ Job.Create termSources soloIslandSingleStatisticSource random fabricatedDestinationList ]} |> Some)
 
 let internal commoditySource() = 
@@ -100,6 +101,7 @@ let internal genericWorld =
     World.Create 
         avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
+        islandSingleNameSinkStub
         nameSource
         genericWorldSingleStatisticSource
         shipmateStatisticTemplateSource

@@ -236,6 +236,22 @@ let main argv =
         AvatarIslandMetric.GetMetricForAvatarIsland connection avatarId location
         >> Persister.unpackOrThrow
 
+    let islandLocationByNameSource
+            (name:string)
+            : Location option =
+        raise (System.NotImplementedException "islandLocationByNameSource")
+
+    let islandSingleNameSink 
+            (location:Location)
+            (name:string option)
+            : unit =
+        raise (System.NotImplementedException "islandSingleNameSink")
+
+    let islandSingleNameSource
+            (location:Location)
+            : string option =
+        raise (System.NotImplementedException "islandSingleNameSource")
+
     try
         Runner.Run 
             avatarInventorySink
@@ -254,10 +270,13 @@ let main argv =
             commoditySource
             islandItemSink 
             islandItemSource 
+            islandLocationByNameSource
             islandMarketSink 
             islandMarketSource 
             islandSingleMarketSink 
             islandSingleMarketSource
+            islandSingleNameSink
+            islandSingleNameSource
             itemSource 
             rationItemSource
             shipmateRationItemSink

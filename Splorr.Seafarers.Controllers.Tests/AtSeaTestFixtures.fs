@@ -31,6 +31,7 @@ let internal world =
     World.Create 
         avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
+        islandSingleNameSinkStub
         termNameSource
         worldSingleStatisticSourceStub
         shipmateStatisticTemplateSourceStub
@@ -67,6 +68,7 @@ let internal emptyWorld =
     World.Create 
         avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
+        islandSingleNameSinkStub
         termNameSource
         emptyWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
@@ -97,6 +99,7 @@ let internal dockWorld =
     World.Create 
         avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
+        islandSingleNameSinkStub
         termNameSource
         dockWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
@@ -115,6 +118,7 @@ let internal headForWorldUnvisited =
     World.Create 
         avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
+        islandSingleNameSinkStub
         termNameSource
         dockWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
@@ -126,9 +130,6 @@ let internal headForWorldUnvisited =
         shipmateRationItemSinkStub
         random
         avatarId
-    |> World.TransformIsland 
-        (0.0,0.0) 
-        (Island.SetName "yermom" >> Some)
 
     |> World.Move
         avatarInventorySinkStub
