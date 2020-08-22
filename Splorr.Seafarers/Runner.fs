@@ -10,6 +10,8 @@ module Runner =
     let rec private Loop 
             (avatarInventorySink             : AvatarInventorySink)
             (avatarInventorySource           : AvatarInventorySource)
+            (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
+            (avatarIslandSingleMetricSource  : AvatarIslandSingleMetricSource)
             (avatarJobSink                   : AvatarJobSink)
             (avatarJobSource                 : AvatarJobSource)
             (avatarMessagePurger             : AvatarMessagePurger)
@@ -53,6 +55,8 @@ module Runner =
                 AtSea.Run 
                     avatarInventorySink
                     avatarInventorySource
+                    avatarIslandSingleMetricSink
+                    avatarIslandSingleMetricSource
                     avatarJobSink
                     avatarJobSource
                     avatarMessagePurger
@@ -97,6 +101,7 @@ module Runner =
 
             | Gamestate.Chart (chartName, world) -> 
                 Chart.Run 
+                    avatarIslandSingleMetricSource
                     vesselSingleStatisticSource
                     worldSingleStatisticSource
                     messageSink 
@@ -114,6 +119,8 @@ module Runner =
                 Docked.Run 
                     avatarInventorySink
                     avatarInventorySource
+                    avatarIslandSingleMetricSink
+                    avatarIslandSingleMetricSource
                     avatarJobSink
                     avatarJobSource
                     avatarMessagePurger
@@ -178,6 +185,7 @@ module Runner =
 
             | Gamestate.IslandList (page, state) -> 
                 IslandList.Run 
+                    avatarIslandSingleMetricSource
                     vesselSingleStatisticSource
                     messageSink 
                     page 
@@ -185,6 +193,7 @@ module Runner =
 
             | Gamestate.MainMenu world -> 
                 MainMenu.Run 
+                    avatarIslandSingleMetricSink
                     avatarJobSink
                     rationItemSource
                     shipmateRationItemSink
@@ -222,6 +231,8 @@ module Runner =
             Loop 
                 avatarInventorySink
                 avatarInventorySource
+                avatarIslandSingleMetricSink
+                avatarIslandSingleMetricSource
                 avatarJobSink
                 avatarJobSource
                 avatarMessagePurger
@@ -264,6 +275,8 @@ module Runner =
     let Run 
             (avatarInventorySink             : AvatarInventorySink)
             (avatarInventorySource           : AvatarInventorySource)
+            (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
+            (avatarIslandSingleMetricSource  : AvatarIslandSingleMetricSource)
             (avatarJobSink                   : AvatarJobSink)
             (avatarJobSource                 : AvatarJobSource)
             (avatarMessagePurger             : AvatarMessagePurger)
@@ -306,6 +319,8 @@ module Runner =
         |> Loop 
             avatarInventorySink
             avatarInventorySource
+            avatarIslandSingleMetricSink
+            avatarIslandSingleMetricSource
             avatarJobSink
             avatarJobSource
             avatarMessagePurger

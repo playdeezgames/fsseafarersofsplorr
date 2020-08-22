@@ -97,7 +97,7 @@ let avatarExpectedMessagesSink (expected:string list) (_) (actual:string) : unit
     | Some _ ->
         Assert.Pass ("Valid message received.")
     | _ ->
-        Assert.Fail ("Invalid Message Received")
+        Assert.Fail (actual |> sprintf "Invalid Message Received - `%s`")
 
 
 let internal adverbSource()          : string list = [ "woefully" ]
@@ -174,3 +174,6 @@ let internal avatarMetricSourceStub (_) =
 
 let avatarJobSinkStub (_) (_) = ()
 let avatarJobSourceStub (_) = None
+
+let avatarIslandSingleMetricSinkStub (_) (_) (_) (_) = ()
+let avatarIslandSingleMetricSourceStub (_) (_) (_) = None

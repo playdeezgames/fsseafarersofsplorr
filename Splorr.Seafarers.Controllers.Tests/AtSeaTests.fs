@@ -8,15 +8,18 @@ open CommonTestFixtures
 open AtSeaTestFixtures
 
 let private functionUnderTest 
-        (avatarJobSink                 : AvatarJobSink)
-        (avatarJobSource               : AvatarJobSource)
-        (avatarMessageSink             : AvatarMessageSink)
-        (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-        (vesselSingleStatisticSource   : VesselSingleStatisticSource) 
+        (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+        (avatarJobSink                  : AvatarJobSink)
+        (avatarJobSource                : AvatarJobSource)
+        (avatarMessageSink              : AvatarMessageSink)
+        (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
+        (vesselSingleStatisticSource    : VesselSingleStatisticSource) 
         = 
     AtSea.Run 
         avatarInventorySinkStub
         avatarInventorySourceStub
+        avatarIslandSingleMetricSinkStub
+        avatarIslandSingleMetricSource
         avatarJobSink
         avatarJobSource
         avatarMessagePurgerStub
@@ -42,6 +45,7 @@ let private functionUnderTest
 
 let private functionUsuallyUnderTest = 
     functionUnderTest 
+        avatarIslandSingleMetricSourceStub
         avatarMessageSinkStub
         avatarJobSourceStub
         avatarJobSinkStub
@@ -68,6 +72,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
     let actual =
         input
         |> functionUnderTest 
+            avatarIslandSingleMetricSourceStub
             avatarJobSinkStub
             avatarJobSourceStub
             avatarMessageSinkStub 
@@ -128,6 +133,7 @@ let ``Run.It returns AtSea with new speed when given Set Speed command.`` () =
     let actual =
         input
         |> functionUnderTest 
+            avatarIslandSingleMetricSourceStub
             avatarJobSinkStub
             avatarJobSourceStub
             (avatarExpectedMessagesSink expectedMessages)
@@ -158,6 +164,7 @@ let ``Run.It returns AtSea with new heading when given Set Heading command.`` ()
     let actual =
         input
         |> functionUnderTest 
+            avatarIslandSingleMetricSourceStub
             avatarJobSinkStub
             avatarJobSourceStub
             (avatarExpectedMessagesSink expectedMessages)
@@ -184,6 +191,7 @@ let ``Run.It moves the avatar when given Move command.`` () =
     let actual =
         input
         |> functionUnderTest 
+            avatarIslandSingleMetricSourceStub
             avatarJobSinkStub
             avatarJobSourceStub
             (avatarExpectedMessagesSink expectedMessages)
@@ -293,6 +301,7 @@ let ``Run.It returns AtSea when given the Dock command and there is no sufficien
     let actual =
         input
         |> functionUnderTest 
+            avatarIslandSingleMetricSourceStub
             avatarJobSinkStub
             avatarJobSourceStub
             (avatarExpectedMessagesSink expectedMessages)
@@ -309,7 +318,6 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
     let expectedLocation = (0.0, 0.0)
     let expectedIsland = 
         input.Islands.[expectedLocation] 
-        |> Island.AddVisit 99L avatarId
     let expectedIslands = 
         input.Islands 
         |> Map.add expectedLocation expectedIsland
@@ -323,6 +331,7 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
     let actual =
         input
         |> functionUnderTest
+            avatarIslandSingleMetricSourceStub
             avatarJobSinkStub
             avatarJobSourceStub
             (avatarExpectedMessagesSink expectedMessages)
@@ -348,6 +357,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
     let actual = 
         input
         |> functionUnderTest 
+            avatarIslandSingleMetricSourceStub
             avatarJobSinkStub
             avatarJobSourceStub
             (avatarExpectedMessagesSink expectedMessages)
@@ -373,6 +383,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
     let actual = 
         input
         |> functionUnderTest
+            avatarIslandSingleMetricSourceStub
             avatarJobSinkStub
             avatarJobSourceStub
             (avatarExpectedMessagesSink expectedMessages)
@@ -395,9 +406,17 @@ let ``Run.It gives a message and changes heading when given a Head For command a
         input
         |> Gamestate.AtSea 
         |> Some
+    let avatarIslandSingleMetricSource (_) (_) (identifier: AvatarIslandMetricIdentifier) =
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount ->
+            1UL |> Some
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
+            None
     let actual = 
         input
         |> functionUnderTest 
+            avatarIslandSingleMetricSource
             avatarJobSinkStub
             avatarJobSourceStub
             (avatarExpectedMessagesSink expectedMessages)
@@ -458,6 +477,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
     let actual =
         input
         |> functionUnderTest 
+            avatarIslandSingleMetricSourceStub
             avatarJobSinkStub
             avatarJobSourceStub
             (avatarExpectedMessagesSink expectedMessages)
@@ -490,6 +510,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
     let actual =
         input
         |> functionUnderTest 
+            avatarIslandSingleMetricSourceStub
             avatarJobSinkStub
             avatarJobSource
             (avatarExpectedMessagesSink expectedMessages)
@@ -537,6 +558,7 @@ let ``Run.It gives a message and returns AtSea when the avatar is too far away f
     let actual =
         input
         |> functionUnderTest 
+            avatarIslandSingleMetricSourceStub
             avatarJobSinkStub
             avatarJobSourceStub
             (avatarExpectedMessagesSink expectedMessages)
@@ -582,6 +604,7 @@ let ``Run.It adds a message when given a Distance To command with an island name
     let actual =
         input
         |> functionUnderTest
+            avatarIslandSingleMetricSourceStub
             avatarJobSinkStub
             avatarJobSourceStub
             (avatarExpectedMessagesSink expectedMessages)
@@ -595,23 +618,30 @@ let ``Run.It adds a message when given a Distance To command with an island name
 let ``Run.It adds a message when given a Distance To command with an island name that does exist.`` () =
     let input = 
         dockWorld
-        |> World.TransformIsland (0.0, 0.0) (Island.MakeKnown dockWorld.AvatarId >> Some)
     let inputIslandName = input.Islands.[(0.0, 0.0)].Name
     let inputSource = 
         inputIslandName
         |> Command.DistanceTo
         |> Some 
         |> toSource
-    let expectedMessages = [inputIslandName |> sprintf "Distance to `%s` is 0.000000."]
+    let expectedMessages = [inputIslandName |> sprintf "I don't know how to get to `%s`."]
     let expectedWorld =
         input
     let expected =
         expectedWorld
         |> Gamestate.AtSea
         |> Some
+    let avatarIslandSingleMetricSource (_) (_) (identifier: AvatarIslandMetricIdentifier) =
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount ->
+            None
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
+            None
     let actual =
         input
         |> functionUnderTest
+            avatarIslandSingleMetricSource
             avatarJobSinkStub
             avatarJobSourceStub
             (avatarExpectedMessagesSink expectedMessages)

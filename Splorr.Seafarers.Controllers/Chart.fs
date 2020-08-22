@@ -13,11 +13,12 @@ module Chart =
         ((location |> snd |> int) * scale - scale/2, (-(location |> fst |> int)) * scale - scale/2)
 
     let private outputChart 
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
-            (worldSize                   : Location) 
-            (messageSink                 : MessageSink) 
-            (chartName                   : string) 
-            (world                       : World) 
+            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (vesselSingleStatisticSource    : VesselSingleStatisticSource)
+            (worldSize                      : Location) 
+            (messageSink                    : MessageSink) 
+            (chartName                      : string) 
+            (world                          : World) 
             : unit =
         try
             let scale = 10
@@ -33,14 +34,11 @@ module Chart =
             use font = new Font("Arial", 10.0f)
             let legend: Map<uint,string> = 
                 world.Islands
-                |> Map.filter
-                    (fun _ island ->
-                        island.AvatarVisits.ContainsKey world.AvatarId)
                 |> Map.fold
                     (fun leg location island -> 
                         let x, y = plotLocation scale location
                         let addToLegend, brush =
-                            match island.AvatarVisits.[world.AvatarId].VisitCount with
+                            match avatarIslandSingleMetricSource world.AvatarId location AvatarIslandMetricIdentifier.VisitCount with
                             | None -> false, seenIslandBrush
                             | _ -> true, knownIslandBrush
                         g.FillEllipse(brush,x,y,scale,scale)
@@ -94,11 +92,12 @@ module Chart =
             chartName
 
     let Run 
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
-            (worldSingleStatisticSource  : WorldSingleStatisticSource) 
-            (messageSink                 : MessageSink) 
-            (chartName                   : string) 
-            (world                       : World) 
+            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (vesselSingleStatisticSource    : VesselSingleStatisticSource)
+            (worldSingleStatisticSource     : WorldSingleStatisticSource) 
+            (messageSink                    : MessageSink) 
+            (chartName                      : string) 
+            (world                          : World) 
             : Gamestate option =
         let chartName = 
             chartName 
@@ -107,6 +106,7 @@ module Chart =
             messageSink 
             chartName
         outputChart 
+            avatarIslandSingleMetricSource
             vesselSingleStatisticSource
             (worldSingleStatisticSource WorldStatisticIdentifier.PositionX |> Statistic.GetMaximumValue, 
                 worldSingleStatisticSource WorldStatisticIdentifier.PositionY |> Statistic.GetMaximumValue) 

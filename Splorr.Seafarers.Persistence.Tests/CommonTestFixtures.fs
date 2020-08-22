@@ -234,6 +234,17 @@ let private setupAvatarJob
     ]
     |> runCommands connection
 
+let internal VisitedIslandLocation: Location = (0.0, 0.0)
+
+let private setupAvatarIslandMetrics
+        (connection : SQLiteConnection)
+        : unit =
+    [
+        Tables.AvatarIslandMetrics
+        sprintf "REPLACE INTO [AvatarIslandMetrics] ([AvatarId], [IslandX], [IslandY], [MetricId], [MetricValue]) VALUES ('%s',%f,%f,1,1)" ExistingAvatarId (VisitedIslandLocation |> fst) (VisitedIslandLocation |> snd)
+    ]
+    |> runCommands connection
+
 let internal NewAvatarId = "newavatar"
 
 let internal SetupConnection() : SQLiteConnection = 
@@ -257,6 +268,7 @@ let internal SetupConnection() : SQLiteConnection =
         setupAvatarInventories
         setupAvatarMetrics ExistingAvatarId
         setupAvatarJob ExistingAvatarId
+        setupAvatarIslandMetrics
     ]
     |> List.iter (fun f -> f connection)
 

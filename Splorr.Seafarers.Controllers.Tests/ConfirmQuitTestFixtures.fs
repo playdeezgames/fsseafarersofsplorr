@@ -42,8 +42,10 @@ let rationItemSourceStub () = [1UL]
 let shipmateStatisticTemplateSourceStub () = Map.empty
 let shipmateSingleStatisticSinkStub (_) (_) (_) = ()
 let avatarJobSinkStub (_) (_) = ()
+let avatarIslandSingleMetricSinkStub (_) (_) (_) (_) = ()
 let internal previousState = 
     World.Create
+        avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
         nameSourceStub
         worldSingleStatisticSourceStub

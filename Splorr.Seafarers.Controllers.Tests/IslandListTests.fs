@@ -17,5 +17,9 @@ let ``Run.It returns the given gamestate.`` () =
         |> Some
     let actual =
         input
-        |> IslandList.Run vesselSingleStatisticSourceStub sinkStub 0u
+        |> IslandList.Run
+            avatarIslandSingleMetricSourceStub
+            vesselSingleStatisticSourceStub 
+            sinkStub 
+            0u
     Assert.AreEqual(expected, actual)

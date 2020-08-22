@@ -14,5 +14,11 @@ let ``Run.It returns the At Sea state with the given world.`` () =
         |> Gamestate.AtSea
         |> Some
     let actual =
-        Chart.Run vesselSingleStatisticSourceStub worldSingleStatisticSourceStub sinkStub inputName inputWorld
+        Chart.Run
+            avatarIslandSingleMetricSourceStub
+            vesselSingleStatisticSourceStub 
+            worldSingleStatisticSourceStub 
+            sinkStub 
+            inputName 
+            inputWorld
     Assert.AreEqual(expected, actual)

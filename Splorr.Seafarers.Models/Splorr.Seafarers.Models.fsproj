@@ -8,7 +8,7 @@
     <Compile Include="CommodityDescriptor.fs" />
     <Compile Include="Market.fs" />
     <Compile Include="ItemDescriptor.fs" />
-    <Compile Include="AvatarVisit.fs" />
+    <Compile Include="AvatarIslandMetricIdentifier.fs" />
     <Compile Include="Island.fs" />
     <Compile Include="StatisticTemplate.fs" />
     <Compile Include="ShipmateStatisticIdentifier.fs" />
@@ -19,7 +19,7 @@
     <Compile Include="Statistic.fs" />
     <Compile Include="Side.fs" />
     <Compile Include="Metric.fs" />
-    <Compile Include="Avatar.fs" />
+    <Compile Include="ShipmateIdentifier.fs" />
     <Compile Include="World.fs" />
   </ItemGroup>
   <ItemGroup>

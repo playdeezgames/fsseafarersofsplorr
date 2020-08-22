@@ -24,10 +24,13 @@ let private random = Random()
 
 let internal avatarJobSinkStub (_) (_) = ()
 let internal avatarJobSourceStub (_) = None
+let internal avatarIslandSingleMetricSinkStub (_) (_) (_) (_) = ()
+let internal avatarIslandSingleMetricSourceStub (_) (_) (_) = None
 
 let internal world = 
     World.Create 
-        avatarInventorySinkStub
+        avatarIslandSingleMetricSinkStub
+        avatarJobSinkStub
         termNameSource
         worldSingleStatisticSourceStub
         shipmateStatisticTemplateSourceStub
@@ -62,6 +65,7 @@ let internal emptyWorldSingleStatisticSource (identfier: WorldStatisticIdentifie
 
 let internal emptyWorld = 
     World.Create 
+        avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
         termNameSource
         emptyWorldSingleStatisticSource
@@ -91,6 +95,7 @@ let internal dockWorldSingleStatisticSource (identfier: WorldStatisticIdentifier
         raise (System.NotImplementedException (sprintf "dockWorldSingleStatisticSource %s" (identfier.ToString())))
 let internal dockWorld = 
     World.Create 
+        avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
         termNameSource
         dockWorldSingleStatisticSource
@@ -108,6 +113,7 @@ let internal commoditySourceStub () = Map.empty
 
 let internal headForWorldUnvisited = 
     World.Create 
+        avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
         termNameSource
         dockWorldSingleStatisticSource
@@ -127,6 +133,7 @@ let internal headForWorldUnvisited =
     |> World.Move
         avatarInventorySinkStub
         avatarInventorySourceStub
+        avatarIslandSingleMetricSinkStub
         avatarMessageSinkStub
         avatarShipmateSourceStub
         avatarSingleMetricSinkStub
@@ -161,6 +168,8 @@ let private itemSourceStub() = Map.empty
 let internal headForWorldVisited = 
     headForWorldUnvisited
     |> World.Dock 
+        avatarIslandSingleMetricSinkStub
+        avatarIslandSingleMetricSourceStub
         avatarJobSinkStub
         avatarJobSourceStub
         avatarMessageSinkStub

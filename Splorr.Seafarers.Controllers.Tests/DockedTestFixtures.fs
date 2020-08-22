@@ -3,11 +3,11 @@
 open CommonTestFixtures
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
-open CommonTestFixtures
 open AtSeaTestFixtures
 
 let internal dockWorld = 
     World.Create
+        avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
         termNameSource
         dockWorldSingleStatisticSource
@@ -72,6 +72,7 @@ let internal smallWorldSingleStatisticSource (identifier: WorldStatisticIdentifi
 
 let internal smallWorld = 
     World.Create 
+        avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
         termNameSource
         smallWorldSingleStatisticSource
@@ -112,6 +113,8 @@ let private smallWorldIslandMarketSink (_) (_) = ()
 let internal smallWorldDocked = 
     smallWorld 
     |> World.Dock
+        avatarIslandSingleMetricSinkStub
+        avatarIslandSingleMetricSourceStub
         avatarJobSinkStub
         avatarJobSourceStub
         avatarMessageSinkStub

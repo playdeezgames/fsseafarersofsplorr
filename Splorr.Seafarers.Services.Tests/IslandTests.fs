@@ -18,55 +18,153 @@ let ``SetName.It sets the name of a given island to a given name.`` () =
     Assert.AreEqual(name, actual.Name)
 
 [<Test>]
-let ``GetDisplayName.It returns ???? when there is no visit count.`` () =
-    let actual = Island.Create() |> Island.SetName "Uno" |> Island.GetDisplayName avatarId
+let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =
+    let inputLocation = (0.0, 0.0)
+    let avatarIslandSingleMetricSource(_) (_) (identifier:AvatarIslandMetricIdentifier) = 
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount ->
+            None
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
+            None
+    let actual = 
+        Island.Create() 
+        |> Island.SetName "Uno" 
+        |> Island.GetDisplayName 
+            avatarIslandSingleMetricSource
+            avatarId
+            inputLocation
     Assert.AreEqual("(unknown)", actual)
 
 [<Test>]
 let ``GetDisplayName.It returns the island's name when there is a visit count.`` () =
     let name = "Uno"
+    let inputLocation = (0.0, 0.0)
+    let avatarIslandSingleMetricSource(_) (_) (identifier:AvatarIslandMetricIdentifier) = 
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount ->
+            0UL |> Some
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
+            None
     let actual = 
-        {Island.Create() with 
-            AvatarVisits = Map.empty |> Map.add avatarId {VisitCount=0u |> Some; LastVisit=None}
-            } |> Island.SetName name |> Island.GetDisplayName avatarId
+        Island.Create()
+        |> Island.SetName name 
+        |> Island.GetDisplayName 
+            avatarIslandSingleMetricSource
+            avatarId
+            inputLocation
     Assert.AreEqual(name, actual)
 
 [<Test>]
 let ``AddVisit.It increases visit count to one and sets last visit to given turn when there is no last visit and no visit count.`` () =
-    let turn = 100L
-    let actual =
-        unvisitedIsland
-        |> Island.AddVisit turn avatarId
-    Assert.AreEqual(1u, actual.AvatarVisits.[avatarId].VisitCount.Value)
-    Assert.AreEqual(Some turn, actual.AvatarVisits.[avatarId].LastVisit)
+    let turn = 100UL
+    let location = (0.0, 0.0)
+    let avatarIslandSingleMetricSource(_) (_) (identifier: AvatarIslandMetricIdentifier) = 
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount
+        | AvatarIslandMetricIdentifier.LastVisit ->
+            None
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
+            None
+    let avatarIslandSingleMetricSink(_) (_) (identifier:AvatarIslandMetricIdentifier) (value: uint64)= 
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount ->
+            Assert.AreEqual(1UL, value)
+        | AvatarIslandMetricIdentifier.LastVisit ->
+            Assert.AreEqual(turn, value)
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
+    Island.AddVisit 
+        avatarIslandSingleMetricSink
+        avatarIslandSingleMetricSource
+        turn 
+        avatarId
+        location
 
 [<Test>]
 let ``AddVisit.It increases visit count by one and sets last visit to given turn when there is no last visit.`` () =
-    let turn = 100L
-    let actual = 
-        visitedIslandNoLastVisit
-        |> Island.AddVisit turn avatarId
-    Assert.AreEqual(1u, actual.AvatarVisits.[avatarId].VisitCount.Value)
-    Assert.AreEqual(Some turn, actual.AvatarVisits.[avatarId].LastVisit)
+    let turn = 100UL
+    let location = (0.0, 0.0)
+    let avatarIslandSingleMetricSource(_) (_) (identifier: AvatarIslandMetricIdentifier) = 
+        match identifier with
+        | AvatarIslandMetricIdentifier.LastVisit ->
+            (turn + 1UL)
+            |> Some
+        | AvatarIslandMetricIdentifier.VisitCount ->
+            None
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
+            None
+    let avatarIslandSingleMetricSink(_) (_) (identifier:AvatarIslandMetricIdentifier) (value:uint64)= 
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount ->
+            Assert.AreEqual(1UL, value)
+        | AvatarIslandMetricIdentifier.LastVisit ->
+            Assert.AreEqual(turn, value)
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
+    Island.AddVisit 
+        avatarIslandSingleMetricSink
+        avatarIslandSingleMetricSource
+        turn 
+        avatarId
+        location
 
 [<Test>]
 let ``AddVisit.It increases visit count by one and sets last visit to given turn when the given turn is after the last visit.`` () =
-    let turn = 100L
-    let expected = 
-        (visitedIsland.AvatarVisits.[avatarId].VisitCount.Value + 1u) |> Some
-    let actual = 
-        visitedIsland
-        |> Island.AddVisit turn avatarId
-    Assert.AreEqual(expected, actual.AvatarVisits.[avatarId].VisitCount)
-    Assert.AreEqual(Some turn, actual.AvatarVisits.[avatarId].LastVisit)
+    let turn = 100UL
+    let location = (0.0, 0.0)
+    let avatarIslandSingleMetricSource(_) (_) (identifier: AvatarIslandMetricIdentifier) = 
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount -> 
+            1UL 
+            |> Some
+        | AvatarIslandMetricIdentifier.LastVisit -> 
+            0UL 
+            |> Some
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
+            None
+    let avatarIslandSingleMetricSink(_) (_) (identifier: AvatarIslandMetricIdentifier) (value:uint64)= 
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount ->
+            Assert.AreEqual(2UL, value)
+        | AvatarIslandMetricIdentifier.LastVisit ->
+            Assert.AreEqual(turn, value)
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
+    Island.AddVisit 
+        avatarIslandSingleMetricSink
+        avatarIslandSingleMetricSource
+        turn 
+        avatarId
+        location
 
 [<Test>]
 let ``AddVisit.It does not update visit count when given turn was prior or equal to last visit.`` () =
-    let turn = 0L
-    let actual = 
-        visitedIsland
-        |> Island.AddVisit turn avatarId
-    Assert.AreEqual(visitedIsland, actual)
+    let turn = 0UL
+    let location = (0.0, 0.0)
+    let avatarIslandSingleMetricSource(_) (_) (identifier: AvatarIslandMetricIdentifier) = 
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount -> 
+            1UL 
+            |> Some
+        | AvatarIslandMetricIdentifier.LastVisit -> 
+            turn 
+            |> Some
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
+            None
+    let avatarIslandSingleMetricSink(_) (_) (_) (_)= 
+        Assert.Fail("avatarIslandSingleMetricSink")
+    Island.AddVisit 
+        avatarIslandSingleMetricSink
+        avatarIslandSingleMetricSource
+        turn 
+        avatarId
+        location
 
 [<Test>]
 let ``GenerateJob.It generates a job when no job is present on the island.`` () =
@@ -113,54 +211,43 @@ let ``RemoveJob.It returns the modified island and the indicated job when the gi
 
 [<Test>]
 let ``MakeKnown.It does nothing when the given island is already known.`` () =
-    let input = visitedIsland
-    let expected = visitedIsland
-    let actual =
-        input
-        |> Island.MakeKnown avatarId
-    Assert.AreEqual(expected, actual)
+    let location = (0.0, 0.0)
+    let avatarIslandSingleMetricSource(_) (_) (identifier:AvatarIslandMetricIdentifier) = 
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount ->
+            0UL |> Some
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
+            None
+    let avatarIslandSingleMetricSink(_) (_) (_) (_)= 
+        Assert.Fail("avatarIslandSingleMetricSink")
+    Island.MakeKnown 
+        avatarIslandSingleMetricSink
+        avatarIslandSingleMetricSource
+        avatarId
+        location
 
 [<Test>]
 let ``MakeKnown.It mutates the island's visit count to Some 0 when the given island is not known.`` () =
-    let input = unvisitedIsland
-    let expected = 
-        {input with
-            AvatarVisits = Map.empty |> Map.add avatarId {VisitCount=0u |> Some;LastVisit=None}}
-    let actual =
-        input
-        |> Island.MakeKnown avatarId
-    Assert.AreEqual(0u, actual.AvatarVisits.[avatarId].VisitCount.Value)
-    Assert.AreEqual(expected.AvatarVisits.[avatarId].LastVisit, actual.AvatarVisits.[avatarId].LastVisit)
-
-[<Test>]
-let ``MakeSeen.It does nothing when the given island is already seen.`` () =
-    let input = seenIsland
-    let expected = seenIsland
-    let actual =
-        input
-        |> Island.MakeSeen avatarId
-    Assert.AreEqual(expected, actual)
-
-[<Test>]
-let ``MakeSeen.It does nothing when the given island is already known.`` () =
-    let input = visitedIsland
-    let expected = visitedIsland
-    let actual =
-        input
-        |> Island.MakeSeen avatarId
-    Assert.AreEqual(expected, actual)
-
-[<Test>]
-let ``MakeSeen.It mutates the island's visit count to None when the given island is not known or seen.`` () =
-    let input = unvisitedIsland
-    let expected = 
-        {input with
-            AvatarVisits = Map.empty |> Map.add avatarId {VisitCount=None;LastVisit=None}}
-    let actual =
-        input
-        |> Island.MakeSeen avatarId
-    Assert.AreEqual(None, actual.AvatarVisits.[avatarId].VisitCount)
-    Assert.AreEqual(expected.AvatarVisits.[avatarId].LastVisit, actual.AvatarVisits.[avatarId].LastVisit)
+    let location = (0.0, 0.0)
+    let avatarIslandSingleMetricSource(_) (_) (identifier:AvatarIslandMetricIdentifier) = 
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount ->
+            None
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
+            None
+    let avatarIslandSingleMetricSink(_) (_) (identifier: AvatarIslandMetricIdentifier) (value:uint64)= 
+        match identifier with
+        | AvatarIslandMetricIdentifier.VisitCount ->
+            Assert.AreEqual(0UL, value)
+        | _ ->
+            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
+    Island.MakeKnown 
+        avatarIslandSingleMetricSink
+        avatarIslandSingleMetricSource
+        avatarId
+        location
 
 [<Test>]
 let ``GenerateCommodities.It does nothing when commodities already exists for the given island.`` () =

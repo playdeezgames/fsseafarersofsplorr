@@ -221,10 +221,20 @@ let main argv =
         AvatarJob.GetForAvatar connection
         >> Persister.unpackOrThrow
 
+    let avatarIslandSingleMetricSink (avatarId:string) (location:Location) (metric:AvatarIslandMetricIdentifier) (value:uint64)= 
+        AvatarIslandMetric.SetMetricForAvatarIsland connection avatarId location metric (value |> Some)
+        |> Persister.unpackOrThrow
+
+    let avatarIslandSingleMetricSource (avatarId:string) (location:Location) =
+        AvatarIslandMetric.GetMetricForAvatarIsland connection avatarId location
+        >> Persister.unpackOrThrow
+
     try
         Runner.Run 
             avatarInventorySink
             avatarInventorySource
+            avatarIslandSingleMetricSink
+            avatarIslandSingleMetricSource
             avatarJobSink
             avatarJobSource
             avatarMessagePurger
