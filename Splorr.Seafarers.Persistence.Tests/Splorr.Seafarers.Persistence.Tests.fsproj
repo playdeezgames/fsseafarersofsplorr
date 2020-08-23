@@ -19,7 +19,6 @@
 
   <ItemGroup>
     <Compile Include="CommonTestFixtures.fs" />
-    <Compile Include="ShipmateStatisticTemplateTests.fs" />
     <Compile Include="AvatarInventoryTests.fs" />
     <Compile Include="AvatarIslandMetricTests.fs" />
     <Compile Include="AvatarJobTests.fs" />
@@ -28,10 +27,13 @@
     <Compile Include="IslandTests.fs" />
     <Compile Include="IslandItemTests.fs" />
     <Compile Include="IslandMarketTests.fs" />
+    <Compile Include="IslandStatisticTemplateTests.fs" />
+    <Compile Include="IslandStatisticTests.fs" />
     <Compile Include="ItemTests.fs" />
     <Compile Include="MessageTests.fs" />
     <Compile Include="RationItemTests.fs" />
     <Compile Include="ShipmateRationItemTests.fs" />
+    <Compile Include="ShipmateStatisticTemplateTests.fs" />
     <Compile Include="ShipmateStatisticTests.fs" />
     <Compile Include="TermTests.fs" />
     <Compile Include="VesselStatisticTemplateTests.fs" />
