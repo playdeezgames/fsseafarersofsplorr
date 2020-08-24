@@ -7,25 +7,21 @@ open CommonTestFixtures
 let internal unvisitedIsland = 
     {
         Jobs = []
-        CareenDistance = 0.0
     }
 
 let internal visitedIslandNoLastVisit = 
     {
         Jobs           = []
-        CareenDistance = 0.0
     }
 
 let internal seenIsland =
     {
         Jobs           = []
-        CareenDistance = 0.0
     }
 
 let internal visitedIsland =
     {
         Jobs           = []
-        CareenDistance = 0.0
     }
 
 let internal random = System.Random()

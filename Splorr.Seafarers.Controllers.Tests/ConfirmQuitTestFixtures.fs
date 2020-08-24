@@ -38,17 +38,21 @@ let private avatarId = ""
 
 let private nameSourceStub () = []
 let internal shipmateRationItemSinkStub (_) (_) (_) = ()
-let rationItemSourceStub () = [1UL]
-let shipmateStatisticTemplateSourceStub () = Map.empty
-let shipmateSingleStatisticSinkStub (_) (_) (_) = ()
-let avatarJobSinkStub (_) (_) = ()
-let avatarIslandSingleMetricSinkStub (_) (_) (_) (_) = ()
-let islandSingleNameSinkStub (_) (_) = ()
+let internal rationItemSourceStub () = [1UL]
+let internal shipmateStatisticTemplateSourceStub () = Map.empty
+let internal shipmateSingleStatisticSinkStub (_) (_) (_) = ()
+let internal avatarJobSinkStub (_) (_) = ()
+let internal avatarIslandSingleMetricSinkStub (_) (_) (_) (_) = ()
+let internal islandSingleNameSinkStub (_) (_) = ()
+let internal islandSingleStatisticSinkStub (_) (_) = ()
+let internal islandStatisticTemplateSourceStub () = Map.empty
 let internal previousState = 
     World.Create
         avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
         islandSingleNameSinkStub
+        islandSingleStatisticSinkStub
+        islandStatisticTemplateSourceStub
         nameSourceStub
         worldSingleStatisticSourceStub
         shipmateStatisticTemplateSourceStub

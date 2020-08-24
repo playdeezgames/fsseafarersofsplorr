@@ -19,6 +19,8 @@ let private world =
         avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
         islandSingleNameSinkStub
+        islandSingleStatisticSinkStub
+        islandStatisticTemplateSourceStub
         termNameSource
         worldSingleStatisticSourceStub
         shipmateStatisticTemplateSourceStub

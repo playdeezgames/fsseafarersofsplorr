@@ -12,6 +12,8 @@ let private world =
         avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
         islandSingleNameSinkStub
+        islandSingleStatisticSinkStub
+        islandStatisticTemplateSourceStub
         termNameSource
         worldSingleStatisticSourceStub
         shipmateStatisticTemplateSourceStub
@@ -44,6 +46,8 @@ let ``Run.It returns Confirm Quit when given Quit command and there is no world.
             avatarIslandSingleMetricSinkStub
             avatarJobSink
             islandSingleNameSinkStub
+            islandSingleStatisticSinkStub
+            islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub
@@ -78,6 +82,8 @@ let ``Run.It returns Main Menu when given Quit command and there is a world.`` (
             avatarIslandSingleMetricSinkStub
             avatarJobSink
             islandSingleNameSinkStub
+            islandSingleStatisticSinkStub
+            islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub
@@ -107,6 +113,8 @@ let ``Run.It returns Main Menu when given invalid command and there is no world.
             avatarIslandSingleMetricSinkStub
             avatarJobSink
             islandSingleNameSinkStub
+            islandSingleStatisticSinkStub
+            islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub
@@ -138,6 +146,8 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
             avatarIslandSingleMetricSinkStub
             avatarJobSink
             islandSingleNameSinkStub
+            islandSingleStatisticSinkStub
+            islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub
@@ -163,6 +173,8 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
             avatarIslandSingleMetricSinkStub
             avatarJobSink
             islandSingleNameSinkStub
+            islandSingleStatisticSinkStub
+            islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub
@@ -201,6 +213,8 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
             avatarIslandSingleMetricSinkStub
             avatarJobSink
             islandSingleNameSinkStub
+            islandSingleStatisticSinkStub
+            islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub
@@ -230,6 +244,8 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
             avatarIslandSingleMetricSinkStub
             avatarJobSink
             islandSingleNameSinkStub
+            islandSingleStatisticSinkStub
+            islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub
@@ -266,6 +282,8 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
             avatarIslandSingleMetricSinkStub
             avatarJobSink
             islandSingleNameSinkStub
+            islandSingleStatisticSinkStub
+            islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub
@@ -296,6 +314,8 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
             avatarIslandSingleMetricSinkStub
             avatarJobSink
             islandSingleNameSinkStub
+            islandSingleStatisticSinkStub
+            islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub
@@ -326,6 +346,8 @@ let ``Run.It returns Main Menu with no world when given Resume command and there
             avatarIslandSingleMetricSinkStub
             avatarJobSink
             islandSingleNameSinkStub
+            islandSingleStatisticSinkStub
+            islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
             shipmateSingleStatisticSinkStub

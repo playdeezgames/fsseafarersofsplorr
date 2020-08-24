@@ -27,10 +27,13 @@ module Runner =
             (islandLocationByNameSource      : IslandLocationByNameSource)
             (islandMarketSink                : IslandMarketSink) 
             (islandMarketSource              : IslandMarketSource) 
-            (islandSingleNameSink            : IslandSingleNameSink) 
-            (islandSingleNameSource          : IslandSingleNameSource) 
             (islandSingleMarketSink          : IslandSingleMarketSink) 
             (islandSingleMarketSource        : IslandSingleMarketSource)
+            (islandSingleNameSink            : IslandSingleNameSink) 
+            (islandSingleNameSource          : IslandSingleNameSource) 
+            (islandSingleStatisticSink       : IslandSingleStatisticSink)
+            (islandSingleStatisticSource     : IslandSingleStatisticSource)
+            (islandStatisticTemplateSource   : IslandStatisticTemplateSource)
             (itemSource                      : ItemSource)
             (rationItemSource                : RationItemSource)
             (shipmateRationItemSink          : ShipmateRationItemSink)
@@ -75,6 +78,7 @@ module Runner =
                     islandMarketSink 
                     islandMarketSource
                     islandSingleNameSource
+                    islandSingleStatisticSource
                     itemSource 
                     shipmateRationItemSource
                     shipmateSingleStatisticSink
@@ -205,6 +209,8 @@ module Runner =
                     avatarIslandSingleMetricSink
                     avatarJobSink
                     islandSingleNameSink
+                    islandSingleStatisticSink
+                    islandStatisticTemplateSource
                     rationItemSource
                     shipmateRationItemSink
                     shipmateSingleStatisticSink
@@ -259,10 +265,13 @@ module Runner =
                 islandLocationByNameSource
                 islandMarketSink 
                 islandMarketSource 
-                islandSingleNameSink
-                islandSingleNameSource
                 islandSingleMarketSink 
                 islandSingleMarketSource
+                islandSingleNameSink
+                islandSingleNameSource
+                islandSingleStatisticSink
+                islandSingleStatisticSource
+                islandStatisticTemplateSource
                 itemSource 
                 rationItemSource
                 shipmateRationItemSink
@@ -310,6 +319,9 @@ module Runner =
             (islandSingleMarketSource        : IslandSingleMarketSource) 
             (islandSingleNameSink            : IslandSingleNameSink) 
             (islandSingleNameSource          : IslandSingleNameSource) 
+            (islandSingleStatisticSink       : IslandSingleStatisticSink)
+            (islandSingleStatisticSource     : IslandSingleStatisticSource)
+            (islandStatisticTemplateSource   : IslandStatisticTemplateSource)
             (itemSource                      : ItemSource) 
             (rationItemSource                : RationItemSource)
             (shipmateRationItemSink          : ShipmateRationItemSink)
@@ -353,10 +365,13 @@ module Runner =
             islandLocationByNameSource
             islandMarketSink 
             islandMarketSource 
-            islandSingleNameSink
-            islandSingleNameSource
             islandSingleMarketSink 
             islandSingleMarketSource
+            islandSingleNameSink
+            islandSingleNameSource
+            islandSingleStatisticSink
+            islandSingleStatisticSource
+            islandStatisticTemplateSource
             itemSource 
             rationItemSource
             shipmateRationItemSink

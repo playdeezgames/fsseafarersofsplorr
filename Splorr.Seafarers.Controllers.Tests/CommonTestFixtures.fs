@@ -172,12 +172,23 @@ let internal avatarMetricSourceStub (_) =
     |> Array.map (fun m -> (m, 1UL))
     |> Map.ofArray
 
-let avatarJobSinkStub (_) (_) = ()
-let avatarJobSourceStub (_) = None
+let internal avatarJobSinkStub (_) (_) = ()
+let internal avatarJobSourceStub (_) = None
 
-let avatarIslandSingleMetricSinkStub (_) (_) (_) (_) = ()
-let avatarIslandSingleMetricSourceStub (_) (_) (_) = None
+let internal avatarIslandSingleMetricSinkStub (_) (_) (_) (_) = ()
+let internal avatarIslandSingleMetricSourceStub (_) (_) (_) = None
 
-let islandSingleNameSinkStub (_) (_) = ()
-let islandSingleNameSourceStub (_) = None
-let islandLocationByNameSourceStub (_) = None
+let internal islandSingleNameSinkStub (_) (_) = ()
+let internal islandSingleNameSourceStub (_) = None
+let internal islandLocationByNameSourceStub (_) = None
+
+let internal islandSingleStatisticSinkStub (_) (_) = ()
+let internal islandStatisticTemplateSourceStub () = Map.empty
+let internal islandSingleStatisticSourceStub (location: Location) (identifier : IslandStatisticIdentifier) = 
+    match location, identifier with
+    | _, IslandStatisticIdentifier.CareenDistance ->
+        Statistic.Create (0.1, 0.1) 0.1
+        |> Some
+    | _ ->
+        None
+

@@ -64,3 +64,6 @@ let internal avatarJobSourceStub (_) = None
 let internal avatarIslandSingleMetricSinkStub (_) (_) (_) (_) = ()
 let internal avatarIslandSingleMetricSourceStub (_) (_) (_) = None
 let internal islandSingleNameSinkStub (_) (_) = ()
+
+let internal islandSingleStatisticSinkStub (_) (_) = ()
+let internal islandStatisticTemplateSourceStub () = Map.empty

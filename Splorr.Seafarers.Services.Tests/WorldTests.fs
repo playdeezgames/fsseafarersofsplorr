@@ -347,7 +347,6 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
     let blankIsland =
         {
             Jobs = []
-            CareenDistance = 0.0
         }
     let viewDistance = 5.0
     let avatarPosition = (5.0, 5.0)
@@ -384,14 +383,26 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
 let ``SetIsland.It adds an island to a world when given an island where there was none.`` () =
     let actual = 
         emptyWorld
-        |> World.SetIsland (0.0,0.0) (Island.Create() |> Some)
+        |> World.SetIsland 
+            (0.0,0.0) 
+            (Island.Create
+                islandSingleStatisticSinkStub
+                islandStatisticTemplateSourceStub
+                (0.0, 0.0)
+            |> Some)
     Assert.AreEqual(1, actual.Islands.Count)
 
 [<Test>]
 let ``SetIsland.It replaces an island to a world when given an island where there was one before.`` () =
     let actual =
         oneIslandWorld
-        |> World.SetIsland (0.0,0.0) (Island.Create() |> Some)
+        |> World.SetIsland 
+            (0.0,0.0) 
+            (Island.Create
+                islandSingleStatisticSinkStub
+                islandStatisticTemplateSourceStub
+                (0.0, 0.0)
+            |> Some)
     Assert.AreEqual(1, actual.Islands.Count)
 
 [<Test>]
@@ -418,7 +429,14 @@ let ``TransformIsland.It applies a transform function to an existing island and 
 let ``TransformIsland.It does nothing when the location given does not have an existing island.`` () =
     let actual =
         emptyWorld
-        |> World.TransformIsland (0.0, 0.0) (fun _-> Island.Create() |> Some)
+        |> World.TransformIsland 
+            (0.0, 0.0) 
+            (fun _-> 
+                Island.Create
+                    islandSingleStatisticSinkStub
+                    islandStatisticTemplateSourceStub
+                    (0.0, 0.0)
+                |> Some)
     Assert.AreEqual(0, actual.Islands.Count)
 
 let private islandItemSourceStub (_) = Set.empty

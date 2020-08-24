@@ -14,6 +14,7 @@ let private functionUnderTest
         (avatarMessageSink              : AvatarMessageSink)
         (islandLocationByNameSource     : IslandLocationByNameSource)
         (islandSingleNameSource         : IslandSingleNameSource)
+        (islandSingleStatisticSource    : IslandSingleStatisticSource)
         (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
         (vesselSingleStatisticSource    : VesselSingleStatisticSource) 
         = 
@@ -37,6 +38,7 @@ let private functionUnderTest
         atSeaIslandMarketSink 
         atSeaIslandMarketSource 
         islandSingleNameSource
+        islandSingleStatisticSource
         atSeaItemSource
         shipmateRationItemSourceStub
         shipmateSingleStatisticSinkStub
@@ -55,6 +57,7 @@ let private functionUsuallyUnderTest =
         avatarJobSinkStub
         islandLocationByNameSourceStub
         islandSingleNameSourceStub
+        islandSingleStatisticSourceStub
         shipmateSingleStatisticSourceStub
         vesselSingleStatisticSourceStub 
 
@@ -84,6 +87,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
             avatarMessageSinkStub 
             islandLocationByNameSourceStub
             islandSingleNameSourceStub
+            islandSingleStatisticSourceStub
             shipmateSingleStatisticSource
             vesselSingleStatisticSourceStub 
             inputSource 
@@ -147,6 +151,7 @@ let ``Run.It returns AtSea with new speed when given Set Speed command.`` () =
             (avatarExpectedMessagesSink expectedMessages)
             islandLocationByNameSourceStub
             islandSingleNameSourceStub
+            islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub 
             inputSource 
@@ -180,6 +185,7 @@ let ``Run.It returns AtSea with new heading when given Set Heading command.`` ()
             (avatarExpectedMessagesSink expectedMessages)
             islandLocationByNameSourceStub
             islandSingleNameSourceStub
+            islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource 
@@ -195,7 +201,6 @@ let ``Run.It moves the avatar when given Move command.`` () =
         |> Some 
         |> toSource
     let expectedMessages = ["Steady as she goes."]
-    let expectedPosition = (6.0,5.0)
     let expected = 
         input
         |> Gamestate.AtSea 
@@ -209,6 +214,7 @@ let ``Run.It moves the avatar when given Move command.`` () =
             (avatarExpectedMessagesSink expectedMessages)
             islandLocationByNameSourceStub
             islandSingleNameSourceStub
+            islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource 
@@ -321,6 +327,7 @@ let ``Run.It returns AtSea when given the Dock command and there is no sufficien
             (avatarExpectedMessagesSink expectedMessages)
             islandLocationByNameSourceStub
             islandSingleNameSourceStub
+            islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource 
@@ -353,6 +360,7 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
             (avatarExpectedMessagesSink expectedMessages)
             islandLocationByNameSourceStub
             islandSingleNameSourceStub
+            islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource 
@@ -381,6 +389,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
             (avatarExpectedMessagesSink expectedMessages)
             islandLocationByNameSourceStub
             islandSingleNameSourceStub
+            islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource 
@@ -409,6 +418,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
             (avatarExpectedMessagesSink expectedMessages)
             islandLocationByNameSourceStub
             islandSingleNameSourceStub
+            islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource
@@ -449,6 +459,7 @@ let ``Run.It gives a message and changes heading when given a Head For command a
             (avatarExpectedMessagesSink expectedMessages)
             islandLocationByNameSource
             islandSingleNameSource
+            islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource 
@@ -512,6 +523,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
             (avatarExpectedMessagesSink expectedMessages)
             islandLocationByNameSourceStub
             islandSingleNameSourceStub
+            islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource 
@@ -547,6 +559,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
             (avatarExpectedMessagesSink expectedMessages)
             islandLocationByNameSourceStub
             islandSingleNameSourceStub
+            islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource 
@@ -597,6 +610,7 @@ let ``Run.It gives a message and returns AtSea when the avatar is too far away f
             (avatarExpectedMessagesSink expectedMessages)
             islandLocationByNameSourceStub
             islandSingleNameSourceStub
+            islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSource
             inputSource 
@@ -645,6 +659,7 @@ let ``Run.It adds a message when given a Distance To command with an island name
             (avatarExpectedMessagesSink expectedMessages)
             islandLocationByNameSourceStub
             islandSingleNameSourceStub
+            islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource
@@ -684,6 +699,7 @@ let ``Run.It adds a message when given a Distance To command with an island name
             (avatarExpectedMessagesSink expectedMessages)
             islandLocationByNameSourceStub
             islandSingleNameSourceStub
+            islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource
