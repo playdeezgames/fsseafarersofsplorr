@@ -17,7 +17,8 @@ module AtSea =
             Hue.Error
 
     let private CanCareen 
-            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
+            (islandSingleStatisticSource : IslandSingleStatisticSource)
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (world : World) 
             : bool =
         let viewDistance =
@@ -29,7 +30,13 @@ module AtSea =
             |> Option.get
         world
         |> World.GetNearbyLocations avatarPosition viewDistance
-        |> List.map (fun l -> (l,world.Islands.[l].CareenDistance))
+        |> List.map 
+            (fun l -> 
+                (l,
+                    IslandStatisticIdentifier.CareenDistance
+                    |> islandSingleStatisticSource l 
+                    |> Option.get
+                    |> Statistic.GetCurrentValue))
         |> List.exists (fun (l,d) -> Location.DistanceTo l avatarPosition < d)
 
     let private GetVisibleIslands 
@@ -147,6 +154,7 @@ module AtSea =
             (islandMarketSink               : IslandMarketSink) 
             (islandMarketSource             : IslandMarketSource) 
             (islandSingleNameSource         : IslandSingleNameSource)
+            (islandSingleStatisticSource    : IslandSingleStatisticSource)
             (itemSource                     : ItemSource) 
             (shipmateRationItemSource       : ShipmateRationItemSource)
             (shipmateSingleStatisticSink    : ShipmateSingleStatisticSink)
@@ -163,7 +171,10 @@ module AtSea =
         |> World.ClearMessages avatarMessagePurger
 
         let canCareen = 
-            CanCareen vesselSingleStatisticSource world
+            CanCareen 
+                islandSingleStatisticSource     
+                vesselSingleStatisticSource 
+                world
 
         let dockDistance = 
             vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.ViewDistance 
@@ -374,6 +385,7 @@ module AtSea =
             (islandMarketSink                : IslandMarketSink) 
             (islandMarketSource              : IslandMarketSource) 
             (islandSingleNameSource          : IslandSingleNameSource)
+            (islandSingleStatisticSource     : IslandSingleStatisticSource)
             (itemSource                      : ItemSource) 
             (shipmateRationItemSource        : ShipmateRationItemSource)
             (termSources                     : TermSources)
@@ -414,6 +426,7 @@ module AtSea =
             islandMarketSink
             islandMarketSource
             islandSingleNameSource
+            islandSingleStatisticSource
             itemSource
             shipmateRationItemSource
             shipmateSingleStatisticSink
@@ -446,6 +459,7 @@ module AtSea =
             (islandMarketSink                : IslandMarketSink) 
             (islandMarketSource              : IslandMarketSource) 
             (islandSingleNameSource          : IslandSingleNameSource)
+            (islandSingleStatisticSource    : IslandSingleStatisticSource)
             (itemSource                      : ItemSource) 
             (shipmateRationItemSource        : ShipmateRationItemSource)
             (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
@@ -480,6 +494,7 @@ module AtSea =
                 islandMarketSink 
                 islandMarketSource 
                 islandSingleNameSource
+                islandSingleStatisticSource
                 itemSource 
                 shipmateRationItemSource
                 termSources

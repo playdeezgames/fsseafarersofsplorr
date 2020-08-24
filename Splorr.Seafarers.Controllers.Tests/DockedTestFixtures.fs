@@ -10,6 +10,8 @@ let internal dockWorld =
         avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
         islandSingleNameSinkStub
+        islandSingleStatisticSinkStub
+        islandStatisticTemplateSourceStub
         termNameSource
         dockWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub
@@ -76,6 +78,8 @@ let internal smallWorld =
         avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
         islandSingleNameSinkStub
+        islandSingleStatisticSinkStub
+        islandStatisticTemplateSourceStub
         termNameSource
         smallWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub

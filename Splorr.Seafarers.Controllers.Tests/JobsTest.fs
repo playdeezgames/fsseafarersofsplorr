@@ -12,6 +12,8 @@ let private dockWorld =
         avatarIslandSingleMetricSinkStub
         avatarJobSinkStub
         islandSingleNameSinkStub
+        islandSingleStatisticSinkStub
+        islandStatisticTemplateSourceStub
         termNameSource
         dockWorldSingleStatisticSource
         shipmateStatisticTemplateSourceStub

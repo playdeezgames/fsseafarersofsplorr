@@ -82,14 +82,16 @@ module World =
                 islandSingleNameSink l (Some n))
 
     let rec private GenerateIslands  //TODO: move to world generator?
-            (islandSingleNameSink   : IslandSingleNameSink)
-            (nameSource             : TermSource)
-            (worldSize              : Location) 
-            (minimumIslandDistance  : float)
-            (random                 : Random) 
-            (maximumGenerationTries : uint32, 
-             currentTry             : uint32) 
-            (world                  : World) 
+            (islandSingleNameSink          : IslandSingleNameSink)
+            (islandSingleStatisticSink     : IslandSingleStatisticSink)
+            (islandStatisticTemplateSource : IslandStatisticTemplateSource)
+            (nameSource                    : TermSource)
+            (worldSize                     : Location) 
+            (minimumIslandDistance         : float)
+            (random                        : Random) 
+            (maximumGenerationTries        : uint32, 
+             currentTry                    : uint32) 
+            (world                         : World) 
             : World =
         if currentTry>=maximumGenerationTries then
             world
@@ -98,9 +100,37 @@ module World =
         else
             let candidateLocation = (random.NextDouble() * (worldSize |> fst), random.NextDouble() * (worldSize |> snd))
             if world.Islands |> Map.exists(fun k _ ->(Location.DistanceTo candidateLocation k) < minimumIslandDistance) then
-                GenerateIslands islandSingleNameSink nameSource worldSize minimumIslandDistance random (maximumGenerationTries, currentTry+1u) world
+                GenerateIslands 
+                    islandSingleNameSink 
+                    islandSingleStatisticSink
+                    islandStatisticTemplateSource
+                    nameSource 
+                    worldSize 
+                    minimumIslandDistance 
+                    random 
+                    (maximumGenerationTries, currentTry+1u) 
+                    world
             else
-                GenerateIslands islandSingleNameSink nameSource worldSize minimumIslandDistance random (maximumGenerationTries, 0u) {world with Islands = world.Islands |> Map.add candidateLocation (Island.Create())}
+                let island = 
+                    Island.Create
+                        islandSingleStatisticSink
+                        islandStatisticTemplateSource
+                        candidateLocation
+                GenerateIslands 
+                    islandSingleNameSink 
+                    islandSingleStatisticSink
+                    islandStatisticTemplateSource
+                    nameSource 
+                    worldSize 
+                    minimumIslandDistance 
+                    random 
+                    (maximumGenerationTries, 0u) 
+                    {world with 
+                        Islands = 
+                            world.Islands 
+                            |> Map.add 
+                                candidateLocation 
+                                island}
 
     let UpdateCharts 
             (avatarIslandSingleMetricSink : AvatarIslandSingleMetricSink)
@@ -127,7 +157,9 @@ module World =
     let Create 
             (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
             (avatarJobSink                   : AvatarJobSink)
-            (islandSingleNameSink   : IslandSingleNameSink)
+            (islandSingleNameSink            : IslandSingleNameSink)
+            (islandSingleStatisticSink       : IslandSingleStatisticSink)
+            (islandStatisticTemplateSource   : IslandStatisticTemplateSource)
             (nameSource                      : TermSource)
             (worldSingleStatisticSource      : WorldSingleStatisticSource)
             (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
@@ -171,6 +203,8 @@ module World =
             }
             |> GenerateIslands 
                 islandSingleNameSink
+                islandSingleStatisticSink
+                islandStatisticTemplateSource
                 nameSource 
                 worldSize 
                 minimumIslandDistance

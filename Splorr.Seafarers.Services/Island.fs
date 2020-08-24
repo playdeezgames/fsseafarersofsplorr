@@ -14,13 +14,39 @@ type AvatarIslandSingleMetricSource = string -> Location -> AvatarIslandMetricId
 type AvatarIslandSingleMetricSink = string -> Location -> AvatarIslandMetricIdentifier -> uint64 -> unit //TODO:value needs to become uint64 option
 type IslandSingleNameSource = Location -> string option
 type IslandSingleNameSink = Location -> string option -> unit
+type IslandStatisticTemplateSource = unit -> Map<IslandStatisticIdentifier, VesselStatisticTemplate>
+type IslandSingleStatisticSink = Location->IslandStatisticIdentifier*Statistic option->unit
+type IslandSingleStatisticSource = Location->IslandStatisticIdentifier->Statistic option
 
 module Island =
-    let Create() 
-        : Island =
+    let private CreateStatistics
+            (islandSingleStatisticSink     : IslandSingleStatisticSink)
+            (islandStatisticTemplateSource : IslandStatisticTemplateSource)
+            (location                      : Location)
+            : unit =
+        islandStatisticTemplateSource()
+        |> Map.iter
+            (fun identifier template ->
+                (identifier, 
+                    {
+                        MinimumValue = template.MinimumValue
+                        MaximumValue=template.MaximumValue
+                        CurrentValue = template.CurrentValue
+                    } 
+                    |> Some)
+                |> islandSingleStatisticSink location)
+
+    let Create
+            (islandSingleStatisticSink     : IslandSingleStatisticSink)
+            (islandStatisticTemplateSource : IslandStatisticTemplateSource)
+            (location                      : Location) 
+            : Island =
+        location
+        |> CreateStatistics
+            islandSingleStatisticSink
+            islandStatisticTemplateSource
         {
-            Jobs           = []
-            CareenDistance = 0.1 //TODO: dont hardcode this
+            Jobs = []
         }
 
     let GetDisplayName 

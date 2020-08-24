@@ -70,6 +70,21 @@ let private setupShipmateStatisticTemplates
         ]
     |> runCommands connection
 
+let private setupIslandStatisticTemplates 
+        (connection : SQLiteConnection) 
+        : unit =
+    System.Enum.GetValues(typedefof<IslandStatisticIdentifier>) 
+    :?> IslandStatisticIdentifier []
+    |> Array.toList
+    |> List.map
+        (fun id ->
+            sprintf "REPLACE INTO [IslandStatisticTemplates] ([StatisticId], [StatisticName], [MinimumValue], [MaximumValue], [CurrentValue]) VALUES (%u, 'Statistic %u', 0.0, 100.0, 50.0);" (id |> uint) (id |> uint))
+    |> List.append
+        [
+            Tables.IslandStatisticTemplates
+        ]
+    |> runCommands connection
+
 let private setupVesselStatisticTemplates 
         (connection:SQLiteConnection) 
         : unit =
@@ -256,6 +271,23 @@ let private setupIslands
     ]
     |> runCommands connection
 
+
+let private setupIslandStatistics
+        (location   : Location)
+        (connection : SQLiteConnection)
+        : unit =
+    System.Enum.GetValues(typedefof<IslandStatisticIdentifier>) 
+    :?> IslandStatisticIdentifier []
+    |> Array.toList
+    |> List.map
+        (fun id ->
+            sprintf "REPLACE INTO [IslandStatistics] ([IslandX], [IslandY], [StatisticId], [MinimumValue], [MaximumValue], [CurrentValue]) VALUES (%f,%f,%u, 0.0, 100.0, 50.0);" (location |> fst) (location |> snd) (id |> uint))
+    |> List.append
+        [
+            Tables.IslandStatistics
+        ]
+    |> runCommands connection
+
 let internal NewAvatarId = "newavatar"
 let internal InvalidIslandLocation = (-1.0, -1.0)
 
@@ -282,6 +314,8 @@ let internal SetupConnection() : SQLiteConnection =
         setupAvatarJob ExistingAvatarId
         setupAvatarIslandMetrics
         setupIslands
+        setupIslandStatisticTemplates
+        setupIslandStatistics VisitedIslandLocation
     ]
     |> List.iter (fun f -> f connection)
 

@@ -71,6 +71,23 @@ module Tables =
 		[Tonnage] REAL NOT NULL,
 		PRIMARY KEY([ItemId]));"
 
+    let IslandStatistics : string ="CREATE TABLE IF NOT EXISTS [IslandStatistics] (
+    		[IslandX]	REAL NOT NULL,
+    		[IslandY]	REAL NOT NULL,
+    		[StatisticId]	INTEGER NOT NULL,
+    		[MinimumValue]	REAL NOT NULL,
+    		[MaximumValue]	REAL NOT NULL CHECK(MaximumValue>=MinimumValue),
+    		[CurrentValue]	REAL NOT NULL CHECK(CurrentValue>=MinimumValue AND CurrentValue<=MaximumValue),
+    		PRIMARY KEY([IslandX],[IslandY],[StatisticId]));"
+
+    let IslandStatisticTemplates : string = "CREATE TABLE IF NOT EXISTS [IslandStatisticTemplates] (
+    		[StatisticId]	INTEGER,
+    		[StatisticName]	TEXT NOT NULL,
+    		[MinimumValue]	REAL NOT NULL,
+    		[MaximumValue]	REAL NOT NULL CHECK(MaximumValue>=MinimumValue),
+    		[CurrentValue]	REAL NOT NULL CHECK(CurrentValue>=MinimumValue AND CurrentValue<=MaximumValue),
+    		PRIMARY KEY([StatisticId]));"
+
     let Messages : string = "CREATE TABLE IF NOT EXISTS [Messages] (
     	[MessageId]	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     	[AvatarId]	TEXT NOT NULL,

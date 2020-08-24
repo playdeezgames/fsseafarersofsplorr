@@ -74,6 +74,8 @@ module MainMenu =
             (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
             (avatarJobSink                   : AvatarJobSink)
             (islandSingleNameSink            : IslandSingleNameSink)
+            (islandSingleStatisticSink       : IslandSingleStatisticSink)
+            (islandStatisticTemplateSource   : IslandStatisticTemplateSource)
             (nameSource                      : TermSource)
             (rationItemSource                : RationItemSource)
             (shipmateRationItemSink          : ShipmateRationItemSink)
@@ -90,6 +92,8 @@ module MainMenu =
                 avatarIslandSingleMetricSink
                 avatarJobSink
                 islandSingleNameSink
+                islandSingleStatisticSink
+                islandStatisticTemplateSource
                 nameSource
                 worldSingleStatisticSource
                 shipmateStatisticTemplateSource
@@ -117,6 +121,8 @@ module MainMenu =
             (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
             (avatarJobSink                   : AvatarJobSink)
             (islandSingleNameSink            : IslandSingleNameSink)
+            (islandSingleStatisticSink       : IslandSingleStatisticSink)
+            (islandStatisticTemplateSource   : IslandStatisticTemplateSource)
             (nameSource                      : TermSource)
             (worldSingleStatisticSource      : WorldSingleStatisticSource)
             (rationItemSource                : RationItemSource)
@@ -137,6 +143,8 @@ module MainMenu =
                 avatarIslandSingleMetricSink
                 avatarJobSink
                 islandSingleNameSink
+                islandSingleStatisticSink
+                islandStatisticTemplateSource
                 nameSource
                 rationItemSource
                 shipmateRationItemSink
@@ -152,6 +160,8 @@ module MainMenu =
             (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
             (avatarJobSink                   : AvatarJobSink)
             (islandSingleNameSink            : IslandSingleNameSink)
+            (islandSingleStatisticSink       : IslandSingleStatisticSink)
+            (islandStatisticTemplateSource   : IslandStatisticTemplateSource)
             (rationItemSource                : RationItemSource)
             (shipmateRationItemSink          : ShipmateRationItemSink)
             (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
@@ -172,6 +182,8 @@ module MainMenu =
             avatarIslandSingleMetricSink
             avatarJobSink
             islandSingleNameSink
+            islandSingleStatisticSink
+            islandStatisticTemplateSource
             termNameSource
             worldSingleStatisticSource
             rationItemSource

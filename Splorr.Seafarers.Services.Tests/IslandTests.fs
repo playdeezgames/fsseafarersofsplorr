@@ -8,7 +8,11 @@ open CommonTestFixtures
 
 [<Test>]
 let ``Create.It returns a new island.`` () =
-    let actual = Island.Create()
+    let actual = 
+        Island.Create
+            islandSingleStatisticSinkStub
+            islandStatisticTemplateSourceStub
+            (0.0, 0.0)
     Assert.AreEqual([], actual.Jobs)
 
 [<Test>]

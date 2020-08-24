@@ -250,6 +250,20 @@ let main argv =
         Island.GetName connection
         >> Persister.unpackOrThrow
 
+    let islandSingleStatisticSink 
+            (location: Location) =
+        IslandStatistic.SetStatisticForIsland connection location
+        >> Persister.unpackOrThrow
+
+    let islandSingleStatisticSource 
+            (location: Location) =
+        IslandStatistic.GetStatisticForIsland connection location
+        >> Persister.unpackOrThrow
+
+    let islandStatisticTemplateSource () = 
+        IslandStatisticTemplate.GetList connection
+        |> Persister.unpackOrThrow
+
     try
         Runner.Run 
             avatarInventorySink
@@ -275,6 +289,9 @@ let main argv =
             islandSingleMarketSource
             islandSingleNameSink
             islandSingleNameSource
+            islandSingleStatisticSink
+            islandSingleStatisticSource
+            islandStatisticTemplateSource
             itemSource 
             rationItemSource
             shipmateRationItemSink
