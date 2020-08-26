@@ -18,6 +18,7 @@ module AtSea =
 
     let private CanCareen 
             (islandSingleStatisticSource : IslandSingleStatisticSource)
+            (islandSource                : IslandSource)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (world : World) 
             : bool =
@@ -28,8 +29,10 @@ module AtSea =
         let avatarPosition =
             Avatar.GetPosition vesselSingleStatisticSource world.AvatarId
             |> Option.get
-        world
-        |> World.GetNearbyLocations avatarPosition viewDistance
+        World.GetNearbyLocations 
+            islandSource
+            avatarPosition 
+            viewDistance
         |> List.map 
             (fun l -> 
                 (l,
@@ -42,6 +45,7 @@ module AtSea =
     let private GetVisibleIslands 
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (islandSingleNameSource         : IslandSingleNameSource)
+            (islandSource                   : IslandSource)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (world : World) 
             : (Location * string * float * string) list =
@@ -53,8 +57,10 @@ module AtSea =
             world.AvatarId
             |> Avatar.GetPosition vesselSingleStatisticSource
             |> Option.get
-        world
-        |> World.GetNearbyLocations avatarPosition viewDistance
+        World.GetNearbyLocations 
+            islandSource
+            avatarPosition 
+            viewDistance
         |> List.map
             (fun location -> 
                 (location, 
@@ -77,6 +83,7 @@ module AtSea =
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (avatarMessageSource            : AvatarMessageSource)
             (islandSingleNameSource         : IslandSingleNameSource)
+            (islandSource                   : IslandSource)
             (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (messageSink                    : MessageSink) 
@@ -121,6 +128,7 @@ module AtSea =
         |> GetVisibleIslands 
             avatarIslandSingleMetricSource
             islandSingleNameSource
+            islandSource
             vesselSingleStatisticSource
         |> List.iter
             (fun (_, heading, distance, name) -> 
@@ -150,9 +158,12 @@ module AtSea =
             (commoditySource                : CommoditySource) 
             (islandItemSink                 : IslandItemSink) 
             (islandItemSource               : IslandItemSource) 
+            (islandJobSink                  : IslandJobSink)
+            (islandJobSource                : IslandJobSource)
             (islandLocationByNameSource     : IslandLocationByNameSource)
             (islandMarketSink               : IslandMarketSink) 
             (islandMarketSource             : IslandMarketSource) 
+            (islandSource                   : IslandSource)
             (islandSingleNameSource         : IslandSingleNameSource)
             (islandSingleStatisticSource    : IslandSingleStatisticSource)
             (itemSource                     : ItemSource) 
@@ -172,7 +183,8 @@ module AtSea =
 
         let canCareen = 
             CanCareen 
-                islandSingleStatisticSource     
+                islandSingleStatisticSource   
+                islandSource
                 vesselSingleStatisticSource 
                 world
 
@@ -185,6 +197,7 @@ module AtSea =
             |> GetVisibleIslands 
                 avatarIslandSingleMetricSource
                 islandSingleNameSource
+                islandSource
                 vesselSingleStatisticSource
             |> List.fold
                 (fun target (location, _, distance, _) -> 
@@ -237,29 +250,33 @@ module AtSea =
         | Some Command.Dock ->
             match dockTarget with
             | Some location ->
+                world 
+                |> World.Dock 
+                    avatarIslandSingleMetricSink
+                    avatarIslandSingleMetricSource
+                    avatarJobSink
+                    avatarJobSource
+                    avatarMessageSink
+                    avatarSingleMetricSink
+                    avatarSingleMetricSource
+                    commoditySource 
+                    islandItemSink 
+                    islandItemSource 
+                    islandJobSink
+                    islandJobSource
+                    islandMarketSink 
+                    islandMarketSource 
+                    islandSource
+                    itemSource
+                    shipmateSingleStatisticSink
+                    shipmateSingleStatisticSource
+                    termSources
+                    worldSingleStatisticSource
+                    random 
+                    location
                 (Dock, 
                     location, 
-                        world 
-                        |> World.Dock 
-                            avatarIslandSingleMetricSink
-                            avatarIslandSingleMetricSource
-                            avatarJobSink
-                            avatarJobSource
-                            avatarMessageSink
-                            avatarSingleMetricSink
-                            avatarSingleMetricSource
-                            commoditySource 
-                            islandItemSink 
-                            islandItemSource 
-                            islandMarketSink 
-                            islandMarketSource 
-                            itemSource
-                            shipmateSingleStatisticSink
-                            shipmateSingleStatisticSource
-                            termSources
-                            worldSingleStatisticSource
-                            random 
-                            location)
+                        world)
                 |> Gamestate.Docked
                 |> Some
             | None ->
@@ -320,6 +337,7 @@ module AtSea =
                 avatarShipmateSource
                 avatarSingleMetricSink
                 avatarSingleMetricSource
+                islandSource
                 shipmateRationItemSource 
                 shipmateSingleStatisticSink
                 shipmateSingleStatisticSource
@@ -381,11 +399,14 @@ module AtSea =
             (commoditySource                 : CommoditySource) 
             (islandItemSink                  : IslandItemSink) 
             (islandItemSource                : IslandItemSource) 
+            (islandJobSink                   : IslandJobSink)
+            (islandJobSource                 : IslandJobSource)
             (islandLocationByNameSource      : IslandLocationByNameSource)
             (islandMarketSink                : IslandMarketSink) 
             (islandMarketSource              : IslandMarketSource) 
             (islandSingleNameSource          : IslandSingleNameSource)
             (islandSingleStatisticSource     : IslandSingleStatisticSource)
+            (islandSource                    : IslandSource)
             (itemSource                      : ItemSource) 
             (shipmateRationItemSource        : ShipmateRationItemSource)
             (termSources                     : TermSources)
@@ -403,6 +424,7 @@ module AtSea =
             avatarIslandSingleMetricSource
             avatarMessageSource
             islandSingleNameSource
+            islandSource
             shipmateSingleStatisticSource
             vesselSingleStatisticSource
             messageSink 
@@ -422,9 +444,12 @@ module AtSea =
             commoditySource
             islandItemSink
             islandItemSource
+            islandJobSink
+            islandJobSource
             islandLocationByNameSource
             islandMarketSink
             islandMarketSource
+            islandSource
             islandSingleNameSource
             islandSingleStatisticSource
             itemSource
@@ -455,11 +480,14 @@ module AtSea =
             (commoditySource                 : CommoditySource) 
             (islandItemSink                  : IslandItemSink) 
             (islandItemSource                : IslandItemSource) 
+            (islandJobSink                   : IslandJobSink)
+            (islandJobSource                 : IslandJobSource)
             (islandLocationByNameSource      : IslandLocationByNameSource)
             (islandMarketSink                : IslandMarketSink) 
             (islandMarketSource              : IslandMarketSource) 
             (islandSingleNameSource          : IslandSingleNameSource)
-            (islandSingleStatisticSource    : IslandSingleStatisticSource)
+            (islandSingleStatisticSource     : IslandSingleStatisticSource)
+            (islandSource                    : IslandSource) 
             (itemSource                      : ItemSource) 
             (shipmateRationItemSource        : ShipmateRationItemSource)
             (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
@@ -490,11 +518,14 @@ module AtSea =
                 commoditySource 
                 islandItemSink 
                 islandItemSource 
+                islandJobSink
+                islandJobSource
                 islandLocationByNameSource
                 islandMarketSink 
                 islandMarketSource 
                 islandSingleNameSource
                 islandSingleStatisticSource
+                islandSource
                 itemSource 
                 shipmateRationItemSource
                 termSources

@@ -34,11 +34,14 @@ let private functionUnderTest
         atSeaCommoditySource 
         atSeaIslandItemSink 
         atSeaIslandItemSource 
+        islandJobSinkStub
+        islandJobSourceStub
         islandLocationByNameSource
         atSeaIslandMarketSink 
         atSeaIslandMarketSource 
         islandSingleNameSource
         islandSingleStatisticSource
+        islandSourceStub 
         atSeaItemSource
         shipmateRationItemSourceStub
         shipmateSingleStatisticSinkStub
@@ -318,6 +321,14 @@ let ``Run.It returns AtSea when given the Dock command and there is no sufficien
         input
         |>Gamestate.AtSea
         |>Some
+    let vesselSingleStatisticSource (a) (identifier: VesselStatisticIdentifier) = 
+        match identifier with 
+        | VesselStatisticIdentifier.PositionX ->
+            {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=10.0} |> Some
+        | VesselStatisticIdentifier.PositionY ->
+            {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=10.0} |> Some
+        | _ ->
+            vesselSingleStatisticSourceStub a identifier
     let actual =
         input
         |> functionUnderTest 
@@ -329,7 +340,7 @@ let ``Run.It returns AtSea when given the Dock command and there is no sufficien
             islandSingleNameSourceStub
             islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
-            vesselSingleStatisticSourceStub
+            vesselSingleStatisticSource
             inputSource 
             sinkStub
     Assert.AreEqual(expected, actual)
@@ -339,11 +350,6 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
     let input = dockWorld
     let inputSource = Command.Dock |> Some |> toSource
     let expectedLocation = (0.0, 0.0)
-    let expectedIsland = 
-        input.Islands.[expectedLocation] 
-    let expectedIslands = 
-        input.Islands 
-        |> Map.add expectedLocation expectedIsland
     let expectedMessages = ["You dock."]
     let expectedWorld = 
         input

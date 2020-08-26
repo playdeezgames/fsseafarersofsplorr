@@ -8,23 +8,7 @@ open CommonTestFixtures
 open AtSeaTestFixtures
 
 let private world = 
-    World.Create 
-        avatarIslandSingleMetricSinkStub
-        avatarJobSinkStub
-        islandSingleNameSinkStub
-        islandSingleStatisticSinkStub
-        islandStatisticTemplateSourceStub
-        termNameSource
-        worldSingleStatisticSourceStub
-        shipmateStatisticTemplateSourceStub
-        shipmateSingleStatisticSinkStub
-        rationItemSourceStub
-        vesselStatisticTemplateSourceStub
-        vesselStatisticSinkStub
-        vesselSingleStatisticSourceStub
-        shipmateRationItemSinkStub
-        random 
-        avatarId
+    { AvatarId = avatarId }
 
 [<Test>]
 let ``Run.It returns Confirm Quit when given Quit command and there is no world.`` () =
@@ -47,6 +31,7 @@ let ``Run.It returns Confirm Quit when given Quit command and there is no world.
             avatarJobSink
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
+            islandSourceStub
             islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
@@ -83,6 +68,7 @@ let ``Run.It returns Main Menu when given Quit command and there is a world.`` (
             avatarJobSink
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
+            islandSourceStub
             islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
@@ -114,6 +100,7 @@ let ``Run.It returns Main Menu when given invalid command and there is no world.
             avatarJobSink
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
+            islandSourceStub
             islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
@@ -147,6 +134,7 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
             avatarJobSink
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
+            islandSourceStub
             islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
@@ -163,8 +151,13 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
 
 [<Test>]
 let ``Run.It returns At Sea when given Start command and there is no world.`` () =
-    let input = None
-    let inputSource = System.Guid.NewGuid().ToString() |> Command.Start |> Some |> toSource
+    let input = 
+        None
+    let inputSource = 
+        System.Guid.NewGuid().ToString() 
+        |> Command.Start 
+        |> Some 
+        |> toSource
     let avatarJobSink (_) (actual:Job option) = 
         Assert.AreEqual(None, actual)
     let actual =
@@ -174,6 +167,7 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
             avatarJobSink
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
+            islandSourceStub
             islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
@@ -214,6 +208,7 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
             avatarJobSink
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
+            islandSourceStub
             islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
@@ -245,6 +240,7 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
             avatarJobSink
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
+            islandSourceStub
             islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
@@ -283,6 +279,7 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
             avatarJobSink
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
+            islandSourceStub
             islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
@@ -315,6 +312,7 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
             avatarJobSink
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
+            islandSourceStub
             islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub
@@ -347,6 +345,7 @@ let ``Run.It returns Main Menu with no world when given Resume command and there
             avatarJobSink
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
+            islandSourceStub
             islandStatisticTemplateSourceStub
             rationItemSourceStub
             shipmateRationItemSinkStub

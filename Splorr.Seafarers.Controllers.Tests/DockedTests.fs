@@ -30,10 +30,13 @@ let private functionUnderTest
         avatarSingleMetricSink
         avatarSingleMetricSourceStub
         commoditySource 
+        islandJobPurgerStub
         islandMarketSource 
+        islandSingleJobSourceStub
         islandSingleMarketSink
         dockedItemSingleMarketSourceStub
         islandSingleNameSource
+        islandSourceStub
         itemSource 
         shipmateSingleStatisticSinkStub
         shipmateSingleStatisticSource
@@ -508,12 +511,9 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
         Assert.AreEqual(1UL, commodityId)
         Assert.AreEqual(markets.[commodityId].Supply, market.Supply)
         Assert.AreEqual(expectedDemand, market.Demand)
-    let expectedIsland = 
-        inputWorld.Islands.[inputLocation]
     let expectedMessages = ["You complete the purchase of 1 item under test."]
     let expectedWorld =
         inputWorld
-        |> World.TransformIsland inputLocation (fun _ -> expectedIsland |> Some)
     let expected = 
         (Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
@@ -622,12 +622,9 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
     let islandSingleMarketSink (_) (commodityId, market) =
         Assert.AreEqual(1UL, commodityId)
         Assert.AreEqual(expectedMarket, market)
-    let expectedIsland = 
-        inputWorld.Islands.[inputLocation]
     let expectedMessages = ["You complete the sale of 1 item under test.";"You complete the sale."]
     let expectedWorld =
         inputWorld
-        |> World.TransformIsland inputLocation (fun _ -> expectedIsland |> Some)
     let expected = 
         (Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked

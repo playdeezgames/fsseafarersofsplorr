@@ -250,6 +250,7 @@ let private setupAvatarJob
     |> runCommands connection
 
 let internal VisitedIslandLocation: Location = (1.0, 2.0)
+let internal UnvisitedIslandLocation: Location = (10.0, 20.0)
 
 let private setupAvatarIslandMetrics
         (connection : SQLiteConnection)
@@ -261,6 +262,7 @@ let private setupAvatarIslandMetrics
     |> runCommands connection
 
 let internal VisitedIslandName: string = "visited"
+let internal UnvisitedIslandName: string = "unvisited"
 
 let private setupIslands
         (connection : SQLiteConnection)
@@ -268,6 +270,7 @@ let private setupIslands
     [
         Tables.Islands
         sprintf "REPLACE INTO [Islands] ([IslandX], [IslandY], [IslandName]) VALUES (%f, %f, '%s');" (VisitedIslandLocation |> fst) (VisitedIslandLocation |> snd) VisitedIslandName
+        sprintf "REPLACE INTO [Islands] ([IslandX], [IslandY], [IslandName]) VALUES (%f, %f, '%s');" (UnvisitedIslandLocation |> fst) (UnvisitedIslandLocation |> snd) UnvisitedIslandName
     ]
     |> runCommands connection
 
@@ -288,13 +291,31 @@ let private setupIslandStatistics
         ]
     |> runCommands connection
 
+let private setupIslandJobs
+        (location    : Location)
+        (destination : Location)
+        (connection  : SQLiteConnection)
+        : unit =
+    [
+        Tables.IslandJobs
+        sprintf "REPLACE INTO [IslandJobs] ([IslandX], [IslandY], [DestinationX], [DestinationY], [Description], [Reward], [Order]) VALUES (%f, %f, %f, %f, 'description', 1.0, 1);" (location|>fst) (location|>snd) (destination|>fst) (destination|>snd)
+    ]
+    |> runCommands connection
+
 let internal NewAvatarId = "newavatar"
 let internal InvalidIslandLocation = (-1.0, -1.0)
+
+let internal setupIslandList
+        (connection : SQLiteConnection)
+        : unit =
+    [
+        Views.IslandList
+    ]
+    |> runCommands connection
 
 let internal SetupConnection() : SQLiteConnection = 
     let connection = new SQLiteConnection(connectionString)
     connection.Open()
-
     [
         setupCommodities  
         setupItems
@@ -316,6 +337,9 @@ let internal SetupConnection() : SQLiteConnection =
         setupIslands
         setupIslandStatisticTemplates
         setupIslandStatistics VisitedIslandLocation
+        setupIslandStatistics UnvisitedIslandLocation
+        setupIslandJobs VisitedIslandLocation UnvisitedIslandLocation
+        setupIslandList
     ]
     |> List.iter (fun f -> f connection)
 

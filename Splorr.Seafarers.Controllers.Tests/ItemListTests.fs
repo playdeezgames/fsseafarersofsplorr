@@ -21,6 +21,7 @@ let ``Run.It returns Docked (at Shop) gamestate.`` () =
             atSeaCommoditySource 
             atSeaIslandItemSource 
             atSeaIslandMarketSource 
+            islandSourceStub
             atSeaItemSource 
             shipmateSingleStatisticSourceStub
             sinkStub

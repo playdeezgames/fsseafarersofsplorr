@@ -5,6 +5,15 @@ open CommonTestFixtures
 open Splorr.Seafarers.Persistence
 open Splorr.Seafarers.Models
 
+let ``GetList.It retrieves a list of locations for islands.`` () =
+    let connection = SetupConnection()
+    let expected = 
+        [
+            (0.0, 0.0)
+        ]
+    let actual = Island.GetList connection
+    Assert.AreEqual(expected, actual)
+
 [<Test>]
 let ``GetName.It retrieves a name for a given location where an island exists.`` () =
     let connection = SetupConnection()

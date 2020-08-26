@@ -47,23 +47,7 @@ let internal islandSingleNameSinkStub (_) (_) = ()
 let internal islandSingleStatisticSinkStub (_) (_) = ()
 let internal islandStatisticTemplateSourceStub () = Map.empty
 let internal previousState = 
-    World.Create
-        avatarIslandSingleMetricSinkStub
-        avatarJobSinkStub
-        islandSingleNameSinkStub
-        islandSingleStatisticSinkStub
-        islandStatisticTemplateSourceStub
-        nameSourceStub
-        worldSingleStatisticSourceStub
-        shipmateStatisticTemplateSourceStub
-        shipmateSingleStatisticSinkStub
-        rationItemSourceStub
-        vesselStatisticTemplateSourceStub
-        vesselStatisticSinkStub
-        vesselSingleStatisticSourceStub
-        shipmateRationItemSinkStub
-        random
-        avatarId
+    { AvatarId = avatarId }
     |> Gamestate.AtSea
 
 

@@ -16,8 +16,6 @@ module Docked =
         world.AvatarId
         |> avatarMessageSource
         |> Utility.DumpMessages messageSink
-        let island =
-            world.Islands.[location]
         [
             (Hue.Flavor, sprintf "You have visited %u times." (avatarIslandSingleMetricSource world.AvatarId location AvatarIslandMetricIdentifier.VisitCount |> Option.defaultValue 0UL) |> Line) |> Hued
             (Hue.Heading, sprintf "You are docked at '%s':" (islandSingleNameSource location |> Option.get) |> Line) |> Hued
@@ -36,9 +34,12 @@ module Docked =
             (avatarSingleMetricSink         : AvatarSingleMetricSink)
             (avatarSingleMetricSource       : AvatarSingleMetricSource)
             (commoditySource                : CommoditySource) 
+            (islandJobPurger                : IslandJobPurger)
             (islandMarketSource             : IslandMarketSource) 
+            (islandSingleJobSource          : IslandSingleJobSource)
             (islandSingleMarketSink         : IslandSingleMarketSink) 
             (islandSingleMarketSource       : IslandSingleMarketSource) 
+            (islandSource                   : IslandSource)
             (itemSource                     : ItemSource) 
             (shipmateSingleStatisticSink    : ShipmateSingleStatisticSink)
             (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
@@ -52,19 +53,23 @@ module Docked =
 
         match command with
         | Some (Command.AcceptJob index) ->
+            world 
+            |> World.AcceptJob
+                avatarIslandSingleMetricSink
+                avatarIslandSingleMetricSource
+                avatarJobSink
+                avatarJobSource
+                avatarMessageSink 
+                avatarSingleMetricSink
+                avatarSingleMetricSource
+                islandJobPurger
+                islandSingleJobSource
+                islandSource
+                index 
+                location
             (Dock, 
                 location, 
-                world 
-                |> World.AcceptJob
-                    avatarIslandSingleMetricSink
-                    avatarIslandSingleMetricSource
-                    avatarJobSink
-                    avatarJobSource
-                    avatarMessageSink 
-                    avatarSingleMetricSink
-                    avatarSingleMetricSource
-                    index 
-                    location)
+                world)
             |> Gamestate.Docked
             |> Some
 
@@ -78,6 +83,7 @@ module Docked =
                 islandMarketSource 
                 islandSingleMarketSink 
                 islandSingleMarketSource 
+                islandSource
                 itemSource 
                 shipmateSingleStatisticSink
                 shipmateSingleStatisticSource
@@ -103,6 +109,7 @@ module Docked =
                         islandMarketSource 
                         islandSingleMarketSink 
                         islandSingleMarketSource 
+                        islandSource
                         itemSource 
                         shipmateSingleStatisticSink
                         shipmateSingleStatisticSource
@@ -194,10 +201,13 @@ module Docked =
             (avatarSingleMetricSink         : AvatarSingleMetricSink)
             (avatarSingleMetricSource       : AvatarSingleMetricSource)
             (commoditySource                : CommoditySource) 
+            (islandJobPurger                : IslandJobPurger)
             (islandMarketSource             : IslandMarketSource) 
+            (islandSingleJobSource          : IslandSingleJobSource)
             (islandSingleMarketSink         : IslandSingleMarketSink) 
             (islandSingleMarketSource       : IslandSingleMarketSource) 
             (islandSingleNameSource         : IslandSingleNameSource)
+            (islandSource                   : IslandSource)
             (itemSource                     : ItemSource) 
             (shipmateSingleStatisticSink    : ShipmateSingleStatisticSink)
             (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
@@ -228,9 +238,12 @@ module Docked =
             avatarSingleMetricSink
             avatarSingleMetricSource
             commoditySource 
+            islandJobPurger
             islandMarketSource 
+            islandSingleJobSource
             islandSingleMarketSink 
             islandSingleMarketSource
+            islandSource
             itemSource 
             shipmateSingleStatisticSink
             shipmateSingleStatisticSource
@@ -240,13 +253,14 @@ module Docked =
 
     let internal RunBoilerplate 
             (avatarMessageSource           : AvatarMessageSource)
+            (islandSource                  : IslandSource)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (func                          : Location -> World -> Gamestate option) 
             (location                      : Location) 
             (world                         : World) 
             : Gamestate option =
         if world |> World.IsAvatarAlive shipmateSingleStatisticSource then
-            if world.Islands |> Map.containsKey location then
+            if islandSource() |> List.exists (fun x->x= location) then
                 func location world
             else
                 world
@@ -271,10 +285,13 @@ module Docked =
             (avatarSingleMetricSink         : AvatarSingleMetricSink)
             (avatarSingleMetricSource       : AvatarSingleMetricSource)
             (commoditySource                : CommoditySource) 
+            (islandJobPurger                : IslandJobPurger)
             (islandMarketSource             : IslandMarketSource) 
+            (islandSingleJobSource          : IslandSingleJobSource)
             (islandSingleMarketSink         : IslandSingleMarketSink) 
             (islandSingleMarketSource       : IslandSingleMarketSource) 
             (islandSingleNameSource         : IslandSingleNameSource)
+            (islandSource                   : IslandSource)
             (itemSource                     : ItemSource) 
             (shipmateSingleStatisticSink    : ShipmateSingleStatisticSink)
             (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
@@ -283,6 +300,7 @@ module Docked =
             (messageSink                    : MessageSink) =
         RunBoilerplate 
             avatarMessageSource
+            islandSource
             shipmateSingleStatisticSource
             (RunWithIsland 
                 avatarInventorySink
@@ -296,11 +314,14 @@ module Docked =
                 avatarMessageSource          
                 avatarSingleMetricSink
                 avatarSingleMetricSource
-                commoditySource              
+                commoditySource         
+                islandJobPurger
                 islandMarketSource           
+                islandSingleJobSource
                 islandSingleMarketSink       
                 islandSingleMarketSource
                 islandSingleNameSource
+                islandSource
                 itemSource                   
                 shipmateSingleStatisticSink  
                 shipmateSingleStatisticSource

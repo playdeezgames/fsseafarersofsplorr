@@ -67,3 +67,5 @@ let internal islandSingleNameSinkStub (_) (_) = ()
 
 let internal islandSingleStatisticSinkStub (_) (_) = ()
 let internal islandStatisticTemplateSourceStub () = Map.empty
+
+let internal islandSourceStub() = []

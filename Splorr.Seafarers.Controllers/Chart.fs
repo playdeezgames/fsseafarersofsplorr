@@ -15,6 +15,7 @@ module Chart =
     let private outputChart 
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (islandSingleNameSource         : IslandSingleNameSource)
+            (islandSource                   : IslandSource)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (worldSize                      : Location) 
             (messageSink                    : MessageSink) 
@@ -34,9 +35,9 @@ module Chart =
             use textBrush:Brush = new SolidBrush(Color.White) :> Brush
             use font = new Font("Arial", 10.0f)
             let legend: Map<uint,string> = 
-                world.Islands
-                |> Map.fold
-                    (fun leg location island -> 
+                islandSource()
+                |> List.fold
+                    (fun leg location -> 
                         let x, y = plotLocation scale location
                         let addToLegend, brush =
                             match avatarIslandSingleMetricSource world.AvatarId location AvatarIslandMetricIdentifier.VisitCount with
@@ -95,6 +96,7 @@ module Chart =
     let Run 
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (islandSingleNameSource         : IslandSingleNameSource)
+            (islandSource                   : IslandSource)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (worldSingleStatisticSource     : WorldSingleStatisticSource) 
             (messageSink                    : MessageSink) 
@@ -110,6 +112,7 @@ module Chart =
         outputChart 
             avatarIslandSingleMetricSource
             islandSingleNameSource
+            islandSource
             vesselSingleStatisticSource
             (worldSingleStatisticSource WorldStatisticIdentifier.PositionX |> Statistic.GetMaximumValue, 
                 worldSingleStatisticSource WorldStatisticIdentifier.PositionY |> Statistic.GetMaximumValue) 

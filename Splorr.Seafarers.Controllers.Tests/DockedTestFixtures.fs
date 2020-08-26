@@ -6,23 +6,7 @@ open Splorr.Seafarers.Services
 open AtSeaTestFixtures
 
 let internal dockWorld = 
-    World.Create
-        avatarIslandSingleMetricSinkStub
-        avatarJobSinkStub
-        islandSingleNameSinkStub
-        islandSingleStatisticSinkStub
-        islandStatisticTemplateSourceStub
-        termNameSource
-        dockWorldSingleStatisticSource
-        shipmateStatisticTemplateSourceStub
-        shipmateSingleStatisticSinkStub
-        rationItemSourceStub
-        vesselStatisticTemplateSourceStub
-        vesselStatisticSinkStub
-        vesselSingleStatisticSourceStub
-        shipmateRationItemSinkStub
-        random 
-        avatarId
+    { AvatarId = avatarId }
 
 let internal dockLocation : Location = (0.0, 0.0)
 
@@ -74,29 +58,10 @@ let internal smallWorldSingleStatisticSource (identifier: WorldStatisticIdentifi
         raise (System.NotImplementedException (sprintf "smallWorldSingleStatisticSource - %s" (identifier.ToString())))
 
 let internal smallWorld = 
-    World.Create 
-        avatarIslandSingleMetricSinkStub
-        avatarJobSinkStub
-        islandSingleNameSinkStub
-        islandSingleStatisticSinkStub
-        islandStatisticTemplateSourceStub
-        termNameSource
-        smallWorldSingleStatisticSource
-        shipmateStatisticTemplateSourceStub
-        shipmateSingleStatisticSinkStub
-        rationItemSourceStub
-        vesselStatisticTemplateSourceStub
-        vesselStatisticSinkStub
-        vesselSingleStatisticSourceStub
-        shipmateRationItemSinkStub
-        random 
-        avatarId
+    { AvatarId = avatarId }
 
 let internal smallWorldIslandLocation = 
-    smallWorld.Islands 
-    |> Map.toList 
-    |> List.map fst 
-    |> List.head
+    (0.0, 0.0)
 
 let private smallWorldIslandItemSource (_) = 
     Set.empty 
@@ -118,26 +83,6 @@ let private smallWorldIslandMarketSink (_) (_) = ()
 
 let internal smallWorldDocked = 
     smallWorld 
-    |> World.Dock
-        avatarIslandSingleMetricSinkStub
-        avatarIslandSingleMetricSourceStub
-        avatarJobSinkStub
-        avatarJobSourceStub
-        avatarMessageSinkStub
-        avatarSingleMetricSinkStub
-        avatarSingleMetricSourceStub
-        commoditySource 
-        smallWorldIslandItemSink 
-        smallWorldIslandItemSource 
-        smallWorldIslandMarketSink 
-        smallWorldIslandMarketSource 
-        itemSource
-        shipmateSingleStatisticSinkStub
-        shipmateSingleStatisticSourceStub
-        termSources
-        smallWorldSingleStatisticSource
-        random 
-        smallWorldIslandLocation
 
 let internal shopWorld = smallWorldDocked
 

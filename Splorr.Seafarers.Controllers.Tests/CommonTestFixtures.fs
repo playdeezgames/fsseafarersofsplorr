@@ -192,3 +192,12 @@ let internal islandSingleStatisticSourceStub (location: Location) (identifier : 
     | _ ->
         None
 
+let islandJobSinkStub (_) (_) = ()
+
+let islandJobSourceStub (_) = []
+
+let islandSourceStub () = [(0.0, 0.0)]
+
+let islandJobPurgerStub (_) (_) = ()
+
+let islandSingleJobSourceStub (_) (_) = None

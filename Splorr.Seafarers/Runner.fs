@@ -24,9 +24,13 @@ module Runner =
             (commoditySource                 : CommoditySource)
             (islandItemSink                  : IslandItemSink) 
             (islandItemSource                : IslandItemSource) 
+            (islandJobPurger                 : IslandJobPurger)
+            (islandJobSink                   : IslandJobSink)
+            (islandJobSource                 : IslandJobSource)
             (islandLocationByNameSource      : IslandLocationByNameSource)
             (islandMarketSink                : IslandMarketSink) 
             (islandMarketSource              : IslandMarketSource) 
+            (islandSingleJobSource           : IslandSingleJobSource)
             (islandSingleMarketSink          : IslandSingleMarketSink) 
             (islandSingleMarketSource        : IslandSingleMarketSource)
             (islandSingleNameSink            : IslandSingleNameSink) 
@@ -34,6 +38,7 @@ module Runner =
             (islandSingleStatisticSink       : IslandSingleStatisticSink)
             (islandSingleStatisticSource     : IslandSingleStatisticSource)
             (islandStatisticTemplateSource   : IslandStatisticTemplateSource)
+            (islandSource                    : IslandSource)
             (itemSource                      : ItemSource)
             (rationItemSource                : RationItemSource)
             (shipmateRationItemSink          : ShipmateRationItemSink)
@@ -74,11 +79,14 @@ module Runner =
                     commoditySource 
                     islandItemSink 
                     islandItemSource 
+                    islandJobSink
+                    islandJobSource
                     islandLocationByNameSource
                     islandMarketSink 
                     islandMarketSource
                     islandSingleNameSource
                     islandSingleStatisticSource
+                    islandSource
                     itemSource 
                     shipmateRationItemSource
                     shipmateSingleStatisticSink
@@ -112,6 +120,7 @@ module Runner =
                 Chart.Run 
                     avatarIslandSingleMetricSource
                     islandSingleNameSource
+                    islandSource 
                     vesselSingleStatisticSource
                     worldSingleStatisticSource
                     messageSink 
@@ -139,10 +148,13 @@ module Runner =
                     avatarSingleMetricSink
                     avatarSingleMetricSource
                     commoditySource 
+                    islandJobPurger
                     islandMarketSource 
+                    islandSingleJobSource
                     islandSingleMarketSink 
                     islandSingleMarketSource
                     islandSingleNameSource
+                    islandSource
                     itemSource 
                     shipmateSingleStatisticSink
                     shipmateSingleStatisticSource
@@ -158,6 +170,7 @@ module Runner =
                     commoditySource 
                     islandItemSource 
                     islandMarketSource 
+                    islandSource
                     itemSource 
                     shipmateSingleStatisticSource
                     messageSink 
@@ -166,7 +179,9 @@ module Runner =
 
             | Gamestate.Docked (Jobs, location, world) -> 
                 Jobs.Run 
+                    islandJobSource
                     islandSingleNameSource
+                    islandSource
                     messageSink 
                     location
                     world
@@ -199,6 +214,7 @@ module Runner =
                 IslandList.Run 
                     avatarIslandSingleMetricSource
                     islandSingleNameSource
+                    islandSource
                     vesselSingleStatisticSource
                     messageSink 
                     page 
@@ -210,6 +226,7 @@ module Runner =
                     avatarJobSink
                     islandSingleNameSink
                     islandSingleStatisticSink
+                    islandSource
                     islandStatisticTemplateSource
                     rationItemSource
                     shipmateRationItemSink
@@ -262,9 +279,13 @@ module Runner =
                 commoditySource 
                 islandItemSink 
                 islandItemSource 
+                islandJobPurger
+                islandJobSink
+                islandJobSource
                 islandLocationByNameSource
                 islandMarketSink 
                 islandMarketSource 
+                islandSingleJobSource
                 islandSingleMarketSink 
                 islandSingleMarketSource
                 islandSingleNameSink
@@ -272,6 +293,7 @@ module Runner =
                 islandSingleStatisticSink
                 islandSingleStatisticSource
                 islandStatisticTemplateSource
+                islandSource
                 itemSource 
                 rationItemSource
                 shipmateRationItemSink
@@ -312,9 +334,13 @@ module Runner =
             (commoditySource                 : CommoditySource) 
             (islandItemSink                  : IslandItemSink) 
             (islandItemSource                : IslandItemSource) 
+            (islandJobPurger                 : IslandJobPurger)
+            (islandJobSink                   : IslandJobSink)
+            (islandJobSource                 : IslandJobSource)
             (islandLocationByNameSource      : IslandLocationByNameSource)
             (islandMarketSink                : IslandMarketSink) 
             (islandMarketSource              : IslandMarketSource) 
+            (islandSingleJobSource           : IslandSingleJobSource)
             (islandSingleMarketSink          : IslandSingleMarketSink) 
             (islandSingleMarketSource        : IslandSingleMarketSource) 
             (islandSingleNameSink            : IslandSingleNameSink) 
@@ -322,6 +348,7 @@ module Runner =
             (islandSingleStatisticSink       : IslandSingleStatisticSink)
             (islandSingleStatisticSource     : IslandSingleStatisticSource)
             (islandStatisticTemplateSource   : IslandStatisticTemplateSource)
+            (islandSource                    : IslandSource)
             (itemSource                      : ItemSource) 
             (rationItemSource                : RationItemSource)
             (shipmateRationItemSink          : ShipmateRationItemSink)
@@ -362,9 +389,13 @@ module Runner =
             commoditySource 
             islandItemSink 
             islandItemSource 
+            islandJobPurger
+            islandJobSink
+            islandJobSource
             islandLocationByNameSource
             islandMarketSink 
             islandMarketSource 
+            islandSingleJobSource
             islandSingleMarketSink 
             islandSingleMarketSource
             islandSingleNameSink
@@ -372,6 +403,7 @@ module Runner =
             islandSingleStatisticSink
             islandSingleStatisticSource
             islandStatisticTemplateSource
+            islandSource
             itemSource 
             rationItemSource
             shipmateRationItemSink

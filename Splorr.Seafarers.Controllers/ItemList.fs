@@ -56,12 +56,20 @@ module ItemList =
             (commoditySource               : CommoditySource) 
             (islandItemSource              : IslandItemSource)
             (islandMarketSource            : IslandMarketSource) 
+            (islandSource                  : IslandSource)
             (itemSource                    : ItemSource) 
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (messageSink                   : MessageSink) =
-        RunWithIsland commoditySource itemSource islandMarketSource islandItemSource shipmateSingleStatisticSource messageSink
+        RunWithIsland 
+            commoditySource 
+            itemSource 
+            islandMarketSource 
+            islandItemSource 
+            shipmateSingleStatisticSource 
+            messageSink
         |> Docked.RunBoilerplate 
             avatarMessageSource
+            islandSource
             shipmateSingleStatisticSource 
     
 

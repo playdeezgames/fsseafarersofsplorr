@@ -26,6 +26,7 @@
     <Compile Include="CommodityTests.fs" />
     <Compile Include="IslandTests.fs" />
     <Compile Include="IslandItemTests.fs" />
+    <Compile Include="IslandJobTests.fs" />
     <Compile Include="IslandMarketTests.fs" />
     <Compile Include="IslandStatisticTemplateTests.fs" />
     <Compile Include="IslandStatisticTests.fs" />

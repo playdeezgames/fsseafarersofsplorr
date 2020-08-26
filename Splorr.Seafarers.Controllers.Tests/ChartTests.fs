@@ -17,6 +17,7 @@ let ``Run.It returns the At Sea state with the given world.`` () =
         Chart.Run
             avatarIslandSingleMetricSourceStub
             islandSingleNameSourceStub
+            islandSourceStub
             vesselSingleStatisticSourceStub 
             worldSingleStatisticSourceStub 
             sinkStub 
