@@ -276,11 +276,13 @@ let main argv =
         IslandJob.AddToIsland connection location
         >> Persister.unpackOrThrow
 
-    let islandJobPurger(location:Location) (index:uint32) : unit= 
-        raise (System.NotImplementedException "islandJobPurger")
+    let islandJobPurger(location:Location)= 
+        IslandJob.RemoveFromIsland connection location
+        >> Persister.unpackOrThrow
 
-    let islandSingleJobSource(location:Location) (index:uint32) : Job option = 
-        raise (System.NotImplementedException "islandSingleJobSource")
+    let islandSingleJobSource(location:Location) = 
+        IslandJob.GetForIslandByIndex connection location
+        >> Persister.unpackOrThrow
 
     try
         Runner.Run 
