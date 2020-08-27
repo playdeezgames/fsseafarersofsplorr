@@ -8,7 +8,7 @@ open CommonTestFixtures
 open AtSeaTestFixtures
 
 let private dockWorld = 
-    { AvatarId = avatarId }
+    avatarId
 
 let private dockLocation = (0.0, 0.0)
 

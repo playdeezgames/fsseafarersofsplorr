@@ -15,7 +15,7 @@ let private random = Random()
 let private avatarId = ""
 
 let private world =  
-    { AvatarId = avatarId }
+    avatarId
 
 [<Test>]
 let ``Run.It returns the given AtSea Gamestate`` () =

@@ -10,19 +10,19 @@ module Status =
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
             (messageSink                   : MessageSink) 
-            (world                         : World) 
+            (avatarId                      : string) 
             : unit =
-        let portFouling = vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.PortFouling |> Option.get
-        let satiety = shipmateSingleStatisticSource world.AvatarId Primary ShipmateStatisticIdentifier.Satiety |> Option.get
-        let health = shipmateSingleStatisticSource world.AvatarId Primary ShipmateStatisticIdentifier.Health |> Option.get
-        let starboardFouling = vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.StarboardFouling |> Option.get
+        let portFouling = vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PortFouling |> Option.get
+        let satiety = shipmateSingleStatisticSource avatarId Primary ShipmateStatisticIdentifier.Satiety |> Option.get
+        let health = shipmateSingleStatisticSource avatarId Primary ShipmateStatisticIdentifier.Health |> Option.get
+        let starboardFouling = vesselSingleStatisticSource avatarId VesselStatisticIdentifier.StarboardFouling |> Option.get
         [
             "" |> Line
             (Hue.Heading, "Status:" |> Line) |> Hued
             (Hue.Label, "Money: " |> Text) |> Hued
-            (Hue.Value, world.AvatarId |> Avatar.GetMoney shipmateSingleStatisticSource |> sprintf "%f" |> Line) |> Hued
+            (Hue.Value, avatarId |> Avatar.GetMoney shipmateSingleStatisticSource |> sprintf "%f" |> Line) |> Hued
             (Hue.Label, "Reputation: " |> Text) |> Hued
-            (Hue.Value, world.AvatarId |> Avatar.GetReputation shipmateSingleStatisticSource |> sprintf "%f" |> Line) |> Hued
+            (Hue.Value, avatarId |> Avatar.GetReputation shipmateSingleStatisticSource |> sprintf "%f" |> Line) |> Hued
             (Hue.Label, "Satiety: " |> Text) |> Hued
             (Hue.Value, (satiety.CurrentValue, satiety.MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
             (Hue.Label, "Health: " |> Text) |> Hued
@@ -33,7 +33,7 @@ module Status =
             (Hue.Value, (starboardFouling.CurrentValue, starboardFouling.MaximumValue) ||> sprintf "%.2f/%.2f" |> Line) |> Hued
         ]
         |> List.iter messageSink
-        world.AvatarId
+        avatarId
         |> avatarJobSource
         |> Option.iter
             (fun job ->

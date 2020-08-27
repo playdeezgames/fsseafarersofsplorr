@@ -15,7 +15,7 @@ let private random =
 let private avatarId = ""
 
 let private world = 
-    { AvatarId = avatarId }
+    avatarId
 
 [<Test>]
 let ``GetWorld.It returns the world embedded within the given AtSea Gamestate.`` () =

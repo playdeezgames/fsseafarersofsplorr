@@ -27,7 +27,7 @@ let internal avatarJobSourceStub (_) = None
 let internal avatarIslandSingleMetricSinkStub (_) (_) (_) (_) = ()
 let internal avatarIslandSingleMetricSourceStub (_) (_) (_) = None
 
-let internal world = { AvatarId = avatarId }
+let internal world = avatarId
 
 let internal deadWorld =
     world

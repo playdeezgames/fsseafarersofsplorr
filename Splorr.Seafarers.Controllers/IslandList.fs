@@ -12,7 +12,7 @@ module IslandList =
             (messageSink                    : MessageSink) 
             (pageSize                       : uint32) 
             (page                           : uint32) 
-            (world                          : World) 
+            (avatarId                       : string) 
             : unit = 
         [
             "" |> Line
@@ -23,7 +23,7 @@ module IslandList =
             islandSource()
             |> List.filter
                 (fun location -> 
-                    avatarIslandSingleMetricSource world.AvatarId location AvatarIslandMetricIdentifier.VisitCount 
+                    avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount 
                     |> Option.map (fun _ -> true)
                     |> Option.defaultValue false)
             |> List.sortBy(fun l->islandSingleNameSource l |> Option.get)
@@ -39,7 +39,7 @@ module IslandList =
         |> List.iter messageSink
         if page < totalPages then
             let avatarPosition = 
-                world.AvatarId
+                avatarId
                 |> Avatar.GetPosition vesselSingleStatisticSource
                 |> Option.get
             knownIslands

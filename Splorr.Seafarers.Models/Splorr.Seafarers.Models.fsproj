@@ -21,7 +21,6 @@
     <Compile Include="Side.fs" />
     <Compile Include="Metric.fs" />
     <Compile Include="ShipmateIdentifier.fs" />
-    <Compile Include="World.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.7.2" />

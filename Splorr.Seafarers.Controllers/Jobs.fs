@@ -50,7 +50,7 @@ module Jobs =
             (islandSource           : IslandSource)
             (messageSink            : MessageSink) 
             (location               : Location)
-            (world                  : World) 
+            (avatarId               : string) 
             : Gamestate option =
         islandSource()
         |> List.tryFind(fun x->x= location)
@@ -59,7 +59,7 @@ module Jobs =
                 islandSingleNameSource
                 islandJobSource
                 messageSink)
-        (Dock, location, world)
+        (Dock, location, avatarId)
         |> Gamestate.Docked
         |> Some
 

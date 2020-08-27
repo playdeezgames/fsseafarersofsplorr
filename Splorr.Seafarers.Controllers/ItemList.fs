@@ -12,7 +12,7 @@ module ItemList =
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (messageSink        : MessageSink) 
             (location           : Location) 
-            (world              : World) 
+            (avatarId           : string) 
             : Gamestate option =
         [
             "" |> Line
@@ -44,10 +44,10 @@ module ItemList =
             ())
         [
             (Hue.Label, "Money: " |> Text) |> Hued
-            (Hue.Value, world.AvatarId |> Avatar.GetMoney shipmateSingleStatisticSource |> sprintf "%f" |> Line) |> Hued
+            (Hue.Value, avatarId |> Avatar.GetMoney shipmateSingleStatisticSource |> sprintf "%f" |> Line) |> Hued
         ]
         |> List.iter messageSink
-        (Dock, location, world)
+        (Dock, location, avatarId)
         |> Gamestate.Docked
         |> Some
 
