@@ -189,19 +189,24 @@ module AtSea =
                 world
 
         let dockDistance = 
-            vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.ViewDistance 
+            vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.DockDistance 
             |> Option.get 
             |> Statistic.GetCurrentValue
-        let dockTarget = 
+        let nearby = 
             world
             |> GetVisibleIslands 
                 avatarIslandSingleMetricSource
                 islandSingleNameSource
                 islandSource
                 vesselSingleStatisticSource
+        let dockTarget = 
+            nearby
             |> List.fold
                 (fun target (location, _, distance, _) -> 
-                    (if distance<dockDistance then (Some location) else target)) None
+                    (if distance<dockDistance then 
+                        (Some location) 
+                    else 
+                        target)) None
 
         match command with
         | Some Command.Status ->

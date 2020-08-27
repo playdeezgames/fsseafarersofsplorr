@@ -15,7 +15,7 @@ module Island =
             : Result<Location list, string> =
         connection
         |> Utility.GetList 
-            "" (fun _->()) convertor
+            "SELECT [IslandX], [IslandY] FROM [IslandList];" (fun _->()) convertor
 
     let GetName
             (connection : SQLiteConnection)

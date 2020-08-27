@@ -5,12 +5,15 @@ open CommonTestFixtures
 open Splorr.Seafarers.Persistence
 open Splorr.Seafarers.Models
 
+[<Test>]
 let ``GetList.It retrieves a list of locations for islands.`` () =
     let connection = SetupConnection()
-    let expected = 
+    let expected : Result<Location list, string>= 
         [
-            (0.0, 0.0)
+            (1.0, 2.0)
+            (10.0, 20.0)
         ]
+        |> Ok
     let actual = Island.GetList connection
     Assert.AreEqual(expected, actual)
 
