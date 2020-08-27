@@ -264,6 +264,26 @@ let main argv =
         IslandStatisticTemplate.GetList connection
         |> Persister.unpackOrThrow
 
+    let islandJobSource = 
+        IslandJob.GetForIsland connection
+        >> Persister.unpackOrThrow
+
+    let islandSource () : Location list = 
+        Island.GetList connection
+        |> Persister.unpackOrThrow
+
+    let islandJobSink (location:Location) = 
+        IslandJob.AddToIsland connection location
+        >> Persister.unpackOrThrow
+
+    let islandJobPurger(location:Location)= 
+        IslandJob.RemoveFromIsland connection location
+        >> Persister.unpackOrThrow
+
+    let islandSingleJobSource(location:Location) = 
+        IslandJob.GetForIslandByIndex connection location
+        >> Persister.unpackOrThrow
+
     try
         Runner.Run 
             avatarInventorySink
@@ -282,9 +302,13 @@ let main argv =
             commoditySource
             islandItemSink 
             islandItemSource 
+            islandJobPurger
+            islandJobSink
+            islandJobSource
             islandLocationByNameSource
             islandMarketSink 
             islandMarketSource 
+            islandSingleJobSource
             islandSingleMarketSink 
             islandSingleMarketSource
             islandSingleNameSink
@@ -292,6 +316,7 @@ let main argv =
             islandSingleStatisticSink
             islandSingleStatisticSource
             islandStatisticTemplateSource
+            islandSource
             itemSource 
             rationItemSource
             shipmateRationItemSink

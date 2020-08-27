@@ -6,6 +6,18 @@ open Splorr.Seafarers.Persistence
 open Splorr.Seafarers.Models
 
 [<Test>]
+let ``GetList.It retrieves a list of locations for islands.`` () =
+    let connection = SetupConnection()
+    let expected : Result<Location list, string>= 
+        [
+            (1.0, 2.0)
+            (10.0, 20.0)
+        ]
+        |> Ok
+    let actual = Island.GetList connection
+    Assert.AreEqual(expected, actual)
+
+[<Test>]
 let ``GetName.It retrieves a name for a given location where an island exists.`` () =
     let connection = SetupConnection()
     let input = VisitedIslandLocation

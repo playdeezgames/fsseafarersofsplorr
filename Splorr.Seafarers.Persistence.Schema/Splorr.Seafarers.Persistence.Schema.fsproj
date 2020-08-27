@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Tables.fs" />
+    <Compile Include="Views.fs" />
   </ItemGroup>
 
 </Project>

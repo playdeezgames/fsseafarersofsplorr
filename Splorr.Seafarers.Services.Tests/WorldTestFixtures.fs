@@ -31,41 +31,8 @@ let private vesselSingleStatisticSourceStub (_) (identifier:VesselStatisticIdent
     | VesselStatisticIdentifier.PositionY ->
         {MinimumValue=0.0; CurrentValue=50.0; MaximumValue=100.0} |> Some
     | _ -> None
-let internal soloIslandWorld = 
-    World.Create 
-        avatarIslandSingleMetricSinkStub
-        avatarJobSinkStub
-        islandSingleNameSinkStub
-        islandSingleStatisticSinkStub
-        islandStatisticTemplateSourceStub
-        nameSource
-        soloIslandSingleStatisticSource
-        shipmateStatisticTemplateSource
-        shipmateSingleStatisticSinkStub
-        rationItemSourceStub
-        vesselStatisticTemplateSourceStub
-        vesselStatisticSinkStub
-        vesselSingleStatisticSourceStub
-        shipmateRationItemSinkStub
-        random 
-        avatarId
-let internal emptyWorld = 
-    {
-        AvatarId = avatarId
-        Islands = Map.empty
-    }
 let internal defaultRewardrange = (1.0,10.0)
 let internal fabricatedDestinationList = [(0.0, 0.0)] |> Set.ofList
-let internal oneIslandWorld = 
-    emptyWorld
-    |> World.SetIsland 
-        (0.0,0.0) 
-        (Island.Create
-            islandSingleStatisticSinkStub
-            islandStatisticTemplateSourceStub
-            (0.0, 0.0)
-        |> Some)
-    |> World.TransformIsland  (0.0,0.0) (fun i -> {i with Jobs = [ Job.Create termSources soloIslandSingleStatisticSource random fabricatedDestinationList ]} |> Some)
 
 let internal commoditySource() = 
     Map.empty
@@ -104,85 +71,3 @@ let internal genericWorldSingleStatisticSource (identfier: WorldStatisticIdentif
         {MinimumValue=0.0; MaximumValue=11.0; CurrentValue=5.5}
     | _ ->
         raise (System.NotImplementedException "soloIslandSingleStatisticSource")
-
-let internal genericWorld = 
-    World.Create 
-        avatarIslandSingleMetricSinkStub
-        avatarJobSinkStub
-        islandSingleNameSinkStub
-        islandSingleStatisticSinkStub
-        islandStatisticTemplateSourceStub
-        nameSource
-        genericWorldSingleStatisticSource
-        shipmateStatisticTemplateSource
-        shipmateSingleStatisticSinkStub
-        rationItemSourceStub
-        vesselStatisticTemplateSourceStub
-        vesselStatisticSinkStub
-        vesselSingleStatisticSourceStub
-        shipmateRationItemSinkStub
-        random 
-        avatarId
-let internal deadWorld =
-    genericWorld
-
-let internal genericWorldIslandLocation = genericWorld.Islands |> Map.toList |> List.map fst |> List.head
-let internal genericWorldInvalidIslandLocation = ((genericWorldIslandLocation |> fst) + 1.0, genericWorldIslandLocation |> snd)
-let private genericWorldIslandItemSource (_:Location) = Set.empty
-let private genericWorldIslandItemSink (_) (_) = ()
-let private genericWorldIslandMarketSource (_:Location) = Map.empty
-let private genericWorldIslandMarketSink (_) (_) = ()
-let private genericWorldShipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
-    match identifier with
-    | ShipmateStatisticIdentifier.Turn ->
-        Statistic.Create(0.0, 50000.0) 0.0 |> Some
-    | _ ->
-        raise (System.NotImplementedException "genericWorldShipmateSingleStatisticSource")
-        None
-let private genericWorldShipmateSingleStatisticSink (_) (_) (_) = 
-    ()
-let internal genericDockedWorld = 
-    World.Dock
-        avatarIslandSingleMetricSinkStub
-        avatarIslandSingleMetricSourceStub
-        avatarJobSinkStub
-        avatarJobSourceStub
-        avatarMessageSinkStub 
-        avatarSingleMetricSinkStub
-        avatarSingleMetricSourceStub
-        commoditySource
-        genericWorldIslandItemSink 
-        genericWorldIslandItemSource 
-        genericWorldIslandMarketSink 
-        genericWorldIslandMarketSource 
-        genericWorldItemSource 
-        genericWorldShipmateSingleStatisticSink
-        genericWorldShipmateSingleStatisticSource
-        termSources 
-        genericWorldSingleStatisticSource
-        random 
-        genericWorldIslandLocation 
-        genericWorld
-
-let internal shopWorld = 
-    genericDockedWorld
-let internal shopWorldLocation = genericWorldIslandLocation
-let internal shopWorldBogusLocation = genericWorldInvalidIslandLocation
-
-let internal jobWorld = 
-    genericDockedWorld 
-    |> World.AcceptJob 
-        avatarIslandSingleMetricSinkStub
-        avatarIslandSingleMetricSourceStub
-        avatarJobSinkStub
-        avatarJobSourceStub
-        avatarMessageSinkStub 
-        avatarSingleMetricSinkStub
-        avatarSingleMetricSourceStub
-        1u 
-        genericWorldIslandLocation
-
-
-let internal headForWorld =
-    oneIslandWorld
-

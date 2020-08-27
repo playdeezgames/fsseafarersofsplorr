@@ -10,7 +10,8 @@
     <Compile Include="ItemDescriptor.fs" />
     <Compile Include="AvatarIslandMetricIdentifier.fs" />
     <Compile Include="StatisticTemplate.fs" />
-    <Compile Include="Island.fs" />
+    <Compile Include="IslandStatisticIdentifier.fs" />
+    <Compile Include="IslandStatisticTemplate.fs" />
     <Compile Include="ShipmateStatisticIdentifier.fs" />
     <Compile Include="ShipmateStatisticTemplate.fs" />
     <Compile Include="VesselStatisticIdentifier.fs" />

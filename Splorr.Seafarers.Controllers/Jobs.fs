@@ -6,21 +6,22 @@ open Splorr.Seafarers.Services
 module Jobs = 
     let private RunIsland 
             (islandSingleNameSource : IslandSingleNameSource)
+            (islandJobSource        : IslandJobSource)
             (messageSink            : MessageSink) 
             (location               : Location) 
-            (islands                : Map<Location,Island>) 
-            (island                 : Island) 
             : unit =
         [
             "" |> Line
             (Hue.Heading, "Jobs Available:" |> Line) |> Hued
         ]
         |> List.iter messageSink
-        island.Jobs
-        |> List.zip [1..island.Jobs.Length]
-        |> List.map (fun (index, job) -> (index, job, islands |> Map.find job.Destination))
+        let jobs = 
+            location
+            |> islandJobSource
+        jobs
+        |> List.zip [1..jobs.Length]
         |> List.iter 
-            (fun (index, job, island) ->
+            (fun (index, job) ->
                 let bearing = 
                     Location.HeadingTo location job.Destination
                     |> Angle.ToDegrees
@@ -39,24 +40,25 @@ module Jobs =
                     (Hue.Flavor, job.FlavorText |> sprintf "\t'%s'" |> Line) |> Hued
                 ]
                 |> List.iter messageSink)
-        if island.Jobs.IsEmpty then
+        if jobs.IsEmpty then
             "(none available)" |> Line |> messageSink
 
         
     let Run  
+            (islandJobSource        : IslandJobSource)
             (islandSingleNameSource : IslandSingleNameSource)
+            (islandSource           : IslandSource)
             (messageSink            : MessageSink) 
             (location               : Location)
             (world                  : World) 
             : Gamestate option =
-        world.Islands 
-        |> Map.tryFind location
+        islandSource()
+        |> List.tryFind(fun x->x= location)
         |> Option.iter 
             (RunIsland 
                 islandSingleNameSource
-                messageSink 
-                location 
-                world.Islands)
+                islandJobSource
+                messageSink)
         (Dock, location, world)
         |> Gamestate.Docked
         |> Some

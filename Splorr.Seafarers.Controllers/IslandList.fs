@@ -7,6 +7,7 @@ module IslandList =
     let private RunWorld 
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (islandSingleNameSource         : IslandSingleNameSource)
+            (islandSource                   : IslandSource)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (messageSink                    : MessageSink) 
             (pageSize                       : uint32) 
@@ -19,14 +20,13 @@ module IslandList =
         ]
         |> List.iter messageSink
         let knownIslands =
-            world.Islands
-            |> Map.toList
+            islandSource()
             |> List.filter
-                (fun (location,island) -> 
+                (fun location -> 
                     avatarIslandSingleMetricSource world.AvatarId location AvatarIslandMetricIdentifier.VisitCount 
                     |> Option.map (fun _ -> true)
                     |> Option.defaultValue false)
-            |> List.sortBy(fun (l,_)->islandSingleNameSource l |> Option.get)
+            |> List.sortBy(fun l->islandSingleNameSource l |> Option.get)
         let totalItems = knownIslands |> List.length |> uint32
         let totalPages = (totalItems + (pageSize-1u)) / pageSize
         let skippedItems = page * pageSize
@@ -45,7 +45,7 @@ module IslandList =
             knownIslands
             |> List.skip (skippedItems |> int)
             |> List.take ((Utility.Lesser pageSize (totalItems-skippedItems)) |> int)
-            |> List.iter (fun (location, island) -> 
+            |> List.iter (fun location -> 
                 let distance =
                     Location.DistanceTo avatarPosition location
                 let bearing =
@@ -68,6 +68,7 @@ module IslandList =
     let Run 
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (islandSingleNameSource         : IslandSingleNameSource)
+            (islandSource                   : IslandSource)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (messageSink                    : MessageSink) 
             (page                           : uint32) 
@@ -79,6 +80,7 @@ module IslandList =
             (RunWorld 
                 avatarIslandSingleMetricSource
                 islandSingleNameSource
+                islandSource
                 vesselSingleStatisticSource 
                 messageSink 
                 pageSize 

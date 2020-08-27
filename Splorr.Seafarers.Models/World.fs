@@ -3,6 +3,5 @@
 type World =
     {
         AvatarId : string
-        Islands  : Map<Location, Island>
     }
     

@@ -7,15 +7,6 @@ open IslandTestFixtures
 open CommonTestFixtures
 
 [<Test>]
-let ``Create.It returns a new island.`` () =
-    let actual = 
-        Island.Create
-            islandSingleStatisticSinkStub
-            islandStatisticTemplateSourceStub
-            (0.0, 0.0)
-    Assert.AreEqual([], actual.Jobs)
-
-[<Test>]
 let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =
     let inputLocation = (0.0, 0.0)
     let avatarIslandSingleMetricSource(_) (_) (identifier:AvatarIslandMetricIdentifier) = 
@@ -173,46 +164,43 @@ let ``AddVisit.It does not update visit count when given turn was prior or equal
 
 [<Test>]
 let ``GenerateJob.It generates a job when no job is present on the island.`` () =
-    let actual =
-        visitedIsland
-        |> Island.GenerateJobs termSources worldSingleStatisticSourceStub random singleDestination
-    Assert.False(actual.Jobs.IsEmpty)
+    let inputLocation = (0.0, 0.0)
+    let mutable sinkCalled = false
+    let islandJobSink (_) (_) =
+        sinkCalled<-true
+    let islandJobSource (_) =
+        []
+    inputLocation
+    |> Island.GenerateJobs 
+        islandJobSink
+        islandJobSource
+        termSources 
+        worldSingleStatisticSourceStub 
+        random 
+        singleDestination
+    Assert.IsTrue(sinkCalled)
 
 [<Test>]
 let ``GenerateJob.It does nothing when no job is present on the island and no potential job destinations are given.`` () =
-    let actual =
-        visitedIsland
-        |> Island.GenerateJobs termSources worldSingleStatisticSourceStub random Set.empty
-    Assert.True(actual.Jobs.IsEmpty)
-
-[<Test>]
-let ``RemoveJob.It returns the original island and None when the given job index is 0u.`` () =
-    let actual =
-        jobAvailableIsland
-        |> Island.RemoveJob 0u
-    Assert.AreEqual((jobAvailableIsland,None),actual)
-
-[<Test>]
-let ``RemoveJob.It returns the original island and None when there are no jobs on the given island.`` () =
-    let actual =
-        visitedIsland
-        |> Island.RemoveJob 1u
-    Assert.AreEqual((visitedIsland,None),actual)
-
-[<Test>]
-let ``RemoveJob.It returns the original island and None whenthe given job index is out of range.`` () =
-    let actual =
-        jobAvailableIsland
-        |> Island.RemoveJob 0xFFFFFFFFu
-    Assert.AreEqual((jobAvailableIsland,None),actual)
-
-
-[<Test>]
-let ``RemoveJob.It returns the modified island and the indicated job when the given job index is in range.`` () =
-    let actual =
-        jobAvailableIsland
-        |> Island.RemoveJob 1u
-    Assert.AreEqual(({jobAvailableIsland with Jobs = []},Some jobAvailableIsland.Jobs.Head),actual)
+    let inputLocation = (0.0, 0.0)
+    let islandJobSink (_) (_) =
+        Assert.Fail("islandJobSink")
+    let islandJobSource (_) =
+        [
+            {
+                FlavorText=""
+                Reward=0.0
+                Destination=(0.0, 0.0)
+            }
+        ]
+    inputLocation
+    |> Island.GenerateJobs 
+        islandJobSink
+        islandJobSource
+        termSources 
+        worldSingleStatisticSourceStub 
+        random 
+        Set.empty
 
 [<Test>]
 let ``MakeKnown.It does nothing when the given island is already known.`` () =

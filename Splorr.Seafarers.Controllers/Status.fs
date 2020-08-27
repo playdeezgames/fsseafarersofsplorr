@@ -37,8 +37,6 @@ module Status =
         |> avatarJobSource
         |> Option.iter
             (fun job ->
-                let island = 
-                    world.Islands.[job.Destination]
                 [
                     (Hue.Subheading, "Current Job:" |> Line) |> Hued
                     (Hue.Sublabel, "Description: " |> Text) |> Hued

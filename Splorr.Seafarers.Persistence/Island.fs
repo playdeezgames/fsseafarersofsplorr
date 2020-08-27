@@ -5,6 +5,18 @@ open Splorr.Seafarers.Models
 open System
 
 module Island =
+    let private convertor 
+            (reader : SQLiteDataReader) 
+            : Location =
+        (reader.GetDouble(0), reader.GetDouble(1))
+
+    let GetList
+            (connection : SQLiteConnection)
+            : Result<Location list, string> =
+        connection
+        |> Utility.GetList 
+            "SELECT [IslandX], [IslandY] FROM [IslandList];" (fun _->()) convertor
+
     let GetName
             (connection : SQLiteConnection)
             (location   : Location)

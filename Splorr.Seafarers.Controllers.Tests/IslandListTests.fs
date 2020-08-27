@@ -20,6 +20,7 @@ let ``Run.It returns the given gamestate.`` () =
         |> IslandList.Run
             avatarIslandSingleMetricSourceStub
             islandSingleNameSourceStub
+            islandSourceStub
             vesselSingleStatisticSourceStub 
             sinkStub 
             0u

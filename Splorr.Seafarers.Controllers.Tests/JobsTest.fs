@@ -8,23 +8,7 @@ open CommonTestFixtures
 open AtSeaTestFixtures
 
 let private dockWorld = 
-    World.Create 
-        avatarIslandSingleMetricSinkStub
-        avatarJobSinkStub
-        islandSingleNameSinkStub
-        islandSingleStatisticSinkStub
-        islandStatisticTemplateSourceStub
-        termNameSource
-        dockWorldSingleStatisticSource
-        shipmateStatisticTemplateSourceStub
-        shipmateSingleStatisticSinkStub
-        rationItemSourceStub
-        vesselStatisticTemplateSourceStub
-        vesselStatisticSinkStub
-        vesselSingleStatisticSourceStub
-        shipmateRationItemSinkStub
-        random
-        avatarId
+    { AvatarId = avatarId }
 
 let private dockLocation = (0.0, 0.0)
 
@@ -39,7 +23,9 @@ let ``Run.It returns Docked with the given location and world.`` () =
     let actual =
         (inputLocation, inputWorld)
         ||> Jobs.Run 
+            islandJobSourceStub
             islandSingleNameSourceStub
+            islandSourceStub
             sinkStub
     Assert.AreEqual(expected, actual)
 

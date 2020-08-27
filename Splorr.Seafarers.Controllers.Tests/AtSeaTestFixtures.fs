@@ -27,24 +27,7 @@ let internal avatarJobSourceStub (_) = None
 let internal avatarIslandSingleMetricSinkStub (_) (_) (_) (_) = ()
 let internal avatarIslandSingleMetricSourceStub (_) (_) (_) = None
 
-let internal world = 
-    World.Create 
-        avatarIslandSingleMetricSinkStub
-        avatarJobSinkStub
-        islandSingleNameSinkStub
-        islandSingleStatisticSinkStub
-        islandStatisticTemplateSourceStub
-        termNameSource
-        worldSingleStatisticSourceStub
-        shipmateStatisticTemplateSourceStub
-        shipmateSingleStatisticSinkStub
-        rationItemSourceStub
-        vesselStatisticTemplateSourceStub
-        vesselStatisticSinkStub
-        vesselSingleStatisticSourceStub
-        shipmateRationItemSinkStub
-        random 
-        avatarId
+let internal world = { AvatarId = avatarId }
 
 let internal deadWorld =
     world
@@ -66,24 +49,7 @@ let internal emptyWorldSingleStatisticSource (identfier: WorldStatisticIdentifie
     | _ ->
         raise (System.NotImplementedException "emptyWorldSingleStatisticSource")
 
-let internal emptyWorld = 
-    World.Create 
-        avatarIslandSingleMetricSinkStub
-        avatarJobSinkStub
-        islandSingleNameSinkStub
-        islandSingleStatisticSinkStub
-        islandStatisticTemplateSourceStub
-        termNameSource
-        emptyWorldSingleStatisticSource
-        shipmateStatisticTemplateSourceStub
-        shipmateSingleStatisticSinkStub
-        rationItemSourceStub
-        vesselStatisticTemplateSourceStub
-        vesselStatisticSinkStub
-        vesselSingleStatisticSourceStub
-        shipmateRationItemSinkStub
-        random
-        avatarId
+let internal emptyWorld = world
 
 let internal dockWorldSingleStatisticSource (identfier: WorldStatisticIdentifier) : Statistic =
     match identfier with
@@ -99,60 +65,11 @@ let internal dockWorldSingleStatisticSource (identfier: WorldStatisticIdentifier
         {MinimumValue=0.0; MaximumValue=0.0; CurrentValue=5.0}
     | _ ->
         raise (System.NotImplementedException (sprintf "dockWorldSingleStatisticSource %s" (identfier.ToString())))
-let internal dockWorld = 
-    World.Create 
-        avatarIslandSingleMetricSinkStub
-        avatarJobSinkStub
-        islandSingleNameSinkStub
-        islandSingleStatisticSinkStub
-        islandStatisticTemplateSourceStub
-        termNameSource
-        dockWorldSingleStatisticSource
-        shipmateStatisticTemplateSourceStub
-        shipmateSingleStatisticSinkStub
-        rationItemSourceStub
-        vesselStatisticTemplateSourceStub
-        vesselStatisticSinkStub
-        vesselSingleStatisticSourceStub
-        shipmateRationItemSinkStub
-        random
-        avatarId
+let internal dockWorld = world
 
 let internal commoditySourceStub () = Map.empty
 
-let internal headForWorldUnvisited = 
-    World.Create 
-        avatarIslandSingleMetricSinkStub
-        avatarJobSinkStub
-        islandSingleNameSinkStub
-        islandSingleStatisticSinkStub
-        islandStatisticTemplateSourceStub
-        termNameSource
-        dockWorldSingleStatisticSource
-        shipmateStatisticTemplateSourceStub
-        shipmateRationItemSinkStub
-        rationItemSourceStub
-        vesselStatisticTemplateSourceStub
-        vesselStatisticSinkStub
-        vesselSingleStatisticSourceStub
-        shipmateRationItemSinkStub
-        random
-        avatarId
-
-    |> World.Move
-        avatarInventorySinkStub
-        avatarInventorySourceStub
-        avatarIslandSingleMetricSinkStub
-        avatarMessageSinkStub
-        avatarShipmateSourceStub
-        avatarSingleMetricSinkStub
-        avatarSingleMetricSourceStub
-        shipmateRationItemSourceStub
-        shipmateSingleStatisticSinkStub
-        shipmateSingleStatisticSourceStub
-        vesselSingleStatisticSinkStub 
-        vesselSingleStatisticSourceStub 
-        1u
+let internal headForWorldUnvisited = world
 
 let private headForWorldIslandItemSource (_) = 
     [1UL] 
@@ -176,26 +93,6 @@ let private itemSourceStub() = Map.empty
 
 let internal headForWorldVisited = 
     headForWorldUnvisited
-    |> World.Dock 
-        avatarIslandSingleMetricSinkStub
-        avatarIslandSingleMetricSourceStub
-        avatarJobSinkStub
-        avatarJobSourceStub
-        avatarMessageSinkStub
-        avatarSingleMetricSinkStub
-        avatarSingleMetricSourceStub
-        commoditySourceStub 
-        headForWorldIslandItemSink 
-        headForWorldIslandItemSource 
-        headForWorldIslandMarketSink 
-        headForWorldIslandMarketSource 
-        itemSourceStub 
-        shipmateSingleStatisticSinkStub
-        shipmateSingleStatisticSourceStub
-        termSources
-        dockWorldSingleStatisticSource
-        random 
-        (0.0, 0.0)
 
 let internal abandonJobWorld =
     dockWorld

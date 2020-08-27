@@ -50,6 +50,16 @@ module Tables =
 		[ItemId]	INTEGER NOT NULL,
 		PRIMARY KEY([IslandX],[IslandY],[ItemId]));"
 
+    let IslandJobs : string = "CREATE TABLE IF NOT EXISTS [IslandJobs] (
+    	[IslandX]	REAL NOT NULL,
+    	[IslandY]	REAL NOT NULL,
+    	[Order]	INTEGER NOT NULL,
+    	[DestinationX]	REAL NOT NULL,
+    	[DestinationY]	REAL NOT NULL,
+    	[Reward]	REAL NOT NULL,
+    	[Description]	TEXT NOT NULL,
+    	PRIMARY KEY([IslandX],[IslandY],[Order]));"
+
     let IslandMarkets : string = "CREATE TABLE IF NOT EXISTS [IslandMarkets] (
     	[IslandX]	REAL NOT NULL,
     	[IslandY]	REAL NOT NULL,

@@ -17,6 +17,10 @@ type IslandSingleNameSink = Location -> string option -> unit
 type IslandStatisticTemplateSource = unit -> Map<IslandStatisticIdentifier, VesselStatisticTemplate>
 type IslandSingleStatisticSink = Location->IslandStatisticIdentifier*Statistic option->unit
 type IslandSingleStatisticSource = Location->IslandStatisticIdentifier->Statistic option
+type IslandJobSource = Location -> Job list
+type IslandJobSink = Location -> Job -> unit
+type IslandSingleJobSource = Location -> uint32 -> Job option
+type IslandJobPurger = Location -> uint32 -> unit
 
 module Island =
     let private CreateStatistics
@@ -40,14 +44,12 @@ module Island =
             (islandSingleStatisticSink     : IslandSingleStatisticSink)
             (islandStatisticTemplateSource : IslandStatisticTemplateSource)
             (location                      : Location) 
-            : Island =
+            : unit =
         location
         |> CreateStatistics
             islandSingleStatisticSink
             islandStatisticTemplateSource
-        {
-            Jobs = []
-        }
+        
 
     let GetDisplayName 
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
@@ -85,36 +87,23 @@ module Island =
             ()
 
     let GenerateJobs 
-            (termSources                : TermSource * TermSource * TermSource * TermSource * TermSource * TermSource)
+            (islandJobSink              : IslandJobSink)
+            (islandJobSource            : IslandJobSource)
+            (termSources                : TermSources)
             (worldSingleStatisticSource : WorldSingleStatisticSource)
             (random                     : Random) 
             (destinations               : Set<Location>) 
-            (island                     : Island) 
-            : Island =
-        if island.Jobs.IsEmpty && not destinations.IsEmpty then
-            {island with 
-                Jobs = 
-                    [
-                        Job.Create 
-                            termSources 
-                            worldSingleStatisticSource 
-                            random 
-                            destinations
-                    ] 
-                    |> List.append island.Jobs}
-        else
-            island
-
-    let RemoveJob 
-            (index  : uint32) 
-            (island : Island) 
-            : Island * (Job option) =
-        let taken, left =
-            island.Jobs
-            |> List.zip [1u..(island.Jobs.Length |> uint32)]
-            |> List.partition 
-                (fun (idx, _)->idx=index)
-        {island with Jobs = left |> List.map snd}, taken |> List.map snd |> List.tryHead
+            (location                   : Location)
+            : unit =
+        let jobs = 
+            islandJobSource location
+        if jobs.IsEmpty && not destinations.IsEmpty then
+            Job.Create 
+                termSources 
+                worldSingleStatisticSource 
+                random 
+                destinations
+            |> islandJobSink location
 
     let MakeKnown
             (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)

@@ -15,23 +15,7 @@ let private random = Random()
 let private avatarId = ""
 
 let private world =  
-    World.Create 
-        avatarIslandSingleMetricSinkStub
-        avatarJobSinkStub
-        islandSingleNameSinkStub
-        islandSingleStatisticSinkStub
-        islandStatisticTemplateSourceStub
-        termNameSource
-        worldSingleStatisticSourceStub
-        shipmateStatisticTemplateSourceStub
-        shipmateSingleStatisticSinkStub
-        rationItemSourceStub
-        vesselStatisticTemplateSourceStub
-        vesselStatisticSinkStub
-        vesselSingleStatisticSourceStub
-        shipmateRationItemSinkStub
-        random 
-        avatarId
+    { AvatarId = avatarId }
 
 [<Test>]
 let ``Run.It returns the given AtSea Gamestate`` () =
