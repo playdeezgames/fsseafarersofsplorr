@@ -2,15 +2,15 @@
 
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
-open System.Drawing
 open System
+open System.IO
 
 module Chart = 
     let private plotLocation 
             (scale    : int) 
             (location : Location) 
             : int * int =
-        ((location |> snd |> int) * scale - scale/2, (-(location |> fst |> int)) * scale - scale/2)
+        ((location |> snd |> int) * scale - scale/2, (-(location |> fst |> int)) * scale + scale/2)
 
     let private outputChart 
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
@@ -23,31 +23,37 @@ module Chart =
             (avatarId                       : string) 
             : unit =
         try
+            use writer = System.IO.File.CreateText(sprintf "%s.html" chartName)
+            writer.WriteLine("<html>")
+            writer.WriteLine("<body>")
             let scale = 10
-            let x, y = plotLocation scale worldSize
-            use bmp = new Bitmap(x, -y)
-            let g = Graphics.FromImage(bmp)
-            g.TranslateTransform(0.0f, (-y) |> float32)
-            g.Clear(Color.DarkBlue)
-            use seenIslandBrush = new SolidBrush(Color.Green)
-            use knownIslandBrush = new SolidBrush(Color.LightGreen)
-            use avatarBrush = new SolidBrush(Color.Bisque)
-            use textBrush:Brush = new SolidBrush(Color.White) :> Brush
-            use font = new Font("Arial", 10.0f)
+            let width, height = ((worldSize |> fst |> int) * scale, (worldSize |> snd |> int) * scale)
+            writer.WriteLine(sprintf "<svg width=\"%d\" height=\"%d\">" width height)
+            writer.WriteLine(sprintf "<rect width=\"%d\" height=\"%d\" style=\"fill:#00008B;\"/>" width height)
             let legend: Map<uint,string> = 
                 islandSource()
                 |> List.fold
                     (fun leg location -> 
                         let x, y = plotLocation scale location
-                        let addToLegend, brush =
+                        let seen = 
+                            avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.Seen 
+                            |> Option.map (fun x -> x > 0UL) 
+                            |> Option.defaultValue false
+                        let addToLegend =
                             match avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount with
-                            | None -> false, seenIslandBrush
-                            | _ -> true, knownIslandBrush
-                        g.FillEllipse(brush,x,y,scale,scale)
+                            | None -> false
+                            | _ -> true
+                        match seen, addToLegend with
+                        | true, true ->
+                            writer.WriteLine(sprintf "<ellipse cx=\"%d\" cy=\"%d\" rx=\"%d\" ry=\"%d\" style=\"fill:#00FF00;\"/>" x (height+y) (scale/2) (scale/2))
+                        | true, false ->
+                            writer.WriteLine(sprintf "<ellipse cx=\"%d\" cy=\"%d\" rx=\"%d\" ry=\"%d\" style=\"fill:#008000;\"/>" x (height+y) (scale/2) (scale/2))
+                        | _ ->
+                            ()
                         if addToLegend then
                             let index = (leg.Count + 1) |> uint
-                            let yOffset = if (-y)>bmp.Height/2 then 10.0f else (-20.0f)
-                            g.DrawString(index|>sprintf "%u", font, textBrush, (x |> float32), (y |> float32) + yOffset)
+                            let yOffset = if (-y)>height/2 then 20 else (-10)
+                            writer.WriteLine(sprintf "<text x=\"%d\" y=\"%d\" fill=\"#ffffff\">%u</text>" x (y+height+yOffset) index)
                             leg
                             |> Map.add index (islandSingleNameSource location |> Option.get)
                         else
@@ -57,23 +63,26 @@ module Chart =
                 |> Avatar.GetPosition vesselSingleStatisticSource 
                 |> Option.get
                 |> plotLocation scale
-            g.FillEllipse(avatarBrush, avatarPosition |> fst , avatarPosition |> snd, scale, scale)
-            bmp.Save(chartName |> sprintf "%s.png", Imaging.ImageFormat.Png)
-            let legendText =
-                legend
-                |> Map.toList
-                |> List.map 
-                    (fun (index,name) ->
-                        sprintf "%u - %s" index name)
-                |> List.toArray
-            IO.File.WriteAllLines(chartName |> sprintf "%s.txt", legendText)
+            writer.WriteLine(sprintf "<ellipse cx=\"%d\" cy=\"%d\" rx=\"%d\" ry=\"%d\" style=\"fill:#c0c000;\"/>" (avatarPosition |> fst) (height+(avatarPosition |> snd)) (scale/2) (scale/2))
+            writer.WriteLine("</svg>")
+            writer.WriteLine("<ul>")
+            legend
+            |> Map.toList
+            |> List.iter
+                (fun (index,name) ->
+                    (index, name)
+                    ||> sprintf "<li>%u - %s</li>" 
+                    |> writer.WriteLine)
+            writer.WriteLine("</ul>")
+            writer.WriteLine("</body>")
+            writer.WriteLine("</html>")
+            writer.Close()
         with
         | ex ->
             [
                 (Hue.Error, ex.ToString() |> sprintf "An error occurred when attempting to export the chart: '%s'" |> Line) |> Hued
             ]            
             |> List.iter messageSink
-            //try, catch, eat... ci build fails because of the gdi stuff not working on wherever it is being built
 
     let private UpdateDisplay 
         (messageSink : MessageSink) 
@@ -81,7 +90,7 @@ module Chart =
         : unit =
         [
             "" |> Line
-            (chartName, chartName) ||> sprintf "Writing chart to '%s.png' and '%s.txt'" |> Line
+            chartName |> sprintf "Writing chart to '%s.html'" |> Line
         ]
         |> List.iter messageSink
 
