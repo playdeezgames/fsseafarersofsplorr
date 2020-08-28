@@ -57,7 +57,7 @@ module Metrics =
                 RunWorld 
                     avatarMetricSource
                     messageSink 
-                    w.AvatarId)
+                    w)
         gamestate
         |> Some
 

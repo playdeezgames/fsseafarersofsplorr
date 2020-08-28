@@ -6,7 +6,7 @@ open Splorr.Seafarers.Services
 open AtSeaTestFixtures
 
 let internal dockWorld = 
-    { AvatarId = avatarId }
+    avatarId
 
 let internal dockLocation : Location = (0.0, 0.0)
 
@@ -58,7 +58,7 @@ let internal smallWorldSingleStatisticSource (identifier: WorldStatisticIdentifi
         raise (System.NotImplementedException (sprintf "smallWorldSingleStatisticSource - %s" (identifier.ToString())))
 
 let internal smallWorld = 
-    { AvatarId = avatarId }
+    avatarId
 
 let internal smallWorldIslandLocation = 
     (0.0, 0.0)

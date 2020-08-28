@@ -8,7 +8,7 @@ open CommonTestFixtures
 open AtSeaTestFixtures
 
 let private world = 
-    { AvatarId = avatarId }
+    avatarId
 
 [<Test>]
 let ``Run.It returns Confirm Quit when given Quit command and there is no world.`` () =

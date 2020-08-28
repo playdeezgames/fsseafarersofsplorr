@@ -10,14 +10,14 @@ module Docked =
             (islandSingleNameSource         : IslandSingleNameSource)
             (messageSink                    : MessageSink) 
             (location                       : Location) 
-            (world                          : World) 
+            (avatarId                       : string) 
             : unit =
         "" |> Line |> messageSink
-        world.AvatarId
+        avatarId
         |> avatarMessageSource
         |> Utility.DumpMessages messageSink
         [
-            (Hue.Flavor, sprintf "You have visited %u times." (avatarIslandSingleMetricSource world.AvatarId location AvatarIslandMetricIdentifier.VisitCount |> Option.defaultValue 0UL) |> Line) |> Hued
+            (Hue.Flavor, sprintf "You have visited %u times." (avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount |> Option.defaultValue 0UL) |> Line) |> Hued
             (Hue.Heading, sprintf "You are docked at '%s':" (islandSingleNameSource location |> Option.get) |> Line) |> Hued
         ]
         |> List.iter messageSink
@@ -46,14 +46,14 @@ module Docked =
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (command                        : Command option) 
             (location                       : Location) 
-            (world                          : World) 
+            (avatarId                       : string) 
             : Gamestate option =
-        world
+        avatarId
         |> World.ClearMessages avatarMessagePurger
 
         match command with
         | Some (Command.AcceptJob index) ->
-            world 
+            avatarId 
             |> World.AcceptJob
                 avatarIslandSingleMetricSink
                 avatarIslandSingleMetricSource
@@ -69,12 +69,12 @@ module Docked =
                 location
             (Dock, 
                 location, 
-                world)
+                avatarId)
             |> Gamestate.Docked
             |> Some
 
         | Some (Command.Buy (quantity, itemName))->
-            world 
+            avatarId 
             |> World.BuyItems 
                 avatarInventorySink
                 avatarInventorySource
@@ -93,97 +93,98 @@ module Docked =
                 itemName
             (Dock, 
                 location, 
-                    world) 
+                    avatarId) 
             |> Gamestate.Docked
             |> Some            
 
         | Some (Command.Sell (quantity, itemName))->
+            avatarId 
+            |> World.SellItems 
+                avatarInventorySink
+                avatarInventorySource
+                avatarMessageSink
+                commoditySource 
+                islandMarketSource 
+                islandSingleMarketSink 
+                islandSingleMarketSource 
+                islandSource
+                itemSource 
+                shipmateSingleStatisticSink
+                shipmateSingleStatisticSource
+                location 
+                quantity 
+                itemName
             (Dock, 
                 location, 
-                    world 
-                    |> World.SellItems 
-                        avatarInventorySink
-                        avatarInventorySource
-                        avatarMessageSink
-                        commoditySource 
-                        islandMarketSource 
-                        islandSingleMarketSink 
-                        islandSingleMarketSource 
-                        islandSource
-                        itemSource 
-                        shipmateSingleStatisticSink
-                        shipmateSingleStatisticSource
-                        location 
-                        quantity 
-                        itemName) 
+                    avatarId) 
             |> Gamestate.Docked
             |> Some            
 
         | Some Command.Items ->
-            (ItemList, location, world) 
+            (ItemList, location, avatarId) 
             |> Gamestate.Docked
             |> Some
 
         | Some Command.Jobs ->
-            (Jobs, location, world)
+            (Jobs, location, avatarId)
             |> Gamestate.Docked
             |> Some
 
         | Some Command.Status ->
-            (Dock, location, world)
+            (Dock, location, avatarId)
             |> Gamestate.Docked
             |> Gamestate.Status
             |> Some
 
         | Some (Command.Abandon Job) ->
+            avatarId 
+            |> World.AbandonJob 
+                avatarJobSink
+                avatarJobSource
+                avatarMessageSink
+                avatarSingleMetricSink
+                avatarSingleMetricSource
+                shipmateSingleStatisticSink
+                shipmateSingleStatisticSource
             (Dock, 
                 location, 
-                world 
-                |> World.AbandonJob 
-                    avatarJobSink
-                    avatarJobSource
-                    avatarMessageSink
-                    avatarSingleMetricSink
-                    avatarSingleMetricSource
-                    shipmateSingleStatisticSink
-                    shipmateSingleStatisticSource
-                    )
+                    avatarId)
             |> Gamestate.Docked
             |> Some
 
         | Some Command.Undock ->
-            world 
+            avatarId 
             |> World.AddMessages  avatarMessageSink [ "You undock." ]
-            world
+            avatarId
             |> Gamestate.AtSea 
             |> Some
 
         | Some Command.Quit ->
-            (Dock, location, world) 
+            (Dock, location, avatarId) 
             |> Gamestate.Docked 
             |> Gamestate.ConfirmQuit 
             |> Some
 
         | Some Command.Inventory ->
-            (Dock, location, world) 
+            (Dock, location, avatarId) 
             |> Gamestate.Docked 
             |> Gamestate.Inventory 
             |> Some
 
         | Some Command.Help ->
-            (Dock, location, world) 
+            (Dock, location, avatarId) 
             |> Gamestate.Docked 
             |> Gamestate.Help 
             |> Some
 
         | Some Command.Metrics ->
-            (Dock, location, world) 
+            (Dock, location, avatarId) 
             |> Gamestate.Docked 
             |> Gamestate.Metrics 
             |> Some
 
         | _ -> 
-            ("Maybe try 'help'?",(Dock, location, world) 
+            ("Maybe try 'help'?",(Dock, location, avatarId) 
             |> Gamestate.Docked)
             |> Gamestate.ErrorMessage
             |> Some
@@ -215,9 +216,9 @@ module Docked =
             (commandSource                  : CommandSource) 
             (messageSink                    : MessageSink) 
             (location                       : Location) 
-            (world                          : World) 
+            (avatarId                       : string) 
             : Gamestate option =
-        world
+        avatarId
         |> UpdateDisplay 
             avatarIslandSingleMetricSource
             avatarMessageSource
@@ -225,7 +226,7 @@ module Docked =
             messageSink 
             location 
         
-        world   
+        avatarId   
         |> HandleCommand 
             avatarInventorySink
             avatarInventorySource
@@ -255,19 +256,19 @@ module Docked =
             (avatarMessageSource           : AvatarMessageSource)
             (islandSource                  : IslandSource)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (func                          : Location -> World -> Gamestate option) 
+            (func                          : Location -> string -> Gamestate option) 
             (location                      : Location) 
-            (world                         : World) 
+            (avatarId                      : string) 
             : Gamestate option =
-        if world |> World.IsAvatarAlive shipmateSingleStatisticSource then
+        if avatarId |> World.IsAvatarAlive shipmateSingleStatisticSource then
             if islandSource() |> List.exists (fun x->x= location) then
-                func location world
+                func location avatarId
             else
-                world
+                avatarId
                 |> Gamestate.AtSea
                 |> Some
         else
-            world.AvatarId
+            avatarId
             |> avatarMessageSource
             |> Gamestate.GameOver
             |> Some

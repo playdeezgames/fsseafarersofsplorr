@@ -47,18 +47,18 @@ module MainMenu =
             UpdateDisplayNoGame messageSink
 
     let private HandleInvalidCommand 
-            (world : World option) 
+            (avatarId : string option) 
             : Gamestate option =
-        ("Invalid command.", world
+        ("Invalid command.", avatarId
         |> Gamestate.MainMenu)
         |> Gamestate.ErrorMessage
         |> Some
 
     let private HandleCommandInGame 
-            (world : World) =
+            (avatarId : string) =
         function
         | Some Command.Resume ->
-            world
+            avatarId
             |> Gamestate.AtSea
             |> Some
         | Some (Command.Abandon Game)->
@@ -66,7 +66,7 @@ module MainMenu =
             |> Gamestate.MainMenu
             |> Some
         | _ ->
-            world
+            avatarId
             |> Some
             |> HandleInvalidCommand
 
@@ -107,6 +107,7 @@ module MainMenu =
                 shipmateRationItemSink
                 (System.Random())
                 avatarId
+            avatarId
             |> Gamestate.AtSea
             |> Some
         | Some Command.Quit ->
@@ -135,10 +136,10 @@ module MainMenu =
             (vesselStatisticSink             : VesselStatisticSink)
             (vesselSingleStatisticSource     : VesselSingleStatisticSource)
             (shipmateRationItemSink          : ShipmateRationItemSink)
-            (world                           : World option) 
+            (avatarId                        : string option) 
             (command                         : Command option) 
             : Gamestate option =
-        match world with
+        match avatarId with
         | Some w ->
             HandleCommandInGame w command
         | _ ->
@@ -178,11 +179,11 @@ module MainMenu =
             (worldSingleStatisticSource      : WorldSingleStatisticSource)
             (commandSource                   : CommandSource) 
             (messageSink                     : MessageSink) 
-            (world                           : World option) 
+            (avatarId                        : string option) 
             : Gamestate option =
         UpdateDisplay 
             messageSink 
-            world.IsSome
+            avatarId.IsSome
         HandleCommand
             avatarIslandSingleMetricSink
             avatarJobSink
@@ -199,7 +200,7 @@ module MainMenu =
             vesselStatisticSink
             vesselSingleStatisticSource
             shipmateRationItemSink
-            world
+            avatarId
             (commandSource())
 
 

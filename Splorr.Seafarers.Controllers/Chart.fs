@@ -20,7 +20,7 @@ module Chart =
             (worldSize                      : Location) 
             (messageSink                    : MessageSink) 
             (chartName                      : string) 
-            (world                          : World) 
+            (avatarId                       : string) 
             : unit =
         try
             let scale = 10
@@ -40,7 +40,7 @@ module Chart =
                     (fun leg location -> 
                         let x, y = plotLocation scale location
                         let addToLegend, brush =
-                            match avatarIslandSingleMetricSource world.AvatarId location AvatarIslandMetricIdentifier.VisitCount with
+                            match avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount with
                             | None -> false, seenIslandBrush
                             | _ -> true, knownIslandBrush
                         g.FillEllipse(brush,x,y,scale,scale)
@@ -53,7 +53,7 @@ module Chart =
                         else
                             leg) Map.empty
             let avatarPosition = 
-                world.AvatarId
+                avatarId
                 |> Avatar.GetPosition vesselSingleStatisticSource 
                 |> Option.get
                 |> plotLocation scale
@@ -101,7 +101,7 @@ module Chart =
             (worldSingleStatisticSource     : WorldSingleStatisticSource) 
             (messageSink                    : MessageSink) 
             (chartName                      : string) 
-            (world                          : World) 
+            (avatarId                       : string) 
             : Gamestate option =
         let chartName = 
             chartName 
@@ -118,8 +118,8 @@ module Chart =
                 worldSingleStatisticSource WorldStatisticIdentifier.PositionY |> Statistic.GetMaximumValue) 
             messageSink 
             chartName 
-            world
-        world
+            avatarId
+        avatarId
         |> Gamestate.AtSea
         |> Some
 

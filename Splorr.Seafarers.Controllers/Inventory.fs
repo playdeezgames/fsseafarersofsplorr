@@ -9,7 +9,7 @@ module Inventory =
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (avatarInventorySource       : AvatarInventorySource)
             (messageSink                 : MessageSink) 
-            (world                       : World) 
+            (avatarId                    : string) 
             : unit =
         [
             "" |> Line
@@ -23,7 +23,7 @@ module Inventory =
         |> List.iter messageSink
         let items = itemSource()
         let inventoryEmpty =
-            world.AvatarId
+            avatarId
             |> avatarInventorySource
             |> Map.fold
                 (fun _ item quantity -> 
@@ -42,11 +42,11 @@ module Inventory =
             (Hue.Usage, "(none)"  |> Line) |> Hued
             |> messageSink
         let availableTonnage = 
-            vesselSingleStatisticSource world.AvatarId VesselStatisticIdentifier.Tonnage
+            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Tonnage
             |> Option.map Statistic.GetCurrentValue
             |> Option.get
         let usedTonnage = 
-            world.AvatarId 
+            avatarId 
             |> Avatar.GetUsedTonnage 
                 avatarInventorySource
                 items
