@@ -179,11 +179,11 @@ module Avatar =
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (avatarId                      : string)
             : unit =
-        let inventory, eaten =
-            ((avatarInventorySource avatarId, 0UL), avatarShipmateSource avatarId)
+        let inventory, eaten, starved =
+            ((avatarInventorySource avatarId, 0UL, 0UL), avatarShipmateSource avatarId)
             ||> List.fold 
-                (fun (inventory,metric) identifier -> 
-                    let updateInventory, ate =
+                (fun (inventory,eatMetric, starveMetric) identifier -> 
+                    let updateInventory, ate, starved =
                         Shipmate.Eat
                             shipmateRationItemSource 
                             shipmateSingleStatisticSource
@@ -191,15 +191,25 @@ module Avatar =
                             inventory 
                             avatarId 
                             identifier
-                    (updateInventory, if ate then metric+1UL else metric)) 
+                    (updateInventory, 
+                        (if ate then eatMetric+1UL else eatMetric), 
+                            (if starved then starveMetric+1UL else starveMetric))) 
         inventory
         |> avatarInventorySink avatarId
-        avatarId
-        |> AddMetric 
-            avatarSingleMetricSink 
-            avatarSingleMetricSource 
-            Metric.Ate 
-            eaten
+        if eaten > 0UL then
+            avatarId
+            |> AddMetric 
+                avatarSingleMetricSink 
+                avatarSingleMetricSource 
+                Metric.Ate 
+                eaten
+        if starved > 0UL then
+            avatarId
+            |> AddMetric 
+                avatarSingleMetricSink 
+                avatarSingleMetricSource 
+                Metric.Starved 
+                starved
 
     
     let GetCurrentFouling

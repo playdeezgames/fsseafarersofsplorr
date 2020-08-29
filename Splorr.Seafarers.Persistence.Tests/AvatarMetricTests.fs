@@ -85,14 +85,14 @@ let ``SetMetricForAvatar.It removes the metric when the given metric is 0 for th
         let inputValue = 0UL
         match AvatarMetric.GetForAvatar connection avatarId with
         | Ok x ->
-            Assert.AreEqual(7, x.Count)
+            Assert.AreEqual(8, x.Count)
         | _ ->
             Assert.Fail()
         match AvatarMetric.SetMetricForAvatar connection avatarId (inputMetric, inputValue) with
         | Ok () ->
             match AvatarMetric.GetForAvatar connection avatarId with
             | Ok x ->
-                Assert.AreEqual(6, x.Count)
+                Assert.AreEqual(7, x.Count)
             | _ ->
                 Assert.Fail()
         | Error message -> Assert.Fail message

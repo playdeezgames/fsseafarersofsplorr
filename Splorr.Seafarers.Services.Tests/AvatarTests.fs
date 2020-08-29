@@ -279,7 +279,7 @@ let ``Move.It moves the avatar.`` () =
         avatarInventorySink
         avatarInventorySource
         avatarShipmateSourceStub
-        (assertAvatarSingleMetricSink [(Metric.Moved, 1UL);(Metric.Ate, 0UL)])
+        (assertAvatarSingleMetricSink [(Metric.Moved, 1UL)])
         avatarSingleMetricSourceStub
         shipmateRationItemSourceStub 
         shipmateSingleStatisticSinkStub 
@@ -403,7 +403,7 @@ let ``Move.It lowers the avatar's satiety but does not affect turns when the giv
         avatarInventorySink
         avatarInventorySource
         avatarShipmateSource
-        (assertAvatarSingleMetricSink [(Metric.Moved, 1UL);(Metric.Ate, 0UL)])
+        (assertAvatarSingleMetricSink [(Metric.Moved, 1UL)])
         avatarSingleMetricSourceStub
         shipmateRationItemSourceStub 
         shipmateSingleStatisticSink
@@ -414,7 +414,7 @@ let ``Move.It lowers the avatar's satiety but does not affect turns when the giv
 
 
 [<Test>]
-let ``Move.It lowers the avatar's maximum turn when the given avatar has no rations and minimum satiety.`` () =
+let ``Move.It lowers the avatar's maximum turn and updates the starvation metric when the given avatar has no rations and minimum satiety.`` () =
     let avatarShipmateSource (_) = 
         [ Primary ]
     let mutable sinkCalls = 0u
@@ -453,7 +453,7 @@ let ``Move.It lowers the avatar's maximum turn when the given avatar has no rati
         avatarInventorySink
         avatarInventorySource
         avatarShipmateSource
-        (assertAvatarSingleMetricSink [(Metric.Moved, 1UL);(Metric.Ate, 0UL)])
+        (assertAvatarSingleMetricSink [(Metric.Moved, 1UL);(Metric.Starved, 1UL)])
         avatarSingleMetricSourceStub
         shipmateRationItemSourceStub 
         shipmateSingleStatisticSink

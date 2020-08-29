@@ -69,7 +69,7 @@ module Shipmate =
             (inventory                     : AvatarInventory) 
             (avatarId                      : string)
             (shipmateId                    : ShipmateIdentifier)
-            : AvatarInventory * bool =
+            : AvatarInventory * bool * bool =
         let satietyDecrease = -1.0
         let satietyIncrease = 1.0
         let rationConsumptionRate = 1UL
@@ -96,7 +96,7 @@ module Shipmate =
                 inventory
                 |> Map.add item (inventory.[item] - rationConsumptionRate)
                 |> Map.filter (fun k v -> v > 0UL)
-            (updatedInventory, true)
+            (updatedInventory, true, false)
         | _ ->
             let satiety = 
                 shipmateSingleStatisticSource 
@@ -112,7 +112,7 @@ module Shipmate =
                     (Statistic.ChangeCurrentBy (satietyDecrease) >> Some) 
                     avatarId
                     shipmateId
-                (inventory, false)
+                (inventory, false, false)
             else
                 TransformStatistic 
                     shipmateSingleStatisticSource
@@ -121,4 +121,4 @@ module Shipmate =
                     (Statistic.ChangeMaximumBy (satietyDecrease) >> Some)
                     avatarId
                     shipmateId
-                (inventory, false)
+                (inventory, false, true)

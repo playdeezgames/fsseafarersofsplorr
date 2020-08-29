@@ -10,12 +10,13 @@ module Metrics =
             : string =
         match metric with
         | Metric.Moved         -> "moved"
-        | Metric.Ate           -> "ate"
+        | Metric.Ate           -> "shipmates ate"
         | Metric.VisitedIsland -> "visited an island"
         | Metric.CompletedJob  -> "completed a job"
         | Metric.AbandonedJob  -> "abandoned a job"
         | Metric.AcceptedJob   -> "accepted a job"
         | Metric.CleanedHull   -> "cleaned a hull"
+        | Metric.Starved       -> "shipmates starved"
         | _ -> raise (System.NotImplementedException (metric.ToString() |> sprintf "'%s' is a metric with no name!"))
 
     let private RunWorld
