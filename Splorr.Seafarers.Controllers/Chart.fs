@@ -26,6 +26,10 @@ module Chart =
             use writer = System.IO.File.CreateText(sprintf "%s.html" chartName)
             writer.WriteLine("<html>")
             writer.WriteLine("<body>")
+            writer.WriteLine("<table>")
+            writer.WriteLine("<tbody>")
+            writer.WriteLine("<tr>")
+            writer.WriteLine("<td>")
             let scale = 10
             let width, height = ((worldSize |> fst |> int) * scale, (worldSize |> snd |> int) * scale)
             writer.WriteLine(sprintf "<svg width=\"%d\" height=\"%d\">" width height)
@@ -60,11 +64,14 @@ module Chart =
                             leg) Map.empty
             let avatarPosition = 
                 avatarId
-                |> Avatar.GetPosition vesselSingleStatisticSource 
+                |> Avatar.GetPosition 
+                    vesselSingleStatisticSource 
                 |> Option.get
                 |> plotLocation scale
-            writer.WriteLine(sprintf "<ellipse cx=\"%d\" cy=\"%d\" rx=\"%d\" ry=\"%d\" style=\"fill:#c0c000;\"/>" (avatarPosition |> fst) (height+(avatarPosition |> snd)) (scale/2) (scale/2))
+            writer.WriteLine(sprintf "<ellipse cx=\"%d\" cy=\"%d\" rx=\"%d\" ry=\"%d\" style=\"fill:#c0c000;\"/>" (avatarPosition |> fst) (height+(avatarPosition |> snd)) 3 3)
             writer.WriteLine("</svg>")
+            writer.WriteLine("</td>")
+            writer.WriteLine("<td valign=\"top\">")
             writer.WriteLine("<ul>")
             legend
             |> Map.toList
@@ -74,6 +81,10 @@ module Chart =
                     ||> sprintf "<li>%u - %s</li>" 
                     |> writer.WriteLine)
             writer.WriteLine("</ul>")
+            writer.WriteLine("</td>")
+            writer.WriteLine("</tr>")
+            writer.WriteLine("</tbody>")
+            writer.WriteLine("</table>")
             writer.WriteLine("</body>")
             writer.WriteLine("</html>")
             writer.Close()
