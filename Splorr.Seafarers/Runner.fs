@@ -22,6 +22,7 @@ module Runner =
             (avatarSingleMetricSink          : AvatarSingleMetricSink)
             (avatarSingleMetricSource        : AvatarSingleMetricSource)
             (commoditySource                 : CommoditySource)
+            (islandFeatureGeneratorSource    : IslandFeatureGeneratorSource)
             (islandItemSink                  : IslandItemSink) 
             (islandItemSource                : IslandItemSource) 
             (islandJobPurger                 : IslandJobPurger)
@@ -224,6 +225,7 @@ module Runner =
                 MainMenu.Run 
                     avatarIslandSingleMetricSink
                     avatarJobSink
+                    islandFeatureGeneratorSource
                     islandSingleNameSink
                     islandSingleStatisticSink
                     islandSource
@@ -277,6 +279,7 @@ module Runner =
                 avatarSingleMetricSink
                 avatarSingleMetricSource
                 commoditySource 
+                islandFeatureGeneratorSource
                 islandItemSink 
                 islandItemSource 
                 islandJobPurger
@@ -332,6 +335,7 @@ module Runner =
             (avatarSingleMetricSink          : AvatarSingleMetricSink)
             (avatarSingleMetricSource        : AvatarSingleMetricSource)
             (commoditySource                 : CommoditySource) 
+            (islandFeatureGeneratorSource    : IslandFeatureGeneratorSource)
             (islandItemSink                  : IslandItemSink) 
             (islandItemSource                : IslandItemSource) 
             (islandJobPurger                 : IslandJobPurger)
@@ -387,6 +391,7 @@ module Runner =
             avatarSingleMetricSink
             avatarSingleMetricSource
             commoditySource 
+            islandFeatureGeneratorSource
             islandItemSink 
             islandItemSource 
             islandJobPurger

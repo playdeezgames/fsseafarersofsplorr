@@ -284,6 +284,10 @@ let main argv =
         IslandJob.GetForIslandByIndex connection location
         >> Persister.unpackOrThrow
 
+    let islandFeatureGeneratorSource() =
+        IslandFeature.GetGenerators connection
+        |> Persister.unpackOrThrow
+
     try
         Runner.Run 
             avatarInventorySink
@@ -300,6 +304,7 @@ let main argv =
             avatarSingleMetricSink
             avatarSingleMetricSource
             commoditySource
+            islandFeatureGeneratorSource
             islandItemSink 
             islandItemSource 
             islandJobPurger

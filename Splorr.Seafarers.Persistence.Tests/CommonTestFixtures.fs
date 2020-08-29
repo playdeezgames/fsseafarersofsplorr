@@ -305,12 +305,27 @@ let private setupIslandJobs
 let internal NewAvatarId = "newavatar"
 let internal InvalidIslandLocation = (-1.0, -1.0)
 
-let internal setupIslandList
+let private setupIslandList
         (connection : SQLiteConnection)
         : unit =
     [
         Views.IslandList
     ]
+    |> runCommands connection
+
+let private setupIslandFeatureGenerators
+        (connection : SQLiteConnection)
+        : unit =
+    System.Enum.GetValues(typedefof<IslandFeatureIdentifier>) 
+    :?> IslandFeatureIdentifier []
+    |> Array.toList
+    |> List.map
+        (fun id ->
+            sprintf "REPLACE INTO [IslandFeatureGenerators] ([FeatureId], [FeatureWeight], [FeaturelessWeight]) VALUES (%u, 0.5, 0.5);" (id |> uint))
+    |> List.append
+        [
+            Tables.IslandFeatureGenerators
+        ]
     |> runCommands connection
 
 let internal SetupConnection() : SQLiteConnection = 
@@ -340,6 +355,7 @@ let internal SetupConnection() : SQLiteConnection =
         setupIslandStatistics UnvisitedIslandLocation
         setupIslandJobs VisitedIslandLocation UnvisitedIslandLocation
         setupIslandList
+        setupIslandFeatureGenerators
     ]
     |> List.iter (fun f -> f connection)
 

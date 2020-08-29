@@ -29,6 +29,7 @@ let ``Run.It returns Confirm Quit when given Quit command and there is no world.
         |> MainMenu.Run 
             avatarIslandSingleMetricSinkStub
             avatarJobSink
+            islandFeatureGeneratorSourceStub
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
             islandSourceStub
@@ -66,6 +67,7 @@ let ``Run.It returns Main Menu when given Quit command and there is a world.`` (
         |> MainMenu.Run 
             avatarIslandSingleMetricSinkStub
             avatarJobSink
+            islandFeatureGeneratorSourceStub
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
             islandSourceStub
@@ -98,6 +100,7 @@ let ``Run.It returns Main Menu when given invalid command and there is no world.
         |> MainMenu.Run
             avatarIslandSingleMetricSinkStub
             avatarJobSink
+            islandFeatureGeneratorSourceStub
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
             islandSourceStub
@@ -132,6 +135,7 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
         |> MainMenu.Run 
             avatarIslandSingleMetricSinkStub
             avatarJobSink
+            islandFeatureGeneratorSourceStub
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
             islandSourceStub
@@ -165,6 +169,7 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
         |> MainMenu.Run 
             avatarIslandSingleMetricSinkStub
             avatarJobSink
+            islandFeatureGeneratorSourceStub
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
             islandSourceStub
@@ -206,6 +211,7 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
         |> MainMenu.Run 
             avatarIslandSingleMetricSinkStub
             avatarJobSink
+            islandFeatureGeneratorSourceStub
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
             islandSourceStub
@@ -238,6 +244,7 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
         |> MainMenu.Run 
             avatarIslandSingleMetricSinkStub
             avatarJobSink
+            islandFeatureGeneratorSourceStub
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
             islandSourceStub
@@ -277,6 +284,7 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
         |> MainMenu.Run 
             avatarIslandSingleMetricSinkStub
             avatarJobSink
+            islandFeatureGeneratorSourceStub
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
             islandSourceStub
@@ -310,6 +318,7 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
         |> MainMenu.Run 
             avatarIslandSingleMetricSinkStub
             avatarJobSink
+            islandFeatureGeneratorSourceStub
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
             islandSourceStub
@@ -343,6 +352,7 @@ let ``Run.It returns Main Menu with no world when given Resume command and there
         |> MainMenu.Run 
             avatarIslandSingleMetricSinkStub
             avatarJobSink
+            islandFeatureGeneratorSourceStub
             islandSingleNameSinkStub
             islandSingleStatisticSinkStub
             islandSourceStub

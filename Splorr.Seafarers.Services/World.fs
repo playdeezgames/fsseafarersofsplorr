@@ -9,8 +9,10 @@ type TradeQuantity =
 type AvatarMessagePurger = string -> unit
 type IslandLocationByNameSource = string -> Location option
 type IslandSource = unit -> Location list
+type IslandFeatureGeneratorSource = unit -> Map<IslandFeatureIdentifier, IslandFeatureGenerator>
 
 module World =
+//TODO: top of "world generator" refactor
     let private GenerateIslandName //TODO: move to world generator?
             (random:Random) 
             : string =
@@ -62,7 +64,17 @@ module World =
             (fun (l,n) -> 
                 islandSingleNameSink l (Some n))
 
+    let private PopulateIslands
+            (islandFeatureGeneratorSource : IslandFeatureGeneratorSource)
+            (islandSource                 : IslandSource)
+            (random                       : Random) 
+            : unit =
+        let locations = islandSource()
+        let generators = islandFeatureGeneratorSource()
+        ()
+
     let rec private GenerateIslands  //TODO: move to world generator?
+            (islandFeatureGeneratorSource  : IslandFeatureGeneratorSource)
             (islandSingleNameSink          : IslandSingleNameSink)
             (islandSingleStatisticSink     : IslandSingleStatisticSink)
             (islandSource                  : IslandSource)
@@ -80,11 +92,16 @@ module World =
                 islandSource
                 nameSource 
                 random
+            PopulateIslands
+                islandFeatureGeneratorSource
+                islandSource
+                random
         else
             let locations = islandSource()
             let candidateLocation = (random.NextDouble() * (worldSize |> fst), random.NextDouble() * (worldSize |> snd))
             if locations |> List.exists(fun k ->(Location.DistanceTo candidateLocation k) < minimumIslandDistance) then
                 GenerateIslands 
+                    islandFeatureGeneratorSource
                     islandSingleNameSink 
                     islandSingleStatisticSink
                     islandSource
@@ -100,6 +117,7 @@ module World =
                     islandStatisticTemplateSource
                     candidateLocation
                 GenerateIslands 
+                    islandFeatureGeneratorSource
                     islandSingleNameSink 
                     islandSingleStatisticSink
                     islandSource
@@ -109,7 +127,7 @@ module World =
                     minimumIslandDistance 
                     random 
                     (maximumGenerationTries, 0u) 
-
+//end of "world generator"
     let UpdateCharts 
             (avatarIslandSingleMetricSink : AvatarIslandSingleMetricSink)
             (islandSource                 : IslandSource)
@@ -136,6 +154,7 @@ module World =
     let Create 
             (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
             (avatarJobSink                   : AvatarJobSink)
+            (islandFeatureGeneratorSource    : IslandFeatureGeneratorSource)
             (islandSingleNameSink            : IslandSingleNameSink)
             (islandSingleStatisticSink       : IslandSingleStatisticSink)
             (islandSource                    : IslandSource)
@@ -178,6 +197,7 @@ module World =
             vesselStatisticTemplateSource
             avatarId
         GenerateIslands 
+            islandFeatureGeneratorSource
             islandSingleNameSink
             islandSingleStatisticSink
             islandSource

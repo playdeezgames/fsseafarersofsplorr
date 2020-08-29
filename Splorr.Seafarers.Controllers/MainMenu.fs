@@ -73,6 +73,7 @@ module MainMenu =
     let private HandleCommandNoGame
             (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
             (avatarJobSink                   : AvatarJobSink)
+            (islandFeatureGeneratorSource    : IslandFeatureGeneratorSource)
             (islandSingleNameSink            : IslandSingleNameSink)
             (islandSingleStatisticSink       : IslandSingleStatisticSink)
             (islandSource                    : IslandSource)
@@ -92,6 +93,7 @@ module MainMenu =
             World.Create 
                 avatarIslandSingleMetricSink
                 avatarJobSink
+                islandFeatureGeneratorSource
                 islandSingleNameSink
                 islandSingleStatisticSink
                 islandSource
@@ -123,6 +125,7 @@ module MainMenu =
     let private HandleCommand
             (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
             (avatarJobSink                   : AvatarJobSink)
+            (islandFeatureGeneratorSource    : IslandFeatureGeneratorSource)
             (islandSingleNameSink            : IslandSingleNameSink)
             (islandSingleStatisticSink       : IslandSingleStatisticSink)
             (islandSource                    : IslandSource)
@@ -146,6 +149,7 @@ module MainMenu =
             HandleCommandNoGame 
                 avatarIslandSingleMetricSink
                 avatarJobSink
+                islandFeatureGeneratorSource
                 islandSingleNameSink
                 islandSingleStatisticSink
                 islandSource
@@ -164,6 +168,7 @@ module MainMenu =
     let Run 
             (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
             (avatarJobSink                   : AvatarJobSink)
+            (islandFeatureGeneratorSource    : IslandFeatureGeneratorSource)
             (islandSingleNameSink            : IslandSingleNameSink)
             (islandSingleStatisticSink       : IslandSingleStatisticSink)
             (islandSource                    : IslandSource)
@@ -187,6 +192,7 @@ module MainMenu =
         HandleCommand
             avatarIslandSingleMetricSink
             avatarJobSink
+            islandFeatureGeneratorSource
             islandSingleNameSink
             islandSingleStatisticSink
             islandSource

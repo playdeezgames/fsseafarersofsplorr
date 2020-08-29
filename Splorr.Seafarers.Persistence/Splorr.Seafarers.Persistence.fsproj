@@ -12,6 +12,7 @@
     <Compile Include="AvatarMetric.fs" />
     <Compile Include="Commodity.fs" />
     <Compile Include="Island.fs" />
+    <Compile Include="IslandFeature.fs" />
     <Compile Include="IslandItem.fs" />
     <Compile Include="IslandJob.fs" />
     <Compile Include="IslandMarket.fs" />
