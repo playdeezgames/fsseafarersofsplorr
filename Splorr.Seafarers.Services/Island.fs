@@ -27,13 +27,16 @@ type IslandJobsGenerationContext =
     abstract member islandJobSink              : IslandJobSink
     abstract member islandJobSource            : IslandJobSource
 
+type IslandCreateContext = 
+    abstract member islandSingleStatisticSink     : IslandSingleStatisticSink
+    abstract member islandStatisticTemplateSource : IslandStatisticTemplateSource
+
 module Island =
-    let private CreateStatistics
-            (islandSingleStatisticSink     : IslandSingleStatisticSink)
-            (islandStatisticTemplateSource : IslandStatisticTemplateSource)
-            (location                      : Location)
+    let  Create
+            (context  : IslandCreateContext)
+            (location : Location)
             : unit =
-        islandStatisticTemplateSource()
+        context.islandStatisticTemplateSource()
         |> Map.iter
             (fun identifier template ->
                 (identifier, 
@@ -43,18 +46,7 @@ module Island =
                         CurrentValue = template.CurrentValue
                     } 
                     |> Some)
-                |> islandSingleStatisticSink location)
-
-    let Create
-            (islandSingleStatisticSink     : IslandSingleStatisticSink)
-            (islandStatisticTemplateSource : IslandStatisticTemplateSource)
-            (location                      : Location) 
-            : unit =
-        location
-        |> CreateStatistics
-            islandSingleStatisticSink
-            islandStatisticTemplateSource
-        
+                |> context.islandSingleStatisticSink location)
 
     let GetDisplayName 
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)

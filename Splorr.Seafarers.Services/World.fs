@@ -11,6 +11,27 @@ type IslandLocationByNameSource = string -> Location option
 type IslandSource = unit -> Location list
 type IslandFeatureGeneratorSource = unit -> Map<IslandFeatureIdentifier, IslandFeatureGenerator>
 
+type WorldGenerateIslandsContext =
+    inherit IslandCreateContext
+    abstract member islandFeatureGeneratorSource  : IslandFeatureGeneratorSource
+    abstract member islandSingleNameSink          : IslandSingleNameSink
+    abstract member islandSource                  : IslandSource
+    abstract member termNameSource                : TermSource
+
+type WorldCreateContext =
+    inherit WorldGenerateIslandsContext
+    abstract member avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink
+    abstract member avatarJobSink                   : AvatarJobSink
+    abstract member worldSingleStatisticSource      : WorldSingleStatisticSource
+    abstract member shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource
+    abstract member shipmateSingleStatisticSink     : ShipmateSingleStatisticSink
+    abstract member rationItemSource                : RationItemSource
+    abstract member vesselStatisticTemplateSource   : VesselStatisticTemplateSource
+    abstract member vesselStatisticSink             : VesselStatisticSink
+    abstract member vesselSingleStatisticSource     : VesselSingleStatisticSource
+    abstract member shipmateRationItemSink          : ShipmateRationItemSink
+
+
 type WorldDockContext =
     inherit IslandJobsGenerationContext
     abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
@@ -93,55 +114,39 @@ module World =
         ()
 
     let rec private GenerateIslands  //TODO: move to world generator?
-            (islandFeatureGeneratorSource  : IslandFeatureGeneratorSource)
-            (islandSingleNameSink          : IslandSingleNameSink)
-            (islandSingleStatisticSink     : IslandSingleStatisticSink)
-            (islandSource                  : IslandSource)
-            (islandStatisticTemplateSource : IslandStatisticTemplateSource)
-            (nameSource                    : TermSource)
-            (worldSize                     : Location) 
-            (minimumIslandDistance         : float)
-            (random                        : Random) 
-            (maximumGenerationTries        : uint32, 
-             currentTry                    : uint32) 
+            (context                : WorldGenerateIslandsContext)
+            (worldSize              : Location) 
+            (minimumIslandDistance  : float)
+            (random                 : Random) 
+            (maximumGenerationTries : uint32, 
+             currentTry             : uint32) 
             : unit =
         if currentTry>=maximumGenerationTries then
             NameIslands 
-                islandSingleNameSink 
-                islandSource
-                nameSource 
+                context.islandSingleNameSink 
+                context.islandSource
+                context.termNameSource 
                 random
             PopulateIslands
-                islandFeatureGeneratorSource
-                islandSource
+                context.islandFeatureGeneratorSource
+                context.islandSource
                 random
         else
-            let locations = islandSource()
+            let locations = context.islandSource()
             let candidateLocation = (random.NextDouble() * (worldSize |> fst), random.NextDouble() * (worldSize |> snd))
             if locations |> List.exists(fun k ->(Location.DistanceTo candidateLocation k) < minimumIslandDistance) then
                 GenerateIslands 
-                    islandFeatureGeneratorSource
-                    islandSingleNameSink 
-                    islandSingleStatisticSink
-                    islandSource
-                    islandStatisticTemplateSource
-                    nameSource 
+                    context 
                     worldSize 
                     minimumIslandDistance 
                     random 
                     (maximumGenerationTries, currentTry+1u) 
             else
                 Island.Create
-                    islandSingleStatisticSink
-                    islandStatisticTemplateSource
+                    context
                     candidateLocation
                 GenerateIslands 
-                    islandFeatureGeneratorSource
-                    islandSingleNameSink 
-                    islandSingleStatisticSink
-                    islandSource
-                    islandStatisticTemplateSource
-                    nameSource 
+                    context 
                     worldSize 
                     minimumIslandDistance 
                     random 
@@ -171,66 +176,46 @@ module World =
                 avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.Seen 1UL)
 
     let Create 
-            (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
-            (avatarJobSink                   : AvatarJobSink)
-            (islandFeatureGeneratorSource    : IslandFeatureGeneratorSource)
-            (islandSingleNameSink            : IslandSingleNameSink)
-            (islandSingleStatisticSink       : IslandSingleStatisticSink)
-            (islandSource                    : IslandSource)
-            (islandStatisticTemplateSource   : IslandStatisticTemplateSource)
-            (nameSource                      : TermSource)
-            (worldSingleStatisticSource      : WorldSingleStatisticSource)
-            (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
-            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
-            (rationItemSource                : RationItemSource)
-            (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
-            (vesselStatisticSink             : VesselStatisticSink)
-            (vesselSingleStatisticSource     : VesselSingleStatisticSource)
-            (shipmateRationItemSink          : ShipmateRationItemSink)
-            (random                          : Random) 
-            (avatarId                        : string)
+            (context  : WorldCreateContext)
+            (random   : Random) 
+            (avatarId : string)
             : unit =
         let maximumGenerationRetries =
             WorldStatisticIdentifier.IslandGenerationRetries
-            |> worldSingleStatisticSource 
+            |> context.worldSingleStatisticSource 
             |> Statistic.GetCurrentValue
             |> uint
         let minimumIslandDistance = 
             WorldStatisticIdentifier.IslandDistance
-            |> worldSingleStatisticSource 
+            |> context.worldSingleStatisticSource 
             |> Statistic.GetCurrentValue
         let worldSize =
             (WorldStatisticIdentifier.PositionX
-            |> worldSingleStatisticSource 
+            |> context.worldSingleStatisticSource 
             |> Statistic.GetMaximumValue,
                 WorldStatisticIdentifier.PositionY
-                |> worldSingleStatisticSource 
+                |> context.worldSingleStatisticSource 
                 |> Statistic.GetMaximumValue)
         Avatar.Create 
-            avatarJobSink
-            rationItemSource
-            shipmateRationItemSink
-            shipmateSingleStatisticSink
-            shipmateStatisticTemplateSource
-            vesselStatisticSink
-            vesselStatisticTemplateSource
+            context.avatarJobSink
+            context.rationItemSource
+            context.shipmateRationItemSink
+            context.shipmateSingleStatisticSink
+            context.shipmateStatisticTemplateSource
+            context.vesselStatisticSink
+            context.vesselStatisticTemplateSource
             avatarId
         GenerateIslands 
-            islandFeatureGeneratorSource
-            islandSingleNameSink
-            islandSingleStatisticSink
-            islandSource
-            islandStatisticTemplateSource
-            nameSource 
+            context 
             worldSize 
             minimumIslandDistance
             random 
             (maximumGenerationRetries, 0u)
         avatarId
         |> UpdateCharts 
-            avatarIslandSingleMetricSink
-            islandSource
-            vesselSingleStatisticSource
+            context.avatarIslandSingleMetricSink
+            context.islandSource
+            context.vesselSingleStatisticSource
 
     let ClearMessages 
             (avatarMessagePurger : AvatarMessagePurger) 

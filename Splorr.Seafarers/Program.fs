@@ -74,51 +74,64 @@ type SplorrContext
     interface RunnerRunContext with
         member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource
-        member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
-        member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
-        member _.avatarJobSink: AvatarJobSink = avatarJobSink
-        member _.avatarJobSource: AvatarJobSource = avatarJobSource
         member _.avatarMessagePurger: AvatarMessagePurger = avatarMessagePurger
-        member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         member _.avatarMessageSource: AvatarMessageSource = avatarMessageSource
         member _.avatarMetricSource: AvatarMetricSource = avatarMetricSource
         member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
-        member _.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
-        member _.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
-        member _.commoditySource: CommoditySource = commoditySource
-        member _.islandFeatureGeneratorSource: IslandFeatureGeneratorSource = islandFeatureGeneratorSource
-        member _.islandItemSink: IslandItemSink = islandItemSink
-        member _.islandItemSource: IslandItemSource = islandItemSource
         member _.islandJobPurger: IslandJobPurger = islandJobPurger
-        member _.islandJobSink: IslandJobSink = islandJobSink
-        member _.islandJobSource: IslandJobSource = islandJobSource
         member _.islandLocationByNameSource: IslandLocationByNameSource = islandLocationByNameSource
-        member _.islandMarketSink: IslandMarketSink = islandMarketSink
-        member _.islandMarketSource: IslandMarketSource = islandMarketSource
         member _.islandSingleJobSource: IslandSingleJobSource = islandSingleJobSource
         member _.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
         member _.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
-        member _.islandSingleNameSink: IslandSingleNameSink = islandSingleNameSink
         member _.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
-        member _.islandSingleStatisticSink: IslandSingleStatisticSink = islandSingleStatisticSink
         member _.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
-        member _.islandSource: IslandSource = islandSource
-        member _.islandStatisticTemplateSource: IslandStatisticTemplateSource = islandStatisticTemplateSource
-        member _.itemSource: ItemSource = itemSource
-        member _.rationItemSource: RationItemSource = rationItemSource
-        member _.shipmateRationItemSink: ShipmateRationItemSink = shipmateRationItemSink
         member _.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
-        member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
-        member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-        member _.shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
         member _.switchSource: SwitchSource = switchSource
-        member _.termNameSource: TermSource = termNameSource
-        member _.termSources: TermSources = termSources
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
+    interface WorldDockContext with
+        member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        member _.avatarJobSource: AvatarJobSource = avatarJobSource
+        member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+        member _.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
+        member _.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
+        member _.commoditySource: CommoditySource = commoditySource
+        member _.islandItemSink: IslandItemSink = islandItemSink
+        member _.islandItemSource: IslandItemSource = islandItemSource
+        member _.islandJobSink: IslandJobSink = islandJobSink
+        member _.islandJobSource: IslandJobSource = islandJobSource
+        member _.islandMarketSink: IslandMarketSink = islandMarketSink
+        member _.islandMarketSource: IslandMarketSource = islandMarketSource
+        member _.itemSource: ItemSource = itemSource
+        member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+        member _.termSources: TermSources = termSources
+        member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+        member _.avatarJobSink: AvatarJobSink = avatarJobSink
+        member _.islandSource: IslandSource = islandSource
+        member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
+
+    interface WorldCreateContext with
+        member _.islandFeatureGeneratorSource: IslandFeatureGeneratorSource = islandFeatureGeneratorSource
+        member _.islandSingleNameSink: IslandSingleNameSink = islandSingleNameSink
+        member _.islandSingleStatisticSink: IslandSingleStatisticSink = islandSingleStatisticSink
+        member _.islandStatisticTemplateSource: IslandStatisticTemplateSource = islandStatisticTemplateSource
+        member _.rationItemSource: RationItemSource = rationItemSource
+        member _.shipmateRationItemSink: ShipmateRationItemSink = shipmateRationItemSink
+        member _.shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
+        member _.termNameSource: TermSource = termNameSource
         member _.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
         member _.vesselStatisticTemplateSource: VesselStatisticTemplateSource = vesselStatisticTemplateSource
+        member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+        member _.avatarJobSink: AvatarJobSink = avatarJobSink
+        member _.islandSource: IslandSource = islandSource
+        member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
+
+
+
 
 [<EntryPoint>]
 let main argv =

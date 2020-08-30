@@ -6,22 +6,13 @@ open System
 
 type RunnerRunContext =
     inherit AtSeaRunContext
+    inherit WorldCreateContext
     abstract member avatarMetricSource              : AvatarMetricSource
-    abstract member islandFeatureGeneratorSource    : IslandFeatureGeneratorSource
     abstract member islandJobPurger                 : IslandJobPurger
     abstract member islandSingleJobSource           : IslandSingleJobSource
     abstract member islandSingleMarketSink          : IslandSingleMarketSink 
     abstract member islandSingleMarketSource        : IslandSingleMarketSource
-    abstract member islandSingleNameSink            : IslandSingleNameSink 
-    abstract member islandSingleStatisticSink       : IslandSingleStatisticSink
-    abstract member islandStatisticTemplateSource   : IslandStatisticTemplateSource
-    abstract member rationItemSource                : RationItemSource
-    abstract member shipmateRationItemSink          : ShipmateRationItemSink
-    abstract member shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource
     abstract member switchSource                    : SwitchSource
-    abstract member termNameSource                  : TermSource
-    abstract member vesselStatisticSink             : VesselStatisticSink
-    abstract member vesselStatisticTemplateSource   : VesselStatisticTemplateSource
 
 module Runner =
     let rec private Loop 
@@ -164,22 +155,7 @@ module Runner =
 
             | Gamestate.MainMenu world -> 
                 MainMenu.Run 
-                    context.avatarIslandSingleMetricSink
-                    context.avatarJobSink
-                    context.islandFeatureGeneratorSource
-                    context.islandSingleNameSink
-                    context.islandSingleStatisticSink
-                    context.islandSource
-                    context.islandStatisticTemplateSource
-                    context.rationItemSource
-                    context.shipmateRationItemSink
-                    context.shipmateSingleStatisticSink
-                    context.shipmateStatisticTemplateSource
-                    context.termNameSource
-                    context.vesselSingleStatisticSource
-                    context.vesselStatisticSink
-                    context.vesselStatisticTemplateSource
-                    context.worldSingleStatisticSource
+                    context
                     commandSource 
                     messageSink 
                     world
