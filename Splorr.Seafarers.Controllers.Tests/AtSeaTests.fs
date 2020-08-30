@@ -18,38 +18,41 @@ let private functionUnderTest
         (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
         (vesselSingleStatisticSource    : VesselSingleStatisticSource) 
         = 
+    let context : AtSeaRunContext =
+        TestAtSeaRunContext
+            (avatarInventorySinkStub,
+            avatarInventorySourceStub,
+            avatarIslandSingleMetricSinkStub,
+            avatarIslandSingleMetricSource,
+            avatarJobSink,
+            avatarJobSource,
+            avatarMessagePurgerStub,
+            avatarMessageSink,
+            avatarMessageSourceStub,
+            avatarShipmateSourceStub,
+            avatarSingleMetricSinkExplode,
+            avatarSingleMetricSourceStub,
+            atSeaCommoditySource ,
+            atSeaIslandItemSink ,
+            atSeaIslandItemSource, 
+            islandJobSinkStub,
+            islandJobSourceStub,
+            islandLocationByNameSource,
+            atSeaIslandMarketSink ,
+            atSeaIslandMarketSource, 
+            islandSingleNameSource,
+            islandSingleStatisticSource,
+            islandSourceStub ,
+            atSeaItemSource,
+            shipmateRationItemSourceStub,
+            shipmateSingleStatisticSinkStub,
+            shipmateSingleStatisticSource,
+            termSources,
+            vesselSingleStatisticSinkStub,
+            vesselSingleStatisticSource,
+            worldSingleStatisticSourceStub) :> AtSeaRunContext
     AtSea.Run 
-        avatarInventorySinkStub
-        avatarInventorySourceStub
-        avatarIslandSingleMetricSinkStub
-        avatarIslandSingleMetricSource
-        avatarJobSink
-        avatarJobSource
-        avatarMessagePurgerStub
-        avatarMessageSink
-        avatarMessageSourceStub
-        avatarShipmateSourceStub
-        avatarSingleMetricSinkExplode
-        avatarSingleMetricSourceStub
-        atSeaCommoditySource 
-        atSeaIslandItemSink 
-        atSeaIslandItemSource 
-        islandJobSinkStub
-        islandJobSourceStub
-        islandLocationByNameSource
-        atSeaIslandMarketSink 
-        atSeaIslandMarketSource 
-        islandSingleNameSource
-        islandSingleStatisticSource
-        islandSourceStub 
-        atSeaItemSource
-        shipmateRationItemSourceStub
-        shipmateSingleStatisticSinkStub
-        shipmateSingleStatisticSource
-        termSources
-        vesselSingleStatisticSinkStub
-        vesselSingleStatisticSource
-        worldSingleStatisticSourceStub
+        context
         random 
 
 let private functionUsuallyUnderTest = 

@@ -201,3 +201,72 @@ let islandSourceStub () = [(0.0, 0.0)]
 let islandJobPurgerStub (_) (_) = ()
 
 let islandSingleJobSourceStub (_) (_) = None
+
+type TestAtSeaRunContext 
+        (
+            avatarInventorySink: AvatarInventorySink, 
+            avatarInventorySource: AvatarInventorySource,
+            avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink,
+            avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource,
+            avatarJobSink: AvatarJobSink,
+            avatarJobSource: AvatarJobSource,
+            avatarMessagePurger: AvatarMessagePurger,
+            avatarMessageSink: AvatarMessageSink,
+            avatarMessageSource: AvatarMessageSource,
+            avatarShipmateSource: AvatarShipmateSource,
+            avatarSingleMetricSink: AvatarSingleMetricSink,
+            avatarSingleMetricSource: AvatarSingleMetricSource,
+            commoditySource: CommoditySource,
+            islandItemSink: IslandItemSink,
+            islandItemSource: IslandItemSource,
+            islandJobSink: IslandJobSink,
+            islandJobSource: IslandJobSource,
+            islandLocationByNameSource: IslandLocationByNameSource,
+            islandMarketSink: IslandMarketSink,
+            islandMarketSource: IslandMarketSource,
+            islandSingleNameSource: IslandSingleNameSource,
+            islandSingleStatisticSource: IslandSingleStatisticSource,
+            islandSource: IslandSource,
+            itemSource: ItemSource,
+            shipmateRationItemSource: ShipmateRationItemSource,
+            shipmateSingleStatisticSink: ShipmateSingleStatisticSink,
+            shipmateSingleStatisticSource: ShipmateSingleStatisticSource,
+            termSources: TermSources,
+            vesselSingleStatisticSink: VesselSingleStatisticSink,
+            vesselSingleStatisticSource: VesselSingleStatisticSource,
+            worldSingleStatisticSource: WorldSingleStatisticSource
+        ) =
+    interface AtSeaRunContext with
+        member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink
+        member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource
+        member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+        member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        member _.avatarJobSink: AvatarJobSink = avatarJobSink
+        member _.avatarJobSource: AvatarJobSource = avatarJobSource
+        member _.avatarMessagePurger: AvatarMessagePurger = avatarMessagePurger
+        member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+        member _.avatarMessageSource: AvatarMessageSource = avatarMessageSource
+        member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
+        member _.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
+        member _.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
+        member _.commoditySource: CommoditySource = commoditySource
+        member _.islandItemSink: IslandItemSink = islandItemSink
+        member _.islandItemSource: IslandItemSource = islandItemSource
+        member _.islandJobSink: IslandJobSink = islandJobSink
+        member _.islandJobSource: IslandJobSource = islandJobSource
+        member _.islandLocationByNameSource: IslandLocationByNameSource = islandLocationByNameSource
+        member _.islandMarketSink: IslandMarketSink = islandMarketSink
+        member _.islandMarketSource: IslandMarketSource = islandMarketSource
+        member _.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
+        member _.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
+        member _.islandSource: IslandSource = islandSource
+        member _.itemSource: ItemSource = itemSource
+        member _.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
+        member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+        member _.termSources: TermSources = termSources
+        member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        member _.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
+
+        

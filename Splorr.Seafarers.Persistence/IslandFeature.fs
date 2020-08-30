@@ -8,10 +8,10 @@ module IslandFeature =
             (reader : SQLiteDataReader) 
             : IslandFeatureIdentifier * IslandFeatureGenerator =
         (reader.GetInt32(0) |> enum<IslandFeatureIdentifier>,
-        {
-            FeatureWeight = reader.GetDouble(1)
-            FeaturelessWeight = reader.GetDouble(2)
-        })
+            {
+                FeatureWeight = reader.GetDouble(1)
+                FeaturelessWeight = reader.GetDouble(2)
+            })
 
     let GetGenerators
             (connection : SQLiteConnection)

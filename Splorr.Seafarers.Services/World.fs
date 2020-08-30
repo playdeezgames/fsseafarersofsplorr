@@ -11,6 +11,25 @@ type IslandLocationByNameSource = string -> Location option
 type IslandSource = unit -> Location list
 type IslandFeatureGeneratorSource = unit -> Map<IslandFeatureIdentifier, IslandFeatureGenerator>
 
+type WorldDockContext =
+    inherit IslandJobsGenerationContext
+    abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
+    abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
+    abstract member avatarJobSink                  : AvatarJobSink
+    abstract member avatarJobSource                : AvatarJobSource
+    abstract member avatarMessageSink              : AvatarMessageSink
+    abstract member avatarSingleMetricSink         : AvatarSingleMetricSink
+    abstract member avatarSingleMetricSource       : AvatarSingleMetricSource
+    abstract member commoditySource                : CommoditySource 
+    abstract member islandItemSink                 : IslandItemSink 
+    abstract member islandItemSource               : IslandItemSource 
+    abstract member islandMarketSink               : IslandMarketSink 
+    abstract member islandMarketSource             : IslandMarketSource 
+    abstract member islandSource                   : IslandSource
+    abstract member itemSource                     : ItemSource 
+    abstract member shipmateSingleStatisticSink    : ShipmateSingleStatisticSink
+    abstract member shipmateSingleStatisticSource  : ShipmateSingleStatisticSource
+
 module World =
 //TODO: top of "world generator" refactor
     let private GenerateIslandName //TODO: move to world generator?
@@ -364,31 +383,12 @@ module World =
             |> AddMessages avatarMessageSink [ "You complete your job." ]
 
     let Dock
-            (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
-            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
-            (avatarJobSink                  : AvatarJobSink)
-            (avatarJobSource                : AvatarJobSource)
-            (avatarMessageSink              : AvatarMessageSink)
-            (avatarSingleMetricSink         : AvatarSingleMetricSink)
-            (avatarSingleMetricSource       : AvatarSingleMetricSource)
-            (commoditySource                : CommoditySource) 
-            (islandItemSink                 : IslandItemSink) 
-            (islandItemSource               : IslandItemSource) 
-            (islandJobSink                  : IslandJobSink)
-            (islandJobSource                : IslandJobSource)
-            (islandMarketSink               : IslandMarketSink) 
-            (islandMarketSource             : IslandMarketSource) 
-            (islandSource                   : IslandSource)
-            (itemSource                     : ItemSource) 
-            (shipmateSingleStatisticSink    : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
-            (termSources                    : TermSources)
-            (worldSingleStatisticSource     : WorldSingleStatisticSource)
-            (random                         : Random) 
-            (location                       : Location) 
-            (avatarId                       : string) 
+            (context  : WorldDockContext)
+            (random   : Random) 
+            (location : Location) 
+            (avatarId : string) 
             : unit =
-        let locations = islandSource()
+        let locations = context.islandSource()
         match locations |> List.tryFind (fun x -> x = location) with
         | Some l ->
             let destinations =
@@ -396,54 +396,68 @@ module World =
                 |> Set.ofList
                 |> Set.remove location
             let oldVisitCount =
-                avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
+                context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
                 |> Option.defaultValue 0UL
             Island.AddVisit
-                avatarIslandSingleMetricSink
-                avatarIslandSingleMetricSource
+                context.avatarIslandSingleMetricSink
+                context.avatarIslandSingleMetricSource
                 (DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64)
                 avatarId
                 location
             let newVisitCount =
-                avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
+                context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
                 |> Option.defaultValue 0UL
             l
             |> Island.GenerateJobs 
-                islandJobSink
-                islandJobSource
-                termSources 
-                worldSingleStatisticSource 
+                context 
                 random 
                 destinations 
-            Island.GenerateCommodities commoditySource islandMarketSource islandMarketSink random location
-            Island.GenerateItems islandItemSource islandItemSink random itemSource location
+            Island.GenerateCommodities 
+                context.commoditySource 
+                context.islandMarketSource 
+                context.islandMarketSink 
+                random 
+                location
+            Island.GenerateItems 
+                context.islandItemSource 
+                context.islandItemSink 
+                random 
+                context.itemSource location
             avatarId
-            |> AddMessages (avatarMessageSink : AvatarMessageSink) [ "You dock." ]
+            |> AddMessages 
+                context.avatarMessageSink 
+                [ 
+                    "You dock." 
+                ]
             avatarId
             |> Avatar.AddMetric 
-                avatarSingleMetricSink
-                avatarSingleMetricSource
+                context.avatarSingleMetricSink
+                context.avatarSingleMetricSource
                 Metric.VisitedIsland 
                 (if newVisitCount > oldVisitCount then 1UL else 0UL)
             avatarId
             |> Option.foldBack 
                 (fun job w ->
                     DoJobCompletion
-                        avatarJobSink
-                        avatarJobSource
-                        avatarMessageSink
-                        avatarSingleMetricSink
-                        avatarSingleMetricSource
-                        shipmateSingleStatisticSink 
-                        shipmateSingleStatisticSource 
+                        context.avatarJobSink
+                        context.avatarJobSource
+                        context.avatarMessageSink
+                        context.avatarSingleMetricSink
+                        context.avatarSingleMetricSource
+                        context.shipmateSingleStatisticSink 
+                        context.shipmateSingleStatisticSource 
                         location
                         job
                         w
-                    w) (avatarJobSource avatarId)
+                    w) (context.avatarJobSource avatarId)
             |> ignore
         | _ -> 
             avatarId
-            |> AddMessages (avatarMessageSink : AvatarMessageSink) [ "There is no place to dock there." ]
+            |> AddMessages 
+                context.avatarMessageSink 
+                [ 
+                    "There is no place to dock there." 
+                ]
 
     let DistanceTo 
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)

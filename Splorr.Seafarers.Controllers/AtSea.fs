@@ -5,6 +5,24 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Persistence
 
+type AtSeaHandleCommandContext =
+    inherit WorldDockContext
+    abstract member avatarInventorySink            : AvatarInventorySink
+    abstract member avatarInventorySource          : AvatarInventorySource
+    abstract member avatarMessagePurger            : AvatarMessagePurger
+    abstract member avatarShipmateSource           : AvatarShipmateSource
+    abstract member islandLocationByNameSource     : IslandLocationByNameSource
+    abstract member islandSingleNameSource         : IslandSingleNameSource
+    abstract member islandSingleStatisticSource    : IslandSingleStatisticSource
+    abstract member shipmateRationItemSource       : ShipmateRationItemSource
+    abstract member vesselSingleStatisticSink      : VesselSingleStatisticSink
+    abstract member vesselSingleStatisticSource    : VesselSingleStatisticSource
+
+type AtSeaRunContext =
+    inherit AtSeaHandleCommandContext
+    abstract member avatarMessageSource             : AvatarMessageSource
+
+
 module AtSea =
     let private DetermineSpeedHue 
             (speed:float) 
@@ -144,61 +162,32 @@ module AtSea =
                 |> List.iter messageSink)
 
     let private HandleCommand
-            (avatarInventorySink            : AvatarInventorySink)
-            (avatarInventorySource          : AvatarInventorySource)
-            (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
-            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
-            (avatarJobSink                  : AvatarJobSink)
-            (avatarJobSource                : AvatarJobSource)
-            (avatarMessagePurger            : AvatarMessagePurger)
-            (avatarMessageSink              : AvatarMessageSink)
-            (avatarShipmateSource           : AvatarShipmateSource)
-            (avatarSingleMetricSink         : AvatarSingleMetricSink)
-            (avatarSingleMetricSource       : AvatarSingleMetricSource)
-            (commoditySource                : CommoditySource) 
-            (islandItemSink                 : IslandItemSink) 
-            (islandItemSource               : IslandItemSource) 
-            (islandJobSink                  : IslandJobSink)
-            (islandJobSource                : IslandJobSource)
-            (islandLocationByNameSource     : IslandLocationByNameSource)
-            (islandMarketSink               : IslandMarketSink) 
-            (islandMarketSource             : IslandMarketSource) 
-            (islandSource                   : IslandSource)
-            (islandSingleNameSource         : IslandSingleNameSource)
-            (islandSingleStatisticSource    : IslandSingleStatisticSource)
-            (itemSource                     : ItemSource) 
-            (shipmateRationItemSource       : ShipmateRationItemSource)
-            (shipmateSingleStatisticSink    : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
-            (termSources                    : TermSources)
-            (vesselSingleStatisticSink      : VesselSingleStatisticSink)
-            (vesselSingleStatisticSource    : VesselSingleStatisticSource)
-            (worldSingleStatisticSource     : WorldSingleStatisticSource)
+            (context                        : AtSeaHandleCommandContext)
             (random                         : Random) 
             (command                        : Command option) 
             (avatarId                       : string) 
             : Gamestate option =
         avatarId
-        |> World.ClearMessages avatarMessagePurger
+        |> World.ClearMessages context.avatarMessagePurger
 
         let canCareen = 
             CanCareen 
-                islandSingleStatisticSource   
-                islandSource
-                vesselSingleStatisticSource 
+                context.islandSingleStatisticSource   
+                context.islandSource
+                context.vesselSingleStatisticSource 
                 avatarId
 
         let dockDistance = 
-            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.DockDistance 
+            context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.DockDistance 
             |> Option.get 
             |> Statistic.GetCurrentValue
         let nearby = 
             avatarId
             |> GetVisibleIslands 
-                avatarIslandSingleMetricSource
-                islandSingleNameSource
-                islandSource
-                vesselSingleStatisticSource
+                context.avatarIslandSingleMetricSource
+                context.islandSingleNameSource
+                context.islandSource
+                context.vesselSingleStatisticSource
         let dockTarget = 
             nearby
             |> List.fold
@@ -218,11 +207,11 @@ module AtSea =
         | Some (Command.HeadFor name) ->
             avatarId
             |> World.HeadFor
-                avatarIslandSingleMetricSource
-                avatarMessageSink 
-                islandLocationByNameSource
-                vesselSingleStatisticSource 
-                vesselSingleStatisticSink 
+                context.avatarIslandSingleMetricSource
+                context.avatarMessageSink 
+                context.islandLocationByNameSource
+                context.vesselSingleStatisticSource 
+                context.vesselSingleStatisticSink 
                 name
             avatarId
             |> Gamestate.AtSea
@@ -231,10 +220,10 @@ module AtSea =
         | Some (Command.DistanceTo name) ->
             avatarId
             |> World.DistanceTo 
-                avatarIslandSingleMetricSource
-                avatarMessageSink 
-                islandLocationByNameSource
-                vesselSingleStatisticSource 
+                context.avatarIslandSingleMetricSource
+                context.avatarMessageSink 
+                context.islandLocationByNameSource
+                context.vesselSingleStatisticSource 
                 name
             avatarId
             |> Gamestate.AtSea
@@ -247,7 +236,9 @@ module AtSea =
                 |> Some
             else
                 avatarId
-                |> World.AddMessages avatarMessageSink [ "You cannot careen here." ]
+                |> World.AddMessages 
+                    context.avatarMessageSink 
+                    [ "You cannot careen here." ]
                 avatarId
                 |> Gamestate.AtSea
                 |> Some
@@ -257,26 +248,7 @@ module AtSea =
             | Some location ->
                 avatarId 
                 |> World.Dock 
-                    avatarIslandSingleMetricSink
-                    avatarIslandSingleMetricSource
-                    avatarJobSink
-                    avatarJobSource
-                    avatarMessageSink
-                    avatarSingleMetricSink
-                    avatarSingleMetricSource
-                    commoditySource 
-                    islandItemSink 
-                    islandItemSource 
-                    islandJobSink
-                    islandJobSource
-                    islandMarketSink 
-                    islandMarketSource 
-                    islandSource
-                    itemSource
-                    shipmateSingleStatisticSink
-                    shipmateSingleStatisticSource
-                    termSources
-                    worldSingleStatisticSource
+                    context
                     random 
                     location
                 (Dock, 
@@ -286,7 +258,9 @@ module AtSea =
                 |> Some
             | None ->
                 avatarId
-                |> World.AddMessages avatarMessageSink [ "There is no place to dock." ]
+                |> World.AddMessages 
+                    context.avatarMessageSink 
+                    [ "There is no place to dock." ]
                 avatarId
                 |> Gamestate.AtSea
                 |> Some
@@ -299,13 +273,13 @@ module AtSea =
         | Some (Command.Abandon Job) ->
             avatarId
             |> World.AbandonJob 
-                avatarJobSink
-                avatarJobSource
-                avatarMessageSink
-                avatarSingleMetricSink
-                avatarSingleMetricSource
-                shipmateSingleStatisticSink
-                shipmateSingleStatisticSource
+                context.avatarJobSink
+                context.avatarJobSource
+                context.avatarMessageSink
+                context.avatarSingleMetricSink
+                context.avatarSingleMetricSource
+                context.shipmateSingleStatisticSink
+                context.shipmateSingleStatisticSource
             avatarId
             |> Gamestate.AtSea
             |> Some
@@ -336,19 +310,19 @@ module AtSea =
         | Some (Command.Move distance)->
             avatarId
             |> World.Move 
-                avatarInventorySink
-                avatarInventorySource
-                avatarIslandSingleMetricSink
-                avatarMessageSink 
-                avatarShipmateSource
-                avatarSingleMetricSink
-                avatarSingleMetricSource
-                islandSource
-                shipmateRationItemSource 
-                shipmateSingleStatisticSink
-                shipmateSingleStatisticSource
-                vesselSingleStatisticSink 
-                vesselSingleStatisticSource 
+                context.avatarInventorySink
+                context.avatarInventorySource
+                context.avatarIslandSingleMetricSink
+                context.avatarMessageSink 
+                context.avatarShipmateSource
+                context.avatarSingleMetricSink
+                context.avatarSingleMetricSource
+                context.islandSource
+                context.shipmateRationItemSource 
+                context.shipmateSingleStatisticSink
+                context.shipmateSingleStatisticSource
+                context.vesselSingleStatisticSink 
+                context.vesselSingleStatisticSource 
                 distance
             avatarId
             |> Gamestate.AtSea
@@ -356,7 +330,11 @@ module AtSea =
 
         | Some (Command.Set (SetCommand.Heading heading)) ->
             avatarId
-            |> World.SetHeading vesselSingleStatisticSource vesselSingleStatisticSink avatarMessageSink heading
+            |> World.SetHeading 
+                context.vesselSingleStatisticSource 
+                context.vesselSingleStatisticSink 
+                context.avatarMessageSink 
+                heading
             avatarId
             |> Gamestate.AtSea
             |> Some
@@ -364,9 +342,9 @@ module AtSea =
         | Some (Command.Set (Speed speed)) ->
             avatarId
             |> World.SetSpeed 
-                vesselSingleStatisticSource
-                vesselSingleStatisticSink
-                avatarMessageSink
+                context.vesselSingleStatisticSource
+                context.vesselSingleStatisticSink
+                context.avatarMessageSink
                 speed
             avatarId
             |> Gamestate.AtSea
@@ -391,162 +369,43 @@ module AtSea =
             |> Some
 
     let private RunAlive
-            (avatarInventorySink             : AvatarInventorySink)
-            (avatarInventorySource           : AvatarInventorySource)
-            (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
-            (avatarIslandSingleMetricSource  : AvatarIslandSingleMetricSource)
-            (avatarJobSink                   : AvatarJobSink)
-            (avatarJobSource                 : AvatarJobSource)
-            (avatarMessagePurger             : AvatarMessagePurger)
-            (avatarMessageSink               : AvatarMessageSink)
-            (avatarMessageSource             : AvatarMessageSource)
-            (avatarShipmateSource            : AvatarShipmateSource)
-            (avatarSingleMetricSink          : AvatarSingleMetricSink)
-            (avatarSingleMetricSource        : AvatarSingleMetricSource)
-            (commoditySource                 : CommoditySource) 
-            (islandItemSink                  : IslandItemSink) 
-            (islandItemSource                : IslandItemSource) 
-            (islandJobSink                   : IslandJobSink)
-            (islandJobSource                 : IslandJobSource)
-            (islandLocationByNameSource      : IslandLocationByNameSource)
-            (islandMarketSink                : IslandMarketSink) 
-            (islandMarketSource              : IslandMarketSource) 
-            (islandSingleNameSource          : IslandSingleNameSource)
-            (islandSingleStatisticSource     : IslandSingleStatisticSource)
-            (islandSource                    : IslandSource)
-            (itemSource                      : ItemSource) 
-            (shipmateRationItemSource        : ShipmateRationItemSource)
-            (termSources                     : TermSources)
-            (vesselSingleStatisticSink       : VesselSingleStatisticSink)
-            (vesselSingleStatisticSource     : VesselSingleStatisticSource)
-            (worldSingleStatisticSource      : WorldSingleStatisticSource)
-            (shipmateSingleStatisticSource   : ShipmateSingleStatisticSource)
-            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
-            (random                          : Random) 
-            (commandSource                   : CommandSource) 
-            (messageSink                     : MessageSink) 
-            (avatarId                        : string) 
+            (context       : AtSeaRunContext)
+            (random        : Random) 
+            (commandSource : CommandSource) 
+            (messageSink   : MessageSink) 
+            (avatarId      : string) 
             : Gamestate option =
         UpdateDisplay 
-            avatarIslandSingleMetricSource
-            avatarMessageSource
-            islandSingleNameSource
-            islandSource
-            shipmateSingleStatisticSource
-            vesselSingleStatisticSource
+            context.avatarIslandSingleMetricSource
+            context.avatarMessageSource
+            context.islandSingleNameSource
+            context.islandSource
+            context.shipmateSingleStatisticSource
+            context.vesselSingleStatisticSource
             messageSink 
             avatarId
         HandleCommand
-            avatarInventorySink
-            avatarInventorySource
-            avatarIslandSingleMetricSink
-            avatarIslandSingleMetricSource
-            avatarJobSink
-            avatarJobSource
-            avatarMessagePurger
-            avatarMessageSink
-            avatarShipmateSource
-            avatarSingleMetricSink
-            avatarSingleMetricSource
-            commoditySource
-            islandItemSink
-            islandItemSource
-            islandJobSink
-            islandJobSource
-            islandLocationByNameSource
-            islandMarketSink
-            islandMarketSource
-            islandSource
-            islandSingleNameSource
-            islandSingleStatisticSource
-            itemSource
-            shipmateRationItemSource
-            shipmateSingleStatisticSink
-            shipmateSingleStatisticSource
-            termSources
-            vesselSingleStatisticSink
-            vesselSingleStatisticSource
-            worldSingleStatisticSource
+            context
             random
             (commandSource())
             avatarId
 
     let Run 
-            (avatarInventorySink             : AvatarInventorySink)
-            (avatarInventorySource           : AvatarInventorySource)
-            (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
-            (avatarIslandSingleMetricSource  : AvatarIslandSingleMetricSource)
-            (avatarJobSink                   : AvatarJobSink)
-            (avatarJobSource                 : AvatarJobSource)
-            (avatarMessagePurger             : AvatarMessagePurger)
-            (avatarMessageSink               : AvatarMessageSink)
-            (avatarMessageSource             : AvatarMessageSource)
-            (avatarShipmateSource            : AvatarShipmateSource)
-            (avatarSingleMetricSink          : AvatarSingleMetricSink)
-            (avatarSingleMetricSource        : AvatarSingleMetricSource)
-            (commoditySource                 : CommoditySource) 
-            (islandItemSink                  : IslandItemSink) 
-            (islandItemSource                : IslandItemSource) 
-            (islandJobSink                   : IslandJobSink)
-            (islandJobSource                 : IslandJobSource)
-            (islandLocationByNameSource      : IslandLocationByNameSource)
-            (islandMarketSink                : IslandMarketSink) 
-            (islandMarketSource              : IslandMarketSource) 
-            (islandSingleNameSource          : IslandSingleNameSource)
-            (islandSingleStatisticSource     : IslandSingleStatisticSource)
-            (islandSource                    : IslandSource) 
-            (itemSource                      : ItemSource) 
-            (shipmateRationItemSource        : ShipmateRationItemSource)
-            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource   : ShipmateSingleStatisticSource)
-            (termSources                     : TermSources)
-            (vesselSingleStatisticSink       : VesselSingleStatisticSink)
-            (vesselSingleStatisticSource     : VesselSingleStatisticSource)
-            (worldSingleStatisticSource      : WorldSingleStatisticSource)
-            (random                          : Random) 
-            (commandSource                   : CommandSource) 
-            (messageSink                     : MessageSink) 
-            (avatarId                        : string) 
+            (context       : AtSeaRunContext)
+            (random        : Random) 
+            (commandSource : CommandSource) 
+            (messageSink   : MessageSink) 
+            (avatarId      : string) 
             : Gamestate option =
-        if avatarId |> World.IsAvatarAlive shipmateSingleStatisticSource then
+        if avatarId |> World.IsAvatarAlive context.shipmateSingleStatisticSource then
             RunAlive
-                avatarInventorySink
-                avatarInventorySource
-                avatarIslandSingleMetricSink
-                avatarIslandSingleMetricSource
-                avatarJobSink
-                avatarJobSource
-                avatarMessagePurger
-                avatarMessageSink
-                avatarMessageSource
-                avatarShipmateSource
-                avatarSingleMetricSink
-                avatarSingleMetricSource
-                commoditySource 
-                islandItemSink 
-                islandItemSource 
-                islandJobSink
-                islandJobSource
-                islandLocationByNameSource
-                islandMarketSink 
-                islandMarketSource 
-                islandSingleNameSource
-                islandSingleStatisticSource
-                islandSource
-                itemSource 
-                shipmateRationItemSource
-                termSources
-                vesselSingleStatisticSink
-                vesselSingleStatisticSource
-                worldSingleStatisticSource
-                shipmateSingleStatisticSource
-                shipmateSingleStatisticSink
+                context
                 random 
                 commandSource 
                 messageSink 
                 avatarId
         else
             avatarId
-            |> avatarMessageSource
+            |> context.avatarMessageSource
             |> Gamestate.GameOver
             |> Some

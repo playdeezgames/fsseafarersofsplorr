@@ -25,10 +25,23 @@ let internal vesselSingleStatisticSource (_) (identifier) =
         None
 let internal vesselSingleStatisticSink (_) (_) = ()
 
+type TestJobCreationContext
+        (
+            termSources                : TermSources, 
+            worldSingleStatisticSource : WorldSingleStatisticSource
+        ) =
+    interface JobCreationContext with
+        member _.termSources : TermSources = termSources
+        member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
+
+let internal jobCreationContextStub =
+    TestJobCreationContext
+        (termSourcesStub, 
+        worldSingleStatisticSourceStub)
+
 let internal avatarId = "avatar"
 let internal job =
     Job.Create 
-        termSources 
-        worldSingleStatisticSourceStub
+        jobCreationContextStub
         random  
         singleLocation

@@ -12,7 +12,7 @@ let internal statisticDescriptors =
         ShipmateStatisticIdentifier.Money, {StatisticName="money"; MinimumValue=0.0; CurrentValue=0.0;MaximumValue=1000000000.0}
         ShipmateStatisticIdentifier.Reputation, {StatisticName="reputation"; MinimumValue=(-1000000000.0); CurrentValue=0.0;MaximumValue=1000000000.0}
     ]
-let internal shipmateStatisticTemplateSource () =
+let internal shipmateStatisticTemplateSourceStub () =
     statisticDescriptors
     |> Map.ofList
 let internal adverbSource()          : string list = [ "woefully" ]
@@ -21,7 +21,7 @@ let internal objectNameSource()      : string list = [ "thing" ]
 let internal personNameSource()      : string list = [ "george" ]
 let internal personAdjectiveSource() : string list = [ "ugly" ]
 let internal professionSource()      : string list = [ "poopsmith" ]
-let internal termSources = 
+let internal termSourcesStub = 
     (adverbSource, adjectiveSource, objectNameSource, personNameSource, personAdjectiveSource, professionSource)
 let internal nameSource() = []
 
@@ -69,3 +69,4 @@ let internal islandSingleStatisticSinkStub (_) (_) = ()
 let internal islandStatisticTemplateSourceStub () = Map.empty
 
 let internal islandSourceStub() = []
+

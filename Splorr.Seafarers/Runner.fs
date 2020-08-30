@@ -4,98 +4,39 @@ open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Services
 open System
 
+type RunnerRunContext =
+    inherit AtSeaRunContext
+    abstract member avatarMetricSource              : AvatarMetricSource
+    abstract member islandFeatureGeneratorSource    : IslandFeatureGeneratorSource
+    abstract member islandJobPurger                 : IslandJobPurger
+    abstract member islandSingleJobSource           : IslandSingleJobSource
+    abstract member islandSingleMarketSink          : IslandSingleMarketSink 
+    abstract member islandSingleMarketSource        : IslandSingleMarketSource
+    abstract member islandSingleNameSink            : IslandSingleNameSink 
+    abstract member islandSingleStatisticSink       : IslandSingleStatisticSink
+    abstract member islandStatisticTemplateSource   : IslandStatisticTemplateSource
+    abstract member rationItemSource                : RationItemSource
+    abstract member shipmateRationItemSink          : ShipmateRationItemSink
+    abstract member shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource
+    abstract member switchSource                    : SwitchSource
+    abstract member termNameSource                  : TermSource
+    abstract member vesselStatisticSink             : VesselStatisticSink
+    abstract member vesselStatisticTemplateSource   : VesselStatisticTemplateSource
+
 module Runner =
-
-
     let rec private Loop 
-            (avatarInventorySink             : AvatarInventorySink)
-            (avatarInventorySource           : AvatarInventorySource)
-            (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
-            (avatarIslandSingleMetricSource  : AvatarIslandSingleMetricSource)
-            (avatarJobSink                   : AvatarJobSink)
-            (avatarJobSource                 : AvatarJobSource)
-            (avatarMessagePurger             : AvatarMessagePurger)
-            (avatarMessageSink               : AvatarMessageSink)
-            (avatarMessageSource             : AvatarMessageSource)
-            (avatarMetricSource              : AvatarMetricSource)
-            (avatarShipmateSource            : AvatarShipmateSource)
-            (avatarSingleMetricSink          : AvatarSingleMetricSink)
-            (avatarSingleMetricSource        : AvatarSingleMetricSource)
-            (commoditySource                 : CommoditySource)
-            (islandFeatureGeneratorSource    : IslandFeatureGeneratorSource)
-            (islandItemSink                  : IslandItemSink) 
-            (islandItemSource                : IslandItemSource) 
-            (islandJobPurger                 : IslandJobPurger)
-            (islandJobSink                   : IslandJobSink)
-            (islandJobSource                 : IslandJobSource)
-            (islandLocationByNameSource      : IslandLocationByNameSource)
-            (islandMarketSink                : IslandMarketSink) 
-            (islandMarketSource              : IslandMarketSource) 
-            (islandSingleJobSource           : IslandSingleJobSource)
-            (islandSingleMarketSink          : IslandSingleMarketSink) 
-            (islandSingleMarketSource        : IslandSingleMarketSource)
-            (islandSingleNameSink            : IslandSingleNameSink) 
-            (islandSingleNameSource          : IslandSingleNameSource) 
-            (islandSingleStatisticSink       : IslandSingleStatisticSink)
-            (islandSingleStatisticSource     : IslandSingleStatisticSource)
-            (islandStatisticTemplateSource   : IslandStatisticTemplateSource)
-            (islandSource                    : IslandSource)
-            (itemSource                      : ItemSource)
-            (rationItemSource                : RationItemSource)
-            (shipmateRationItemSink          : ShipmateRationItemSink)
-            (shipmateRationItemSource        : ShipmateRationItemSource)
-            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource   : ShipmateSingleStatisticSource)
-            (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
-            (switchSource                    : SwitchSource)
-            (termNameSource                  : TermSource)
-            (termSources                     : TermSources)
-            (vesselSingleStatisticSink       : VesselSingleStatisticSink)
-            (vesselStatisticSink             : VesselStatisticSink)
-            (vesselSingleStatisticSource     : VesselSingleStatisticSource)
-            (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
-            (worldSingleStatisticSource      : WorldSingleStatisticSource)
-            (random                          : Random) 
-            (commandSource                   : CommandSource) 
-            (messageSink                     : MessageSink) 
-            (gamestate                       : Gamestate) 
+            (context       : RunnerRunContext)
+            (random        : Random) 
+            (commandSource : CommandSource) 
+            (messageSink   : MessageSink) 
+            (gamestate     : Gamestate) 
             : unit =
 
         let nextGamestate : Gamestate option = 
             match gamestate with
             | Gamestate.AtSea world -> 
                 AtSea.Run 
-                    avatarInventorySink
-                    avatarInventorySource
-                    avatarIslandSingleMetricSink
-                    avatarIslandSingleMetricSource
-                    avatarJobSink
-                    avatarJobSource
-                    avatarMessagePurger
-                    avatarMessageSink
-                    avatarMessageSource
-                    avatarShipmateSource
-                    avatarSingleMetricSink
-                    avatarSingleMetricSource
-                    commoditySource 
-                    islandItemSink 
-                    islandItemSource 
-                    islandJobSink
-                    islandJobSource
-                    islandLocationByNameSource
-                    islandMarketSink 
-                    islandMarketSource
-                    islandSingleNameSource
-                    islandSingleStatisticSource
-                    islandSource
-                    itemSource 
-                    shipmateRationItemSource
-                    shipmateSingleStatisticSink
-                    shipmateSingleStatisticSource
-                    termSources
-                    vesselSingleStatisticSink
-                    vesselSingleStatisticSource
-                    worldSingleStatisticSource
+                    context
                     random 
                     commandSource 
                     messageSink 
@@ -103,15 +44,15 @@ module Runner =
 
             | Gamestate.Careened (side, world) -> 
                 Careened.Run 
-                    avatarMessagePurger
-                    avatarMessageSource
-                    avatarShipmateSource
-                    avatarSingleMetricSink
-                    avatarSingleMetricSource
-                    shipmateSingleStatisticSink
-                    shipmateSingleStatisticSource
-                    vesselSingleStatisticSink
-                    vesselSingleStatisticSource
+                    context.avatarMessagePurger
+                    context.avatarMessageSource
+                    context.avatarShipmateSource
+                    context.avatarSingleMetricSink
+                    context.avatarSingleMetricSource
+                    context.shipmateSingleStatisticSink
+                    context.shipmateSingleStatisticSource
+                    context.vesselSingleStatisticSink
+                    context.vesselSingleStatisticSource
                     commandSource 
                     messageSink 
                     side 
@@ -119,47 +60,47 @@ module Runner =
 
             | Gamestate.Chart (chartName, world) -> 
                 Chart.Run 
-                    avatarIslandSingleMetricSource
-                    islandSingleNameSource
-                    islandSource 
-                    vesselSingleStatisticSource
-                    worldSingleStatisticSource
+                    context.avatarIslandSingleMetricSource
+                    context.islandSingleNameSource
+                    context.islandSource 
+                    context.vesselSingleStatisticSource
+                    context.worldSingleStatisticSource
                     messageSink 
                     chartName 
                     world
 
             | Gamestate.ConfirmQuit state -> 
                 ConfirmQuit.Run 
-                    switchSource 
+                    context.switchSource 
                     commandSource 
                     messageSink 
                     state
 
             | Gamestate.Docked (Dock, location, world) -> 
                 Docked.Run 
-                    avatarInventorySink
-                    avatarInventorySource
-                    avatarIslandSingleMetricSink
-                    avatarIslandSingleMetricSource
-                    avatarJobSink
-                    avatarJobSource
-                    avatarMessagePurger
-                    avatarMessageSink
-                    avatarMessageSource
-                    avatarSingleMetricSink
-                    avatarSingleMetricSource
-                    commoditySource 
-                    islandJobPurger
-                    islandMarketSource 
-                    islandSingleJobSource
-                    islandSingleMarketSink 
-                    islandSingleMarketSource
-                    islandSingleNameSource
-                    islandSource
-                    itemSource 
-                    shipmateSingleStatisticSink
-                    shipmateSingleStatisticSource
-                    vesselSingleStatisticSource
+                    context.avatarInventorySink
+                    context.avatarInventorySource
+                    context.avatarIslandSingleMetricSink
+                    context.avatarIslandSingleMetricSource
+                    context.avatarJobSink
+                    context.avatarJobSource
+                    context.avatarMessagePurger
+                    context.avatarMessageSink
+                    context.avatarMessageSource
+                    context.avatarSingleMetricSink
+                    context.avatarSingleMetricSource
+                    context.commoditySource 
+                    context.islandJobPurger
+                    context.islandMarketSource 
+                    context.islandSingleJobSource
+                    context.islandSingleMarketSink 
+                    context.islandSingleMarketSource
+                    context.islandSingleNameSource
+                    context.islandSource
+                    context.itemSource 
+                    context.shipmateSingleStatisticSink
+                    context.shipmateSingleStatisticSource
+                    context.vesselSingleStatisticSource
                     commandSource 
                     messageSink 
                     location 
@@ -167,22 +108,22 @@ module Runner =
 
             | Gamestate.Docked (ItemList, location, world) -> 
                 ItemList.Run 
-                    avatarMessageSource
-                    commoditySource 
-                    islandItemSource 
-                    islandMarketSource 
-                    islandSource
-                    itemSource 
-                    shipmateSingleStatisticSource
+                    context.avatarMessageSource
+                    context.commoditySource 
+                    context.islandItemSource 
+                    context.islandMarketSource 
+                    context.islandSource
+                    context.itemSource 
+                    context.shipmateSingleStatisticSource
                     messageSink 
                     location 
                     world
 
             | Gamestate.Docked (Jobs, location, world) -> 
                 Jobs.Run 
-                    islandJobSource
-                    islandSingleNameSource
-                    islandSource
+                    context.islandJobSource
+                    context.islandSingleNameSource
+                    context.islandSource
                     messageSink 
                     location
                     world
@@ -205,113 +146,67 @@ module Runner =
 
             | Gamestate.Inventory gameState -> 
                 Inventory.Run 
-                    avatarInventorySource
-                    itemSource 
-                    vesselSingleStatisticSource
+                    context.avatarInventorySource
+                    context.itemSource 
+                    context.vesselSingleStatisticSource
                     messageSink 
                     gameState
 
             | Gamestate.IslandList (page, state) -> 
                 IslandList.Run 
-                    avatarIslandSingleMetricSource
-                    islandSingleNameSource
-                    islandSource
-                    vesselSingleStatisticSource
+                    context.avatarIslandSingleMetricSource
+                    context.islandSingleNameSource
+                    context.islandSource
+                    context.vesselSingleStatisticSource
                     messageSink 
                     page 
                     state
 
             | Gamestate.MainMenu world -> 
                 MainMenu.Run 
-                    avatarIslandSingleMetricSink
-                    avatarJobSink
-                    islandFeatureGeneratorSource
-                    islandSingleNameSink
-                    islandSingleStatisticSink
-                    islandSource
-                    islandStatisticTemplateSource
-                    rationItemSource
-                    shipmateRationItemSink
-                    shipmateSingleStatisticSink
-                    shipmateStatisticTemplateSource
-                    termNameSource
-                    vesselSingleStatisticSource
-                    vesselStatisticSink
-                    vesselStatisticTemplateSource
-                    worldSingleStatisticSource
+                    context.avatarIslandSingleMetricSink
+                    context.avatarJobSink
+                    context.islandFeatureGeneratorSource
+                    context.islandSingleNameSink
+                    context.islandSingleStatisticSink
+                    context.islandSource
+                    context.islandStatisticTemplateSource
+                    context.rationItemSource
+                    context.shipmateRationItemSink
+                    context.shipmateSingleStatisticSink
+                    context.shipmateStatisticTemplateSource
+                    context.termNameSource
+                    context.vesselSingleStatisticSource
+                    context.vesselStatisticSink
+                    context.vesselStatisticTemplateSource
+                    context.worldSingleStatisticSource
                     commandSource 
                     messageSink 
                     world
 
             | Gamestate.Metrics state -> 
                 Metrics.Run 
-                    avatarMetricSource
+                    context.avatarMetricSource
                     messageSink 
                     state
 
             | Gamestate.Status state -> 
                 Status.Run 
-                    avatarJobSource
-                    islandSingleNameSource
-                    shipmateSingleStatisticSource
-                    vesselSingleStatisticSource
+                    context.avatarJobSource
+                    context.islandSingleNameSource
+                    context.shipmateSingleStatisticSource
+                    context.vesselSingleStatisticSource
                     messageSink 
                     state
 
             |> Gamestate.CheckForAvatarDeath 
-                avatarMessageSource
-                shipmateSingleStatisticSource
+                context.avatarMessageSource
+                context.shipmateSingleStatisticSource
 
         match nextGamestate with
         | Some state ->
             Loop 
-                avatarInventorySink
-                avatarInventorySource
-                avatarIslandSingleMetricSink
-                avatarIslandSingleMetricSource
-                avatarJobSink
-                avatarJobSource
-                avatarMessagePurger
-                avatarMessageSink
-                avatarMessageSource
-                avatarMetricSource
-                avatarShipmateSource
-                avatarSingleMetricSink
-                avatarSingleMetricSource
-                commoditySource 
-                islandFeatureGeneratorSource
-                islandItemSink 
-                islandItemSource 
-                islandJobPurger
-                islandJobSink
-                islandJobSource
-                islandLocationByNameSource
-                islandMarketSink 
-                islandMarketSource 
-                islandSingleJobSource
-                islandSingleMarketSink 
-                islandSingleMarketSource
-                islandSingleNameSink
-                islandSingleNameSource
-                islandSingleStatisticSink
-                islandSingleStatisticSource
-                islandStatisticTemplateSource
-                islandSource
-                itemSource 
-                rationItemSource
-                shipmateRationItemSink
-                shipmateRationItemSource
-                shipmateSingleStatisticSink
-                shipmateSingleStatisticSource
-                shipmateStatisticTemplateSource
-                switchSource 
-                termNameSource
-                termSources
-                vesselSingleStatisticSink
-                vesselStatisticSink
-                vesselSingleStatisticSource
-                vesselStatisticTemplateSource
-                worldSingleStatisticSource
+                context
                 random 
                 commandSource 
                 messageSink 
@@ -321,53 +216,7 @@ module Runner =
             ()
     
     let Run 
-            (avatarInventorySink             : AvatarInventorySink)
-            (avatarInventorySource           : AvatarInventorySource)
-            (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
-            (avatarIslandSingleMetricSource  : AvatarIslandSingleMetricSource)
-            (avatarJobSink                   : AvatarJobSink)
-            (avatarJobSource                 : AvatarJobSource)
-            (avatarMessagePurger             : AvatarMessagePurger)
-            (avatarMessageSink               : AvatarMessageSink)
-            (avatarMessageSource             : AvatarMessageSource)
-            (avatarMetricSource              : AvatarMetricSource)
-            (avatarShipmateSource            : AvatarShipmateSource)
-            (avatarSingleMetricSink          : AvatarSingleMetricSink)
-            (avatarSingleMetricSource        : AvatarSingleMetricSource)
-            (commoditySource                 : CommoditySource) 
-            (islandFeatureGeneratorSource    : IslandFeatureGeneratorSource)
-            (islandItemSink                  : IslandItemSink) 
-            (islandItemSource                : IslandItemSource) 
-            (islandJobPurger                 : IslandJobPurger)
-            (islandJobSink                   : IslandJobSink)
-            (islandJobSource                 : IslandJobSource)
-            (islandLocationByNameSource      : IslandLocationByNameSource)
-            (islandMarketSink                : IslandMarketSink) 
-            (islandMarketSource              : IslandMarketSource) 
-            (islandSingleJobSource           : IslandSingleJobSource)
-            (islandSingleMarketSink          : IslandSingleMarketSink) 
-            (islandSingleMarketSource        : IslandSingleMarketSource) 
-            (islandSingleNameSink            : IslandSingleNameSink) 
-            (islandSingleNameSource          : IslandSingleNameSource) 
-            (islandSingleStatisticSink       : IslandSingleStatisticSink)
-            (islandSingleStatisticSource     : IslandSingleStatisticSource)
-            (islandStatisticTemplateSource   : IslandStatisticTemplateSource)
-            (islandSource                    : IslandSource)
-            (itemSource                      : ItemSource) 
-            (rationItemSource                : RationItemSource)
-            (shipmateRationItemSink          : ShipmateRationItemSink)
-            (shipmateRationItemSource        : ShipmateRationItemSource)
-            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource   : ShipmateSingleStatisticSource)
-            (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
-            (switchSource                    : SwitchSource) 
-            (termNameSource                  : TermSource)
-            (termSources                     : TermSources)
-            (vesselSingleStatisticSink       : VesselSingleStatisticSink)
-            (vesselSingleStatisticSource     : VesselSingleStatisticSource)
-            (vesselStatisticSink             : VesselStatisticSink)
-            (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
-            (worldSingleStatisticSource      : WorldSingleStatisticSource)
+            (context : RunnerRunContext)
             : unit =
 
         Console.Title <- "Seafarers of SPLORR!!"
@@ -377,53 +226,7 @@ module Runner =
         None
         |> Gamestate.MainMenu
         |> Loop 
-            avatarInventorySink
-            avatarInventorySource
-            avatarIslandSingleMetricSink
-            avatarIslandSingleMetricSource
-            avatarJobSink
-            avatarJobSource
-            avatarMessagePurger
-            avatarMessageSink
-            avatarMessageSource
-            avatarMetricSource
-            avatarShipmateSource
-            avatarSingleMetricSink
-            avatarSingleMetricSource
-            commoditySource 
-            islandFeatureGeneratorSource
-            islandItemSink 
-            islandItemSource 
-            islandJobPurger
-            islandJobSink
-            islandJobSource
-            islandLocationByNameSource
-            islandMarketSink 
-            islandMarketSource 
-            islandSingleJobSource
-            islandSingleMarketSink 
-            islandSingleMarketSource
-            islandSingleNameSink
-            islandSingleNameSource
-            islandSingleStatisticSink
-            islandSingleStatisticSource
-            islandStatisticTemplateSource
-            islandSource
-            itemSource 
-            rationItemSource
-            shipmateRationItemSink
-            shipmateRationItemSource
-            shipmateSingleStatisticSink
-            shipmateSingleStatisticSource
-            shipmateStatisticTemplateSource
-            switchSource 
-            termNameSource
-            termSources
-            vesselSingleStatisticSink
-            vesselStatisticSink
-            vesselSingleStatisticSource
-            vesselStatisticTemplateSource
-            worldSingleStatisticSource
+            context
             (Random()) 
             (fun () -> CommandSource.Read Console.ReadLine) 
             MessageSink.Write

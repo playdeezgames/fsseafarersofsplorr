@@ -162,6 +162,18 @@ let ``AddVisit.It does not update visit count when given turn was prior or equal
         avatarId
         location
 
+type TestIslandJobsGenerationContext
+        (islandJobSink             : IslandJobSink, 
+        islandJobSource            : IslandJobSource,
+        termSources                : TermSources,
+        worldSingleStatisticSource : WorldSingleStatisticSource) =
+    interface IslandJobsGenerationContext with
+        member _.islandJobSink   : IslandJobSink = islandJobSink
+        member _.islandJobSource : IslandJobSource = islandJobSource
+    interface JobCreationContext with
+        member _.termSources : TermSources = termSources
+        member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
+
 [<Test>]
 let ``GenerateJob.It generates a job when no job is present on the island.`` () =
     let inputLocation = (0.0, 0.0)
@@ -170,12 +182,16 @@ let ``GenerateJob.It generates a job when no job is present on the island.`` () 
         sinkCalled<-true
     let islandJobSource (_) =
         []
+    let context : IslandJobsGenerationContext =
+        TestIslandJobsGenerationContext
+            (islandJobSink,
+            islandJobSource,
+            termSourcesStub,
+            worldSingleStatisticSourceStub) 
+        :> IslandJobsGenerationContext
     inputLocation
     |> Island.GenerateJobs 
-        islandJobSink
-        islandJobSource
-        termSources 
-        worldSingleStatisticSourceStub 
+        context
         random 
         singleDestination
     Assert.IsTrue(sinkCalled)
@@ -193,12 +209,16 @@ let ``GenerateJob.It does nothing when no job is present on the island and no po
                 Destination=(0.0, 0.0)
             }
         ]
+    let context : IslandJobsGenerationContext =
+        TestIslandJobsGenerationContext
+            (islandJobSink,
+            islandJobSource,
+            termSourcesStub,
+            worldSingleStatisticSourceStub) 
+        :> IslandJobsGenerationContext
     inputLocation
     |> Island.GenerateJobs 
-        islandJobSink
-        islandJobSource
-        termSources 
-        worldSingleStatisticSourceStub 
+        context 
         random 
         Set.empty
 

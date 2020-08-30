@@ -4,6 +4,7 @@ open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
+open AvatarTestFixtures
 
 let rewardRange = (1.0, 10.0)
 let random = System.Random()
@@ -14,7 +15,10 @@ let singleDestination =
 [<Test>]
 let ``Create.It generates a job.`` () =
     let actual =
-        Job.Create termSources worldSingleStatisticSourceStub random singleDestination
+        Job.Create 
+            jobCreationContextStub
+            random 
+            singleDestination
     Assert.AreEqual((0.0,0.0), actual.Destination)
     Assert.GreaterOrEqual(actual.Reward,rewardRange |> fst);
     Assert.LessOrEqual(actual.Reward,rewardRange |> snd);
@@ -23,6 +27,12 @@ let ``Create.It generates a job.`` () =
 
 [<Test>]
 let ``Create.It throws an exception when an empty set of destinations is given.`` () =
-    Assert.Throws<System.ArgumentException>(fun () -> Job.Create termSources worldSingleStatisticSourceStub random Set.empty |> ignore)
+    Assert.Throws<System.ArgumentException>(
+        fun () -> 
+            Job.Create 
+                jobCreationContextStub
+                random 
+                Set.empty 
+                |> ignore)
     |> ignore
 

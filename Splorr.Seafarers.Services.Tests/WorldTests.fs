@@ -400,28 +400,31 @@ let ``Dock.It does nothing when given an invalid avatar id.`` () =
         []
     let islandSource () =
         []
+    let context : WorldDockContext =
+        TestWorldDockContext
+            (avatarIslandSingleMetricSink,
+            avatarIslandSingleMetricSource,
+            avatarJobSink,
+            avatarJobSource,
+            avatarMessageSinkStub,
+            avatarSingleMetricSinkExplode,
+            avatarSingleMetricSourceStub,
+            commoditySource,
+            islandItemSinkStub,
+            islandItemSourceStub, 
+            islandJobSink,
+            islandJobSource,
+            islandMarketSinkStub,
+            islandMarketSourceStub, 
+            islandSource,
+            genericWorldItemSource,
+            shipmateSingleStatisticSinkStub,
+            shipmateSingleStatisticSourceStub,
+            termSourcesStub,
+            worldSingleStatisticSourceStub) :> WorldDockContext
     bogusAvatarId
     |> World.Dock 
-        avatarIslandSingleMetricSink
-        avatarIslandSingleMetricSource
-        avatarJobSink
-        avatarJobSource
-        avatarMessageSinkStub
-        avatarSingleMetricSinkExplode
-        avatarSingleMetricSourceStub
-        commoditySource
-        islandItemSinkStub 
-        islandItemSourceStub 
-        islandJobSink
-        islandJobSource
-        islandMarketSinkStub 
-        islandMarketSourceStub 
-        islandSource
-        genericWorldItemSource
-        shipmateSingleStatisticSinkStub
-        shipmateSingleStatisticSourceStub
-        termSources 
-        worldSingleStatisticSourceStub
+        context
         random 
         (0.0, 0.0)
 
@@ -451,28 +454,31 @@ let ``Dock.It adds a message when the given location has no island.`` () =
         []
     let islandSource () =
         []
+    let context : WorldDockContext =
+        TestWorldDockContext
+            (avatarIslandSingleMetricSink,
+            avatarIslandSingleMetricSource,
+            avatarJobSink,
+            avatarJobSource,
+            (avatarExpectedMessageSink expectedMessage),
+            avatarSingleMetricSinkExplode,
+            avatarSingleMetricSourceStub,
+            commoditySource,
+            islandItemSinkStub ,
+            islandItemSourceStub, 
+            islandJobSink,
+            islandJobSource,
+            islandMarketSinkStub ,
+            islandMarketSourceStub, 
+            islandSource,
+            genericWorldItemSource ,
+            shipmateSingleStatisticSinkStub,
+            shipmateSingleStatisticSourceStub,
+            termSourcesStub ,
+            worldSingleStatisticSourceStub) :> WorldDockContext
     inputWorld
     |> World.Dock
-        avatarIslandSingleMetricSink
-        avatarIslandSingleMetricSource
-        avatarJobSink
-        avatarJobSource
-        (avatarExpectedMessageSink expectedMessage)
-        avatarSingleMetricSinkExplode
-        avatarSingleMetricSourceStub
-        commoditySource
-        islandItemSinkStub 
-        islandItemSourceStub 
-        islandJobSink
-        islandJobSource
-        islandMarketSinkStub 
-        islandMarketSourceStub 
-        islandSource
-        genericWorldItemSource 
-        shipmateSingleStatisticSinkStub
-        shipmateSingleStatisticSourceStub
-        termSources 
-        worldSingleStatisticSourceStub
+        context
         random 
         (0.0, 0.0)
 
@@ -534,28 +540,32 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
         []
     let islandSource () =
         [inputLocation]
+    let context : WorldDockContext =
+        TestWorldDockContext
+            (avatarIslandSingleMetricSink,
+            avatarIslandSingleMetricSource,
+            avatarJobSink,
+            avatarJobSource,
+            (avatarExpectedMessageSink expectedMessage),
+            (assertAvatarSingleMetricSink [Metric.VisitedIsland, 1UL]),
+            avatarSingleMetricSourceStub,
+            (fun()->Map.empty),
+            islandItemSinkStub, 
+            islandItemSourceStub,
+            islandJobSink,
+            islandJobSource,
+            islandMarketSinkStub ,
+            islandMarketSourceStub, 
+            islandSource,
+            (fun()->Map.empty) ,
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource,
+            termSourcesStub ,
+            worldSingleStatisticSourceStub) 
+        :> WorldDockContext
     inputWorld
     |> World.Dock
-        avatarIslandSingleMetricSink
-        avatarIslandSingleMetricSource
-        avatarJobSink
-        avatarJobSource
-        (avatarExpectedMessageSink expectedMessage)
-        (assertAvatarSingleMetricSink [Metric.VisitedIsland, 1UL])
-        avatarSingleMetricSourceStub
-        (fun()->Map.empty) 
-        islandItemSinkStub 
-        islandItemSourceStub 
-        islandJobSink
-        islandJobSource
-        islandMarketSinkStub 
-        islandMarketSourceStub 
-        islandSource
-        (fun()->Map.empty) 
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
-        termSources 
-        worldSingleStatisticSourceStub
+        context
         random 
         inputLocation
 
@@ -1036,28 +1046,31 @@ let ``Dock.It does not modify avatar when given avatar has a job for a different
         [
             inputLocation
         ]
+    let context : WorldDockContext =
+        TestWorldDockContext
+            (avatarIslandSingleMetricSink,
+            avatarIslandSingleMetricSource,
+            avatarJobSink,
+            avatarJobSource,
+            (avatarExpectedMessageSink expectedMessage),
+            (assertAvatarSingleMetricSink [Metric.VisitedIsland, 0UL; Metric.VisitedIsland, 1UL]),
+            avatarSingleMetricSourceStub,
+            commoditySource,
+            islandItemSinkStub ,
+            islandItemSourceStub, 
+            islandJobSink,
+            islandJobSource,
+            islandMarketSinkStub ,
+            islandMarketSourceStub ,
+            islandSource,
+            genericWorldItemSource ,
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource,
+            termSourcesStub ,
+            worldSingleStatisticSourceStub) :> WorldDockContext
     avatarId
     |> World.Dock
-        avatarIslandSingleMetricSink
-        avatarIslandSingleMetricSource
-        avatarJobSink
-        avatarJobSource
-        (avatarExpectedMessageSink expectedMessage)
-        (assertAvatarSingleMetricSink [Metric.VisitedIsland, 0UL; Metric.VisitedIsland, 1UL])
-        avatarSingleMetricSourceStub
-        commoditySource
-        islandItemSinkStub 
-        islandItemSourceStub 
-        islandJobSink
-        islandJobSource
-        islandMarketSinkStub 
-        islandMarketSourceStub 
-        islandSource
-        genericWorldItemSource 
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
-        termSources 
-        worldSingleStatisticSourceStub
+        context
         random 
         inputLocation
     |> ignore
@@ -1099,28 +1112,32 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
         []
     let islandSource () =
         [jobLocation]
+    let context : WorldDockContext =
+        TestWorldDockContext
+            (avatarIslandSingleMetricSink,
+            avatarIslandSingleMetricSource,
+            avatarJobSink,
+            avatarJobSource,
+            (avatarExpectedMessagesSink expectedMessages),
+            avatarSingleMetricSinkExplode,
+            avatarSingleMetricSourceStub,
+            commoditySource ,
+            islandItemSinkStub ,
+            islandItemSourceStub,
+            islandJobSink,
+            islandJobSource,
+            islandMarketSinkStub ,
+            islandMarketSourceStub, 
+            islandSource,
+            genericWorldItemSource ,
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource,
+            termSourcesStub ,
+            worldSingleStatisticSourceStub)
+        :> WorldDockContext
     avatarId
     |> World.Dock
-        avatarIslandSingleMetricSink
-        avatarIslandSingleMetricSource
-        avatarJobSink
-        avatarJobSource
-        (avatarExpectedMessagesSink expectedMessages)
-        avatarSingleMetricSinkExplode
-        avatarSingleMetricSourceStub
-        commoditySource 
-        islandItemSinkStub 
-        islandItemSourceStub
-        islandJobSink
-        islandJobSource
-        islandMarketSinkStub 
-        islandMarketSourceStub 
-        islandSource
-        genericWorldItemSource 
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
-        termSources 
-        worldSingleStatisticSourceStub
+        context
         random 
         jobLocation
 

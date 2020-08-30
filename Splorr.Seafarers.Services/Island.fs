@@ -22,6 +22,11 @@ type IslandJobSink = Location -> Job -> unit
 type IslandSingleJobSource = Location -> uint32 -> Job option
 type IslandJobPurger = Location -> uint32 -> unit
 
+type IslandJobsGenerationContext =
+    inherit JobCreationContext
+    abstract member islandJobSink              : IslandJobSink
+    abstract member islandJobSource            : IslandJobSource
+
 module Island =
     let private CreateStatistics
             (islandSingleStatisticSink     : IslandSingleStatisticSink)
@@ -87,23 +92,19 @@ module Island =
             ()
 
     let GenerateJobs 
-            (islandJobSink              : IslandJobSink)
-            (islandJobSource            : IslandJobSource)
-            (termSources                : TermSources)
-            (worldSingleStatisticSource : WorldSingleStatisticSource)
-            (random                     : Random) 
-            (destinations               : Set<Location>) 
-            (location                   : Location)
+            (context      : IslandJobsGenerationContext)
+            (random       : Random) 
+            (destinations : Set<Location>) 
+            (location     : Location)
             : unit =
         let jobs = 
-            islandJobSource location
+            context.islandJobSource location
         if jobs.IsEmpty && not destinations.IsEmpty then
             Job.Create 
-                termSources 
-                worldSingleStatisticSource 
+                context 
                 random 
                 destinations
-            |> islandJobSink location
+            |> context.islandJobSink location
 
     let MakeKnown
             (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
