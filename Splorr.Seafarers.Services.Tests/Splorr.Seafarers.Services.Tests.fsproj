@@ -24,6 +24,7 @@
     <Compile Include="AvatarTests.fs" />
     <Compile Include="AngleTests.fs" />
     <Compile Include="IslandTests.fs" />
+    <Compile Include="IslandFeatureGeneratorTests.fs" />
     <Compile Include="ItemTests.fs" />
     <Compile Include="JobTests.fs" />
     <Compile Include="LocationTests.fs" />

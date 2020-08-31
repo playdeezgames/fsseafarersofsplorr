@@ -47,6 +47,7 @@ type SplorrContext
         islandLocationByNameSource: IslandLocationByNameSource ,
         islandMarketSink: IslandMarketSink ,
         islandMarketSource: IslandMarketSource ,
+        islandSingleFeatureSink : IslandSingleFeatureSink,
         islandSingleJobSource: IslandSingleJobSource ,
         islandSingleMarketSink: IslandSingleMarketSink ,
         islandSingleMarketSource: IslandSingleMarketSource ,
@@ -113,6 +114,7 @@ type SplorrContext
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
 
     interface WorldCreateContext with
+        member _.islandSingleFeatureSink : IslandSingleFeatureSink = islandSingleFeatureSink
         member _.islandFeatureGeneratorSource: IslandFeatureGeneratorSource = islandFeatureGeneratorSource
         member _.islandSingleNameSink: IslandSingleNameSink = islandSingleNameSink
         member _.islandSingleStatisticSink: IslandSingleStatisticSink = islandSingleStatisticSink
@@ -400,6 +402,10 @@ let main argv =
         IslandFeature.GetGenerators connection
         |> Persister.unpackOrThrow
 
+    let islandSingleFeatureSink (location:Location) =
+        IslandFeature.AddToIsland connection location
+        >> Persister.unpackOrThrow
+
     let context : RunnerRunContext =
         SplorrContext
             (avatarInventorySink,
@@ -425,6 +431,7 @@ let main argv =
             islandLocationByNameSource,
             islandMarketSink ,
             islandMarketSource, 
+            islandSingleFeatureSink,
             islandSingleJobSource,
             islandSingleMarketSink, 
             islandSingleMarketSource,

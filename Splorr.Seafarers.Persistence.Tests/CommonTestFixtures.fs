@@ -303,7 +303,7 @@ let private setupIslandJobs
     |> runCommands connection
 
 let internal NewAvatarId = "newavatar"
-let internal InvalidIslandLocation = (-1.0, -1.0)
+let internal InvalidIslandLocation = (-1.0, -2.0)
 
 let private setupIslandList
         (connection : SQLiteConnection)
@@ -327,6 +327,22 @@ let private setupIslandFeatureGenerators
             Tables.IslandFeatureGenerators
         ]
     |> runCommands connection
+
+let private setupIslandFeatures 
+        (location: Location)
+        (features: IslandFeatureIdentifier list)
+        (connection: SQLiteConnection)
+        : unit =
+    features
+    |> List.map
+        (fun id ->
+            sprintf "REPLACE INTO [IslandFeatures] ([IslandX], [IslandY], [FeatureId]) VALUES (%f, %f, %u);" (location |> fst) (location |> snd) (id |> uint))
+    |> List.append
+        [
+            Tables.IslandFeatures
+        ]
+    |> runCommands connection
+
 
 let internal SetupConnection() : SQLiteConnection = 
     let connection = new SQLiteConnection(connectionString)
@@ -356,6 +372,8 @@ let internal SetupConnection() : SQLiteConnection =
         setupIslandJobs VisitedIslandLocation UnvisitedIslandLocation
         setupIslandList
         setupIslandFeatureGenerators
+        setupIslandFeatures VisitedIslandLocation [IslandFeatureIdentifier.DarkAlley]
+        setupIslandFeatures UnvisitedIslandLocation [IslandFeatureIdentifier.DarkAlley]
     ]
     |> List.iter (fun f -> f connection)
 

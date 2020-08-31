@@ -10,12 +10,17 @@ type AvatarMessagePurger = string -> unit
 type IslandLocationByNameSource = string -> Location option
 type IslandSource = unit -> Location list
 type IslandFeatureGeneratorSource = unit -> Map<IslandFeatureIdentifier, IslandFeatureGenerator>
+type IslandSingleFeatureSink = Location->IslandFeatureIdentifier->unit
+
+type WorldPopulateIslandsContext =
+    abstract member islandFeatureGeneratorSource : IslandFeatureGeneratorSource
+    abstract member islandSingleFeatureSink      : IslandSingleFeatureSink
+    abstract member islandSource                 : IslandSource
 
 type WorldGenerateIslandsContext =
     inherit IslandCreateContext
-    abstract member islandFeatureGeneratorSource  : IslandFeatureGeneratorSource
+    inherit WorldPopulateIslandsContext
     abstract member islandSingleNameSink          : IslandSingleNameSink
-    abstract member islandSource                  : IslandSource
     abstract member termNameSource                : TermSource
 
 type WorldCreateContext =
@@ -105,13 +110,18 @@ module World =
                 islandSingleNameSink l (Some n))
 
     let private PopulateIslands
-            (islandFeatureGeneratorSource : IslandFeatureGeneratorSource)
-            (islandSource                 : IslandSource)
-            (random                       : Random) 
+            (context : WorldPopulateIslandsContext)
+            (random  : Random) 
             : unit =
-        let locations = islandSource()
-        let generators = islandFeatureGeneratorSource()
-        ()
+        let generators = context.islandFeatureGeneratorSource()
+        context.islandSource()
+        |> List.iter
+            (fun location -> 
+                generators
+                |> Map.iter
+                    (fun identifier generator ->
+                        if IslandFeatureGenerator.Generate random generator then
+                            context.islandSingleFeatureSink location identifier))
 
     let rec private GenerateIslands  //TODO: move to world generator?
             (context                : WorldGenerateIslandsContext)
@@ -128,8 +138,7 @@ module World =
                 context.termNameSource 
                 random
             PopulateIslands
-                context.islandFeatureGeneratorSource
-                context.islandSource
+                context
                 random
         else
             let locations = context.islandSource()

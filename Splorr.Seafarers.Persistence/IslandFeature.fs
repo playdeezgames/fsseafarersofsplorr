@@ -24,3 +24,16 @@ module IslandFeature =
         |> Result.map
             (Map.ofList)
 
+    let AddToIsland
+            (connection : SQLiteConnection)
+            (location   : Location)
+            (identifier : IslandFeatureIdentifier)
+            : Result<unit, string> =
+        use command = new SQLiteCommand("REPLACE INTO [IslandFeatures] ([IslandX],[IslandY],[FeatureId]) VALUES ($islandX,$islandY,$featureId);", connection)
+        command.Parameters.AddWithValue("$islandX", location |> fst) |> ignore
+        command.Parameters.AddWithValue("$islandY", location |> snd) |> ignore
+        command.Parameters.AddWithValue("$featureId", identifier |> uint) |> ignore
+        command.ExecuteNonQuery() 
+        |> ignore
+        |> Ok
+

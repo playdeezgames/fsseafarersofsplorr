@@ -27,6 +27,8 @@ let internal avatarJobSourceStub (_) = None
 let internal avatarIslandSingleMetricSinkStub (_) (_) (_) (_) = ()
 let internal avatarIslandSingleMetricSourceStub (_) (_) (_) = None
 let internal islandFeatureGeneratorSourceStub () = Map.empty
+let internal islandSingleFeatureSinkStub (_) (_) =
+    raise (System.NotImplementedException "islandSingleFeatureSinkStub")
 
 let internal world = avatarId
 

@@ -50,6 +50,12 @@ module Tables =
     	[FeaturelessWeight]	REAL NOT NULL,
     	PRIMARY KEY([FeatureId]));"
 
+    let IslandFeatures : string = "CREATE TABLE IF NOT EXISTS [IslandFeatures] (
+    	[IslandX]	REAL NOT NULL,
+    	[IslandY]	REAL NOT NULL,
+    	[FeatureId]	INTEGER NOT NULL,
+    	PRIMARY KEY([IslandX],[IslandY],[FeatureId]));";
+
     let IslandItems : string = "CREATE TABLE IF NOT EXISTS [IslandItems] (
 		[IslandX]	REAL NOT NULL,
 		[IslandY]	REAL NOT NULL,
