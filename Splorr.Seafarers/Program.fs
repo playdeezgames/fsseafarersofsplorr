@@ -277,7 +277,7 @@ let main argv =
         |> Persister.unpackOrThrow
 
     let shipmateStatisticTemplateSource () 
-            : Map<ShipmateStatisticIdentifier, ShipmateStatisticTemplate> =
+            : Map<ShipmateStatisticIdentifier, StatisticTemplate> =
         connection |> ShipmateStatisticTemplate.GetList
         |> Persister.unpackOrThrow
 

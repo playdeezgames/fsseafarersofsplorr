@@ -59,7 +59,7 @@ let internal shipmateStatisticTemplateSourceStub () =
     statisticDescriptors
     |> Map.ofList
 let internal vesselStatisticTemplateSourceStub () 
-        : Map<VesselStatisticIdentifier, VesselStatisticTemplate>= 
+        : Map<VesselStatisticIdentifier, StatisticTemplate>= 
     Map.empty
 
 let internal vesselStatisticSinkStub (_) (_) = 

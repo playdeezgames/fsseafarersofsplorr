@@ -6,7 +6,7 @@ open Splorr.Seafarers.Models
 module IslandStatisticTemplate =
     let private convertor 
             (reader : SQLiteDataReader) 
-            : IslandStatisticIdentifier * IslandStatisticTemplate =
+            : IslandStatisticIdentifier * StatisticTemplate =
         (reader.GetInt32(0) |> enum<IslandStatisticIdentifier>,
             {
                 StatisticName = reader.GetString(1)
@@ -17,7 +17,7 @@ module IslandStatisticTemplate =
 
     let GetList 
             (connection : SQLiteConnection) 
-            : Result<Map<IslandStatisticIdentifier, IslandStatisticTemplate>, string> =
+            : Result<Map<IslandStatisticIdentifier, StatisticTemplate>, string> =
         connection
         |> Utility.GetList 
             "SELECT [StatisticId], [StatisticName], [MinimumValue], [MaximumValue], [CurrentValue] FROM [IslandStatisticTemplates];" (fun _->()) convertor

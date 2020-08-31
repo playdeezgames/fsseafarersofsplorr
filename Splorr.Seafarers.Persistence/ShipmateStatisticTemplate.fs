@@ -6,7 +6,7 @@ open Splorr.Seafarers.Models
 module ShipmateStatisticTemplate =
     let private convertor 
             (reader : SQLiteDataReader) 
-            : ShipmateStatisticIdentifier * ShipmateStatisticTemplate =
+            : ShipmateStatisticIdentifier * StatisticTemplate =
         (reader.GetInt32(0) |> enum<ShipmateStatisticIdentifier>,
             {
                 StatisticName = reader.GetString(1)
@@ -17,7 +17,7 @@ module ShipmateStatisticTemplate =
 
     let GetList 
             (connection : SQLiteConnection) 
-            : Result<Map<ShipmateStatisticIdentifier, ShipmateStatisticTemplate>, string> =
+            : Result<Map<ShipmateStatisticIdentifier, StatisticTemplate>, string> =
         connection
         |> Utility.GetList 
             "SELECT [StatisticId], [StatisticName], [MinimumValue], [MaximumValue], [CurrentValue] FROM [ShipmateStatisticTemplates];" (fun _->()) convertor

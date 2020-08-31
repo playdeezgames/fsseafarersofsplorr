@@ -1,7 +1,7 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
-type VesselStatisticTemplateSource = unit -> Map<VesselStatisticIdentifier, VesselStatisticTemplate>
+type VesselStatisticTemplateSource = unit -> Map<VesselStatisticIdentifier, StatisticTemplate>
 type VesselStatisticSink           = string -> Map<VesselStatisticIdentifier, Statistic> -> unit
 type VesselSingleStatisticSource   = string->VesselStatisticIdentifier->Statistic option
 type VesselSingleStatisticSink     = string->VesselStatisticIdentifier*Statistic->unit

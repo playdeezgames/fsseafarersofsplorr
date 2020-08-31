@@ -365,7 +365,7 @@ let ``Create.It sets up statistics for an island.`` () =
         |> Map.add 
             IslandStatisticIdentifier.CareenDistance
             {
-                VesselStatisticTemplate.StatisticName="careen distance"
+                StatisticTemplate.StatisticName="careen distance"
                 MinimumValue = 0.0
                 MaximumValue = 100.0
                 CurrentValue = 50.0

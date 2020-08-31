@@ -13,11 +13,8 @@
     <Compile Include="IslandFeatureGenerator.fs" />
     <Compile Include="StatisticTemplate.fs" />
     <Compile Include="IslandStatisticIdentifier.fs" />
-    <Compile Include="IslandStatisticTemplate.fs" />
     <Compile Include="ShipmateStatisticIdentifier.fs" />
-    <Compile Include="ShipmateStatisticTemplate.fs" />
     <Compile Include="VesselStatisticIdentifier.fs" />
-    <Compile Include="VesselStatisticTemplate.fs" />
     <Compile Include="WorldStatisticIdentifier.fs" />
     <Compile Include="Statistic.fs" />
     <Compile Include="Side.fs" />
