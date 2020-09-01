@@ -37,3 +37,21 @@ module IslandFeature =
         |> ignore
         |> Ok
 
+    let private getForIslandconvertor 
+            (reader : SQLiteDataReader) 
+            : IslandFeatureIdentifier =
+        reader.GetInt32(0) |> enum<IslandFeatureIdentifier>
+
+    let GetForIsland
+            (connection : SQLiteConnection)
+            (location   : Location)
+            : Result<IslandFeatureIdentifier list, string> =
+        connection
+        |> Utility.GetList 
+            "SELECT [FeatureId] FROM [IslandFeatures] WHERE [IslandX]=$islandX AND [IslandY]=$islandY;" 
+            (fun command->
+                command.Parameters.AddWithValue("$islandX", location |> fst) |> ignore
+                command.Parameters.AddWithValue("$islandY", location |> snd) |> ignore
+                ) 
+            getForIslandconvertor
+

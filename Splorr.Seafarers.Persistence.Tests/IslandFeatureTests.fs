@@ -42,6 +42,21 @@ let ``AddToIsland.It adds a given feature to a given island when it does not exi
     let actualFinal = command.ExecuteScalar() :?> int64
     Assert.AreEqual(1L, actualFinal)
 
+[<Test>]
+let ``GetForIsland.It returns a list of island features for a given island.`` () =
+    let connection = SetupConnection()
+    let givenLocation = VisitedIslandLocation
+    let expected : Result<IslandFeatureIdentifier list, string> =
+        [
+            IslandFeatureIdentifier.DarkAlley            
+        ]
+        |> Ok
+    let actual = IslandFeature.GetForIsland connection givenLocation
+    Assert.AreEqual(expected, actual)
+
+//[<Test>]
+//let ``GetForIsland.It returns nothing for an island that does not exist.`` () =
+
 
 [<Test>]
 let ``AddToIsland.It does nothing when a given feature on a given island already exists.`` () =

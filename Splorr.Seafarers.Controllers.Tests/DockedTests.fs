@@ -7,6 +7,66 @@ open CommonTestFixtures
 open DockedTestFixtures
 open Splorr.Seafarers.Services
 
+type TestDockedRunContext
+        (
+            avatarInventorySink           ,
+            avatarInventorySource         ,
+            avatarIslandSingleMetricSink  ,
+            avatarIslandSingleMetricSource,
+            avatarJobSink                 ,
+            avatarJobSource               ,
+            avatarMessagePurger           ,
+            avatarMessageSink             ,
+            avatarMessageSource           ,
+            avatarSingleMetricSink        ,
+            avatarSingleMetricSource      ,
+            commoditySource               ,
+            islandFeatureSource           ,
+            islandJobPurger               ,
+            islandMarketSource            ,
+            islandSingleJobSource         ,
+            islandSingleMarketSink        ,
+            islandSingleNameSource        ,
+            islandSingleMarketSource      ,
+            islandSource                  ,
+            itemSource                    ,
+            shipmateSingleStatisticSink   ,
+            shipmateSingleStatisticSource ,
+            vesselSingleStatisticSource   
+        ) =
+    interface DockedRunContext
+        
+    interface DockedUpdateDisplayContext with
+        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        member _.avatarMessageSource            : AvatarMessageSource            = avatarMessageSource           
+        member _.islandSingleNameSource         : IslandSingleNameSource         = islandSingleNameSource  
+        member _.islandFeatureSource            : IslandFeatureSource            = islandFeatureSource
+        
+    interface DockedHandleCommandContext with
+        member _.avatarInventorySink            : AvatarInventorySink           =avatarInventorySink            
+        member _.avatarInventorySource          : AvatarInventorySource         =avatarInventorySource          
+        member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink  =avatarIslandSingleMetricSink   
+        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource=avatarIslandSingleMetricSource 
+        member _.avatarJobSink                  : AvatarJobSink                 =avatarJobSink                 
+        member _.avatarJobSource                : AvatarJobSource               =avatarJobSource               
+        member _.avatarMessagePurger            : AvatarMessagePurger           =avatarMessagePurger           
+        member _.avatarMessageSink              : AvatarMessageSink             =avatarMessageSink             
+        member _.avatarSingleMetricSink         : AvatarSingleMetricSink        =avatarSingleMetricSink        
+        member _.avatarSingleMetricSource       : AvatarSingleMetricSource      =avatarSingleMetricSource      
+        member _.commoditySource                : CommoditySource               =commoditySource               
+        member _.islandJobPurger                : IslandJobPurger               =islandJobPurger               
+        member _.islandMarketSource             : IslandMarketSource            =islandMarketSource            
+        member _.islandSingleJobSource          : IslandSingleJobSource         =islandSingleJobSource         
+        member _.islandSingleMarketSink         : IslandSingleMarketSink        =islandSingleMarketSink        
+        member _.islandSingleMarketSource       : IslandSingleMarketSource      =islandSingleMarketSource      
+        member _.islandSource                   : IslandSource                  =islandSource                  
+        member _.itemSource                     : ItemSource                    =itemSource                    
+        member _.shipmateSingleStatisticSink    : ShipmateSingleStatisticSink   =shipmateSingleStatisticSink   
+        member _.shipmateSingleStatisticSource  : ShipmateSingleStatisticSource =shipmateSingleStatisticSource 
+        member _.vesselSingleStatisticSource    : VesselSingleStatisticSource   =vesselSingleStatisticSource   
+
+
+
 let private functionUnderTest
         (avatarInventorySink           : AvatarInventorySink)
         (avatarInventorySource         : AvatarInventorySource)
@@ -17,30 +77,34 @@ let private functionUnderTest
         (islandSingleMarketSink        : IslandSingleMarketSink) 
         (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
         =
+    let context =
+        TestDockedRunContext
+            (avatarInventorySink,
+            avatarInventorySource,
+            avatarIslandSingleMetricSinkStub,
+            avatarIslandSingleMetricSourceStub,
+            avatarJobSinkStub,
+            avatarJobSourceStub,
+            avatarMessagePurgerStub,
+            avatarMessageSink,
+            avatarMessageSourceStub,
+            avatarSingleMetricSink,
+            avatarSingleMetricSourceStub,
+            commoditySource ,
+            islandFeatureSourceStub,
+            islandJobPurgerStub,
+            islandMarketSource ,
+            islandSingleJobSourceStub,
+            islandSingleMarketSink,
+            islandSingleNameSource,
+            dockedItemSingleMarketSourceStub,
+            islandSourceStub,
+            itemSource ,
+            shipmateSingleStatisticSinkStub,
+            shipmateSingleStatisticSource,
+            vesselSingleStatisticSourceStub) :> DockedRunContext
     Docked.Run 
-        avatarInventorySink
-        avatarInventorySource
-        avatarIslandSingleMetricSinkStub
-        avatarIslandSingleMetricSourceStub
-        avatarJobSinkStub
-        avatarJobSourceStub
-        avatarMessagePurgerStub
-        avatarMessageSink
-        avatarMessageSourceStub
-        avatarSingleMetricSink
-        avatarSingleMetricSourceStub
-        commoditySource 
-        islandJobPurgerStub
-        islandMarketSource 
-        islandSingleJobSourceStub
-        islandSingleMarketSink
-        dockedItemSingleMarketSourceStub
-        islandSingleNameSource
-        islandSourceStub
-        itemSource 
-        shipmateSingleStatisticSinkStub
-        shipmateSingleStatisticSource
-        vesselSingleStatisticSourceStub
+        context
 
 let private functionUnderTestStubbed 
         (avatarMessageSink             : AvatarMessageSink) 

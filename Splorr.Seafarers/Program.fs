@@ -39,6 +39,7 @@ type SplorrContext
         avatarSingleMetricSource: AvatarSingleMetricSource ,
         commoditySource: CommoditySource ,
         islandFeatureGeneratorSource: IslandFeatureGeneratorSource ,
+        islandFeatureSource: IslandFeatureSource,
         islandItemSink: IslandItemSink ,
         islandItemSource: IslandItemSource ,
         islandJobPurger: IslandJobPurger ,
@@ -72,24 +73,76 @@ type SplorrContext
         vesselStatisticSink: VesselStatisticSink ,
         vesselStatisticTemplateSource: VesselStatisticTemplateSource ,
         worldSingleStatisticSource : WorldSingleStatisticSource) =
-    interface RunnerRunContext with
-        member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink
-        member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource
-        member _.avatarMessagePurger: AvatarMessagePurger = avatarMessagePurger
-        member _.avatarMessageSource: AvatarMessageSource = avatarMessageSource
-        member _.avatarMetricSource: AvatarMetricSource = avatarMetricSource
-        member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
-        member _.islandJobPurger: IslandJobPurger = islandJobPurger
-        member _.islandLocationByNameSource: IslandLocationByNameSource = islandLocationByNameSource
-        member _.islandSingleJobSource: IslandSingleJobSource = islandSingleJobSource
-        member _.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
-        member _.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
-        member _.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
-        member _.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
-        member _.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
-        member _.switchSource: SwitchSource = switchSource
-        member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
-        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
+    interface AtSeaHandleCommandContext with
+        member _.avatarInventorySink            : AvatarInventorySink        =avatarInventorySink        
+        member _.avatarInventorySource          : AvatarInventorySource      =avatarInventorySource      
+        member _.avatarMessagePurger            : AvatarMessagePurger        =avatarMessagePurger        
+        member _.avatarShipmateSource           : AvatarShipmateSource       =avatarShipmateSource       
+        member _.islandLocationByNameSource     : IslandLocationByNameSource =islandLocationByNameSource 
+        member _.islandSingleNameSource         : IslandSingleNameSource     =islandSingleNameSource     
+        member _.islandSingleStatisticSource    : IslandSingleStatisticSource=islandSingleStatisticSource
+        member _.shipmateRationItemSource       : ShipmateRationItemSource   =shipmateRationItemSource   
+        member _.vesselSingleStatisticSink      : VesselSingleStatisticSink  =vesselSingleStatisticSink  
+        member _.vesselSingleStatisticSource    : VesselSingleStatisticSource=vesselSingleStatisticSource
+
+    interface AtSeaRunContext with
+        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
+
+    interface IslandCreateContext with
+        member _.islandSingleStatisticSink     : IslandSingleStatisticSink    =islandSingleStatisticSink    
+        member _.islandStatisticTemplateSource : IslandStatisticTemplateSource=islandStatisticTemplateSource
+
+    interface WorldPopulateIslandsContext with
+        member _.islandFeatureGeneratorSource : IslandFeatureGeneratorSource=islandFeatureGeneratorSource
+        member _.islandSingleFeatureSink      : IslandSingleFeatureSink     =islandSingleFeatureSink     
+        member _.islandSource                 : IslandSource                =islandSource                
+
+    interface WorldGenerateIslandsContext with
+        member _.islandSingleNameSink          : IslandSingleNameSink=islandSingleNameSink
+        member _.termNameSource                : TermSource          =termNameSource      
+
+    interface WorldCreateContext with
+        member _.avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink    = avatarIslandSingleMetricSink   
+        member _.avatarJobSink                   : AvatarJobSink                   = avatarJobSink                  
+        member _.worldSingleStatisticSource      : WorldSingleStatisticSource      = worldSingleStatisticSource     
+        member _.shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
+        member _.shipmateSingleStatisticSink     : ShipmateSingleStatisticSink     = shipmateSingleStatisticSink    
+        member _.rationItemSource                : RationItemSource                = rationItemSource               
+        member _.vesselStatisticTemplateSource   : VesselStatisticTemplateSource   = vesselStatisticTemplateSource  
+        member _.vesselStatisticSink             : VesselStatisticSink             = vesselStatisticSink            
+        member _.vesselSingleStatisticSource     : VesselSingleStatisticSource     = vesselSingleStatisticSource    
+        member _.shipmateRationItemSink          : ShipmateRationItemSink          = shipmateRationItemSink         
+
+
+    interface DockedUpdateDisplayContext with
+        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource 
+        member _.avatarMessageSource            : AvatarMessageSource            = avatarMessageSource            
+        member _.islandSingleNameSource         : IslandSingleNameSource         = islandSingleNameSource  
+        member _.islandFeatureSource            : IslandFeatureSource            = islandFeatureSource
+
+    interface DockedHandleCommandContext with
+        member _.avatarInventorySink            : AvatarInventorySink            =avatarInventorySink            
+        member _.avatarInventorySource          : AvatarInventorySource          =avatarInventorySource          
+        member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink   =avatarIslandSingleMetricSink   
+        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource =avatarIslandSingleMetricSource 
+        member _.avatarJobSink                  : AvatarJobSink                  =avatarJobSink                 
+        member _.avatarJobSource                : AvatarJobSource                =avatarJobSource               
+        member _.avatarMessagePurger            : AvatarMessagePurger            =avatarMessagePurger           
+        member _.avatarMessageSink              : AvatarMessageSink              =avatarMessageSink             
+        member _.avatarSingleMetricSink         : AvatarSingleMetricSink         =avatarSingleMetricSink        
+        member _.avatarSingleMetricSource       : AvatarSingleMetricSource       =avatarSingleMetricSource      
+        member _.commoditySource                : CommoditySource                =commoditySource               
+        member _.islandJobPurger                : IslandJobPurger                =islandJobPurger               
+        member _.islandMarketSource             : IslandMarketSource             =islandMarketSource            
+        member _.islandSingleJobSource          : IslandSingleJobSource          =islandSingleJobSource         
+        member _.islandSingleMarketSink         : IslandSingleMarketSink         =islandSingleMarketSink        
+        member _.islandSingleMarketSource       : IslandSingleMarketSource       =islandSingleMarketSource      
+        member _.islandSource                   : IslandSource                   =islandSource                  
+        member _.itemSource                     : ItemSource                     =itemSource                    
+        member _.shipmateSingleStatisticSink    : ShipmateSingleStatisticSink    =shipmateSingleStatisticSink   
+        member _.shipmateSingleStatisticSource  : ShipmateSingleStatisticSource  =shipmateSingleStatisticSource 
+        member _.vesselSingleStatisticSource    : VesselSingleStatisticSource    =vesselSingleStatisticSource   
 
     interface WorldDockContext with
         member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
@@ -113,24 +166,9 @@ type SplorrContext
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
 
-    interface WorldCreateContext with
-        member _.islandSingleFeatureSink : IslandSingleFeatureSink = islandSingleFeatureSink
-        member _.islandFeatureGeneratorSource: IslandFeatureGeneratorSource = islandFeatureGeneratorSource
-        member _.islandSingleNameSink: IslandSingleNameSink = islandSingleNameSink
-        member _.islandSingleStatisticSink: IslandSingleStatisticSink = islandSingleStatisticSink
-        member _.islandStatisticTemplateSource: IslandStatisticTemplateSource = islandStatisticTemplateSource
-        member _.rationItemSource: RationItemSource = rationItemSource
-        member _.shipmateRationItemSink: ShipmateRationItemSink = shipmateRationItemSink
-        member _.shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
-        member _.termNameSource: TermSource = termNameSource
-        member _.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
-        member _.vesselStatisticTemplateSource: VesselStatisticTemplateSource = vesselStatisticTemplateSource
-        member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
-        member _.avatarJobSink: AvatarJobSink = avatarJobSink
-        member _.islandSource: IslandSource = islandSource
-        member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
-        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-        member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
+    interface RunnerRunContext with
+        member _.avatarMetricSource              : AvatarMetricSource=avatarMetricSource
+        member _.switchSource                    : SwitchSource      =switchSource      
 
 
 
@@ -406,6 +444,10 @@ let main argv =
         IslandFeature.AddToIsland connection location
         >> Persister.unpackOrThrow
 
+    let islandFeatureSource =
+        IslandFeature.GetForIsland connection
+        >> Persister.unpackOrThrow
+
     let context : RunnerRunContext =
         SplorrContext
             (avatarInventorySink,
@@ -423,6 +465,7 @@ let main argv =
             avatarSingleMetricSource,
             commoditySource,
             islandFeatureGeneratorSource,
+            islandFeatureSource,
             islandItemSink ,
             islandItemSource, 
             islandJobPurger,

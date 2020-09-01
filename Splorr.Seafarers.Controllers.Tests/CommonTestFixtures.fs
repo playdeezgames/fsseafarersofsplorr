@@ -202,6 +202,8 @@ let islandJobPurgerStub (_) (_) = ()
 
 let islandSingleJobSourceStub (_) (_) = None
 
+let islandFeatureSourceStub (_) = []
+
 type TestAtSeaRunContext 
         (
             avatarInventorySink: AvatarInventorySink, 

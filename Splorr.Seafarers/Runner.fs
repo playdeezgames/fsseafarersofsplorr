@@ -7,11 +7,8 @@ open System
 type RunnerRunContext =
     inherit AtSeaRunContext
     inherit WorldCreateContext
+    inherit DockedRunContext
     abstract member avatarMetricSource              : AvatarMetricSource
-    abstract member islandJobPurger                 : IslandJobPurger
-    abstract member islandSingleJobSource           : IslandSingleJobSource
-    abstract member islandSingleMarketSink          : IslandSingleMarketSink 
-    abstract member islandSingleMarketSource        : IslandSingleMarketSource
     abstract member switchSource                    : SwitchSource
 
 module Runner =
@@ -69,29 +66,7 @@ module Runner =
 
             | Gamestate.Docked (Dock, location, world) -> 
                 Docked.Run 
-                    context.avatarInventorySink
-                    context.avatarInventorySource
-                    context.avatarIslandSingleMetricSink
-                    context.avatarIslandSingleMetricSource
-                    context.avatarJobSink
-                    context.avatarJobSource
-                    context.avatarMessagePurger
-                    context.avatarMessageSink
-                    context.avatarMessageSource
-                    context.avatarSingleMetricSink
-                    context.avatarSingleMetricSource
-                    context.commoditySource 
-                    context.islandJobPurger
-                    context.islandMarketSource 
-                    context.islandSingleJobSource
-                    context.islandSingleMarketSink 
-                    context.islandSingleMarketSource
-                    context.islandSingleNameSource
-                    context.islandSource
-                    context.itemSource 
-                    context.shipmateSingleStatisticSink
-                    context.shipmateSingleStatisticSource
-                    context.vesselSingleStatisticSource
+                    context
                     commandSource 
                     messageSink 
                     location 
