@@ -63,6 +63,12 @@ let internal smallWorld =
 let internal smallWorldIslandLocation = 
     (0.0, 0.0)
 
+let internal darkAlleyIslandLocation =
+    smallWorldIslandLocation
+
+let internal noDarkAlleyIslandLocation =
+    (10.0, 20.0)
+
 let private smallWorldIslandItemSource (_) = 
     Set.empty 
     |> Set.add 1UL
@@ -97,3 +103,5 @@ let internal dockedItemSingleMarketSourceStub (_) (_) =
     None
 
 let internal dockedItemSingleMarketSinkStub (_) (_) = ()
+
+let internal invalidLocation : Location = (-1.0, -2.0)

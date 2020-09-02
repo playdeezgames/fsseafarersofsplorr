@@ -2,3 +2,4 @@
 
 type IslandStatisticIdentifier =
     | CareenDistance = 1
+    | MinimumGamblingStakes = 2

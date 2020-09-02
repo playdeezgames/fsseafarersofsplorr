@@ -180,6 +180,7 @@ let internal avatarIslandSingleMetricSourceStub (_) (_) (_) = None
 
 let internal islandSingleNameSinkStub (_) (_) = ()
 let internal islandSingleNameSourceStub (_) = None
+let internal islandSingleFeatureSourceStub (_) (_) = false
 let internal islandLocationByNameSourceStub (_) = None
 
 let internal islandSingleStatisticSinkStub (_) (_) = ()
@@ -271,4 +272,8 @@ type TestAtSeaRunContext
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
         member _.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
 
-        
+let commandSourceExplode () : Command option =
+    raise (System.NotImplementedException "There should be no input handling here!")
+
+let commandSourceFake (expectedCommand:Command option) : unit -> Command option =
+    fun () -> expectedCommand

@@ -55,3 +55,15 @@ module IslandFeature =
                 ) 
             getForIslandconvertor
 
+    let ExistsForIsland
+            (connection : SQLiteConnection)
+            (location   : Location)
+            (feature    : IslandFeatureIdentifier)
+            : Result<bool, string> =
+        use command = new SQLiteCommand("SELECT COUNT(1) FROM [IslandFeatures] WHERE [IslandX]=$islandX AND [IslandY]=$islandY AND [FeatureId]=$featureId;", connection)
+        command.Parameters.AddWithValue("$islandX", location |> fst) |> ignore
+        command.Parameters.AddWithValue("$islandY", location |> snd) |> ignore
+        command.Parameters.AddWithValue("$featureId", feature |> int32) |> ignore
+        (command.ExecuteScalar() :?> int64) > 0L
+        |> Ok
+

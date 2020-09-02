@@ -47,6 +47,12 @@ module Help =
             (Hue.Usage, " - docks at an island, if one is close enough" |> Line) |> Hued
         ] |> Group
 
+    let private enterDarkAlleyMessage = 
+        [
+            (Hue.Label, "enter [the] [dark] alley" |> Text) |> Hued
+            (Hue.Usage, " - enters a dark alley on an island when one is present" |> Line) |> Hued
+        ] |> Group
+
     let private headForMessage=
         [
             (Hue.Label, "head for (island name)" |> Text) |> Hued
@@ -209,6 +215,7 @@ module Help =
             abandonJobMessage
             acceptJobMessage 
             buyMessage
+            enterDarkAlleyMessage
             inventoryMessage
             itemsMessage
             jobsMessage

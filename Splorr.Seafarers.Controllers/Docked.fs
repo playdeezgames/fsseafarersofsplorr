@@ -77,6 +77,13 @@ module Docked =
         |> World.ClearMessages context.avatarMessagePurger
 
         match command with
+        | Some (Command.GoTo feature) ->
+            (feature |> Feature, 
+                location, 
+                avatarId)
+            |> Gamestate.Docked
+            |> Some
+
         | Some (Command.AcceptJob index) ->
             avatarId 
             |> World.AcceptJob
@@ -255,9 +262,9 @@ module Docked =
             |> Some
 
     let Run 
-            (context : DockedRunContext)
-            (commandSource                  : CommandSource) 
-            (messageSink                    : MessageSink) =
+            (context       : DockedRunContext)
+            (commandSource : CommandSource) 
+            (messageSink   : MessageSink) =
         RunBoilerplate 
             context.avatarMessageSource
             context.islandSource

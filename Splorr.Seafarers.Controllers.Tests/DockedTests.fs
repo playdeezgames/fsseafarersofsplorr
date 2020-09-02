@@ -383,6 +383,35 @@ let ``Run.It returns Docked (at Jobs) gamestate when given the command Jobs.`` (
             sinkStub
     Assert.AreEqual(expected, actual)
 
+
+[<Test>]
+let ``Run.It returns Docked (at Feature DarkAlley) gamestate when given the command GoTo DarkAlley.`` () =
+    let input = dockWorld
+    let inputLocation = dockLocation
+    let inputSource = 
+        IslandFeatureIdentifier.DarkAlley
+        |> Command.GoTo 
+        |> Some 
+        |> toSource
+    let expected = 
+        (IslandFeatureIdentifier.DarkAlley |> Feature, inputLocation, input) 
+        |> Gamestate.Docked 
+        |> Some
+    let islandSingleNameSource (_) =
+        "yermom"
+        |> Some
+    let actual =
+        (inputLocation, input)
+        ||> functionUnderTestStubbed 
+            avatarMessageSinkStub
+            avatarSingleMetricSinkExplode
+            islandSingleNameSource
+            shipmateSingleStatisticSourceStub
+            inputSource 
+            sinkStub
+    Assert.AreEqual(expected, actual)
+
+
 [<Test>]
 let ``Run.It gives a message when given the Accept Job command and the given job number does not exist.`` () =
     let input = smallWorldDocked

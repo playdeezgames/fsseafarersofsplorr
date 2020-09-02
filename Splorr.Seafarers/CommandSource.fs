@@ -214,6 +214,9 @@ module CommandSource=
         | [ "dock" ] ->
             Command.Dock
             |> Some
+        | [ "leave" ] ->
+            Command.Leave
+            |> Some
         | [ "jobs" ] ->
             Command.Jobs
             |> Some
@@ -253,6 +256,13 @@ module CommandSource=
         | [ "clean"; "the"; "hull"]
         | [ "clean"; "hull"] ->
             Command.CleanHull
+            |> Some
+        | [ "enter" ; "dark"; "alley" ]
+        | [ "enter" ; "the"; "alley" ]
+        | [ "enter" ; "the"; "dark"; "alley" ]
+        | [ "enter" ; "alley" ] ->
+            IslandFeatureIdentifier.DarkAlley
+            |> Command.GoTo
             |> Some
         | _ -> 
             None

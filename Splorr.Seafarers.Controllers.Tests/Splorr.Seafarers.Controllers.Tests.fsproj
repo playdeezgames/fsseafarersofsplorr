@@ -32,6 +32,7 @@
     <Compile Include="InvalidInputTests.fs" />
     <Compile Include="InventoryTests.fs" />
     <Compile Include="ItemListTests.fs" />
+    <Compile Include="IslandFeatureTests.fs" />
     <Compile Include="IslandListTests.fs" />
     <Compile Include="JobsTest.fs" />
     <Compile Include="MainMenuTests.fs" />

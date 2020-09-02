@@ -21,12 +21,14 @@ type Command =
     | CleanHull
     | DistanceTo of string
     | Dock
+    | GoTo of IslandFeatureIdentifier
     | Help
     | HeadFor of string
     | Inventory
     | Islands of uint32
     | Items
     | Jobs
+    | Leave
     | Menu
     | Metrics
     | Move of uint32

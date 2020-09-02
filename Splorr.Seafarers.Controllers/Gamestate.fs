@@ -7,6 +7,7 @@ type DockedState =
     | Dock
     | Jobs
     | ItemList
+    | Feature of IslandFeatureIdentifier
 
 type AvatarMessageSource = string -> string list
 

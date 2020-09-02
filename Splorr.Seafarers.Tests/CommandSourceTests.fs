@@ -188,6 +188,13 @@ let ``Parse.It returns Inventory command when given ["inventory"]`` () =
     Assert.AreEqual(Command.Inventory |> Some, actual)
 
 [<Test>]
+let ``Parse.It returns Leave command when given ["leave"]`` () =
+    let actual =
+        [ "leave"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Command.Leave |> Some, actual)
+
+[<Test>]
 let ``Parse.It returns Islands 0 command when given ["islands";"1"]`` () =
     let actual =
         [ "islands";"1"]
@@ -293,16 +300,43 @@ let ``Parse.It returns Weigh Anchor command when given ["weigh";"anchor"]`` () =
     Assert.AreEqual(Command.WeighAnchor |> Some, actual)
 
 [<Test>]
-let ``Parse.It returns Clean Hull ommand when given ["clean";"hull"]`` () =
+let ``Parse.It returns Clean Hull command when given ["clean";"hull"]`` () =
     let actual =
         [ "clean";"hull"]
         |> CommandSource.Parse
     Assert.AreEqual(Command.CleanHull |> Some, actual)
 
 [<Test>]
-let ``Parse.It returns Clean Hull ommand when given ["clean";"the";"hull"]`` () =
+let ``Parse.It returns Clean Hull command when given ["clean";"the";"hull"]`` () =
     let actual =
         [ "clean";"the";"hull"]
         |> CommandSource.Parse
     Assert.AreEqual(Command.CleanHull |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns GoTo DarkAlley command when given ["enter";"alley"]`` () =
+    let actual =
+        [ "enter";"alley" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(IslandFeatureIdentifier.DarkAlley |> Command.GoTo |> Some, actual)
     
+[<Test>]
+let ``Parse.It returns GoTo DarkAlley command when given ["enter";"the";"alley"]`` () =
+    let actual =
+        [ "enter";"the";"alley" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(IslandFeatureIdentifier.DarkAlley |> Command.GoTo |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns GoTo DarkAlley command when given ["enter";"dark";"alley"]`` () =
+    let actual =
+        [ "enter";"dark";"alley" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(IslandFeatureIdentifier.DarkAlley |> Command.GoTo |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns GoTo DarkAlley command when given ["enter";"the";"dark";"alley"]`` () =
+    let actual =
+        [ "enter";"the";"dark";"alley" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(IslandFeatureIdentifier.DarkAlley |> Command.GoTo |> Some, actual)

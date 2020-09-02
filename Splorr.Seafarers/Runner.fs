@@ -8,6 +8,7 @@ type RunnerRunContext =
     inherit AtSeaRunContext
     inherit WorldCreateContext
     inherit DockedRunContext
+    inherit IslandFeatureRunContext
     abstract member avatarMetricSource              : AvatarMetricSource
     abstract member switchSource                    : SwitchSource
 
@@ -22,15 +23,15 @@ module Runner =
 
         let nextGamestate : Gamestate option = 
             match gamestate with
-            | Gamestate.AtSea world -> 
+            | Gamestate.AtSea avatarId -> 
                 AtSea.Run 
                     context
                     random 
                     commandSource 
                     messageSink 
-                    world
+                    avatarId
 
-            | Gamestate.Careened (side, world) -> 
+            | Gamestate.Careened (side, avatarId) -> 
                 Careened.Run 
                     context.avatarMessagePurger
                     context.avatarMessageSource
@@ -44,9 +45,9 @@ module Runner =
                     commandSource 
                     messageSink 
                     side 
-                    world
+                    avatarId
 
-            | Gamestate.Chart (chartName, world) -> 
+            | Gamestate.Chart (chartName, avatarId) -> 
                 Chart.Run 
                     context.avatarIslandSingleMetricSource
                     context.islandSingleNameSource
@@ -55,7 +56,7 @@ module Runner =
                     context.worldSingleStatisticSource
                     messageSink 
                     chartName 
-                    world
+                    avatarId
 
             | Gamestate.ConfirmQuit state -> 
                 ConfirmQuit.Run 
@@ -64,15 +65,24 @@ module Runner =
                     messageSink 
                     state
 
-            | Gamestate.Docked (Dock, location, world) -> 
+            | Gamestate.Docked (Feature feature, location, avatarId) -> 
+                IslandFeature.Run
+                    context
+                    commandSource
+                    messageSink
+                    location
+                    feature
+                    avatarId
+
+            | Gamestate.Docked (Dock, location, avatarId) -> 
                 Docked.Run 
                     context
                     commandSource 
                     messageSink 
                     location 
-                    world
+                    avatarId
 
-            | Gamestate.Docked (ItemList, location, world) -> 
+            | Gamestate.Docked (ItemList, location, avatarId) -> 
                 ItemList.Run 
                     context.avatarMessageSource
                     context.commoditySource 
@@ -83,16 +93,16 @@ module Runner =
                     context.shipmateSingleStatisticSource
                     messageSink 
                     location 
-                    world
+                    avatarId
 
-            | Gamestate.Docked (Jobs, location, world) -> 
+            | Gamestate.Docked (Jobs, location, avatarId) -> 
                 Jobs.Run 
                     context.islandJobSource
                     context.islandSingleNameSource
                     context.islandSource
                     messageSink 
                     location
-                    world
+                    avatarId
 
             | Gamestate.GameOver messages -> 
                 GameOver.Run 
@@ -128,12 +138,12 @@ module Runner =
                     page 
                     state
 
-            | Gamestate.MainMenu world -> 
+            | Gamestate.MainMenu avatarId -> 
                 MainMenu.Run 
                     context
                     commandSource 
                     messageSink 
-                    world
+                    avatarId
 
             | Gamestate.Metrics state -> 
                 Metrics.Run 
