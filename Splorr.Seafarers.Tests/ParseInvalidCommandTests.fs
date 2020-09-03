@@ -20,6 +20,41 @@ let ``Parse.It returns invalid command when given []`` () =
     Assert.AreEqual(None, actual)
 
 [<Test>]
+let ``Parse.It returns invalid command when given ["bet"]`` () =
+    let actual =
+        [ "bet" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(None, actual)
+
+[<Test>]
+let ``Parse.It returns invalid command when given ["bet";"foo"]`` () =
+    let actual =
+        [ "bet"; "foo"]
+        |> CommandSource.Parse
+    Assert.AreEqual(None, actual)
+
+[<Test>]
+let ``Parse.It returns invalid command when given ["bet";"-1"]`` () =
+    let actual =
+        [ "bet"; "-1"]
+        |> CommandSource.Parse
+    Assert.AreEqual(None, actual)
+
+[<Test>]
+let ``Parse.It returns invalid command when given ["bet";"0"]`` () =
+    let actual =
+        [ "bet"; "0"]
+        |> CommandSource.Parse
+    Assert.AreEqual(None, actual)
+
+[<Test>]
+let ``Parse.It returns invalid command when given ["bet";"0.0"]`` () =
+    let actual =
+        [ "bet"; "0.0"]
+        |> CommandSource.Parse
+    Assert.AreEqual(None, actual)
+
+[<Test>]
 let ``Parse.It returns invalid command when given ["help";"foo"]`` () =
     let actual =
         [ "help"; "foo"]

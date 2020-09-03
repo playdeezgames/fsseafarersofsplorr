@@ -114,6 +114,21 @@ module CommandSource=
             |> Command.Move 
             |> Some
 
+    let private ParseBet: 
+            string list -> Command option =
+        function
+        | [ number ] ->
+            match Double.TryParse(number) with
+            | true, amount when amount > 0.0->
+                amount
+                |> Some
+                |> Command.Bet
+                |> Some
+            | _ -> None
+        | _ -> 
+            None
+
+
     let ParseBuy: 
             string list -> Command option =
         function
@@ -171,11 +186,13 @@ module CommandSource=
         Map.empty
         |> Map.add [ "clean"; "hull"] Command.CleanHull
         |> Map.add [ "clean"; "the"; "hull"] Command.CleanHull
+        |> Map.add [ "deal" ] Command.Gamble
         |> Map.add [ "dock" ] Command.Dock
         |> Map.add [ "enter" ; "alley" ] (IslandFeatureIdentifier.DarkAlley |> Command.GoTo)
         |> Map.add [ "enter" ; "dark"; "alley" ] (IslandFeatureIdentifier.DarkAlley |> Command.GoTo)
         |> Map.add [ "enter" ; "the"; "alley" ] (IslandFeatureIdentifier.DarkAlley |> Command.GoTo)
         |> Map.add [ "enter" ; "the"; "dark"; "alley" ] (IslandFeatureIdentifier.DarkAlley |> Command.GoTo)
+        |> Map.add [ "gamble" ] Command.Gamble
         |> Map.add [ "items" ] Command.Items
         |> Map.add [ "help"  ] Command.Help
         |> Map.add [ "inventory" ] Command.Inventory
@@ -184,8 +201,10 @@ module CommandSource=
         |> Map.add [ "menu" ] Command.Menu
         |> Map.add [ "metrics" ] Command.Metrics
         |> Map.add [ "no" ] Command.No
+        |> Map.add [ "no"; "bet" ] (Command.Bet None)
         |> Map.add [ "quit" ] Command.Quit
         |> Map.add [ "resume" ] Command.Resume
+        |> Map.add [ "rules" ] Command.Rules
         |> Map.add [ "undock" ] Command.Undock
         |> Map.add [ "status" ] Command.Status
         |> Map.add [ "weigh"; "anchor" ] Command.WeighAnchor
@@ -199,40 +218,56 @@ module CommandSource=
             System.String.Join(" ", tail) 
             |> Command.Chart 
             |> Some
+
         | "careen" :: tail ->
             tail
             |> ParseCareen 
+
+        | "bet" :: tail ->
+            tail
+            |> ParseBet 
+
+
         | [ "start" ] ->
             System.Guid.NewGuid().ToString()
             |> Command.Start
             |> Some
+
         | "abandon" :: tail -> 
             tail
             |> ParseAbandon
+
         | "set" :: tail ->
             tail
             |> ParseSet
+
         | "move" :: tail ->
             tail
             |> ParseMove
+
         | "islands" :: tail ->
             tail
             |> ParseIslands
+
         | "head" :: tail ->
             tail
             |> ParseHead
         | "distance" :: tail ->
             tail
             |> ParseDistance
+
         | "accept" :: tail ->
             tail
             |> ParseAccept
+
         | "buy" :: tail ->
             tail
             |> ParseBuy
+
         | "sell" :: tail ->
             tail
             |> ParseSell
+
         | _ -> 
             simpleCommandMap
             |> Map.tryFind input

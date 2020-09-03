@@ -195,6 +195,41 @@ let ``Parse.It returns Leave command when given ["leave"]`` () =
     Assert.AreEqual(Command.Leave |> Some, actual)
 
 [<Test>]
+let ``Parse.It returns NoBet command when given ["no";"bet"]`` () =
+    let actual =
+        [ "no"; "bet" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(None |> Command.Bet |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Gamble command when given ["gamble"]`` () =
+    let actual =
+        [ "gamble"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Command.Gamble |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Rules command when given ["rules"]`` () =
+    let actual =
+        [ "rules"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Command.Rules |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Bet 1.0 command when given ["bet";"1"]`` () =
+    let actual =
+        [ "bet"; "1" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(1.0 |> Some |> Command.Bet |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Gamble command when given ["deal"]`` () =
+    let actual =
+        [ "deal"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Command.Gamble |> Some, actual)
+
+[<Test>]
 let ``Parse.It returns Islands 0 command when given ["islands";"1"]`` () =
     let actual =
         [ "islands";"1"]
