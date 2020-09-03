@@ -167,71 +167,54 @@ module CommandSource=
             Starboard |> Command.Careen |> Some
         | _ -> None
 
-    let Parse: 
-            string list -> Command option =
-        function
-        | "chart" :: tail ->
-            System.String.Join(" ", tail) |> Command.Chart |> Some
+    let private simpleCommandMap : Map<string list, Command> =
+        Map.empty
+        |> Map.add [ "clean"; "hull"] Command.CleanHull
+        |> Map.add [ "clean"; "the"; "hull"] Command.CleanHull
+        |> Map.add [ "dock" ] Command.Dock
+        |> Map.add [ "enter" ; "alley" ] (IslandFeatureIdentifier.DarkAlley |> Command.GoTo)
+        |> Map.add [ "enter" ; "dark"; "alley" ] (IslandFeatureIdentifier.DarkAlley |> Command.GoTo)
+        |> Map.add [ "enter" ; "the"; "alley" ] (IslandFeatureIdentifier.DarkAlley |> Command.GoTo)
+        |> Map.add [ "enter" ; "the"; "dark"; "alley" ] (IslandFeatureIdentifier.DarkAlley |> Command.GoTo)
+        |> Map.add [ "items" ] Command.Items
+        |> Map.add [ "help"  ] Command.Help
+        |> Map.add [ "inventory" ] Command.Inventory
+        |> Map.add [ "jobs" ] Command.Jobs
+        |> Map.add [ "leave" ] Command.Leave
+        |> Map.add [ "menu" ] Command.Menu
+        |> Map.add [ "metrics" ] Command.Metrics
+        |> Map.add [ "no" ] Command.No
+        |> Map.add [ "quit" ] Command.Quit
+        |> Map.add [ "resume" ] Command.Resume
+        |> Map.add [ "undock" ] Command.Undock
+        |> Map.add [ "status" ] Command.Status
+        |> Map.add [ "weigh"; "anchor" ] Command.WeighAnchor
+        |> Map.add [ "yes" ] Command.Yes
 
+    let Parse 
+            (input : string list) 
+            : Command option =
+        match input with
+        | "chart" :: tail ->
+            System.String.Join(" ", tail) 
+            |> Command.Chart 
+            |> Some
         | "careen" :: tail ->
             tail
             |> ParseCareen 
-
-        | [ "resume" ] -> 
-            Command.Resume 
-            |> Some
-        | [ "metrics" ] -> 
-            Command.Metrics 
+        | [ "start" ] ->
+            System.Guid.NewGuid().ToString()
+            |> Command.Start
             |> Some
         | "abandon" :: tail -> 
             tail
             |> ParseAbandon
-        | [ "quit" ] -> 
-            Command.Quit 
-            |> Some
-        | [ "items" ] ->
-            Command.Items
-            |> Some
-        | [ "yes" ] ->
-            Command.Yes
-            |> Some
-        | [ "no" ] ->
-            Command.No
-            |> Some
         | "set" :: tail ->
             tail
             |> ParseSet
         | "move" :: tail ->
             tail
             |> ParseMove
-        | [ "help" ] ->
-            Command.Help
-            |> Some
-        | [ "start" ] ->
-            System.Guid.NewGuid().ToString()
-            |> Command.Start
-            |> Some
-        | [ "dock" ] ->
-            Command.Dock
-            |> Some
-        | [ "leave" ] ->
-            Command.Leave
-            |> Some
-        | [ "jobs" ] ->
-            Command.Jobs
-            |> Some
-        | [ "undock" ] ->
-            Command.Undock
-            |> Some
-        | [ "status" ] ->
-            Command.Status
-            |> Some
-        | [ "inventory" ] ->
-            Command.Inventory
-            |> Some
-        | [ "menu" ] ->
-            Command.Menu
-            |> Some
         | "islands" :: tail ->
             tail
             |> ParseIslands
@@ -250,22 +233,9 @@ module CommandSource=
         | "sell" :: tail ->
             tail
             |> ParseSell
-        | [ "weigh"; "anchor" ] ->
-            Command.WeighAnchor
-            |> Some
-        | [ "clean"; "the"; "hull"]
-        | [ "clean"; "hull"] ->
-            Command.CleanHull
-            |> Some
-        | [ "enter" ; "dark"; "alley" ]
-        | [ "enter" ; "the"; "alley" ]
-        | [ "enter" ; "the"; "dark"; "alley" ]
-        | [ "enter" ; "alley" ] ->
-            IslandFeatureIdentifier.DarkAlley
-            |> Command.GoTo
-            |> Some
         | _ -> 
-            None
+            simpleCommandMap
+            |> Map.tryFind input
 
     let Read 
             (lineReader: unit -> string) 
