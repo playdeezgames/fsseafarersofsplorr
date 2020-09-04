@@ -92,6 +92,17 @@ let internal avatarMessageSourceStub (_) = []
 let internal avatarMessageSinkStub (_) (_) = ()
 let internal avatarMessagePurgerStub (_) = ()
 
+let internal avatarMessageSinkExplode (_) (_) =
+    raise (System.NotImplementedException "avatarMessageSinkExplode")
+
+let internal avatarMessageSinkExpected (expected:string list) (_) (message:string) =
+    match expected |> List.tryFind ((=) message) with
+    | None ->
+        Assert.Fail(sprintf "did not find '%s'" message)
+    | _ ->
+        ()
+
+
 let avatarExpectedMessagesSink (expected:string list) (_) (actual:string) : unit =
     match expected |> List.tryFind (fun x -> x = actual) with
     | Some _ ->

@@ -177,8 +177,12 @@ type SplorrContext
     interface IslandFeatureRunContext with
         member _.islandSingleNameSource    : IslandSingleNameSource = islandSingleNameSource
 
-    interface IslandFeatureRunFeatureContext with
+    interface IslandFeatureRunDarkAlleyContext with
         member _.avatarMessageSource : AvatarMessageSource = avatarMessageSource
+        member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
+        member _.islandSingleStatisticSource   : IslandSingleStatisticSource = islandSingleStatisticSource
+        member _.shipmateSingleStatisticSource : ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+
 
 
 

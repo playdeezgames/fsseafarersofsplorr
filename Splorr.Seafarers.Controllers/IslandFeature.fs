@@ -5,8 +5,15 @@ open Splorr.Seafarers.Services
 
 type IslandSingleFeatureSource = Location -> IslandFeatureIdentifier -> bool
 
+type IslandFeatureRunDarkAlleyContext =
+    abstract member avatarMessageSource           : AvatarMessageSource
+    abstract member avatarMessageSink             : AvatarMessageSink
+    abstract member islandSingleStatisticSource   : IslandSingleStatisticSource
+    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
+
 type IslandFeatureRunFeatureContext =
-    abstract member avatarMessageSource : AvatarMessageSource
+    inherit IslandFeatureRunDarkAlleyContext
+    
 
 type IslandFeatureRunIslandContext = 
     inherit IslandFeatureRunFeatureContext
@@ -17,6 +24,61 @@ type IslandFeatureRunContext =
     abstract member islandSingleNameSource    : IslandSingleNameSource
 
 module IslandFeature =
+    let private RunDarkAlley
+            (context       : IslandFeatureRunDarkAlleyContext)
+            (commandSource : CommandSource) 
+            (messageSink   : MessageSink) 
+            (location      : Location)
+            (avatarId      : string)
+            : Gamestate option = 
+        let minimumBet = 
+            context.islandSingleStatisticSource 
+                location 
+                IslandStatisticIdentifier.MinimumGamblingStakes
+            |> Option.get
+            |> Statistic.GetCurrentValue
+        let money =
+            context.shipmateSingleStatisticSource 
+                avatarId 
+                ShipmateIdentifier.Primary 
+                ShipmateStatisticIdentifier.Money
+            |> Option.get
+            |> Statistic.GetCurrentValue
+        if money < minimumBet then
+            avatarId
+            |> World.AddMessages
+                context.avatarMessageSink
+                [ "Come back when you've got more money!" ]
+            (Dock, location, avatarId)
+            |> Gamestate.Docked
+            |> Some
+        else
+            "" |> Line |> messageSink
+            avatarId
+            |> context.avatarMessageSource
+            |> Utility.DumpMessages messageSink
+            [
+                (Hue.Heading, "You are in the dark alley." |> Line) |> Hued
+            ]
+            |> List.iter messageSink
+            match commandSource() with
+            | Some Command.Help ->
+                (Feature IslandFeatureIdentifier.DarkAlley, location, avatarId)
+                |> Gamestate.Docked
+                |> Gamestate.Help
+                |> Some
+            | Some Command.Leave ->
+                (Dock, location, avatarId)
+                |> Gamestate.Docked
+                |> Some
+            | _ ->
+                ("Maybe try 'help'?",
+                    (Feature IslandFeatureIdentifier.DarkAlley, location, avatarId)
+                    |> Gamestate.Docked)
+                |> Gamestate.ErrorMessage
+                |> Some
+
+
     let private RunFeature
             (context       : IslandFeatureRunFeatureContext)
             (commandSource : CommandSource) 
@@ -25,30 +87,19 @@ module IslandFeature =
             (feature       : IslandFeatureIdentifier)
             (avatarId      : string)
             : Gamestate option = 
-        "" |> Line |> messageSink
-        avatarId
-        |> context.avatarMessageSource
-        |> Utility.DumpMessages messageSink
-        [
-            (Hue.Heading, "You are in the dark alley." |> Line) |> Hued
-        ]
-        |> List.iter messageSink
-        match commandSource() with
-        | Some Command.Help ->
-            (Feature feature, location, avatarId)
-            |> Gamestate.Docked
-            |> Gamestate.Help
-            |> Some
-        | Some Command.Leave ->
+        match feature with
+        | IslandFeatureIdentifier.DarkAlley ->
+            RunDarkAlley
+                context
+                commandSource
+                messageSink
+                location
+                avatarId
+        | _ ->
             (Dock, location, avatarId)
             |> Gamestate.Docked
             |> Some
-        | _ ->
-            ("Maybe try 'help'?",
-                (Feature feature, location, avatarId)
-                |> Gamestate.Docked)
-            |> Gamestate.ErrorMessage
-            |> Some
+            
 
     let private RunIsland
             (context       : IslandFeatureRunIslandContext)
