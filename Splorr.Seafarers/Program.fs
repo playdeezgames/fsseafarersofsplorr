@@ -177,6 +177,9 @@ type SplorrContext
     interface IslandFeatureRunContext with
         member _.islandSingleNameSource    : IslandSingleNameSource = islandSingleNameSource
 
+    interface IslandFeatureRunFeatureContext with
+        member _.avatarMessageSource : AvatarMessageSource = avatarMessageSource
+
 
 
 [<EntryPoint>]

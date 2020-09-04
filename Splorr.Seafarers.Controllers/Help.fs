@@ -15,6 +15,12 @@ module Help =
             (Hue.Usage, " - accepts the offered job" |> Line) |> Hued
         ] |> Group
 
+    let private betMessage =
+        [
+            (Hue.Label, "bet (amount)" |> Text) |> Hued
+            (Hue.Usage, " - after a hand has been dealt, bets the given amount and resolves the gambling round" |> Line) |> Hued
+        ] |> Group
+
     let private buyMessage=
         [
             (Hue.Label, "buy (amount) (item)" |> Text) |> Hued
@@ -41,6 +47,12 @@ module Help =
             (Hue.Usage, " - cleans the hull" |> Line) |> Hued
         ] |> Group
 
+    let private dealMessage =
+        [
+            (Hue.Label, "deal" |> Text) |> Hued
+            (Hue.Usage, " - starts a new gambling round when there isn't currently one" |> Line) |> Hued
+        ] |> Group
+
     let private dockMessage=
         [
             (Hue.Label, "dock" |> Text) |> Hued
@@ -51,6 +63,13 @@ module Help =
         [
             (Hue.Label, "enter [the] [dark] alley" |> Text) |> Hued
             (Hue.Usage, " - enters a dark alley on an island when one is present" |> Line) |> Hued
+        ] |> Group
+
+    let private gambleMessage =
+        [
+            (Hue.Label, "gamble" |> Text) |> Hued
+            (Hue.Usage, " - starts a new gambling round when there isn't currently one" |> Line) |> Hued
+
         ] |> Group
 
     let private headForMessage=
@@ -83,6 +102,12 @@ module Help =
             (Hue.Usage, " - lists job offers" |> Line) |> Hued
         ] |> Group
 
+    let private leaveMessage (featureName: string) =
+        [
+            (Hue.Label, "leave" |> Text) |> Hued
+            (Hue.Usage, featureName |> sprintf " - leaves %s" |> Line) |> Hued
+        ] |> Group
+
     let private menuMessage=
         [
             (Hue.Label, "menu" |> Text) |> Hued
@@ -101,6 +126,12 @@ module Help =
             (Hue.Usage, " - moves for the given number of turns, with a default of 1 turn" |> Line) |> Hued
         ] |> Group
 
+    let private noBetMessage =
+        [
+            (Hue.Label, "no bet" |> Text) |> Hued
+            (Hue.Usage, " - ends the gambling round with no betting" |> Line) |> Hued
+        ] |> Group
+
     let private noMessage =
         [
             (Hue.Label, "no" |> Line) |> Hued
@@ -111,6 +142,12 @@ module Help =
         [
             (Hue.Label, "quit" |> Text) |> Hued
             (Hue.Usage, " - quits the game" |> Line) |> Hued
+        ] |> Group
+
+    let private rulesMessage =
+        [
+            (Hue.Label, "rules" |> Text) |> Hued
+            (Hue.Usage, " - displays the rules of gambling in the dark alley" |> Line) |> Hued
         ] |> Group
 
     let private sellMessage =
@@ -227,6 +264,30 @@ module Help =
         ]
         |> List.iter messageSink
 
+    let perFeatureHelp : Map<IslandFeatureIdentifier, Message list> =
+        Map.empty
+        |> Map.add 
+            IslandFeatureIdentifier.DarkAlley
+            [
+                "" |> Line
+                (Hue.Heading, "Dark Alley Commands:" |> Line) |> Hued
+                betMessage
+                dealMessage
+                gambleMessage
+                (leaveMessage "the dark alley")
+                noBetMessage
+                rulesMessage
+            ]
+
+    let private AtFeature
+            (feature     : IslandFeatureIdentifier)
+            (messageSink : MessageSink) 
+            : unit =
+        perFeatureHelp
+        |> Map.tryFind feature
+        |> Option.get
+        |> List.iter messageSink
+
     let Run 
             (messageSink : MessageSink) 
             (gamestate   : Gamestate) 
@@ -240,6 +301,8 @@ module Help =
             messageSink |> ConfirmQuit
         | Gamestate.Docked (Dock, _, _) ->
             messageSink |> Docked
+        | Gamestate.Docked (Feature feature, _, _) ->
+            messageSink |> AtFeature feature
         | _ ->
             ()
         gamestate

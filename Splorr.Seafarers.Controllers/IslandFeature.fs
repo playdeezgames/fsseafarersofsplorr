@@ -6,8 +6,7 @@ open Splorr.Seafarers.Services
 type IslandSingleFeatureSource = Location -> IslandFeatureIdentifier -> bool
 
 type IslandFeatureRunFeatureContext =
-    interface
-    end
+    abstract member avatarMessageSource : AvatarMessageSource
 
 type IslandFeatureRunIslandContext = 
     inherit IslandFeatureRunFeatureContext
@@ -26,13 +25,21 @@ module IslandFeature =
             (feature       : IslandFeatureIdentifier)
             (avatarId      : string)
             : Gamestate option = 
+        "" |> Line |> messageSink
+        avatarId
+        |> context.avatarMessageSource
+        |> Utility.DumpMessages messageSink
         [
-            "" |> Line
             (Hue.Heading, "You are in the dark alley." |> Line) |> Hued
         ]
         |> List.iter messageSink
         match commandSource() with
-        | (Some Command.Leave) ->
+        | Some Command.Help ->
+            (Feature feature, location, avatarId)
+            |> Gamestate.Docked
+            |> Gamestate.Help
+            |> Some
+        | Some Command.Leave ->
             (Dock, location, avatarId)
             |> Gamestate.Docked
             |> Some
