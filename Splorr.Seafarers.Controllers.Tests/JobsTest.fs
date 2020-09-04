@@ -26,6 +26,6 @@ let ``Run.It returns Docked with the given location and world.`` () =
             islandJobSourceStub
             islandSingleNameSourceStub
             islandSourceStub
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 

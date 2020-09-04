@@ -161,7 +161,7 @@ let ``CheckForAvatarDeath.It returns the original gamestate when the avatar embe
     let actual =
         input
         |> Gamestate.CheckForAvatarDeath
-            avatarMessageSourceStub
+            avatarMessageSourceDummy
             shipmateSingleStatisticSourceStub
     Assert.AreEqual(expected, actual)
 
@@ -176,7 +176,7 @@ let ``CheckForAvatarDeath.It returns the original gamestate when there is not a 
     let actual =
         input
         |> Gamestate.CheckForAvatarDeath
-            avatarMessageSourceStub
+            avatarMessageSourceDummy
             shipmateSingleStatisticSourceStub
     Assert.AreEqual(expected, actual)
 
@@ -200,6 +200,6 @@ let ``CheckForAvatarDeath.It returns gameover when the avatar embedded therein i
     let actual =
         input
         |> Gamestate.CheckForAvatarDeath 
-            avatarMessageSourceStub
+            avatarMessageSourceDummy
             shipmateSingleStatisticSource
     Assert.AreEqual(expected, actual)

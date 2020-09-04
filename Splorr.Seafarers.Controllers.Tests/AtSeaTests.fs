@@ -28,7 +28,7 @@ let private functionUnderTest
             avatarJobSource,
             avatarMessagePurgerStub,
             avatarMessageSink,
-            avatarMessageSourceStub,
+            avatarMessageSourceDummy,
             avatarShipmateSourceStub,
             avatarSingleMetricSinkExplode,
             avatarSingleMetricSourceStub,
@@ -97,7 +97,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
             shipmateSingleStatisticSource
             vesselSingleStatisticSourceStub 
             inputSource 
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -114,7 +114,7 @@ let ``Run.It returns ConfirmQuit when given Quit command.`` () =
         |> Some
     let actual = 
         input
-        |> functionUsuallyUnderTest inputSource sinkStub
+        |> functionUsuallyUnderTest inputSource sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -130,7 +130,7 @@ let ``Run.It returns InvalidInput when given invalid command.`` () =
         |> Some
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkStub
+        |> functionUsuallyUnderTest inputSource sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -161,7 +161,7 @@ let ``Run.It returns AtSea with new speed when given Set Speed command.`` () =
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub 
             inputSource 
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -195,7 +195,7 @@ let ``Run.It returns AtSea with new heading when given Set Heading command.`` ()
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource 
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -224,7 +224,7 @@ let ``Run.It moves the avatar when given Move command.`` () =
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource 
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -241,7 +241,7 @@ let ``Run.It returns At Sea Help when given the Help command.`` () =
         |> Some
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkStub
+        |> functionUsuallyUnderTest inputSource sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -258,7 +258,7 @@ let ``Run.It returns At Sea Metrics when given the Metrics command.`` () =
         |> Some
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkStub
+        |> functionUsuallyUnderTest inputSource sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -275,7 +275,7 @@ let ``Run.It returns At Sea Inventory when given the Inventory command.`` () =
         |> Some
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkStub
+        |> functionUsuallyUnderTest inputSource sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -292,7 +292,7 @@ let ``Run.It returns Main Menu when given the Menu command.`` () =
         |> Some
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkStub
+        |> functionUsuallyUnderTest inputSource sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -309,7 +309,7 @@ let ``Run.It returns Island List when given the Islands command.`` () =
         |> Some
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkStub
+        |> functionUsuallyUnderTest inputSource sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -345,7 +345,7 @@ let ``Run.It returns AtSea when given the Dock command and there is no sufficien
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSource
             inputSource 
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -373,7 +373,7 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource 
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -402,7 +402,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource 
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -431,7 +431,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -472,7 +472,7 @@ let ``Run.It gives a message and changes heading when given a Head For command a
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource 
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -490,7 +490,7 @@ let ``Run.It returns Chart when given the command Chart.`` () =
         |> Some
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkStub
+        |> functionUsuallyUnderTest inputSource sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -507,7 +507,7 @@ let ``Run.It returns Status when given the command Status.`` () =
         |> Some
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkStub
+        |> functionUsuallyUnderTest inputSource sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -536,7 +536,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource 
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -572,7 +572,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource 
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -623,7 +623,7 @@ let ``Run.It gives a message and returns AtSea when the avatar is too far away f
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSource
             inputSource 
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -640,7 +640,7 @@ let ``Run.It returns Careen Port when given the careen port command and the avat
         |> Some
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkStub
+        |> functionUsuallyUnderTest inputSource sinkDummy
     Assert.AreEqual(expected, actual)
     
 [<Test>]
@@ -672,7 +672,7 @@ let ``Run.It adds a message when given a Distance To command with an island name
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -712,5 +712,5 @@ let ``Run.It adds a message when given a Distance To command with an island name
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
             inputSource
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)

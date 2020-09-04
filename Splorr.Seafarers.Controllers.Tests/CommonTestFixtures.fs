@@ -13,7 +13,7 @@ let internal connectionString =
 let internal random = 
     Random()
 
-let internal sinkStub 
+let internal sinkDummy 
         (_ : Message) 
         : unit = 
     ()
@@ -28,7 +28,7 @@ let internal createConnection () : SQLiteConnection =
 
 let internal avatarId : string = ""
 
-let internal statisticDescriptors =
+let private statisticDescriptors =
     [
         (ShipmateStatisticIdentifier.Satiety,{
             StatisticName="satiety"
@@ -58,11 +58,11 @@ let internal statisticDescriptors =
 let internal shipmateStatisticTemplateSourceStub () =
     statisticDescriptors
     |> Map.ofList
-let internal vesselStatisticTemplateSourceStub () 
+let internal vesselStatisticTemplateSourceDummy () 
         : Map<VesselStatisticIdentifier, StatisticTemplate>= 
     Map.empty
 
-let internal vesselStatisticSinkStub (_) (_) = 
+let internal vesselStatisticSinkDummy (_) (_) = 
     ()
 
 let internal vesselSingleStatisticSourceStub (_) (identifier: VesselStatisticIdentifier) = 
@@ -88,7 +88,7 @@ let internal vesselSingleStatisticSourceStub (_) (identifier: VesselStatisticIde
 
 let internal vesselSingleStatisticSinkStub (_) (_) = ()
 
-let internal avatarMessageSourceStub (_) = []
+let internal avatarMessageSourceDummy (_) = []
 let internal avatarMessageSinkStub (_) (_) = ()
 let internal avatarMessagePurgerStub (_) = ()
 

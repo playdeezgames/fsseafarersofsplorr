@@ -37,7 +37,7 @@ let ``Run.It should return AtSea when the given island does not exist.`` () =
     let context = 
         TestIslandFeatureRunContext
             (avatarMessageSinkExplode,
-            avatarMessageSourceStub,
+            avatarMessageSourceDummy,
             islandSingleFeatureSourceStub,
             islandSingleNameSourceStub,
             islandSingleStatisticSourceStub,
@@ -47,7 +47,7 @@ let ``Run.It should return AtSea when the given island does not exist.`` () =
         IslandFeature.Run 
             context
             commandSourceExplode
-            sinkStub
+            sinkDummy
             givenLocation
             givenFeature
             givenAvatarId
@@ -66,7 +66,7 @@ let ``Run.It should return Dock state when the given island exists but does not 
     let context = 
         TestIslandFeatureRunContext
             (avatarMessageSinkExplode,
-            avatarMessageSourceStub,
+            avatarMessageSourceDummy,
             islandSingleFeatureSourceStub,
             islandSingleNameSource,
             islandSingleStatisticSourceStub,
@@ -76,7 +76,7 @@ let ``Run.It should return Dock state when the given island exists but does not 
         IslandFeature.Run 
             context
             commandSourceExplode
-            sinkStub
+            sinkDummy
             givenLocation
             givenFeature
             givenAvatarId
@@ -99,7 +99,7 @@ let ``Run.It should return Dock state when dark alley exists but the player does
     let context = 
         TestIslandFeatureRunContext
             (avatarMessageSinkExpected ["Come back when you've got more money!"],
-            avatarMessageSourceStub,
+            avatarMessageSourceDummy,
             islandSingleFeatureSource,
             islandSingleNameSource,
             islandSingleStatisticSource,
@@ -109,7 +109,7 @@ let ``Run.It should return Dock state when dark alley exists but the player does
         IslandFeature.Run 
             context
             commandSourceExplode
-            sinkStub
+            sinkDummy
             givenLocation
             givenFeature
             givenAvatarId
@@ -134,7 +134,7 @@ let ``Run.When in the dark alley, the leave command will take the player back to
     let context = 
         TestIslandFeatureRunContext
             (avatarMessageSinkExplode,
-            avatarMessageSourceStub,
+            avatarMessageSourceDummy,
             islandSingleFeatureSource,
             islandSingleNameSource,
             islandSingleStatisticSource,
@@ -144,7 +144,7 @@ let ``Run.When in the dark alley, the leave command will take the player back to
         IslandFeature.Run 
             context
             (commandSourceFake (Some Command.Leave))
-            sinkStub
+            sinkDummy
             givenLocation
             givenFeature
             givenAvatarId
@@ -168,7 +168,7 @@ let ``Run.When in the dark alley, the help command will take the player to the h
     let context = 
         TestIslandFeatureRunContext
             (avatarMessageSinkExplode,
-            avatarMessageSourceStub,
+            avatarMessageSourceDummy,
             islandSingleFeatureSource,
             islandSingleNameSource,
             islandSingleStatisticSource,
@@ -178,7 +178,7 @@ let ``Run.When in the dark alley, the help command will take the player to the h
         IslandFeature.Run 
             context
             (commandSourceFake (Some Command.Help))
-            sinkStub
+            sinkDummy
             givenLocation
             givenFeature
             givenAvatarId
@@ -203,7 +203,7 @@ let ``Run.When in the dark alley, the an invalid command gives you an error mess
     let context = 
         TestIslandFeatureRunContext
             (avatarMessageSinkExplode,
-            avatarMessageSourceStub,
+            avatarMessageSourceDummy,
             islandSingleFeatureSource,
             islandSingleNameSource,
             islandSingleStatisticSource,
@@ -213,7 +213,7 @@ let ``Run.When in the dark alley, the an invalid command gives you an error mess
         IslandFeature.Run 
             context
             (commandSourceFake None)
-            sinkStub
+            sinkDummy
             givenLocation
             givenFeature
             givenAvatarId

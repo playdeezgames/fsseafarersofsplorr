@@ -11,7 +11,7 @@ let private functionUnderTest
         (avatarSingleMetricSink : AvatarSingleMetricSink)= 
     Careened.Run 
         avatarMessagePurgerStub
-        avatarMessageSourceStub
+        avatarMessageSourceDummy
         avatarShipmateSourceStub
         avatarSingleMetricSink
         avatarSingleMetricSourceStub
@@ -42,7 +42,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
         inputWorld
         |> Careened.Run 
             avatarMessagePurgerStub
-            avatarMessageSourceStub
+            avatarMessageSourceDummy
             avatarShipmateSourceStub
             avatarSingleMetricSinkExplode
             avatarSingleMetricSourceStub
@@ -51,7 +51,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
             vesselSingleStatisticSinkStub
             vesselSingleStatisticSourceStub
             inputSource 
-            sinkStub 
+            sinkDummy 
             inputSide
     Assert.AreEqual(expected, actual)
 
@@ -73,7 +73,7 @@ let ``Run.It returns ConfirmQuit when given Quit command.`` () =
         |> functionUnderTest
             avatarSingleMetricSinkExplode
             inputSource 
-            sinkStub 
+            sinkDummy 
             inputSide
     Assert.AreEqual(expected, actual)
 
@@ -94,7 +94,7 @@ let ``Run.It returns InvalidInput when given invalid command.`` () =
         |> functionUnderTest
             avatarSingleMetricSinkExplode
             inputSource 
-            sinkStub 
+            sinkDummy 
             inputSide
     Assert.AreEqual(expected, actual)
 
@@ -116,7 +116,7 @@ let ``Run.It returns Careened Help when given the Help command.`` () =
         |> functionUnderTest
             avatarSingleMetricSinkExplode
             inputSource 
-            sinkStub 
+            sinkDummy 
             inputSide
     Assert.AreEqual(expected, actual)
 
@@ -138,7 +138,7 @@ let ``Run.It returns Careened Metrics when given the Metrics command.`` () =
         |> functionUnderTest
             avatarSingleMetricSinkExplode
             inputSource 
-            sinkStub 
+            sinkDummy 
             inputSide
     Assert.AreEqual(expected, actual)
 
@@ -160,7 +160,7 @@ let ``Run.It returns Careened Inventory when given the Inventory command.`` () =
         |> functionUnderTest
             avatarSingleMetricSinkExplode
             inputSource 
-            sinkStub 
+            sinkDummy 
             inputSide
     Assert.AreEqual(expected, actual)
 
@@ -182,7 +182,7 @@ let ``Run.It returns Status when given the command Status.`` () =
         |> functionUnderTest
             avatarSingleMetricSinkExplode
             inputSource 
-            sinkStub 
+            sinkDummy 
             inputSide
     Assert.AreEqual(expected, actual)
 
@@ -203,7 +203,7 @@ let ``Run.It returns At Sea when given the command Weigh Anchor.`` () =
         |> functionUnderTest
             avatarSingleMetricSinkExplode
             inputSource
-            sinkStub
+            sinkDummy
             inputSide
     Assert.AreEqual(expected, actual)
 
@@ -225,7 +225,7 @@ let ``Run.It returns Careened with a cleaned hull when given the command Clean H
         |> functionUnderTest
             (assertAvatarSingleMetricSink [Metric.CleanedHull, 1UL])
             inputSource 
-            sinkStub 
+            sinkDummy 
             inputSide
     Assert.AreEqual(expected, actual)
 

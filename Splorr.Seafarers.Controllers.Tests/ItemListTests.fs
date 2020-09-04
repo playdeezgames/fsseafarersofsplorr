@@ -17,12 +17,12 @@ let ``Run.It returns Docked (at Shop) gamestate.`` () =
     let actual = 
         (inputLocation, inputWorld)
         ||> ItemList.Run 
-            avatarMessageSourceStub
+            avatarMessageSourceDummy
             atSeaCommoditySource 
             atSeaIslandItemSource 
             atSeaIslandMarketSource 
             islandSourceStub
             atSeaItemSource 
             shipmateSingleStatisticSourceStub
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)

@@ -20,7 +20,7 @@ let ``Run.It returns the At Sea state with the given world.`` () =
             islandSourceStub
             vesselSingleStatisticSourceStub 
             worldSingleStatisticSourceStub 
-            sinkStub 
+            sinkDummy 
             inputName 
             inputWorld
     Assert.AreEqual(expected, actual)

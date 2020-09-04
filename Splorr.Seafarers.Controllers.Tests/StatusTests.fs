@@ -19,6 +19,6 @@ let ``Run.It returns the given gamestate.`` () =
             islandSingleNameSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 

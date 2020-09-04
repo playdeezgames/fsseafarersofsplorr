@@ -77,15 +77,15 @@ let ``Run.It returns Confirm Quit when given Quit command and there is no world.
             shipmateStatisticTemplateSourceStub,
             termNameSource,
             vesselSingleStatisticSourceStub,
-            vesselStatisticSinkStub,
-            vesselStatisticTemplateSourceStub,
+            vesselStatisticSinkDummy,
+            vesselStatisticTemplateSourceDummy,
             worldSingleStatisticSourceStub) :> WorldCreateContext
     let actual =
         input
         |> MainMenu.Run 
             context
             inputSource 
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -118,8 +118,8 @@ let ``Run.It returns Main Menu when given Quit command and there is a world.`` (
             shipmateStatisticTemplateSourceStub,
             termNameSource,
             vesselSingleStatisticSourceStub,
-            vesselStatisticSinkStub,
-            vesselStatisticTemplateSourceStub,
+            vesselStatisticSinkDummy,
+            vesselStatisticTemplateSourceDummy,
             worldSingleStatisticSourceStub) :> WorldCreateContext
     let actual =
         input
@@ -127,7 +127,7 @@ let ``Run.It returns Main Menu when given Quit command and there is a world.`` (
         |> MainMenu.Run 
             context
             inputSource 
-            sinkStub 
+            sinkDummy 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -156,15 +156,15 @@ let ``Run.It returns Main Menu when given invalid command and there is no world.
             shipmateStatisticTemplateSourceStub,
             termNameSource,
             vesselSingleStatisticSourceStub,
-            vesselStatisticSinkStub,
-            vesselStatisticTemplateSourceStub,
+            vesselStatisticSinkDummy,
+            vesselStatisticTemplateSourceDummy,
             worldSingleStatisticSourceStub) :> WorldCreateContext
     let actual =
         input
         |> MainMenu.Run
             context
             (fun()->None) 
-            sinkStub 
+            sinkDummy 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -194,8 +194,8 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
             shipmateStatisticTemplateSourceStub,
             termNameSource,
             vesselSingleStatisticSourceStub,
-            vesselStatisticSinkStub,
-            vesselStatisticTemplateSourceStub,
+            vesselStatisticSinkDummy,
+            vesselStatisticTemplateSourceDummy,
             worldSingleStatisticSourceStub) :> WorldCreateContext
     let actual =
         input
@@ -203,7 +203,7 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
         |> MainMenu.Run 
             context
             (fun()->None) 
-            sinkStub 
+            sinkDummy 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -233,8 +233,8 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
             shipmateStatisticTemplateSourceStub,
             termNameSource,
             vesselSingleStatisticSourceStub,
-            vesselStatisticSinkStub,
-            vesselStatisticTemplateSourceStub,
+            vesselStatisticSinkDummy,
+            vesselStatisticTemplateSourceDummy,
             worldSingleStatisticSourceStub) :> WorldCreateContext
 
     let actual =
@@ -242,7 +242,7 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
         |> MainMenu.Run 
             context
             inputSource 
-            sinkStub 
+            sinkDummy 
     //the command creates a world, which has randomness in the generation
     //so it is very brittle to figure out what the expected would be
     match actual with
@@ -279,8 +279,8 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
             shipmateStatisticTemplateSourceStub,
             termNameSource,
             vesselSingleStatisticSourceStub,
-            vesselStatisticSinkStub,
-            vesselStatisticTemplateSourceStub,
+            vesselStatisticSinkDummy,
+            vesselStatisticTemplateSourceDummy,
             worldSingleStatisticSourceStub) :> WorldCreateContext
 
     let actual =
@@ -289,7 +289,7 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
         |> MainMenu.Run 
             context
             inputSource 
-            sinkStub 
+            sinkDummy 
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -317,8 +317,8 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
             shipmateStatisticTemplateSourceStub,
             termNameSource,
             vesselSingleStatisticSourceStub,
-            vesselStatisticSinkStub,
-            vesselStatisticTemplateSourceStub,
+            vesselStatisticSinkDummy,
+            vesselStatisticTemplateSourceDummy,
             worldSingleStatisticSourceStub) :> WorldCreateContext
 
     let actual =
@@ -327,7 +327,7 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
         |> MainMenu.Run 
             context
             inputSource 
-            sinkStub 
+            sinkDummy 
     Assert.AreEqual(expected, actual)
 
 
@@ -363,8 +363,8 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
             shipmateStatisticTemplateSourceStub,
             termNameSource,
             vesselSingleStatisticSourceStub,
-            vesselStatisticSinkStub,
-            vesselStatisticTemplateSourceStub,
+            vesselStatisticSinkDummy,
+            vesselStatisticTemplateSourceDummy,
             worldSingleStatisticSourceStub) :> WorldCreateContext
 
     let actual =
@@ -372,7 +372,7 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
         |> MainMenu.Run 
             context
             inputSource 
-            sinkStub 
+            sinkDummy 
     Assert.AreEqual(expected, actual)
 
 
@@ -401,8 +401,8 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
             shipmateStatisticTemplateSourceStub,
             termNameSource,
             vesselSingleStatisticSourceStub,
-            vesselStatisticSinkStub,
-            vesselStatisticTemplateSourceStub,
+            vesselStatisticSinkDummy,
+            vesselStatisticTemplateSourceDummy,
             worldSingleStatisticSourceStub) :> WorldCreateContext
 
     let actual =
@@ -411,7 +411,7 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
         |> MainMenu.Run 
             context
             inputSource 
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -441,8 +441,8 @@ let ``Run.It returns Main Menu with no world when given Resume command and there
             shipmateStatisticTemplateSourceStub,
             termNameSource,
             vesselSingleStatisticSourceStub,
-            vesselStatisticSinkStub,
-            vesselStatisticTemplateSourceStub,
+            vesselStatisticSinkDummy,
+            vesselStatisticTemplateSourceDummy,
             worldSingleStatisticSourceStub) :> WorldCreateContext
 
     let actual =
@@ -450,7 +450,7 @@ let ``Run.It returns Main Menu with no world when given Resume command and there
         |> MainMenu.Run 
             context
             inputSource 
-            sinkStub 
+            sinkDummy 
     Assert.AreEqual(expected, actual)
 
 
