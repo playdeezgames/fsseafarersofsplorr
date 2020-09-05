@@ -103,10 +103,10 @@ let internal avatarMessageSinkExpected (expected:string list) (_) (message:strin
         ()
 
 
-let avatarExpectedMessagesSink (expected:string list) (_) (actual:string) : unit =
+let avatarMessagesSinkFake (expected:string list) (_) (actual:string) : unit =
     match expected |> List.tryFind (fun x -> x = actual) with
     | Some _ ->
-        Assert.Pass ("Valid message received.")
+        ()
     | _ ->
         Assert.Fail (actual |> sprintf "Invalid Message Received - `%s`")
 

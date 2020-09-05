@@ -4,6 +4,8 @@ open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
+let private inputAvatarId = "avatar"
+
 [<Test>]
 let ``Create.It creates a vessel.`` () =
     let inputAvatarId = "avatar"
@@ -30,8 +32,6 @@ let ``TransformFouling.It transforms fouling on the port side when the port side
     let vesselSingleStatisticSink  (avatarId:string) (identifier:VesselStatisticIdentifier, statistic: Statistic) : unit = 
         Assert.AreEqual(VesselStatisticIdentifier.PortFouling, identifier)
     Vessel.TransformFouling vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId inputSide (Statistic.ChangeCurrentBy 0.25)
-
-let private inputAvatarId = "avatar"
 
 [<Test>]
 let ``TransformFouling.It transforms fouling on the starboard side when the starboard side is specified.`` () =

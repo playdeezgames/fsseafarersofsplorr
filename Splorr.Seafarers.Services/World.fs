@@ -12,6 +12,10 @@ type IslandSource = unit -> Location list
 type IslandFeatureGeneratorSource = unit -> Map<IslandFeatureIdentifier, IslandFeatureGenerator>
 type IslandSingleFeatureSink = Location -> IslandFeatureIdentifier -> unit
 
+type WorldUndockContext = 
+    abstract member avatarMessageSink       : AvatarMessageSink
+    abstract member avatarIslandFeatureSink : AvatarIslandFeatureSink
+
 type WorldGenerateIslandNamesContext =
     inherit UtilitySortListRandomlyContext
 
@@ -20,7 +24,6 @@ type WorldNameIslandsContext =
     abstract member islandSingleNameSink : IslandSingleNameSink
     abstract member islandSource         : IslandSource
     abstract member nameSource           : TermSource
-
 
 type WorldPopulateIslandsContext =
     inherit IslandFeatureGeneratorGenerateContext   
@@ -618,7 +621,13 @@ module World =
                 islandMarketSource location
             let unitPrice = 
                 Item.DetermineSalePrice commoditySource markets descriptor 
-            let availableTonnage = vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Tonnage |> Option.map (fun x->x.CurrentValue) |> Option.get
+            let availableTonnage = 
+                vesselSingleStatisticSource 
+                    avatarId 
+                    VesselStatisticIdentifier.Tonnage 
+                |> Option.map 
+                    Statistic.GetCurrentValue 
+                |> Option.get
             let usedTonnage =
                 avatarId
                 |> Avatar.GetUsedTonnage
@@ -740,4 +749,13 @@ module World =
             vesselSingleStatisticSink 
             vesselSingleStatisticSource
             side 
+
+    let Undock
+            (context : WorldUndockContext)
+            (avatarId : string)
+            : unit =
+        avatarId
+        |> AddMessages  context.avatarMessageSink [ "You undock." ]
+        context.avatarIslandFeatureSink (None, avatarId)
+        
             

@@ -32,7 +32,7 @@ let ``GetWorld.It returns the world embedded within the given AtSea Gamestate.``
 let ``GetWorld.It returns the world embedded within the given Docked (at Dock) Gamestate.`` () =
     let expected = world |> Some
     let actual = 
-        (Dock, (0.0,0.0), world)
+        (Feature IslandFeatureIdentifier.Dock, (0.0,0.0), world)
         |> Gamestate.Docked 
         |> Gamestate.GetWorld
     Assert.AreEqual(expected, actual)

@@ -60,7 +60,6 @@ type GamblingState = Card * Card * Card
 *)
 
 type DockedState =
-    | Dock
     | Jobs
     | ItemList
     | Feature of IslandFeatureIdentifier

@@ -3,6 +3,7 @@
 open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Services
 open System
+open Splorr.Seafarers.Models
 
 type RunnerRunContext =
     inherit AtSeaRunContext
@@ -64,6 +65,14 @@ module Runner =
                     commandSource 
                     messageSink 
                     state
+            
+            | Gamestate.Docked (Feature IslandFeatureIdentifier.Dock, location, avatarId) -> 
+                Docked.Run 
+                    context
+                    commandSource 
+                    messageSink 
+                    location 
+                    avatarId
 
             | Gamestate.Docked (Feature feature, location, avatarId) -> 
                 IslandFeature.Run
@@ -72,14 +81,6 @@ module Runner =
                     messageSink
                     location
                     feature
-                    avatarId
-
-            | Gamestate.Docked (Dock, location, avatarId) -> 
-                Docked.Run 
-                    context
-                    commandSource 
-                    messageSink 
-                    location 
                     avatarId
 
             | Gamestate.Docked (ItemList, location, avatarId) -> 

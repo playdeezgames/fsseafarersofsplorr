@@ -299,7 +299,7 @@ module Help =
             messageSink |> Careened
         | Gamestate.ConfirmQuit _ ->
             messageSink |> ConfirmQuit
-        | Gamestate.Docked (Dock, _, _) ->
+        | Gamestate.Docked (Feature IslandFeatureIdentifier.Dock, _, _) ->
             messageSink |> Docked
         | Gamestate.Docked (Feature feature, _, _) ->
             messageSink |> AtFeature feature

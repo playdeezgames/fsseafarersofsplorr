@@ -59,7 +59,7 @@ let ``Run.It should return Dock state when the given island exists but does not 
     let givenAvatarId = avatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let expected=
-        (Dock, givenLocation, givenAvatarId) 
+        (Feature IslandFeatureIdentifier.Dock, givenLocation, givenAvatarId) 
         |> Gamestate.Docked 
         |> Some
     let islandSingleNameSource (_) = Some ""
@@ -89,7 +89,7 @@ let ``Run.It should return Dock state when dark alley exists but the player does
     let givenAvatarId = avatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let expected=
-        (Dock, givenLocation, givenAvatarId) 
+        (Feature IslandFeatureIdentifier.Dock, givenLocation, givenAvatarId) 
         |> Gamestate.Docked 
         |> Some
     let islandSingleFeatureSource (_) (_) = true
@@ -128,7 +128,7 @@ let ``Run.When in the dark alley, the leave command will take the player back to
     let shipmateSingleStatisticSource (_) (_) (_) = 
         Statistic.Create (5.0,5.0) 5.0 |> Some
     let expected =
-        (Dock, givenLocation, avatarId)
+        (Feature IslandFeatureIdentifier.Dock, givenLocation, avatarId)
         |> Gamestate.Docked
         |> Some
     let context = 

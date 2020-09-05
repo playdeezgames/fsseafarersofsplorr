@@ -52,7 +52,7 @@ let ``Run.It returns the given ConfirmQuit Gamestate`` () =
 [<Test>]
 let ``Run.It returns the given Docked (at Dock) Gamestate`` () =
     let input = 
-        (Dock, (0.0, 0.0), world)
+        (Feature IslandFeatureIdentifier.Dock, (0.0, 0.0), world)
         |> Gamestate.Docked
     let expected = 
         input

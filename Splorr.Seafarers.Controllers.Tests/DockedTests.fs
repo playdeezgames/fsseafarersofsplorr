@@ -9,29 +9,30 @@ open Splorr.Seafarers.Services
 
 type TestDockedRunContext
         (
-            avatarInventorySink           ,
-            avatarInventorySource         ,
-            avatarIslandSingleMetricSink  ,
+            avatarInventorySink,
+            avatarInventorySource,
+            avatarIslandFeatureSink, 
+            avatarIslandSingleMetricSink,
             avatarIslandSingleMetricSource,
-            avatarJobSink                 ,
-            avatarJobSource               ,
-            avatarMessagePurger           ,
-            avatarMessageSink             ,
-            avatarMessageSource           ,
-            avatarSingleMetricSink        ,
-            avatarSingleMetricSource      ,
-            commoditySource               ,
-            islandFeatureSource           ,
-            islandJobPurger               ,
-            islandMarketSource            ,
-            islandSingleJobSource         ,
-            islandSingleMarketSink        ,
-            islandSingleNameSource        ,
-            islandSingleMarketSource      ,
-            islandSource                  ,
-            itemSource                    ,
-            shipmateSingleStatisticSink   ,
-            shipmateSingleStatisticSource ,
+            avatarJobSink,
+            avatarJobSource,
+            avatarMessagePurger,
+            avatarMessageSink,
+            avatarMessageSource,
+            avatarSingleMetricSink,
+            avatarSingleMetricSource,
+            commoditySource,
+            islandFeatureSource,
+            islandJobPurger,
+            islandMarketSource,
+            islandSingleJobSource,
+            islandSingleMarketSink,
+            islandSingleNameSource,
+            islandSingleMarketSource,
+            islandSource,
+            itemSource,
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource,
             vesselSingleStatisticSource   
         ) =
     interface DockedRunContext
@@ -42,6 +43,10 @@ type TestDockedRunContext
         member _.islandSingleNameSource         : IslandSingleNameSource         = islandSingleNameSource  
         member _.islandFeatureSource            : IslandFeatureSource            = islandFeatureSource
         
+    interface WorldUndockContext with
+        member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
+        member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
+
     interface DockedHandleCommandContext with
         member _.avatarInventorySink            : AvatarInventorySink           =avatarInventorySink            
         member _.avatarInventorySource          : AvatarInventorySource         =avatarInventorySource          
@@ -70,6 +75,7 @@ type TestDockedRunContext
 let private functionUnderTest
         (avatarInventorySink           : AvatarInventorySink)
         (avatarInventorySource         : AvatarInventorySource)
+        (avatarIslandFeatureSink       : AvatarIslandFeatureSink)
         (avatarMessageSink             : AvatarMessageSink)
         (avatarSingleMetricSink        : AvatarSingleMetricSink)
         (islandMarketSource            : IslandMarketSource) 
@@ -81,6 +87,7 @@ let private functionUnderTest
         TestDockedRunContext
             (avatarInventorySink,
             avatarInventorySource,
+            avatarIslandFeatureSink,
             avatarIslandSingleMetricSinkStub,
             avatarIslandSingleMetricSourceStub,
             avatarJobSinkStub,
@@ -107,6 +114,7 @@ let private functionUnderTest
         context
 
 let private functionUnderTestStubbed 
+        (avatarIslandFeatureSink       : AvatarIslandFeatureSink)
         (avatarMessageSink             : AvatarMessageSink) 
         (avatarSingleMetricSink        : AvatarSingleMetricSink)
         (islandSingleNameSource        : IslandSingleNameSource)
@@ -115,6 +123,7 @@ let private functionUnderTestStubbed
     functionUnderTest 
         avatarInventorySinkStub
         avatarInventorySourceStub
+        avatarIslandFeatureSink
         avatarMessageSink
         avatarSingleMetricSink
         dockedItemMarketSourceStub 
@@ -143,6 +152,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed
+            avatarIslandFeatureSinkDummy
             avatarMessageSinkStub
             avatarSingleMetricSinkExplode
             islandSingleNameSourceStub
@@ -163,9 +173,12 @@ let ``Run.It returns AtSea when given Undock Command.`` () =
     let islandSingleNameSource (_) =
         "yermom"
         |> Some
+    let avatarIslandFeatureSink (feature: IslandFeatureIdentifier option, _) : unit =
+        Assert.AreEqual(None, feature)
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed
+            avatarIslandFeatureSink
             avatarMessageSinkStub
             avatarSingleMetricSinkExplode
             islandSingleNameSource
@@ -180,7 +193,7 @@ let ``Run.It returns ConfirmQuit when given Quit Command.`` () =
     let inputLocation = dockLocation
     let inputSource = Command.Quit |> Some |> toSource
     let expected =
-        (Dock, inputLocation, input) 
+        (Feature IslandFeatureIdentifier.Dock, inputLocation, input) 
         |> Gamestate.Docked 
         |> Gamestate.ConfirmQuit 
         |> Some
@@ -190,6 +203,7 @@ let ``Run.It returns ConfirmQuit when given Quit Command.`` () =
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed
+            avatarIslandFeatureSinkDummy
             avatarMessageSinkStub
             avatarSingleMetricSinkExplode
             islandSingleNameSource
@@ -207,7 +221,7 @@ let ``Run.It returns Metrics when given Metrics Command.`` () =
         |> Some 
         |> toSource
     let expected = 
-        (Dock, inputLocation, input) 
+        (Feature IslandFeatureIdentifier.Dock, inputLocation, input) 
         |> Gamestate.Docked 
         |> Gamestate.Metrics 
         |> Some
@@ -217,6 +231,7 @@ let ``Run.It returns Metrics when given Metrics Command.`` () =
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed
+            avatarIslandFeatureSinkDummy
             avatarMessageSinkStub
             avatarSingleMetricSinkExplode
             islandSingleNameSource
@@ -234,7 +249,7 @@ let ``Run.It returns Help when given Help Command.`` () =
         |> Some 
         |> toSource
     let expected = 
-        (Dock, inputLocation, input) 
+        (Feature IslandFeatureIdentifier.Dock, inputLocation, input) 
         |> Gamestate.Docked 
         |> Gamestate.Help 
         |> Some
@@ -244,6 +259,7 @@ let ``Run.It returns Help when given Help Command.`` () =
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
+            avatarIslandFeatureSinkDummy
             avatarMessageSinkStub
             avatarSingleMetricSinkExplode
             islandSingleNameSource
@@ -261,7 +277,7 @@ let ``Run.It returns Inventory when given Inventory Command.`` () =
         |> Some 
         |> toSource
     let expected = 
-        (Dock, inputLocation, input) 
+        (Feature IslandFeatureIdentifier.Dock, inputLocation, input) 
         |> Gamestate.Docked 
         |> Gamestate.Inventory 
         |> Some
@@ -271,6 +287,7 @@ let ``Run.It returns Inventory when given Inventory Command.`` () =
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
+            avatarIslandFeatureSinkDummy
             avatarMessageSinkStub
             avatarSingleMetricSinkExplode
             islandSingleNameSource
@@ -287,7 +304,7 @@ let ``Run.It returns InvalidInput when given invalid Command.`` () =
         None 
         |> toSource
     let expected = 
-        ("Maybe try 'help'?",(Dock, inputLocation, input) 
+        ("Maybe try 'help'?",(Feature IslandFeatureIdentifier.Dock, inputLocation, input) 
         |> Gamestate.Docked)
         |> Gamestate.ErrorMessage
         |> Some
@@ -297,6 +314,7 @@ let ``Run.It returns InvalidInput when given invalid Command.`` () =
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
+            avatarIslandFeatureSinkDummy
             avatarMessageSinkStub
             avatarSingleMetricSinkExplode
             islandSingleNameSource
@@ -321,6 +339,7 @@ let ``Run.It returns AtSea when given invalid docked location.`` () =
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
+            avatarIslandFeatureSinkDummy
             avatarMessageSinkStub
             avatarSingleMetricSinkExplode
             islandSingleNameSourceStub
@@ -338,7 +357,7 @@ let ``Run.It returns Status when given the command Status.`` () =
         |> Some 
         |> toSource
     let expected = 
-        (Dock, inputLocation, input) 
+        (Feature IslandFeatureIdentifier.Dock, inputLocation, input) 
         |> Gamestate.Docked 
         |> Gamestate.Status 
         |> Some
@@ -348,6 +367,7 @@ let ``Run.It returns Status when given the command Status.`` () =
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
+            avatarIslandFeatureSinkDummy
             avatarMessageSinkStub
             avatarSingleMetricSinkExplode
             islandSingleNameSource
@@ -375,6 +395,7 @@ let ``Run.It returns Docked (at Jobs) gamestate when given the command Jobs.`` (
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
+            avatarIslandFeatureSinkDummy
             avatarMessageSinkStub
             avatarSingleMetricSinkExplode
             islandSingleNameSource
@@ -403,6 +424,7 @@ let ``Run.It returns Docked (at Feature DarkAlley) gamestate when given the comm
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
+            avatarIslandFeatureSinkDummy
             avatarMessageSinkStub
             avatarSingleMetricSinkExplode
             islandSingleNameSource
@@ -421,7 +443,7 @@ let ``Run.It gives a message when given the Accept Job command and the given job
     let expectedWorld = 
         input
     let expected = 
-        (Dock, inputLocation,  expectedWorld) 
+        (Feature IslandFeatureIdentifier.Dock, inputLocation,  expectedWorld) 
         |> Gamestate.Docked 
         |> Some
     let islandSingleNameSource (_) =
@@ -430,6 +452,7 @@ let ``Run.It gives a message when given the Accept Job command and the given job
     let actual =
         input
         |> functionUnderTestStubbed 
+            avatarIslandFeatureSinkDummy
             avatarMessageSinkStub
             avatarSingleMetricSinkExplode
             islandSingleNameSource
@@ -451,7 +474,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
     let expectedWorld = 
         input
     let expected = 
-        (Dock, inputLocation, expectedWorld) 
+        (Feature IslandFeatureIdentifier.Dock, inputLocation, expectedWorld) 
         |> Gamestate.Docked 
         |> Some
     let islandSingleNameSource (_) =
@@ -460,6 +483,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
     let actual =
         input
         |> functionUnderTestStubbed 
+            avatarIslandFeatureSinkDummy
             avatarMessageSinkStub
             avatarSingleMetricSinkExplode
             islandSingleNameSource
@@ -477,7 +501,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
     let expectedWorld = 
         input
     let expected = 
-        (Dock, inputLocation, expectedWorld) 
+        (Feature IslandFeatureIdentifier.Dock, inputLocation, expectedWorld) 
         |> Gamestate.Docked 
         |> Some
     let islandSingleNameSource (_) =
@@ -486,6 +510,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
     let actual =
         input
         |> functionUnderTestStubbed 
+            avatarIslandFeatureSinkDummy
             avatarMessageSinkStub
             (assertAvatarSingleMetricSink [Metric.AbandonedJob, 1UL])
             islandSingleNameSource
@@ -513,6 +538,7 @@ let ``Run.It returns Docked (at ItemList) gamestate when given the Items command
     let actual =
         (inputLocation, inputWorld)
         ||> functionUnderTestStubbed 
+            avatarIslandFeatureSinkDummy
             avatarMessageSinkStub
             avatarSingleMetricSinkExplode
             islandSingleNameSource
@@ -530,7 +556,7 @@ let ``Run.It adds a message when given the Buy command for a non-existent item.`
     let expectedWorld =
         inputWorld
     let expected = 
-        (Dock, inputLocation, expectedWorld)
+        (Feature IslandFeatureIdentifier.Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
         |> Some
     let islandSingleNameSource (_) =
@@ -539,7 +565,8 @@ let ``Run.It adds a message when given the Buy command for a non-existent item.`
     let actual =
         (inputLocation, inputWorld)
         ||> functionUnderTestStubbed 
-            (avatarExpectedMessagesSink expectedMessages)
+            avatarIslandFeatureSinkDummy
+            (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
             islandSingleNameSource
             shipmateSingleStatisticSourceStub
@@ -565,7 +592,7 @@ let ``Run.It adds a message when given the Buy command and the avatar does not h
     let expectedWorld =
         inputWorld
     let expected = 
-        (Dock, inputLocation, expectedWorld)
+        (Feature IslandFeatureIdentifier.Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
         |> Some
     let islandSingleNameSource (_) =
@@ -576,7 +603,8 @@ let ``Run.It adds a message when given the Buy command and the avatar does not h
         ||> functionUnderTest 
             avatarInventorySinkStub
             avatarInventorySourceStub
-            (avatarExpectedMessagesSink expectedMessages)
+            avatarIslandFeatureSinkDummy
+            (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
             islandMarketSource 
             islandSingleNameSource
@@ -607,7 +635,7 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
     let expectedWorld =
         inputWorld
     let expected = 
-        (Dock, inputLocation, expectedWorld)
+        (Feature IslandFeatureIdentifier.Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
         |> Some
     let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
@@ -629,7 +657,8 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
         ||> functionUnderTest 
             avatarInventorySinkStub
             avatarInventorySourceStub
-            (avatarExpectedMessagesSink expectedMessages)
+            avatarIslandFeatureSinkDummy
+            (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
             islandMarketSource 
             islandSingleNameSource
@@ -648,7 +677,7 @@ let ``Run.It adds a message when given the Sell command for a non-existent item.
     let expectedWorld =
         inputWorld
     let expected = 
-        (Dock, inputLocation, expectedWorld)
+        (Feature IslandFeatureIdentifier.Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
         |> Some
     let islandSingleNameSource (_) =
@@ -657,7 +686,8 @@ let ``Run.It adds a message when given the Sell command for a non-existent item.
     let actual =
         (inputLocation, inputWorld)
         ||> functionUnderTestStubbed 
-            (avatarExpectedMessagesSink expectedMessages)
+            avatarIslandFeatureSinkDummy
+            (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
             islandSingleNameSource
             shipmateSingleStatisticSourceStub
@@ -674,7 +704,7 @@ let ``Run.It adds a message when given the Sell command and the avatar does not 
     let expectedWorld =
         inputWorld
     let expected = 
-        (Dock, inputLocation, expectedWorld)
+        (Feature IslandFeatureIdentifier.Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
         |> Some
     let islandSingleNameSource (_) =
@@ -683,7 +713,8 @@ let ``Run.It adds a message when given the Sell command and the avatar does not 
     let actual =
         (inputLocation, inputWorld)
         ||> functionUnderTestStubbed 
-            (avatarExpectedMessagesSink expectedMessages)
+            avatarIslandFeatureSinkDummy
+            (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
             islandSingleNameSource
             shipmateSingleStatisticSourceStub
@@ -718,7 +749,7 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
     let expectedWorld =
         inputWorld
     let expected = 
-        (Dock, inputLocation, expectedWorld)
+        (Feature IslandFeatureIdentifier.Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
         |> Some
     let avatarInventorySource (_) = Map.empty |> Map.add 1UL 1UL
@@ -731,7 +762,8 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
         ||> functionUnderTest 
             avatarInventorySink
             avatarInventorySource
-            (avatarExpectedMessagesSink expectedMessages)
+            avatarIslandFeatureSinkDummy
+            (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
             islandMarketSource 
             islandSingleNameSource

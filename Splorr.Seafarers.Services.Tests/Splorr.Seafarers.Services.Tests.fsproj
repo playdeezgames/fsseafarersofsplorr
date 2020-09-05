@@ -31,7 +31,21 @@
     <Compile Include="MarketTests.fs" />
     <Compile Include="StatisticTest.fs" />
     <Compile Include="VesselTests.fs" />
-    <Compile Include="WorldTests.fs" />
+    <Compile Include="WorldAbandonJobTests.fs" />
+    <Compile Include="WorldAcceptJobTests.fs" />
+    <Compile Include="WorldBuyItemsTests.fs" />
+    <Compile Include="WorldCleanHullTests.fs" />
+    <Compile Include="WorldDistanceToTests.fs" />
+    <Compile Include="WorldDockTests.fs" />
+    <Compile Include="WorldHeadForTests.fs" />
+    <Compile Include="WorldIsAvatarAliveTests.fs" />
+    <Compile Include="WorldMoveTests.fs" />
+    <Compile Include="WorldSellItemsTests.fs" />
+    <Compile Include="WorldSetHeadingTests.fs" />
+    <Compile Include="WorldSetSpeedTests.fs" />
+    <Compile Include="WorldUndockTests.fs" />
+    <Compile Include="WorldUnsortedTests.fs" />
+    <Compile Include="WorldUpdateChartTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

@@ -70,3 +70,74 @@ let internal islandStatisticTemplateSourceStub () = Map.empty
 
 let internal islandSourceStub() = []
 
+let internal avatarMessagesSinkFake (messages:string list) (_) (message) =
+    match messages |> List.tryFind (fun x->x=message) with
+    | Some _ ->
+        ()
+    | None ->
+        Assert.Fail(message |> sprintf "Received an invalid message - `%s`.")
+let internal avatarExpectedMessageSink (expected:string) (_) (actual:string) =
+    Assert.AreEqual(expected, actual)
+
+
+let internal islandSingleMarketSinkStub (_) (_) = ()//BOOM
+
+let internal islandItemSourceStub (_) = Set.empty
+let internal islandItemSinkStub (_) (_) = ()
+let internal islandMarketSourceStub (_) = Map.empty
+let internal islandSingleMarketSourceStub (_) (_) = None
+let internal islandMarketSinkStub (_) (_) = ()
+
+let internal bogusAvatarId = "bogus"
+let internal random = System.Random()
+let internal soloIslandSingleStatisticSource (identfier: WorldStatisticIdentifier) : Statistic =
+    match identfier with
+    | WorldStatisticIdentifier.IslandGenerationRetries ->
+        {MinimumValue=10.0; MaximumValue=10.0; CurrentValue=10.0}
+    | WorldStatisticIdentifier.IslandDistance ->
+        {MinimumValue=30.0; MaximumValue=30.0; CurrentValue=30.0}
+    | WorldStatisticIdentifier.JobReward ->
+        {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
+    | WorldStatisticIdentifier.PositionX ->
+        {MinimumValue=0.0; MaximumValue=10.0; CurrentValue=5.5}
+    | WorldStatisticIdentifier.PositionY ->
+        {MinimumValue=0.0; MaximumValue=10.0; CurrentValue=5.5}
+    | _ ->
+        raise (System.NotImplementedException "soloIslandSingleStatisticSource")
+let internal vesselStatisticTemplateSourceStub () = Map.empty
+let internal vesselStatisticSinkStub (_) (_) = ()
+
+let internal vesselSingleStatisticSourceStub (_) (identifier:VesselStatisticIdentifier) =
+    match identifier with
+    | VesselStatisticIdentifier.ViewDistance ->
+        {MinimumValue=10.0; CurrentValue=10.0; MaximumValue=10.0} |> Some
+    | VesselStatisticIdentifier.PositionX ->
+        {MinimumValue=0.0; CurrentValue=50.0; MaximumValue=100.0} |> Some
+    | VesselStatisticIdentifier.PositionY ->
+        {MinimumValue=0.0; CurrentValue=50.0; MaximumValue=100.0} |> Some
+    | _ -> None
+let internal defaultRewardrange = (1.0,10.0)
+let internal fabricatedDestinationList = [(0.0, 0.0)] |> Set.ofList
+
+let internal commoditySource() = 
+    Map.empty
+    |> Map.add 
+        1UL 
+        {
+            CommodityName=""
+            BasePrice=1.0
+            PurchaseFactor=1.0
+            SaleFactor=1.0
+            Discount=0.5
+        }
+
+let internal genericWorldItemSource () = 
+    Map.empty
+    |> Map.add 
+        1UL 
+        {
+            ItemName="item under test"
+            Commodities= Map.empty |> Map.add 1UL 1.0
+            Occurrence=1.0
+            Tonnage = 1.0
+        }

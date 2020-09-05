@@ -105,7 +105,7 @@ let ``Parse.It returns Start command when given ["start"]`` () =
         |> CommandSource.Parse
     match actual with
     | Some (Command.Start _) ->
-        Assert.Pass("A start command was generated.")
+        ()
     | _ ->
         Assert.Fail("A start command was not generated.")
 

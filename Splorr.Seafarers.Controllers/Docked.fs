@@ -12,6 +12,7 @@ type DockedUpdateDisplayContext =
     abstract member islandFeatureSource            : IslandFeatureSource
 
 type DockedHandleCommandContext = 
+    inherit WorldUndockContext
     abstract member avatarInventorySink            : AvatarInventorySink
     abstract member avatarInventorySource          : AvatarInventorySource
     abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
@@ -99,7 +100,7 @@ module Docked =
                 context.islandSource
                 index 
                 location
-            (Dock, 
+            (Feature IslandFeatureIdentifier.Dock, 
                 location, 
                 avatarId)
             |> Gamestate.Docked
@@ -123,7 +124,7 @@ module Docked =
                 location 
                 quantity 
                 itemName
-            (Dock, 
+            (Feature IslandFeatureIdentifier.Dock, 
                 location, 
                     avatarId) 
             |> Gamestate.Docked
@@ -146,7 +147,7 @@ module Docked =
                 location 
                 quantity 
                 itemName
-            (Dock, 
+            (Feature IslandFeatureIdentifier.Dock, 
                 location, 
                     avatarId) 
             |> Gamestate.Docked
@@ -163,7 +164,7 @@ module Docked =
             |> Some
 
         | Some Command.Status ->
-            (Dock, location, avatarId)
+            (Feature IslandFeatureIdentifier.Dock, location, avatarId)
             |> Gamestate.Docked
             |> Gamestate.Status
             |> Some
@@ -178,7 +179,7 @@ module Docked =
                 context.avatarSingleMetricSource
                 context.shipmateSingleStatisticSink
                 context.shipmateSingleStatisticSource
-            (Dock, 
+            (Feature IslandFeatureIdentifier.Dock, 
                 location, 
                     avatarId)
             |> Gamestate.Docked
@@ -186,38 +187,37 @@ module Docked =
 
         | Some Command.Undock ->
             avatarId 
-            //|> World.undock
-            |> World.AddMessages  context.avatarMessageSink [ "You undock." ]
+            |> World.Undock context
             avatarId
             |> Gamestate.AtSea 
             |> Some
 
         | Some Command.Quit ->
-            (Dock, location, avatarId) 
+            (Feature IslandFeatureIdentifier.Dock, location, avatarId) 
             |> Gamestate.Docked 
             |> Gamestate.ConfirmQuit 
             |> Some
 
         | Some Command.Inventory ->
-            (Dock, location, avatarId) 
+            (Feature IslandFeatureIdentifier.Dock, location, avatarId) 
             |> Gamestate.Docked 
             |> Gamestate.Inventory 
             |> Some
 
         | Some Command.Help ->
-            (Dock, location, avatarId) 
+            (Feature IslandFeatureIdentifier.Dock, location, avatarId) 
             |> Gamestate.Docked 
             |> Gamestate.Help 
             |> Some
 
         | Some Command.Metrics ->
-            (Dock, location, avatarId) 
+            (Feature IslandFeatureIdentifier.Dock, location, avatarId) 
             |> Gamestate.Docked 
             |> Gamestate.Metrics 
             |> Some
 
         | _ -> 
-            ("Maybe try 'help'?",(Dock, location, avatarId) 
+            ("Maybe try 'help'?",(Feature IslandFeatureIdentifier.Dock, location, avatarId) 
             |> Gamestate.Docked)
             |> Gamestate.ErrorMessage
             |> Some
