@@ -216,10 +216,14 @@ let islandSingleJobSourceStub (_) (_) = None
 
 let islandFeatureSourceStub (_) = []
 
+let internal avatarIslandFeatureSinkDummy (_) : unit =
+    raise (System.NotImplementedException "avatarIslandFeatureSinkDummy")
+
 type TestAtSeaRunContext 
         (
             avatarInventorySink: AvatarInventorySink, 
             avatarInventorySource: AvatarInventorySource,
+            avatarIslandFeatureSink : AvatarIslandFeatureSink,
             avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink,
             avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource,
             avatarJobSink: AvatarJobSink,
@@ -255,6 +259,7 @@ type TestAtSeaRunContext
     interface AtSeaRunContext with
         member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource
+        member _.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.avatarJobSink: AvatarJobSink = avatarJobSink

@@ -10,8 +10,7 @@ type AvatarMessagePurger = string -> unit
 type IslandLocationByNameSource = string -> Location option
 type IslandSource = unit -> Location list
 type IslandFeatureGeneratorSource = unit -> Map<IslandFeatureIdentifier, IslandFeatureGenerator>
-type IslandSingleFeatureSink = Location->IslandFeatureIdentifier->unit
-
+type IslandSingleFeatureSink = Location -> IslandFeatureIdentifier -> unit
 
 type WorldGenerateIslandNamesContext =
     inherit UtilitySortListRandomlyContext
@@ -53,6 +52,7 @@ type WorldCreateContext =
 
 type WorldDockContext =
     inherit IslandJobsGenerationContext
+    abstract member avatarIslandFeatureSink        : AvatarIslandFeatureSink
     abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
     abstract member avatarJobSink                  : AvatarJobSink
@@ -447,6 +447,7 @@ module World =
                         w
                     w) (context.avatarJobSource avatarId)
             |> ignore
+            context.avatarIslandFeatureSink (IslandFeatureIdentifier.Dock |> Some, avatarId)
         | _ -> 
             avatarId
             |> AddMessages 

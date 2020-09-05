@@ -75,6 +75,7 @@ let internal genericWorldSingleStatisticSource (identfier: WorldStatisticIdentif
 
 type TestWorldDockContext
         (
+            avatarIslandFeatureSink        : AvatarIslandFeatureSink,
             avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink,
             avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource,
             avatarJobSink                  : AvatarJobSink,
@@ -97,6 +98,7 @@ type TestWorldDockContext
             worldSingleStatisticSource     : WorldSingleStatisticSource
         ) =
     interface WorldDockContext with
+        member _.avatarIslandFeatureSink        : AvatarIslandFeatureSink = avatarIslandFeatureSink
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource= avatarIslandSingleMetricSource
         member _.avatarJobSink                  : AvatarJobSink= avatarJobSink

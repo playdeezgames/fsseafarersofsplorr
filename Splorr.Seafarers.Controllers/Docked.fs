@@ -186,6 +186,7 @@ module Docked =
 
         | Some Command.Undock ->
             avatarId 
+            //|> World.undock
             |> World.AddMessages  context.avatarMessageSink [ "You undock." ]
             avatarId
             |> Gamestate.AtSea 

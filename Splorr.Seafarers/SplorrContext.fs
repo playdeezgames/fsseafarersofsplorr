@@ -7,6 +7,7 @@ open System
 type SplorrContext 
         (avatarInventorySink: AvatarInventorySink ,
         avatarInventorySource: AvatarInventorySource ,
+        avatarIslandFeatureSink : AvatarIslandFeatureSink, 
         avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink ,
         avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource ,
         avatarJobSink: AvatarJobSink ,
@@ -142,6 +143,7 @@ type SplorrContext
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
 
     interface WorldDockContext with
+        member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
         member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.avatarJobSource: AvatarJobSource = avatarJobSource
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink

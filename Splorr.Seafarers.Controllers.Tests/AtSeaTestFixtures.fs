@@ -24,6 +24,7 @@ let private random = Random()
 
 let internal avatarJobSinkStub (_) (_) = ()
 let internal avatarJobSourceStub (_) = None
+
 let internal avatarIslandSingleMetricSinkStub (_) (_) (_) (_) = ()
 let internal avatarIslandSingleMetricSourceStub (_) (_) (_) = None
 let internal islandFeatureGeneratorSourceStub () = Map.empty

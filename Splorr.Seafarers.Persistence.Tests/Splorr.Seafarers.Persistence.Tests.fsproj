@@ -20,6 +20,7 @@
   <ItemGroup>
     <Compile Include="CommonTestFixtures.fs" />
     <Compile Include="AvatarInventoryTests.fs" />
+    <Compile Include="AvatarIslandFeatureTests.fs" />
     <Compile Include="AvatarIslandMetricTests.fs" />
     <Compile Include="AvatarJobTests.fs" />
     <Compile Include="AvatarMetricTests.fs" />

@@ -11,6 +11,8 @@ type AvatarSingleMetricSource = string -> Metric -> uint64
 type AvatarSingleMetricSink = string -> Metric * uint64 -> unit
 type AvatarJobSource = string -> Job option
 type AvatarJobSink = string -> Job option -> unit
+type AvatarIslandFeatureSink = IslandFeatureIdentifier option * string -> unit
+//type AvatarIslandFeatureSource = string -> IslandFeatureIdentifier option
 
 module Avatar =
     let Create 
@@ -32,7 +34,6 @@ module Avatar =
             avatarId 
             Primary
         avatarJobSink avatarId None
-
 
     let GetPosition
             (vesselSingleStatisticSource : VesselSingleStatisticSource)

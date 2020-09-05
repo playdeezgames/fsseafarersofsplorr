@@ -22,6 +22,7 @@ let private functionUnderTest
         TestAtSeaRunContext
             (avatarInventorySinkStub,
             avatarInventorySourceStub,
+            avatarIslandFeatureSinkDummy,
             avatarIslandSingleMetricSinkStub,
             avatarIslandSingleMetricSource,
             avatarJobSink,

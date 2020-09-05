@@ -303,10 +303,15 @@ let main argv =
         IslandFeature.ExistsForIsland connection location
         >> Persister.unpackOrThrow
 
+    let avatarIslandFeatureSink =
+        AvatarIslandFeature.SetFeatureForAvatar connection
+        >> Persister.unpackOrThrow
+
     let context : RunnerRunContext =
         SplorrContext
             (avatarInventorySink,
             avatarInventorySource,
+            avatarIslandFeatureSink,
             avatarIslandSingleMetricSink,
             avatarIslandSingleMetricSource,
             avatarJobSink,

@@ -400,9 +400,12 @@ let ``Dock.It does nothing when given an invalid avatar id.`` () =
         []
     let islandSource () =
         []
+    let avatarIslandFeatureSink (_) =
+        raise (System.NotImplementedException "avatarIslandFeatureSink")
     let context : WorldDockContext =
         TestWorldDockContext
-            (avatarIslandSingleMetricSink,
+            (avatarIslandFeatureSink,
+            avatarIslandSingleMetricSink,
             avatarIslandSingleMetricSource,
             avatarJobSink,
             avatarJobSource,
@@ -454,9 +457,12 @@ let ``Dock.It adds a message when the given location has no island.`` () =
         []
     let islandSource () =
         []
+    let avatarIslandFeatureSink (_) =
+        raise (System.NotImplementedException "avatarIslandFeatureSink")
     let context : WorldDockContext =
         TestWorldDockContext
-            (avatarIslandSingleMetricSink,
+            (avatarIslandFeatureSink,
+            avatarIslandSingleMetricSink,
             avatarIslandSingleMetricSource,
             avatarJobSink,
             avatarJobSource,
@@ -540,9 +546,12 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
         []
     let islandSource () =
         [inputLocation]
+    let avatarIslandFeatureSink (feature: IslandFeatureIdentifier option, _) =
+        Assert.AreEqual(IslandFeatureIdentifier.Dock |> Some, feature)
     let context : WorldDockContext =
         TestWorldDockContext
-            (avatarIslandSingleMetricSink,
+            (avatarIslandFeatureSink,
+            avatarIslandSingleMetricSink,
             avatarIslandSingleMetricSource,
             avatarJobSink,
             avatarJobSource,
@@ -1046,9 +1055,12 @@ let ``Dock.It does not modify avatar when given avatar has a job for a different
         [
             inputLocation
         ]
+    let avatarIslandFeatureSink (feature: IslandFeatureIdentifier option, _) =
+        Assert.AreEqual(IslandFeatureIdentifier.Dock |> Some, feature)
     let context : WorldDockContext =
         TestWorldDockContext
-            (avatarIslandSingleMetricSink,
+            (avatarIslandFeatureSink,
+            avatarIslandSingleMetricSink,
             avatarIslandSingleMetricSource,
             avatarJobSink,
             avatarJobSource,
@@ -1112,9 +1124,12 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
         []
     let islandSource () =
         [jobLocation]
+    let avatarIslandFeatureSink (_) =
+        raise (System.NotImplementedException "avatarIslandFeatureSink")
     let context : WorldDockContext =
         TestWorldDockContext
-            (avatarIslandSingleMetricSink,
+            (avatarIslandFeatureSink,
+            avatarIslandSingleMetricSink,
             avatarIslandSingleMetricSource,
             avatarJobSink,
             avatarJobSource,

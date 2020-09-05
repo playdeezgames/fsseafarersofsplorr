@@ -1,5 +1,6 @@
 ﻿namespace Splorr.Seafarers.Models
 
 type IslandFeatureIdentifier =
-    | DarkAlley = 1
+    | Dock = 1
+    | DarkAlley = 2
 

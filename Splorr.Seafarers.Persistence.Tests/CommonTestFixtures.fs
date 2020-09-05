@@ -343,6 +343,15 @@ let private setupIslandFeatures
         ]
     |> runCommands connection
 
+let private setupAvatarIslandFeatures
+        (connection: SQLiteConnection)
+        : unit =
+    [
+        Tables.AvatarIslandFeatures
+        sprintf "REPLACE INTO [AvatarIslandFeatures] ([AvatarId], [FeatureId]) VALUES ('%s',%d);" ExistingAvatarId (IslandFeatureIdentifier.DarkAlley |> int32)
+    ]
+    |> runCommands connection
+
 
 let internal SetupConnection() : SQLiteConnection = 
     let connection = new SQLiteConnection(connectionString)
@@ -374,6 +383,7 @@ let internal SetupConnection() : SQLiteConnection =
         setupIslandFeatureGenerators
         setupIslandFeatures VisitedIslandLocation [IslandFeatureIdentifier.DarkAlley]
         setupIslandFeatures UnvisitedIslandLocation [IslandFeatureIdentifier.DarkAlley]
+        setupAvatarIslandFeatures
     ]
     |> List.iter (fun f -> f connection)
 

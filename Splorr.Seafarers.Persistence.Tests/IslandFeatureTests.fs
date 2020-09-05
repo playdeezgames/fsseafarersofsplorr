@@ -18,6 +18,12 @@ let ``GetGenerators.It retrieves a map of island feature generators.`` () =
                 FeaturelessWeight = 0.5
                 FeatureWeight = 0.5
             }
+        |> Map.add
+            IslandFeatureIdentifier.Dock
+            {
+                FeaturelessWeight = 0.5
+                FeatureWeight = 0.5
+            }
         |> Ok
     let actual =
         IslandFeature.GetGenerators connection
