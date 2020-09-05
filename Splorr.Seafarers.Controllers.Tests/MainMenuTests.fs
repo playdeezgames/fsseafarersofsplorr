@@ -6,6 +6,7 @@ open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
 open CommonTestFixtures
 open AtSeaTestFixtures
+open System
 
 type TestWorldCreateContext
         (avatarIslandSingleMetricSink,
@@ -25,19 +26,35 @@ type TestWorldCreateContext
         vesselStatisticSink,
         vesselStatisticTemplateSource,
         worldSingleStatisticSource) =
+
+    interface IslandCreateContext with 
+        member this.islandStatisticTemplateSource: IslandStatisticTemplateSource = islandStatisticTemplateSource
+        member this.islandSingleStatisticSink: IslandSingleStatisticSink = islandSingleStatisticSink
+
+    interface WorldPopulateIslandsContext with
+        member this.islandFeatureGeneratorSource: IslandFeatureGeneratorSource = islandFeatureGeneratorSource
+        member this.islandSingleFeatureSink: IslandSingleFeatureSink = islandSingleFeatureSink
+        member this.random: Random = random
+        member this.islandSource: IslandSource = islandSource
+
+    interface UtilitySortListRandomlyContext with 
+        member this.random : Random = random
+
+    interface WorldNameIslandsContext with
+        member this.islandSingleNameSink: IslandSingleNameSink = islandSingleNameSink
+        member this.nameSource: TermSource = termNameSource
+        member this.islandSource: IslandSource = islandSource
+
+    interface WorldGenerateIslandsContext with
+        member this.termNameSource: TermSource = termNameSource
+        member this.islandSingleNameSink : IslandSingleNameSink = islandSingleNameSink
+
     interface WorldCreateContext with
-        member this.islandSingleFeatureSink : IslandSingleFeatureSink = islandSingleFeatureSink
         member this.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member this.avatarJobSink: AvatarJobSink = avatarJobSink
-        member this.islandFeatureGeneratorSource: IslandFeatureGeneratorSource = islandFeatureGeneratorSource
-        member this.islandSingleNameSink: IslandSingleNameSink = islandSingleNameSink
-        member this.islandSingleStatisticSink: IslandSingleStatisticSink = islandSingleStatisticSink
-        member this.islandSource: IslandSource = islandSource
-        member this.islandStatisticTemplateSource: IslandStatisticTemplateSource = islandStatisticTemplateSource
         member this.rationItemSource: RationItemSource = rationItemSource
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
-        member this.termNameSource: TermSource = termNameSource
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
         member this.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
         member this.vesselStatisticTemplateSource: VesselStatisticTemplateSource = vesselStatisticTemplateSource

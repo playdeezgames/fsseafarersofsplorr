@@ -3,6 +3,7 @@
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
+open System
 
 let internal random = System.Random()
 let internal rewardRange = (1.0,10.0)
@@ -30,6 +31,9 @@ type TestJobCreationContext
             termSources                : TermSources, 
             worldSingleStatisticSource : WorldSingleStatisticSource
         ) =
+    interface UtilitySortListRandomlyContext with
+        member _.random : Random = random
+
     interface JobCreationContext with
         member _.termSources : TermSources = termSources
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
@@ -43,5 +47,4 @@ let internal avatarId = "avatar"
 let internal job =
     Job.Create 
         jobCreationContextStub
-        random  
         singleLocation

@@ -3,6 +3,7 @@
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
+open System
 
 let internal bogusAvatarId = "bogus"
 let internal random = System.Random()
@@ -115,6 +116,8 @@ type TestWorldDockContext
     interface IslandJobsGenerationContext with
         member _.islandJobSink              : IslandJobSink=islandJobSink
         member _.islandJobSource            : IslandJobSource=islandJobSource
+    interface UtilitySortListRandomlyContext with
+        member _.random : Random = random
     interface JobCreationContext with 
         member _.termSources                : TermSources = termSources
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource

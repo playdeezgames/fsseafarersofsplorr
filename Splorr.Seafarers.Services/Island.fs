@@ -85,7 +85,6 @@ module Island =
 
     let GenerateJobs 
             (context      : IslandJobsGenerationContext)
-            (random       : Random) 
             (destinations : Set<Location>) 
             (location     : Location)
             : unit =
@@ -94,7 +93,6 @@ module Island =
         if jobs.IsEmpty && not destinations.IsEmpty then
             Job.Create 
                 context 
-                random 
                 destinations
             |> context.islandJobSink location
 
@@ -164,7 +162,7 @@ module Island =
             : unit =
         commodity
         |> islandSingleMarketSource location
-        |> Option.map (Market.ChangeDemand change)
+        |> Option.map (fun m -> Market.ChangeDemand (change, m))
         |> Option.iter (fun market -> islandSingleMarketSink location (commodity, market))
 
         
@@ -178,7 +176,7 @@ module Island =
             : unit =
         commodity
         |> islandSingleMarketSource location
-        |> Option.map (Market.ChangeSupply change)
+        |> Option.map (fun m -> Market.ChangeSupply (change, m))
         |> Option.iter (fun market -> islandSingleMarketSink location (commodity, market))
 
     let UpdateMarketForItemSale 

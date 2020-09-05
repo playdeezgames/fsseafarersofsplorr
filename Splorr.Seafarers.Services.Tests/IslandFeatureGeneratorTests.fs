@@ -5,6 +5,10 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open System
 
+type TestIslandFeatureGeneratorGenerateContext(random) =
+    interface IslandFeatureGeneratorGenerateContext with
+        member _.random : Random = random
+
 [<Test>]
 let ``Generate.It generates the presence of a feature based on the weights of the feature generator.`` () =
     [
@@ -21,8 +25,9 @@ let ``Generate.It generates the presence of a feature based on the weights of th
                     FeatureWeight = feature
                     FeaturelessWeight = featureless
                 }
-            let random = Random(seed)
-            let actual = IslandFeatureGenerator.Generate random givenGenerator
+            let context = TestIslandFeatureGeneratorGenerateContext(Random(seed))
+
+            let actual = IslandFeatureGenerator.Generate context givenGenerator
             Assert.AreEqual(expected, actual))
 
 

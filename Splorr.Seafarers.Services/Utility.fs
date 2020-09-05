@@ -2,11 +2,17 @@
 
 open System
 
+type UtilitySortListRandomlyContext =
+    abstract member random : Random
+
+type UtilityPickRandomlyContext = 
+    inherit UtilitySortListRandomlyContext
+
 module Utility =
     let SortListRandomly 
-            (random : Random) =
-        List.sortBy (fun _ -> random.Next())
+            (context : UtilitySortListRandomlyContext) =
+        List.sortBy (fun _ -> context.random.Next())
         
     let PickRandomly
-            (random : Random) =
-        SortListRandomly random >> List.head
+            (context : UtilityPickRandomlyContext) =
+        SortListRandomly context >> List.head

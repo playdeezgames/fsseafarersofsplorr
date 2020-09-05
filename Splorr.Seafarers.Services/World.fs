@@ -12,7 +12,19 @@ type IslandSource = unit -> Location list
 type IslandFeatureGeneratorSource = unit -> Map<IslandFeatureIdentifier, IslandFeatureGenerator>
 type IslandSingleFeatureSink = Location->IslandFeatureIdentifier->unit
 
+
+type WorldGenerateIslandNamesContext =
+    inherit UtilitySortListRandomlyContext
+
+type WorldNameIslandsContext =
+    inherit WorldGenerateIslandNamesContext
+    abstract member islandSingleNameSink : IslandSingleNameSink
+    abstract member islandSource         : IslandSource
+    abstract member nameSource           : TermSource
+
+
 type WorldPopulateIslandsContext =
+    inherit IslandFeatureGeneratorGenerateContext   
     abstract member islandFeatureGeneratorSource : IslandFeatureGeneratorSource
     abstract member islandSingleFeatureSink      : IslandSingleFeatureSink
     abstract member islandSource                 : IslandSource
@@ -20,6 +32,8 @@ type WorldPopulateIslandsContext =
 type WorldGenerateIslandsContext =
     inherit IslandCreateContext
     inherit WorldPopulateIslandsContext
+    inherit WorldGenerateIslandNamesContext
+    inherit WorldNameIslandsContext
     abstract member islandSingleNameSink          : IslandSingleNameSink
     abstract member termNameSource                : TermSource
 
@@ -77,41 +91,37 @@ module World =
         |> List.reduce (+)
 
     let rec private GenerateIslandNames  //TODO: move to world generator?
-            (random:Random) 
+            (context : WorldGenerateIslandNamesContext) 
             (nameCount:int) 
             (names: Set<string>) 
             : List<string> =
         if names.Count>=nameCount then
             names
             |> Set.toList
-            |> Utility.SortListRandomly random
+            |> Utility.SortListRandomly context
             |> List.take nameCount
         else
             names
-            |> Set.add (GenerateIslandName random)
-            |> GenerateIslandNames random nameCount
+            |> Set.add (GenerateIslandName context.random)
+            |> GenerateIslandNames context nameCount
 
     let private NameIslands  //TODO: move to world generator?
-            (islandSingleNameSink : IslandSingleNameSink)
-            (islandSource         : IslandSource)
-            (nameSource           : TermSource)
-            (random               : Random) 
+            (context: WorldNameIslandsContext)
             : unit =
         let locations = 
-            islandSource()
+            context.islandSource()
         GenerateIslandNames 
-            random 
+            context 
             (locations.Length) 
-            (nameSource() |> Set.ofList)
-        |> Utility.SortListRandomly random
+            (context.nameSource() |> Set.ofList)
+        |> Utility.SortListRandomly context
         |> List.zip (locations)
         |> List.iter
             (fun (l,n) -> 
-                islandSingleNameSink l (Some n))
+                context.islandSingleNameSink l (Some n))
 
     let private PopulateIslands
             (context : WorldPopulateIslandsContext)
-            (random  : Random) 
             : unit =
         let generators = context.islandFeatureGeneratorSource()
         context.islandSource()
@@ -120,35 +130,30 @@ module World =
                 generators
                 |> Map.iter
                     (fun identifier generator ->
-                        if IslandFeatureGenerator.Generate random generator then
+                        if IslandFeatureGenerator.Generate context generator then
                             context.islandSingleFeatureSink location identifier))
 
     let rec private GenerateIslands  //TODO: move to world generator?
             (context                : WorldGenerateIslandsContext)
             (worldSize              : Location) 
             (minimumIslandDistance  : float)
-            (random                 : Random) 
             (maximumGenerationTries : uint32, 
              currentTry             : uint32) 
             : unit =
         if currentTry>=maximumGenerationTries then
             NameIslands 
-                context.islandSingleNameSink 
-                context.islandSource
-                context.termNameSource 
-                random
+                context
             PopulateIslands
                 context
-                random
+                
         else
             let locations = context.islandSource()
-            let candidateLocation = (random.NextDouble() * (worldSize |> fst), random.NextDouble() * (worldSize |> snd))
+            let candidateLocation = (context.random.NextDouble() * (worldSize |> fst), context.random.NextDouble() * (worldSize |> snd))
             if locations |> List.exists(fun k ->(Location.DistanceTo candidateLocation k) < minimumIslandDistance) then
                 GenerateIslands 
                     context 
                     worldSize 
                     minimumIslandDistance 
-                    random 
                     (maximumGenerationTries, currentTry+1u) 
             else
                 Island.Create
@@ -158,7 +163,6 @@ module World =
                     context 
                     worldSize 
                     minimumIslandDistance 
-                    random 
                     (maximumGenerationTries, 0u) 
 //end of "world generator"
     let UpdateCharts 
@@ -218,7 +222,6 @@ module World =
             context 
             worldSize 
             minimumIslandDistance
-            random 
             (maximumGenerationRetries, 0u)
         avatarId
         |> UpdateCharts 
@@ -404,7 +407,6 @@ module World =
             l
             |> Island.GenerateJobs 
                 context 
-                random 
                 destinations 
             Island.GenerateCommodities 
                 context.commoditySource 

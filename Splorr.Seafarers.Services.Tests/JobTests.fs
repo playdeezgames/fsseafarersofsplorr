@@ -17,7 +17,6 @@ let ``Create.It generates a job.`` () =
     let actual =
         Job.Create 
             jobCreationContextStub
-            random 
             singleDestination
     Assert.AreEqual((0.0,0.0), actual.Destination)
     Assert.GreaterOrEqual(actual.Reward,rewardRange |> fst);
@@ -31,7 +30,6 @@ let ``Create.It throws an exception when an empty set of destinations is given.`
         fun () -> 
             Job.Create 
                 jobCreationContextStub
-                random 
                 Set.empty 
                 |> ignore)
     |> ignore

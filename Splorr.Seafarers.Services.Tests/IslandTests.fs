@@ -5,6 +5,7 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open IslandTestFixtures
 open CommonTestFixtures
+open System
 
 [<Test>]
 let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =
@@ -170,6 +171,10 @@ type TestIslandJobsGenerationContext
     interface IslandJobsGenerationContext with
         member _.islandJobSink   : IslandJobSink = islandJobSink
         member _.islandJobSource : IslandJobSource = islandJobSource
+
+    interface UtilitySortListRandomlyContext with
+        member _.random : Random = random
+
     interface JobCreationContext with
         member _.termSources : TermSources = termSources
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
@@ -192,7 +197,6 @@ let ``GenerateJob.It generates a job when no job is present on the island.`` () 
     inputLocation
     |> Island.GenerateJobs 
         context
-        random 
         singleDestination
     Assert.IsTrue(sinkCalled)
 
@@ -219,7 +223,6 @@ let ``GenerateJob.It does nothing when no job is present on the island and no po
     inputLocation
     |> Island.GenerateJobs 
         context 
-        random 
         Set.empty
 
 [<Test>]

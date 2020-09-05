@@ -10,7 +10,7 @@ module Item =
         itemDescriptor.Commodities
         |> Map.map
             (fun commodity amount -> 
-                amount * (Market.DetermineSalePrice commodities.[commodity] markets.[commodity]))
+                amount * (Market.DetermineSalePrice (commodities.[commodity], markets.[commodity])))
         |> Map.toList
         |> List.map snd
         |> List.reduce (+)
@@ -23,7 +23,7 @@ module Item =
         itemDescriptor.Commodities
         |> Map.map
             (fun commodity amount -> 
-                amount * (Market.DeterminePurchasePrice commodities.[commodity] markets.[commodity]))
+                amount * (Market.DeterminePurchasePrice (commodities.[commodity], markets.[commodity])))
         |> Map.toList
         |> List.map snd
         |> List.reduce (+)

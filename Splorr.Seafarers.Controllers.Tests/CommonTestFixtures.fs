@@ -250,6 +250,8 @@ type TestAtSeaRunContext
             vesselSingleStatisticSource: VesselSingleStatisticSource,
             worldSingleStatisticSource: WorldSingleStatisticSource
         ) =
+    interface UtilitySortListRandomlyContext with
+        member _.random : Random = random
     interface AtSeaRunContext with
         member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource
