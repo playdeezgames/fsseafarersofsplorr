@@ -24,7 +24,7 @@ let ``DetermineSalePrice.It calculates the sale price of an item in a given set 
     let expected = 15.0
     let actual = 
         input
-        |> Item.DetermineSalePrice inputCommodities inputMarkets
+        |> Item.DetermineSalePrice (fun () -> inputCommodities) inputMarkets
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -35,5 +35,5 @@ let ``DeterminePurchasePrice.It calculates the purchase price of an item in a gi
     let expected = 13.5
     let actual = 
         input
-        |> Item.DeterminePurchasePrice inputCommodities inputMarkets
+        |> Item.DeterminePurchasePrice (fun () -> inputCommodities) inputMarkets
     Assert.AreEqual(expected, actual)

@@ -616,7 +616,7 @@ module World =
             let markets =
                 islandMarketSource location
             let unitPrice = 
-                Item.DetermineSalePrice (commoditySource()) markets descriptor 
+                Item.DetermineSalePrice commoditySource markets descriptor 
             let availableTonnage = vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Tonnage |> Option.map (fun x->x.CurrentValue) |> Option.get
             let usedTonnage =
                 avatarId
@@ -695,7 +695,7 @@ module World =
             else
                 let markets = islandMarketSource location
                 let unitPrice = 
-                    Item.DeterminePurchasePrice (commoditySource()) markets descriptor 
+                    Item.DeterminePurchasePrice commoditySource markets descriptor 
                 let price = (quantity |> float) * unitPrice
                 Island.UpdateMarketForItemPurchase islandSingleMarketSource islandSingleMarketSink commoditySource descriptor quantity location
                 avatarId

@@ -597,7 +597,6 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
     let islandMarketSource (_) = markets
     let commodities = commoditySource()
     let smallWorldItems = itemSource()
-    let expectedPrice = Item.DetermineSalePrice commodities markets smallWorldItems.[1UL]
     let expectedDemand = 
         markets.[1UL].Demand + commodities.[1UL].SaleFactor
     let islandSingleMarketSink (_) (commodityId, market) =

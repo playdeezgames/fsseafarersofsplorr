@@ -2,9 +2,8 @@
 open Splorr.Seafarers.Models
 open System
 
-type CommoditySource = unit -> Map<uint64, CommodityDescriptor>
+
 type ItemSource = unit -> Map<uint64, ItemDescriptor>
-type IslandMarketSource = Location -> Map<uint64, Market>
 type IslandMarketSink = Location -> Map<uint64, Market> -> unit
 type IslandItemSource = Location -> Set<uint64>
 type IslandItemSink   = Location -> Set<uint64>->unit
