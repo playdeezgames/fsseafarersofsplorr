@@ -43,6 +43,8 @@ type DockedRunContext =
 module Docked = 
     let private getFeatureDisplayName (feature:IslandFeatureIdentifier) : Message =
         match feature with
+        | IslandFeatureIdentifier.Dock ->
+            "" |> Text
         | IslandFeatureIdentifier.DarkAlley ->
             (Hue.Flavor, "There is a dark alley here." |> Line) |> Hued
         | _ ->
