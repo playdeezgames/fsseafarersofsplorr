@@ -66,7 +66,7 @@ module Runner =
                     messageSink 
                     state
             
-            | Gamestate.Docked (Feature IslandFeatureIdentifier.Dock, location, avatarId) -> 
+            | Gamestate.Docked (IslandFeatureIdentifier.Dock, location, avatarId) -> 
                 Docked.Run 
                     context
                     commandSource 
@@ -74,7 +74,7 @@ module Runner =
                     location 
                     avatarId
 
-            | Gamestate.Docked (Feature feature, location, avatarId) -> 
+            | Gamestate.Docked (feature, location, avatarId) -> 
                 IslandFeature.Run
                     context
                     commandSource
@@ -99,7 +99,7 @@ module Runner =
             | Gamestate.ItemList _ ->
                 raise (System.NotImplementedException "Gamestate.ItemList with unexpected inner gamestate")
 
-            | Gamestate.Jobs (Gamestate.Docked (Feature IslandFeatureIdentifier.Dock, location, avatarId)) -> 
+            | Gamestate.Jobs (Gamestate.Docked (IslandFeatureIdentifier.Dock, location, avatarId)) -> 
                 Jobs.Run 
                     context.islandJobSource
                     context.islandSingleNameSource

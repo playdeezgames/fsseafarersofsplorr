@@ -251,7 +251,7 @@ module AtSea =
                     context
                     random 
                     location
-                (Feature IslandFeatureIdentifier.Dock, 
+                (IslandFeatureIdentifier.Dock, 
                     location, 
                         avatarId)
                 |> Gamestate.Docked

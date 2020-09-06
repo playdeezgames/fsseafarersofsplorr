@@ -81,7 +81,7 @@ module Docked =
 
         match command with
         | Some (Command.GoTo feature) ->
-            (feature |> Feature, 
+            (feature, 
                 location, 
                 avatarId)
             |> Gamestate.Docked
@@ -102,7 +102,7 @@ module Docked =
                 context.islandSource
                 index 
                 location
-            (Feature IslandFeatureIdentifier.Dock, 
+            (IslandFeatureIdentifier.Dock, 
                 location, 
                 avatarId)
             |> Gamestate.Docked
@@ -126,7 +126,7 @@ module Docked =
                 location 
                 quantity 
                 itemName
-            (Feature IslandFeatureIdentifier.Dock, 
+            (IslandFeatureIdentifier.Dock, 
                 location, 
                     avatarId) 
             |> Gamestate.Docked
@@ -149,26 +149,26 @@ module Docked =
                 location 
                 quantity 
                 itemName
-            (Feature IslandFeatureIdentifier.Dock, 
+            (IslandFeatureIdentifier.Dock, 
                 location, 
                     avatarId) 
             |> Gamestate.Docked
             |> Some            
 
         | Some Command.Items ->
-            (Feature IslandFeatureIdentifier.Dock, location, avatarId) 
+            (IslandFeatureIdentifier.Dock, location, avatarId) 
             |> Gamestate.Docked
             |> Gamestate.ItemList
             |> Some
 
         | Some Command.Jobs ->
-            (Feature IslandFeatureIdentifier.Dock, location, avatarId)
+            (IslandFeatureIdentifier.Dock, location, avatarId)
             |> Gamestate.Docked
             |> Gamestate.Jobs
             |> Some
 
         | Some Command.Status ->
-            (Feature IslandFeatureIdentifier.Dock, location, avatarId)
+            (IslandFeatureIdentifier.Dock, location, avatarId)
             |> Gamestate.Docked
             |> Gamestate.Status
             |> Some
@@ -183,7 +183,7 @@ module Docked =
                 context.avatarSingleMetricSource
                 context.shipmateSingleStatisticSink
                 context.shipmateSingleStatisticSource
-            (Feature IslandFeatureIdentifier.Dock, 
+            (IslandFeatureIdentifier.Dock, 
                 location, 
                     avatarId)
             |> Gamestate.Docked
@@ -197,31 +197,31 @@ module Docked =
             |> Some
 
         | Some Command.Quit ->
-            (Feature IslandFeatureIdentifier.Dock, location, avatarId) 
+            (IslandFeatureIdentifier.Dock, location, avatarId) 
             |> Gamestate.Docked 
             |> Gamestate.ConfirmQuit 
             |> Some
 
         | Some Command.Inventory ->
-            (Feature IslandFeatureIdentifier.Dock, location, avatarId) 
+            (IslandFeatureIdentifier.Dock, location, avatarId) 
             |> Gamestate.Docked 
             |> Gamestate.Inventory 
             |> Some
 
         | Some Command.Help ->
-            (Feature IslandFeatureIdentifier.Dock, location, avatarId) 
+            (IslandFeatureIdentifier.Dock, location, avatarId) 
             |> Gamestate.Docked 
             |> Gamestate.Help 
             |> Some
 
         | Some Command.Metrics ->
-            (Feature IslandFeatureIdentifier.Dock, location, avatarId) 
+            (IslandFeatureIdentifier.Dock, location, avatarId) 
             |> Gamestate.Docked 
             |> Gamestate.Metrics 
             |> Some
 
         | _ -> 
-            ("Maybe try 'help'?",(Feature IslandFeatureIdentifier.Dock, location, avatarId) 
+            ("Maybe try 'help'?",(IslandFeatureIdentifier.Dock, location, avatarId) 
             |> Gamestate.Docked)
             |> Gamestate.ErrorMessage
             |> Some

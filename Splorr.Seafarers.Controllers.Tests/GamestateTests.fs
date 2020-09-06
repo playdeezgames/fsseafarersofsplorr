@@ -32,7 +32,7 @@ let ``GetWorld.It returns the world embedded within the given AtSea Gamestate.``
 let ``GetWorld.It returns the world embedded within the given Docked (at Dock) Gamestate.`` () =
     let expected = world |> Some
     let actual = 
-        (Feature IslandFeatureIdentifier.Dock, (0.0,0.0), world)
+        (IslandFeatureIdentifier.Dock, (0.0,0.0), world)
         |> Gamestate.Docked 
         |> Gamestate.GetWorld
     Assert.AreEqual(expected, actual)
@@ -117,7 +117,7 @@ let ``GetWorld.It returns None from the given MainMenu Gamestate when no world i
 [<Test>]
 let ``GetWorld.It returns world from the given Docked (at Jobs) Gamestate.`` () =
     let actual =
-        (Feature IslandFeatureIdentifier.Dock, (0.0, 0.0),world)
+        (IslandFeatureIdentifier.Dock, (0.0, 0.0),world)
         |> Gamestate.Docked
         |> Gamestate.Jobs
         |> Gamestate.GetWorld
@@ -127,7 +127,7 @@ let ``GetWorld.It returns world from the given Docked (at Jobs) Gamestate.`` () 
 let ``GetWorld.It returns world from the given ItemList Gamestate.`` () =
     let expected = world |> Some
     let actual =
-        (Feature IslandFeatureIdentifier.Dock, (0.0, 0.0),world)
+        (IslandFeatureIdentifier.Dock, (0.0, 0.0),world)
         |> Gamestate.Docked
         |> Gamestate.ItemList
         |> Gamestate.GetWorld
@@ -137,7 +137,7 @@ let ``GetWorld.It returns world from the given ItemList Gamestate.`` () =
 let ``GetWorld.It returns world from the given Inventory Gamestate.`` () =
     let expected = world |> Some
     let actual =
-        (Feature IslandFeatureIdentifier.Dock, (0.0, 0.0),world)
+        (IslandFeatureIdentifier.Dock, (0.0, 0.0),world)
         |> Gamestate.Docked
         |> Gamestate.Inventory
         |> Gamestate.GetWorld

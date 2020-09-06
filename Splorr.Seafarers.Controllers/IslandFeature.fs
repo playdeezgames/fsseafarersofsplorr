@@ -49,7 +49,7 @@ module IslandFeature =
             |> World.AddMessages
                 context.avatarMessageSink
                 [ "Come back when you've got more money!" ]
-            (Feature IslandFeatureIdentifier.Dock, location, avatarId)
+            (IslandFeatureIdentifier.Dock, location, avatarId)
             |> Gamestate.Docked
             |> Some
         else
@@ -63,17 +63,17 @@ module IslandFeature =
             |> List.iter messageSink
             match commandSource() with
             | Some Command.Help ->
-                (Feature IslandFeatureIdentifier.DarkAlley, location, avatarId)
+                (IslandFeatureIdentifier.DarkAlley, location, avatarId)
                 |> Gamestate.Docked
                 |> Gamestate.Help
                 |> Some
             | Some Command.Leave ->
-                (Feature IslandFeatureIdentifier.Dock, location, avatarId)
+                (IslandFeatureIdentifier.Dock, location, avatarId)
                 |> Gamestate.Docked
                 |> Some
             | _ ->
                 ("Maybe try 'help'?",
-                    (Feature IslandFeatureIdentifier.DarkAlley, location, avatarId)
+                    (IslandFeatureIdentifier.DarkAlley, location, avatarId)
                     |> Gamestate.Docked)
                 |> Gamestate.ErrorMessage
                 |> Some
@@ -96,7 +96,7 @@ module IslandFeature =
                 location
                 avatarId
         | _ ->
-            (Feature IslandFeatureIdentifier.Dock, location, avatarId)
+            (IslandFeatureIdentifier.Dock, location, avatarId)
             |> Gamestate.Docked
             |> Some
             
@@ -118,7 +118,7 @@ module IslandFeature =
                 feature
                 avatarId
         else
-            (Feature IslandFeatureIdentifier.Dock, location, avatarId)
+            (IslandFeatureIdentifier.Dock, location, avatarId)
             |> Gamestate.Docked
             |> Some
 

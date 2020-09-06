@@ -59,10 +59,6 @@ type Hand = Card * Card * Card
 type GamblingState = Card * Card * Card
 *)
 
-type DockedState =
-    | Feature of IslandFeatureIdentifier //game state
-    //|Gambling of GamblingState
-
 type AvatarMessageSource = string -> string list
 
 [<RequireQualifiedAccess>]
@@ -71,7 +67,7 @@ type Gamestate =
     | Careened     of Side * string //persist to db
     | Chart        of string * string
     | ConfirmQuit  of Gamestate
-    | Docked       of DockedState * Location *  string
+    | Docked       of IslandFeatureIdentifier * Location *  string
     | ErrorMessage of string * Gamestate 
     | GameOver     of string list
     | Help         of Gamestate

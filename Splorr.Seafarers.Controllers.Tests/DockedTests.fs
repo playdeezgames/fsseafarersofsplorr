@@ -193,7 +193,7 @@ let ``Run.It returns ConfirmQuit when given Quit Command.`` () =
     let inputLocation = dockLocation
     let inputSource = Command.Quit |> Some |> toSource
     let expected =
-        (Feature IslandFeatureIdentifier.Dock, inputLocation, input) 
+        (IslandFeatureIdentifier.Dock, inputLocation, input) 
         |> Gamestate.Docked 
         |> Gamestate.ConfirmQuit 
         |> Some
@@ -221,7 +221,7 @@ let ``Run.It returns Metrics when given Metrics Command.`` () =
         |> Some 
         |> toSource
     let expected = 
-        (Feature IslandFeatureIdentifier.Dock, inputLocation, input) 
+        (IslandFeatureIdentifier.Dock, inputLocation, input) 
         |> Gamestate.Docked 
         |> Gamestate.Metrics 
         |> Some
@@ -249,7 +249,7 @@ let ``Run.It returns Help when given Help Command.`` () =
         |> Some 
         |> toSource
     let expected = 
-        (Feature IslandFeatureIdentifier.Dock, inputLocation, input) 
+        (IslandFeatureIdentifier.Dock, inputLocation, input) 
         |> Gamestate.Docked 
         |> Gamestate.Help 
         |> Some
@@ -277,7 +277,7 @@ let ``Run.It returns Inventory when given Inventory Command.`` () =
         |> Some 
         |> toSource
     let expected = 
-        (Feature IslandFeatureIdentifier.Dock, inputLocation, input) 
+        (IslandFeatureIdentifier.Dock, inputLocation, input) 
         |> Gamestate.Docked 
         |> Gamestate.Inventory 
         |> Some
@@ -304,7 +304,7 @@ let ``Run.It returns InvalidInput when given invalid Command.`` () =
         None 
         |> toSource
     let expected = 
-        ("Maybe try 'help'?",(Feature IslandFeatureIdentifier.Dock, inputLocation, input) 
+        ("Maybe try 'help'?",(IslandFeatureIdentifier.Dock, inputLocation, input) 
         |> Gamestate.Docked)
         |> Gamestate.ErrorMessage
         |> Some
@@ -357,7 +357,7 @@ let ``Run.It returns Status when given the command Status.`` () =
         |> Some 
         |> toSource
     let expected = 
-        (Feature IslandFeatureIdentifier.Dock, inputLocation, input) 
+        (IslandFeatureIdentifier.Dock, inputLocation, input) 
         |> Gamestate.Docked 
         |> Gamestate.Status 
         |> Some
@@ -386,7 +386,7 @@ let ``Run.It returns Docked (at Jobs) gamestate when given the command Jobs.`` (
         |> Some 
         |> toSource
     let expected = 
-        (Feature IslandFeatureIdentifier.Dock, inputLocation, input) 
+        (IslandFeatureIdentifier.Dock, inputLocation, input) 
         |> Gamestate.Docked 
         |> Gamestate.Jobs
         |> Some
@@ -407,7 +407,7 @@ let ``Run.It returns Docked (at Jobs) gamestate when given the command Jobs.`` (
 
 
 [<Test>]
-let ``Run.It returns Docked (at Feature DarkAlley) gamestate when given the command GoTo DarkAlley.`` () =
+let ``Run.It returns Docked (at DarkAlley) gamestate when given the command GoTo DarkAlley.`` () =
     let input = dockWorld
     let inputLocation = dockLocation
     let inputSource = 
@@ -416,7 +416,7 @@ let ``Run.It returns Docked (at Feature DarkAlley) gamestate when given the comm
         |> Some 
         |> toSource
     let expected = 
-        (IslandFeatureIdentifier.DarkAlley |> Feature, inputLocation, input) 
+        (IslandFeatureIdentifier.DarkAlley, inputLocation, input) 
         |> Gamestate.Docked 
         |> Some
     let islandSingleNameSource (_) =
@@ -444,7 +444,7 @@ let ``Run.It gives a message when given the Accept Job command and the given job
     let expectedWorld = 
         input
     let expected = 
-        (Feature IslandFeatureIdentifier.Dock, inputLocation,  expectedWorld) 
+        (IslandFeatureIdentifier.Dock, inputLocation,  expectedWorld) 
         |> Gamestate.Docked 
         |> Some
     let islandSingleNameSource (_) =
@@ -475,7 +475,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
     let expectedWorld = 
         input
     let expected = 
-        (Feature IslandFeatureIdentifier.Dock, inputLocation, expectedWorld) 
+        (IslandFeatureIdentifier.Dock, inputLocation, expectedWorld) 
         |> Gamestate.Docked 
         |> Some
     let islandSingleNameSource (_) =
@@ -502,7 +502,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
     let expectedWorld = 
         input
     let expected = 
-        (Feature IslandFeatureIdentifier.Dock, inputLocation, expectedWorld) 
+        (IslandFeatureIdentifier.Dock, inputLocation, expectedWorld) 
         |> Gamestate.Docked 
         |> Some
     let islandSingleNameSource (_) =
@@ -530,7 +530,7 @@ let ``Run.It returns ItemList gamestate when given the Items command.`` () =
         |> Some 
         |> toSource
     let expected = 
-        (Feature IslandFeatureIdentifier.Dock, inputLocation, inputWorld)
+        (IslandFeatureIdentifier.Dock, inputLocation, inputWorld)
         |> Gamestate.Docked
         |> Gamestate.ItemList
         |> Some
@@ -558,7 +558,7 @@ let ``Run.It adds a message when given the Buy command for a non-existent item.`
     let expectedWorld =
         inputWorld
     let expected = 
-        (Feature IslandFeatureIdentifier.Dock, inputLocation, expectedWorld)
+        (IslandFeatureIdentifier.Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
         |> Some
     let islandSingleNameSource (_) =
@@ -594,7 +594,7 @@ let ``Run.It adds a message when given the Buy command and the avatar does not h
     let expectedWorld =
         inputWorld
     let expected = 
-        (Feature IslandFeatureIdentifier.Dock, inputLocation, expectedWorld)
+        (IslandFeatureIdentifier.Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
         |> Some
     let islandSingleNameSource (_) =
@@ -637,7 +637,7 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
     let expectedWorld =
         inputWorld
     let expected = 
-        (Feature IslandFeatureIdentifier.Dock, inputLocation, expectedWorld)
+        (IslandFeatureIdentifier.Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
         |> Some
     let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
@@ -679,7 +679,7 @@ let ``Run.It adds a message when given the Sell command for a non-existent item.
     let expectedWorld =
         inputWorld
     let expected = 
-        (Feature IslandFeatureIdentifier.Dock, inputLocation, expectedWorld)
+        (IslandFeatureIdentifier.Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
         |> Some
     let islandSingleNameSource (_) =
@@ -706,7 +706,7 @@ let ``Run.It adds a message when given the Sell command and the avatar does not 
     let expectedWorld =
         inputWorld
     let expected = 
-        (Feature IslandFeatureIdentifier.Dock, inputLocation, expectedWorld)
+        (IslandFeatureIdentifier.Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
         |> Some
     let islandSingleNameSource (_) =
@@ -751,7 +751,7 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
     let expectedWorld =
         inputWorld
     let expected = 
-        (Feature IslandFeatureIdentifier.Dock, inputLocation, expectedWorld)
+        (IslandFeatureIdentifier.Dock, inputLocation, expectedWorld)
         |> Gamestate.Docked
         |> Some
     let avatarInventorySource (_) = Map.empty |> Map.add 1UL 1UL
