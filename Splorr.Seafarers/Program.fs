@@ -307,11 +307,16 @@ let main argv =
         AvatarIslandFeature.SetFeatureForAvatar connection
         >> Persister.unpackOrThrow
 
+    let avatarIslandFeatureSource =
+        AvatarIslandFeature.GetFeatureForAvatar connection
+        >> Persister.unpackOrThrow
+
     let context : RunnerRunContext =
         SplorrContext
             (avatarInventorySink,
             avatarInventorySource,
             avatarIslandFeatureSink,
+            avatarIslandFeatureSource,
             avatarIslandSingleMetricSink,
             avatarIslandSingleMetricSource,
             avatarJobSink,

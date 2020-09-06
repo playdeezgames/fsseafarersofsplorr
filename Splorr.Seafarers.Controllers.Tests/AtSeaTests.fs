@@ -115,7 +115,7 @@ let ``Run.It returns ConfirmQuit when given Quit command.`` () =
         |> Some 
         |> toSource
     let expected = 
-        (None, input)
+        input
         |> Gamestate.InPlay 
         |> Gamestate.ConfirmQuit 
         |> Some
@@ -131,7 +131,7 @@ let ``Run.It returns InvalidInput when given invalid command.`` () =
         None 
         |> toSource
     let expected = 
-        ("Maybe try 'help'?",(None, input)
+        ("Maybe try 'help'?",input
         |> Gamestate.InPlay)
         |> Gamestate.ErrorMessage
         |> Some
@@ -152,7 +152,7 @@ let ``Run.It returns AtSea with new speed when given Set Speed command.`` () =
         |> toSource
     let expectedMessages = ["You set your speed to 1.00."]//note - the statistic sink does not actually track speed, so this value is "wrong" but the behavior is correct
     let expected = 
-        (None, input)
+        input
         |> Gamestate.InPlay
         |> Some
     let actual =
@@ -188,7 +188,7 @@ let ``Run.It returns AtSea with new heading when given Set Heading command.`` ()
             "You set your heading to 0.00\u00b0." //note - because of stub function the actual heading is not stored, just testing that a message is added
         ]
     let expected = 
-        (None, input)
+        input
         |> Gamestate.InPlay
         |> Some
     let actual =
@@ -219,7 +219,7 @@ let ``Run.It moves the avatar when given Move command.`` () =
         |> toSource
     let expectedMessages = ["Steady as she goes."]
     let expected = 
-        (None, input)
+        input
         |> Gamestate.InPlay 
         |> Some
     let avatarSingleMetricSink (_) (metric: Metric, value: uint64) : unit =
@@ -254,7 +254,7 @@ let ``Run.It returns At Sea Help when given the Help command.`` () =
         |> Some 
         |> toSource
     let expected = 
-        (None, input)
+        input
         |> Gamestate.InPlay 
         |> Gamestate.Help 
         |> Some
@@ -271,7 +271,7 @@ let ``Run.It returns At Sea Metrics when given the Metrics command.`` () =
         |> Some 
         |> toSource
     let expected = 
-        (None, input)
+        input
         |> Gamestate.InPlay 
         |> Gamestate.Metrics 
         |> Some
@@ -288,7 +288,7 @@ let ``Run.It returns At Sea Inventory when given the Inventory command.`` () =
         |> Some 
         |> toSource
     let expected = 
-        (None, input)
+        input
         |> Gamestate.InPlay 
         |> Gamestate.Inventory 
         |> Some
@@ -323,7 +323,7 @@ let ``Run.It returns Island List when given the Islands command.`` () =
         |> Some 
         |> toSource
     let expected = 
-        (0u, (None, input) |> Gamestate.InPlay) 
+        (0u, input |> Gamestate.InPlay) 
         |> Gamestate.IslandList 
         |> Some
     let actual =
@@ -340,7 +340,7 @@ let ``Run.It returns AtSea when given the Dock command and there is no sufficien
         |> toSource
     let expectedMessages = ["There is no place to dock."]
     let expected = 
-        (None, input)
+        input
         |>Gamestate.InPlay
         |>Some
     let vesselSingleStatisticSource (a) (identifier: VesselStatisticIdentifier) = 
@@ -378,7 +378,7 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
     let expectedWorld = 
         input
     let expected = 
-        ((IslandFeatureIdentifier.Dock, expectedLocation) |> Some, expectedWorld)
+        expectedWorld
         |>Gamestate.InPlay
         |>Some
     let avatarSingleMetricSink (_) (metric: Metric, value: uint64) : unit =
@@ -417,7 +417,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
         |> toSource
     let expectedMessages = ["I don't know how to get to `foo`."]
     let expected = 
-        (None, input)
+        input
         |> Gamestate.InPlay
         |> Some
     let actual = 
@@ -448,7 +448,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
         |> toSource
     let expectedMessages = ["I don't know how to get to `yermom`."]
     let expected = 
-        (None, input)
+        input
         |> Gamestate.InPlay
         |> Some
     let actual = 
@@ -479,7 +479,7 @@ let ``Run.It gives a message and changes heading when given a Head For command a
             "You head for `yermom`."
         ]
     let expected = 
-        (None, input)
+        input
         |> Gamestate.InPlay
         |> Some
     let avatarIslandSingleMetricSource (_) (_) (identifier: AvatarIslandMetricIdentifier) =
@@ -538,7 +538,7 @@ let ``Run.It returns Status when given the command Status.`` () =
         |> Some 
         |> toSource
     let expected = 
-        (None, input)
+        input
         |> Gamestate.InPlay
         |> Gamestate.Status 
         |> Some
@@ -557,7 +557,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
         |> toSource
     let expectedMessages = ["You have no job to abandon."]
     let expected = 
-        (None, input)
+        input
         |> Gamestate.InPlay
         |> Some
     let actual =
@@ -588,7 +588,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
         |> toSource
     let expectedMessages = ["You abandon your job."]
     let expected = 
-        (None, input)
+        input
         |> Gamestate.InPlay
         |> Some
     let avatarJobSource (_) =
@@ -634,7 +634,7 @@ let ``Run.It gives a message and returns AtSea when the avatar is too far away f
         |> toSource
     let expectedMessages = ["You cannot careen here."]
     let expected =
-        (None, input)
+        input
         |> Gamestate.InPlay
         |> Some
     let vesselSingleStatisticSource (_) (identifier) =
@@ -705,7 +705,7 @@ let ``Run.It adds a message when given a Distance To command with an island name
     let expectedWorld =
         input
     let expected =
-        (None, expectedWorld)
+        expectedWorld
         |> Gamestate.InPlay
         |> Some
     let actual =
@@ -740,7 +740,7 @@ let ``Run.It adds a message when given a Distance To command with an island name
     let expectedWorld =
         input
     let expected =
-        (None, expectedWorld)
+        expectedWorld
         |> Gamestate.InPlay
         |> Some
     let avatarIslandSingleMetricSource (_) (_) (identifier: AvatarIslandMetricIdentifier) =

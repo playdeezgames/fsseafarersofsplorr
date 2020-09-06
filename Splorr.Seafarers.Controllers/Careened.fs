@@ -89,7 +89,7 @@ module Careened =
             |> Gamestate.Careened
             |> Some
         | Some Command.WeighAnchor ->
-            (None, avatarId)
+            avatarId
             |> Gamestate.InPlay
             |> Some
         | _ ->

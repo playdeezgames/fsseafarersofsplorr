@@ -398,7 +398,7 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
     let input = world
     let inputSource = Command.Resume |> Some |> toSource
     let expected =
-        (None, input)
+        input
         |> Gamestate.InPlay 
         |> Some
     let avatarJobSink (_) (_) = Assert.Fail("avatarJobSink")

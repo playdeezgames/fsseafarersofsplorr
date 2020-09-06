@@ -81,9 +81,7 @@ module Docked =
 
         match command with
         | Some (Command.GoTo feature) ->
-            (Some(feature, 
-                location), 
-                avatarId)
+            avatarId
             |> Gamestate.InPlay
             |> Some
 
@@ -102,9 +100,7 @@ module Docked =
                 context.islandSource
                 index 
                 location
-            (Some(IslandFeatureIdentifier.Dock, 
-                location), 
-                avatarId)
+            avatarId
             |> Gamestate.InPlay
             |> Some
 
@@ -126,9 +122,7 @@ module Docked =
                 location 
                 quantity 
                 itemName
-            (Some(IslandFeatureIdentifier.Dock, 
-                location), 
-                    avatarId) 
+            avatarId 
             |> Gamestate.InPlay
             |> Some            
 
@@ -149,26 +143,24 @@ module Docked =
                 location 
                 quantity 
                 itemName
-            (Some(IslandFeatureIdentifier.Dock, 
-                location), 
-                    avatarId) 
+            avatarId 
             |> Gamestate.InPlay
             |> Some            
 
         | Some Command.Items ->
-            (Some(IslandFeatureIdentifier.Dock, location), avatarId) 
+            avatarId 
             |> Gamestate.InPlay
             |> Gamestate.ItemList
             |> Some
 
         | Some Command.Jobs ->
-            (Some(IslandFeatureIdentifier.Dock, location), avatarId)
+            avatarId
             |> Gamestate.InPlay
             |> Gamestate.Jobs
             |> Some
 
         | Some Command.Status ->
-            (Some(IslandFeatureIdentifier.Dock, location), avatarId)
+            avatarId
             |> Gamestate.InPlay
             |> Gamestate.Status
             |> Some
@@ -183,45 +175,43 @@ module Docked =
                 context.avatarSingleMetricSource
                 context.shipmateSingleStatisticSink
                 context.shipmateSingleStatisticSource
-            (Some(IslandFeatureIdentifier.Dock, 
-                location), 
-                    avatarId)
+            avatarId
             |> Gamestate.InPlay
             |> Some
 
         | Some Command.Undock ->
             avatarId 
             |> World.Undock context
-            (None, avatarId)
+            avatarId
             |> Gamestate.InPlay 
             |> Some
 
         | Some Command.Quit ->
-            (Some(IslandFeatureIdentifier.Dock, location), avatarId) 
+            avatarId 
             |> Gamestate.InPlay 
             |> Gamestate.ConfirmQuit 
             |> Some
 
         | Some Command.Inventory ->
-            (Some(IslandFeatureIdentifier.Dock, location), avatarId) 
+            avatarId 
             |> Gamestate.InPlay 
             |> Gamestate.Inventory 
             |> Some
 
         | Some Command.Help ->
-            (Some(IslandFeatureIdentifier.Dock, location), avatarId) 
+            avatarId 
             |> Gamestate.InPlay 
             |> Gamestate.Help 
             |> Some
 
         | Some Command.Metrics ->
-            (Some(IslandFeatureIdentifier.Dock, location), avatarId) 
+            avatarId 
             |> Gamestate.InPlay 
             |> Gamestate.Metrics 
             |> Some
 
         | _ -> 
-            ("Maybe try 'help'?",(Some(IslandFeatureIdentifier.Dock, location), avatarId) 
+            ("Maybe try 'help'?",avatarId 
             |> Gamestate.InPlay)
             |> Gamestate.ErrorMessage
             |> Some
@@ -257,7 +247,7 @@ module Docked =
             if islandSource() |> List.exists (fun x->x= location) then
                 func location avatarId
             else
-                (None, avatarId)
+                avatarId
                 |> Gamestate.InPlay
                 |> Some
         else

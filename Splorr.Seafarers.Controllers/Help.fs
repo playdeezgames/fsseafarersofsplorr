@@ -2,6 +2,11 @@
 
 open Splorr.Seafarers.Models
 
+type AvatarIslandFeatureSource = string -> AvatarIslandFeature option
+
+type HelpRunContext =
+    abstract member avatarIslandFeatureSource : AvatarIslandFeatureSource
+
 module Help =
     let private abandonJobMessage = 
         [
@@ -289,20 +294,23 @@ module Help =
         |> List.iter messageSink
 
     let Run 
+            (context     : HelpRunContext)
             (messageSink : MessageSink) 
             (gamestate   : Gamestate) 
             : Gamestate option =
         match gamestate with
-        | Gamestate.InPlay (None, _) ->
-            messageSink |> AtSea    
+        | Gamestate.InPlay avatarId ->
+            match context.avatarIslandFeatureSource avatarId with
+            | None ->
+                messageSink |> AtSea    
+            | Some feature when (feature.featureId) = IslandFeatureIdentifier.Dock ->
+                messageSink |> Docked
+            | Some feature ->
+                messageSink |> AtFeature feature.featureId
         | Gamestate.Careened _ ->
             messageSink |> Careened
         | Gamestate.ConfirmQuit _ ->
             messageSink |> ConfirmQuit
-        | Gamestate.InPlay (Some feature, _) when (feature |> fst) = IslandFeatureIdentifier.Dock ->
-            messageSink |> Docked
-        | Gamestate.InPlay (Some feature, _) ->
-            messageSink |> AtFeature (feature |> fst)
         | _ ->
             ()
         gamestate

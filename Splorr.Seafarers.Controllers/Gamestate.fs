@@ -3,67 +3,13 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
-(*
-type Suit =
-    | Wands
-    | Cups
-    | Swords
-    | Pentacles
 
-type Rank =
-    | Ace
-    | Deuce
-    | Three
-    | Four
-    | Five
-    | Six
-    | Seven
-    | Eight
-    | Nine
-    | Ten
-    | Page
-    | Knight
-    | Queen
-    | King
-
-type Arcana =
-    | Fool
-    | Magician
-    | HighPriestess
-    | Empress
-    | Emperor
-    | Hierophant
-    | Lovers
-    | Chariot
-    | Strength
-    | Hermit
-    | WheelOfFortune
-    | Justice
-    | HangedMan
-    | Death
-    | Temperance
-    | Devil
-    | Tower
-    | Star
-    | Moon
-    | Sun
-    | Judgement
-    | World
-
-type Card = 
-    | Minor of Suit * Rank
-    | Major of Arcana
-
-type Hand = Card * Card * Card
-
-type GamblingState = Card * Card * Card
-*)
 
 type AvatarMessageSource = string -> string list
 
 [<RequireQualifiedAccess>]
 type Gamestate = 
-    | InPlay       of (IslandFeatureIdentifier * Location) option * string
+    | InPlay       of string
     | Careened     of Side * string //persist to db
     | Chart        of string * string
     | ConfirmQuit  of Gamestate
@@ -83,7 +29,7 @@ module Gamestate =
             (gamestate:Gamestate) 
             : string option =
         match gamestate with
-        | Gamestate.InPlay (_,w)       -> w |> Some
+        | Gamestate.InPlay (w)         -> w |> Some
         | Gamestate.Careened (_, w)    -> w |> Some
         | Gamestate.Chart (_,w)        -> w |> Some
         | Gamestate.ConfirmQuit g      -> GetWorld g
