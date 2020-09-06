@@ -60,9 +60,9 @@ type GamblingState = Card * Card * Card
 *)
 
 type DockedState =
-    | Jobs
-    | ItemList
-    | Feature of IslandFeatureIdentifier
+    | Jobs //view state
+    | ItemList //view state
+    | Feature of IslandFeatureIdentifier //game state
     //|Gambling of GamblingState
 
 type AvatarMessageSource = string -> string list

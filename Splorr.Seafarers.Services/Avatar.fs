@@ -11,7 +11,7 @@ type AvatarSingleMetricSource = string -> Metric -> uint64
 type AvatarSingleMetricSink = string -> Metric * uint64 -> unit
 type AvatarJobSource = string -> Job option
 type AvatarJobSink = string -> Job option -> unit
-type AvatarIslandFeatureSink = IslandFeatureIdentifier option * string -> unit
+type AvatarIslandFeatureSink = AvatarIslandFeature option * string -> unit
 //type AvatarIslandFeatureSource = string -> IslandFeatureIdentifier option
 
 module Avatar =

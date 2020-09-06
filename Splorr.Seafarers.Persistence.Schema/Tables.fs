@@ -10,6 +10,8 @@ module Tables =
     let AvatarIslandFeatures : string = "CREATE TABLE IF NOT EXISTS [AvatarIslandFeatures] (
     	[AvatarId]	TEXT NOT NULL,
     	[FeatureId]	INTEGER NOT NULL,
+        [IslandX] REAL NOT NULL,
+        [IslandY] REAL NOT NULL,
     	PRIMARY KEY([AvatarId]));"
 
     let AvatarIslandMetrics : string = "CREATE TABLE IF NOT EXISTS [AvatarIslandMetrics] (

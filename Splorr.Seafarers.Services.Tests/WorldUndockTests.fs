@@ -14,7 +14,7 @@ type TestWorldUndockContext
 
 [<Test>]
 let ``Undock.It removes the feature for the avatar and adds a message.`` () =
-    let avatarIslandFeatureSink (feature : IslandFeatureIdentifier option,_) =
+    let avatarIslandFeatureSink (feature : AvatarIslandFeature option,_) =
         Assert.AreEqual(None, feature)
     let context : WorldUndockContext = 
         TestWorldUndockContext

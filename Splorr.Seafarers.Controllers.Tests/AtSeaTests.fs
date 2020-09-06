@@ -387,8 +387,8 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
             Assert.AreEqual(0UL, value)
         | _ ->
             Assert.Fail(metric.ToString() |> sprintf "avatarSingleMetricSink - %s")
-    let avatarIslandFeatureSink (feature, _) =
-        Assert.AreEqual(Some IslandFeatureIdentifier.Dock, feature)
+    let avatarIslandFeatureSink (feature:AvatarIslandFeature option, _) =
+        Assert.AreEqual(IslandFeatureIdentifier.Dock, feature.Value.featureId)
     let actual =
         input
         |> functionUnderTest

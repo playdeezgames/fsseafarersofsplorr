@@ -10,7 +10,7 @@ open System.Data.SQLite
 let ``SetFeatureForAvatar.It will set the feature of a given avatar to a given feature.`` () =
     use connection = SetupConnection()
     try
-        let givenFeature = IslandFeatureIdentifier.DarkAlley |> Some
+        let givenFeature = IslandFeatureIdentifier.DarkAlley
         let givenAvatarId = NewAvatarId
         let expected : Result<unit, string> =
             () |> Ok
@@ -20,7 +20,7 @@ let ``SetFeatureForAvatar.It will set the feature of a given avatar to a given f
         let expectedInitial = 0L
         Assert.AreEqual(expectedInitial, actualInitial)
         let actual = 
-            (givenFeature, givenAvatarId)
+            ({featureId = givenFeature; location = VisitedIslandLocation} |> Some, givenAvatarId)
             |> AvatarIslandFeature.SetFeatureForAvatar
                 connection
         Assert.AreEqual(expected, actual)
@@ -36,7 +36,7 @@ let ``SetFeatureForAvatar.It will remove the feature of a given avatar when give
     use connection = SetupConnection()
     try
         let givenFeature = None
-        let givenAvatarId = ExistingAvatarId
+        let givenAvatarId = DockedAvatarId
         let expected : Result<unit, string> =
             () |> Ok
         use command = new SQLiteCommand("SELECT COUNT(1) FROM [AvatarIslandFeatures] WHERE [AvatarId]=$avatarId;", connection)
@@ -59,9 +59,9 @@ let ``SetFeatureForAvatar.It will remove the feature of a given avatar when give
 let ``GetFeatureForAvatar.It retrieves the current feature associated with a given avatar.`` () =
     use connection = SetupConnection()
     try
-        let givenAvatarId = ExistingAvatarId
-        let expected : Result<IslandFeatureIdentifier option, string> =
-            IslandFeatureIdentifier.DarkAlley |> Some |> Ok
+        let givenAvatarId = DockedAvatarId
+        let expected : Result<AvatarIslandFeature option, string> =
+            {featureId = IslandFeatureIdentifier.Dock; location=VisitedIslandLocation} |> Some |> Ok
         let actual = 
             givenAvatarId
             |> AvatarIslandFeature.GetFeatureForAvatar

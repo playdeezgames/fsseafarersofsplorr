@@ -173,7 +173,7 @@ let ``Run.It returns AtSea when given Undock Command.`` () =
     let islandSingleNameSource (_) =
         "yermom"
         |> Some
-    let avatarIslandFeatureSink (feature: IslandFeatureIdentifier option, _) : unit =
+    let avatarIslandFeatureSink (feature: AvatarIslandFeature option, _) : unit =
         Assert.AreEqual(None, feature)
     let actual =
         (inputLocation, input)

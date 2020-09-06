@@ -450,7 +450,13 @@ module World =
                         w
                     w) (context.avatarJobSource avatarId)
             |> ignore
-            context.avatarIslandFeatureSink (IslandFeatureIdentifier.Dock |> Some, avatarId)
+            context.avatarIslandFeatureSink 
+                ({
+                    featureId = IslandFeatureIdentifier.Dock
+                    location = location
+                } 
+                |> Some, 
+                    avatarId)
         | _ -> 
             avatarId
             |> AddMessages 

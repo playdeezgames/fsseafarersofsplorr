@@ -44,8 +44,8 @@ let ``Dock.It does not modify avatar when given avatar has a job for a different
         [
             inputLocation
         ]
-    let avatarIslandFeatureSink (feature: IslandFeatureIdentifier option, _) =
-        Assert.AreEqual(IslandFeatureIdentifier.Dock |> Some, feature)
+    let avatarIslandFeatureSink (feature: AvatarIslandFeature option, _) =
+        Assert.AreEqual(IslandFeatureIdentifier.Dock, feature.Value.featureId)
     let context : WorldDockContext =
         TestWorldDockContext
             (avatarIslandFeatureSink,
@@ -123,8 +123,8 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
         []
     let islandSource () =
         [jobLocation]
-    let avatarIslandFeatureSink (feature: IslandFeatureIdentifier option, _) =
-        Assert.AreEqual(IslandFeatureIdentifier.Dock |> Some, feature)
+    let avatarIslandFeatureSink (feature: AvatarIslandFeature option, _) =
+        Assert.AreEqual(IslandFeatureIdentifier.Dock, feature.Value.featureId)
     let visitCount = 0UL
     let avatarSingleMetricSource (_) (metric:Metric) : uint64=
         match metric with
@@ -334,8 +334,8 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
         []
     let islandSource () =
         [inputLocation]
-    let avatarIslandFeatureSink (feature: IslandFeatureIdentifier option, _) =
-        Assert.AreEqual(IslandFeatureIdentifier.Dock |> Some, feature)
+    let avatarIslandFeatureSink (feature: AvatarIslandFeature option, _) =
+        Assert.AreEqual(IslandFeatureIdentifier.Dock, feature.Value.featureId)
     let context : WorldDockContext =
         TestWorldDockContext
             (avatarIslandFeatureSink,
