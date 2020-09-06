@@ -8,6 +8,7 @@ type SplorrContext
         (avatarInventorySink: AvatarInventorySink ,
         avatarInventorySource: AvatarInventorySource ,
         avatarIslandFeatureSink : AvatarIslandFeatureSink, 
+        avatarIslandFeatureSource : AvatarIslandFeatureSource,
         avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink ,
         avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource ,
         avatarJobSink: AvatarJobSink ,
@@ -166,6 +167,8 @@ type SplorrContext
         member _.islandSource: IslandSource = islandSource
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
 
+    interface HelpRunContext with
+        member _.avatarIslandFeatureSource : AvatarIslandFeatureSource = avatarIslandFeatureSource
 
     interface RunnerRunContext with
         member _.avatarMetricSource              : AvatarMetricSource=avatarMetricSource

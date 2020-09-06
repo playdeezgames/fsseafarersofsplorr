@@ -46,7 +46,7 @@ module ItemList =
             (Hue.Value, avatarId |> Avatar.GetMoney shipmateSingleStatisticSource |> sprintf "%f" |> Line) |> Hued
         ]
         |> List.iter messageSink
-        (Some(IslandFeatureIdentifier.Dock, location), avatarId)
+        avatarId
         |> Gamestate.InPlay
         |> Some
 

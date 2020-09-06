@@ -31,7 +31,7 @@ let ``Run.It should return AtSea when the given island does not exist.`` () =
     let givenAvatarId = avatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let expected=
-        (None, givenAvatarId)
+        givenAvatarId
         |> Gamestate.InPlay
         |> Some
     let context = 
@@ -59,7 +59,7 @@ let ``Run.It should return Dock state when the given island exists but does not 
     let givenAvatarId = avatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let expected=
-        (Some(IslandFeatureIdentifier.Dock, givenLocation), givenAvatarId) 
+        givenAvatarId
         |> Gamestate.InPlay
         |> Some
     let islandSingleNameSource (_) = Some ""
@@ -89,7 +89,7 @@ let ``Run.It should return Dock state when dark alley exists but the player does
     let givenAvatarId = avatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let expected=
-        (Some(IslandFeatureIdentifier.Dock, givenLocation), givenAvatarId) 
+        givenAvatarId
         |> Gamestate.InPlay 
         |> Some
     let islandSingleFeatureSource (_) (_) = true
@@ -128,7 +128,7 @@ let ``Run.When in the dark alley, the leave command will take the player back to
     let shipmateSingleStatisticSource (_) (_) (_) = 
         Statistic.Create (5.0,5.0) 5.0 |> Some
     let expected =
-        (Some(IslandFeatureIdentifier.Dock, givenLocation), avatarId)
+        avatarId
         |> Gamestate.InPlay
         |> Some
     let context = 
@@ -161,7 +161,7 @@ let ``Run.When in the dark alley, the help command will take the player to the h
     let islandSingleStatisticSource (_) (_) = Statistic.Create (5.0,5.0) 5.0 |> Some
     let shipmateSingleStatisticSource (_) (_) (_) = Statistic.Create (5.0,5.0) 5.0 |> Some
     let expected =
-        (Some(IslandFeatureIdentifier.DarkAlley, givenLocation), avatarId)
+        avatarId
         |> Gamestate.InPlay
         |> Gamestate.Help
         |> Some
@@ -196,7 +196,7 @@ let ``Run.When in the dark alley, the an invalid command gives you an error mess
     let shipmateSingleStatisticSource (_) (_) (_) = Statistic.Create (5.0,5.0) 5.0 |> Some
     let expected =
         ("Maybe try 'help'?",
-            (Some(givenFeature, givenLocation), avatarId)
+            avatarId
             |> Gamestate.InPlay)
         |> Gamestate.ErrorMessage
         |> Some

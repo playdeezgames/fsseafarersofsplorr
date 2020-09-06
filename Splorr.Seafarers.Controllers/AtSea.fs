@@ -199,7 +199,7 @@ module AtSea =
 
         match command with
         | Some Command.Status ->
-            (None, avatarId)
+            (avatarId)
             |> Gamestate.InPlay
             |> Gamestate.Status
             |> Some
@@ -213,7 +213,7 @@ module AtSea =
                 context.vesselSingleStatisticSource 
                 context.vesselSingleStatisticSink 
                 name
-            (None, avatarId)
+            (avatarId)
             |> Gamestate.InPlay
             |> Some
 
@@ -225,7 +225,7 @@ module AtSea =
                 context.islandLocationByNameSource
                 context.vesselSingleStatisticSource 
                 name
-            (None, avatarId)
+            (avatarId)
             |> Gamestate.InPlay
             |> Some
 
@@ -239,7 +239,7 @@ module AtSea =
                 |> World.AddMessages 
                     context.avatarMessageSink 
                     [ "You cannot careen here." ]
-                (None, avatarId)
+                avatarId
                 |> Gamestate.InPlay
                 |> Some
 
@@ -251,9 +251,7 @@ module AtSea =
                     context
                     random 
                     location
-                (Some (IslandFeatureIdentifier.Dock, 
-                    location), 
-                        avatarId)
+                avatarId
                 |> Gamestate.InPlay
                 |> Some
             | None ->
@@ -261,12 +259,12 @@ module AtSea =
                 |> World.AddMessages 
                     context.avatarMessageSink 
                     [ "There is no place to dock." ]
-                (None, avatarId)
+                avatarId
                 |> Gamestate.InPlay
                 |> Some
 
         | Some (Command.Islands page) ->
-            (page, (None, avatarId) |> Gamestate.InPlay)
+            (page, avatarId |> Gamestate.InPlay)
             |> Gamestate.IslandList
             |> Some
 
@@ -280,12 +278,12 @@ module AtSea =
                 context.avatarSingleMetricSource
                 context.shipmateSingleStatisticSink
                 context.shipmateSingleStatisticSource
-            (None, avatarId)
+            avatarId
             |> Gamestate.InPlay
             |> Some
 
         | Some Command.Metrics ->
-            (None, avatarId)
+            avatarId
             |> Gamestate.InPlay
             |> Gamestate.Metrics
             |> Some
@@ -302,7 +300,7 @@ module AtSea =
             |> Some
 
         | Some Command.Help ->
-            (None, avatarId)
+            avatarId
             |> Gamestate.InPlay
             |> Gamestate.Help
             |> Some
@@ -324,7 +322,7 @@ module AtSea =
                 context.vesselSingleStatisticSink 
                 context.vesselSingleStatisticSource 
                 distance
-            (None, avatarId)
+            avatarId
             |> Gamestate.InPlay
             |> Some
 
@@ -335,7 +333,7 @@ module AtSea =
                 context.vesselSingleStatisticSink 
                 context.avatarMessageSink 
                 heading
-            (None, avatarId)
+            avatarId
             |> Gamestate.InPlay
             |> Some
 
@@ -346,24 +344,24 @@ module AtSea =
                 context.vesselSingleStatisticSink
                 context.avatarMessageSink
                 speed
-            (None, avatarId)
+            avatarId
             |> Gamestate.InPlay
             |> Some
 
         | Some Command.Quit -> 
-            (None, avatarId)
+            avatarId
             |> Gamestate.InPlay
             |> Gamestate.ConfirmQuit
             |> Some
 
         | Some Command.Inventory -> 
-            (None, avatarId)
+            avatarId
             |> Gamestate.InPlay
             |> Gamestate.Inventory
             |> Some
 
         | _ ->
-            ("Maybe try 'help'?",(None, avatarId)
+            ("Maybe try 'help'?",avatarId
             |> Gamestate.InPlay)
             |> Gamestate.ErrorMessage
             |> Some

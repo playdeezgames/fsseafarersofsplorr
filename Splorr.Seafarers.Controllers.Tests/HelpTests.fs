@@ -14,10 +14,14 @@ let private avatarId = ""
 let private world =  
     avatarId
 
+type TestHelpRunContext(avatarIslandFeatureSource) =
+    interface HelpRunContext with
+        member _.avatarIslandFeatureSource : AvatarIslandFeatureSource = avatarIslandFeatureSource
+
 [<Test>]
 let ``Run.It returns the given AtSea Gamestate`` () =
     let input = 
-        (None, world)
+        world
         |> Gamestate.InPlay
     let expected = 
         input
@@ -25,16 +29,21 @@ let ``Run.It returns the given AtSea Gamestate`` () =
     let mutable sinkCalled = false
     let sink(_:Message) : unit =
         sinkCalled <- true
+    let avatarIslandFeatureSource (_) = None
+    let context = 
+        TestHelpRunContext(avatarIslandFeatureSource)
     let actual = 
         input
-        |> Help.Run sink
+        |> Help.Run
+            context
+            sink
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(sinkCalled)
 
 [<Test>]
 let ``Run.It returns the given ConfirmQuit Gamestate`` () =
     let input = 
-        (None, world)
+        world
         |> Gamestate.InPlay
         |> Gamestate.ConfirmQuit
     let expected = 
@@ -43,16 +52,21 @@ let ``Run.It returns the given ConfirmQuit Gamestate`` () =
     let mutable sinkCalled = false
     let sink(_:Message) : unit =
         sinkCalled <- true
+    let avatarIslandFeatureSource (_) = None
+    let context = 
+        TestHelpRunContext(avatarIslandFeatureSource)
     let actual = 
         input
-        |> Help.Run sink
+        |> Help.Run 
+            context
+            sink
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(sinkCalled)
 
 [<Test>]
 let ``Run.It returns the given Docked (at Dock) Gamestate`` () =
     let input = 
-        (Some(IslandFeatureIdentifier.Dock, (0.0, 0.0)), world)
+        world
         |> Gamestate.InPlay
     let expected = 
         input
@@ -60,16 +74,21 @@ let ``Run.It returns the given Docked (at Dock) Gamestate`` () =
     let mutable sinkCalled = false
     let sink(_:Message) : unit =
         sinkCalled <- true
+    let avatarIslandFeatureSource (_) = None
+    let context = 
+        TestHelpRunContext(avatarIslandFeatureSource)
     let actual = 
         input
-        |> Help.Run sink
+        |> Help.Run 
+            context
+            sink
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(sinkCalled)
 
 [<Test>]
 let ``Run.It returns the given Docked (at Feature) Gamestate`` () =
     let input = 
-        (Some(IslandFeatureIdentifier.DarkAlley, (0.0, 0.0)), world)
+        world
         |> Gamestate.InPlay
     let expected = 
         input
@@ -77,9 +96,14 @@ let ``Run.It returns the given Docked (at Feature) Gamestate`` () =
     let mutable sinkCalled = false
     let sink(_:Message) : unit =
         sinkCalled <- true
+    let avatarIslandFeatureSource (_) = None
+    let context = 
+        TestHelpRunContext(avatarIslandFeatureSource)
     let actual = 
         input
-        |> Help.Run sink
+        |> Help.Run 
+            context
+            sink
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(sinkCalled)
 

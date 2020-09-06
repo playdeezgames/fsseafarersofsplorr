@@ -10,6 +10,7 @@ type RunnerRunContext =
     inherit WorldCreateContext
     inherit DockedRunContext
     inherit IslandFeatureRunContext
+    inherit HelpRunContext
     abstract member avatarMetricSource              : AvatarMetricSource
     abstract member switchSource                    : SwitchSource
 
@@ -24,13 +25,36 @@ module Runner =
 
         let nextGamestate : Gamestate option = 
             match gamestate with
-            | Gamestate.InPlay (None, avatarId) -> 
-                AtSea.Run 
-                    context
-                    random 
-                    commandSource 
-                    messageSink 
-                    avatarId
+            | Gamestate.InPlay avatarId -> 
+                match context.avatarIslandFeatureSource avatarId with
+                | None ->
+                    AtSea.Run 
+                        context
+                        random 
+                        commandSource 
+                        messageSink 
+                        avatarId
+
+                | Some feature when feature.featureId = IslandFeatureIdentifier.Dock -> 
+                    Docked.Run 
+                        context
+                        commandSource 
+                        messageSink 
+                        feature.location 
+                        avatarId
+
+                | Some feature -> 
+                    IslandFeature.Run
+                        context
+                        commandSource
+                        messageSink
+                        feature.location
+                        feature.featureId
+                        avatarId
+
+                | _ ->
+                    raise (System.NotImplementedException "InPlay state with unknown configuration")
+
 
             | Gamestate.Careened (side, avatarId) -> 
                 Careened.Run 
@@ -66,51 +90,41 @@ module Runner =
                     messageSink 
                     state
             
-            | Gamestate.InPlay (Some (IslandFeatureIdentifier.Dock, location), avatarId) -> 
-                Docked.Run 
-                    context
-                    commandSource 
-                    messageSink 
-                    location 
-                    avatarId
 
-            | Gamestate.InPlay (Some (feature, location), avatarId) -> 
-                IslandFeature.Run
-                    context
-                    commandSource
-                    messageSink
-                    location
-                    feature
-                    avatarId
+            | Gamestate.ItemList (Gamestate.InPlay avatarId) -> 
+                match context.avatarIslandFeatureSource avatarId with
+                | Some feature ->
+                    ItemList.Run 
+                        context.avatarMessageSource
+                        context.commoditySource 
+                        context.islandItemSource 
+                        context.islandMarketSource 
+                        context.islandSource
+                        context.itemSource 
+                        context.shipmateSingleStatisticSource
+                        messageSink 
+                        feature.location 
+                        avatarId
+                | _ ->
+                    raise (System.NotImplementedException "Gamestate.ItemList with unexpected inner gamestate")
 
-            | Gamestate.ItemList (Gamestate.InPlay (Some (_, location), avatarId)) -> 
-                ItemList.Run 
-                    context.avatarMessageSource
-                    context.commoditySource 
-                    context.islandItemSource 
-                    context.islandMarketSource 
-                    context.islandSource
-                    context.itemSource 
-                    context.shipmateSingleStatisticSource
-                    messageSink 
-                    location 
-                    avatarId
-
-            | Gamestate.ItemList _ ->
+            | Gamestate.ItemList _ -> 
                 raise (System.NotImplementedException "Gamestate.ItemList with unexpected inner gamestate")
 
-            | Gamestate.Jobs (Gamestate.InPlay (Some (IslandFeatureIdentifier.Dock, location), avatarId)) -> 
-                Jobs.Run 
-                    context.islandJobSource
-                    context.islandSingleNameSource
-                    context.islandSource
-                    messageSink 
-                    location
-                    avatarId
-
-            | Gamestate.Jobs _ ->
+            | Gamestate.Jobs (Gamestate.InPlay avatarId) -> 
+                match context.avatarIslandFeatureSource avatarId with
+                | Some feature ->
+                    Jobs.Run 
+                        context.islandJobSource
+                        context.islandSingleNameSource
+                        context.islandSource
+                        messageSink 
+                        feature.location
+                        avatarId
+                | _ ->
+                    raise (System.NotImplementedException "Gamestate.Jobs with unexpected inner gamestate")
+            | Gamestate.Jobs _ -> 
                 raise (System.NotImplementedException "Gamestate.Jobs with unexpected inner gamestate")
-
 
             | Gamestate.GameOver messages -> 
                 GameOver.Run 
@@ -119,6 +133,7 @@ module Runner =
 
             | Gamestate.Help state -> 
                 Help.Run 
+                    context
                     messageSink 
                     state
 

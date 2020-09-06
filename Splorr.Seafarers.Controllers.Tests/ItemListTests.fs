@@ -12,7 +12,7 @@ let ``Run.It returns Docked (at Shop) gamestate.`` () =
     let inputLocation = dockLocation
     let inputWorld = dockWorld
     let expected = 
-        (Some(IslandFeatureIdentifier.Dock, inputLocation), inputWorld) 
+        inputWorld
         |> Gamestate.InPlay 
         |> Some
     let actual = 

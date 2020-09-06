@@ -58,7 +58,7 @@ module MainMenu =
             (avatarId : string) =
         function
         | Some Command.Resume ->
-            (None, avatarId)
+            avatarId
             |> Gamestate.InPlay
             |> Some
         | Some (Command.Abandon Game)->
@@ -79,7 +79,7 @@ module MainMenu =
                 context
                 (System.Random())
                 avatarId
-            (None, avatarId)
+            avatarId
             |> Gamestate.InPlay
             |> Some
         | Some Command.Quit ->
