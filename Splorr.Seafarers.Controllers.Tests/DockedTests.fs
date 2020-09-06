@@ -521,7 +521,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
     Assert.AreEqual(expected, actual)
 
 [<Test>]
-let ``Run.It returns Docked (at ItemList) gamestate when given the Items command.`` () =
+let ``Run.It returns ItemList gamestate when given the Items command.`` () =
     let inputLocation = dockLocation
     let inputWorld = dockWorld
     let inputSource = 
@@ -529,8 +529,9 @@ let ``Run.It returns Docked (at ItemList) gamestate when given the Items command
         |> Some 
         |> toSource
     let expected = 
-        (ItemList, inputLocation, inputWorld)
+        (Feature IslandFeatureIdentifier.Dock, inputLocation, inputWorld)
         |> Gamestate.Docked
+        |> Gamestate.ItemList
         |> Some
     let islandSingleNameSource (_) =
         "yermom"

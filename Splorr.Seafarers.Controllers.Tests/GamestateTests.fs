@@ -126,8 +126,9 @@ let ``GetWorld.It returns world from the given Docked (at Jobs) Gamestate.`` () 
 let ``GetWorld.It returns world from the given ItemList Gamestate.`` () =
     let expected = world |> Some
     let actual =
-        (ItemList, (0.0, 0.0),world)
+        (Feature IslandFeatureIdentifier.Dock, (0.0, 0.0),world)
         |> Gamestate.Docked
+        |> Gamestate.ItemList
         |> Gamestate.GetWorld
     Assert.AreEqual(expected, actual)
 
@@ -135,7 +136,7 @@ let ``GetWorld.It returns world from the given ItemList Gamestate.`` () =
 let ``GetWorld.It returns world from the given Inventory Gamestate.`` () =
     let expected = world |> Some
     let actual =
-        (ItemList, (0.0, 0.0),world)
+        (Feature IslandFeatureIdentifier.Dock, (0.0, 0.0),world)
         |> Gamestate.Docked
         |> Gamestate.Inventory
         |> Gamestate.GetWorld

@@ -83,7 +83,7 @@ module Runner =
                     feature
                     avatarId
 
-            | Gamestate.Docked (ItemList, location, avatarId) -> 
+            | Gamestate.ItemList (Gamestate.Docked (_, location, avatarId)) -> 
                 ItemList.Run 
                     context.avatarMessageSource
                     context.commoditySource 
@@ -95,6 +95,9 @@ module Runner =
                     messageSink 
                     location 
                     avatarId
+
+            | Gamestate.ItemList _ ->
+                raise (System.NotImplementedException "Gamestate.ItemList with unexpected inner gamestate")
 
             | Gamestate.Docked (Jobs, location, avatarId) -> 
                 Jobs.Run 

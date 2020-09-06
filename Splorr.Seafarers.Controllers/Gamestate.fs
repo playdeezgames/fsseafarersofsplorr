@@ -61,7 +61,6 @@ type GamblingState = Card * Card * Card
 
 type DockedState =
     | Jobs //view state
-    | ItemList //view state
     | Feature of IslandFeatureIdentifier //game state
     //|Gambling of GamblingState
 
@@ -70,7 +69,7 @@ type AvatarMessageSource = string -> string list
 [<RequireQualifiedAccess>]
 type Gamestate = 
     | AtSea        of string
-    | Careened     of Side * string
+    | Careened     of Side * string //persist to db
     | Chart        of string * string
     | ConfirmQuit  of Gamestate
     | Docked       of DockedState * Location *  string
@@ -79,6 +78,7 @@ type Gamestate =
     | Help         of Gamestate
     | Inventory    of Gamestate
     | IslandList   of uint32 * Gamestate
+    | ItemList     of Gamestate
     | MainMenu     of string option
     | Metrics      of Gamestate
     | Status       of Gamestate
@@ -97,6 +97,7 @@ module Gamestate =
         | Gamestate.Help g             -> GetWorld g
         | Gamestate.Inventory g        -> GetWorld g
         | Gamestate.IslandList (_,g)   -> GetWorld g
+        | Gamestate.ItemList g         -> GetWorld g
         | Gamestate.MainMenu w         -> w
         | Gamestate.Metrics g          -> GetWorld g
         | Gamestate.Status g           -> GetWorld g

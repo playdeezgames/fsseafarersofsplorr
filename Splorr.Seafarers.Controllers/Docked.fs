@@ -156,8 +156,9 @@ module Docked =
             |> Some            
 
         | Some Command.Items ->
-            (ItemList, location, avatarId) 
+            (Feature IslandFeatureIdentifier.Dock, location, avatarId) 
             |> Gamestate.Docked
+            |> Gamestate.ItemList
             |> Some
 
         | Some Command.Jobs ->
