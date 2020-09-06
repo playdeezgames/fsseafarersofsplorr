@@ -60,7 +60,6 @@ type GamblingState = Card * Card * Card
 *)
 
 type DockedState =
-    | Jobs //view state
     | Feature of IslandFeatureIdentifier //game state
     //|Gambling of GamblingState
 
@@ -79,6 +78,7 @@ type Gamestate =
     | Inventory    of Gamestate
     | IslandList   of uint32 * Gamestate
     | ItemList     of Gamestate
+    | Jobs         of Gamestate
     | MainMenu     of string option
     | Metrics      of Gamestate
     | Status       of Gamestate
@@ -98,6 +98,7 @@ module Gamestate =
         | Gamestate.Inventory g        -> GetWorld g
         | Gamestate.IslandList (_,g)   -> GetWorld g
         | Gamestate.ItemList g         -> GetWorld g
+        | Gamestate.Jobs g             -> GetWorld g
         | Gamestate.MainMenu w         -> w
         | Gamestate.Metrics g          -> GetWorld g
         | Gamestate.Status g           -> GetWorld g

@@ -386,8 +386,9 @@ let ``Run.It returns Docked (at Jobs) gamestate when given the command Jobs.`` (
         |> Some 
         |> toSource
     let expected = 
-        (Jobs, inputLocation, input) 
+        (Feature IslandFeatureIdentifier.Dock, inputLocation, input) 
         |> Gamestate.Docked 
+        |> Gamestate.Jobs
         |> Some
     let islandSingleNameSource (_) =
         "yermom"

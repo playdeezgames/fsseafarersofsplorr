@@ -99,7 +99,7 @@ module Runner =
             | Gamestate.ItemList _ ->
                 raise (System.NotImplementedException "Gamestate.ItemList with unexpected inner gamestate")
 
-            | Gamestate.Docked (Jobs, location, avatarId) -> 
+            | Gamestate.Jobs (Gamestate.Docked (Feature IslandFeatureIdentifier.Dock, location, avatarId)) -> 
                 Jobs.Run 
                     context.islandJobSource
                     context.islandSingleNameSource
@@ -107,6 +107,10 @@ module Runner =
                     messageSink 
                     location
                     avatarId
+
+            | Gamestate.Jobs _ ->
+                raise (System.NotImplementedException "Gamestate.Jobs with unexpected inner gamestate")
+
 
             | Gamestate.GameOver messages -> 
                 GameOver.Run 

@@ -117,8 +117,9 @@ let ``GetWorld.It returns None from the given MainMenu Gamestate when no world i
 [<Test>]
 let ``GetWorld.It returns world from the given Docked (at Jobs) Gamestate.`` () =
     let actual =
-        (Jobs, (0.0, 0.0),world)
+        (Feature IslandFeatureIdentifier.Dock, (0.0, 0.0),world)
         |> Gamestate.Docked
+        |> Gamestate.Jobs
         |> Gamestate.GetWorld
     Assert.AreEqual(world |> Some, actual)
 
