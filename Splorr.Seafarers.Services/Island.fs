@@ -2,9 +2,8 @@
 open Splorr.Seafarers.Models
 open System
 
-type CommoditySource = unit -> Map<uint64, CommodityDescriptor>
+
 type ItemSource = unit -> Map<uint64, ItemDescriptor>
-type IslandMarketSource = Location -> Map<uint64, Market>
 type IslandMarketSink = Location -> Map<uint64, Market> -> unit
 type IslandItemSource = Location -> Set<uint64>
 type IslandItemSink   = Location -> Set<uint64>->unit
@@ -14,7 +13,7 @@ type AvatarIslandSingleMetricSource = string -> Location -> AvatarIslandMetricId
 type AvatarIslandSingleMetricSink = string -> Location -> AvatarIslandMetricIdentifier -> uint64 -> unit //TODO:value needs to become uint64 option
 type IslandSingleNameSource = Location -> string option
 type IslandSingleNameSink = Location -> string option -> unit
-type IslandStatisticTemplateSource = unit -> Map<IslandStatisticIdentifier, VesselStatisticTemplate>
+type IslandStatisticTemplateSource = unit -> Map<IslandStatisticIdentifier, StatisticTemplate>
 type IslandSingleStatisticSink = Location->IslandStatisticIdentifier*Statistic option->unit
 type IslandSingleStatisticSource = Location->IslandStatisticIdentifier->Statistic option
 type IslandJobSource = Location -> Job list
@@ -22,13 +21,21 @@ type IslandJobSink = Location -> Job -> unit
 type IslandSingleJobSource = Location -> uint32 -> Job option
 type IslandJobPurger = Location -> uint32 -> unit
 
+type IslandJobsGenerationContext =
+    inherit JobCreationContext
+    abstract member islandJobSink              : IslandJobSink
+    abstract member islandJobSource            : IslandJobSource
+
+type IslandCreateContext = 
+    abstract member islandSingleStatisticSink     : IslandSingleStatisticSink
+    abstract member islandStatisticTemplateSource : IslandStatisticTemplateSource
+
 module Island =
-    let private CreateStatistics
-            (islandSingleStatisticSink     : IslandSingleStatisticSink)
-            (islandStatisticTemplateSource : IslandStatisticTemplateSource)
-            (location                      : Location)
+    let  Create
+            (context  : IslandCreateContext)
+            (location : Location)
             : unit =
-        islandStatisticTemplateSource()
+        context.islandStatisticTemplateSource()
         |> Map.iter
             (fun identifier template ->
                 (identifier, 
@@ -38,18 +45,7 @@ module Island =
                         CurrentValue = template.CurrentValue
                     } 
                     |> Some)
-                |> islandSingleStatisticSink location)
-
-    let Create
-            (islandSingleStatisticSink     : IslandSingleStatisticSink)
-            (islandStatisticTemplateSource : IslandStatisticTemplateSource)
-            (location                      : Location) 
-            : unit =
-        location
-        |> CreateStatistics
-            islandSingleStatisticSink
-            islandStatisticTemplateSource
-        
+                |> context.islandSingleStatisticSink location)
 
     let GetDisplayName 
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
@@ -87,23 +83,17 @@ module Island =
             ()
 
     let GenerateJobs 
-            (islandJobSink              : IslandJobSink)
-            (islandJobSource            : IslandJobSource)
-            (termSources                : TermSources)
-            (worldSingleStatisticSource : WorldSingleStatisticSource)
-            (random                     : Random) 
-            (destinations               : Set<Location>) 
-            (location                   : Location)
+            (context      : IslandJobsGenerationContext)
+            (destinations : Set<Location>) 
+            (location     : Location)
             : unit =
         let jobs = 
-            islandJobSource location
+            context.islandJobSource location
         if jobs.IsEmpty && not destinations.IsEmpty then
             Job.Create 
-                termSources 
-                worldSingleStatisticSource 
-                random 
+                context 
                 destinations
-            |> islandJobSink location
+            |> context.islandJobSink location
 
     let MakeKnown
             (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
@@ -171,7 +161,7 @@ module Island =
             : unit =
         commodity
         |> islandSingleMarketSource location
-        |> Option.map (Market.ChangeDemand change)
+        |> Option.map (fun m -> Market.ChangeDemand (change, m))
         |> Option.iter (fun market -> islandSingleMarketSink location (commodity, market))
 
         
@@ -185,7 +175,7 @@ module Island =
             : unit =
         commodity
         |> islandSingleMarketSource location
-        |> Option.map (Market.ChangeSupply change)
+        |> Option.map (fun m -> Market.ChangeSupply (change, m))
         |> Option.iter (fun market -> islandSingleMarketSink location (commodity, market))
 
     let UpdateMarketForItemSale 

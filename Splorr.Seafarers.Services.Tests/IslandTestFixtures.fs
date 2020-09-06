@@ -1,8 +1,6 @@
 ﻿module IslandTestFixtures
 
-open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
-open CommonTestFixtures
 
 let internal random = System.Random()
 let internal rewardRange = (1.0, 10.0)

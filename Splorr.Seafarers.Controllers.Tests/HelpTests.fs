@@ -4,11 +4,8 @@ open CommonTestFixtures
 open NUnit.Framework
 open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
-open Splorr.Seafarers.Services
 open System
-open AtSeaTestFixtures
 
-let private sink(_:Message) : unit = ()
 
 let private random = Random()
 
@@ -20,40 +17,69 @@ let private world =
 [<Test>]
 let ``Run.It returns the given AtSea Gamestate`` () =
     let input = 
-        world
-        |> Gamestate.AtSea
+        (None, world)
+        |> Gamestate.InPlay
     let expected = 
         input
         |> Some
+    let mutable sinkCalled = false
+    let sink(_:Message) : unit =
+        sinkCalled <- true
     let actual = 
         input
         |> Help.Run sink
     Assert.AreEqual(expected, actual)
+    Assert.IsTrue(sinkCalled)
 
 [<Test>]
 let ``Run.It returns the given ConfirmQuit Gamestate`` () =
     let input = 
-        world
-        |> Gamestate.AtSea
+        (None, world)
+        |> Gamestate.InPlay
         |> Gamestate.ConfirmQuit
     let expected = 
         input
         |> Some
+    let mutable sinkCalled = false
+    let sink(_:Message) : unit =
+        sinkCalled <- true
     let actual = 
         input
         |> Help.Run sink
     Assert.AreEqual(expected, actual)
+    Assert.IsTrue(sinkCalled)
 
 [<Test>]
 let ``Run.It returns the given Docked (at Dock) Gamestate`` () =
     let input = 
-        (Dock, (0.0, 0.0), world)
-        |> Gamestate.Docked
+        (Some(IslandFeatureIdentifier.Dock, (0.0, 0.0)), world)
+        |> Gamestate.InPlay
     let expected = 
         input
         |> Some
+    let mutable sinkCalled = false
+    let sink(_:Message) : unit =
+        sinkCalled <- true
     let actual = 
         input
         |> Help.Run sink
     Assert.AreEqual(expected, actual)
+    Assert.IsTrue(sinkCalled)
+
+[<Test>]
+let ``Run.It returns the given Docked (at Feature) Gamestate`` () =
+    let input = 
+        (Some(IslandFeatureIdentifier.DarkAlley, (0.0, 0.0)), world)
+        |> Gamestate.InPlay
+    let expected = 
+        input
+        |> Some
+    let mutable sinkCalled = false
+    let sink(_:Message) : unit =
+        sinkCalled <- true
+    let actual = 
+        input
+        |> Help.Run sink
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(sinkCalled)
 

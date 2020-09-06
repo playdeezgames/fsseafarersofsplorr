@@ -7,6 +7,13 @@ module Tables =
 		[ItemCount]	INTEGER NOT NULL CHECK(ItemCount>0),
 		PRIMARY KEY([AvatarId],[ItemId]));"
 
+    let AvatarIslandFeatures : string = "CREATE TABLE IF NOT EXISTS [AvatarIslandFeatures] (
+    	[AvatarId]	TEXT NOT NULL,
+    	[FeatureId]	INTEGER NOT NULL,
+        [IslandX] REAL NOT NULL,
+        [IslandY] REAL NOT NULL,
+    	PRIMARY KEY([AvatarId]));"
+
     let AvatarIslandMetrics : string = "CREATE TABLE IF NOT EXISTS [AvatarIslandMetrics] (
     	[AvatarId]	TEXT NOT NULL,
     	[IslandX]	REAL NOT NULL,
@@ -43,6 +50,18 @@ module Tables =
 	    [ItemId] INTEGER,
 	    [Quantity] REAL NOT NULL,
 	    PRIMARY KEY([CommodityId],[ItemId]));"
+
+    let IslandFeatureGenerators : string = "CREATE TABLE IF NOT EXISTS [IslandFeatureGenerators] (
+    	[FeatureId]	INTEGER NOT NULL,
+    	[FeatureWeight]	REAL NOT NULL,
+    	[FeaturelessWeight]	REAL NOT NULL,
+    	PRIMARY KEY([FeatureId]));"
+
+    let IslandFeatures : string = "CREATE TABLE IF NOT EXISTS [IslandFeatures] (
+    	[IslandX]	REAL NOT NULL,
+    	[IslandY]	REAL NOT NULL,
+    	[FeatureId]	INTEGER NOT NULL,
+    	PRIMARY KEY([IslandX],[IslandY],[FeatureId]));";
 
     let IslandItems : string = "CREATE TABLE IF NOT EXISTS [IslandItems] (
 		[IslandX]	REAL NOT NULL,

@@ -4,17 +4,19 @@ open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
+let private inputAvatarId = "avatar"
+
 [<Test>]
 let ``Create.It creates a vessel.`` () =
     let inputAvatarId = "avatar"
-    let inputTemplates : Map<VesselStatisticIdentifier, VesselStatisticTemplate> =
+    let inputTemplates : Map<VesselStatisticIdentifier, StatisticTemplate> =
         Map.empty
         |> Map.add VesselStatisticIdentifier.Tonnage {StatisticName=""; MinimumValue=0.0; MaximumValue=0.0; CurrentValue=0.0}
     let expectedStatistics =
         inputTemplates
         |> Map.map
             (fun _ template -> { MinimumValue=template.MinimumValue; MaximumValue=template.MaximumValue; CurrentValue=template.CurrentValue})
-    let vesselStatisticTemplateSource() : Map<VesselStatisticIdentifier, VesselStatisticTemplate> = 
+    let vesselStatisticTemplateSource() : Map<VesselStatisticIdentifier, StatisticTemplate> = 
         inputTemplates
     let vesselStatisticSink (avatarId:string) (statistics:Map<VesselStatisticIdentifier, Statistic>) : unit =
         Assert.AreEqual(inputAvatarId, avatarId)
@@ -30,8 +32,6 @@ let ``TransformFouling.It transforms fouling on the port side when the port side
     let vesselSingleStatisticSink  (avatarId:string) (identifier:VesselStatisticIdentifier, statistic: Statistic) : unit = 
         Assert.AreEqual(VesselStatisticIdentifier.PortFouling, identifier)
     Vessel.TransformFouling vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId inputSide (Statistic.ChangeCurrentBy 0.25)
-
-let private inputAvatarId = "avatar"
 
 [<Test>]
 let ``TransformFouling.It transforms fouling on the starboard side when the starboard side is specified.`` () =

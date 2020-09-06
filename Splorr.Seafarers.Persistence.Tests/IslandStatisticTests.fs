@@ -57,7 +57,7 @@ let ``SetStatisticForIsland.It removes the given statistic for the given island 
         command.Parameters.AddWithValue("$islandX", inputIslandLocation |> fst) |> ignore
         command.Parameters.AddWithValue("$islandY", inputIslandLocation |> snd) |> ignore
         let initialCount = command.ExecuteScalar() :?> int64
-        Assert.AreEqual(1L, initialCount)
+        Assert.AreEqual(2L, initialCount)
 
         let expected: Result<unit, string> = () |> Ok
         let actual =
@@ -65,6 +65,6 @@ let ``SetStatisticForIsland.It removes the given statistic for the given island 
         Assert.AreEqual(expected, actual)
 
         let finalCount = command.ExecuteScalar() :?> int64
-        Assert.AreEqual(0L, finalCount)
+        Assert.AreEqual(1L, finalCount)
     finally
         connection.Close()

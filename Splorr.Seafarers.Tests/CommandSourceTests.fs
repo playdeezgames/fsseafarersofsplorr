@@ -105,7 +105,7 @@ let ``Parse.It returns Start command when given ["start"]`` () =
         |> CommandSource.Parse
     match actual with
     | Some (Command.Start _) ->
-        Assert.Pass("A start command was generated.")
+        ()
     | _ ->
         Assert.Fail("A start command was not generated.")
 
@@ -186,6 +186,48 @@ let ``Parse.It returns Inventory command when given ["inventory"]`` () =
         [ "inventory"]
         |> CommandSource.Parse
     Assert.AreEqual(Command.Inventory |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Leave command when given ["leave"]`` () =
+    let actual =
+        [ "leave"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Command.Leave |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns NoBet command when given ["no";"bet"]`` () =
+    let actual =
+        [ "no"; "bet" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(None |> Command.Bet |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Gamble command when given ["gamble"]`` () =
+    let actual =
+        [ "gamble"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Command.Gamble |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Rules command when given ["rules"]`` () =
+    let actual =
+        [ "rules"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Command.Rules |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Bet 1.0 command when given ["bet";"1"]`` () =
+    let actual =
+        [ "bet"; "1" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(1.0 |> Some |> Command.Bet |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Gamble command when given ["deal"]`` () =
+    let actual =
+        [ "deal"]
+        |> CommandSource.Parse
+    Assert.AreEqual(Command.Gamble |> Some, actual)
 
 [<Test>]
 let ``Parse.It returns Islands 0 command when given ["islands";"1"]`` () =
@@ -293,16 +335,43 @@ let ``Parse.It returns Weigh Anchor command when given ["weigh";"anchor"]`` () =
     Assert.AreEqual(Command.WeighAnchor |> Some, actual)
 
 [<Test>]
-let ``Parse.It returns Clean Hull ommand when given ["clean";"hull"]`` () =
+let ``Parse.It returns Clean Hull command when given ["clean";"hull"]`` () =
     let actual =
         [ "clean";"hull"]
         |> CommandSource.Parse
     Assert.AreEqual(Command.CleanHull |> Some, actual)
 
 [<Test>]
-let ``Parse.It returns Clean Hull ommand when given ["clean";"the";"hull"]`` () =
+let ``Parse.It returns Clean Hull command when given ["clean";"the";"hull"]`` () =
     let actual =
         [ "clean";"the";"hull"]
         |> CommandSource.Parse
     Assert.AreEqual(Command.CleanHull |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns GoTo DarkAlley command when given ["enter";"alley"]`` () =
+    let actual =
+        [ "enter";"alley" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(IslandFeatureIdentifier.DarkAlley |> Command.GoTo |> Some, actual)
     
+[<Test>]
+let ``Parse.It returns GoTo DarkAlley command when given ["enter";"the";"alley"]`` () =
+    let actual =
+        [ "enter";"the";"alley" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(IslandFeatureIdentifier.DarkAlley |> Command.GoTo |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns GoTo DarkAlley command when given ["enter";"dark";"alley"]`` () =
+    let actual =
+        [ "enter";"dark";"alley" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(IslandFeatureIdentifier.DarkAlley |> Command.GoTo |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns GoTo DarkAlley command when given ["enter";"the";"dark";"alley"]`` () =
+    let actual =
+        [ "enter";"the";"dark";"alley" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(IslandFeatureIdentifier.DarkAlley |> Command.GoTo |> Some, actual)

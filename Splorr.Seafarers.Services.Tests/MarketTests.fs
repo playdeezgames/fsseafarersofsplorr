@@ -24,8 +24,7 @@ let ``DetermineSalePrice.It calculates the selling price for the the described c
     let input = market
     let expected = descriptor.BasePrice * market.Demand / market.Supply
     let actual =
-        input
-        |> Market.DetermineSalePrice descriptor
+        Market.DetermineSalePrice (descriptor, input)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -33,8 +32,7 @@ let ``DeterminePurchasePrice.It calculates the buying price for the described co
     let input = market
     let expected = descriptor.BasePrice * market.Demand / market.Supply * (1.0 - descriptor.Discount)
     let actual =
-        input
-        |> Market.DeterminePurchasePrice descriptor
+        Market.DeterminePurchasePrice (descriptor, input)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -45,8 +43,7 @@ let ``ChangeDemand.It adds the given demand to the given markets demand and retu
         {input with 
             Demand = input.Demand + inputChange}
     let actual =
-        input
-        |> Market.ChangeDemand inputChange
+        Market.ChangeDemand (inputChange, input)
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -57,6 +54,5 @@ let ``ChangeSupply.It adds the given supply to the given markets supply and retu
         {input with 
             Supply = input.Supply + inputChange}
     let actual =
-        input
-        |> Market.ChangeSupply inputChange
+        Market.ChangeSupply (inputChange, input)
     Assert.AreEqual(expected, actual)

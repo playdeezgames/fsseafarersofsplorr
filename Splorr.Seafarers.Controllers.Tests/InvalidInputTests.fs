@@ -14,5 +14,5 @@ let ``Run.It returns the given gamestate.`` () =
     let expected =previousGameState |> Some
     let actual =
         input
-        |> ErrorMessage.Run sinkStub ""
+        |> ErrorMessage.Run sinkDummy ""
     Assert.AreEqual(expected, actual)

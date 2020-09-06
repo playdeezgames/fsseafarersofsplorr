@@ -7,11 +7,13 @@
   <ItemGroup>
     <Compile Include="Utility.fs" />
     <Compile Include="AvatarInventory.fs" />
+    <Compile Include="AvatarIslandFeature.fs" />
     <Compile Include="AvatarIslandMetric.fs" />
     <Compile Include="AvatarJob.fs" />
     <Compile Include="AvatarMetric.fs" />
     <Compile Include="Commodity.fs" />
     <Compile Include="Island.fs" />
+    <Compile Include="IslandFeature.fs" />
     <Compile Include="IslandItem.fs" />
     <Compile Include="IslandJob.fs" />
     <Compile Include="IslandMarket.fs" />

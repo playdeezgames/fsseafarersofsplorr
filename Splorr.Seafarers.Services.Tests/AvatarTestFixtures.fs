@@ -3,12 +3,11 @@
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
+open System
 
 let internal random = System.Random()
 let internal rewardRange = (1.0,10.0)
 let internal singleLocation = [(0.0, 0.0)] |> Set.ofList
-let private vesselStatisticTemplateSourceStub () = Map.empty
-let private vesselStatisticSinkStub (_) (_) = ()
 let internal vesselSingleStatisticSource (_) (identifier) = 
     match identifier with
     | VesselStatisticIdentifier.FoulRate ->
@@ -25,10 +24,25 @@ let internal vesselSingleStatisticSource (_) (identifier) =
         None
 let internal vesselSingleStatisticSink (_) (_) = ()
 
+type TestJobCreationContext
+        (
+            termSources                : TermSources, 
+            worldSingleStatisticSource : WorldSingleStatisticSource
+        ) =
+    interface UtilitySortListRandomlyContext with
+        member _.random : Random = random
+
+    interface JobCreationContext with
+        member _.termSources : TermSources = termSources
+        member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
+
+let internal jobCreationContextStub =
+    TestJobCreationContext
+        (termSourcesStub, 
+        worldSingleStatisticSourceStub)
+
 let internal avatarId = "avatar"
 let internal job =
     Job.Create 
-        termSources 
-        worldSingleStatisticSourceStub
-        random  
+        jobCreationContextStub
         singleLocation

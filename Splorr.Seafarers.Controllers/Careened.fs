@@ -89,8 +89,8 @@ module Careened =
             |> Gamestate.Careened
             |> Some
         | Some Command.WeighAnchor ->
-            avatarId
-            |> Gamestate.AtSea
+            (None, avatarId)
+            |> Gamestate.InPlay
             |> Some
         | _ ->
             ("Maybe try 'help'?",(side, avatarId)

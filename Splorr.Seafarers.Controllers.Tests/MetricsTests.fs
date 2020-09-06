@@ -18,7 +18,7 @@ let ``Run.It returns the given gamestate.`` () =
         input
         |> Metrics.Run
             avatarMetricSourceStub
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -26,13 +26,13 @@ let ``Run.It works when all of the metrics have counters.`` () =
     let inputWorld =
         world
     let input = 
-        inputWorld
-        |> Gamestate.AtSea
+        (None, inputWorld)
+        |> Gamestate.InPlay
     let expected = input |> Some
     let actual =
         input
         |> Metrics.Run 
             avatarMetricSourceStub
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 

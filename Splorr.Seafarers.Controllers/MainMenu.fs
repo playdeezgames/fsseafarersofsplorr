@@ -58,8 +58,8 @@ module MainMenu =
             (avatarId : string) =
         function
         | Some Command.Resume ->
-            avatarId
-            |> Gamestate.AtSea
+            (None, avatarId)
+            |> Gamestate.InPlay
             |> Some
         | Some (Command.Abandon Game)->
             None
@@ -71,44 +71,16 @@ module MainMenu =
             |> HandleInvalidCommand
 
     let private HandleCommandNoGame
-            (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
-            (avatarJobSink                   : AvatarJobSink)
-            (islandSingleNameSink            : IslandSingleNameSink)
-            (islandSingleStatisticSink       : IslandSingleStatisticSink)
-            (islandSource                    : IslandSource)
-            (islandStatisticTemplateSource   : IslandStatisticTemplateSource)
-            (nameSource                      : TermSource)
-            (rationItemSource                : RationItemSource)
-            (shipmateRationItemSink          : ShipmateRationItemSink)
-            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
-            (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
-            (vesselSingleStatisticSource     : VesselSingleStatisticSource)
-            (vesselStatisticSink             : VesselStatisticSink)
-            (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
-            (worldSingleStatisticSource      : WorldSingleStatisticSource)
+            (context : WorldCreateContext)
             =
         function
         | Some (Command.Start avatarId)->
             World.Create 
-                avatarIslandSingleMetricSink
-                avatarJobSink
-                islandSingleNameSink
-                islandSingleStatisticSink
-                islandSource
-                islandStatisticTemplateSource
-                nameSource
-                worldSingleStatisticSource
-                shipmateStatisticTemplateSource
-                shipmateSingleStatisticSink
-                rationItemSource
-                vesselStatisticTemplateSource
-                vesselStatisticSink
-                vesselSingleStatisticSource
-                shipmateRationItemSink
+                context
                 (System.Random())
                 avatarId
-            avatarId
-            |> Gamestate.AtSea
+            (None, avatarId)
+            |> Gamestate.InPlay
             |> Some
         | Some Command.Quit ->
             None
@@ -121,85 +93,29 @@ module MainMenu =
 
 
     let private HandleCommand
-            (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
-            (avatarJobSink                   : AvatarJobSink)
-            (islandSingleNameSink            : IslandSingleNameSink)
-            (islandSingleStatisticSink       : IslandSingleStatisticSink)
-            (islandSource                    : IslandSource)
-            (islandStatisticTemplateSource   : IslandStatisticTemplateSource)
-            (nameSource                      : TermSource)
-            (worldSingleStatisticSource      : WorldSingleStatisticSource)
-            (rationItemSource                : RationItemSource)
-            (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
-            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
-            (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
-            (vesselStatisticSink             : VesselStatisticSink)
-            (vesselSingleStatisticSource     : VesselSingleStatisticSource)
-            (shipmateRationItemSink          : ShipmateRationItemSink)
-            (avatarId                        : string option) 
-            (command                         : Command option) 
+            (context  : WorldCreateContext)
+            (avatarId : string option) 
+            (command  : Command option) 
             : Gamestate option =
         match avatarId with
         | Some w ->
             HandleCommandInGame w command
         | _ ->
             HandleCommandNoGame 
-                avatarIslandSingleMetricSink
-                avatarJobSink
-                islandSingleNameSink
-                islandSingleStatisticSink
-                islandSource
-                islandStatisticTemplateSource
-                nameSource
-                rationItemSource
-                shipmateRationItemSink
-                shipmateSingleStatisticSink
-                shipmateStatisticTemplateSource
-                vesselSingleStatisticSource
-                vesselStatisticSink
-                vesselStatisticTemplateSource
-                worldSingleStatisticSource
+                context
                 command
 
     let Run 
-            (avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink)
-            (avatarJobSink                   : AvatarJobSink)
-            (islandSingleNameSink            : IslandSingleNameSink)
-            (islandSingleStatisticSink       : IslandSingleStatisticSink)
-            (islandSource                    : IslandSource)
-            (islandStatisticTemplateSource   : IslandStatisticTemplateSource)
-            (rationItemSource                : RationItemSource)
-            (shipmateRationItemSink          : ShipmateRationItemSink)
-            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
-            (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
-            (termNameSource                  : TermSource)
-            (vesselSingleStatisticSource     : VesselSingleStatisticSource)
-            (vesselStatisticSink             : VesselStatisticSink)
-            (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
-            (worldSingleStatisticSource      : WorldSingleStatisticSource)
-            (commandSource                   : CommandSource) 
-            (messageSink                     : MessageSink) 
-            (avatarId                        : string option) 
+            (context       : WorldCreateContext)
+            (commandSource : CommandSource) 
+            (messageSink   : MessageSink) 
+            (avatarId      : string option) 
             : Gamestate option =
         UpdateDisplay 
             messageSink 
             avatarId.IsSome
         HandleCommand
-            avatarIslandSingleMetricSink
-            avatarJobSink
-            islandSingleNameSink
-            islandSingleStatisticSink
-            islandSource
-            islandStatisticTemplateSource
-            termNameSource
-            worldSingleStatisticSource
-            rationItemSource
-            shipmateStatisticTemplateSource
-            shipmateSingleStatisticSink
-            vesselStatisticTemplateSource
-            vesselStatisticSink
-            vesselSingleStatisticSource
-            shipmateRationItemSink
+            context
             avatarId
             (commandSource())
 

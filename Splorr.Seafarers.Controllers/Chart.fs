@@ -139,7 +139,7 @@ module Chart =
             messageSink 
             chartName 
             avatarId
-        avatarId
-        |> Gamestate.AtSea
+        (None, avatarId)
+        |> Gamestate.InPlay
         |> Some
 

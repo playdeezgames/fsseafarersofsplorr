@@ -24,15 +24,14 @@ module ItemList =
             (Hue.Sublabel, "---------------------+----------+----------" |> Line) |> Hued
         ]
         |> List.iter messageSink
-        let commodities = commoditySource()
         let items = itemSource()
         location
         |> islandItemSource
         |> Set.iter (fun item -> 
             let descriptor = items.[item]
             let markets = islandMarketSource location
-            let sellPrice: float = descriptor |> Item.DetermineSalePrice commodities markets
-            let buyPrice: float = descriptor |> Item.DeterminePurchasePrice commodities markets
+            let sellPrice: float = descriptor |> Item.DetermineSalePrice commoditySource markets
+            let buyPrice: float = descriptor |> Item.DeterminePurchasePrice commoditySource markets
             [
                 (Hue.Value, descriptor.ItemName |> sprintf "%-20s" |> Text) |> Hued
                 (Hue.Sublabel, " | " |> Text) |> Hued
@@ -47,8 +46,8 @@ module ItemList =
             (Hue.Value, avatarId |> Avatar.GetMoney shipmateSingleStatisticSource |> sprintf "%f" |> Line) |> Hued
         ]
         |> List.iter messageSink
-        (Dock, location, avatarId)
-        |> Gamestate.Docked
+        (Some(IslandFeatureIdentifier.Dock, location), avatarId)
+        |> Gamestate.InPlay
         |> Some
 
     let Run 

@@ -2,6 +2,9 @@
 open System.Data.SQLite
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Persistence
+open Splorr.Seafarers.Services
+open Splorr.Seafarers.Controllers
+open System
 
 let bootstrapConnection () 
         : SQLiteConnection =
@@ -163,7 +166,7 @@ let main argv =
         |> Persister.unpackOrThrow
 
     let shipmateStatisticTemplateSource () 
-            : Map<ShipmateStatisticIdentifier, ShipmateStatisticTemplate> =
+            : Map<ShipmateStatisticIdentifier, StatisticTemplate> =
         connection |> ShipmateStatisticTemplate.GetList
         |> Persister.unpackOrThrow
 
@@ -284,54 +287,85 @@ let main argv =
         IslandJob.GetForIslandByIndex connection location
         >> Persister.unpackOrThrow
 
+    let islandFeatureGeneratorSource() =
+        IslandFeature.GetGenerators connection
+        |> Persister.unpackOrThrow
+
+    let islandSingleFeatureSink (location:Location) =
+        IslandFeature.AddToIsland connection location
+        >> Persister.unpackOrThrow
+
+    let islandFeatureSource =
+        IslandFeature.GetForIsland connection
+        >> Persister.unpackOrThrow
+
+    let islandSingleFeatureSource (location : Location) =
+        IslandFeature.ExistsForIsland connection location
+        >> Persister.unpackOrThrow
+
+    let avatarIslandFeatureSink =
+        AvatarIslandFeature.SetFeatureForAvatar connection
+        >> Persister.unpackOrThrow
+
+    let context : RunnerRunContext =
+        SplorrContext
+            (avatarInventorySink,
+            avatarInventorySource,
+            avatarIslandFeatureSink,
+            avatarIslandSingleMetricSink,
+            avatarIslandSingleMetricSource,
+            avatarJobSink,
+            avatarJobSource,
+            avatarMessagePurger,
+            avatarMessageSink,
+            avatarMessageSource,
+            avatarMetricSource,
+            avatarShipmateSource,
+            avatarSingleMetricSink,
+            avatarSingleMetricSource,
+            commoditySource,
+            islandFeatureGeneratorSource,
+            islandFeatureSource,
+            islandItemSink ,
+            islandItemSource, 
+            islandJobPurger,
+            islandJobSink,
+            islandJobSource,
+            islandLocationByNameSource,
+            islandMarketSink ,
+            islandMarketSource, 
+            islandSingleFeatureSink,
+            islandSingleFeatureSource,
+            islandSingleJobSource,
+            islandSingleMarketSink, 
+            islandSingleMarketSource,
+            islandSingleNameSink,
+            islandSingleNameSource,
+            islandSingleStatisticSink,
+            islandSingleStatisticSource,
+            islandSource,
+            islandStatisticTemplateSource,
+            itemSource ,
+            Random(),
+            rationItemSource,
+            shipmateRationItemSink,
+            shipmateRationItemSource,
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource,
+            shipmateStatisticTemplateSource,
+            switchSource ,
+            termNameSource,
+            termSources,
+            vesselSingleStatisticSink,
+            vesselSingleStatisticSource,
+            vesselStatisticSink,
+            vesselStatisticTemplateSource,
+            worldSingleStatisticSource) 
+        :> RunnerRunContext
+
     try
         Runner.Run 
-            avatarInventorySink
-            avatarInventorySource
-            avatarIslandSingleMetricSink
-            avatarIslandSingleMetricSource
-            avatarJobSink
-            avatarJobSource
-            avatarMessagePurger
-            avatarMessageSink
-            avatarMessageSource
-            avatarMetricSource
-            avatarShipmateSource
-            avatarSingleMetricSink
-            avatarSingleMetricSource
-            commoditySource
-            islandItemSink 
-            islandItemSource 
-            islandJobPurger
-            islandJobSink
-            islandJobSource
-            islandLocationByNameSource
-            islandMarketSink 
-            islandMarketSource 
-            islandSingleJobSource
-            islandSingleMarketSink 
-            islandSingleMarketSource
-            islandSingleNameSink
-            islandSingleNameSource
-            islandSingleStatisticSink
-            islandSingleStatisticSource
-            islandStatisticTemplateSource
-            islandSource
-            itemSource 
-            rationItemSource
-            shipmateRationItemSink
-            shipmateRationItemSource
-            shipmateSingleStatisticSink
-            shipmateSingleStatisticSource
-            shipmateStatisticTemplateSource
-            switchSource 
-            termNameSource
-            termSources
-            vesselSingleStatisticSink
-            vesselSingleStatisticSource
-            vesselStatisticSink
-            vesselStatisticTemplateSource
-            worldSingleStatisticSource
+            context
     finally
         connection.Close()
     0

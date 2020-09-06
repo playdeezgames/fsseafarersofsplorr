@@ -59,8 +59,8 @@ module Jobs =
                 islandSingleNameSource
                 islandJobSource
                 messageSink)
-        (Dock, location, avatarId)
-        |> Gamestate.Docked
+        (Some(IslandFeatureIdentifier.Dock, location), avatarId)
+        |> Gamestate.InPlay
         |> Some
 
 

@@ -7,6 +7,9 @@ open Splorr.Seafarers.Models
 open CommonTestFixtures
 open AvatarTestFixtures
 
+let private inputAvatarId = "avatar"
+
+
 [<Test>]
 let ``GetReputation.It retrieves the reputation of the primary shipmate.`` () =
     let inputReputation = 100.0
@@ -257,8 +260,6 @@ let ``SetPosition.It sets a given position.`` () =
             raise (System.NotImplementedException "Sink - Dont call me.")
     input
     |> Avatar.SetPosition vesselSingleStatisticSource vesselSingleStatisticSink inputPosition
-
-let private inputAvatarId = "avatar"
 
 [<Test>]
 let ``Move.It moves the avatar.`` () =
@@ -816,7 +817,7 @@ let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a ALIVE when given an avatar with abo
     let inputAvatarId = avatarId
     let inputShipmateId = Primary
     match Shipmate.GetStatus shipmateSingleStatisticSource inputAvatarId inputShipmateId with
-    | Alive -> Assert.Pass("It detected that the avatar is alive")
+    | Alive -> ()
     | _ -> Assert.Fail("It detected that the avatar is not alive")
 
 [<Test>]//TODO - bad name
@@ -833,7 +834,7 @@ let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a ZERO_HEALTH when given an avatar at
     let inputAvatarId = avatarId
     let inputShipmateId = Primary
     match Shipmate.GetStatus shipmateSingleStatisticSource inputAvatarId inputShipmateId with
-    | Dead ZeroHealth -> Assert.Pass("It detected that the avatar is dead of zero health")
+    | Dead ZeroHealth -> ()
     | _ -> Assert.Fail("It detected that the avatar is not dead")
 
 [<Test>]//TODO - bad name
@@ -850,7 +851,7 @@ let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a OLD_AGE when given an avatar at max
     let inputAvatarId = avatarId
     let inputShipmateId = Primary
     match Shipmate.GetStatus shipmateSingleStatisticSource inputAvatarId inputShipmateId with
-    | Dead OldAge -> Assert.Pass("It detected that the avatar is dead of old age")
+    | Dead OldAge -> ()
     | _ -> Assert.Fail("It detected that the avatar is not dead")
 
 [<Test>]
@@ -862,7 +863,7 @@ let ``AddMessages.It adds messages to a given avatar.`` () =
     let avatarMessageSink (_) (message:string) =
         match message with
         | x when x = firstMessage || x = secondMessage ->
-            Assert.Pass("Got an expected message.")
+            ()
         | _ ->
             Assert.Fail("Got an unexpected message.")
     input
@@ -1103,3 +1104,66 @@ let ``GetHeading.It gets the heading of an avatar.`` () =
         inputAvatarId
         |> Avatar.GetHeading vesselSingleStatisticSource
     Assert.AreEqual(expected, actual)
+
+[<Test>]
+let ``Move.It transforms the avatar within the given world.`` () =
+    let vesselSingleStatisticSource (_) (identifier) = 
+        match identifier with
+        | VesselStatisticIdentifier.PositionX
+        | VesselStatisticIdentifier.PositionY ->
+            {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=50.0} |> Some
+        | VesselStatisticIdentifier.Speed ->
+            {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=1.0} |> Some
+        | VesselStatisticIdentifier.Heading ->
+            {MinimumValue=0.0; MaximumValue=6.5; CurrentValue=0.0} |> Some
+        | VesselStatisticIdentifier.FoulRate ->
+            {MinimumValue=0.01; MaximumValue=0.01; CurrentValue=0.01} |> Some
+        | _ ->
+            None
+    let mutable xPositionCalled = 0
+    let mutable yPositionCalled = 0
+    let vesselSingleStatisticSink (_) (identifier:VesselStatisticIdentifier,_) =
+        match identifier with
+        | VesselStatisticIdentifier.PositionX ->
+            xPositionCalled <- xPositionCalled + 1
+        | VesselStatisticIdentifier.PositionY ->
+            yPositionCalled <- yPositionCalled + 1
+        | _ ->
+            raise (System.NotImplementedException "Kaboom set")
+    let avatarShipmateSource (_) = 
+        [ Primary ]
+    let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
+        match identifier with
+        | ShipmateStatisticIdentifier.Turn ->
+            Statistic.Create (0.0, 50000.0) 0.0 |> Some
+        | ShipmateStatisticIdentifier.Satiety ->
+            Statistic.Create (0.0, 100.0) 50.0 |> Some
+        | _ ->
+            raise (System.NotImplementedException "kaboom shipmateSingleStatisticSource")
+            None
+    let shipmateSingleStatisticSink (_) (_) (identifier:ShipmateStatisticIdentifier, statistic: Statistic option) =
+        match identifier with
+        | ShipmateStatisticIdentifier.Turn ->
+            Assert.AreEqual(1.0, statistic.Value.CurrentValue)
+        | ShipmateStatisticIdentifier.Satiety ->
+            Assert.AreEqual(49.0, statistic.Value.CurrentValue)
+        | _ ->
+            raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
+    let avatarInventorySource (_) =
+        Map.empty
+    let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
+        Assert.AreEqual(Map.empty, inventory)
+    Avatar.Move 
+            avatarInventorySink
+            avatarInventorySource
+            avatarShipmateSource
+            (assertAvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL])
+            avatarSingleMetricSourceStub
+            shipmateRationItemSourceStub 
+            shipmateSingleStatisticSink
+            shipmateSingleStatisticSource
+            vesselSingleStatisticSink 
+            vesselSingleStatisticSource 
+            avatarId
+    Assert.AreEqual(1, xPositionCalled)
+    Assert.AreEqual(1, yPositionCalled)

@@ -17,8 +17,8 @@ let ``Run.It returns Docked with the given location and world.`` () =
     let inputLocation = dockLocation
     let inputWorld = dockWorld
     let expected = 
-        (Dock, inputLocation, inputWorld) 
-        |> Gamestate.Docked 
+        (Some(IslandFeatureIdentifier.Dock, inputLocation), inputWorld) 
+        |> Gamestate.InPlay 
         |> Some
     let actual =
         (inputLocation, inputWorld)
@@ -26,6 +26,6 @@ let ``Run.It returns Docked with the given location and world.`` () =
             islandJobSourceStub
             islandSingleNameSourceStub
             islandSourceStub
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)
 

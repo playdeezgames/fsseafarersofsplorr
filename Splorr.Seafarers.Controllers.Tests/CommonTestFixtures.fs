@@ -13,7 +13,7 @@ let internal connectionString =
 let internal random = 
     Random()
 
-let internal sinkStub 
+let internal sinkDummy 
         (_ : Message) 
         : unit = 
     ()
@@ -28,7 +28,7 @@ let internal createConnection () : SQLiteConnection =
 
 let internal avatarId : string = ""
 
-let internal statisticDescriptors =
+let private statisticDescriptors =
     [
         (ShipmateStatisticIdentifier.Satiety,{
             StatisticName="satiety"
@@ -58,11 +58,11 @@ let internal statisticDescriptors =
 let internal shipmateStatisticTemplateSourceStub () =
     statisticDescriptors
     |> Map.ofList
-let internal vesselStatisticTemplateSourceStub () 
-        : Map<VesselStatisticIdentifier, VesselStatisticTemplate>= 
+let internal vesselStatisticTemplateSourceDummy () 
+        : Map<VesselStatisticIdentifier, StatisticTemplate>= 
     Map.empty
 
-let internal vesselStatisticSinkStub (_) (_) = 
+let internal vesselStatisticSinkDummy (_) (_) = 
     ()
 
 let internal vesselSingleStatisticSourceStub (_) (identifier: VesselStatisticIdentifier) = 
@@ -88,14 +88,25 @@ let internal vesselSingleStatisticSourceStub (_) (identifier: VesselStatisticIde
 
 let internal vesselSingleStatisticSinkStub (_) (_) = ()
 
-let internal avatarMessageSourceStub (_) = []
+let internal avatarMessageSourceDummy (_) = []
 let internal avatarMessageSinkStub (_) (_) = ()
 let internal avatarMessagePurgerStub (_) = ()
 
-let avatarExpectedMessagesSink (expected:string list) (_) (actual:string) : unit =
+let internal avatarMessageSinkExplode (_) (_) =
+    raise (System.NotImplementedException "avatarMessageSinkExplode")
+
+let internal avatarMessageSinkExpected (expected:string list) (_) (message:string) =
+    match expected |> List.tryFind ((=) message) with
+    | None ->
+        Assert.Fail(sprintf "did not find '%s'" message)
+    | _ ->
+        ()
+
+
+let avatarMessagesSinkFake (expected:string list) (_) (actual:string) : unit =
     match expected |> List.tryFind (fun x -> x = actual) with
     | Some _ ->
-        Assert.Pass ("Valid message received.")
+        ()
     | _ ->
         Assert.Fail (actual |> sprintf "Invalid Message Received - `%s`")
 
@@ -180,6 +191,7 @@ let internal avatarIslandSingleMetricSourceStub (_) (_) (_) = None
 
 let internal islandSingleNameSinkStub (_) (_) = ()
 let internal islandSingleNameSourceStub (_) = None
+let internal islandSingleFeatureSourceStub (_) (_) = false
 let internal islandLocationByNameSourceStub (_) = None
 
 let internal islandSingleStatisticSinkStub (_) (_) = ()
@@ -201,3 +213,85 @@ let islandSourceStub () = [(0.0, 0.0)]
 let islandJobPurgerStub (_) (_) = ()
 
 let islandSingleJobSourceStub (_) (_) = None
+
+let islandFeatureSourceStub (_) = []
+
+let internal avatarIslandFeatureSinkDummy (_) : unit =
+    raise (System.NotImplementedException "avatarIslandFeatureSinkDummy")
+
+type TestAtSeaRunContext 
+        (
+            avatarInventorySink: AvatarInventorySink, 
+            avatarInventorySource: AvatarInventorySource,
+            avatarIslandFeatureSink : AvatarIslandFeatureSink,
+            avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink,
+            avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource,
+            avatarJobSink: AvatarJobSink,
+            avatarJobSource: AvatarJobSource,
+            avatarMessagePurger: AvatarMessagePurger,
+            avatarMessageSink: AvatarMessageSink,
+            avatarMessageSource: AvatarMessageSource,
+            avatarShipmateSource: AvatarShipmateSource,
+            avatarSingleMetricSink: AvatarSingleMetricSink,
+            avatarSingleMetricSource: AvatarSingleMetricSource,
+            commoditySource: CommoditySource,
+            islandItemSink: IslandItemSink,
+            islandItemSource: IslandItemSource,
+            islandJobSink: IslandJobSink,
+            islandJobSource: IslandJobSource,
+            islandLocationByNameSource: IslandLocationByNameSource,
+            islandMarketSink: IslandMarketSink,
+            islandMarketSource: IslandMarketSource,
+            islandSingleNameSource: IslandSingleNameSource,
+            islandSingleStatisticSource: IslandSingleStatisticSource,
+            islandSource: IslandSource,
+            itemSource: ItemSource,
+            shipmateRationItemSource: ShipmateRationItemSource,
+            shipmateSingleStatisticSink: ShipmateSingleStatisticSink,
+            shipmateSingleStatisticSource: ShipmateSingleStatisticSource,
+            termSources: TermSources,
+            vesselSingleStatisticSink: VesselSingleStatisticSink,
+            vesselSingleStatisticSource: VesselSingleStatisticSource,
+            worldSingleStatisticSource: WorldSingleStatisticSource
+        ) =
+    interface UtilitySortListRandomlyContext with
+        member _.random : Random = random
+    interface AtSeaRunContext with
+        member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink
+        member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource
+        member _.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
+        member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+        member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        member _.avatarJobSink: AvatarJobSink = avatarJobSink
+        member _.avatarJobSource: AvatarJobSource = avatarJobSource
+        member _.avatarMessagePurger: AvatarMessagePurger = avatarMessagePurger
+        member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+        member _.avatarMessageSource: AvatarMessageSource = avatarMessageSource
+        member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
+        member _.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
+        member _.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
+        member _.commoditySource: CommoditySource = commoditySource
+        member _.islandItemSink: IslandItemSink = islandItemSink
+        member _.islandItemSource: IslandItemSource = islandItemSource
+        member _.islandJobSink: IslandJobSink = islandJobSink
+        member _.islandJobSource: IslandJobSource = islandJobSource
+        member _.islandLocationByNameSource: IslandLocationByNameSource = islandLocationByNameSource
+        member _.islandMarketSink: IslandMarketSink = islandMarketSink
+        member _.islandMarketSource: IslandMarketSource = islandMarketSource
+        member _.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
+        member _.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
+        member _.islandSource: IslandSource = islandSource
+        member _.itemSource: ItemSource = itemSource
+        member _.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
+        member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+        member _.termSources: TermSources = termSources
+        member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        member _.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
+
+let commandSourceExplode () : Command option =
+    raise (System.NotImplementedException "There should be no input handling here!")
+
+let commandSourceFake (expectedCommand:Command option) : unit -> Command option =
+    fun () -> expectedCommand

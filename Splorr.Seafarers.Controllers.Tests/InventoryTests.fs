@@ -22,5 +22,5 @@ let ``Run.It returns the given gamestate.`` () =
             avatarInventorySourceStub
             atSeaItemSource 
             vesselSingleStatisticSourceStub 
-            sinkStub
+            sinkDummy
     Assert.AreEqual(expected, actual)

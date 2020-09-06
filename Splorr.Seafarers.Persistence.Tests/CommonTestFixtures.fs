@@ -173,6 +173,7 @@ let private setupTerms
     |> runCommands connection
 
 let internal ExistingAvatarId = "avatar"
+let internal DockedAvatarId = "docked"
 
 let private setupMessages
         (connection:SQLiteConnection)
@@ -303,15 +304,56 @@ let private setupIslandJobs
     |> runCommands connection
 
 let internal NewAvatarId = "newavatar"
-let internal InvalidIslandLocation = (-1.0, -1.0)
+let internal InvalidIslandLocation = (-1.0, -2.0)
 
-let internal setupIslandList
+let private setupIslandList
         (connection : SQLiteConnection)
         : unit =
     [
         Views.IslandList
     ]
     |> runCommands connection
+
+let private setupIslandFeatureGenerators
+        (connection : SQLiteConnection)
+        : unit =
+    System.Enum.GetValues(typedefof<IslandFeatureIdentifier>) 
+    :?> IslandFeatureIdentifier []
+    |> Array.toList
+    |> List.map
+        (fun id ->
+            sprintf "REPLACE INTO [IslandFeatureGenerators] ([FeatureId], [FeatureWeight], [FeaturelessWeight]) VALUES (%u, 0.5, 0.5);" (id |> uint))
+    |> List.append
+        [
+            Tables.IslandFeatureGenerators
+        ]
+    |> runCommands connection
+
+let private setupIslandFeatures 
+        (location: Location)
+        (features: IslandFeatureIdentifier list)
+        (connection: SQLiteConnection)
+        : unit =
+    features
+    |> List.map
+        (fun id ->
+            sprintf "REPLACE INTO [IslandFeatures] ([IslandX], [IslandY], [FeatureId]) VALUES (%f, %f, %u);" (location |> fst) (location |> snd) (id |> uint))
+    |> List.append
+        [
+            Tables.IslandFeatures
+        ]
+    |> runCommands connection
+
+let private setupAvatarIslandFeatures
+        (avatarId : string)
+        (connection: SQLiteConnection)
+        : unit =
+    [
+        Tables.AvatarIslandFeatures
+        sprintf "REPLACE INTO [AvatarIslandFeatures] ([AvatarId], [FeatureId], [IslandX], [IslandY]) VALUES ('%s',%d, %f, %f);" avatarId (IslandFeatureIdentifier.Dock |> int32) (VisitedIslandLocation |> fst) (VisitedIslandLocation |> snd)
+    ]
+    |> runCommands connection
+
 
 let internal SetupConnection() : SQLiteConnection = 
     let connection = new SQLiteConnection(connectionString)
@@ -340,6 +382,10 @@ let internal SetupConnection() : SQLiteConnection =
         setupIslandStatistics UnvisitedIslandLocation
         setupIslandJobs VisitedIslandLocation UnvisitedIslandLocation
         setupIslandList
+        setupIslandFeatureGenerators
+        setupIslandFeatures VisitedIslandLocation [IslandFeatureIdentifier.DarkAlley]
+        setupIslandFeatures UnvisitedIslandLocation [IslandFeatureIdentifier.DarkAlley]
+        setupAvatarIslandFeatures DockedAvatarId
     ]
     |> List.iter (fun f -> f connection)
 

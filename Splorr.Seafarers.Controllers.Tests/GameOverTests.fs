@@ -13,5 +13,5 @@ let ``Run.It returns MainMenu None``() =
         |> Some
     let actual =
         input   
-        |> GameOver.Run sinkStub
+        |> GameOver.Run sinkDummy
     Assert.AreEqual(expected, actual)

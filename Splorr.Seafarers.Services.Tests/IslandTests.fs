@@ -5,6 +5,7 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open IslandTestFixtures
 open CommonTestFixtures
+open System
 
 [<Test>]
 let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =
@@ -162,6 +163,22 @@ let ``AddVisit.It does not update visit count when given turn was prior or equal
         avatarId
         location
 
+type TestIslandJobsGenerationContext
+        (islandJobSink             : IslandJobSink, 
+        islandJobSource            : IslandJobSource,
+        termSources                : TermSources,
+        worldSingleStatisticSource : WorldSingleStatisticSource) =
+    interface IslandJobsGenerationContext with
+        member _.islandJobSink   : IslandJobSink = islandJobSink
+        member _.islandJobSource : IslandJobSource = islandJobSource
+
+    interface UtilitySortListRandomlyContext with
+        member _.random : Random = random
+
+    interface JobCreationContext with
+        member _.termSources : TermSources = termSources
+        member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
+
 [<Test>]
 let ``GenerateJob.It generates a job when no job is present on the island.`` () =
     let inputLocation = (0.0, 0.0)
@@ -170,13 +187,16 @@ let ``GenerateJob.It generates a job when no job is present on the island.`` () 
         sinkCalled<-true
     let islandJobSource (_) =
         []
+    let context : IslandJobsGenerationContext =
+        TestIslandJobsGenerationContext
+            (islandJobSink,
+            islandJobSource,
+            termSourcesStub,
+            worldSingleStatisticSourceStub) 
+        :> IslandJobsGenerationContext
     inputLocation
     |> Island.GenerateJobs 
-        islandJobSink
-        islandJobSource
-        termSources 
-        worldSingleStatisticSourceStub 
-        random 
+        context
         singleDestination
     Assert.IsTrue(sinkCalled)
 
@@ -193,13 +213,16 @@ let ``GenerateJob.It does nothing when no job is present on the island and no po
                 Destination=(0.0, 0.0)
             }
         ]
+    let context : IslandJobsGenerationContext =
+        TestIslandJobsGenerationContext
+            (islandJobSink,
+            islandJobSource,
+            termSourcesStub,
+            worldSingleStatisticSourceStub) 
+        :> IslandJobsGenerationContext
     inputLocation
     |> Island.GenerateJobs 
-        islandJobSink
-        islandJobSource
-        termSources 
-        worldSingleStatisticSourceStub 
-        random 
+        context 
         Set.empty
 
 [<Test>]
@@ -326,6 +349,34 @@ let ``UpdateMarketForItemPurchase.It updates market commodity supply based on th
     input
     |> Island.UpdateMarketForItemPurchase islandSingleMarketSource islandMarketSink commoditySource inputDescriptor inputQuantity
 
-//[<Test>]
-//let ``AddVisit..`` () =
-//    raise (System.NotImplementedException "Not Implemented")
+type TestIslandCreateContext
+        (islandSingleStatisticSink : IslandSingleStatisticSink,
+        islandStatisticTemplateSource : IslandStatisticTemplateSource)=
+    interface IslandCreateContext with
+        member this.islandStatisticTemplateSource: IslandStatisticTemplateSource = islandStatisticTemplateSource
+        member _.islandSingleStatisticSink : IslandSingleStatisticSink = islandSingleStatisticSink
+
+[<Test>]
+let ``Create.It sets up statistics for an island.`` () =
+    let givenLocation = (1.0, 2.0)
+    let mutable statisticCounter : uint64 = 0UL
+    let islandSingleStatisticSink (location:Location) (identifier: IslandStatisticIdentifier, statistic: Statistic option) =
+        statisticCounter <- statisticCounter + 1UL
+        Assert.AreEqual(givenLocation, location)
+    let islandStatisticTemplateSource () =
+        Map.empty
+        |> Map.add 
+            IslandStatisticIdentifier.CareenDistance
+            {
+                StatisticTemplate.StatisticName="careen distance"
+                MinimumValue = 0.0
+                MaximumValue = 100.0
+                CurrentValue = 50.0
+            }
+    let context : IslandCreateContext =
+        TestIslandCreateContext
+            (islandSingleStatisticSink,
+            islandStatisticTemplateSource) 
+        :> IslandCreateContext
+    Island.Create context givenLocation
+    Assert.AreEqual(1UL, statisticCounter)
