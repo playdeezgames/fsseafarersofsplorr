@@ -3,61 +3,7 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
-(*
-type Suit =
-    | Wands
-    | Cups
-    | Swords
-    | Pentacles
 
-type Rank =
-    | Ace
-    | Deuce
-    | Three
-    | Four
-    | Five
-    | Six
-    | Seven
-    | Eight
-    | Nine
-    | Ten
-    | Page
-    | Knight
-    | Queen
-    | King
-
-type Arcana =
-    | Fool
-    | Magician
-    | HighPriestess
-    | Empress
-    | Emperor
-    | Hierophant
-    | Lovers
-    | Chariot
-    | Strength
-    | Hermit
-    | WheelOfFortune
-    | Justice
-    | HangedMan
-    | Death
-    | Temperance
-    | Devil
-    | Tower
-    | Star
-    | Moon
-    | Sun
-    | Judgement
-    | World
-
-type Card = 
-    | Minor of Suit * Rank
-    | Major of Arcana
-
-type Hand = Card * Card * Card
-
-type GamblingState = Card * Card * Card
-*)
 
 type AvatarMessageSource = string -> string list
 

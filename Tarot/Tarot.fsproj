@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Suit.fs" />
+    <Compile Include="Rank.fs" />
+    <Compile Include="Arcana.fs" />
+    <Compile Include="Card.fs" />
+  </ItemGroup>
+
+</Project>
