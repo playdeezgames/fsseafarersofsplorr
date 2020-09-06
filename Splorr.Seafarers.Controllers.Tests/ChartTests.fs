@@ -10,8 +10,8 @@ let ``Run.It returns the At Sea state with the given world.`` () =
     let inputName = "chartname"
     let inputWorld = world
     let expected =
-        world
-        |> Gamestate.AtSea
+        (None, world)
+        |> Gamestate.InPlay
         |> Some
     let actual =
         Chart.Run

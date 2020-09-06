@@ -26,8 +26,8 @@ let ``Run.It works when all of the metrics have counters.`` () =
     let inputWorld =
         world
     let input = 
-        inputWorld
-        |> Gamestate.AtSea
+        (None, inputWorld)
+        |> Gamestate.InPlay
     let expected = input |> Some
     let actual =
         input

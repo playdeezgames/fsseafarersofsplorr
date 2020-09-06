@@ -17,8 +17,8 @@ let private world =
 [<Test>]
 let ``Run.It returns the given AtSea Gamestate`` () =
     let input = 
-        world
-        |> Gamestate.AtSea
+        (None, world)
+        |> Gamestate.InPlay
     let expected = 
         input
         |> Some
@@ -34,8 +34,8 @@ let ``Run.It returns the given AtSea Gamestate`` () =
 [<Test>]
 let ``Run.It returns the given ConfirmQuit Gamestate`` () =
     let input = 
-        world
-        |> Gamestate.AtSea
+        (None, world)
+        |> Gamestate.InPlay
         |> Gamestate.ConfirmQuit
     let expected = 
         input
@@ -52,8 +52,8 @@ let ``Run.It returns the given ConfirmQuit Gamestate`` () =
 [<Test>]
 let ``Run.It returns the given Docked (at Dock) Gamestate`` () =
     let input = 
-        (Feature IslandFeatureIdentifier.Dock, (0.0, 0.0), world)
-        |> Gamestate.Docked
+        (Some(IslandFeatureIdentifier.Dock, (0.0, 0.0)), world)
+        |> Gamestate.InPlay
     let expected = 
         input
         |> Some
@@ -69,8 +69,8 @@ let ``Run.It returns the given Docked (at Dock) Gamestate`` () =
 [<Test>]
 let ``Run.It returns the given Docked (at Feature) Gamestate`` () =
     let input = 
-        (Feature IslandFeatureIdentifier.DarkAlley, (0.0, 0.0), world)
-        |> Gamestate.Docked
+        (Some(IslandFeatureIdentifier.DarkAlley, (0.0, 0.0)), world)
+        |> Gamestate.InPlay
     let expected = 
         input
         |> Some

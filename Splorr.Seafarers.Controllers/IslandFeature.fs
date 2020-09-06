@@ -49,8 +49,8 @@ module IslandFeature =
             |> World.AddMessages
                 context.avatarMessageSink
                 [ "Come back when you've got more money!" ]
-            (IslandFeatureIdentifier.Dock, location, avatarId)
-            |> Gamestate.Docked
+            (Some(IslandFeatureIdentifier.Dock, location), avatarId)
+            |> Gamestate.InPlay
             |> Some
         else
             "" |> Line |> messageSink
@@ -63,18 +63,18 @@ module IslandFeature =
             |> List.iter messageSink
             match commandSource() with
             | Some Command.Help ->
-                (IslandFeatureIdentifier.DarkAlley, location, avatarId)
-                |> Gamestate.Docked
+                (Some(IslandFeatureIdentifier.DarkAlley, location), avatarId)
+                |> Gamestate.InPlay
                 |> Gamestate.Help
                 |> Some
             | Some Command.Leave ->
-                (IslandFeatureIdentifier.Dock, location, avatarId)
-                |> Gamestate.Docked
+                (Some(IslandFeatureIdentifier.Dock, location), avatarId)
+                |> Gamestate.InPlay
                 |> Some
             | _ ->
                 ("Maybe try 'help'?",
-                    (IslandFeatureIdentifier.DarkAlley, location, avatarId)
-                    |> Gamestate.Docked)
+                    (Some(IslandFeatureIdentifier.DarkAlley, location), avatarId)
+                    |> Gamestate.InPlay)
                 |> Gamestate.ErrorMessage
                 |> Some
 
@@ -96,8 +96,8 @@ module IslandFeature =
                 location
                 avatarId
         | _ ->
-            (IslandFeatureIdentifier.Dock, location, avatarId)
-            |> Gamestate.Docked
+            (Some(IslandFeatureIdentifier.Dock, location), avatarId)
+            |> Gamestate.InPlay
             |> Some
             
 
@@ -118,8 +118,8 @@ module IslandFeature =
                 feature
                 avatarId
         else
-            (IslandFeatureIdentifier.Dock, location, avatarId)
-            |> Gamestate.Docked
+            (Some(IslandFeatureIdentifier.Dock, location), avatarId)
+            |> Gamestate.InPlay
             |> Some
 
     let Run 
@@ -140,7 +140,7 @@ module IslandFeature =
                 feature
                 avatarId
         | _ ->
-            avatarId
-            |> Gamestate.AtSea
+            (None, avatarId)
+            |> Gamestate.InPlay
             |> Some
 

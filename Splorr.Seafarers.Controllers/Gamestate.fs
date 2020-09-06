@@ -63,11 +63,10 @@ type AvatarMessageSource = string -> string list
 
 [<RequireQualifiedAccess>]
 type Gamestate = 
-    | AtSea        of string
+    | InPlay       of (IslandFeatureIdentifier * Location) option * string
     | Careened     of Side * string //persist to db
     | Chart        of string * string
     | ConfirmQuit  of Gamestate
-    | Docked       of IslandFeatureIdentifier * Location *  string
     | ErrorMessage of string * Gamestate 
     | GameOver     of string list
     | Help         of Gamestate
@@ -84,11 +83,10 @@ module Gamestate =
             (gamestate:Gamestate) 
             : string option =
         match gamestate with
-        | Gamestate.AtSea w            -> w |> Some
+        | Gamestate.InPlay (_,w)       -> w |> Some
         | Gamestate.Careened (_, w)    -> w |> Some
         | Gamestate.Chart (_,w)        -> w |> Some
         | Gamestate.ConfirmQuit g      -> GetWorld g
-        | Gamestate.Docked (_,_,w)     -> w |> Some
         | Gamestate.ErrorMessage (_,g) -> GetWorld g
         | Gamestate.Help g             -> GetWorld g
         | Gamestate.Inventory g        -> GetWorld g

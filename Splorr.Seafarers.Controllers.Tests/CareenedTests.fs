@@ -195,8 +195,8 @@ let ``Run.It returns At Sea when given the command Weigh Anchor.`` () =
         |> toSource
     let inputSide = Port
     let expected =
-        inputWorld
-        |> Gamestate.AtSea
+        (None, inputWorld)
+        |> Gamestate.InPlay
         |> Some
     let actual =
         inputWorld

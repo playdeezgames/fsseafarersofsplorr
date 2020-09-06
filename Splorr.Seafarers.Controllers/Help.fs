@@ -293,16 +293,16 @@ module Help =
             (gamestate   : Gamestate) 
             : Gamestate option =
         match gamestate with
-        | Gamestate.AtSea _ ->
+        | Gamestate.InPlay (None, _) ->
             messageSink |> AtSea    
         | Gamestate.Careened _ ->
             messageSink |> Careened
         | Gamestate.ConfirmQuit _ ->
             messageSink |> ConfirmQuit
-        | Gamestate.Docked (IslandFeatureIdentifier.Dock, _, _) ->
+        | Gamestate.InPlay (Some feature, _) when (feature |> fst) = IslandFeatureIdentifier.Dock ->
             messageSink |> Docked
-        | Gamestate.Docked (feature, _, _) ->
-            messageSink |> AtFeature feature
+        | Gamestate.InPlay (Some feature, _) ->
+            messageSink |> AtFeature (feature |> fst)
         | _ ->
             ()
         gamestate

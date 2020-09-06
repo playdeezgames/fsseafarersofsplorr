@@ -47,7 +47,7 @@ let internal islandSingleNameSinkStub (_) (_) = ()
 let internal islandSingleStatisticSinkStub (_) (_) = ()
 let internal islandStatisticTemplateSourceStub () = Map.empty
 let internal previousState = 
-    avatarId
-    |> Gamestate.AtSea
+    (None,avatarId)
+    |> Gamestate.InPlay
 
 

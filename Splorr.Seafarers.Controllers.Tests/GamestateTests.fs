@@ -23,8 +23,8 @@ let ``GetWorld.It returns the world embedded within the given AtSea Gamestate.``
         world
         |> Some
     let actual = 
-        world 
-        |> Gamestate.AtSea 
+        (None, world)
+        |> Gamestate.InPlay
         |> Gamestate.GetWorld
     Assert.AreEqual(expected, actual)
 
@@ -32,8 +32,8 @@ let ``GetWorld.It returns the world embedded within the given AtSea Gamestate.``
 let ``GetWorld.It returns the world embedded within the given Docked (at Dock) Gamestate.`` () =
     let expected = world |> Some
     let actual = 
-        (IslandFeatureIdentifier.Dock, (0.0,0.0), world)
-        |> Gamestate.Docked 
+        (Some(IslandFeatureIdentifier.Dock, (0.0,0.0)), world)
+        |> Gamestate.InPlay 
         |> Gamestate.GetWorld
     Assert.AreEqual(expected, actual)
 
@@ -51,8 +51,8 @@ let ``GetWorld.It returns the world embedded within the given MainMenu Gamestate
 let ``GetWorld.It returns the world embedded within the given Status Gamestate when a world is present.`` () =
     let expected =world |> Some
     let actual = 
-        world
-        |> Gamestate.AtSea
+        (None, world)
+        |> Gamestate.InPlay
         |> Gamestate.Status
         |> Gamestate.GetWorld
     Assert.AreEqual(expected, actual)
@@ -70,8 +70,8 @@ let ``GetWorld.It returns the world embedded within the given Chart Gamestate wh
 let ``GetWorld.It returns the world embedded within the given Help Gamestate when a world is present.`` () =
     let expected =world |> Some
     let actual = 
-        world
-        |> Gamestate.AtSea
+        (None, world)
+        |> Gamestate.InPlay
         |> Gamestate.Help
         |> Gamestate.GetWorld
     Assert.AreEqual(expected, actual)
@@ -80,8 +80,8 @@ let ``GetWorld.It returns the world embedded within the given Help Gamestate whe
 let ``GetWorld.It returns the world embedded within the given Metrics Gamestate when a world is present.`` () =
     let expected = world |> Some
     let actual = 
-        world
-        |> Gamestate.AtSea
+        (None, world)
+        |> Gamestate.InPlay
         |> Gamestate.Metrics
         |> Gamestate.GetWorld
     Assert.AreEqual(expected, actual)
@@ -90,8 +90,8 @@ let ``GetWorld.It returns the world embedded within the given Metrics Gamestate 
 let ``GetWorld.It returns the world embedded within the given InvalidInput Gamestate when a world is present.`` () =
     let expected = world |> Some
     let actual = 
-        ("Maybe try 'help'?",world
-        |> Gamestate.AtSea)
+        ("Maybe try 'help'?",(None, world)
+        |> Gamestate.InPlay)
         |> Gamestate.ErrorMessage
         |> Gamestate.GetWorld
     Assert.AreEqual(expected, actual)
@@ -117,8 +117,8 @@ let ``GetWorld.It returns None from the given MainMenu Gamestate when no world i
 [<Test>]
 let ``GetWorld.It returns world from the given Docked (at Jobs) Gamestate.`` () =
     let actual =
-        (IslandFeatureIdentifier.Dock, (0.0, 0.0),world)
-        |> Gamestate.Docked
+        (Some(IslandFeatureIdentifier.Dock, (0.0, 0.0)),world)
+        |> Gamestate.InPlay
         |> Gamestate.Jobs
         |> Gamestate.GetWorld
     Assert.AreEqual(world |> Some, actual)
@@ -127,8 +127,8 @@ let ``GetWorld.It returns world from the given Docked (at Jobs) Gamestate.`` () 
 let ``GetWorld.It returns world from the given ItemList Gamestate.`` () =
     let expected = world |> Some
     let actual =
-        (IslandFeatureIdentifier.Dock, (0.0, 0.0),world)
-        |> Gamestate.Docked
+        (Some(IslandFeatureIdentifier.Dock, (0.0, 0.0)),world)
+        |> Gamestate.InPlay
         |> Gamestate.ItemList
         |> Gamestate.GetWorld
     Assert.AreEqual(expected, actual)
@@ -137,8 +137,8 @@ let ``GetWorld.It returns world from the given ItemList Gamestate.`` () =
 let ``GetWorld.It returns world from the given Inventory Gamestate.`` () =
     let expected = world |> Some
     let actual =
-        (IslandFeatureIdentifier.Dock, (0.0, 0.0),world)
-        |> Gamestate.Docked
+        (Some(IslandFeatureIdentifier.Dock, (0.0, 0.0)),world)
+        |> Gamestate.InPlay
         |> Gamestate.Inventory
         |> Gamestate.GetWorld
     Assert.AreEqual(expected, actual)
@@ -155,8 +155,8 @@ let ``GetWorld.It returns None from the given GameOver Gamestate.`` () =
 [<Test>]
 let ``CheckForAvatarDeath.It returns the original gamestate when the avatar embedded therein is not dead.`` () =
     let input =
-        world
-        |> Gamestate.AtSea
+        (None, world)
+        |> Gamestate.InPlay
         |> Some
     let expected =
         input
@@ -186,8 +186,8 @@ let ``CheckForAvatarDeath.It returns the original gamestate when there is not a 
 [<Test>]
 let ``CheckForAvatarDeath.It returns gameover when the avatar embedded therein is dead.`` () =
     let input =
-        world
-        |> Gamestate.AtSea
+        (None, world)
+        |> Gamestate.InPlay
         |> Some
     let expected =
         []

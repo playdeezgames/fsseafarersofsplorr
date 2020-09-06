@@ -24,7 +24,7 @@ module Runner =
 
         let nextGamestate : Gamestate option = 
             match gamestate with
-            | Gamestate.AtSea avatarId -> 
+            | Gamestate.InPlay (None, avatarId) -> 
                 AtSea.Run 
                     context
                     random 
@@ -66,7 +66,7 @@ module Runner =
                     messageSink 
                     state
             
-            | Gamestate.Docked (IslandFeatureIdentifier.Dock, location, avatarId) -> 
+            | Gamestate.InPlay (Some (IslandFeatureIdentifier.Dock, location), avatarId) -> 
                 Docked.Run 
                     context
                     commandSource 
@@ -74,7 +74,7 @@ module Runner =
                     location 
                     avatarId
 
-            | Gamestate.Docked (feature, location, avatarId) -> 
+            | Gamestate.InPlay (Some (feature, location), avatarId) -> 
                 IslandFeature.Run
                     context
                     commandSource
@@ -83,7 +83,7 @@ module Runner =
                     feature
                     avatarId
 
-            | Gamestate.ItemList (Gamestate.Docked (_, location, avatarId)) -> 
+            | Gamestate.ItemList (Gamestate.InPlay (Some (_, location), avatarId)) -> 
                 ItemList.Run 
                     context.avatarMessageSource
                     context.commoditySource 
@@ -99,7 +99,7 @@ module Runner =
             | Gamestate.ItemList _ ->
                 raise (System.NotImplementedException "Gamestate.ItemList with unexpected inner gamestate")
 
-            | Gamestate.Jobs (Gamestate.Docked (IslandFeatureIdentifier.Dock, location, avatarId)) -> 
+            | Gamestate.Jobs (Gamestate.InPlay (Some (IslandFeatureIdentifier.Dock, location), avatarId)) -> 
                 Jobs.Run 
                     context.islandJobSource
                     context.islandSingleNameSource

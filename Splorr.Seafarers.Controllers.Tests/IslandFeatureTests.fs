@@ -31,8 +31,8 @@ let ``Run.It should return AtSea when the given island does not exist.`` () =
     let givenAvatarId = avatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let expected=
-        givenAvatarId 
-        |> Gamestate.AtSea 
+        (None, givenAvatarId)
+        |> Gamestate.InPlay
         |> Some
     let context = 
         TestIslandFeatureRunContext
@@ -59,8 +59,8 @@ let ``Run.It should return Dock state when the given island exists but does not 
     let givenAvatarId = avatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let expected=
-        (Feature IslandFeatureIdentifier.Dock, givenLocation, givenAvatarId) 
-        |> Gamestate.Docked 
+        (Some(IslandFeatureIdentifier.Dock, givenLocation), givenAvatarId) 
+        |> Gamestate.InPlay
         |> Some
     let islandSingleNameSource (_) = Some ""
     let context = 
@@ -89,8 +89,8 @@ let ``Run.It should return Dock state when dark alley exists but the player does
     let givenAvatarId = avatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let expected=
-        (Feature IslandFeatureIdentifier.Dock, givenLocation, givenAvatarId) 
-        |> Gamestate.Docked 
+        (Some(IslandFeatureIdentifier.Dock, givenLocation), givenAvatarId) 
+        |> Gamestate.InPlay 
         |> Some
     let islandSingleFeatureSource (_) (_) = true
     let islandSingleNameSource (_) = Some ""
@@ -128,8 +128,8 @@ let ``Run.When in the dark alley, the leave command will take the player back to
     let shipmateSingleStatisticSource (_) (_) (_) = 
         Statistic.Create (5.0,5.0) 5.0 |> Some
     let expected =
-        (Feature IslandFeatureIdentifier.Dock, givenLocation, avatarId)
-        |> Gamestate.Docked
+        (Some(IslandFeatureIdentifier.Dock, givenLocation), avatarId)
+        |> Gamestate.InPlay
         |> Some
     let context = 
         TestIslandFeatureRunContext
@@ -161,8 +161,8 @@ let ``Run.When in the dark alley, the help command will take the player to the h
     let islandSingleStatisticSource (_) (_) = Statistic.Create (5.0,5.0) 5.0 |> Some
     let shipmateSingleStatisticSource (_) (_) (_) = Statistic.Create (5.0,5.0) 5.0 |> Some
     let expected =
-        (Feature IslandFeatureIdentifier.DarkAlley, givenLocation, avatarId)
-        |> Gamestate.Docked
+        (Some(IslandFeatureIdentifier.DarkAlley, givenLocation), avatarId)
+        |> Gamestate.InPlay
         |> Gamestate.Help
         |> Some
     let context = 
@@ -196,8 +196,8 @@ let ``Run.When in the dark alley, the an invalid command gives you an error mess
     let shipmateSingleStatisticSource (_) (_) (_) = Statistic.Create (5.0,5.0) 5.0 |> Some
     let expected =
         ("Maybe try 'help'?",
-            (Feature givenFeature, givenLocation, avatarId)
-            |> Gamestate.Docked)
+            (Some(givenFeature, givenLocation), avatarId)
+            |> Gamestate.InPlay)
         |> Gamestate.ErrorMessage
         |> Some
     let context = 

@@ -263,7 +263,7 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
     //the command creates a world, which has randomness in the generation
     //so it is very brittle to figure out what the expected would be
     match actual with
-    | Some (Gamestate.AtSea _) -> true
+    | Some (Gamestate.InPlay _) -> true
     | _ -> false
     |> Assert.True
 
@@ -398,8 +398,8 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
     let input = world
     let inputSource = Command.Resume |> Some |> toSource
     let expected =
-        input 
-        |> Gamestate.AtSea 
+        (None, input)
+        |> Gamestate.InPlay 
         |> Some
     let avatarJobSink (_) (_) = Assert.Fail("avatarJobSink")
     let context = 
