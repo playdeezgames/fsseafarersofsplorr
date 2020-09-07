@@ -26,10 +26,12 @@ type TestItemDetermineSalePriceContext
 
 type TestItemDeterminePurchasePriceContext
         (commoditySource,
-        islandMarketSource) = 
+        islandMarketSource,
+        itemSingleSource) = 
     interface ItemDeterminePurchasePriceContext with
         member _.commoditySource                : CommoditySource               =commoditySource  
-        member _.islandMarketSource             : IslandMarketSource            =islandMarketSource            
+        member _.islandMarketSource             : IslandMarketSource            =islandMarketSource  
+        member _.itemSingleSource               : ItemSingleSource               = itemSingleSource
 
 [<Test>]
 let ``DetermineSalePrice.It calculates the sale price of an item in a given set of markets with given commodities.`` () =
@@ -60,7 +62,8 @@ let ``DeterminePurchasePrice.It calculates the purchase price of an item in a gi
     let context = 
         TestItemDeterminePurchasePriceContext
             ((fun () -> inputCommodities),
-            (fun(_) -> inputMarkets))
+            (fun(_) -> inputMarkets),
+            (fun(_)->input |> Some))
         :> ItemDeterminePurchasePriceContext
     let actual = 
         (input, givenLocation)

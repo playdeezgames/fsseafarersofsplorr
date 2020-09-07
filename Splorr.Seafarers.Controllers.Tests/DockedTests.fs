@@ -55,7 +55,8 @@ type TestDockedRunContext
 
     interface ItemDeterminePurchasePriceContext with
         member _.commoditySource                : CommoditySource               =commoditySource      
-        member _.islandMarketSource             : IslandMarketSource            =islandMarketSource            
+        member _.islandMarketSource             : IslandMarketSource            =islandMarketSource  
+        member _.itemSingleSource               : ItemSingleSource               = itemSingleSource
 
     interface DockedHandleCommandContext with
         member _.avatarInventorySink            : AvatarInventorySink           =avatarInventorySink            

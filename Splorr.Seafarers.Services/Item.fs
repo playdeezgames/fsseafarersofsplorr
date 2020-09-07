@@ -13,6 +13,7 @@ type ItemDetermineSalePriceContext =
 type ItemDeterminePurchasePriceContext =
     abstract member commoditySource    : CommoditySource
     abstract member islandMarketSource : IslandMarketSource
+    abstract member itemSingleSource   : ItemSingleSource
 
 module Item =
     let DetermineSalePrice 

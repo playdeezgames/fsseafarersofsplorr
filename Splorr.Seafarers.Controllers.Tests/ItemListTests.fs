@@ -5,7 +5,6 @@ open Splorr.Seafarers.Controllers
 open DockedTestFixtures
 open CommonTestFixtures
 open AtSeaTestFixtures
-open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 type TestItemListRunContext
@@ -20,6 +19,7 @@ type TestItemListRunContext
     interface ItemDeterminePurchasePriceContext with
         member this.commoditySource: CommoditySource = commoditySource
         member this.islandMarketSource: IslandMarketSource = islandMarketSource
+        member this.itemSingleSource: ItemSingleSource = itemSingleSource
 
 
 [<Test>]
