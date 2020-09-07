@@ -1,6 +1,5 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
-open System
 
 type TermSource = unit -> string list
 type TermSources = TermSource * TermSource * TermSource * TermSource * TermSource * TermSource

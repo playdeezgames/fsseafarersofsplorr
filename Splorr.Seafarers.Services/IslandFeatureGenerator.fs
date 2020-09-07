@@ -7,7 +7,7 @@ type IslandFeatureGeneratorGenerateContext =
 
 module IslandFeatureGenerator =
     let Generate 
-            (context    : IslandFeatureGeneratorGenerateContext) 
+            (context   : IslandFeatureGeneratorGenerateContext) 
             (generator : IslandFeatureGenerator)
             : bool = 
         let total = 

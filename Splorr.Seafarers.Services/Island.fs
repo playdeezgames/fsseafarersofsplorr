@@ -2,7 +2,6 @@
 open Splorr.Seafarers.Models
 open System
 
-
 type ItemSource = unit -> Map<uint64, ItemDescriptor>
 type IslandMarketSink = Location -> Map<uint64, Market> -> unit
 type IslandItemSource = Location -> Set<uint64>
@@ -36,15 +35,12 @@ module Island =
             (location : Location)
             : unit =
         context.islandStatisticTemplateSource()
+        |> Map.map
+            (fun _ template ->
+                    Statistic.CreateFromTemplate template)
         |> Map.iter
-            (fun identifier template ->
-                (identifier, 
-                    {
-                        MinimumValue = template.MinimumValue
-                        MaximumValue=template.MaximumValue
-                        CurrentValue = template.CurrentValue
-                    } 
-                    |> Some)
+            (fun identifier statistic ->
+                (identifier, statistic |> Some)
                 |> context.islandSingleStatisticSink location)
 
     let GetDisplayName 

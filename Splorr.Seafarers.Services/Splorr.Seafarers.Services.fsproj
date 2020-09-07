@@ -11,9 +11,9 @@
     <Compile Include="Job.fs" />
     <Compile Include="Item.fs" />
     <Compile Include="IslandFeatureGenerator.fs" />
+    <Compile Include="Statistic.fs" />
     <Compile Include="Island.fs" />
     <Compile Include="Location.fs" />
-    <Compile Include="Statistic.fs" />
     <Compile Include="Vessel.fs" />
     <Compile Include="Shipmate.fs" />
     <Compile Include="Avatar.fs" />
