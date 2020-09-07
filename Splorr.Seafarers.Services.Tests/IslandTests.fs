@@ -7,6 +7,9 @@ open IslandTestFixtures
 open CommonTestFixtures
 open System
 
+type TestIslandGetDisplayNameContext()=
+    interface IslandGetDisplayNameContext
+
 [<Test>]
 let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =
     let inputLocation = (0.0, 0.0)
@@ -20,9 +23,11 @@ let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =
     let islandSingleNameSource (_) =
         Assert.Fail("islandSingleNameSource")
         None
+    let context = TestIslandGetDisplayNameContext() :> IslandGetDisplayNameContext
     let actual = 
         inputLocation
         |> Island.GetDisplayName 
+            context
             avatarIslandSingleMetricSource
             islandSingleNameSource
             avatarId
@@ -45,8 +50,10 @@ let ``GetDisplayName.It returns the island's name when there is a visit count.``
             |> Some
         else
             None
+    let context = TestIslandGetDisplayNameContext() :> IslandGetDisplayNameContext
     let actual = 
         Island.GetDisplayName 
+            context
             avatarIslandSingleMetricSource
             islandSingleNameSource
             avatarId

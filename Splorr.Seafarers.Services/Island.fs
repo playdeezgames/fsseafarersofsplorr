@@ -29,6 +29,10 @@ type IslandCreateContext =
     abstract member islandSingleStatisticSink     : IslandSingleStatisticSink
     abstract member islandStatisticTemplateSource : IslandStatisticTemplateSource
 
+type IslandGetDisplayNameContext =
+    interface
+    end
+
 module Island =
     let  Create
             (context  : IslandCreateContext)
@@ -44,11 +48,13 @@ module Island =
                 |> context.islandSingleStatisticSink location)
 
     let GetDisplayName 
+            (context : IslandGetDisplayNameContext)
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (islandSingleNameSource         : IslandSingleNameSource)
             (avatarId                       : string) 
             (location                       : Location)
             : string =
+        //does this island location have a visit count for this avatar?
         match avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount with
         | Some x ->
             islandSingleNameSource location

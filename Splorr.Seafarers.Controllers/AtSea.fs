@@ -5,8 +5,16 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Persistence
 
+type AtSeaGetVisibleIslandsContext =
+    inherit IslandGetDisplayNameContext
+
+type AtSeaUpdateDisplayContext =
+    inherit AtSeaGetVisibleIslandsContext
+
 type AtSeaHandleCommandContext =
     inherit WorldDockContext
+    inherit AtSeaGetVisibleIslandsContext
+    inherit AtSeaUpdateDisplayContext
     abstract member avatarInventorySink            : AvatarInventorySink
     abstract member avatarInventorySource          : AvatarInventorySource
     abstract member avatarMessagePurger            : AvatarMessagePurger
@@ -21,7 +29,6 @@ type AtSeaHandleCommandContext =
 type AtSeaRunContext =
     inherit AtSeaHandleCommandContext
     abstract member avatarMessageSource             : AvatarMessageSource
-
 
 module AtSea =
     let private DetermineSpeedHue 
@@ -61,6 +68,7 @@ module AtSea =
         |> List.exists (fun (l,d) -> Location.DistanceTo l avatarPosition < d)
 
     let private GetVisibleIslands 
+            (context : AtSeaGetVisibleIslandsContext)
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (islandSingleNameSource         : IslandSingleNameSource)
             (islandSource                   : IslandSource)
@@ -91,6 +99,7 @@ module AtSea =
                             avatarPosition 
                             location, 
                                 (Island.GetDisplayName 
+                                    context
                                     avatarIslandSingleMetricSource
                                     islandSingleNameSource
                                     avatarId
@@ -98,6 +107,7 @@ module AtSea =
         |> List.sortBy (fun (_,_,d,_)->d)
 
     let private UpdateDisplay 
+            (context : AtSeaUpdateDisplayContext)
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (avatarMessageSource            : AvatarMessageSource)
             (islandSingleNameSource         : IslandSingleNameSource)
@@ -144,6 +154,7 @@ module AtSea =
             |> Statistic.GetCurrentValue
         avatarId
         |> GetVisibleIslands 
+            context
             avatarIslandSingleMetricSource
             islandSingleNameSource
             islandSource
@@ -184,6 +195,7 @@ module AtSea =
         let nearby = 
             avatarId
             |> GetVisibleIslands 
+                context
                 context.avatarIslandSingleMetricSource
                 context.islandSingleNameSource
                 context.islandSource
@@ -374,6 +386,7 @@ module AtSea =
             (avatarId      : string) 
             : Gamestate option =
         UpdateDisplay 
+            context
             context.avatarIslandSingleMetricSource
             context.avatarMessageSource
             context.islandSingleNameSource
