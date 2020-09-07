@@ -6,16 +6,20 @@ module Location =
             (from   : Location) 
             (``to`` : Location) 
             : float =
-        sqrt(((``to``|>fst)-(from|>fst))*((``to``|>fst)-(from|>fst))+((``to``|>snd)-(from|>snd))*((``to``|>snd)-(from|>snd)))
+        let deltaX = (``to`` |> fst) - (from |> fst)
+        let deltaY = (``to`` |> snd) - (from |> snd)
+        sqrt((deltaX ** 2.0) + (deltaY ** 2.0))
 
     let ScaleBy 
             (scale    : float) 
             (location : Location) 
             : Location =
-        ((location|>fst) * scale,(location|>snd) * scale)
+        ((location |> fst) * scale,(location |> snd) * scale)
 
     let HeadingTo 
             (from   : Location) 
             (``to`` : Location) 
             : float =
-        System.Math.Atan2((``to`` |> snd)-(from |> snd),(``to`` |> fst)-(from |> fst))
+        let deltaX = (``to`` |> fst) - (from |> fst)
+        let deltaY = (``to`` |> snd) - (from |> snd)
+        atan2 deltaY deltaX
