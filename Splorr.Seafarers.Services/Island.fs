@@ -50,13 +50,12 @@ module Island =
 
     let GetDisplayName 
             (context : IslandGetDisplayNameContext)
-            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (islandSingleNameSource         : IslandSingleNameSource)
             (avatarId : string) 
             (location : Location)
             : string =
         //does this island location have a visit count for this avatar?
-        let visitCount = avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
+        let visitCount = context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
         let islandName = islandSingleNameSource location
         match visitCount, islandName with
         | Some _, Some name ->

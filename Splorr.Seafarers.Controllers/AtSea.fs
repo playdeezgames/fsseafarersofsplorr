@@ -100,7 +100,6 @@ module AtSea =
                             location, 
                                 (Island.GetDisplayName 
                                     context
-                                    avatarIslandSingleMetricSource
                                     islandSingleNameSource
                                     avatarId
                                     location)))
