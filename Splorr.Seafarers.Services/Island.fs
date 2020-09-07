@@ -49,14 +49,13 @@ module Island =
                 |> context.islandSingleStatisticSink location)
 
     let GetDisplayName 
-            (context : IslandGetDisplayNameContext)
-            (islandSingleNameSource         : IslandSingleNameSource)
+            (context  : IslandGetDisplayNameContext)
             (avatarId : string) 
             (location : Location)
             : string =
         //does this island location have a visit count for this avatar?
         let visitCount = context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
-        let islandName = islandSingleNameSource location
+        let islandName = context.islandSingleNameSource location
         match visitCount, islandName with
         | Some _, Some name ->
             name

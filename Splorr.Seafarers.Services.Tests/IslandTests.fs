@@ -31,7 +31,6 @@ let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =
         inputLocation
         |> Island.GetDisplayName 
             context
-            islandSingleNameSource
             avatarId
     Assert.AreEqual("(unknown)", actual)
 
@@ -56,7 +55,6 @@ let ``GetDisplayName.It returns the island's name when there is a visit count.``
     let actual = 
         Island.GetDisplayName 
             context
-            islandSingleNameSource
             avatarId
             inputLocation
     Assert.AreEqual(name, actual)

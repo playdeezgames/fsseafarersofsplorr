@@ -100,7 +100,6 @@ module AtSea =
                             location, 
                                 (Island.GetDisplayName 
                                     context
-                                    islandSingleNameSource
                                     avatarId
                                     location)))
         |> List.sortBy (fun (_,_,d,_)->d)
