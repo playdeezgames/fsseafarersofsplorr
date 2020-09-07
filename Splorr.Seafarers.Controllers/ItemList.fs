@@ -39,7 +39,7 @@ module ItemList =
             let descriptor = items.[item]
             let markets = islandMarketSource location
             let sellPrice: float = (item, location) ||> Item.DetermineSalePrice context
-            let buyPrice: float = (descriptor, location) ||> Item.DeterminePurchasePrice context
+            let buyPrice: float = (item, location) ||> Item.DeterminePurchasePrice context
             [
                 (Hue.Value, descriptor.ItemName |> sprintf "%-20s" |> Text) |> Hued
                 (Hue.Sublabel, " | " |> Text) |> Hued

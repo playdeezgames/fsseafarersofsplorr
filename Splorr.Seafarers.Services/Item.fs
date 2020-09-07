@@ -35,17 +35,20 @@ module Item =
                 |> List.reduce (+)) System.Double.NaN
 
     let DeterminePurchasePrice 
-            (context : ItemDeterminePurchasePriceContext)
-            (itemDescriptor : ItemDescriptor) 
-            (location           : Location)
+            (context   : ItemDeterminePurchasePriceContext)
+            (itemIndex : uint64) 
+            (location  : Location)
             : float =
         let commodities = context.commoditySource()
         let markets = context.islandMarketSource location
-        itemDescriptor.Commodities
-        |> Map.map
-            (fun commodity amount -> 
-                amount * (Market.DeterminePurchasePrice (commodities.[commodity], markets.[commodity])))
-        |> Map.toList
-        |> List.map snd
-        |> List.reduce (+)
+        context.itemSingleSource itemIndex
+        |> Option.fold
+            (fun _ itemDescriptor ->
+                itemDescriptor.Commodities
+                |> Map.map
+                    (fun commodity amount -> 
+                        amount * (Market.DeterminePurchasePrice (commodities.[commodity], markets.[commodity])))
+                |> Map.toList
+                |> List.map snd
+                |> List.reduce (+)) System.Double.NaN
 

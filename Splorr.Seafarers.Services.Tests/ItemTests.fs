@@ -66,7 +66,7 @@ let ``DeterminePurchasePrice.It calculates the purchase price of an item in a gi
             (fun(_)->input |> Some))
         :> ItemDeterminePurchasePriceContext
     let actual = 
-        (input, givenLocation)
+        (0UL, givenLocation)
         ||> Item.DeterminePurchasePrice 
             context
     Assert.AreEqual(expected, actual)
