@@ -12,11 +12,7 @@ type TestItemListRunContext
         islandMarketSource,
         itemSingleSource) =
     interface ItemListRunContext
-    interface ItemDetermineSalePriceContext with
-        member this.commoditySource: CommoditySource = commoditySource
-        member this.islandMarketSource: IslandMarketSource = islandMarketSource
-        member this.itemSingleSource: ItemSingleSource = itemSingleSource
-    interface ItemDeterminePurchasePriceContext with
+    interface ItemDeterminePriceContext with
         member this.commoditySource: CommoditySource = commoditySource
         member this.islandMarketSource: IslandMarketSource = islandMarketSource
         member this.itemSingleSource: ItemSingleSource = itemSingleSource

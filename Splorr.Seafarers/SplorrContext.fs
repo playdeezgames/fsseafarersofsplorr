@@ -120,14 +120,9 @@ type SplorrContext
         member _.islandSingleNameSource         : IslandSingleNameSource         = islandSingleNameSource  
         member _.islandFeatureSource            : IslandFeatureSource            = islandFeatureSource
 
-    interface ItemDetermineSalePriceContext with
+    interface ItemDeterminePriceContext with
         member _.commoditySource                : CommoditySource                =commoditySource               
         member _.islandMarketSource             : IslandMarketSource             =islandMarketSource     
-        member _.itemSingleSource               : ItemSingleSource               = itemSingleSource
-
-    interface ItemDeterminePurchasePriceContext with
-        member _.commoditySource                : CommoditySource                =commoditySource               
-        member _.islandMarketSource             : IslandMarketSource             =islandMarketSource            
         member _.itemSingleSource               : ItemSingleSource               = itemSingleSource
 
     interface DockedHandleCommandContext with

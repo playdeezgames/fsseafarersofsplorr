@@ -5,50 +5,44 @@ type CommoditySource = unit -> Map<uint64, CommodityDescriptor>
 type IslandMarketSource = Location -> Map<uint64, Market>
 type ItemSingleSource = uint64 -> ItemDescriptor option
 
-type ItemDetermineSalePriceContext =
+type ItemDeterminePriceContext =
     abstract member commoditySource    : CommoditySource
     abstract member islandMarketSource : IslandMarketSource
     abstract member itemSingleSource   : ItemSingleSource
+
+type ItemDetermineSalePriceContext =
+    inherit ItemDeterminePriceContext
 
 type ItemDeterminePurchasePriceContext =
-    abstract member commoditySource    : CommoditySource
-    abstract member islandMarketSource : IslandMarketSource
-    abstract member itemSingleSource   : ItemSingleSource
+    inherit ItemDeterminePriceContext
+
+type UnitPriceDeterminer = CommodityDescriptor * Market -> float
 
 module Item =
-    let DetermineSalePrice 
-            (context   : ItemDetermineSalePriceContext)
-            (itemIndex : uint64) 
-            (location  : Location)
+    let private DeterminePrice 
+            (context             : ItemDeterminePriceContext)
+            (unitPriceDeterminer : UnitPriceDeterminer)
+            (itemIndex           : uint64) 
+            (location            : Location)
             : float =
-        let commodities = context.commoditySource()
-        let markets = context.islandMarketSource location
         context.itemSingleSource itemIndex
         |> Option.fold
             (fun _ itemDescriptor->
+                let commodities = context.commoditySource()
+                let markets = context.islandMarketSource location
                 itemDescriptor.Commodities
                 |> Map.map
                     (fun commodity amount -> 
-                        amount * (Market.DetermineSalePrice (commodities.[commodity], markets.[commodity])))
+                        amount * (unitPriceDeterminer (commodities.[commodity], markets.[commodity])))
                 |> Map.toList
                 |> List.map snd
                 |> List.reduce (+)) System.Double.NaN
 
+    let DetermineSalePrice 
+            (context : ItemDetermineSalePriceContext) =
+        DeterminePrice context Market.DetermineSalePrice
+
     let DeterminePurchasePrice 
-            (context   : ItemDeterminePurchasePriceContext)
-            (itemIndex : uint64) 
-            (location  : Location)
-            : float =
-        let commodities = context.commoditySource()
-        let markets = context.islandMarketSource location
-        context.itemSingleSource itemIndex
-        |> Option.fold
-            (fun _ itemDescriptor ->
-                itemDescriptor.Commodities
-                |> Map.map
-                    (fun commodity amount -> 
-                        amount * (Market.DeterminePurchasePrice (commodities.[commodity], markets.[commodity])))
-                |> Map.toList
-                |> List.map snd
-                |> List.reduce (+)) System.Double.NaN
+            (context : ItemDeterminePurchasePriceContext) =
+        DeterminePrice context Market.DeterminePurchasePrice
 

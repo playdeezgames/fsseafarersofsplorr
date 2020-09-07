@@ -48,15 +48,10 @@ type TestDockedRunContext
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
 
-    interface ItemDetermineSalePriceContext with
+    interface ItemDeterminePriceContext with
         member _.commoditySource                : CommoditySource               =commoditySource  
         member _.islandMarketSource             : IslandMarketSource            =islandMarketSource   
         member _.itemSingleSource               : ItemSingleSource              = itemSingleSource
-
-    interface ItemDeterminePurchasePriceContext with
-        member _.commoditySource                : CommoditySource               =commoditySource      
-        member _.islandMarketSource             : IslandMarketSource            =islandMarketSource  
-        member _.itemSingleSource               : ItemSingleSource               = itemSingleSource
 
     interface DockedHandleCommandContext with
         member _.avatarInventorySink            : AvatarInventorySink           =avatarInventorySink            
