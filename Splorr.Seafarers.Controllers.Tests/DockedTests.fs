@@ -30,6 +30,7 @@ type TestDockedRunContext
             islandSingleNameSource,
             islandSingleMarketSource,
             islandSource,
+            itemSingleSource,
             itemSource,
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
@@ -46,6 +47,15 @@ type TestDockedRunContext
     interface WorldUndockContext with
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
+
+    interface ItemDetermineSalePriceContext with
+        member _.commoditySource                : CommoditySource               =commoditySource  
+        member _.islandMarketSource             : IslandMarketSource            =islandMarketSource   
+        member _.itemSingleSource               : ItemSingleSource              = itemSingleSource
+
+    interface ItemDeterminePurchasePriceContext with
+        member _.commoditySource                : CommoditySource               =commoditySource      
+        member _.islandMarketSource             : IslandMarketSource            =islandMarketSource            
 
     interface DockedHandleCommandContext with
         member _.avatarInventorySink            : AvatarInventorySink           =avatarInventorySink            
@@ -106,6 +116,7 @@ let private functionUnderTest
             islandSingleNameSource,
             dockedItemSingleMarketSourceStub,
             islandSourceStub,
+            (fun x -> itemSource() |> Map.tryFind x),
             itemSource ,
             shipmateSingleStatisticSinkStub,
             shipmateSingleStatisticSource,

@@ -73,6 +73,12 @@ type WorldDockContext =
     abstract member shipmateSingleStatisticSink    : ShipmateSingleStatisticSink
     abstract member shipmateSingleStatisticSource  : ShipmateSingleStatisticSource
 
+type WorldBuyItemsContext =
+    inherit ItemDetermineSalePriceContext
+
+type WorldSellItemsContext =
+    inherit ItemDeterminePurchasePriceContext
+
 module World =
 //TODO: top of "world generator" refactor
     let private GenerateIslandName //TODO: move to world generator?
@@ -603,6 +609,7 @@ module World =
         |> Map.tryPick (fun k v -> if v.ItemName = itemName then Some (k,v) else None)
 
     let BuyItems 
+            (context                       : WorldBuyItemsContext)
             (avatarInventorySink           : AvatarInventorySink)
             (avatarInventorySource         : AvatarInventorySource)
             (avatarMessageSink             : AvatarMessageSink)
@@ -626,7 +633,10 @@ module World =
             let markets =
                 islandMarketSource location
             let unitPrice = 
-                Item.DetermineSalePrice commoditySource markets descriptor 
+                Item.DetermineSalePrice 
+                    context
+                    item 
+                    location
             let availableTonnage = 
                 vesselSingleStatisticSource 
                     avatarId 
@@ -677,6 +687,7 @@ module World =
             |> AddMessages avatarMessageSink ["You cannot buy items here."]
 
     let SellItems 
+            (context : WorldSellItemsContext)
             (avatarInventorySink           : AvatarInventorySink)
             (avatarInventorySource         : AvatarInventorySource)
             (avatarMessageSink             : AvatarMessageSink)
@@ -711,7 +722,11 @@ module World =
             else
                 let markets = islandMarketSource location
                 let unitPrice = 
-                    Item.DeterminePurchasePrice commoditySource markets descriptor 
+                    Item.DeterminePurchasePrice 
+                        context
+                        markets 
+                        descriptor 
+                        location
                 let price = (quantity |> float) * unitPrice
                 Island.UpdateMarketForItemPurchase islandSingleMarketSource islandSingleMarketSink commoditySource descriptor quantity location
                 avatarId

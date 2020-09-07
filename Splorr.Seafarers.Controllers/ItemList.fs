@@ -3,8 +3,16 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
+type ItemListRunWithIslandContext =
+    inherit ItemDetermineSalePriceContext
+    inherit ItemDeterminePurchasePriceContext
+
+type ItemListRunContext =
+    inherit ItemListRunWithIslandContext
+
 module ItemList = 
     let private RunWithIsland 
+            (context            : ItemListRunWithIslandContext)
             (commoditySource    : unit -> Map<uint64, CommodityDescriptor>) 
             (itemSource         : unit -> Map<uint64, ItemDescriptor>) 
             (islandMarketSource : Location -> Map<uint64,Market>) 
@@ -30,8 +38,8 @@ module ItemList =
         |> Set.iter (fun item -> 
             let descriptor = items.[item]
             let markets = islandMarketSource location
-            let sellPrice: float = descriptor |> Item.DetermineSalePrice commoditySource markets
-            let buyPrice: float = descriptor |> Item.DeterminePurchasePrice commoditySource markets
+            let sellPrice: float = (item, location) ||> Item.DetermineSalePrice context
+            let buyPrice: float = (descriptor, location) ||> Item.DeterminePurchasePrice context markets
             [
                 (Hue.Value, descriptor.ItemName |> sprintf "%-20s" |> Text) |> Hued
                 (Hue.Sublabel, " | " |> Text) |> Hued
@@ -51,6 +59,7 @@ module ItemList =
         |> Some
 
     let Run 
+            (context : ItemListRunContext)
             (avatarMessageSource           : AvatarMessageSource)
             (commoditySource               : CommoditySource) 
             (islandItemSource              : IslandItemSource)
@@ -60,6 +69,7 @@ module ItemList =
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (messageSink                   : MessageSink) =
         RunWithIsland 
+            context
             commoditySource 
             itemSource 
             islandMarketSource 

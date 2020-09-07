@@ -6,6 +6,21 @@ open DockedTestFixtures
 open CommonTestFixtures
 open AtSeaTestFixtures
 open Splorr.Seafarers.Models
+open Splorr.Seafarers.Services
+
+type TestItemListRunContext
+        (commoditySource,
+        islandMarketSource,
+        itemSingleSource) =
+    interface ItemListRunContext
+    interface ItemDetermineSalePriceContext with
+        member this.commoditySource: CommoditySource = commoditySource
+        member this.islandMarketSource: IslandMarketSource = islandMarketSource
+        member this.itemSingleSource: ItemSingleSource = itemSingleSource
+    interface ItemDeterminePurchasePriceContext with
+        member this.commoditySource: CommoditySource = commoditySource
+        member this.islandMarketSource: IslandMarketSource = islandMarketSource
+
 
 [<Test>]
 let ``Run.It returns Docked (at Shop) gamestate.`` () =
@@ -15,9 +30,16 @@ let ``Run.It returns Docked (at Shop) gamestate.`` () =
         inputWorld
         |> Gamestate.InPlay 
         |> Some
+    let context = 
+        TestItemListRunContext
+            (atSeaCommoditySource, 
+            atSeaIslandMarketSource,
+            (fun x -> atSeaItemSource() |> Map.tryFind x )) 
+        :> ItemListRunContext
     let actual = 
         (inputLocation, inputWorld)
         ||> ItemList.Run 
+            context
             avatarMessageSourceDummy
             atSeaCommoditySource 
             atSeaIslandItemSource 

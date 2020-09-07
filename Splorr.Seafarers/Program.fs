@@ -311,6 +311,10 @@ let main argv =
         AvatarIslandFeature.GetFeatureForAvatar connection
         >> Persister.unpackOrThrow
 
+    let itemSingleSource (index:uint64) : ItemDescriptor option =
+        itemSource()
+        |> Map.tryFind index
+
     let context : RunnerRunContext =
         SplorrContext
             (avatarInventorySink,
@@ -350,6 +354,7 @@ let main argv =
             islandSingleStatisticSource,
             islandSource,
             islandStatisticTemplateSource,
+            itemSingleSource,
             itemSource ,
             Random(),
             rationItemSource,

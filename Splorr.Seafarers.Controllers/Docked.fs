@@ -13,6 +13,8 @@ type DockedUpdateDisplayContext =
 
 type DockedHandleCommandContext = 
     inherit WorldUndockContext
+    inherit WorldBuyItemsContext
+    inherit WorldSellItemsContext
     abstract member avatarInventorySink            : AvatarInventorySink
     abstract member avatarInventorySource          : AvatarInventorySource
     abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
@@ -107,6 +109,7 @@ module Docked =
         | Some (Command.Buy (quantity, itemName))->
             avatarId 
             |> World.BuyItems 
+                context
                 context.avatarInventorySink
                 context.avatarInventorySource
                 context.avatarMessageSink 
@@ -129,6 +132,7 @@ module Docked =
         | Some (Command.Sell (quantity, itemName))->
             avatarId 
             |> World.SellItems 
+                context
                 context.avatarInventorySink
                 context.avatarInventorySource
                 context.avatarMessageSink

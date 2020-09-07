@@ -42,6 +42,7 @@ type SplorrContext
         islandSingleStatisticSource: IslandSingleStatisticSource ,
         islandSource: IslandSource ,
         islandStatisticTemplateSource: IslandStatisticTemplateSource ,
+        itemSingleSource: ItemSingleSource,
         itemSource: ItemSource ,
         random : Random,
         rationItemSource: RationItemSource ,
@@ -119,7 +120,18 @@ type SplorrContext
         member _.islandSingleNameSource         : IslandSingleNameSource         = islandSingleNameSource  
         member _.islandFeatureSource            : IslandFeatureSource            = islandFeatureSource
 
+    interface ItemDetermineSalePriceContext with
+        member _.commoditySource                : CommoditySource                =commoditySource               
+        member _.islandMarketSource             : IslandMarketSource             =islandMarketSource     
+        member _.itemSingleSource               : ItemSingleSource               = itemSingleSource
+
+    interface ItemDeterminePurchasePriceContext with
+        member _.commoditySource                : CommoditySource                =commoditySource               
+        member _.islandMarketSource             : IslandMarketSource             =islandMarketSource            
+
     interface DockedHandleCommandContext with
+        member _.commoditySource                : CommoditySource                =commoditySource               
+        member _.islandMarketSource             : IslandMarketSource             =islandMarketSource            
         member _.avatarInventorySink            : AvatarInventorySink            =avatarInventorySink            
         member _.avatarInventorySource          : AvatarInventorySource          =avatarInventorySource          
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink   =avatarIslandSingleMetricSink   
@@ -130,9 +142,7 @@ type SplorrContext
         member _.avatarMessageSink              : AvatarMessageSink              =avatarMessageSink             
         member _.avatarSingleMetricSink         : AvatarSingleMetricSink         =avatarSingleMetricSink        
         member _.avatarSingleMetricSource       : AvatarSingleMetricSource       =avatarSingleMetricSource      
-        member _.commoditySource                : CommoditySource                =commoditySource               
         member _.islandJobPurger                : IslandJobPurger                =islandJobPurger               
-        member _.islandMarketSource             : IslandMarketSource             =islandMarketSource            
         member _.islandSingleJobSource          : IslandSingleJobSource          =islandSingleJobSource         
         member _.islandSingleMarketSink         : IslandSingleMarketSink         =islandSingleMarketSink        
         member _.islandSingleMarketSource       : IslandSingleMarketSource       =islandSingleMarketSource      

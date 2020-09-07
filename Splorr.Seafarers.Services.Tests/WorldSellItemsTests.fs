@@ -5,6 +5,11 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
 
+type TestWorldSellItemsContext(commoditySource, islandMarketSource) =
+    interface WorldSellItemsContext with
+        member this.commoditySource: CommoditySource = commoditySource
+        member this.islandMarketSource: IslandMarketSource = islandMarketSource
+
 [<Test>]
 let ``SellItems.It gives a message when given a bogus island location.`` () =
     let input = avatarId
@@ -20,8 +25,10 @@ let ``SellItems.It gives a message when given a bogus island location.`` () =
         ()
     let islandSource() =
         []
+    let context = TestWorldSellItemsContext(commoditySource, islandMarketSourceStub) :> WorldSellItemsContext
     input 
     |> World.SellItems 
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
@@ -54,8 +61,10 @@ let ``SellItems.It gives a message when given a valid island location and bogus 
         ()
     let islandSource() =
         [inputLocation]
+    let context = TestWorldSellItemsContext(commoditySource, islandMarketSourceStub) :> WorldSellItemsContext
     input 
     |> World.SellItems 
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
@@ -84,8 +93,10 @@ let ``SellItems.It gives a message when the avatar has insufficient items in inv
         Assert.AreEqual(Map.empty, inventory)
     let islandSource() =
         [inputLocation]
+    let context = TestWorldSellItemsContext(commoditySource, islandMarketSourceStub) :> WorldSellItemsContext
     input 
     |> World.SellItems 
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
@@ -114,8 +125,10 @@ let ``SellItems.It gives a message when the avatar has no items in inventory and
         Assert.AreEqual(Map.empty, inventory)
     let islandSource() =
         [inputLocation]
+    let context = TestWorldSellItemsContext(commoditySource, islandMarketSourceStub) :> WorldSellItemsContext
     input 
     |> World.SellItems 
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
@@ -165,8 +178,10 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
         Assert.AreEqual(Map.empty, inventory)
     let islandSource() =
         [inputLocation]
+    let context = TestWorldSellItemsContext(commoditySource, islandMarketSourceStub) :> WorldSellItemsContext
     input 
     |> World.SellItems 
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
@@ -216,8 +231,10 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
         Assert.AreEqual(Map.empty, inventory)
     let islandSource() =
         [inputLocation]
+    let context = TestWorldSellItemsContext(commoditySource, islandMarketSourceStub) :> WorldSellItemsContext
     input 
     |> World.SellItems 
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)

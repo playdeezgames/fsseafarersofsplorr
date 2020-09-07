@@ -11,6 +11,7 @@ type RunnerRunContext =
     inherit DockedRunContext
     inherit IslandFeatureRunContext
     inherit HelpRunContext
+    inherit ItemListRunContext
     abstract member avatarMetricSource              : AvatarMetricSource
     abstract member switchSource                    : SwitchSource
 
@@ -95,6 +96,7 @@ module Runner =
                 match context.avatarIslandFeatureSource avatarId with
                 | Some feature ->
                     ItemList.Run 
+                        context
                         context.avatarMessageSource
                         context.commoditySource 
                         context.islandItemSource 
