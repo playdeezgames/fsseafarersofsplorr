@@ -63,6 +63,10 @@ type SplorrContext
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
 
+    interface IslandGetDisplayNameContext with
+        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        member _.islandSingleNameSource         : IslandSingleNameSource = islandSingleNameSource
+
     interface AtSeaHandleCommandContext with
         member _.avatarInventorySink            : AvatarInventorySink        =avatarInventorySink        
         member _.avatarInventorySource          : AvatarInventorySource      =avatarInventorySource      

@@ -256,6 +256,11 @@ type TestAtSeaRunContext
         ) =
     interface UtilitySortListRandomlyContext with
         member _.random : Random = random
+
+    interface IslandGetDisplayNameContext with
+        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        member _.islandSingleNameSource         : IslandSingleNameSource = islandSingleNameSource
+
     interface AtSeaRunContext with
         member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource

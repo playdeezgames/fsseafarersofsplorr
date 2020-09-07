@@ -30,8 +30,9 @@ type IslandCreateContext =
     abstract member islandStatisticTemplateSource : IslandStatisticTemplateSource
 
 type IslandGetDisplayNameContext =
-    interface
-    end
+    abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
+    abstract member islandSingleNameSource         : IslandSingleNameSource
+
 
 module Island =
     let  Create
@@ -51,16 +52,19 @@ module Island =
             (context : IslandGetDisplayNameContext)
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (islandSingleNameSource         : IslandSingleNameSource)
-            (avatarId                       : string) 
-            (location                       : Location)
+            (avatarId : string) 
+            (location : Location)
             : string =
         //does this island location have a visit count for this avatar?
-        match avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount with
-        | Some x ->
-            islandSingleNameSource location
-            |> Option.get
-        | _ ->
+        let visitCount = avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
+        let islandName = islandSingleNameSource location
+        match visitCount, islandName with
+        | Some _, Some name ->
+            name
+        | None, Some _ ->
             "(unknown)"
+        | _ ->
+            raise (System.NotImplementedException "This island does not exist!")
     
     let AddVisit 
             (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
