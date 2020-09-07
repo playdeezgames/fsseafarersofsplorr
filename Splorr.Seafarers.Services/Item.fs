@@ -36,11 +36,11 @@ module Item =
 
     let DeterminePurchasePrice 
             (context : ItemDeterminePurchasePriceContext)
-            (markets        : Map<uint64, Market>)  //TODO: refactor me to use source?
             (itemDescriptor : ItemDescriptor) 
             (location           : Location)
             : float =
         let commodities = context.commoditySource()
+        let markets = context.islandMarketSource location
         itemDescriptor.Commodities
         |> Map.map
             (fun commodity amount -> 

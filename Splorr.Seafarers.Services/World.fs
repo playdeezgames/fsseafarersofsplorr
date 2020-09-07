@@ -724,7 +724,6 @@ module World =
                 let unitPrice = 
                     Item.DeterminePurchasePrice 
                         context
-                        markets 
                         descriptor 
                         location
                 let price = (quantity |> float) * unitPrice

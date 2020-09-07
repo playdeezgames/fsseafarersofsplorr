@@ -69,5 +69,4 @@ let ``DeterminePurchasePrice.It calculates the purchase price of an item in a gi
         (input, givenLocation)
         ||> Item.DeterminePurchasePrice 
             context
-            inputMarkets
     Assert.AreEqual(expected, actual)

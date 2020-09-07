@@ -194,7 +194,7 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
     let itemSingleSource (x) =
         genericWorldItemSource()
         |> Map.tryFind x
-    let context = TestWorldSellItemsContext(commoditySource, islandMarketSourceStub, itemSingleSource) :> WorldSellItemsContext
+    let context = TestWorldSellItemsContext(commoditySource, islandMarketSource, itemSingleSource) :> WorldSellItemsContext
     input 
     |> World.SellItems 
         context
@@ -250,7 +250,7 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
     let itemSingleSource (x) =
         genericWorldItemSource()
         |> Map.tryFind x
-    let context = TestWorldSellItemsContext(commoditySource, islandMarketSourceStub, itemSingleSource) :> WorldSellItemsContext
+    let context = TestWorldSellItemsContext(commoditySource, islandMarketSource, itemSingleSource) :> WorldSellItemsContext
     input 
     |> World.SellItems 
         context
