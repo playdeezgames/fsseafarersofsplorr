@@ -21,7 +21,6 @@ type TestItemListRunContext
         member this.islandMarketSource: IslandMarketSource = islandMarketSource
         member this.itemSingleSource: ItemSingleSource = itemSingleSource
 
-
 [<Test>]
 let ``Run.It returns Docked (at Shop) gamestate.`` () =
     let inputLocation = dockLocation
