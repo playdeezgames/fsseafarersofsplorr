@@ -44,8 +44,9 @@ type IslandMakeKnownContext =
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
 
 type IslandGenerateCommoditiesContext =
-    interface
-    end
+    abstract member commoditySource    : CommoditySource
+    abstract member islandMarketSource : IslandMarketSource
+    abstract member islandMarketSink   : IslandMarketSink
 
 module Island =
     let  Create

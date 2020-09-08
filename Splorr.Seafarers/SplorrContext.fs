@@ -166,6 +166,11 @@ type SplorrContext
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
 
+    interface IslandGenerateCommoditiesContext with
+        member this.commoditySource: CommoditySource = commoditySource
+        member this.islandMarketSink: IslandMarketSink = islandMarketSink
+        member this.islandMarketSource: IslandMarketSource = islandMarketSource
+
     interface WorldDockContext with
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
         member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource

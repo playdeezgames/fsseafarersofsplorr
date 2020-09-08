@@ -64,6 +64,10 @@ type TestWorldDockContext
         member _.itemSource                     : ItemSource =itemSource
         member _.shipmateSingleStatisticSink    : ShipmateSingleStatisticSink=shipmateSingleStatisticSink
         member _.shipmateSingleStatisticSource  : ShipmateSingleStatisticSource=shipmateSingleStatisticSource
+    interface IslandGenerateCommoditiesContext with
+        member this.commoditySource: CommoditySource = commoditySource
+        member this.islandMarketSink: IslandMarketSink = islandMarketSink
+        member this.islandMarketSource: IslandMarketSource = islandMarketSource
     interface IslandAddVisitContext with
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
