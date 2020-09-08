@@ -172,6 +172,12 @@ type SplorrContext
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
         member _.random : Random = random
 
+    interface IslandGenerateItemsContext with
+        member _.islandItemSink: IslandItemSink = islandItemSink
+        member _.islandItemSource: IslandItemSource = islandItemSource
+        member _.itemSource: ItemSource = itemSource
+        member _.random: Random = random
+
     interface WorldDockContext with
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
         member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource

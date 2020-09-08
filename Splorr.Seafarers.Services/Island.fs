@@ -49,6 +49,12 @@ type IslandGenerateCommoditiesContext =
     abstract member islandMarketSink   : IslandMarketSink
     abstract member random             : Random
 
+type IslandGenerateItemsContext =
+    abstract member islandItemSink   : IslandItemSink
+    abstract member islandItemSource : IslandItemSource
+    abstract member itemSource       : ItemSource
+    abstract member random           : Random
+
 module Island =
     let  Create
             (context  : IslandCreateContext)
@@ -146,23 +152,20 @@ module Island =
             |> context.islandMarketSink location
 
     let GenerateItems 
-            (islandItemSource : IslandItemSource) 
-            (islandItemSink   : IslandItemSink) 
-            (random           : Random) 
-            (itemSource       : ItemSource)
-            (location         : Location) 
+            (context  : IslandGenerateItemsContext)
+            (location : Location) 
             : unit =
-        let items = itemSource()
-        let islandItems = islandItemSource location
+        let items = context.itemSource()
+        let islandItems = context.islandItemSource location
         if islandItems.IsEmpty then
             items
             |> Map.fold 
                 (fun a k v -> 
-                    if random.NextDouble() < v.Occurrence then
+                    if context.random.NextDouble() < v.Occurrence then
                         a |> Set.add k
                     else
                         a) islandItems
-            |> islandItemSink location
+            |> context.islandItemSink location
 
     let private ChangeMarketDemand 
             (islandSingleMarketSource : IslandSingleMarketSource)

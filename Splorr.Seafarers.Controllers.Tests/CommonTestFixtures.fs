@@ -271,6 +271,12 @@ type TestAtSeaRunContext
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
         member _.random : Random = random
 
+    interface IslandGenerateItemsContext with
+        member _.islandItemSink: IslandItemSink = islandItemSink
+        member _.islandItemSource: IslandItemSource = islandItemSource
+        member _.itemSource: ItemSource = itemSource
+        member _.random: Random = random
+
     interface AtSeaRunContext with
         member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource

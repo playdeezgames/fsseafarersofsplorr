@@ -32,6 +32,13 @@ type TestIslandGenerateCommoditiesContext(commoditySource, islandMarketSink, isl
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
         member _.random : Random = random
 
+type TestIslandGenerateItemsContext(islandItemSink, islandItemSource, itemSource, random) =
+    interface IslandGenerateItemsContext with
+        member _.islandItemSink: IslandItemSink = islandItemSink
+        member _.islandItemSource: IslandItemSource = islandItemSource
+        member _.itemSource: ItemSource = itemSource
+        member _.random: Random = random
+
 [<Test>]
 let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =
     let inputLocation = (0.0, 0.0)
@@ -320,8 +327,17 @@ let ``GenerateItems.It has no effect when the given island already has items in 
     let islandItemSource (l:Location) = [1UL] |> Set.ofList
     let islandItemSink (_) (_) =
         Assert.Fail("This should not be called")
+    let context = 
+        TestIslandGenerateItemsContext
+            (
+                islandItemSink,
+                islandItemSource ,
+                itemSource,
+                random 
+            ) :> IslandGenerateItemsContext
     input
-    |> Island.GenerateItems islandItemSource islandItemSink random itemSource
+    |> Island.GenerateItems 
+        context
 
 
 [<Test>]
@@ -331,8 +347,17 @@ let ``GenerateItems.It generates the shop when the given island has no items in 
     let islandItemSource (l:Location) = Set.empty
     let islandItemSink (_) (_) =
         counter <- counter + 1
+    let context = 
+        TestIslandGenerateItemsContext
+            (
+                islandItemSink,
+                islandItemSource ,
+                itemSource,
+                random 
+            ) :> IslandGenerateItemsContext
     input
-    |> Island.GenerateItems islandItemSource islandItemSink random itemSource
+    |> Island.GenerateItems 
+        context
     Assert.AreEqual(1,counter)
 
 [<Test>]

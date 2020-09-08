@@ -57,6 +57,7 @@ type WorldDockContext =
     inherit IslandAddVisitContext
     inherit IslandJobsGenerationContext
     inherit IslandGenerateCommoditiesContext
+    inherit IslandGenerateItemsContext
     abstract member avatarIslandFeatureSink        : AvatarIslandFeatureSink
     abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
@@ -424,10 +425,8 @@ module World =
                 context
                 location
             Island.GenerateItems 
-                context.islandItemSource 
-                context.islandItemSink 
-                random 
-                context.itemSource location
+                context
+                location
             avatarId
             |> AddMessages 
                 context.avatarMessageSink 
