@@ -41,6 +41,7 @@ type WorldGenerateIslandsContext =
 
 type WorldCreateContext =
     inherit WorldGenerateIslandsContext
+    inherit AvatarCreateContext
     abstract member avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink
     abstract member avatarJobSink                   : AvatarJobSink
     abstract member worldSingleStatisticSource      : WorldSingleStatisticSource
@@ -52,6 +53,11 @@ type WorldCreateContext =
     abstract member vesselSingleStatisticSource     : VesselSingleStatisticSource
     abstract member shipmateRationItemSink          : ShipmateRationItemSink
 
+type WorldCleanHullContext =
+    inherit AvatarCleanHullContext
+
+type WorldMoveContext =
+    inherit AvatarMoveContext
 
 type WorldDockContext =
     inherit IslandAddVisitContext
@@ -81,11 +87,11 @@ type WorldAcceptJobContext =
 
 type WorldBuyItemsContext =
     inherit ItemDetermineSalePriceContext
-    inherit IslandUpdateMarketForItemSaleContext
+    inherit IslandUpdateMarketForItemContext
 
 type WorldSellItemsContext =
     inherit ItemDeterminePurchasePriceContext
-    inherit IslandUpdateMarketForItemSaleContext
+    inherit IslandUpdateMarketForItemContext
 
 module World =
 //TODO: top of "world generator" refactor
@@ -227,6 +233,7 @@ module World =
                 |> context.worldSingleStatisticSource 
                 |> Statistic.GetMaximumValue)
         Avatar.Create 
+            context
             context.avatarJobSink
             context.rationItemSource
             context.shipmateRationItemSink
@@ -301,6 +308,7 @@ module World =
             Primary) = Alive
 
     let rec Move
+            (context : WorldMoveContext)
             (avatarInventorySink           : AvatarInventorySink)
             (avatarInventorySource         : AvatarInventorySource)
             (avatarIslandSingleMetricSink  : AvatarIslandSingleMetricSink)
@@ -322,6 +330,7 @@ module World =
             avatarId
             |> AddMessages avatarMessageSink [ "Steady as she goes." ]
             Avatar.Move 
+                context
                 avatarInventorySink
                 avatarInventorySource
                 avatarShipmateSource
@@ -345,6 +354,7 @@ module World =
                 |> AddMessages avatarMessageSink [ "You die of old age!" ]
             else
                 Move
+                    context
                     avatarInventorySink
                     avatarInventorySource
                     avatarIslandSingleMetricSink
@@ -758,6 +768,7 @@ module World =
             |> AddMessages avatarMessageSink ["You cannot sell items here."]
 
     let CleanHull //TODO: this just passes everything along to avatar.CleanHull, so eliminate
+            (context : WorldCleanHullContext)
             (avatarShipmateSource          : AvatarShipmateSource)
             (avatarSingleMetricSink        : AvatarSingleMetricSink)
             (avatarSingleMetricSource      : AvatarSingleMetricSource)
@@ -770,6 +781,7 @@ module World =
             : unit =
         avatarId 
         |> Avatar.CleanHull 
+            context
             avatarShipmateSource
             avatarSingleMetricSink
             avatarSingleMetricSource

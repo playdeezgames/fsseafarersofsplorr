@@ -1,8 +1,16 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
-open System
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
+
+type CareenedHandleCommandContext =
+    inherit WorldCleanHullContext
+
+type CareenedRunAliveContext =
+    inherit CareenedHandleCommandContext
+
+type CareenedRunContext =
+    inherit CareenedRunAliveContext
 
 module Careened = 
     let private UpdateDisplay 
@@ -34,6 +42,7 @@ module Careened =
         |> List.iter messageSink
 
     let private HandleCommand
+            (context : CareenedHandleCommandContext)
             (avatarMessagePurger           : AvatarMessagePurger)
             (avatarShipmateSource          : AvatarShipmateSource)
             (avatarSingleMetricSink        : AvatarSingleMetricSink)
@@ -77,6 +86,7 @@ module Careened =
         | Some Command.CleanHull ->
             avatarId 
             |> World.CleanHull
+                context
                 avatarShipmateSource
                 avatarSingleMetricSink
                 avatarSingleMetricSource
@@ -99,6 +109,7 @@ module Careened =
             |> Some
 
     let private RunAlive
+            (context : CareenedRunAliveContext)
             (avatarMessagePurger           : AvatarMessagePurger)
             (avatarMessageSource           : AvatarMessageSource)
             (avatarShipmateSource          : AvatarShipmateSource)
@@ -120,6 +131,7 @@ module Careened =
             side 
             avatarId
         HandleCommand
+            context
             avatarMessagePurger
             avatarShipmateSource
             avatarSingleMetricSink
@@ -133,6 +145,7 @@ module Careened =
             avatarId
 
     let Run 
+            (context : CareenedRunContext)
             (avatarMessagePurger           : AvatarMessagePurger)
             (avatarMessageSource           : AvatarMessageSource)
             (avatarShipmateSource          : AvatarShipmateSource)
@@ -149,6 +162,7 @@ module Careened =
             : Gamestate option =
         if avatarId |> World.IsAvatarAlive shipmateSingleStatisticSource then
             RunAlive 
+                context
                 avatarMessagePurger
                 avatarMessageSource
                 avatarShipmateSource

@@ -14,8 +14,18 @@ type AvatarJobSink = string -> Job option -> unit
 type AvatarIslandFeatureSink = AvatarIslandFeature option * string -> unit
 //type AvatarIslandFeatureSource = string -> IslandFeatureIdentifier option
 
+type AvatarCreateContext =
+    inherit VesselCreateContext
+
+type AvatarMoveContext =
+    inherit VesselBefoulContext
+
+type AvatarCleanHullContext =
+    inherit VesselTransformFoulingContext
+
 module Avatar =
     let Create 
+            (context : AvatarCreateContext)
             (avatarJobSink                   : AvatarJobSink)
             (rationItemSource                : RationItemSource)
             (shipmateRationItemSink          : ShipmateRationItemSink)
@@ -25,7 +35,9 @@ module Avatar =
             (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
             (avatarId                        : string)
             : unit =
-        Vessel.Create vesselStatisticTemplateSource vesselStatisticSink avatarId
+        Vessel.Create 
+            context
+            avatarId
         Shipmate.Create 
             shipmateStatisticTemplateSource 
             shipmateSingleStatisticSink
@@ -259,6 +271,7 @@ module Avatar =
         |> List.iter transform
 
     let Move
+            (context : AvatarMoveContext)
             (avatarInventorySink           : AvatarInventorySink)
             (avatarInventorySource         : AvatarInventorySource)
             (avatarShipmateSource          : AvatarShipmateSource)
@@ -278,7 +291,11 @@ module Avatar =
             vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Heading 
             |> Option.map Statistic.GetCurrentValue 
             |> Option.get
-        Vessel.Befoul vesselSingleStatisticSource vesselSingleStatisticSink avatarId
+        Vessel.Befoul 
+            context
+            vesselSingleStatisticSource 
+            vesselSingleStatisticSink 
+            avatarId
         let avatarPosition = GetPosition vesselSingleStatisticSource avatarId |> Option.get
         let newPosition = ((avatarPosition |> fst) + System.Math.Cos(actualHeading) * actualSpeed, (avatarPosition |> snd) + System.Math.Sin(actualHeading) * actualSpeed)
         SetPosition vesselSingleStatisticSource vesselSingleStatisticSink newPosition avatarId
@@ -481,6 +498,7 @@ module Avatar =
                 result + (quantity |> float) * d.Tonnage)
 
     let CleanHull 
+            (context : AvatarCleanHullContext)
             (avatarShipmateSource          : AvatarShipmateSource)
             (avatarSingleMetricSink        : AvatarSingleMetricSink)
             (avatarSingleMetricSource      : AvatarSingleMetricSource)
@@ -491,7 +509,11 @@ module Avatar =
             (side                          : Side) 
             (avatarId                      : string)
             : unit =
-        Vessel.TransformFouling vesselSingleStatisticSource vesselSingleStatisticSink avatarId side (fun x-> {x with CurrentValue = x.MinimumValue})
+        Vessel.TransformFouling 
+            context
+            avatarId 
+            side 
+            (fun x-> {x with CurrentValue = x.MinimumValue})
         TransformShipmates 
             avatarShipmateSource 
             (Shipmate.TransformStatistic

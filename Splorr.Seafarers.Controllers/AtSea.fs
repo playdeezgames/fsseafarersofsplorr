@@ -15,6 +15,7 @@ type AtSeaHandleCommandContext =
     inherit WorldDockContext
     inherit AtSeaGetVisibleIslandsContext
     inherit AtSeaUpdateDisplayContext
+    inherit WorldMoveContext
     abstract member avatarInventorySink            : AvatarInventorySink
     abstract member avatarInventorySource          : AvatarInventorySource
     abstract member avatarMessagePurger            : AvatarMessagePurger
@@ -318,6 +319,7 @@ module AtSea =
         | Some (Command.Move distance)->
             avatarId
             |> World.Move 
+                context
                 context.avatarInventorySink
                 context.avatarInventorySource
                 context.avatarIslandSingleMetricSink

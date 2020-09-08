@@ -12,6 +12,7 @@ type RunnerRunContext =
     inherit IslandFeatureRunContext
     inherit HelpRunContext
     inherit ItemListRunContext
+    inherit CareenedRunContext
     abstract member avatarMetricSource              : AvatarMetricSource
     abstract member switchSource                    : SwitchSource
 
@@ -59,6 +60,7 @@ module Runner =
 
             | Gamestate.Careened (side, avatarId) -> 
                 Careened.Run 
+                    context
                     context.avatarMessagePurger
                     context.avatarMessageSource
                     context.avatarShipmateSource

@@ -11,7 +11,7 @@ type TestWorldBuyItemsContext
         islandSingleMarketSink,
         islandSingleMarketSource,
         itemSingleSource)=
-    interface IslandUpdateMarketForItemSaleContext with
+    interface IslandUpdateMarketForItemContext with
         member this.commoditySource: CommoditySource = commoditySource
         member this.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
         member this.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource

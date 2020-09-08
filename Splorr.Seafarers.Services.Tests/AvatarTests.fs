@@ -9,6 +9,22 @@ open AvatarTestFixtures
 
 let private inputAvatarId = "avatar"
 
+type TestAvatarCreateContext(vesselStatisticSink, vesselStatisticTemplateSource) =
+    interface AvatarCreateContext with
+        member _.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
+        member _.vesselStatisticTemplateSource: VesselStatisticTemplateSource = vesselStatisticTemplateSource
+
+type TestAvatarMoveContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
+    interface AvatarMoveContext with
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface VesselTransformFoulingContext with
+        member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
+type TestAvatarCleanHullContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
+    interface AvatarCleanHullContext with
+        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 [<Test>]
 let ``GetReputation.It retrieves the reputation of the primary shipmate.`` () =
@@ -108,7 +124,9 @@ let ``Create.It creates an avatar.`` () =
         Assert.AreEqual(Map.empty, actual)
     let vesselStatisticTemplateSource () = 
         Map.empty
+    let context = TestAvatarCreateContext(vesselStatisticSink, vesselStatisticTemplateSource)
     Avatar.Create
+        context
         avatarJobSink                   
         rationItemSource                
         shipmateRationItemSink          
@@ -276,7 +294,9 @@ let ``Move.It moves the avatar.`` () =
         Map.empty
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(Map.empty, inventory)
+    let context = TestAvatarMoveContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
+        context
         avatarInventorySink
         avatarInventorySource
         avatarShipmateSourceStub
@@ -318,7 +338,9 @@ let ``Move.It removes a ration when the given avatar has rations and full satiet
         originalInventory
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(expectedInventory, inventory)
+    let context = TestAvatarMoveContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
+        context
         avatarInventorySink
         avatarInventorySource
         avatarShipmateSource
@@ -359,7 +381,9 @@ let ``Move.It removes a ration and increases satiety when the given avatar has r
         originalInventory
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(expectedInventory, inventory)
+    let context = TestAvatarMoveContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
+        context
         avatarInventorySink
         avatarInventorySource
         avatarShipmateSource
@@ -400,7 +424,9 @@ let ``Move.It lowers the avatar's satiety but does not affect turns when the giv
         Map.empty
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(Map.empty, inventory)
+    let context = TestAvatarMoveContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
+        context
         avatarInventorySink
         avatarInventorySource
         avatarShipmateSource
@@ -450,7 +476,9 @@ let ``Move.It lowers the avatar's maximum turn and updates the starvation metric
         Map.empty
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(Map.empty, inventory)
+    let context = TestAvatarMoveContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
+        context
         avatarInventorySink
         avatarInventorySource
         avatarShipmateSource
@@ -962,7 +990,9 @@ let ``CleanHull.It cleans the hull of the given avatar.`` () =
             Assert.AreEqual(1.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "Kaboom shipmateSingleStatisticSink")
+    let context = TestAvatarCleanHullContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarCleanHullContext
     Avatar.CleanHull
+        context
         avatarShipmateSource
         (assertAvatarSingleMetricSink [(Metric.CleanedHull, 1UL)])
         avatarSingleMetricSourceStub
@@ -1153,7 +1183,9 @@ let ``Move.It transforms the avatar within the given world.`` () =
         Map.empty
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(Map.empty, inventory)
+    let context = TestAvatarMoveContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
+            context
             avatarInventorySink
             avatarInventorySource
             avatarShipmateSource

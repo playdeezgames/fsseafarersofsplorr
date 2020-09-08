@@ -68,6 +68,13 @@ type SplorrContext
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.islandSingleNameSource         : IslandSingleNameSource = islandSingleNameSource
 
+    interface VesselTransformFoulingContext with
+        member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
+    interface VesselBefoulContext with
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
     interface AtSeaHandleCommandContext with
         member _.avatarInventorySink            : AvatarInventorySink        =avatarInventorySink        
         member _.avatarInventorySource          : AvatarInventorySource      =avatarInventorySource      
@@ -99,13 +106,17 @@ type SplorrContext
         member _.islandSource                 : IslandSource                =islandSource     
 
     interface WorldNameIslandsContext with
-        member this.islandSingleNameSink: IslandSingleNameSink = islandSingleNameSink
-        member this.islandSource: IslandSource = islandSource
-        member this.nameSource: TermSource = termNameSource
+        member _.islandSingleNameSink: IslandSingleNameSink = islandSingleNameSink
+        member _.islandSource: IslandSource = islandSource
+        member _.nameSource: TermSource = termNameSource
 
     interface WorldGenerateIslandsContext with
         member _.islandSingleNameSink          : IslandSingleNameSink=islandSingleNameSink
         member _.termNameSource                : TermSource          =termNameSource      
+
+    interface VesselCreateContext with
+        member _.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
+        member _.vesselStatisticTemplateSource: VesselStatisticTemplateSource = vesselStatisticTemplateSource
 
     interface WorldCreateContext with
         member _.avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink    = avatarIslandSingleMetricSink   
@@ -134,7 +145,7 @@ type SplorrContext
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
     
-    interface IslandUpdateMarketForItemSaleContext with
+    interface IslandUpdateMarketForItemContext with
         member _.commoditySource: CommoditySource = commoditySource
         member _.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
         member _.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource

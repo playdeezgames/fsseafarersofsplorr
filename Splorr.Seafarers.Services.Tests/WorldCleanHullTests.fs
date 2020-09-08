@@ -6,6 +6,11 @@ open Splorr.Seafarers.Models
 open WorldTestFixtures
 open CommonTestFixtures
 
+type TestWorldCleanHullContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
+    interface WorldCleanHullContext with
+        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
 [<Test>]
 let ``CleanHull.It returns the original world when given a bogus avatar id and world.`` () =
     let inputWorld = 
@@ -22,8 +27,10 @@ let ``CleanHull.It returns the original world when given a bogus avatar id and w
         None
     let shipmateSingleStatisticSink (_) (_) (_) =
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
+    let context = TestWorldCleanHullContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldCleanHullContext
     inputWorld
     |> World.CleanHull
+        context
         avatarShipmateSource
         (assertAvatarSingleMetricSink [Metric.CleanedHull, 1UL])
         avatarSingleMetricSourceStub
@@ -50,8 +57,10 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
         None
     let shipmateSingleStatisticSink (_) (_) (_) =
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
+    let context = TestWorldCleanHullContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldCleanHullContext
     inputWorld
     |> World.CleanHull 
+        context
         avatarShipmateSource
         (assertAvatarSingleMetricSink [Metric.CleanedHull, 1UL])
         avatarSingleMetricSourceStub

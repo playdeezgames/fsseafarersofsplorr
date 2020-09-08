@@ -40,7 +40,7 @@ type TestIslandGenerateItemsContext(islandItemSink, islandItemSource, itemSource
         member _.random: Random = random
 
 type TestIslandUpdateMarketForItemSaleContext(commoditySource, islandSingleMarketSink, islandSingleMarketSource) =
-    interface IslandUpdateMarketForItemSaleContext with
+    interface IslandUpdateMarketForItemContext with
         member _.commoditySource: CommoditySource = commoditySource
         member _.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
         member _.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
@@ -382,7 +382,12 @@ let ``UpdateMarketForItemSale.It updates market commodity demands based on the g
         Assert.AreEqual(expectedMarket, market)
     let islandSingleMarketSource (_) (_) =
         None
-    let context = TestIslandUpdateMarketForItemSaleContext(commoditySource, islandSingleMarketSink, islandSingleMarketSource) :> IslandUpdateMarketForItemSaleContext
+    let context = 
+        TestIslandUpdateMarketForItemSaleContext
+            (commoditySource, 
+            islandSingleMarketSink, 
+            islandSingleMarketSource) 
+        :> IslandUpdateMarketForItemContext
     input
     |> Island.UpdateMarketForItemSale 
         context
@@ -408,7 +413,12 @@ let ``UpdateMarketForItemPurchase.It updates market commodity supply based on th
     let islandMarketSink (_) (commodityId: uint64,market:Market) =
         Assert.AreEqual(1UL, commodityId)
         Assert.AreEqual(expectedMarket, market)
-    let context = TestIslandUpdateMarketForItemSaleContext(commoditySource, islandMarketSink, islandSingleMarketSource) :> IslandUpdateMarketForItemSaleContext
+    let context = 
+        TestIslandUpdateMarketForItemSaleContext
+            (commoditySource, 
+            islandMarketSink, 
+            islandSingleMarketSource) 
+        :> IslandUpdateMarketForItemContext
     input
     |> Island.UpdateMarketForItemPurchase 
         context

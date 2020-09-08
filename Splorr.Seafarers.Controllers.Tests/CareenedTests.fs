@@ -7,9 +7,16 @@ open Splorr.Seafarers.Controllers
 open CommonTestFixtures
 open AtSeaTestFixtures
 
+type TestCareenedRunContext (vesselSingleStatisticSink, vesselSingleStatisticSource) 
+    = interface CareenedRunContext with
+        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
 let private functionUnderTest 
         (avatarSingleMetricSink : AvatarSingleMetricSink)= 
+    let context = TestCareenedRunContext (vesselSingleStatisticSinkStub, vesselSingleStatisticSourceStub) :> CareenedRunContext
     Careened.Run 
+        context
         avatarMessagePurgerStub
         avatarMessageSourceDummy
         avatarShipmateSourceStub
@@ -38,9 +45,11 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
             Statistic.Create (0.0, 100.0) 0.0 |> Some
         | _ ->
             raise (System.NotImplementedException (identifier.ToString() |> sprintf "shipmateSingleStatisticSource - %s"))
+    let context = TestCareenedRunContext (vesselSingleStatisticSinkStub, vesselSingleStatisticSourceStub) :> CareenedRunContext
     let actual =
         inputWorld
         |> Careened.Run 
+            context
             avatarMessagePurgerStub
             avatarMessageSourceDummy
             avatarShipmateSourceStub
