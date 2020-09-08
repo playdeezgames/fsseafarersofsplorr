@@ -27,9 +27,10 @@ type TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingle
 
 type TestIslandGenerateCommoditiesContext(commoditySource, islandMarketSink, islandMarketSource) =
     interface IslandGenerateCommoditiesContext with
-        member this.commoditySource: CommoditySource = commoditySource
-        member this.islandMarketSink: IslandMarketSink = islandMarketSink
-        member this.islandMarketSource: IslandMarketSource = islandMarketSource
+        member _.commoditySource: CommoditySource = commoditySource
+        member _.islandMarketSink: IslandMarketSink = islandMarketSink
+        member _.islandMarketSource: IslandMarketSource = islandMarketSource
+        member _.random : Random = random
 
 [<Test>]
 let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =
@@ -300,7 +301,6 @@ let ``GenerateCommodities.It does nothing when commodities already exists for th
     input
     |> Island.GenerateCommodities 
         context
-        random
 
 [<Test>]
 let ``GenerateCommodities.It generates commodities when the given island has no commodities.`` () =
@@ -313,7 +313,6 @@ let ``GenerateCommodities.It generates commodities when the given island has no 
     input
     |> Island.GenerateCommodities 
         context
-        random
 
 [<Test>]
 let ``GenerateItems.It has no effect when the given island already has items in the shop.`` () =

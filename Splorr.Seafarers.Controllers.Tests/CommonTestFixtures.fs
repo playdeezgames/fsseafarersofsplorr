@@ -266,9 +266,10 @@ type TestAtSeaRunContext
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
     interface IslandGenerateCommoditiesContext with
-        member this.commoditySource: CommoditySource = commoditySource
-        member this.islandMarketSink: IslandMarketSink = islandMarketSink
-        member this.islandMarketSource: IslandMarketSource = islandMarketSource
+        member _.commoditySource: CommoditySource = commoditySource
+        member _.islandMarketSink: IslandMarketSink = islandMarketSink
+        member _.islandMarketSource: IslandMarketSource = islandMarketSource
+        member _.random : Random = random
 
     interface AtSeaRunContext with
         member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink

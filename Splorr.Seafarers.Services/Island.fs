@@ -47,6 +47,7 @@ type IslandGenerateCommoditiesContext =
     abstract member commoditySource    : CommoditySource
     abstract member islandMarketSource : IslandMarketSource
     abstract member islandMarketSink   : IslandMarketSink
+    abstract member random             : Random
 
 module Island =
     let  Create
@@ -126,7 +127,6 @@ module Island =
 
     let GenerateCommodities 
             (context  : IslandGenerateCommoditiesContext)
-            (random   : Random) 
             (location : Location) 
             : unit =
         let islandMarkets = context.islandMarketSource location
@@ -138,8 +138,8 @@ module Island =
                 (fun a commodity _->
                     let market = 
                         {
-                            Supply=random |> SupplyDemandGenerator
-                            Demand=random |> SupplyDemandGenerator
+                            Supply=context.random |> SupplyDemandGenerator
+                            Demand=context.random |> SupplyDemandGenerator
                         }
                     a
                     |> Map.add commodity market) islandMarkets
