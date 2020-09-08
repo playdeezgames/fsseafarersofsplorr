@@ -54,6 +54,7 @@ type WorldCreateContext =
 
 
 type WorldDockContext =
+    inherit IslandAddVisitContext
     inherit IslandJobsGenerationContext
     abstract member avatarIslandFeatureSink        : AvatarIslandFeatureSink
     abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
@@ -405,6 +406,7 @@ module World =
                 context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
                 |> Option.defaultValue 0UL
             Island.AddVisit
+                context
                 context.avatarIslandSingleMetricSink
                 context.avatarIslandSingleMetricSource
                 (DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64)

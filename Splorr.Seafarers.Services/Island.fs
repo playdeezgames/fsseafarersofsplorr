@@ -33,6 +33,9 @@ type IslandGetDisplayNameContext =
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
     abstract member islandSingleNameSource         : IslandSingleNameSource
 
+type IslandAddVisitContext =
+    interface
+    end
 
 module Island =
     let  Create
@@ -53,7 +56,6 @@ module Island =
             (avatarId : string) 
             (location : Location)
             : string =
-        //does this island location have a visit count for this avatar?
         let visitCount = context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
         let islandName = context.islandSingleNameSource location
         match visitCount, islandName with
@@ -65,6 +67,7 @@ module Island =
             raise (System.NotImplementedException "This island does not exist!")
     
     let AddVisit 
+            (islandAddVisitContext          : IslandAddVisitContext)
             (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (epochSeconds                   : uint64) //TODO: to time source(if the tests fail intermittently)?
