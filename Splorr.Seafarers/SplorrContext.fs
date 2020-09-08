@@ -21,6 +21,7 @@ type SplorrContext
         avatarSingleMetricSink: AvatarSingleMetricSink ,
         avatarSingleMetricSource: AvatarSingleMetricSource ,
         commoditySource: CommoditySource ,
+        epochSecondsSource: EpochSecondsSource,
         islandFeatureGeneratorSource: IslandFeatureGeneratorSource ,
         islandFeatureSource: IslandFeatureSource,
         islandItemSink: IslandItemSink ,
@@ -159,6 +160,7 @@ type SplorrContext
     interface IslandAddVisitContext with
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink   
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
 
     interface WorldDockContext with
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink

@@ -19,6 +19,7 @@ type IslandJobSource = Location -> Job list
 type IslandJobSink = Location -> Job -> unit
 type IslandSingleJobSource = Location -> uint32 -> Job option
 type IslandJobPurger = Location -> uint32 -> unit
+type EpochSecondsSource = unit -> uint64
 
 type IslandJobsGenerationContext =
     inherit JobCreationContext
@@ -36,6 +37,7 @@ type IslandGetDisplayNameContext =
 type IslandAddVisitContext =
     abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
+    abstract member epochSecondsSource : EpochSecondsSource
 
 module Island =
     let  Create
@@ -68,7 +70,7 @@ module Island =
     
     let AddVisit 
             (context      : IslandAddVisitContext)
-            (epochSeconds : uint64) //TODO: to time source(if the tests fail intermittently)?
+            (epochSecondsSource : EpochSecondsSource)
             (avatarId     : string) 
             (location     : Location)
             : unit =
@@ -77,13 +79,13 @@ module Island =
         match visitCount, lastVisit with
         | None, _ ->
             context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount 1UL
-            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit epochSeconds
+            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit <| epochSecondsSource()
         | Some x, None ->
             context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount (x+1UL)
-            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit epochSeconds
-        | Some x, Some y when y < epochSeconds ->
+            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit <| epochSecondsSource()
+        | Some x, Some y when y < epochSecondsSource() ->
             context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount (x+1UL)
-            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit epochSeconds
+            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit <| epochSecondsSource()
         | _ -> 
             ()
 

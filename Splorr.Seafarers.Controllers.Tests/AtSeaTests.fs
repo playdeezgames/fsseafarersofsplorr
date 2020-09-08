@@ -36,6 +36,7 @@ let private functionUnderTest
             avatarSingleMetricSink,
             avatarSingleMetricSourceStub,
             atSeaCommoditySource ,
+            (fun () -> System.DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64),
             atSeaIslandItemSink ,
             atSeaIslandItemSource, 
             islandJobSinkStub,

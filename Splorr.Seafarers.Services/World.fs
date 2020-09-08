@@ -407,7 +407,7 @@ module World =
                 |> Option.defaultValue 0UL
             Island.AddVisit
                 context
-                (DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64)
+                (fun () -> DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64)
                 avatarId
                 location
             let newVisitCount =

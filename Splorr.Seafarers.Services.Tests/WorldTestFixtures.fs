@@ -32,6 +32,7 @@ type TestWorldDockContext
             avatarSingleMetricSink         : AvatarSingleMetricSink,
             avatarSingleMetricSource       : AvatarSingleMetricSource,
             commoditySource                : CommoditySource ,
+            epochSecondsSource             : EpochSecondsSource,
             islandItemSink                 : IslandItemSink ,
             islandItemSource               : IslandItemSource, 
             islandJobSink                  : IslandJobSink,
@@ -66,6 +67,7 @@ type TestWorldDockContext
     interface IslandAddVisitContext with
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
     interface IslandJobsGenerationContext with
         member _.islandJobSink              : IslandJobSink=islandJobSink
         member _.islandJobSource            : IslandJobSource=islandJobSource

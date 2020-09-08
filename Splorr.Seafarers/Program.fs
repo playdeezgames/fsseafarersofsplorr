@@ -333,6 +333,7 @@ let main argv =
             avatarSingleMetricSink,
             avatarSingleMetricSource,
             commoditySource,
+            (fun () -> System.DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64),
             islandFeatureGeneratorSource,
             islandFeatureSource,
             islandItemSink ,
