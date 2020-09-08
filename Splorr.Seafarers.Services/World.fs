@@ -74,6 +74,9 @@ type WorldDockContext =
     abstract member shipmateSingleStatisticSink    : ShipmateSingleStatisticSink
     abstract member shipmateSingleStatisticSource  : ShipmateSingleStatisticSource
 
+type WorldAcceptJobContext =
+    inherit IslandMakeKnownContext
+
 type WorldBuyItemsContext =
     inherit ItemDetermineSalePriceContext
 
@@ -527,6 +530,7 @@ module World =
             ()
 
     let AcceptJob 
+            (context : WorldAcceptJobContext)
             (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (avatarJobSink                  : AvatarJobSink)
@@ -559,6 +563,7 @@ module World =
                     1UL
                 avatarJobSink avatarId (job|>Some)
                 Island.MakeKnown
+                    context
                     avatarIslandSingleMetricSink
                     avatarIslandSingleMetricSource
                     avatarId

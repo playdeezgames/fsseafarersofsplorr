@@ -20,6 +20,9 @@ type TestIslandAddVisitContext (avatarIslandSingleMetricSink, avatarIslandSingle
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
 
+type TestIslandMakeKnownContext() =
+    interface IslandMakeKnownContext
+
 [<Test>]
 let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =
     let inputLocation = (0.0, 0.0)
@@ -249,7 +252,9 @@ let ``MakeKnown.It does nothing when the given island is already known.`` () =
             None
     let avatarIslandSingleMetricSink(_) (_) (_) (_)= 
         Assert.Fail("avatarIslandSingleMetricSink")
+    let context = TestIslandMakeKnownContext() :> IslandMakeKnownContext
     Island.MakeKnown 
+        context
         avatarIslandSingleMetricSink
         avatarIslandSingleMetricSource
         avatarId
@@ -271,7 +276,9 @@ let ``MakeKnown.It mutates the island's visit count to Some 0 when the given isl
             Assert.AreEqual(0UL, value)
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
+    let context = TestIslandMakeKnownContext() :> IslandMakeKnownContext
     Island.MakeKnown 
+        context
         avatarIslandSingleMetricSink
         avatarIslandSingleMetricSource
         avatarId

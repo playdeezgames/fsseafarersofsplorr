@@ -12,6 +12,7 @@ type DockedUpdateDisplayContext =
     abstract member islandFeatureSource            : IslandFeatureSource
 
 type DockedHandleCommandContext = 
+    inherit WorldAcceptJobContext
     inherit WorldUndockContext
     inherit WorldBuyItemsContext
     inherit WorldSellItemsContext
@@ -90,6 +91,7 @@ module Docked =
         | Some (Command.AcceptJob index) ->
             avatarId 
             |> World.AcceptJob
+                context
                 context.avatarIslandSingleMetricSink
                 context.avatarIslandSingleMetricSource
                 context.avatarJobSink

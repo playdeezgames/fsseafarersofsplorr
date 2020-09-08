@@ -39,6 +39,10 @@ type IslandAddVisitContext =
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
     abstract member epochSecondsSource : EpochSecondsSource
 
+type IslandMakeKnownContext = 
+    interface
+    end
+
 module Island =
     let  Create
             (context  : IslandCreateContext)
@@ -102,6 +106,7 @@ module Island =
             |> context.islandJobSink location
 
     let MakeKnown
+            (context : IslandMakeKnownContext)
             (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (avatarId                       : string) 
