@@ -56,6 +56,7 @@ type WorldCreateContext =
 type WorldDockContext =
     inherit IslandAddVisitContext
     inherit IslandJobsGenerationContext
+    inherit IslandGenerateCommoditiesContext
     abstract member avatarIslandFeatureSink        : AvatarIslandFeatureSink
     abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
@@ -420,6 +421,7 @@ module World =
                 context 
                 destinations 
             Island.GenerateCommodities 
+                context
                 context.commoditySource 
                 context.islandMarketSource 
                 context.islandMarketSink 

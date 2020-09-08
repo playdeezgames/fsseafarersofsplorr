@@ -25,6 +25,9 @@ type TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingle
         member this.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
 
+type TestIslandGenerateCommoditiesContext() =
+    interface IslandGenerateCommoditiesContext
+
 [<Test>]
 let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =
     let inputLocation = (0.0, 0.0)
@@ -290,8 +293,14 @@ let ``GenerateCommodities.It does nothing when commodities already exists for th
         |> Map.add 1UL { Supply=1.0; Demand=1.0 }
     let islandMarketSink (_) (_) =
         Assert.Fail("This should not be called.")
+    let context = TestIslandGenerateCommoditiesContext() :> IslandGenerateCommoditiesContext
     input
-    |> Island.GenerateCommodities commoditySource islandMarketSource islandMarketSink random
+    |> Island.GenerateCommodities 
+        context
+        commoditySource 
+        islandMarketSource 
+        islandMarketSink 
+        random
 
 [<Test>]
 let ``GenerateCommodities.It generates commodities when the given island has no commodities.`` () =
@@ -300,8 +309,14 @@ let ``GenerateCommodities.It generates commodities when the given island has no 
         Map.empty
     let islandMarketSink (_) (markets:Map<uint64, Market>) =
         Assert.AreEqual(commodities.Count, markets.Count)
+    let context = TestIslandGenerateCommoditiesContext() :> IslandGenerateCommoditiesContext
     input
-    |> Island.GenerateCommodities commoditySource islandMarketSource islandMarketSink random
+    |> Island.GenerateCommodities 
+        context
+        commoditySource 
+        islandMarketSource 
+        islandMarketSink 
+        random
 
 [<Test>]
 let ``GenerateItems.It has no effect when the given island already has items in the shop.`` () =

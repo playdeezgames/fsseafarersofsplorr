@@ -43,6 +43,9 @@ type IslandMakeKnownContext =
     abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
 
+type IslandGenerateCommoditiesContext =
+    interface
+    end
 
 module Island =
     let  Create
@@ -121,6 +124,7 @@ module Island =
         (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + 3.0
 
     let GenerateCommodities 
+            (context : IslandGenerateCommoditiesContext)
             (commoditySource    : CommoditySource)
             (islandMarketSource : IslandMarketSource) 
             (islandMarketSink   : IslandMarketSink) 
