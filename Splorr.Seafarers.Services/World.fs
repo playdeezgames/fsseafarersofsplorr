@@ -422,9 +422,6 @@ module World =
                 destinations 
             Island.GenerateCommodities 
                 context
-                context.commoditySource 
-                context.islandMarketSource 
-                context.islandMarketSink 
                 random 
                 location
             Island.GenerateItems 

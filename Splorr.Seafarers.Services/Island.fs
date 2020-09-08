@@ -125,17 +125,14 @@ module Island =
         (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + 3.0
 
     let GenerateCommodities 
-            (context : IslandGenerateCommoditiesContext)
-            (commoditySource    : CommoditySource)
-            (islandMarketSource : IslandMarketSource) 
-            (islandMarketSink   : IslandMarketSink) 
-            (random             : Random) 
-            (location           : Location) 
+            (context  : IslandGenerateCommoditiesContext)
+            (random   : Random) 
+            (location : Location) 
             : unit =
-        let islandMarkets = islandMarketSource location
+        let islandMarkets = context.islandMarketSource location
         if islandMarkets.IsEmpty then
             let commodities =
-                commoditySource()
+                context.commoditySource()
             commodities
             |> Map.fold
                 (fun a commodity _->
@@ -146,7 +143,7 @@ module Island =
                         }
                     a
                     |> Map.add commodity market) islandMarkets
-            |> islandMarketSink location
+            |> context.islandMarketSink location
 
     let GenerateItems 
             (islandItemSource : IslandItemSource) 

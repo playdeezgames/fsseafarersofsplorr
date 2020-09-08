@@ -300,9 +300,6 @@ let ``GenerateCommodities.It does nothing when commodities already exists for th
     input
     |> Island.GenerateCommodities 
         context
-        commoditySource 
-        islandMarketSource 
-        islandMarketSink 
         random
 
 [<Test>]
@@ -316,9 +313,6 @@ let ``GenerateCommodities.It generates commodities when the given island has no 
     input
     |> Island.GenerateCommodities 
         context
-        commoditySource 
-        islandMarketSource 
-        islandMarketSink 
         random
 
 [<Test>]
