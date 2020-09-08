@@ -9,7 +9,7 @@ type IslandItemSink   = Location -> Set<uint64>->unit
 type IslandSingleMarketSource = Location -> uint64 -> Market option
 type IslandSingleMarketSink = Location -> (uint64 * Market) -> unit
 type AvatarIslandSingleMetricSource = string -> Location -> AvatarIslandMetricIdentifier -> uint64 option
-type AvatarIslandSingleMetricSink = string -> Location -> AvatarIslandMetricIdentifier -> uint64 -> unit //TODO:value needs to become uint64 option
+type AvatarIslandSingleMetricSink = string -> Location -> AvatarIslandMetricIdentifier -> uint64 -> unit
 type IslandSingleNameSource = Location -> string option
 type IslandSingleNameSink = Location -> string option -> unit
 type IslandStatisticTemplateSource = unit -> Map<IslandStatisticIdentifier, StatisticTemplate>
@@ -34,8 +34,8 @@ type IslandGetDisplayNameContext =
     abstract member islandSingleNameSource         : IslandSingleNameSource
 
 type IslandAddVisitContext =
-    interface
-    end
+    abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
+    abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
 
 module Island =
     let  Create
@@ -67,25 +67,23 @@ module Island =
             raise (System.NotImplementedException "This island does not exist!")
     
     let AddVisit 
-            (islandAddVisitContext          : IslandAddVisitContext)
-            (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
-            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
-            (epochSeconds                   : uint64) //TODO: to time source(if the tests fail intermittently)?
-            (avatarId                       : string) 
-            (location                       : Location)
+            (context      : IslandAddVisitContext)
+            (epochSeconds : uint64) //TODO: to time source(if the tests fail intermittently)?
+            (avatarId     : string) 
+            (location     : Location)
             : unit =
-        let visitCount = avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
-        let lastVisit = avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.LastVisit
+        let visitCount = context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
+        let lastVisit = context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.LastVisit
         match visitCount, lastVisit with
         | None, _ ->
-            avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount 1UL
-            avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit epochSeconds
+            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount 1UL
+            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit epochSeconds
         | Some x, None ->
-            avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount (x+1UL)
-            avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit epochSeconds
+            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount (x+1UL)
+            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit epochSeconds
         | Some x, Some y when y < epochSeconds ->
-            avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount (x+1UL)
-            avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit epochSeconds
+            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount (x+1UL)
+            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit epochSeconds
         | _ -> 
             ()
 

@@ -14,8 +14,10 @@ type TestIslandGetDisplayNameContext
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.islandSingleNameSource         : IslandSingleNameSource = islandSingleNameSource
 
-type TestIslandAddVisitContext () =
-    interface IslandAddVisitContext
+type TestIslandAddVisitContext (avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) =
+    interface IslandAddVisitContext with
+        member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
 
 [<Test>]
 let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =
@@ -82,11 +84,9 @@ let ``AddVisit.It increases visit count to one and sets last visit to given turn
             Assert.AreEqual(turn, value)
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
-    let context = TestIslandAddVisitContext() :> IslandAddVisitContext
+    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> IslandAddVisitContext
     Island.AddVisit 
         context
-        avatarIslandSingleMetricSink
-        avatarIslandSingleMetricSource
         turn 
         avatarId
         location
@@ -113,11 +113,9 @@ let ``AddVisit.It increases visit count by one and sets last visit to given turn
             Assert.AreEqual(turn, value)
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
-    let context = TestIslandAddVisitContext() :> IslandAddVisitContext
+    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> IslandAddVisitContext
     Island.AddVisit 
         context
-        avatarIslandSingleMetricSink
-        avatarIslandSingleMetricSource
         turn 
         avatarId
         location
@@ -145,11 +143,9 @@ let ``AddVisit.It increases visit count by one and sets last visit to given turn
             Assert.AreEqual(turn, value)
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
-    let context = TestIslandAddVisitContext() :> IslandAddVisitContext
+    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> IslandAddVisitContext
     Island.AddVisit 
         context
-        avatarIslandSingleMetricSink
-        avatarIslandSingleMetricSource
         turn 
         avatarId
         location
@@ -171,11 +167,9 @@ let ``AddVisit.It does not update visit count when given turn was prior or equal
             None
     let avatarIslandSingleMetricSink(_) (_) (_) (_)= 
         Assert.Fail("avatarIslandSingleMetricSink")
-    let context = TestIslandAddVisitContext() :> IslandAddVisitContext
+    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> IslandAddVisitContext
     Island.AddVisit 
         context
-        avatarIslandSingleMetricSink
-        avatarIslandSingleMetricSource
         turn 
         avatarId
         location

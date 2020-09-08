@@ -407,8 +407,6 @@ module World =
                 |> Option.defaultValue 0UL
             Island.AddVisit
                 context
-                context.avatarIslandSingleMetricSink
-                context.avatarIslandSingleMetricSource
                 (DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64)
                 avatarId
                 location
