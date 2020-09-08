@@ -564,8 +564,6 @@ module World =
                 avatarJobSink avatarId (job|>Some)
                 Island.MakeKnown
                     context
-                    avatarIslandSingleMetricSink
-                    avatarIslandSingleMetricSource
                     avatarId
                     job.Destination
                 islandJobPurger location jobIndex

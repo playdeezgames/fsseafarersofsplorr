@@ -40,8 +40,9 @@ type IslandAddVisitContext =
     abstract member epochSecondsSource : EpochSecondsSource
 
 type IslandMakeKnownContext = 
-    interface
-    end
+    abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
+    abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
+
 
 module Island =
     let  Create
@@ -106,15 +107,13 @@ module Island =
             |> context.islandJobSink location
 
     let MakeKnown
-            (context : IslandMakeKnownContext)
-            (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
-            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
-            (avatarId                       : string) 
-            (location                       : Location)
+            (context  : IslandMakeKnownContext)
+            (avatarId : string) 
+            (location : Location)
             : unit =
-        let visitCount = avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
+        let visitCount = context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
         if visitCount.IsNone then
-            avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount 0UL
+            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount 0UL
         
     let private SupplyDemandGenerator 
             (random:Random) 

@@ -53,6 +53,10 @@ type TestDockedRunContext
         member _.islandMarketSource             : IslandMarketSource            =islandMarketSource   
         member _.itemSingleSource               : ItemSingleSource              = itemSingleSource
 
+    interface IslandMakeKnownContext with
+        member this.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+        member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+
     interface DockedHandleCommandContext with
         member _.avatarInventorySink            : AvatarInventorySink           =avatarInventorySink            
         member _.avatarInventorySource          : AvatarInventorySource         =avatarInventorySource          
