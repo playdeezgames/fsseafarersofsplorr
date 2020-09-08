@@ -85,6 +85,7 @@ type WorldBuyItemsContext =
 
 type WorldSellItemsContext =
     inherit ItemDeterminePurchasePriceContext
+    inherit IslandUpdateMarketForItemSaleContext
 
 module World =
 //TODO: top of "world generator" refactor
@@ -731,7 +732,11 @@ module World =
                         item 
                         location
                 let price = (quantity |> float) * unitPrice
-                Island.UpdateMarketForItemPurchase islandSingleMarketSource islandSingleMarketSink commoditySource descriptor quantity location
+                Island.UpdateMarketForItemPurchase 
+                    context
+                    descriptor 
+                    quantity 
+                    location
                 avatarId
                 |> AddMessages avatarMessageSink [(quantity, descriptor.ItemName) ||> sprintf "You complete the sale of %u %s."]
                 Avatar.EarnMoney 

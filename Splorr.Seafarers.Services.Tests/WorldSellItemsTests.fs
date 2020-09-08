@@ -5,11 +5,20 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
 
-type TestWorldSellItemsContext(commoditySource, islandMarketSource, itemSingleSource) =
+type TestWorldSellItemsContext
+        (commoditySource, 
+        islandMarketSource, 
+        islandSingleMarketSink,
+        islandSingleMarketSource,
+        itemSingleSource) =
+    interface IslandUpdateMarketForItemSaleContext with
+        member _.commoditySource: CommoditySource = commoditySource
+        member _.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
+        member _.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
     interface WorldSellItemsContext with
-        member this.commoditySource: CommoditySource = commoditySource
-        member this.islandMarketSource: IslandMarketSource = islandMarketSource
-        member this.itemSingleSource : ItemSingleSource = itemSingleSource
+        member _.commoditySource: CommoditySource = commoditySource
+        member _.islandMarketSource: IslandMarketSource = islandMarketSource
+        member _.itemSingleSource : ItemSingleSource = itemSingleSource
 
 [<Test>]
 let ``SellItems.It gives a message when given a bogus island location.`` () =
@@ -29,7 +38,13 @@ let ``SellItems.It gives a message when given a bogus island location.`` () =
     let itemSingleSource (x) =
         genericWorldItemSource()
         |> Map.tryFind x
-    let context = TestWorldSellItemsContext(commoditySource, islandMarketSourceStub, itemSingleSource) :> WorldSellItemsContext
+    let context = 
+        TestWorldSellItemsContext
+            (commoditySource, 
+            islandMarketSourceStub, 
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub, 
+            itemSingleSource) :> WorldSellItemsContext
     input 
     |> World.SellItems 
         context
@@ -68,7 +83,13 @@ let ``SellItems.It gives a message when given a valid island location and bogus 
     let itemSingleSource (x) =
         genericWorldItemSource()
         |> Map.tryFind x
-    let context = TestWorldSellItemsContext(commoditySource, islandMarketSourceStub, itemSingleSource) :> WorldSellItemsContext
+    let context = 
+        TestWorldSellItemsContext
+            (commoditySource, 
+            islandMarketSourceStub, 
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub, 
+            itemSingleSource) :> WorldSellItemsContext
     input 
     |> World.SellItems 
         context
@@ -103,7 +124,13 @@ let ``SellItems.It gives a message when the avatar has insufficient items in inv
     let itemSingleSource (x) =
         genericWorldItemSource()
         |> Map.tryFind x
-    let context = TestWorldSellItemsContext(commoditySource, islandMarketSourceStub, itemSingleSource) :> WorldSellItemsContext
+    let context = 
+        TestWorldSellItemsContext
+            (commoditySource, 
+            islandMarketSourceStub, 
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub, 
+            itemSingleSource) :> WorldSellItemsContext
     input 
     |> World.SellItems 
         context
@@ -138,7 +165,13 @@ let ``SellItems.It gives a message when the avatar has no items in inventory and
     let itemSingleSource (x) =
         genericWorldItemSource()
         |> Map.tryFind x
-    let context = TestWorldSellItemsContext(commoditySource, islandMarketSourceStub, itemSingleSource) :> WorldSellItemsContext
+    let context = 
+        TestWorldSellItemsContext
+            (commoditySource, 
+            islandMarketSourceStub, 
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub,
+            itemSingleSource) :> WorldSellItemsContext
     input 
     |> World.SellItems 
         context
@@ -194,7 +227,13 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
     let itemSingleSource (x) =
         genericWorldItemSource()
         |> Map.tryFind x
-    let context = TestWorldSellItemsContext(commoditySource, islandMarketSource, itemSingleSource) :> WorldSellItemsContext
+    let context = 
+        TestWorldSellItemsContext
+            (commoditySource, 
+            islandMarketSource, 
+            islandSingleMarketSink ,
+            islandSingleMarketSourceStub ,
+            itemSingleSource) :> WorldSellItemsContext
     input 
     |> World.SellItems 
         context
@@ -250,7 +289,13 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
     let itemSingleSource (x) =
         genericWorldItemSource()
         |> Map.tryFind x
-    let context = TestWorldSellItemsContext(commoditySource, islandMarketSource, itemSingleSource) :> WorldSellItemsContext
+    let context = 
+        TestWorldSellItemsContext
+            (commoditySource, 
+            islandMarketSource, 
+            islandSingleMarketSink ,
+            islandSingleMarketSourceStub ,
+            itemSingleSource) :> WorldSellItemsContext
     input 
     |> World.SellItems 
         context

@@ -200,10 +200,10 @@ module Island =
         |> Option.iter (fun market -> islandSingleMarketSink location (commodity, market))
 
     let UpdateMarketForItemSale 
-            (context : IslandUpdateMarketForItemSaleContext)
-            (descriptor               : ItemDescriptor) 
-            (quantitySold             : uint64) 
-            (location                 : Location) 
+            (context      : IslandUpdateMarketForItemSaleContext)
+            (descriptor   : ItemDescriptor) 
+            (quantitySold : uint64) 
+            (location     : Location) 
             : unit =
         let commodities = context.commoditySource()
         descriptor.Commodities
@@ -213,16 +213,14 @@ module Island =
                 ChangeMarketDemand context.islandSingleMarketSource context.islandSingleMarketSink commodity totalQuantity location)
 
     let UpdateMarketForItemPurchase 
-            (islandSingleMarketSource : IslandSingleMarketSource) 
-            (islandSingleMarketSink   : IslandSingleMarketSink) 
-            (commoditySource          : CommoditySource)
+            (context      : IslandUpdateMarketForItemSaleContext)
             (descriptor               : ItemDescriptor) 
             (quantityPurchased        : uint64) 
             (location                 : Location) 
             : unit =
-        let commodities = commoditySource()
+        let commodities = context.commoditySource()
         descriptor.Commodities
         |> Map.iter 
             (fun commodity quantityContained -> 
                 let totalQuantity = quantityContained * (quantityPurchased |> float) * commodities.[commodity].PurchaseFactor
-                ChangeMarketSupply islandSingleMarketSource islandSingleMarketSink commodity totalQuantity location)
+                ChangeMarketSupply context.islandSingleMarketSource context.islandSingleMarketSink commodity totalQuantity location)

@@ -408,8 +408,12 @@ let ``UpdateMarketForItemPurchase.It updates market commodity supply based on th
     let islandMarketSink (_) (commodityId: uint64,market:Market) =
         Assert.AreEqual(1UL, commodityId)
         Assert.AreEqual(expectedMarket, market)
+    let context = TestIslandUpdateMarketForItemSaleContext(commoditySource, islandMarketSink, islandSingleMarketSource) :> IslandUpdateMarketForItemSaleContext
     input
-    |> Island.UpdateMarketForItemPurchase islandSingleMarketSource islandMarketSink commoditySource inputDescriptor inputQuantity
+    |> Island.UpdateMarketForItemPurchase 
+        context
+        inputDescriptor 
+        inputQuantity
 
 type TestIslandCreateContext
         (islandSingleStatisticSink : IslandSingleStatisticSink,
