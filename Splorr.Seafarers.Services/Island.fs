@@ -55,6 +55,12 @@ type IslandGenerateItemsContext =
     abstract member itemSource       : ItemSource
     abstract member random           : Random
 
+type IslandUpdateMarketForItemSaleContext =
+    abstract member commoditySource          : CommoditySource
+    abstract member islandSingleMarketSink   : IslandSingleMarketSink
+    abstract member islandSingleMarketSource : IslandSingleMarketSource
+
+
 module Island =
     let  Create
             (context  : IslandCreateContext)
@@ -194,19 +200,17 @@ module Island =
         |> Option.iter (fun market -> islandSingleMarketSink location (commodity, market))
 
     let UpdateMarketForItemSale 
-            (islandSingleMarketSource : IslandSingleMarketSource) 
-            (islandSingleMarketSink   : IslandSingleMarketSink) 
-            (commoditySource          : CommoditySource)
+            (context : IslandUpdateMarketForItemSaleContext)
             (descriptor               : ItemDescriptor) 
             (quantitySold             : uint64) 
             (location                 : Location) 
             : unit =
-        let commodities = commoditySource()
+        let commodities = context.commoditySource()
         descriptor.Commodities
         |> Map.iter 
             (fun commodity quantityContained -> 
                 let totalQuantity = quantityContained * (quantitySold |> float) * commodities.[commodity].SaleFactor
-                ChangeMarketDemand islandSingleMarketSource islandSingleMarketSink commodity totalQuantity location)
+                ChangeMarketDemand context.islandSingleMarketSource context.islandSingleMarketSink commodity totalQuantity location)
 
     let UpdateMarketForItemPurchase 
             (islandSingleMarketSource : IslandSingleMarketSource) 

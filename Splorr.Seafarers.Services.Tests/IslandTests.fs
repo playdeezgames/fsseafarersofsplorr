@@ -39,6 +39,12 @@ type TestIslandGenerateItemsContext(islandItemSink, islandItemSource, itemSource
         member _.itemSource: ItemSource = itemSource
         member _.random: Random = random
 
+type TestIslandUpdateMarketForItemSaleContext(commoditySource, islandSingleMarketSink, islandSingleMarketSource) =
+    interface IslandUpdateMarketForItemSaleContext with
+        member _.commoditySource: CommoditySource = commoditySource
+        member _.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
+        member _.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
+
 [<Test>]
 let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =
     let inputLocation = (0.0, 0.0)
@@ -376,9 +382,12 @@ let ``UpdateMarketForItemSale.It updates market commodity demands based on the g
         Assert.AreEqual(expectedMarket, market)
     let islandSingleMarketSource (_) (_) =
         None
+    let context = TestIslandUpdateMarketForItemSaleContext(commoditySource, islandSingleMarketSink, islandSingleMarketSource) :> IslandUpdateMarketForItemSaleContext
     input
-    |> Island.UpdateMarketForItemSale islandSingleMarketSource islandSingleMarketSink commoditySource inputDescriptor inputQuantity
-
+    |> Island.UpdateMarketForItemSale 
+        context
+        inputDescriptor 
+        inputQuantity
 
 [<Test>]
 let ``UpdateMarketForItemPurchase.It updates market commodity supply based on the given number of units purchased.`` () =

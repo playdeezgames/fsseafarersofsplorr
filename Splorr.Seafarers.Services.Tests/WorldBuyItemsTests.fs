@@ -5,7 +5,16 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
 
-type TestWorldBuyItemsContext(commoditySource, islandMarketSource, itemSingleSource)=
+type TestWorldBuyItemsContext
+        (commoditySource, 
+        islandMarketSource, 
+        islandSingleMarketSink,
+        islandSingleMarketSource,
+        itemSingleSource)=
+    interface IslandUpdateMarketForItemSaleContext with
+        member this.commoditySource: CommoditySource = commoditySource
+        member this.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
+        member this.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
     interface WorldBuyItemsContext with
         member this.commoditySource: CommoditySource = commoditySource
         member this.islandMarketSource: IslandMarketSource = islandMarketSource
@@ -37,6 +46,8 @@ let ``BuyItems.It gives a message when given a bogus island location.`` () =
         TestWorldBuyItemsContext
             (commoditySource, 
             islandMarketSourceStub,
+            islandSingleMarketSinkStub,
+            islandSingleMarketSourceStub,
             (fun x -> genericWorldItemSource() |> Map.tryFind x))
     input 
     |> World.BuyItems
@@ -81,7 +92,13 @@ let ``BuyItems.It gives a message when given a valid island location and a bogus
         [
             inputLocation
         ]
-    let context = TestWorldBuyItemsContext(commoditySource, islandMarketSourceStub,(fun x -> genericWorldItemSource() |> Map.tryFind x))
+    let context = 
+        TestWorldBuyItemsContext
+            (commoditySource, 
+            islandMarketSourceStub,
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub, 
+            (fun x -> genericWorldItemSource() |> Map.tryFind x))
     input 
     |> World.BuyItems 
         context
@@ -138,7 +155,13 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds.`` () =
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "vesselSingleStatisticSource - %s")
             None
-    let context = TestWorldBuyItemsContext(commoditySource, islandMarketSource,(fun x -> genericWorldItemSource() |> Map.tryFind x))
+    let context = 
+        TestWorldBuyItemsContext
+            (commoditySource, 
+            islandMarketSource,
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub, 
+            (fun x -> genericWorldItemSource() |> Map.tryFind x))
     input 
     |> World.BuyItems 
         context
@@ -196,7 +219,13 @@ let ``BuyItems.It gives a message when the avatar has insufficient tonnage.`` ()
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "vesselSingleStatisticSource - %s")
             None
-    let context = TestWorldBuyItemsContext(commoditySource, islandMarketSource,(fun x -> genericWorldItemSource() |> Map.tryFind x))
+    let context = 
+        TestWorldBuyItemsContext
+            (commoditySource, 
+            islandMarketSource,
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub, 
+            (fun x -> genericWorldItemSource() |> Map.tryFind x))
     input 
     |> World.BuyItems
         context
@@ -261,7 +290,13 @@ let ``BuyItems.It gives a message and completes the purchase when the avatar has
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "vesselSingleStatisticSource - %s")
             None
-    let context = TestWorldBuyItemsContext(commoditySource, islandMarketSource,(fun x -> genericWorldItemSource() |> Map.tryFind x))
+    let context = 
+        TestWorldBuyItemsContext
+            (commoditySource, 
+            islandMarketSource,
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub, 
+            (fun x -> genericWorldItemSource() |> Map.tryFind x))
     input 
     |> World.BuyItems 
         context
@@ -320,7 +355,13 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds for a s
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "vesselSingleStatisticSource - %s")
             None
-    let context = TestWorldBuyItemsContext(commoditySource, islandMarketSource,(fun x -> genericWorldItemSource() |> Map.tryFind x))
+    let context = 
+        TestWorldBuyItemsContext
+            (commoditySource, 
+            islandMarketSource,
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub, 
+            (fun x -> genericWorldItemSource() |> Map.tryFind x))
     input 
     |> World.BuyItems
         context
@@ -383,7 +424,13 @@ let ``BuyItems.It gives a message indicating purchased quantity and completes th
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "vesselSingleStatisticSource - %s")
             None
-    let context = TestWorldBuyItemsContext(commoditySource, islandMarketSource,(fun x -> genericWorldItemSource() |> Map.tryFind x))
+    let context = 
+        TestWorldBuyItemsContext
+            (commoditySource, 
+            islandMarketSource,
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub, 
+            (fun x -> genericWorldItemSource() |> Map.tryFind x))
     input 
     |> World.BuyItems 
         context

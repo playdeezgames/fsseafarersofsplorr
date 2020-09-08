@@ -81,6 +81,7 @@ type WorldAcceptJobContext =
 
 type WorldBuyItemsContext =
     inherit ItemDetermineSalePriceContext
+    inherit IslandUpdateMarketForItemSaleContext
 
 type WorldSellItemsContext =
     inherit ItemDeterminePurchasePriceContext
@@ -664,7 +665,11 @@ module World =
                 avatarId
                 |> AddMessages avatarMessageSink ["You don't have enough money to buy any of those."]
             else
-                Island.UpdateMarketForItemSale islandSingleMarketSource islandSingleMarketSink commoditySource descriptor quantity location
+                Island.UpdateMarketForItemSale 
+                    context
+                    descriptor 
+                    quantity 
+                    location
                 avatarId
                 |> AddMessages avatarMessageSink [(quantity, descriptor.ItemName) ||> sprintf "You complete the purchase of %u %s."]
                 avatarId
