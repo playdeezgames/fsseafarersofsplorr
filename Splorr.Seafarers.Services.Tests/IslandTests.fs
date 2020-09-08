@@ -89,7 +89,6 @@ let ``AddVisit.It increases visit count to one and sets last visit to given turn
     let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> IslandAddVisitContext
     Island.AddVisit 
         context
-        (fun () -> turn)
         avatarId
         location
 
@@ -119,7 +118,6 @@ let ``AddVisit.It increases visit count by one and sets last visit to given turn
     let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> IslandAddVisitContext
     Island.AddVisit 
         context
-        (fun () -> turn) 
         avatarId
         location
 
@@ -150,7 +148,6 @@ let ``AddVisit.It increases visit count by one and sets last visit to given turn
     let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> IslandAddVisitContext
     Island.AddVisit 
         context
-        (fun () -> turn) 
         avatarId
         location
 
@@ -175,7 +172,6 @@ let ``AddVisit.It does not update visit count when given turn was prior or equal
     let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> IslandAddVisitContext
     Island.AddVisit 
         context
-        (fun () -> turn) 
         avatarId
         location
 

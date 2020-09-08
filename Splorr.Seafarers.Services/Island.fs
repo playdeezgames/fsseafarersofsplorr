@@ -70,7 +70,6 @@ module Island =
     
     let AddVisit 
             (context      : IslandAddVisitContext)
-            (epochSecondsSource : EpochSecondsSource)
             (avatarId     : string) 
             (location     : Location)
             : unit =
@@ -79,13 +78,13 @@ module Island =
         match visitCount, lastVisit with
         | None, _ ->
             context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount 1UL
-            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit <| epochSecondsSource()
+            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit <| context.epochSecondsSource()
         | Some x, None ->
             context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount (x+1UL)
-            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit <| epochSecondsSource()
-        | Some x, Some y when y < epochSecondsSource() ->
+            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit <| context.epochSecondsSource()
+        | Some x, Some y when y < context.epochSecondsSource() ->
             context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount (x+1UL)
-            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit <| epochSecondsSource()
+            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit <| context.epochSecondsSource()
         | _ -> 
             ()
 
