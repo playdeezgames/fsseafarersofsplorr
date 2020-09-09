@@ -78,6 +78,10 @@ type SplorrContext
     interface ShipmateGetStatusContext with
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
+    interface ShipmateEatContext with
+        member this.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+
     interface AtSeaHandleCommandContext with
         member _.avatarInventorySink            : AvatarInventorySink        =avatarInventorySink        
         member _.avatarInventorySource          : AvatarInventorySource      =avatarInventorySource      

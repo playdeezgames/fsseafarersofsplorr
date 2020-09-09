@@ -33,6 +33,8 @@ type ShipmateTransformStatisticContext =
 
 type ShipmateEatContext =
     inherit ShipmateTransformStatisticContext
+    abstract member shipmateRationItemSource      : ShipmateRationItemSource
+    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
 
 module Shipmate =
     let Create
@@ -79,7 +81,6 @@ module Shipmate =
             (context : ShipmateEatContext)
             (shipmateRationItemSource      : ShipmateRationItemSource)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
             (inventory                     : AvatarInventory) 
             (avatarId                      : string)
             (shipmateId                    : ShipmateIdentifier)

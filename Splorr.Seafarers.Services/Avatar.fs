@@ -222,7 +222,6 @@ module Avatar =
                             context
                             shipmateRationItemSource 
                             shipmateSingleStatisticSource
-                            shipmateSingleStatisticSink
                             inventory 
                             avatarId 
                             identifier

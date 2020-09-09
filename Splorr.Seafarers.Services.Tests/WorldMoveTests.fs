@@ -7,7 +7,8 @@ open WorldTestFixtures
 open CommonTestFixtures
 
 type TestWorldMoveContext
-        (shipmateSingleStatisticSink,
+        (shipmateRationItemSource,
+        shipmateSingleStatisticSink,
         shipmateSingleStatisticSource,
         vesselSingleStatisticSink, 
         vesselSingleStatisticSource) =
@@ -24,7 +25,9 @@ type TestWorldMoveContext
     interface ShipmateTransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-
+    interface ShipmateEatContext with
+        member this.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface WorldMoveContext
 
 [<Test>]
@@ -90,7 +93,8 @@ let ``Move.It moves the avatar one unit when give 1u for distance when given a v
         []
     let context = 
         TestWorldMoveContext
-            (shipmateSingleStatisticSink,
+            (shipmateRationItemSourceStub,
+            shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
             vesselSingleStatisticSink, 
             vesselSingleStatisticSource) :> WorldMoveContext
@@ -178,7 +182,8 @@ let ``Move.It moves the avatar almost two units when give 2u for distance.`` () 
         []
     let context = 
         TestWorldMoveContext
-            (shipmateSingleStatisticSink,
+            (shipmateRationItemSourceStub,
+            shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
             vesselSingleStatisticSink, 
             vesselSingleStatisticSource) :> WorldMoveContext
