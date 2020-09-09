@@ -75,6 +75,9 @@ type SplorrContext
     interface VesselBefoulContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
+    interface ShipmateGetStatusContext with
+        member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+
     interface AtSeaHandleCommandContext with
         member _.avatarInventorySink            : AvatarInventorySink        =avatarInventorySink        
         member _.avatarInventorySource          : AvatarInventorySource      =avatarInventorySource      

@@ -24,8 +24,7 @@ type ShipmateCreateContext =
     abstract member shipmateRationItemSink            : ShipmateRationItemSink
 
 type ShipmateGetStatusContext =
-    interface
-    end
+    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
 
 type ShipmateTransformStatisticContext =
     interface
@@ -36,20 +35,16 @@ type ShipmateEatContext =
 
 module Shipmate =
     let Create
-            (context : ShipmateCreateContext)
-            (shipmateStatisticTemplateSource   : ShipmateStatisticTemplateSource)
-            (shipmateSingleStatisticSink       : ShipmateSingleStatisticSink)
-            (rationItemSource                  : RationItemSource)
-            (shipmateRationItemSink            : ShipmateRationItemSink)
-            (avatarId                          : string)
-            (shipmateId                        : ShipmateIdentifier)
+            (context    : ShipmateCreateContext)
+            (avatarId   : string)
+            (shipmateId : ShipmateIdentifier)
             : unit =
-        rationItemSource()
-        |> shipmateRationItemSink avatarId shipmateId 
-        shipmateStatisticTemplateSource()
+        context.rationItemSource()
+        |> context.shipmateRationItemSink avatarId shipmateId 
+        context.shipmateStatisticTemplateSource()
         |> Map.iter
             (fun identifier statisticTemplate ->
-                shipmateSingleStatisticSink avatarId shipmateId (identifier, statisticTemplate |> Statistic.CreateFromTemplate |> Some))
+                context.shipmateSingleStatisticSink avatarId shipmateId (identifier, statisticTemplate |> Statistic.CreateFromTemplate |> Some))
 
     let GetStatus
             (context : ShipmateGetStatusContext)

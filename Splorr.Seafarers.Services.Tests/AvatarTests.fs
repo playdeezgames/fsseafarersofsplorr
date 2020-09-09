@@ -46,8 +46,9 @@ type TestAvatarCleanHullContext(vesselSingleStatisticSink, vesselSingleStatistic
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-type TestShipmateGetStatusContext() =
-    interface ShipmateGetStatusContext
+type TestShipmateGetStatusContext(shipmateSingleStatisticSource) =
+    interface ShipmateGetStatusContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 type TestAvatarEarnMoneyContext() =
     interface AvatarEarnMoneyContext
@@ -912,7 +913,7 @@ let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a ALIVE when given an avatar with abo
             None
     let inputAvatarId = avatarId
     let inputShipmateId = Primary
-    let context = TestShipmateGetStatusContext() :> ShipmateGetStatusContext
+    let context = TestShipmateGetStatusContext(shipmateSingleStatisticSource) :> ShipmateGetStatusContext
     match Shipmate.GetStatus 
         context
         shipmateSingleStatisticSource 
@@ -934,7 +935,7 @@ let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a ZERO_HEALTH when given an avatar at
             None
     let inputAvatarId = avatarId
     let inputShipmateId = Primary
-    let context = TestShipmateGetStatusContext() :> ShipmateGetStatusContext
+    let context = TestShipmateGetStatusContext(shipmateSingleStatisticSource) :> ShipmateGetStatusContext
     match Shipmate.GetStatus 
         context
         shipmateSingleStatisticSource 
@@ -956,7 +957,7 @@ let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a OLD_AGE when given an avatar at max
             None
     let inputAvatarId = avatarId
     let inputShipmateId = Primary
-    let context = TestShipmateGetStatusContext() :> ShipmateGetStatusContext
+    let context = TestShipmateGetStatusContext(shipmateSingleStatisticSource) :> ShipmateGetStatusContext
     match Shipmate.GetStatus 
         context
         shipmateSingleStatisticSource 

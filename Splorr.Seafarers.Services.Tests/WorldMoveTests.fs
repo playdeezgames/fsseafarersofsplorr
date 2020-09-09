@@ -6,13 +6,19 @@ open Splorr.Seafarers.Models
 open WorldTestFixtures
 open CommonTestFixtures
 
-type TestWorldMoveContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
+type TestWorldMoveContext
+        (shipmateSingleStatisticSource,
+        vesselSingleStatisticSink, 
+        vesselSingleStatisticSource) =
     interface VesselTransformFoulingContext with
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface VesselBefoulContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
+    interface ShipmateGetStatusContext with
+        member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
     interface WorldMoveContext
 
@@ -77,7 +83,11 @@ let ``Move.It moves the avatar one unit when give 1u for distance when given a v
         Assert.AreEqual(Map.empty, inventory)
     let islandSource () =
         []
-    let context = TestWorldMoveContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldMoveContext
+    let context = 
+        TestWorldMoveContext
+            (shipmateSingleStatisticSource,
+            vesselSingleStatisticSink, 
+            vesselSingleStatisticSource) :> WorldMoveContext
     avatarId
     |> World.Move 
         context
@@ -160,7 +170,11 @@ let ``Move.It moves the avatar almost two units when give 2u for distance.`` () 
         Assert.AreEqual(Map.empty, inventory)
     let islandSource () =
         []
-    let context = TestWorldMoveContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldMoveContext
+    let context = 
+        TestWorldMoveContext
+            (shipmateSingleStatisticSource,
+            vesselSingleStatisticSink, 
+            vesselSingleStatisticSource) :> WorldMoveContext
     avatarId
     |> World.Move 
         context

@@ -63,10 +63,6 @@ module Avatar =
             avatarId
         Shipmate.Create 
             context
-            shipmateStatisticTemplateSource 
-            shipmateSingleStatisticSink
-            rationItemSource 
-            shipmateRationItemSink 
             avatarId 
             Primary
         avatarJobSink avatarId None
