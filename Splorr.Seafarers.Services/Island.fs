@@ -22,7 +22,7 @@ type IslandJobPurger = Location -> uint32 -> unit
 type EpochSecondsSource = unit -> uint64
 
 type IslandJobsGenerationContext =
-    inherit JobCreationContext
+    inherit Job.CreationContext
     abstract member islandJobSink              : IslandJobSink
     abstract member islandJobSource            : IslandJobSource
 
