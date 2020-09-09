@@ -27,8 +27,9 @@ type ShipmateGetStatusContext =
     abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
 
 type ShipmateTransformStatisticContext =
-    interface
-    end
+    abstract member shipmateSingleStatisticSink   : ShipmateSingleStatisticSink
+    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
+
 
 type ShipmateEatContext =
     inherit ShipmateTransformStatisticContext

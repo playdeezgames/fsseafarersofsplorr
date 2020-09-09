@@ -203,6 +203,10 @@ type SplorrContext
         member _.itemSource: ItemSource = itemSource
         member _.random: Random = random
 
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+
     interface WorldDockContext with
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
         member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource

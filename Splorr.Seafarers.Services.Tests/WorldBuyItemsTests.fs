@@ -10,7 +10,9 @@ type TestWorldBuyItemsContext
         islandMarketSource, 
         islandSingleMarketSink,
         islandSingleMarketSource,
-        itemSingleSource)=
+        itemSingleSource,
+        shipmateSingleStatisticSink,
+        shipmateSingleStatisticSource)=
     interface IslandUpdateMarketForItemContext with
         member this.commoditySource: CommoditySource = commoditySource
         member this.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
@@ -19,6 +21,9 @@ type TestWorldBuyItemsContext
         member this.commoditySource: CommoditySource = commoditySource
         member this.islandMarketSource: IslandMarketSource = islandMarketSource
         member this.itemSingleSource : ItemSingleSource = itemSingleSource
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 [<Test>]
 let ``BuyItems.It gives a message when given a bogus island location.`` () =
@@ -48,7 +53,9 @@ let ``BuyItems.It gives a message when given a bogus island location.`` () =
             islandMarketSourceStub,
             islandSingleMarketSinkStub,
             islandSingleMarketSourceStub,
-            (fun x -> genericWorldItemSource() |> Map.tryFind x))
+            (fun x -> genericWorldItemSource() |> Map.tryFind x),
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource)
     input 
     |> World.BuyItems
         context
@@ -98,7 +105,9 @@ let ``BuyItems.It gives a message when given a valid island location and a bogus
             islandMarketSourceStub,
             islandSingleMarketSinkStub ,
             islandSingleMarketSourceStub, 
-            (fun x -> genericWorldItemSource() |> Map.tryFind x))
+            (fun x -> genericWorldItemSource() |> Map.tryFind x),
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource)
     input 
     |> World.BuyItems 
         context
@@ -161,7 +170,9 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds.`` () =
             islandMarketSource,
             islandSingleMarketSinkStub ,
             islandSingleMarketSourceStub, 
-            (fun x -> genericWorldItemSource() |> Map.tryFind x))
+            (fun x -> genericWorldItemSource() |> Map.tryFind x),
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource)
     input 
     |> World.BuyItems 
         context
@@ -225,7 +236,9 @@ let ``BuyItems.It gives a message when the avatar has insufficient tonnage.`` ()
             islandMarketSource,
             islandSingleMarketSinkStub ,
             islandSingleMarketSourceStub, 
-            (fun x -> genericWorldItemSource() |> Map.tryFind x))
+            (fun x -> genericWorldItemSource() |> Map.tryFind x),
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource)
     input 
     |> World.BuyItems
         context
@@ -296,7 +309,9 @@ let ``BuyItems.It gives a message and completes the purchase when the avatar has
             islandMarketSource,
             islandSingleMarketSinkStub ,
             islandSingleMarketSourceStub, 
-            (fun x -> genericWorldItemSource() |> Map.tryFind x))
+            (fun x -> genericWorldItemSource() |> Map.tryFind x),
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource)
     input 
     |> World.BuyItems 
         context
@@ -361,7 +376,9 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds for a s
             islandMarketSource,
             islandSingleMarketSinkStub ,
             islandSingleMarketSourceStub, 
-            (fun x -> genericWorldItemSource() |> Map.tryFind x))
+            (fun x -> genericWorldItemSource() |> Map.tryFind x),
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource)
     input 
     |> World.BuyItems
         context
@@ -430,7 +447,9 @@ let ``BuyItems.It gives a message indicating purchased quantity and completes th
             islandMarketSource,
             islandSingleMarketSinkStub ,
             islandSingleMarketSourceStub, 
-            (fun x -> genericWorldItemSource() |> Map.tryFind x))
+            (fun x -> genericWorldItemSource() |> Map.tryFind x),
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource)
     input 
     |> World.BuyItems 
         context

@@ -10,7 +10,9 @@ type TestWorldSellItemsContext
         islandMarketSource, 
         islandSingleMarketSink,
         islandSingleMarketSource,
-        itemSingleSource) =
+        itemSingleSource,
+        shipmateSingleStatisticSink,
+        shipmateSingleStatisticSource) =
     interface IslandUpdateMarketForItemContext with
         member _.commoditySource: CommoditySource = commoditySource
         member _.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
@@ -19,6 +21,9 @@ type TestWorldSellItemsContext
         member _.commoditySource: CommoditySource = commoditySource
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
         member _.itemSingleSource : ItemSingleSource = itemSingleSource
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 [<Test>]
 let ``SellItems.It gives a message when given a bogus island location.`` () =
@@ -44,7 +49,9 @@ let ``SellItems.It gives a message when given a bogus island location.`` () =
             islandMarketSourceStub, 
             islandSingleMarketSinkStub ,
             islandSingleMarketSourceStub, 
-            itemSingleSource) :> WorldSellItemsContext
+            itemSingleSource,
+            shipmateSingleStatisticSinkStub,
+            shipmateSingleStatisticSourceStub) :> WorldSellItemsContext
     input 
     |> World.SellItems 
         context
@@ -89,7 +96,9 @@ let ``SellItems.It gives a message when given a valid island location and bogus 
             islandMarketSourceStub, 
             islandSingleMarketSinkStub ,
             islandSingleMarketSourceStub, 
-            itemSingleSource) :> WorldSellItemsContext
+            itemSingleSource,
+            shipmateSingleStatisticSinkStub,
+            shipmateSingleStatisticSourceStub) :> WorldSellItemsContext
     input 
     |> World.SellItems 
         context
@@ -130,7 +139,9 @@ let ``SellItems.It gives a message when the avatar has insufficient items in inv
             islandMarketSourceStub, 
             islandSingleMarketSinkStub ,
             islandSingleMarketSourceStub, 
-            itemSingleSource) :> WorldSellItemsContext
+            itemSingleSource,
+            shipmateSingleStatisticSinkStub,
+            shipmateSingleStatisticSourceStub) :> WorldSellItemsContext
     input 
     |> World.SellItems 
         context
@@ -171,7 +182,9 @@ let ``SellItems.It gives a message when the avatar has no items in inventory and
             islandMarketSourceStub, 
             islandSingleMarketSinkStub ,
             islandSingleMarketSourceStub,
-            itemSingleSource) :> WorldSellItemsContext
+            itemSingleSource,
+            shipmateSingleStatisticSinkStub,
+            shipmateSingleStatisticSourceStub) :> WorldSellItemsContext
     input 
     |> World.SellItems 
         context
@@ -233,7 +246,9 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
             islandMarketSource, 
             islandSingleMarketSink ,
             islandSingleMarketSourceStub ,
-            itemSingleSource) :> WorldSellItemsContext
+            itemSingleSource,
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource) :> WorldSellItemsContext
     input 
     |> World.SellItems 
         context
@@ -295,7 +310,9 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
             islandMarketSource, 
             islandSingleMarketSink ,
             islandSingleMarketSourceStub ,
-            itemSingleSource) :> WorldSellItemsContext
+            itemSingleSource,
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource) :> WorldSellItemsContext
     input 
     |> World.SellItems 
         context

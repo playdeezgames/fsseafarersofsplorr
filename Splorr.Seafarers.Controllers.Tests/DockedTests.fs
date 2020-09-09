@@ -64,7 +64,9 @@ type TestDockedRunContext
         member _.commoditySource: CommoditySource = commoditySource
         member _.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
         member _.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
-
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface DockedHandleCommandContext with
         member _.avatarInventorySink            : AvatarInventorySink           =avatarInventorySink            
         member _.avatarInventorySource          : AvatarInventorySource         =avatarInventorySource          

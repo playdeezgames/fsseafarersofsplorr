@@ -6,10 +6,17 @@ open Splorr.Seafarers.Models
 open WorldTestFixtures
 open CommonTestFixtures
 
-type TestWorldCleanHullContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
+type TestWorldCleanHullContext
+        (shipmateSingleStatisticSink,
+        shipmateSingleStatisticSource,
+        vesselSingleStatisticSink, 
+        vesselSingleStatisticSource) =
     interface WorldCleanHullContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 [<Test>]
 let ``CleanHull.It returns the original world when given a bogus avatar id and world.`` () =
@@ -27,7 +34,12 @@ let ``CleanHull.It returns the original world when given a bogus avatar id and w
         None
     let shipmateSingleStatisticSink (_) (_) (_) =
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let context = TestWorldCleanHullContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldCleanHullContext
+    let context = 
+        TestWorldCleanHullContext
+            (shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource,
+            vesselSingleStatisticSink, 
+            vesselSingleStatisticSource) :> WorldCleanHullContext
     inputWorld
     |> World.CleanHull
         context
@@ -57,7 +69,13 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
         None
     let shipmateSingleStatisticSink (_) (_) (_) =
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let context = TestWorldCleanHullContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldCleanHullContext
+    let context = 
+        TestWorldCleanHullContext
+            (shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource,
+            vesselSingleStatisticSink, 
+            vesselSingleStatisticSource) 
+        :> WorldCleanHullContext
     inputWorld
     |> World.CleanHull 
         context

@@ -8,7 +8,8 @@ open CommonTestFixtures
 open AtSeaTestFixtures
 
 type TestCareenedRunContext 
-        (shipmateSingleStatisticSource,
+        (shipmateSingleStatisticSink,
+        shipmateSingleStatisticSource,
         vesselSingleStatisticSink, 
         vesselSingleStatisticSource) =
     interface ShipmateGetStatusContext with
@@ -16,10 +17,13 @@ type TestCareenedRunContext
     interface CareenedRunContext with
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 let private functionUnderTest 
         (avatarSingleMetricSink : AvatarSingleMetricSink)= 
-    let context = TestCareenedRunContext (shipmateSingleStatisticSourceStub, vesselSingleStatisticSinkStub, vesselSingleStatisticSourceStub) :> CareenedRunContext
+    let context = TestCareenedRunContext (shipmateSingleStatisticSinkStub, shipmateSingleStatisticSourceStub, vesselSingleStatisticSinkStub, vesselSingleStatisticSourceStub) :> CareenedRunContext
     Careened.Run 
         context
         avatarMessagePurgerStub
@@ -50,7 +54,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
             Statistic.Create (0.0, 100.0) 0.0 |> Some
         | _ ->
             raise (System.NotImplementedException (identifier.ToString() |> sprintf "shipmateSingleStatisticSource - %s"))
-    let context = TestCareenedRunContext (shipmateSingleStatisticSource, vesselSingleStatisticSinkStub, vesselSingleStatisticSourceStub) :> CareenedRunContext
+    let context = TestCareenedRunContext (shipmateSingleStatisticSinkStub,shipmateSingleStatisticSource, vesselSingleStatisticSinkStub, vesselSingleStatisticSourceStub) :> CareenedRunContext
     let actual =
         inputWorld
         |> Careened.Run 

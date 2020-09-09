@@ -9,14 +9,23 @@ open AvatarTestFixtures
 
 let private inputAvatarId = "avatar"
 
-type TestAvatarSetPrimaryStatisticContext() =
+type TestAvatarSetPrimaryStatisticContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
     interface AvatarSetPrimaryStatisticContext
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-type TestAvatarAbandonJobContext () =
+type TestAvatarAbandonJobContext (shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
     interface AvatarAbandonJobContext
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-type TestAvatarCompleteJobContext () =
+type TestAvatarCompleteJobContext (shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
     interface AvatarCompleteJobContext
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 type TestAvatarCreateContext
         (rationItemSource,
@@ -34,30 +43,44 @@ type TestAvatarCreateContext
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member _.shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
 
-type TestAvatarMoveContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
+type TestAvatarMoveContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource, vesselSingleStatisticSink, vesselSingleStatisticSource) =
     interface AvatarMoveContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface VesselTransformFoulingContext with
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-type TestAvatarCleanHullContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
+type TestAvatarCleanHullContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource, vesselSingleStatisticSink, vesselSingleStatisticSource) =
     interface AvatarCleanHullContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 type TestShipmateGetStatusContext(shipmateSingleStatisticSource) =
     interface ShipmateGetStatusContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-type TestAvatarEarnMoneyContext() =
+type TestAvatarEarnMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
     interface AvatarEarnMoneyContext
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-type TestAvatarSpendMoneyContext() =
+type TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
     interface AvatarSpendMoneyContext
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-type TestShipmateTransformStatisticContext() =
-    interface ShipmateTransformStatisticContext
+type TestShipmateTransformStatisticContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 [<Test>]
 let ``GetReputation.It retrieves the reputation of the primary shipmate.`` () =
@@ -116,7 +139,7 @@ let ``SetMoney.It assigns the amount of money of the primary shipmate.`` () =
             Assert.AreEqual(inputMoney, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "Kaboom set")
-    let context = TestAvatarSetPrimaryStatisticContext() :> AvatarSetPrimaryStatisticContext
+    let context = TestAvatarSetPrimaryStatisticContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarSetPrimaryStatisticContext
     input
     |> Avatar.SetMoney 
         context
@@ -143,7 +166,7 @@ let ``SetReputation.It assigns the amount of reputation of the primary shipmate.
             Assert.AreEqual(inputReputation, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "Kaboom set")
-    let context = TestAvatarSetPrimaryStatisticContext() :> AvatarSetPrimaryStatisticContext
+    let context = TestAvatarSetPrimaryStatisticContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarSetPrimaryStatisticContext
     input
     |> Avatar.SetReputation 
         context
@@ -343,7 +366,7 @@ let ``Move.It moves the avatar.`` () =
         Map.empty
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(Map.empty, inventory)
-    let context = TestAvatarMoveContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarMoveContext
+    let context = TestAvatarMoveContext(shipmateSingleStatisticSinkStub, shipmateSingleStatisticSourceStub, vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
         avatarInventorySink
@@ -387,7 +410,7 @@ let ``Move.It removes a ration when the given avatar has rations and full satiet
         originalInventory
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(expectedInventory, inventory)
-    let context = TestAvatarMoveContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarMoveContext
+    let context = TestAvatarMoveContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource, vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
         avatarInventorySink
@@ -430,7 +453,7 @@ let ``Move.It removes a ration and increases satiety when the given avatar has r
         originalInventory
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(expectedInventory, inventory)
-    let context = TestAvatarMoveContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarMoveContext
+    let context = TestAvatarMoveContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource, vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
         avatarInventorySink
@@ -473,7 +496,7 @@ let ``Move.It lowers the avatar's satiety but does not affect turns when the giv
         Map.empty
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(Map.empty, inventory)
-    let context = TestAvatarMoveContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarMoveContext
+    let context = TestAvatarMoveContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource, vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
         avatarInventorySink
@@ -525,7 +548,7 @@ let ``Move.It lowers the avatar's maximum turn and updates the starvation metric
         Map.empty
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(Map.empty, inventory)
-    let context = TestAvatarMoveContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarMoveContext
+    let context = TestAvatarMoveContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource, vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
         avatarInventorySink
@@ -547,7 +570,7 @@ let ``AbandonJob.It does nothing when the given avatar has no job.`` () =
         Assert.Fail("avatarJobSink")
     let avatarJobSource (_) =
         None
-    let context = TestAvatarAbandonJobContext () :> AvatarAbandonJobContext
+    let context = TestAvatarAbandonJobContext (shipmateSingleStatisticSinkStub, shipmateSingleStatisticSourceStub) :> AvatarAbandonJobContext
     input
     |> Avatar.AbandonJob
         context
@@ -583,7 +606,7 @@ let ``AbandonJob.It set job to None when the given avatar has a job.`` () =
             Destination = (0.0, 0.0)
         }
         |> Some
-    let context = TestAvatarAbandonJobContext() :> AvatarAbandonJobContext
+    let context = TestAvatarAbandonJobContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarAbandonJobContext
     Avatar.AbandonJob
         context
         avatarJobSink
@@ -606,7 +629,7 @@ let ``CompleteJob.It does nothing when the given avatar has no job.`` () =
         Assert.Fail("avatarJobSink")
     let avatarJobSource (_) =
         None
-    let context = TestAvatarCompleteJobContext () :> AvatarCompleteJobContext
+    let context = TestAvatarCompleteJobContext (shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarCompleteJobContext
     Avatar.CompleteJob
         context
         avatarJobSink
@@ -648,7 +671,7 @@ let ``CompleteJob.It sets job to None, adds reward money, adds reputation and me
     let avatarJobSource (_) =
         inputJob 
         |> Some
-    let context = TestAvatarCompleteJobContext() :> AvatarCompleteJobContext
+    let context = TestAvatarCompleteJobContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarCompleteJobContext
     Avatar.CompleteJob
         context
         avatarJobSink
@@ -668,7 +691,7 @@ let ``SpendMoney.It has no effect when given a negative amount to spend.`` () =
         None
     let shipmateSingleStatisticSink (_) (_) (_) =
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let context = TestAvatarSpendMoneyContext() :> AvatarSpendMoneyContext
+    let context = TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarSpendMoneyContext
     input
     |> Avatar.SpendMoney 
         context
@@ -686,7 +709,7 @@ let ``EarnMoney.It has no effect when given a negative amount to earn.`` () =
         None
     let shipmateSingleStatisticSink (_) (_) (_) =
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let context = TestAvatarEarnMoneyContext() :> AvatarEarnMoneyContext
+    let context = TestAvatarEarnMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarEarnMoneyContext
     input
     |> Avatar.EarnMoney 
         context
@@ -712,7 +735,7 @@ let ``SpendMoney.It has no effect when the given avatar has no money.`` () =
             Assert.AreEqual(0.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let context = TestAvatarSpendMoneyContext() :> AvatarSpendMoneyContext
+    let context = TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarSpendMoneyContext
     input
     |> Avatar.SpendMoney 
         context
@@ -737,7 +760,7 @@ let ``SpendMoney.It reduces the avatar's money to zero when the given amount exc
             Assert.AreEqual(0.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let context = TestAvatarSpendMoneyContext() :> AvatarSpendMoneyContext
+    let context = TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarSpendMoneyContext
     input
     |> Avatar.SpendMoney 
         context
@@ -762,7 +785,7 @@ let ``SpendMoney.It updates the avatars money when the given amount is less than
             Assert.AreEqual(49.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let context = TestAvatarSpendMoneyContext() :> AvatarSpendMoneyContext
+    let context = TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarSpendMoneyContext
     input
     |> Avatar.SpendMoney 
         context
@@ -787,7 +810,7 @@ let ``EarnMoney.It updates the avatars money by adding the given amount.`` () =
             Assert.AreEqual(inputAmount, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let context = TestAvatarEarnMoneyContext() :> AvatarEarnMoneyContext
+    let context = TestAvatarEarnMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarEarnMoneyContext
     input
     |> Avatar.EarnMoney 
         context
@@ -1071,7 +1094,7 @@ let ``CleanHull.It cleans the hull of the given avatar.`` () =
             Assert.AreEqual(1.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "Kaboom shipmateSingleStatisticSink")
-    let context = TestAvatarCleanHullContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarCleanHullContext
+    let context = TestAvatarCleanHullContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource, vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarCleanHullContext
     Avatar.CleanHull
         context
         avatarShipmateSource
@@ -1100,7 +1123,7 @@ let ``TransformStatistic.It replaces the statistic when that statistic is origin
             Assert.AreEqual(inputHealth, statistic.Value)
         | _ ->
             raise (System.NotImplementedException "Kaboom shipmateSingleStatisticSink")
-    let context = TestShipmateTransformStatisticContext () :> ShipmateTransformStatisticContext
+    let context = TestShipmateTransformStatisticContext (shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> ShipmateTransformStatisticContext
     Shipmate.TransformStatistic 
         context
         shipmateSingleStatisticSource
@@ -1117,7 +1140,7 @@ let ``TransformStatistic.It does nothing when the given statistic is absent from
         None
     let shipmateSingleStatisticSink (_) (_) (_) =
         Assert.Fail("Dont call me.")
-    let context = TestShipmateTransformStatisticContext () :> ShipmateTransformStatisticContext
+    let context = TestShipmateTransformStatisticContext (shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> ShipmateTransformStatisticContext
     Shipmate.TransformStatistic 
         context
         shipmateSingleStatisticSource
@@ -1268,7 +1291,7 @@ let ``Move.It transforms the avatar within the given world.`` () =
         Map.empty
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(Map.empty, inventory)
-    let context = TestAvatarMoveContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarMoveContext
+    let context = TestAvatarMoveContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource, vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
             context
             avatarInventorySink
