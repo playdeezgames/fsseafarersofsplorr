@@ -208,9 +208,6 @@ module Avatar =
             (avatarShipmateSource          : AvatarShipmateSource)
             (avatarSingleMetricSink        : AvatarSingleMetricSink)
             (avatarSingleMetricSource      : AvatarSingleMetricSource)
-            (shipmateRationItemSource      : ShipmateRationItemSource)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (avatarId                      : string)
             : unit =
         let inventory, eaten, starved =
@@ -220,8 +217,6 @@ module Avatar =
                     let updateInventory, ate, starved =
                         Shipmate.Eat
                             context
-                            shipmateRationItemSource 
-                            shipmateSingleStatisticSource
                             inventory 
                             avatarId 
                             identifier
@@ -342,9 +337,6 @@ module Avatar =
             avatarShipmateSource
             avatarSingleMetricSink
             avatarSingleMetricSource
-            shipmateRationItemSource 
-            shipmateSingleStatisticSink
-            shipmateSingleStatisticSource
 
     let private SetPrimaryStatistic
             (context : AvatarSetPrimaryStatisticContext)

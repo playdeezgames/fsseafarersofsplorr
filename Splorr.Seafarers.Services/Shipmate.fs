@@ -78,17 +78,15 @@ module Shipmate =
                 context.shipmateSingleStatisticSink avatarId shipmateId (identifier, (s |> transform) ) )
 
     let Eat 
-            (context : ShipmateEatContext)
-            (shipmateRationItemSource      : ShipmateRationItemSource)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (inventory                     : AvatarInventory) 
-            (avatarId                      : string)
-            (shipmateId                    : ShipmateIdentifier)
+            (context    : ShipmateEatContext)
+            (inventory  : AvatarInventory) 
+            (avatarId   : string)
+            (shipmateId : ShipmateIdentifier)
             : AvatarInventory * bool * bool =
         let satietyDecrease = -1.0
         let satietyIncrease = 1.0
         let rationConsumptionRate = 1UL
-        let rationItems = shipmateRationItemSource avatarId shipmateId
+        let rationItems = context.shipmateRationItemSource avatarId shipmateId
         let rationItem =
             rationItems
             |> List.tryPick 
@@ -113,7 +111,7 @@ module Shipmate =
             (updatedInventory, true, false)
         | _ ->
             let satiety = 
-                shipmateSingleStatisticSource 
+                context.shipmateSingleStatisticSource 
                     avatarId
                     shipmateId
                     ShipmateStatisticIdentifier.Satiety
