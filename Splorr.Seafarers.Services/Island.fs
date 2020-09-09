@@ -166,16 +166,14 @@ module Island =
             (context  : IslandGenerateItemsContext)
             (location : Location) 
             : unit =
-        let items = context.itemSource()
-        let islandItems = context.islandItemSource location
-        if islandItems.IsEmpty then
-            items
-            |> Map.fold 
-                (fun a k v -> 
-                    if context.random.NextDouble() < v.Occurrence then
-                        a |> Set.add k
+        if (context.islandItemSource location).IsEmpty then
+            (Set.empty, context.itemSource())
+            ||> Map.fold 
+                (fun items item descriptor -> 
+                    if context.random.NextDouble() < descriptor.Occurrence then
+                        items |> Set.add item
                     else
-                        a) islandItems
+                        items)
             |> context.islandItemSink location
 
     let private ChangeMarketDemand 
