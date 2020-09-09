@@ -3,8 +3,15 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
+type StatusRunWorldContext =
+    inherit AvatarGetPrimaryStatisticContext
+
+type StatusRunContext =
+    inherit StatusRunWorldContext
+
 module Status =
     let private RunWorld 
+            (context : StatusRunWorldContext)
             (avatarJobSource               : AvatarJobSource)
             (islandSingleNameSource        : IslandSingleNameSource)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
@@ -20,9 +27,9 @@ module Status =
             "" |> Line
             (Hue.Heading, "Status:" |> Line) |> Hued
             (Hue.Label, "Money: " |> Text) |> Hued
-            (Hue.Value, avatarId |> Avatar.GetMoney shipmateSingleStatisticSource |> sprintf "%f" |> Line) |> Hued
+            (Hue.Value, avatarId |> Avatar.GetMoney context shipmateSingleStatisticSource |> sprintf "%f" |> Line) |> Hued
             (Hue.Label, "Reputation: " |> Text) |> Hued
-            (Hue.Value, avatarId |> Avatar.GetReputation shipmateSingleStatisticSource |> sprintf "%f" |> Line) |> Hued
+            (Hue.Value, avatarId |> Avatar.GetReputation context shipmateSingleStatisticSource |> sprintf "%f" |> Line) |> Hued
             (Hue.Label, "Satiety: " |> Text) |> Hued
             (Hue.Value, (satiety.CurrentValue, satiety.MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
             (Hue.Label, "Health: " |> Text) |> Hued
@@ -49,6 +56,7 @@ module Status =
                 |> List.iter messageSink)
 
     let Run 
+            (context : StatusRunContext)
             (avatarJobSource               : AvatarJobSource)
             (islandSingleNameSource        : IslandSingleNameSource)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
@@ -60,6 +68,7 @@ module Status =
         |> Gamestate.GetWorld
         |> Option.iter 
             (RunWorld 
+                context
                 avatarJobSource
                 islandSingleNameSource
                 shipmateSingleStatisticSource 

@@ -6,6 +6,9 @@ open Splorr.Seafarers.Models
 open WorldTestFixtures
 open CommonTestFixtures
 
+type TestWorldHeadForContext() =
+    interface WorldHeadForContext
+
 [<Test>]
 let ``HeadFor.It adds a message when the island name does not exist.`` () =
     let inputWorld = avatarId
@@ -25,8 +28,10 @@ let ``HeadFor.It adds a message when the island name does not exist.`` () =
         None
     let islandLocationByNameSource (_) =
         None
+    let context = TestWorldHeadForContext() :> WorldHeadForContext
     inputWorld
     |> World.HeadFor 
+        context
         avatarIslandSingleMetricSource
         (avatarExpectedMessageSink expectedMessage)
         islandLocationByNameSource
@@ -58,8 +63,10 @@ let ``HeadFor.It adds a message when the island name exists but is not known.`` 
     let islandLocationByNameSource (_) =
         []
         |> List.tryHead
+    let context = TestWorldHeadForContext() :> WorldHeadForContext
     inputWorld
     |> World.HeadFor 
+        context
         avatarIslandSingleMetricSource
         (avatarExpectedMessageSink expectedMessage)
         islandLocationByNameSource
@@ -98,8 +105,10 @@ let ``HeadFor.It sets the heading when the island name exists and is known.`` ()
     let islandLocationByNameSource (_) =
         [(0.0, 0.0)]
         |> List.tryHead
+    let context = TestWorldHeadForContext() :> WorldHeadForContext
     inputWorld
     |> World.HeadFor 
+        context
         avatarIslandSingleMetricSource
         (avatarMessagesSinkFake [firstExpectedMessage; secondExpectedMessage])
         islandLocationByNameSource

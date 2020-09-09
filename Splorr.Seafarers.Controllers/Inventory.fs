@@ -3,6 +3,9 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
+type TestAvatarGetUsedTonnageContext() =
+    interface AvatarGetUsedTonnageContext
+
 module Inventory =
     let private RunWorld 
             (itemSource                  : ItemSource)
@@ -45,9 +48,11 @@ module Inventory =
             vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Tonnage
             |> Option.map Statistic.GetCurrentValue
             |> Option.get
+        let context = TestAvatarGetUsedTonnageContext() :> AvatarGetUsedTonnageContext
         let usedTonnage = 
             avatarId 
             |> Avatar.GetUsedTonnage 
+                context
                 avatarInventorySource
                 items
         [

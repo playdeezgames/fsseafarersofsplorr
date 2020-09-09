@@ -6,8 +6,13 @@ open Splorr.Seafarers.Services
 type CareenedHandleCommandContext =
     inherit WorldCleanHullContext
 
+type CareenedUpdateDisplayContext = 
+    inherit AvatarGetCurrentFoulingContext
+    inherit AvatarGetMaximumFoulingContext
+
 type CareenedRunAliveContext =
     inherit CareenedHandleCommandContext
+    inherit CareenedUpdateDisplayContext
 
 type CareenedRunContext =
     inherit CareenedRunAliveContext
@@ -15,6 +20,7 @@ type CareenedRunContext =
 
 module Careened = 
     let private UpdateDisplay 
+            (context : CareenedUpdateDisplayContext)
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (avatarMessageSource         : AvatarMessageSource)
             (messageSink                 : MessageSink) 
@@ -31,9 +37,9 @@ module Careened =
             | Port -> "port"
             | Starboard -> "starboard"
         let currentValue =
-            Avatar.GetCurrentFouling vesselSingleStatisticSource avatarId
+            Avatar.GetCurrentFouling context vesselSingleStatisticSource avatarId
         let maximumValue = 
-            Avatar.GetMaximumFouling vesselSingleStatisticSource avatarId
+            Avatar.GetMaximumFouling context vesselSingleStatisticSource avatarId
         let foulage =
             100.0 * currentValue / maximumValue
         [
@@ -126,6 +132,7 @@ module Careened =
             (avatarId                      : string) 
             : Gamestate option =
         UpdateDisplay 
+            context
             vesselSingleStatisticSource
             avatarMessageSource
             sink 

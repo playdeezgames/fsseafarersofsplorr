@@ -4,6 +4,9 @@ open NUnit.Framework
 open Splorr.Seafarers.Services
 open CommonTestFixtures
 
+type TestWorldAddMessagesContext() =
+    interface WorldAddMessagesContext
+
 [<Test>]
 let ``GetNearbyLocations.It returns locations within a given distance from another given location.`` () =
     let viewDistance = 5.0
@@ -52,6 +55,10 @@ let ``AddMessages.It appends new messages to previously existing messages in the
     let secondMessage = "four"
     let newMessages = [ firstMessage; secondMessage]
     let inputWorld = avatarId
+    let context = TestWorldAddMessagesContext() :> WorldAddMessagesContext
     inputWorld
-    |> World.AddMessages (avatarMessagesSinkFake newMessages) newMessages
+    |> World.AddMessages 
+        context
+        (avatarMessagesSinkFake newMessages) 
+        newMessages
 

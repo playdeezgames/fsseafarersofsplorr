@@ -8,13 +8,18 @@ let private previousGameState =
     None
     |> Gamestate.MainMenu
 
+type TestStatusRunContext() =
+    interface StatusRunContext
+
 [<Test>]
 let ``Run.It returns the given gamestate.`` () =
     let input = previousGameState
     let expected = input |> Some
+    let context = TestStatusRunContext() :> StatusRunContext
     let actual =
         input
         |> Status.Run 
+            context
             avatarJobSourceStub
             islandSingleNameSourceStub
             shipmateSingleStatisticSourceStub

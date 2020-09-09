@@ -6,6 +6,7 @@ open System
 open Splorr.Seafarers.Models
 
 type RunnerRunContext =
+    inherit StatusRunContext
     inherit AtSeaRunContext
     inherit WorldCreateContext
     inherit DockedRunContext
@@ -181,6 +182,7 @@ module Runner =
 
             | Gamestate.Status state -> 
                 Status.Run 
+                    context
                     context.avatarJobSource
                     context.islandSingleNameSource
                     context.shipmateSingleStatisticSource

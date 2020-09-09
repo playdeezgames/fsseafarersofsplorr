@@ -10,6 +10,10 @@ type AtSeaGetVisibleIslandsContext =
 
 type AtSeaUpdateDisplayContext =
     inherit AtSeaGetVisibleIslandsContext
+    inherit AvatarGetSpeedContext
+    inherit AvatarGetHeadingContext
+    inherit AvatarGetEffectiveSpeedContext
+    inherit WorldDistanceToContext
 
 type AtSeaHandleCommandContext =
     inherit WorldDockContext
@@ -17,6 +21,9 @@ type AtSeaHandleCommandContext =
     inherit AtSeaUpdateDisplayContext
     inherit WorldMoveContext
     inherit WorldAbandonJobContext
+    inherit WorldHeadForContext
+    inherit WorldAddMessagesContext
+    inherit WorldSetSpeedContext
     abstract member avatarInventorySink            : AvatarInventorySink
     abstract member avatarInventorySource          : AvatarInventorySource
     abstract member avatarMessagePurger            : AvatarMessagePurger
@@ -124,11 +131,11 @@ module AtSea =
 
         let speed = 
             avatarId
-            |> Avatar.GetSpeed vesselSingleStatisticSource 
+            |> Avatar.GetSpeed context vesselSingleStatisticSource 
             |> Option.get
         let heading = 
             avatarId 
-            |> Avatar.GetHeading vesselSingleStatisticSource 
+            |> Avatar.GetHeading context vesselSingleStatisticSource 
             |> Option.get
         let speedHue =DetermineSpeedHue speed
         let turn = shipmateSingleStatisticSource avatarId Primary ShipmateStatisticIdentifier.Turn |> Option.get
@@ -142,7 +149,7 @@ module AtSea =
             (Hue.Label, "Speed: " |> Text) |> Hued
             (speedHue, (speed * 100.0) |> sprintf "%.0f%%" |> Text) |> Hued
             avatarId 
-            |> Avatar.GetEffectiveSpeed vesselSingleStatisticSource 
+            |> Avatar.GetEffectiveSpeed context vesselSingleStatisticSource 
             |> sprintf "(Effective rate: %.2f)" |> Line
             (Hue.Subheading, "Nearby:" |> Line) |> Hued
         ]
@@ -219,6 +226,7 @@ module AtSea =
         | Some (Command.HeadFor name) ->
             avatarId
             |> World.HeadFor
+                context
                 context.avatarIslandSingleMetricSource
                 context.avatarMessageSink 
                 context.islandLocationByNameSource
@@ -232,6 +240,7 @@ module AtSea =
         | Some (Command.DistanceTo name) ->
             avatarId
             |> World.DistanceTo 
+                context
                 context.avatarIslandSingleMetricSource
                 context.avatarMessageSink 
                 context.islandLocationByNameSource
@@ -249,6 +258,7 @@ module AtSea =
             else
                 avatarId
                 |> World.AddMessages 
+                    context
                     context.avatarMessageSink 
                     [ "You cannot careen here." ]
                 avatarId
@@ -269,6 +279,7 @@ module AtSea =
             | None ->
                 avatarId
                 |> World.AddMessages 
+                    context
                     context.avatarMessageSink 
                     [ "There is no place to dock." ]
                 avatarId
@@ -343,6 +354,7 @@ module AtSea =
         | Some (Command.Set (SetCommand.Heading heading)) ->
             avatarId
             |> World.SetHeading 
+                context
                 context.vesselSingleStatisticSource 
                 context.vesselSingleStatisticSink 
                 context.avatarMessageSink 
@@ -354,6 +366,7 @@ module AtSea =
         | Some (Command.Set (Speed speed)) ->
             avatarId
             |> World.SetSpeed 
+                context
                 context.vesselSingleStatisticSource
                 context.vesselSingleStatisticSink
                 context.avatarMessageSink

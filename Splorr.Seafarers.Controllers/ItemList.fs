@@ -6,6 +6,7 @@ open Splorr.Seafarers.Services
 type ItemListRunWithIslandContext =
     inherit ItemDetermineSalePriceContext
     inherit ItemDeterminePurchasePriceContext
+    inherit AvatarGetPrimaryStatisticContext
 
 type ItemListRunContext =
     inherit ItemListRunWithIslandContext
@@ -52,7 +53,7 @@ module ItemList =
             ())
         [
             (Hue.Label, "Money: " |> Text) |> Hued
-            (Hue.Value, avatarId |> Avatar.GetMoney shipmateSingleStatisticSource |> sprintf "%f" |> Line) |> Hued
+            (Hue.Value, avatarId |> Avatar.GetMoney context shipmateSingleStatisticSource |> sprintf "%f" |> Line) |> Hued
         ]
         |> List.iter messageSink
         avatarId

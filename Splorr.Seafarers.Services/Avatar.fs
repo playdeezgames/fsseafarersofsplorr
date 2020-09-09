@@ -17,45 +17,113 @@ type AvatarIslandFeatureSink = AvatarIslandFeature option * string -> unit
 type AvatarCreateContext =
     inherit VesselCreateContext
     inherit ShipmateCreateContext
+    abstract member avatarJobSink : AvatarJobSink
+
+type AvatarAddMetricContext =
+    interface
+    end
 
 type AvatarEatContext =
     inherit ShipmateEatContext
+    inherit AvatarAddMetricContext
+
+type AvatarSetPrimaryStatisticContext = 
+    inherit ShipmateTransformStatisticContext
+
+type AvatarGetSpeedContext =
+    interface
+    end
+
+type AvatarGetHeadingContext =
+    interface
+    end
+
+type AvatarSetPositionContext =
+    interface
+    end
+
+type AvatarSetSpeedContext =
+    interface
+    end
+
+type AvatarGetCurrentFoulingContext =
+    interface
+    end
+
+type AvatarGetMaximumFoulingContext =
+    interface
+    end
+
+type AvatarGetEffectiveSpeedContext =
+    inherit AvatarGetCurrentFoulingContext
+    inherit AvatarGetSpeedContext
+
+
+type AvatarSetHeadingContext =
+    interface
+    end
+
+type AvatarRemoveInventoryContext =
+    interface
+    end
+
+type AvatarIncrementMetricContext =
+    inherit AvatarAddMetricContext
 
 type AvatarMoveContext =
     inherit VesselBefoulContext
     inherit ShipmateTransformStatisticContext
     inherit AvatarEatContext
+    inherit AvatarGetEffectiveSpeedContext
+    inherit AvatarSetPositionContext
 
-type AvatarCleanHullContext =
-    inherit VesselTransformFoulingContext
-    inherit ShipmateTransformStatisticContext
-
-type AvatarSetPrimaryStatisticContext = 
-    inherit ShipmateTransformStatisticContext
+type AvatarGetPrimaryStatisticContext =
+    interface
+    end
 
 type AvatarAbandonJobContext =
     inherit AvatarSetPrimaryStatisticContext
+    inherit AvatarGetPrimaryStatisticContext
+    inherit AvatarIncrementMetricContext
+
+type AvatarGetItemCountContext =
+    interface
+    end
+
+type AvatarAddMessagesContext =
+    interface
+    end
+
+type AvatarGetUsedTonnageContext =
+    interface
+    end
 
 type AvatarCompleteJobContext =
     inherit AvatarSetPrimaryStatisticContext
     inherit ShipmateTransformStatisticContext
+    inherit AvatarGetPrimaryStatisticContext
+    inherit AvatarAddMetricContext
 
 type AvatarEarnMoneyContext =
     inherit AvatarSetPrimaryStatisticContext
+    inherit AvatarGetPrimaryStatisticContext
 
 type AvatarSpendMoneyContext =
     inherit AvatarSetPrimaryStatisticContext
+    inherit AvatarGetPrimaryStatisticContext
+
+type AvatarAddInventoryContext =
+    inherit AvatarGetItemCountContext
+
+type AvatarCleanHullContext =
+    inherit VesselTransformFoulingContext
+    inherit ShipmateTransformStatisticContext
+    inherit AvatarIncrementMetricContext
 
 module Avatar =
     let Create 
             (context : AvatarCreateContext)
             (avatarJobSink                   : AvatarJobSink)
-            (rationItemSource                : RationItemSource)
-            (shipmateRationItemSink          : ShipmateRationItemSink)
-            (shipmateSingleStatisticSink     : ShipmateSingleStatisticSink)
-            (shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource)
-            (vesselStatisticSink             : VesselStatisticSink)
-            (vesselStatisticTemplateSource   : VesselStatisticTemplateSource)
             (avatarId                        : string)
             : unit =
         Vessel.Create 
@@ -86,6 +154,7 @@ module Avatar =
             None
 
     let GetSpeed
+            (context : AvatarGetSpeedContext)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (avatarId                    : string)
             : float option =
@@ -94,6 +163,7 @@ module Avatar =
         |> Option.map Statistic.GetCurrentValue
 
     let GetHeading
+            (context : AvatarGetHeadingContext)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (avatarId                    : string)
             : float option =
@@ -102,6 +172,7 @@ module Avatar =
         |> Option.map Statistic.GetCurrentValue
 
     let SetPosition 
+            (context: AvatarSetPositionContext)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (vesselSingleStatisticSink   : VesselSingleStatisticSink)
             (position                    : Location) 
@@ -129,6 +200,7 @@ module Avatar =
         | _ -> ()
 
     let SetSpeed 
+            (context : AvatarSetSpeedContext)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (vesselSingleStatisticSink   : VesselSingleStatisticSink)
             (speed                       : float) 
@@ -143,6 +215,7 @@ module Avatar =
                 |> vesselSingleStatisticSink avatarId)
 
     let SetHeading 
+            (context : AvatarSetHeadingContext)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (vesselSingleStatisticSink   : VesselSingleStatisticSink)
             (heading : float) 
@@ -157,6 +230,7 @@ module Avatar =
                 |> vesselSingleStatisticSink avatarId)
 
     let RemoveInventory 
+            (context : AvatarRemoveInventoryContext)
             (avatarInventorySource : AvatarInventorySource)
             (avatarInventorySink   : AvatarInventorySink)
             (item                  : uint64) 
@@ -179,6 +253,7 @@ module Avatar =
         |> avatarInventorySink avatarId
 
     let AddMetric 
+            (context : AvatarAddMetricContext)
             (avatarSingleMetricSink   : AvatarSingleMetricSink)
             (avatarSingleMetricSource : AvatarSingleMetricSource)
             (metric                   : Metric) 
@@ -188,6 +263,7 @@ module Avatar =
         avatarSingleMetricSink avatarId (metric, (avatarSingleMetricSource avatarId metric) + amount)
 
     let private IncrementMetric 
+            (context : AvatarIncrementMetricContext)
             (avatarSingleMetricSink   : AvatarSingleMetricSink)
             (avatarSingleMetricSource : AvatarSingleMetricSource)
             (metric                   : Metric) 
@@ -196,6 +272,7 @@ module Avatar =
         let rateOfIncrement = 1UL
         avatarId
         |> AddMetric 
+            context
             avatarSingleMetricSink
             avatarSingleMetricSource
             metric 
@@ -228,6 +305,7 @@ module Avatar =
         if eaten > 0UL then
             avatarId
             |> AddMetric 
+                context
                 avatarSingleMetricSink 
                 avatarSingleMetricSource 
                 Metric.Ate 
@@ -235,6 +313,7 @@ module Avatar =
         if starved > 0UL then
             avatarId
             |> AddMetric 
+                context
                 avatarSingleMetricSink 
                 avatarSingleMetricSource 
                 Metric.Starved 
@@ -242,6 +321,7 @@ module Avatar =
 
     
     let GetCurrentFouling
+            (context : AvatarGetCurrentFoulingContext)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (avatarId                    : string)
             :float =
@@ -256,6 +336,7 @@ module Avatar =
         portFouling + starboardFouling
     
     let GetMaximumFouling
+            (context : AvatarGetMaximumFoulingContext)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (avatarId                    : string)
             :float =
@@ -270,11 +351,12 @@ module Avatar =
         portFouling + starboardFouling
 
     let GetEffectiveSpeed 
+            (context : AvatarGetEffectiveSpeedContext)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (avatarId                    : string)
             : float =
-        let currentValue = GetCurrentFouling vesselSingleStatisticSource avatarId
-        let currentSpeed = GetSpeed vesselSingleStatisticSource avatarId |> Option.get
+        let currentValue = GetCurrentFouling context vesselSingleStatisticSource avatarId
+        let currentSpeed = GetSpeed context vesselSingleStatisticSource avatarId |> Option.get
         (currentSpeed * (1.0 - currentValue))
 
     let TransformShipmates 
@@ -302,7 +384,7 @@ module Avatar =
             : unit =
         let actualSpeed = 
             avatarId 
-            |> GetEffectiveSpeed vesselSingleStatisticSource
+            |> GetEffectiveSpeed context vesselSingleStatisticSource
         let actualHeading = 
             vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Heading 
             |> Option.map Statistic.GetCurrentValue 
@@ -312,7 +394,7 @@ module Avatar =
             avatarId
         let avatarPosition = GetPosition vesselSingleStatisticSource avatarId |> Option.get
         let newPosition = ((avatarPosition |> fst) + System.Math.Cos(actualHeading) * actualSpeed, (avatarPosition |> snd) + System.Math.Sin(actualHeading) * actualSpeed)
-        SetPosition vesselSingleStatisticSource vesselSingleStatisticSink newPosition avatarId
+        SetPosition context vesselSingleStatisticSource vesselSingleStatisticSink newPosition avatarId
         TransformShipmates
             avatarShipmateSource
             (fun identifier -> 
@@ -325,6 +407,7 @@ module Avatar =
             avatarId
         avatarId
         |> AddMetric 
+            context
             avatarSingleMetricSink
             avatarSingleMetricSource
             Metric.Moved 
@@ -358,6 +441,7 @@ module Avatar =
     let SetReputation (context : AvatarSetPrimaryStatisticContext) = SetPrimaryStatistic context ShipmateStatisticIdentifier.Reputation 
 
     let private GetPrimaryStatistic 
+            (context : AvatarGetPrimaryStatisticContext)
             (identifier : ShipmateStatisticIdentifier) 
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (avatarId     : string) 
@@ -369,9 +453,9 @@ module Avatar =
         |> Option.map (fun statistic -> statistic.CurrentValue)
         |> Option.defaultValue 0.0
 
-    let GetMoney = GetPrimaryStatistic ShipmateStatisticIdentifier.Money
+    let GetMoney context = GetPrimaryStatistic context ShipmateStatisticIdentifier.Money
 
-    let GetReputation = GetPrimaryStatistic ShipmateStatisticIdentifier.Reputation
+    let GetReputation context = GetPrimaryStatistic context ShipmateStatisticIdentifier.Reputation
     
     let AbandonJob 
             (context : AvatarAbandonJobContext)
@@ -394,12 +478,14 @@ module Avatar =
                     shipmateSingleStatisticSource 
                     shipmateSingleStatisticSink 
                     ((GetReputation 
+                        context
                         shipmateSingleStatisticSource 
                         avatarId) + 
                             reputationCostForAbandoningAJob) 
                     
                 avatarId
                 |> IncrementMetric 
+                    context
                     avatarSingleMetricSink
                     avatarSingleMetricSource
                     Metric.AbandonedJob
@@ -422,6 +508,7 @@ module Avatar =
                 shipmateSingleStatisticSource 
                 shipmateSingleStatisticSink 
                 ((GetReputation 
+                    context
                     shipmateSingleStatisticSource 
                     avatarId) + 
                         1.0)
@@ -434,6 +521,7 @@ module Avatar =
                 Primary
             avatarId
             |> AddMetric 
+                context
                 avatarSingleMetricSink
                 avatarSingleMetricSource
                 Metric.CompletedJob 
@@ -454,7 +542,7 @@ module Avatar =
                 context
                 shipmateSingleStatisticSource
                 shipmateSingleStatisticSink
-                ((GetMoney shipmateSingleStatisticSource avatarId) + amount)
+                ((GetMoney context shipmateSingleStatisticSource avatarId) + amount)
                 avatarId
 
     let SpendMoney 
@@ -469,10 +557,11 @@ module Avatar =
                 context
                 shipmateSingleStatisticSource
                 shipmateSingleStatisticSink
-                ((GetMoney shipmateSingleStatisticSource avatarId) - amount)
+                ((GetMoney context shipmateSingleStatisticSource avatarId) - amount)
                 avatarId
 
     let GetItemCount 
+            (context : AvatarGetItemCountContext)
             (avatarInventorySource : AvatarInventorySource)
             (item                  : uint64) 
             (avatarId              : string) 
@@ -482,19 +571,21 @@ module Avatar =
         | None -> 0UL
 
     let AddInventory 
+            (context : AvatarAddInventoryContext)
             (avatarInventorySink   : AvatarInventorySink)
             (avatarInventorySource : AvatarInventorySource)
             (item                  : uint64) 
             (quantity              : uint64) 
             (avatarId              : string) 
             : unit =
-        let newQuantity = (avatarId |> GetItemCount avatarInventorySource item) + quantity
+        let newQuantity = (avatarId |> GetItemCount context avatarInventorySource item) + quantity
         avatarId
         |> avatarInventorySource
         |> Map.add item newQuantity
         |> avatarInventorySink avatarId
 
     let AddMessages 
+            (context : AvatarAddMessagesContext)
             (avatarMessageSink : AvatarMessageSink)
             (messages          : string list) 
             (avatarId          : string) 
@@ -504,6 +595,7 @@ module Avatar =
 
 
     let GetUsedTonnage
+            (context : AvatarGetUsedTonnageContext)
             (avatarInventorySource : AvatarInventorySource)
             (items                 : Map<uint64, ItemDescriptor>) //TODO: to source
             (avatarId              : string) 
@@ -541,6 +633,7 @@ module Avatar =
             avatarId
         avatarId
         |> IncrementMetric
+            context
             avatarSingleMetricSink
             avatarSingleMetricSource
             Metric.CleanedHull

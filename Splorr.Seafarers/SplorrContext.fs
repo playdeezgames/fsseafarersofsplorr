@@ -79,8 +79,8 @@ type SplorrContext
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
     interface ShipmateEatContext with
-        member this.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
-        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+        member _.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
+        member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
     interface AtSeaHandleCommandContext with
         member _.avatarInventorySink            : AvatarInventorySink        =avatarInventorySink        
@@ -95,7 +95,7 @@ type SplorrContext
         member _.vesselSingleStatisticSource    : VesselSingleStatisticSource=vesselSingleStatisticSource
 
     interface AtSeaRunContext with
-        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
+        member _.avatarMessageSource: AvatarMessageSource = avatarMessageSource
 
     interface IslandCreateContext with
         member _.islandSingleStatisticSink     : IslandSingleStatisticSink    =islandSingleStatisticSink    
@@ -130,6 +130,9 @@ type SplorrContext
         member _.shipmateRationItemSink: ShipmateRationItemSink = shipmateRationItemSink
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member _.shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
+
+    interface AvatarCreateContext with
+        member _.avatarJobSink: AvatarJobSink = avatarJobSink
 
     interface WorldCreateContext with
         member _.avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink    = avatarIslandSingleMetricSink   
@@ -208,8 +211,8 @@ type SplorrContext
         member _.random: Random = random
 
     interface ShipmateTransformStatisticContext with
-        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
-        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+        member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
     interface WorldDockContext with
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
