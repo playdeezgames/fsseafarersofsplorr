@@ -1126,8 +1126,6 @@ let ``TransformStatistic.It replaces the statistic when that statistic is origin
     let context = TestShipmateTransformStatisticContext (shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> ShipmateTransformStatisticContext
     Shipmate.TransformStatistic 
         context
-        shipmateSingleStatisticSource
-        shipmateSingleStatisticSink
         ShipmateStatisticIdentifier.Health 
         (fun _ -> (inputHealth |> Some))
         avatarId
@@ -1143,8 +1141,6 @@ let ``TransformStatistic.It does nothing when the given statistic is absent from
     let context = TestShipmateTransformStatisticContext (shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> ShipmateTransformStatisticContext
     Shipmate.TransformStatistic 
         context
-        shipmateSingleStatisticSource
-        shipmateSingleStatisticSink
         ShipmateStatisticIdentifier.Health 
         (fun _ -> (inputHealth |> Some))
         avatarId

@@ -64,18 +64,16 @@ module Shipmate =
 
     let TransformStatistic 
             (context : ShipmateTransformStatisticContext)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
             (identifier : ShipmateStatisticIdentifier) 
             (transform  : Statistic -> Statistic option) 
             (avatarId: string)
             (shipmateId: ShipmateIdentifier) 
             : unit =
         identifier
-        |> shipmateSingleStatisticSource avatarId shipmateId
+        |> context.shipmateSingleStatisticSource avatarId shipmateId
         |> Option.iter
             (fun s -> 
-                shipmateSingleStatisticSink avatarId shipmateId (identifier, (s |> transform) ) )
+                context.shipmateSingleStatisticSink avatarId shipmateId (identifier, (s |> transform) ) )
 
     let Eat 
             (context : ShipmateEatContext)
@@ -103,8 +101,6 @@ module Shipmate =
         | Some item ->
             TransformStatistic 
                 context
-                shipmateSingleStatisticSource
-                shipmateSingleStatisticSink
                 ShipmateStatisticIdentifier.Satiety 
                 (Statistic.ChangeCurrentBy satietyIncrease >> Some)
                 avatarId
@@ -124,8 +120,6 @@ module Shipmate =
             if satiety.CurrentValue > satiety.MinimumValue then
                 TransformStatistic 
                     context
-                    shipmateSingleStatisticSource
-                    shipmateSingleStatisticSink
                     ShipmateStatisticIdentifier.Satiety 
                     (Statistic.ChangeCurrentBy (satietyDecrease) >> Some) 
                     avatarId
@@ -134,8 +128,6 @@ module Shipmate =
             else
                 TransformStatistic 
                     context
-                    shipmateSingleStatisticSource
-                    shipmateSingleStatisticSink
                     ShipmateStatisticIdentifier.Turn 
                     (Statistic.ChangeMaximumBy (satietyDecrease) >> Some)
                     avatarId

@@ -324,8 +324,6 @@ module Avatar =
             (fun identifier -> 
                 Shipmate.TransformStatistic 
                     context
-                    shipmateSingleStatisticSource
-                    shipmateSingleStatisticSink
                     ShipmateStatisticIdentifier.Turn 
                     (Statistic.ChangeCurrentBy 1.0 >> Some)
                     avatarId
@@ -359,8 +357,6 @@ module Avatar =
             : unit =
         Shipmate.TransformStatistic 
             context
-            shipmateSingleStatisticSource
-            shipmateSingleStatisticSink
             identifier 
             (Statistic.SetCurrentValue amount >> Some) 
             avatarId
@@ -441,8 +437,6 @@ module Avatar =
                 avatarId
             Shipmate.TransformStatistic 
                 context
-                shipmateSingleStatisticSource
-                shipmateSingleStatisticSink
                 ShipmateStatisticIdentifier.Money 
                 (Statistic.ChangeCurrentBy job.Reward >> Some)
                 avatarId
@@ -550,8 +544,6 @@ module Avatar =
             avatarShipmateSource 
             (Shipmate.TransformStatistic
                 context
-                shipmateSingleStatisticSource
-                shipmateSingleStatisticSink
                 ShipmateStatisticIdentifier.Turn 
                 (Statistic.ChangeCurrentBy 1.0 >> Some)
                 avatarId)
