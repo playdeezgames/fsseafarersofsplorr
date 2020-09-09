@@ -13,6 +13,7 @@ type RunnerRunContext =
     inherit HelpRunContext
     inherit ItemListRunContext
     inherit CareenedRunContext
+    inherit GamestateCheckForAvatarDeathContext
     abstract member avatarMetricSource              : AvatarMetricSource
     abstract member switchSource                    : SwitchSource
 
@@ -188,6 +189,7 @@ module Runner =
                     state
 
             |> Gamestate.CheckForAvatarDeath 
+                context
                 context.avatarMessageSource
                 context.shipmateSingleStatisticSource
 

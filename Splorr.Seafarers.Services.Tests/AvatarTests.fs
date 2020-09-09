@@ -9,6 +9,15 @@ open AvatarTestFixtures
 
 let private inputAvatarId = "avatar"
 
+type TestAvatarSetPrimaryStatisticContext() =
+    interface AvatarSetPrimaryStatisticContext
+
+type TestAvatarAbandonJobContext () =
+    interface AvatarAbandonJobContext
+
+type TestAvatarCompleteJobContext () =
+    interface AvatarCompleteJobContext
+
 type TestAvatarCreateContext(vesselStatisticSink, vesselStatisticTemplateSource) =
     interface AvatarCreateContext with
         member _.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
@@ -25,6 +34,18 @@ type TestAvatarCleanHullContext(vesselSingleStatisticSink, vesselSingleStatistic
     interface AvatarCleanHullContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
+type TestShipmateGetStatusContext() =
+    interface ShipmateGetStatusContext
+
+type TestAvatarEarnMoneyContext() =
+    interface AvatarEarnMoneyContext
+
+type TestAvatarSpendMoneyContext() =
+    interface AvatarSpendMoneyContext
+
+type TestShipmateTransformStatisticContext() =
+    interface ShipmateTransformStatisticContext
 
 [<Test>]
 let ``GetReputation.It retrieves the reputation of the primary shipmate.`` () =
@@ -83,8 +104,13 @@ let ``SetMoney.It assigns the amount of money of the primary shipmate.`` () =
             Assert.AreEqual(inputMoney, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "Kaboom set")
+    let context = TestAvatarSetPrimaryStatisticContext() :> AvatarSetPrimaryStatisticContext
     input
-    |> Avatar.SetMoney shipmateSingleStatisticSource shipmateSingleStatisticSink inputMoney
+    |> Avatar.SetMoney 
+        context
+        shipmateSingleStatisticSource 
+        shipmateSingleStatisticSink 
+        inputMoney
 
 [<Test>]
 let ``SetReputation.It assigns the amount of reputation of the primary shipmate.`` () =
@@ -105,8 +131,13 @@ let ``SetReputation.It assigns the amount of reputation of the primary shipmate.
             Assert.AreEqual(inputReputation, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "Kaboom set")
+    let context = TestAvatarSetPrimaryStatisticContext() :> AvatarSetPrimaryStatisticContext
     input
-    |> Avatar.SetReputation shipmateSingleStatisticSource shipmateSingleStatisticSink inputReputation
+    |> Avatar.SetReputation 
+        context
+        shipmateSingleStatisticSource 
+        shipmateSingleStatisticSink 
+        inputReputation
 
 [<Test>]
 let ``Create.It creates an avatar.`` () =
@@ -135,7 +166,6 @@ let ``Create.It creates an avatar.`` () =
         vesselStatisticSink             
         vesselStatisticTemplateSource   
         avatarId                        
-        
 
 [<Test>]
 let ``SetSpeed.It sets all stop when given less than zero.`` () =
@@ -498,8 +528,10 @@ let ``AbandonJob.It does nothing when the given avatar has no job.`` () =
         Assert.Fail("avatarJobSink")
     let avatarJobSource (_) =
         None
+    let context = TestAvatarAbandonJobContext () :> AvatarAbandonJobContext
     input
     |> Avatar.AbandonJob
+        context
         avatarJobSink
         avatarJobSource
         avatarSingleMetricSinkExplode
@@ -532,7 +564,9 @@ let ``AbandonJob.It set job to None when the given avatar has a job.`` () =
             Destination = (0.0, 0.0)
         }
         |> Some
+    let context = TestAvatarAbandonJobContext() :> AvatarAbandonJobContext
     Avatar.AbandonJob
+        context
         avatarJobSink
         avatarJobSource
         (assertAvatarSingleMetricSink [(Metric.AbandonedJob, 1UL)])
@@ -553,7 +587,9 @@ let ``CompleteJob.It does nothing when the given avatar has no job.`` () =
         Assert.Fail("avatarJobSink")
     let avatarJobSource (_) =
         None
+    let context = TestAvatarCompleteJobContext () :> AvatarCompleteJobContext
     Avatar.CompleteJob
+        context
         avatarJobSink
         avatarJobSource
         avatarSingleMetricSinkExplode
@@ -593,7 +629,9 @@ let ``CompleteJob.It sets job to None, adds reward money, adds reputation and me
     let avatarJobSource (_) =
         inputJob 
         |> Some
+    let context = TestAvatarCompleteJobContext() :> AvatarCompleteJobContext
     Avatar.CompleteJob
+        context
         avatarJobSink
         avatarJobSource
         (assertAvatarSingleMetricSink [(Metric.CompletedJob, 1UL)])
@@ -611,8 +649,10 @@ let ``SpendMoney.It has no effect when given a negative amount to spend.`` () =
         None
     let shipmateSingleStatisticSink (_) (_) (_) =
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
+    let context = TestAvatarSpendMoneyContext() :> AvatarSpendMoneyContext
     input
     |> Avatar.SpendMoney 
+        context
         shipmateSingleStatisticSink
         shipmateSingleStatisticSource
         inputAmount
@@ -627,8 +667,10 @@ let ``EarnMoney.It has no effect when given a negative amount to earn.`` () =
         None
     let shipmateSingleStatisticSink (_) (_) (_) =
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
+    let context = TestAvatarEarnMoneyContext() :> AvatarEarnMoneyContext
     input
     |> Avatar.EarnMoney 
+        context
         shipmateSingleStatisticSink
         shipmateSingleStatisticSource
         inputAmount
@@ -651,8 +693,10 @@ let ``SpendMoney.It has no effect when the given avatar has no money.`` () =
             Assert.AreEqual(0.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
+    let context = TestAvatarSpendMoneyContext() :> AvatarSpendMoneyContext
     input
     |> Avatar.SpendMoney 
+        context
         shipmateSingleStatisticSink
         shipmateSingleStatisticSource
         inputAmount
@@ -674,8 +718,10 @@ let ``SpendMoney.It reduces the avatar's money to zero when the given amount exc
             Assert.AreEqual(0.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
+    let context = TestAvatarSpendMoneyContext() :> AvatarSpendMoneyContext
     input
     |> Avatar.SpendMoney 
+        context
         shipmateSingleStatisticSink
         shipmateSingleStatisticSource
         inputAmount
@@ -697,8 +743,10 @@ let ``SpendMoney.It updates the avatars money when the given amount is less than
             Assert.AreEqual(49.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
+    let context = TestAvatarSpendMoneyContext() :> AvatarSpendMoneyContext
     input
     |> Avatar.SpendMoney 
+        context
         shipmateSingleStatisticSink
         shipmateSingleStatisticSource
         inputAmount
@@ -720,8 +768,10 @@ let ``EarnMoney.It updates the avatars money by adding the given amount.`` () =
             Assert.AreEqual(inputAmount, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
+    let context = TestAvatarEarnMoneyContext() :> AvatarEarnMoneyContext
     input
     |> Avatar.EarnMoney 
+        context
         shipmateSingleStatisticSink
         shipmateSingleStatisticSource
         inputAmount
@@ -844,7 +894,12 @@ let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a ALIVE when given an avatar with abo
             None
     let inputAvatarId = avatarId
     let inputShipmateId = Primary
-    match Shipmate.GetStatus shipmateSingleStatisticSource inputAvatarId inputShipmateId with
+    let context = TestShipmateGetStatusContext() :> ShipmateGetStatusContext
+    match Shipmate.GetStatus 
+        context
+        shipmateSingleStatisticSource 
+        inputAvatarId 
+        inputShipmateId with
     | Alive -> ()
     | _ -> Assert.Fail("It detected that the avatar is not alive")
 
@@ -861,7 +916,12 @@ let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a ZERO_HEALTH when given an avatar at
             None
     let inputAvatarId = avatarId
     let inputShipmateId = Primary
-    match Shipmate.GetStatus shipmateSingleStatisticSource inputAvatarId inputShipmateId with
+    let context = TestShipmateGetStatusContext() :> ShipmateGetStatusContext
+    match Shipmate.GetStatus 
+        context
+        shipmateSingleStatisticSource 
+        inputAvatarId 
+        inputShipmateId with
     | Dead ZeroHealth -> ()
     | _ -> Assert.Fail("It detected that the avatar is not dead")
 
@@ -878,7 +938,12 @@ let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a OLD_AGE when given an avatar at max
             None
     let inputAvatarId = avatarId
     let inputShipmateId = Primary
-    match Shipmate.GetStatus shipmateSingleStatisticSource inputAvatarId inputShipmateId with
+    let context = TestShipmateGetStatusContext() :> ShipmateGetStatusContext
+    match Shipmate.GetStatus 
+        context
+        shipmateSingleStatisticSource 
+        inputAvatarId 
+        inputShipmateId with
     | Dead OldAge -> ()
     | _ -> Assert.Fail("It detected that the avatar is not dead")
 
@@ -1019,7 +1084,9 @@ let ``TransformStatistic.It replaces the statistic when that statistic is origin
             Assert.AreEqual(inputHealth, statistic.Value)
         | _ ->
             raise (System.NotImplementedException "Kaboom shipmateSingleStatisticSink")
+    let context = TestShipmateTransformStatisticContext () :> ShipmateTransformStatisticContext
     Shipmate.TransformStatistic 
+        context
         shipmateSingleStatisticSource
         shipmateSingleStatisticSink
         ShipmateStatisticIdentifier.Health 
@@ -1034,7 +1101,9 @@ let ``TransformStatistic.It does nothing when the given statistic is absent from
         None
     let shipmateSingleStatisticSink (_) (_) (_) =
         Assert.Fail("Dont call me.")
+    let context = TestShipmateTransformStatisticContext () :> ShipmateTransformStatisticContext
     Shipmate.TransformStatistic 
+        context
         shipmateSingleStatisticSource
         shipmateSingleStatisticSink
         ShipmateStatisticIdentifier.Health 

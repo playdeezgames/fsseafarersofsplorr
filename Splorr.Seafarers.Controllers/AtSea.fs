@@ -16,6 +16,7 @@ type AtSeaHandleCommandContext =
     inherit AtSeaGetVisibleIslandsContext
     inherit AtSeaUpdateDisplayContext
     inherit WorldMoveContext
+    inherit WorldAbandonJobContext
     abstract member avatarInventorySink            : AvatarInventorySink
     abstract member avatarInventorySource          : AvatarInventorySource
     abstract member avatarMessagePurger            : AvatarMessagePurger
@@ -282,6 +283,7 @@ module AtSea =
         | Some (Command.Abandon Job) ->
             avatarId
             |> World.AbandonJob 
+                context
                 context.avatarJobSink
                 context.avatarJobSource
                 context.avatarMessageSink
@@ -408,7 +410,7 @@ module AtSea =
             (messageSink   : MessageSink) 
             (avatarId      : string) 
             : Gamestate option =
-        if avatarId |> World.IsAvatarAlive context.shipmateSingleStatisticSource then
+        if avatarId |> World.IsAvatarAlive context context.shipmateSingleStatisticSource then
             RunAlive
                 context
                 random 

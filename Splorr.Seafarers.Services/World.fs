@@ -56,14 +56,22 @@ type WorldCreateContext =
 type WorldCleanHullContext =
     inherit AvatarCleanHullContext
 
+type WorldIsAvatarAliveContext = 
+    inherit ShipmateGetStatusContext
+
 type WorldMoveContext =
     inherit AvatarMoveContext
+    inherit WorldIsAvatarAliveContext
+
+type WorldDoJobCompletionContext =
+    inherit AvatarCompleteJobContext
 
 type WorldDockContext =
     inherit IslandAddVisitContext
     inherit IslandJobsGenerationContext
     inherit IslandGenerateCommoditiesContext
     inherit IslandGenerateItemsContext
+    inherit WorldDoJobCompletionContext
     abstract member avatarIslandFeatureSink        : AvatarIslandFeatureSink
     abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
@@ -88,10 +96,15 @@ type WorldAcceptJobContext =
 type WorldBuyItemsContext =
     inherit ItemDetermineSalePriceContext
     inherit IslandUpdateMarketForItemContext
+    inherit AvatarSpendMoneyContext
 
 type WorldSellItemsContext =
     inherit ItemDeterminePurchasePriceContext
     inherit IslandUpdateMarketForItemContext
+    inherit AvatarEarnMoneyContext
+
+type WorldAbandonJobContext =
+    inherit AvatarAbandonJobContext
 
 module World =
 //TODO: top of "world generator" refactor
@@ -299,10 +312,12 @@ module World =
                 |> AddMessages avatarMessageSink [newHeading |> Angle.ToDegrees |> Angle.ToString |> sprintf "You set your heading to %s." ])
 
     let IsAvatarAlive
+            (context : WorldIsAvatarAliveContext)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (avatarId                      : string) 
             : bool =
         (Shipmate.GetStatus 
+            context
             shipmateSingleStatisticSource
             avatarId
             Primary) = Alive
@@ -348,6 +363,7 @@ module World =
                 islandSource
                 vesselSingleStatisticSource
             if IsAvatarAlive 
+                    context
                     shipmateSingleStatisticSource 
                     avatarId |> not then
                 avatarId
@@ -383,6 +399,7 @@ module World =
 
 
     let private DoJobCompletion
+            (context : WorldDoJobCompletionContext)
             (avatarJobSink                 : AvatarJobSink)
             (avatarJobSource               : AvatarJobSource)
             (avatarMessageSink             : AvatarMessageSink)
@@ -396,6 +413,7 @@ module World =
             : unit = 
         if location = job.Destination then
             Avatar.CompleteJob 
+                context
                 avatarJobSink
                 avatarJobSource
                 avatarSingleMetricSink
@@ -455,6 +473,7 @@ module World =
             |> Option.foldBack 
                 (fun job w ->
                     DoJobCompletion
+                        context
                         context.avatarJobSink
                         context.avatarJobSource
                         context.avatarMessageSink
@@ -586,6 +605,7 @@ module World =
             ()
 
     let AbandonJob
+            (context : WorldAbandonJobContext)
             (avatarJobSink                 : AvatarJobSink)
             (avatarJobSource               : AvatarJobSource)
             (avatarMessageSink             : AvatarMessageSink)
@@ -600,6 +620,7 @@ module World =
             avatarId
             |> AddMessages avatarMessageSink [ "You abandon your job." ]
             Avatar.AbandonJob 
+                context
                 avatarJobSink
                 avatarJobSource
                 avatarSingleMetricSink
@@ -685,6 +706,7 @@ module World =
                 |> AddMessages avatarMessageSink [(quantity, descriptor.ItemName) ||> sprintf "You complete the purchase of %u %s."]
                 avatarId
                 |> Avatar.SpendMoney 
+                    context
                     shipmateSingleStatisticSink
                     shipmateSingleStatisticSource
                     price 
@@ -750,6 +772,7 @@ module World =
                 avatarId
                 |> AddMessages avatarMessageSink [(quantity, descriptor.ItemName) ||> sprintf "You complete the sale of %u %s."]
                 Avatar.EarnMoney 
+                    context
                     shipmateSingleStatisticSink
                     shipmateSingleStatisticSource
                     price 

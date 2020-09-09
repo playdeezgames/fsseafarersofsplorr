@@ -16,6 +16,7 @@ type DockedHandleCommandContext =
     inherit WorldUndockContext
     inherit WorldBuyItemsContext
     inherit WorldSellItemsContext
+    inherit WorldAbandonJobContext
     abstract member avatarInventorySink            : AvatarInventorySink
     abstract member avatarInventorySource          : AvatarInventorySource
     abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
@@ -38,10 +39,13 @@ type DockedHandleCommandContext =
     abstract member shipmateSingleStatisticSource  : ShipmateSingleStatisticSource
     abstract member vesselSingleStatisticSource    : VesselSingleStatisticSource
 
+type DockedRunBoilerplateContext =
+    inherit WorldIsAvatarAliveContext
 
 type DockedRunContext =
     inherit DockedUpdateDisplayContext
     inherit DockedHandleCommandContext
+    inherit DockedRunBoilerplateContext
 
 module Docked = 
     let private getFeatureDisplayName (feature:IslandFeatureIdentifier) : Message =
@@ -174,6 +178,7 @@ module Docked =
         | Some (Command.Abandon Job) ->
             avatarId 
             |> World.AbandonJob 
+                context
                 context.avatarJobSink
                 context.avatarJobSource
                 context.avatarMessageSink
@@ -242,6 +247,7 @@ module Docked =
             location 
 
     let internal RunBoilerplate 
+            (context : DockedRunBoilerplateContext)
             (avatarMessageSource           : AvatarMessageSource)
             (islandSource                  : IslandSource)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
@@ -249,7 +255,7 @@ module Docked =
             (location                      : Location) 
             (avatarId                      : string) 
             : Gamestate option =
-        if avatarId |> World.IsAvatarAlive shipmateSingleStatisticSource then
+        if avatarId |> World.IsAvatarAlive context shipmateSingleStatisticSource then
             if islandSource() |> List.exists (fun x->x= location) then
                 func location avatarId
             else
@@ -267,6 +273,7 @@ module Docked =
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) =
         RunBoilerplate 
+            context
             context.avatarMessageSource
             context.islandSource
             context.shipmateSingleStatisticSource

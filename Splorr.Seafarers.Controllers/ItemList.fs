@@ -9,6 +9,7 @@ type ItemListRunWithIslandContext =
 
 type ItemListRunContext =
     inherit ItemListRunWithIslandContext
+    inherit DockedRunBoilerplateContext
 
 module ItemList = 
     let private RunWithIsland 
@@ -77,6 +78,7 @@ module ItemList =
             shipmateSingleStatisticSource 
             messageSink
         |> Docked.RunBoilerplate 
+            context
             avatarMessageSource
             islandSource
             shipmateSingleStatisticSource 

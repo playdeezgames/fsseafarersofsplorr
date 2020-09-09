@@ -43,23 +43,22 @@ module Vessel =
         |> Option.iter (fun s -> (statisticIdentifier, s |> transform) |> context.vesselSingleStatisticSink avatarId)
     
     let Befoul 
-            (context : VesselBefoulContext)
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
-            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
-            (avatarId                    : string)
+            (context  : VesselBefoulContext)
+            (avatarId : string)
             : unit =
         let foulRate = 
-            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.FoulRate
+            context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.FoulRate
             |> Option.map (fun x->x.CurrentValue)
             |> Option.get
-        TransformFouling 
-            context
-            avatarId 
-            Port 
-            (Statistic.ChangeCurrentBy (foulRate/2.0))
-        TransformFouling 
-            context
-            avatarId 
-            Starboard 
-            (Statistic.ChangeCurrentBy (foulRate/2.0))
+        [
+            Port
+            Starboard
+        ]
+        |> List. iter
+            (fun side ->
+                TransformFouling 
+                    context
+                    avatarId 
+                    side 
+                    (Statistic.ChangeCurrentBy (foulRate/2.0)))
 

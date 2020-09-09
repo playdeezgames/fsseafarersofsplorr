@@ -6,11 +6,9 @@ open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
 open System
 open CommonTestFixtures
-open AtSeaTestFixtures
 
-
-let private random = 
-    Random()
+type TestGamestateCheckForAvatarDeathContext () =
+    interface GamestateCheckForAvatarDeathContext
 
 let private avatarId = ""
 
@@ -160,9 +158,11 @@ let ``CheckForAvatarDeath.It returns the original gamestate when the avatar embe
         |> Some
     let expected =
         input
+    let context = TestGamestateCheckForAvatarDeathContext () :> GamestateCheckForAvatarDeathContext
     let actual =
         input
         |> Gamestate.CheckForAvatarDeath
+            context
             avatarMessageSourceDummy
             shipmateSingleStatisticSourceStub
     Assert.AreEqual(expected, actual)
@@ -175,9 +175,11 @@ let ``CheckForAvatarDeath.It returns the original gamestate when there is not a 
         |> Some
     let expected =
         input
+    let context = TestGamestateCheckForAvatarDeathContext () :> GamestateCheckForAvatarDeathContext
     let actual =
         input
         |> Gamestate.CheckForAvatarDeath
+            context
             avatarMessageSourceDummy
             shipmateSingleStatisticSourceStub
     Assert.AreEqual(expected, actual)
@@ -199,9 +201,11 @@ let ``CheckForAvatarDeath.It returns gameover when the avatar embedded therein i
             Statistic.Create (0.0, 100.0) 0.0 |> Some
         | _ ->
             raise (System.NotImplementedException (identifier.ToString() |> sprintf "shipmateSingleStatisticSource - %s"))
+    let context = TestGamestateCheckForAvatarDeathContext () :> GamestateCheckForAvatarDeathContext
     let actual =
         input
         |> Gamestate.CheckForAvatarDeath 
+            context
             avatarMessageSourceDummy
             shipmateSingleStatisticSource
     Assert.AreEqual(expected, actual)

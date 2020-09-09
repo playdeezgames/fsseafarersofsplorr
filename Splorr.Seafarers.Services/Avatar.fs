@@ -16,12 +16,35 @@ type AvatarIslandFeatureSink = AvatarIslandFeature option * string -> unit
 
 type AvatarCreateContext =
     inherit VesselCreateContext
+    inherit ShipmateCreateContext
+
+type AvatarEatContext =
+    inherit ShipmateEatContext
 
 type AvatarMoveContext =
     inherit VesselBefoulContext
+    inherit ShipmateTransformStatisticContext
+    inherit AvatarEatContext
 
 type AvatarCleanHullContext =
     inherit VesselTransformFoulingContext
+    inherit ShipmateTransformStatisticContext
+
+type AvatarSetPrimaryStatisticContext = 
+    inherit ShipmateTransformStatisticContext
+
+type AvatarAbandonJobContext =
+    inherit AvatarSetPrimaryStatisticContext
+
+type AvatarCompleteJobContext =
+    inherit AvatarSetPrimaryStatisticContext
+    inherit ShipmateTransformStatisticContext
+
+type AvatarEarnMoneyContext =
+    inherit AvatarSetPrimaryStatisticContext
+
+type AvatarSpendMoneyContext =
+    inherit AvatarSetPrimaryStatisticContext
 
 module Avatar =
     let Create 
@@ -39,6 +62,7 @@ module Avatar =
             context
             avatarId
         Shipmate.Create 
+            context
             shipmateStatisticTemplateSource 
             shipmateSingleStatisticSink
             rationItemSource 
@@ -182,6 +206,7 @@ module Avatar =
             rateOfIncrement
 
     let private Eat
+            (context : AvatarEatContext)
             (avatarInventorySink           : AvatarInventorySink)
             (avatarInventorySource         : AvatarInventorySource)
             (avatarShipmateSource          : AvatarShipmateSource)
@@ -198,6 +223,7 @@ module Avatar =
                 (fun (inventory,eatMetric, starveMetric) identifier -> 
                     let updateInventory, ate, starved =
                         Shipmate.Eat
+                            context
                             shipmateRationItemSource 
                             shipmateSingleStatisticSource
                             shipmateSingleStatisticSink
@@ -293,8 +319,6 @@ module Avatar =
             |> Option.get
         Vessel.Befoul 
             context
-            vesselSingleStatisticSource 
-            vesselSingleStatisticSink 
             avatarId
         let avatarPosition = GetPosition vesselSingleStatisticSource avatarId |> Option.get
         let newPosition = ((avatarPosition |> fst) + System.Math.Cos(actualHeading) * actualSpeed, (avatarPosition |> snd) + System.Math.Sin(actualHeading) * actualSpeed)
@@ -303,6 +327,7 @@ module Avatar =
             avatarShipmateSource
             (fun identifier -> 
                 Shipmate.TransformStatistic 
+                    context
                     shipmateSingleStatisticSource
                     shipmateSingleStatisticSink
                     ShipmateStatisticIdentifier.Turn 
@@ -318,6 +343,7 @@ module Avatar =
             1UL
         avatarId
         |> Eat 
+            context
             avatarInventorySink
             avatarInventorySource
             avatarShipmateSource
@@ -328,6 +354,7 @@ module Avatar =
             shipmateSingleStatisticSource
 
     let private SetPrimaryStatistic
+            (context : AvatarSetPrimaryStatisticContext)
             (identifier                    : ShipmateStatisticIdentifier)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
@@ -335,6 +362,7 @@ module Avatar =
             (avatarId                      : string)
             : unit =
         Shipmate.TransformStatistic 
+            context
             shipmateSingleStatisticSource
             shipmateSingleStatisticSink
             identifier 
@@ -342,10 +370,9 @@ module Avatar =
             avatarId
             Primary
 
-    let SetMoney = SetPrimaryStatistic ShipmateStatisticIdentifier.Money 
+    let SetMoney (context : AvatarSetPrimaryStatisticContext) = SetPrimaryStatistic context ShipmateStatisticIdentifier.Money 
 
-    let SetReputation = SetPrimaryStatistic ShipmateStatisticIdentifier.Reputation 
-
+    let SetReputation (context : AvatarSetPrimaryStatisticContext) = SetPrimaryStatistic context ShipmateStatisticIdentifier.Reputation 
 
     let private GetPrimaryStatistic 
             (identifier : ShipmateStatisticIdentifier) 
@@ -364,6 +391,7 @@ module Avatar =
     let GetReputation = GetPrimaryStatistic ShipmateStatisticIdentifier.Reputation
     
     let AbandonJob 
+            (context : AvatarAbandonJobContext)
             (avatarJobSink                 : AvatarJobSink)
             (avatarJobSource               : AvatarJobSource)
             (avatarSingleMetricSink        : AvatarSingleMetricSink)
@@ -379,6 +407,7 @@ module Avatar =
             (fun _ -> 
                 avatarId
                 |> SetReputation 
+                    context
                     shipmateSingleStatisticSource 
                     shipmateSingleStatisticSink 
                     ((GetReputation 
@@ -394,6 +423,7 @@ module Avatar =
                 avatarJobSink avatarId None)
 
     let CompleteJob
+            (context : AvatarCompleteJobContext)
             (avatarJobSink                 : AvatarJobSink)
             (avatarJobSource               : AvatarJobSource)
             (avatarSingleMetricSink        : AvatarSingleMetricSink)
@@ -405,6 +435,7 @@ module Avatar =
         match avatarId |> avatarJobSource with
         | Some job ->
             SetReputation 
+                context
                 shipmateSingleStatisticSource 
                 shipmateSingleStatisticSink 
                 ((GetReputation 
@@ -413,6 +444,7 @@ module Avatar =
                         1.0)
                 avatarId
             Shipmate.TransformStatistic 
+                context
                 shipmateSingleStatisticSource
                 shipmateSingleStatisticSink
                 ShipmateStatisticIdentifier.Money 
@@ -430,6 +462,7 @@ module Avatar =
         | _ -> ()
 
     let EarnMoney 
+            (context : AvatarEarnMoneyContext)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (amount                        : float) 
@@ -437,12 +470,14 @@ module Avatar =
             : unit =
         if amount > 0.0 then
             SetMoney 
+                context
                 shipmateSingleStatisticSource
                 shipmateSingleStatisticSink
                 ((GetMoney shipmateSingleStatisticSource avatarId) + amount)
                 avatarId
 
     let SpendMoney 
+            (context : AvatarSpendMoneyContext)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (amount                        : float) 
@@ -450,6 +485,7 @@ module Avatar =
             : unit =
         if amount > 0.0 then
             SetMoney 
+                context
                 shipmateSingleStatisticSource
                 shipmateSingleStatisticSink
                 ((GetMoney shipmateSingleStatisticSource avatarId) - amount)
@@ -517,6 +553,7 @@ module Avatar =
         TransformShipmates 
             avatarShipmateSource 
             (Shipmate.TransformStatistic
+                context
                 shipmateSingleStatisticSource
                 shipmateSingleStatisticSink
                 ShipmateStatisticIdentifier.Turn 

@@ -17,8 +17,24 @@ type ShipmateSingleStatisticSink = string -> ShipmateIdentifier -> (ShipmateStat
 type ShipmateSingleStatisticSource = string -> ShipmateIdentifier -> ShipmateStatisticIdentifier -> Statistic option
 type AvatarInventory = Map<uint64,uint64>
 
+type ShipmateCreateContext =
+    interface
+    end
+
+type ShipmateGetStatusContext =
+    interface
+    end
+
+type ShipmateTransformStatisticContext =
+    interface
+    end
+
+type ShipmateEatContext =
+    inherit ShipmateTransformStatisticContext
+
 module Shipmate =
     let Create
+            (context : ShipmateCreateContext)
             (shipmateStatisticTemplateSource   : ShipmateStatisticTemplateSource)
             (shipmateSingleStatisticSink       : ShipmateSingleStatisticSink)
             (rationItemSource                  : RationItemSource)
@@ -34,6 +50,7 @@ module Shipmate =
                 shipmateSingleStatisticSink avatarId shipmateId (identifier, statisticTemplate |> Statistic.CreateFromTemplate |> Some))
 
     let GetStatus
+            (context : ShipmateGetStatusContext)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (avatarId                      : string)
             (shipmateId                    : ShipmateIdentifier)
@@ -49,6 +66,7 @@ module Shipmate =
                 Alive
 
     let TransformStatistic 
+            (context : ShipmateTransformStatisticContext)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
             (identifier : ShipmateStatisticIdentifier) 
@@ -63,6 +81,7 @@ module Shipmate =
                 shipmateSingleStatisticSink avatarId shipmateId (identifier, (s |> transform) ) )
 
     let Eat 
+            (context : ShipmateEatContext)
             (shipmateRationItemSource      : ShipmateRationItemSource)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
@@ -86,6 +105,7 @@ module Shipmate =
         match rationItem with
         | Some item ->
             TransformStatistic 
+                context
                 shipmateSingleStatisticSource
                 shipmateSingleStatisticSink
                 ShipmateStatisticIdentifier.Satiety 
@@ -106,6 +126,7 @@ module Shipmate =
                 |> Option.get
             if satiety.CurrentValue > satiety.MinimumValue then
                 TransformStatistic 
+                    context
                     shipmateSingleStatisticSource
                     shipmateSingleStatisticSink
                     ShipmateStatisticIdentifier.Satiety 
@@ -115,6 +136,7 @@ module Shipmate =
                 (inventory, false, false)
             else
                 TransformStatistic 
+                    context
                     shipmateSingleStatisticSource
                     shipmateSingleStatisticSink
                     ShipmateStatisticIdentifier.Turn 

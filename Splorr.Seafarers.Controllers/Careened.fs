@@ -11,6 +11,7 @@ type CareenedRunAliveContext =
 
 type CareenedRunContext =
     inherit CareenedRunAliveContext
+    inherit WorldIsAvatarAliveContext
 
 module Careened = 
     let private UpdateDisplay 
@@ -160,7 +161,7 @@ module Careened =
             (side                          : Side) 
             (avatarId                      : string) 
             : Gamestate option =
-        if avatarId |> World.IsAvatarAlive shipmateSingleStatisticSource then
+        if avatarId |> World.IsAvatarAlive context shipmateSingleStatisticSource then
             RunAlive 
                 context
                 avatarMessagePurger

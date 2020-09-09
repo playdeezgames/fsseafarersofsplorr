@@ -94,8 +94,6 @@ let ``Befoul.It increases how fouled the vessel's hull is by the vessel's foul r
     let context = TestVesselBefoulContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> VesselBefoulContext
     Vessel.Befoul 
         context
-        vesselSingleStatisticSource 
-        vesselSingleStatisticSink 
         inputAvatarId
 
 [<Test>]
@@ -108,6 +106,4 @@ let ``Befoul.It will not increase the vessel's fouling when the vessel is alread
     let context = TestVesselBefoulContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> VesselBefoulContext
     Vessel.Befoul 
         context
-        vesselSingleStatisticSource 
-        vesselSingleStatisticSink 
         inputAvatarId

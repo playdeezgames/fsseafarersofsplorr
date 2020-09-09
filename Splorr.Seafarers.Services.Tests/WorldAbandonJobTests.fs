@@ -5,6 +5,9 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
 
+type TestWorldAbandonJobContext() =
+    interface WorldAbandonJobContext
+
 [<Test>]
 let ``AbandonJob.It adds a message when the avatar has no job.`` () =
     let input = ""
@@ -22,8 +25,10 @@ let ``AbandonJob.It adds a message when the avatar has no job.`` () =
         Assert.Fail("avatarJobSink")
     let avatarJobSource (_) =
         None
+    let context = TestWorldAbandonJobContext() :> WorldAbandonJobContext
     input
     |> World.AbandonJob
+        context
         avatarJobSink
         avatarJobSource
         (avatarExpectedMessageSink expectedMessage)
@@ -58,8 +63,10 @@ let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a
             Destination = (0.0,0.0)
         } 
         |> Some
+    let context = TestWorldAbandonJobContext() :> WorldAbandonJobContext
     input
     |> World.AbandonJob
+        context
         avatarJobSink
         avatarJobSource
         (avatarExpectedMessageSink expectedMessage)
