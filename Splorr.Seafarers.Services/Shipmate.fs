@@ -47,16 +47,15 @@ module Shipmate =
                 context.shipmateSingleStatisticSink avatarId shipmateId (identifier, statisticTemplate |> Statistic.CreateFromTemplate |> Some))
 
     let GetStatus
-            (context : ShipmateGetStatusContext)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (avatarId                      : string)
-            (shipmateId                    : ShipmateIdentifier)
+            (context    : ShipmateGetStatusContext)
+            (avatarId   : string)
+            (shipmateId : ShipmateIdentifier)
             : ShipmateStatus=
-        let health = shipmateSingleStatisticSource avatarId shipmateId ShipmateStatisticIdentifier.Health |> Option.get
+        let health = context.shipmateSingleStatisticSource avatarId shipmateId ShipmateStatisticIdentifier.Health |> Option.get
         if health.CurrentValue <= health.MinimumValue then
             ZeroHealth |> Dead
         else
-            let turn = shipmateSingleStatisticSource avatarId shipmateId ShipmateStatisticIdentifier.Turn |> Option.get
+            let turn = context.shipmateSingleStatisticSource avatarId shipmateId ShipmateStatisticIdentifier.Turn |> Option.get
             if turn.CurrentValue >= turn.MaximumValue then
                 OldAge |> Dead
             else

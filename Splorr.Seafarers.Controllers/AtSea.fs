@@ -410,7 +410,7 @@ module AtSea =
             (messageSink   : MessageSink) 
             (avatarId      : string) 
             : Gamestate option =
-        if avatarId |> World.IsAvatarAlive context context.shipmateSingleStatisticSource then
+        if avatarId |> World.IsAvatarAlive context then
             RunAlive
                 context
                 random 

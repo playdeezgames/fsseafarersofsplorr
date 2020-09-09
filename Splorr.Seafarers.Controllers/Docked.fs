@@ -255,7 +255,7 @@ module Docked =
             (location                      : Location) 
             (avatarId                      : string) 
             : Gamestate option =
-        if avatarId |> World.IsAvatarAlive context shipmateSingleStatisticSource then
+        if avatarId |> World.IsAvatarAlive context then
             if islandSource() |> List.exists (fun x->x= location) then
                 func location avatarId
             else

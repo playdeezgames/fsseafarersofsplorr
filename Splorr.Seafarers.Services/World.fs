@@ -312,13 +312,11 @@ module World =
                 |> AddMessages avatarMessageSink [newHeading |> Angle.ToDegrees |> Angle.ToString |> sprintf "You set your heading to %s." ])
 
     let IsAvatarAlive
-            (context : WorldIsAvatarAliveContext)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (avatarId                      : string) 
+            (context  : WorldIsAvatarAliveContext)
+            (avatarId : string) 
             : bool =
         (Shipmate.GetStatus 
             context
-            shipmateSingleStatisticSource
             avatarId
             Primary) = Alive
 
@@ -364,7 +362,6 @@ module World =
                 vesselSingleStatisticSource
             if IsAvatarAlive 
                     context
-                    shipmateSingleStatisticSource 
                     avatarId |> not then
                 avatarId
                 |> AddMessages avatarMessageSink [ "You die of old age!" ]

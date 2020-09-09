@@ -916,7 +916,6 @@ let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a ALIVE when given an avatar with abo
     let context = TestShipmateGetStatusContext(shipmateSingleStatisticSource) :> ShipmateGetStatusContext
     match Shipmate.GetStatus 
         context
-        shipmateSingleStatisticSource 
         inputAvatarId 
         inputShipmateId with
     | Alive -> ()
@@ -938,7 +937,6 @@ let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a ZERO_HEALTH when given an avatar at
     let context = TestShipmateGetStatusContext(shipmateSingleStatisticSource) :> ShipmateGetStatusContext
     match Shipmate.GetStatus 
         context
-        shipmateSingleStatisticSource 
         inputAvatarId 
         inputShipmateId with
     | Dead ZeroHealth -> ()
@@ -960,7 +958,6 @@ let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a OLD_AGE when given an avatar at max
     let context = TestShipmateGetStatusContext(shipmateSingleStatisticSource) :> ShipmateGetStatusContext
     match Shipmate.GetStatus 
         context
-        shipmateSingleStatisticSource 
         inputAvatarId 
         inputShipmateId with
     | Dead OldAge -> ()

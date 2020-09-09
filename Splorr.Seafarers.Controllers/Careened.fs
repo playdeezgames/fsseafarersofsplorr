@@ -161,7 +161,7 @@ module Careened =
             (side                          : Side) 
             (avatarId                      : string) 
             : Gamestate option =
-        if avatarId |> World.IsAvatarAlive context shipmateSingleStatisticSource then
+        if avatarId |> World.IsAvatarAlive context then
             RunAlive 
                 context
                 avatarMessagePurger

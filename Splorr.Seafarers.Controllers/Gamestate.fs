@@ -56,7 +56,7 @@ module Gamestate =
             (GetWorld)
         |> Option.fold 
             (fun g w -> 
-                if w |> World.IsAvatarAlive context shipmateSingleStatisticSource then
+                if w |> World.IsAvatarAlive context then
                     g
                 else
                     w

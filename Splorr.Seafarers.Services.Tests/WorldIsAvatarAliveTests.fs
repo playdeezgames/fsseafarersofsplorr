@@ -22,7 +22,7 @@ let ``IsAvatarAlive.It returns a true when given a world with an avatar with abo
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSource")
             None
     let context = TestWorldIsAvatarAliveContext(shipmateSingleStatisticSource) :> WorldIsAvatarAliveContext
-    if avatarId |> World.IsAvatarAlive context shipmateSingleStatisticSource then
+    if avatarId |> World.IsAvatarAlive context then
         ()
     else
         Assert.Fail("It detected that the avatar is not alive")
@@ -37,7 +37,7 @@ let ``IsAvatarAlive.It returns a false when given a world with an avatar minimum
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSource")
             None
     let context = TestWorldIsAvatarAliveContext(shipmateSingleStatisticSource) :> WorldIsAvatarAliveContext
-    if avatarId |> World.IsAvatarAlive context shipmateSingleStatisticSource |> not then
+    if avatarId |> World.IsAvatarAlive context |> not then
         ()
     else
         Assert.Fail("It detected that the avatar is not dead")
