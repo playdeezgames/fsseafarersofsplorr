@@ -18,8 +18,10 @@ type ShipmateSingleStatisticSource = string -> ShipmateIdentifier -> ShipmateSta
 type AvatarInventory = Map<uint64,uint64>
 
 type ShipmateCreateContext =
-    interface
-    end
+    abstract member shipmateStatisticTemplateSource   : ShipmateStatisticTemplateSource
+    abstract member shipmateSingleStatisticSink       : ShipmateSingleStatisticSink
+    abstract member rationItemSource                  : RationItemSource
+    abstract member shipmateRationItemSink            : ShipmateRationItemSink
 
 type ShipmateGetStatusContext =
     interface

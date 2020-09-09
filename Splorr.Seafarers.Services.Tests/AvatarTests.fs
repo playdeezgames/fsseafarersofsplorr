@@ -18,10 +18,21 @@ type TestAvatarAbandonJobContext () =
 type TestAvatarCompleteJobContext () =
     interface AvatarCompleteJobContext
 
-type TestAvatarCreateContext(vesselStatisticSink, vesselStatisticTemplateSource) =
+type TestAvatarCreateContext
+        (rationItemSource,
+        shipmateRationItemSink,
+        shipmateSingleStatisticSink,
+        shipmateStatisticTemplateSource,
+        vesselStatisticSink, 
+        vesselStatisticTemplateSource) =
     interface AvatarCreateContext with
         member _.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
         member _.vesselStatisticTemplateSource: VesselStatisticTemplateSource = vesselStatisticTemplateSource
+    interface ShipmateCreateContext with
+        member _.rationItemSource: RationItemSource = rationItemSource
+        member _.shipmateRationItemSink: ShipmateRationItemSink = shipmateRationItemSink
+        member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member _.shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
 
 type TestAvatarMoveContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
     interface AvatarMoveContext with
@@ -155,7 +166,14 @@ let ``Create.It creates an avatar.`` () =
         Assert.AreEqual(Map.empty, actual)
     let vesselStatisticTemplateSource () = 
         Map.empty
-    let context = TestAvatarCreateContext(vesselStatisticSink, vesselStatisticTemplateSource)
+    let context = 
+        TestAvatarCreateContext
+            (rationItemSource,
+            shipmateRationItemSink,
+            shipmateSingleStatisticSink,
+            shipmateStatisticTemplateSource,
+            vesselStatisticSink, 
+            vesselStatisticTemplateSource)
     Avatar.Create
         context
         avatarJobSink                   

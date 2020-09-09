@@ -53,6 +53,12 @@ type TestWorldCreateContext
         member _.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
         member _.vesselStatisticTemplateSource: VesselStatisticTemplateSource = vesselStatisticTemplateSource
 
+    interface ShipmateCreateContext with
+        member _.rationItemSource: RationItemSource = rationItemSource
+        member _.shipmateRationItemSink: ShipmateRationItemSink = shipmateRationItemSink
+        member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member _.shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
+
     interface WorldCreateContext with
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.avatarJobSink: AvatarJobSink = avatarJobSink
