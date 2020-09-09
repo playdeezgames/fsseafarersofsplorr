@@ -205,14 +205,14 @@ type TestIslandJobsGenerationContext
         islandJobSource            : IslandJobSource,
         termSources                : TermSources,
         worldSingleStatisticSource : WorldSingleStatisticSource) =
-    interface IslandJobsGenerationContext with
+    interface IslandGenerateJobsContext with
         member _.islandJobSink   : IslandJobSink = islandJobSink
         member _.islandJobSource : IslandJobSource = islandJobSource
 
     interface UtilitySortListRandomlyContext with
         member _.random : Random = random
 
-    interface JobCreationContext with
+    interface JobCreateContext with
         member _.termSources : TermSources = termSources
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
 
@@ -224,13 +224,13 @@ let ``GenerateJob.It generates a job when no job is present on the island.`` () 
         sinkCalled<-true
     let islandJobSource (_) =
         []
-    let context : IslandJobsGenerationContext =
+    let context : IslandGenerateJobsContext =
         TestIslandJobsGenerationContext
             (islandJobSink,
             islandJobSource,
             termSourcesStub,
             worldSingleStatisticSourceStub) 
-        :> IslandJobsGenerationContext
+        :> IslandGenerateJobsContext
     inputLocation
     |> Island.GenerateJobs 
         context
@@ -250,13 +250,13 @@ let ``GenerateJob.It does nothing when no job is present on the island and no po
                 Destination=(0.0, 0.0)
             }
         ]
-    let context : IslandJobsGenerationContext =
+    let context : IslandGenerateJobsContext =
         TestIslandJobsGenerationContext
             (islandJobSink,
             islandJobSource,
             termSourcesStub,
             worldSingleStatisticSourceStub) 
-        :> IslandJobsGenerationContext
+        :> IslandGenerateJobsContext
     inputLocation
     |> Island.GenerateJobs 
         context 

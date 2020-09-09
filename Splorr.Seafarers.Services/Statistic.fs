@@ -17,7 +17,9 @@ module Statistic =
             (statistic : Statistic) 
             : Statistic =
         {statistic with
-            MaximumValue = maximum |> max statistic.MinimumValue}
+            MaximumValue = 
+                maximum 
+                |> max statistic.MinimumValue}
         |> SetCurrentValue statistic.CurrentValue
 
     let Create 

@@ -32,7 +32,7 @@ type TestJobCreationContext
     interface UtilitySortListRandomlyContext with
         member _.random : Random = random
 
-    interface JobCreationContext with
+    interface JobCreateContext with
         member _.termSources : TermSources = termSources
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
 

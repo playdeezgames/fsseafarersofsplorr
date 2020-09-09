@@ -81,12 +81,12 @@ type TestWorldDockContext
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
-    interface IslandJobsGenerationContext with
+    interface IslandGenerateJobsContext with
         member _.islandJobSink              : IslandJobSink=islandJobSink
         member _.islandJobSource            : IslandJobSource=islandJobSource
     interface UtilitySortListRandomlyContext with
         member _.random : Random = random
-    interface JobCreationContext with 
+    interface JobCreateContext with 
         member _.termSources                : TermSources = termSources
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
         

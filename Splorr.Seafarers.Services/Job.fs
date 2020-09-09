@@ -5,14 +5,14 @@ type TermSource = unit -> string list
 type TermSources = TermSource * TermSource * TermSource * TermSource * TermSource * TermSource
 type WorldSingleStatisticSource = WorldStatisticIdentifier -> Statistic
 
-type JobCreationContext =
+type JobCreateContext =
     inherit UtilityPickRandomlyContext
     abstract member termSources                : TermSources
     abstract member worldSingleStatisticSource : WorldSingleStatisticSource
 
 module Job =
     let Create 
-            (context      : JobCreationContext)
+            (context      : JobCreateContext)
             (destinations : Set<Location>) 
             : Job =
 

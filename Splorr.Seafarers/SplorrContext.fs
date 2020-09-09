@@ -189,7 +189,7 @@ type SplorrContext
         member _.shipmateSingleStatisticSource  : ShipmateSingleStatisticSource  =shipmateSingleStatisticSource 
         member _.vesselSingleStatisticSource    : VesselSingleStatisticSource    =vesselSingleStatisticSource   
 
-    interface JobCreationContext with
+    interface JobCreateContext with
         member _.termSources: TermSources = termSources
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
 

@@ -21,8 +21,8 @@ type IslandSingleJobSource = Location -> uint32 -> Job option
 type IslandJobPurger = Location -> uint32 -> unit
 type EpochSecondsSource = unit -> uint64
 
-type IslandJobsGenerationContext =
-    inherit Job.CreationContext
+type IslandGenerateJobsContext =
+    inherit JobCreateContext
     abstract member islandJobSink              : IslandJobSink
     abstract member islandJobSource            : IslandJobSource
 
@@ -60,7 +60,6 @@ type IslandUpdateMarketForItemContext =
     abstract member islandSingleMarketSink   : IslandSingleMarketSink
     abstract member islandSingleMarketSource : IslandSingleMarketSource
 
-
 module Island =
     let  Create
             (context  : IslandCreateContext)
@@ -95,29 +94,30 @@ module Island =
             (avatarId     : string) 
             (location     : Location)
             : unit =
-        let visitCount = context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
-        let lastVisit = context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.LastVisit
+        let metricSource = context.avatarIslandSingleMetricSource avatarId location
+        let metricSink = context.avatarIslandSingleMetricSink avatarId location
+        let sinkMetrics(visitCount,lastVisit) =
+            metricSink AvatarIslandMetricIdentifier.VisitCount visitCount
+            metricSink AvatarIslandMetricIdentifier.LastVisit lastVisit
+        let visitCount = metricSource AvatarIslandMetricIdentifier.VisitCount
+        let lastVisit = metricSource AvatarIslandMetricIdentifier.LastVisit
+        let currentEpochSeconds = context.epochSecondsSource()
         match visitCount, lastVisit with
         | None, _ ->
-            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount 1UL
-            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit <| context.epochSecondsSource()
+            sinkMetrics (1UL, currentEpochSeconds)
         | Some x, None ->
-            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount (x+1UL)
-            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit <| context.epochSecondsSource()
-        | Some x, Some y when y < context.epochSecondsSource() ->
-            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount (x+1UL)
-            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.LastVisit <| context.epochSecondsSource()
+            sinkMetrics (x + 1UL, currentEpochSeconds)
+        | Some x, Some y when y < currentEpochSeconds ->
+            sinkMetrics (x + 1UL, currentEpochSeconds)
         | _ -> 
             ()
 
     let GenerateJobs 
-            (context      : IslandJobsGenerationContext)
+            (context      : IslandGenerateJobsContext)
             (destinations : Set<Location>) 
             (location     : Location)
             : unit =
-        let jobs = 
-            context.islandJobSource location
-        if jobs.IsEmpty && not destinations.IsEmpty then
+        if (context.islandJobSource location).IsEmpty && not destinations.IsEmpty then
             Job.Create 
                 context 
                 destinations
@@ -128,9 +128,17 @@ module Island =
             (avatarId : string) 
             (location : Location)
             : unit =
-        let visitCount = context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
+        let visitCount = 
+            context.avatarIslandSingleMetricSource 
+                avatarId 
+                location 
+                AvatarIslandMetricIdentifier.VisitCount
         if visitCount.IsNone then
-            context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.VisitCount 0UL
+            context.avatarIslandSingleMetricSink 
+                avatarId 
+                location 
+                AvatarIslandMetricIdentifier.VisitCount 
+                0UL
         
     let private SupplyDemandGenerator 
             (random:Random) 
@@ -141,20 +149,17 @@ module Island =
             (context  : IslandGenerateCommoditiesContext)
             (location : Location) 
             : unit =
-        let islandMarkets = context.islandMarketSource location
-        if islandMarkets.IsEmpty then
-            let commodities =
-                context.commoditySource()
-            commodities
-            |> Map.fold
-                (fun a commodity _->
-                    let market = 
+        if (context.islandMarketSource location).IsEmpty then
+            (Map.empty, context.commoditySource())
+            ||> Map.fold
+                (fun markets commodity _->
+                    markets
+                    |> Map.add 
+                        commodity 
                         {
-                            Supply=context.random |> SupplyDemandGenerator
-                            Demand=context.random |> SupplyDemandGenerator
-                        }
-                    a
-                    |> Map.add commodity market) islandMarkets
+                            Supply = context.random |> SupplyDemandGenerator
+                            Demand = context.random |> SupplyDemandGenerator
+                        })
             |> context.islandMarketSink location
 
     let GenerateItems 

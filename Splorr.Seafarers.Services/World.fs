@@ -70,7 +70,7 @@ type WorldDoJobCompletionContext =
 
 type WorldDockContext =
     inherit IslandAddVisitContext
-    inherit IslandJobsGenerationContext
+    inherit IslandGenerateJobsContext
     inherit IslandGenerateCommoditiesContext
     inherit IslandGenerateItemsContext
     inherit WorldDoJobCompletionContext
