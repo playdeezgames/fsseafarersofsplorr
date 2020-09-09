@@ -10,8 +10,11 @@ open Splorr.Seafarers.Services
 type TestItemListRunContext
         (commoditySource,
         islandMarketSource,
-        itemSingleSource) =
+        itemSingleSource,
+        shipmateSingleStatisticSource) =
     interface ItemListRunContext
+    interface ShipmateGetStatusContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface ItemDeterminePriceContext with
         member this.commoditySource: CommoditySource = commoditySource
         member this.islandMarketSource: IslandMarketSource = islandMarketSource
@@ -29,7 +32,8 @@ let ``Run.It returns Docked (at Shop) gamestate.`` () =
         TestItemListRunContext
             (atSeaCommoditySource, 
             atSeaIslandMarketSource,
-            (fun x -> atSeaItemSource() |> Map.tryFind x )) 
+            (fun x -> atSeaItemSource() |> Map.tryFind x ),
+            shipmateSingleStatisticSourceStub) 
         :> ItemListRunContext
     let actual = 
         (inputLocation, inputWorld)
