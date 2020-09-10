@@ -15,8 +15,10 @@ type RunnerRunContext =
     inherit ItemListRunContext
     inherit CareenedRunContext
     inherit GamestateCheckForAvatarDeathContext
-    abstract member avatarMetricSource              : AvatarMetricSource
-    abstract member switchSource                    : SwitchSource
+    inherit ChartRunContext
+    inherit IslandListRunContext
+    abstract member avatarMetricSource : AvatarMetricSource
+    abstract member switchSource : SwitchSource
 
 module Runner =
     let rec private Loop 
@@ -79,6 +81,7 @@ module Runner =
 
             | Gamestate.Chart (chartName, avatarId) -> 
                 Chart.Run 
+                    context
                     context.avatarIslandSingleMetricSource
                     context.islandSingleNameSource
                     context.islandSource 
@@ -159,6 +162,7 @@ module Runner =
 
             | Gamestate.IslandList (page, state) -> 
                 IslandList.Run 
+                    context
                     context.avatarIslandSingleMetricSource
                     context.islandSingleNameSource
                     context.islandSource

@@ -6,6 +6,7 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Persistence
 
 type AtSeaGetVisibleIslandsContext =
+    inherit AvatarGetPositionContext
     inherit IslandGetDisplayNameContext
 
 type AtSeaUpdateDisplayContext =
@@ -14,6 +15,9 @@ type AtSeaUpdateDisplayContext =
     inherit AvatarGetHeadingContext
     inherit AvatarGetEffectiveSpeedContext
     inherit WorldDistanceToContext
+
+type AtSeaCanCareenContext =
+    inherit AvatarGetPositionContext
 
 type AtSeaHandleCommandContext =
     inherit WorldDockContext
@@ -24,6 +28,7 @@ type AtSeaHandleCommandContext =
     inherit WorldHeadForContext
     inherit WorldAddMessagesContext
     inherit WorldSetSpeedContext
+    inherit AtSeaCanCareenContext
     abstract member avatarInventorySink            : AvatarInventorySink
     abstract member avatarInventorySource          : AvatarInventorySource
     abstract member avatarMessagePurger            : AvatarMessagePurger
@@ -39,6 +44,8 @@ type AtSeaRunContext =
     inherit AtSeaHandleCommandContext
     abstract member avatarMessageSource             : AvatarMessageSource
 
+
+
 module AtSea =
     let private DetermineSpeedHue 
             (speed:float) 
@@ -51,6 +58,7 @@ module AtSea =
             Hue.Error
 
     let private CanCareen 
+            (context : AtSeaCanCareenContext)
             (islandSingleStatisticSource : IslandSingleStatisticSource)
             (islandSource                : IslandSource)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
@@ -61,7 +69,7 @@ module AtSea =
             |> Option.get 
             |> Statistic.GetCurrentValue
         let avatarPosition =
-            Avatar.GetPosition vesselSingleStatisticSource avatarId
+            Avatar.GetPosition context vesselSingleStatisticSource avatarId
             |> Option.get
         World.GetNearbyLocations 
             islandSource
@@ -90,7 +98,7 @@ module AtSea =
             |> Statistic.GetCurrentValue
         let avatarPosition =
             avatarId
-            |> Avatar.GetPosition vesselSingleStatisticSource
+            |> Avatar.GetPosition context vesselSingleStatisticSource
             |> Option.get
         World.GetNearbyLocations 
             islandSource
@@ -190,6 +198,7 @@ module AtSea =
 
         let canCareen = 
             CanCareen 
+                context
                 context.islandSingleStatisticSource   
                 context.islandSource
                 context.vesselSingleStatisticSource 

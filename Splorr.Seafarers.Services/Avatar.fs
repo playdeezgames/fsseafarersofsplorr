@@ -70,12 +70,17 @@ type AvatarRemoveInventoryContext =
 type AvatarIncrementMetricContext =
     inherit AvatarAddMetricContext
 
+type AvatarGetPositionContext = 
+    interface
+    end
+
 type AvatarMoveContext =
     inherit VesselBefoulContext
     inherit ShipmateTransformStatisticContext
     inherit AvatarEatContext
     inherit AvatarGetEffectiveSpeedContext
     inherit AvatarSetPositionContext
+    inherit AvatarGetPositionContext
 
 type AvatarGetPrimaryStatisticContext =
     interface
@@ -122,9 +127,8 @@ type AvatarCleanHullContext =
 
 module Avatar =
     let Create 
-            (context : AvatarCreateContext)
-            (avatarJobSink                   : AvatarJobSink)
-            (avatarId                        : string)
+            (context  : AvatarCreateContext)
+            (avatarId : string)
             : unit =
         Vessel.Create 
             context
@@ -133,9 +137,10 @@ module Avatar =
             context
             avatarId 
             Primary
-        avatarJobSink avatarId None
+        context.avatarJobSink avatarId None
 
     let GetPosition
+            (context : AvatarGetPositionContext)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (avatarId                    : string)
             : Location option =
@@ -392,7 +397,7 @@ module Avatar =
         Vessel.Befoul 
             context
             avatarId
-        let avatarPosition = GetPosition vesselSingleStatisticSource avatarId |> Option.get
+        let avatarPosition = GetPosition context vesselSingleStatisticSource avatarId |> Option.get
         let newPosition = ((avatarPosition |> fst) + System.Math.Cos(actualHeading) * actualSpeed, (avatarPosition |> snd) + System.Math.Sin(actualHeading) * actualSpeed)
         SetPosition context vesselSingleStatisticSource vesselSingleStatisticSink newPosition avatarId
         TransformShipmates

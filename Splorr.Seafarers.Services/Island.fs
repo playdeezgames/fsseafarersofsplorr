@@ -2,24 +2,24 @@
 open Splorr.Seafarers.Models
 open System
 
-type ItemSource = unit -> Map<uint64, ItemDescriptor>
-type IslandMarketSink = Location -> Map<uint64, Market> -> unit
-type IslandItemSource = Location -> Set<uint64>
-type IslandItemSink   = Location -> Set<uint64>->unit
-type IslandSingleMarketSource = Location -> uint64 -> Market option
-type IslandSingleMarketSink = Location -> (uint64 * Market) -> unit
 type AvatarIslandSingleMetricSource = string -> Location -> AvatarIslandMetricIdentifier -> uint64 option
 type AvatarIslandSingleMetricSink = string -> Location -> AvatarIslandMetricIdentifier -> uint64 -> unit
-type IslandSingleNameSource = Location -> string option
+type EpochSecondsSource = unit -> uint64
+type IslandItemSink   = Location -> Set<uint64>->unit
+type IslandItemSource = Location -> Set<uint64>
+type IslandJobPurger = Location -> uint32 -> unit
+type IslandJobSink = Location -> Job -> unit
+type IslandJobSource = Location -> Job list
+type IslandMarketSink = Location -> Map<uint64, Market> -> unit
+type IslandSingleJobSource = Location -> uint32 -> Job option
+type IslandSingleMarketSink = Location -> (uint64 * Market) -> unit
+type IslandSingleMarketSource = Location -> uint64 -> Market option
 type IslandSingleNameSink = Location -> string option -> unit
-type IslandStatisticTemplateSource = unit -> Map<IslandStatisticIdentifier, StatisticTemplate>
+type IslandSingleNameSource = Location -> string option
 type IslandSingleStatisticSink = Location->IslandStatisticIdentifier*Statistic option->unit
 type IslandSingleStatisticSource = Location->IslandStatisticIdentifier->Statistic option
-type IslandJobSource = Location -> Job list
-type IslandJobSink = Location -> Job -> unit
-type IslandSingleJobSource = Location -> uint32 -> Job option
-type IslandJobPurger = Location -> uint32 -> unit
-type EpochSecondsSource = unit -> uint64
+type IslandStatisticTemplateSource = unit -> Map<IslandStatisticIdentifier, StatisticTemplate>
+type ItemSource = unit -> Map<uint64, ItemDescriptor>
 
 type IslandGenerateJobsContext =
     inherit JobCreateContext

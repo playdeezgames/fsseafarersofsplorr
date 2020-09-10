@@ -44,9 +44,13 @@ type WorldGenerateIslandsContext =
     abstract member islandSingleNameSink          : IslandSingleNameSink
     abstract member termNameSource                : TermSource
 
+type WorldUpdateChartsContext = 
+    inherit AvatarGetPositionContext
+
 type WorldCreateContext =
     inherit WorldGenerateIslandsContext
     inherit AvatarCreateContext
+    inherit WorldUpdateChartsContext
     abstract member avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink
     abstract member avatarJobSink                   : AvatarJobSink
     abstract member worldSingleStatisticSource      : WorldSingleStatisticSource
@@ -132,13 +136,16 @@ type WorldMoveContext =
     inherit AvatarMoveContext
     inherit WorldIsAvatarAliveContext
     inherit WorldAddMessagesContext
+    inherit WorldUpdateChartsContext
 
 type WorldDistanceToContext =
     inherit WorldAddMessagesContext
+    inherit AvatarGetPositionContext
 
 type WorldHeadForContext =
     inherit WorldAddMessagesContext
     inherit WorldSetHeadingContext
+    inherit AvatarGetPositionContext
 
 module World =
 //TODO: top of "world generator" refactor
@@ -236,6 +243,7 @@ module World =
                     (maximumGenerationTries, 0u) 
 //end of "world generator"
     let UpdateCharts 
+            (context : WorldUpdateChartsContext)
             (avatarIslandSingleMetricSink : AvatarIslandSingleMetricSink)
             (islandSource                 : IslandSource)
             (vesselSingleStatisticSource  : VesselSingleStatisticSource)
@@ -248,6 +256,7 @@ module World =
         let avatarPosition = 
             avatarId 
             |> Avatar.GetPosition 
+                context
                 vesselSingleStatisticSource 
             |> Option.get
         islandSource()
@@ -281,7 +290,6 @@ module World =
                 |> Statistic.GetMaximumValue)
         Avatar.Create 
             context
-            context.avatarJobSink
             avatarId
         GenerateIslands 
             context 
@@ -290,6 +298,7 @@ module World =
             (maximumGenerationRetries, 0u)
         avatarId
         |> UpdateCharts 
+            context
             context.avatarIslandSingleMetricSink
             context.islandSource
             context.vesselSingleStatisticSource
@@ -404,6 +413,7 @@ module World =
                 avatarId 
             avatarId
             |> UpdateCharts 
+                context
                 avatarIslandSingleMetricSink
                 islandSource
                 vesselSingleStatisticSource
@@ -565,7 +575,7 @@ module World =
                         Some l
                     else
                         None)
-        match location, Avatar.GetPosition vesselSingleStatisticSource avatarId with
+        match location, Avatar.GetPosition context vesselSingleStatisticSource avatarId with
         | Some l, Some avatarPosition ->
             avatarId
             |> AddMessages context avatarMessageSink [ (islandName, Location.DistanceTo l avatarPosition ) ||> sprintf "Distance to `%s` is %f." ]
@@ -593,7 +603,7 @@ module World =
                         Some l
                     else
                         None)
-        match location, Avatar.GetPosition vesselSingleStatisticSource avatarId with
+        match location, Avatar.GetPosition context vesselSingleStatisticSource avatarId with
         | Some l, Some avatarPosition ->
             [
                 AddMessages context avatarMessageSink [ islandName |> sprintf "You head for `%s`." ]

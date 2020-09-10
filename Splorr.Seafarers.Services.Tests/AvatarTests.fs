@@ -131,6 +131,9 @@ type TestAvatarGetSpeedContext() =
 type TestAvatarGetHeadingContext() = 
     interface AvatarGetHeadingContext
 
+type TestAvatarGetPositionContext() =
+    interface AvatarGetPositionContext
+
 [<Test>]
 let ``GetReputation.It retrieves the reputation of the primary shipmate.`` () =
     let inputReputation = 100.0
@@ -252,7 +255,6 @@ let ``Create.It creates an avatar.`` () =
             vesselStatisticTemplateSource)
     Avatar.Create
         context
-        avatarJobSink                   
         avatarId                        
 
 [<Test>]
@@ -1290,9 +1292,10 @@ let ``GetPosition.It gets the position of an avatar.`` () =
     let expected = 
         (actualX.CurrentValue, actualY.CurrentValue) 
         |> Some
+    let context = TestAvatarGetPositionContext() :> AvatarGetPositionContext
     let actual =
         inputAvatarId
-        |> Avatar.GetPosition vesselSingleStatisticSource
+        |> Avatar.GetPosition context vesselSingleStatisticSource
     Assert.AreEqual(expected, actual)
 
 [<Test>]

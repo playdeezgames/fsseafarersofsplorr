@@ -65,11 +65,11 @@ module Shipmate =
                 Alive
 
     let TransformStatistic 
-            (context : ShipmateTransformStatisticContext)
+            (context    : ShipmateTransformStatisticContext)
             (identifier : ShipmateStatisticIdentifier) 
             (transform  : Statistic -> Statistic option) 
-            (avatarId: string)
-            (shipmateId: ShipmateIdentifier) 
+            (avatarId   : string)
+            (shipmateId : ShipmateIdentifier) 
             : unit =
         identifier
         |> context.shipmateSingleStatisticSource avatarId shipmateId
@@ -86,16 +86,14 @@ module Shipmate =
         let satietyDecrease = -1.0
         let satietyIncrease = 1.0
         let rationConsumptionRate = 1UL
-        let rationItems = context.shipmateRationItemSource avatarId shipmateId
         let rationItem =
-            rationItems
+            context.shipmateRationItemSource avatarId shipmateId
             |> List.tryPick 
                 (fun item -> 
                     match inventory |> Map.tryFind item with
                     | Some count when count >= rationConsumptionRate ->
                         item |> Some
                     | _ -> None)
-        
         match rationItem with
         | Some item ->
             TransformStatistic 

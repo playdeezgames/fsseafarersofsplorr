@@ -5,6 +5,12 @@ open Splorr.Seafarers.Services
 open System
 open System.IO
 
+type ChartOutputChartContext =
+    inherit AvatarGetPositionContext
+
+type ChartRunContext = 
+    inherit ChartOutputChartContext
+
 module Chart = 
     let private plotLocation 
             (scale    : int) 
@@ -13,6 +19,7 @@ module Chart =
         ((location |> snd |> int) * scale - scale/2, (-(location |> fst |> int)) * scale + scale/2)
 
     let private outputChart 
+            (context : ChartOutputChartContext)
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (islandSingleNameSource         : IslandSingleNameSource)
             (islandSource                   : IslandSource)
@@ -65,6 +72,7 @@ module Chart =
             let avatarPosition = 
                 avatarId
                 |> Avatar.GetPosition 
+                    context
                     vesselSingleStatisticSource 
                 |> Option.get
                 |> plotLocation scale
@@ -114,6 +122,7 @@ module Chart =
             chartName
 
     let Run 
+            (context : ChartRunContext)
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (islandSingleNameSource         : IslandSingleNameSource)
             (islandSource                   : IslandSource)
@@ -130,6 +139,7 @@ module Chart =
             messageSink 
             chartName
         outputChart 
+            context
             avatarIslandSingleMetricSource
             islandSingleNameSource
             islandSource

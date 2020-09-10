@@ -8,6 +8,9 @@ let private previousGameState =
     None
     |> Gamestate.MainMenu
 
+type TestIslandListRunContext() =
+    interface IslandListRunContext
+
 [<Test>]
 let ``Run.It returns the given gamestate.`` () =
     let input = 
@@ -15,9 +18,11 @@ let ``Run.It returns the given gamestate.`` () =
     let expected =
         input
         |> Some
+    let context = TestIslandListRunContext() :> IslandListRunContext
     let actual =
         input
         |> IslandList.Run
+            context
             avatarIslandSingleMetricSourceStub
             islandSingleNameSourceStub
             islandSourceStub
