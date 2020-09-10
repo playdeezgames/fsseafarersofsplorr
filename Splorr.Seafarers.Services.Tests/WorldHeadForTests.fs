@@ -9,6 +9,8 @@ open CommonTestFixtures
 type TestWorldHeadForContext(vesselSingleStatisticSource) =
     interface AvatarGetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarGetHeadingContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface WorldHeadForContext
 
 [<Test>]

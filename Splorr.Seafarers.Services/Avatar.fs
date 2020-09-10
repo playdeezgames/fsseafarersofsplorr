@@ -34,8 +34,7 @@ type AvatarGetSpeedContext =
     abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
 
 type AvatarGetHeadingContext =
-    interface
-    end
+    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
 
 type AvatarSetPositionContext =
     interface
