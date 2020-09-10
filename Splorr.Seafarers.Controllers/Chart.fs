@@ -73,7 +73,6 @@ module Chart =
                 avatarId
                 |> Avatar.GetPosition 
                     context
-                    vesselSingleStatisticSource 
                 |> Option.get
                 |> plotLocation scale
             writer.WriteLine(sprintf "<ellipse cx=\"%d\" cy=\"%d\" rx=\"%d\" ry=\"%d\" style=\"fill:#c0c000;\"/>" (avatarPosition |> fst) (height+(avatarPosition |> snd)) 3 3)

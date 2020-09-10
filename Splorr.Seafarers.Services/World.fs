@@ -257,7 +257,6 @@ module World =
             avatarId 
             |> Avatar.GetPosition 
                 context
-                vesselSingleStatisticSource 
             |> Option.get
         islandSource()
         |> List.filter
@@ -575,7 +574,7 @@ module World =
                         Some l
                     else
                         None)
-        match location, Avatar.GetPosition context vesselSingleStatisticSource avatarId with
+        match location, Avatar.GetPosition context avatarId with
         | Some l, Some avatarPosition ->
             avatarId
             |> AddMessages context avatarMessageSink [ (islandName, Location.DistanceTo l avatarPosition ) ||> sprintf "Distance to `%s` is %f." ]
@@ -603,7 +602,7 @@ module World =
                         Some l
                     else
                         None)
-        match location, Avatar.GetPosition context vesselSingleStatisticSource avatarId with
+        match location, Avatar.GetPosition context avatarId with
         | Some l, Some avatarPosition ->
             [
                 AddMessages context avatarMessageSink [ islandName |> sprintf "You head for `%s`." ]

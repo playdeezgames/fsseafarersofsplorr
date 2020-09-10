@@ -140,16 +140,15 @@ module Avatar =
 
     let GetPosition
             (context : AvatarGetPositionContext)
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (avatarId                    : string)
             : Location option =
         let positionX =
             VesselStatisticIdentifier.PositionX
-            |> vesselSingleStatisticSource avatarId
+            |> context.vesselSingleStatisticSource avatarId
             |> Option.map Statistic.GetCurrentValue
         let positionY = 
             VesselStatisticIdentifier.PositionY
-            |> vesselSingleStatisticSource avatarId
+            |> context.vesselSingleStatisticSource avatarId
             |> Option.map Statistic.GetCurrentValue
         match positionX, positionY with
         | Some x, Some y ->
@@ -396,7 +395,11 @@ module Avatar =
         Vessel.Befoul 
             context
             avatarId
-        let avatarPosition = GetPosition context vesselSingleStatisticSource avatarId |> Option.get
+        let avatarPosition = 
+            GetPosition 
+                context 
+                avatarId 
+            |> Option.get
         let newPosition = ((avatarPosition |> fst) + System.Math.Cos(actualHeading) * actualSpeed, (avatarPosition |> snd) + System.Math.Sin(actualHeading) * actualSpeed)
         SetPosition context vesselSingleStatisticSource vesselSingleStatisticSink newPosition avatarId
         TransformShipmates

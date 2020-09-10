@@ -1299,7 +1299,7 @@ let ``GetPosition.It gets the position of an avatar.`` () =
     let context = TestAvatarGetPositionContext(vesselSingleStatisticSource) :> AvatarGetPositionContext
     let actual =
         inputAvatarId
-        |> Avatar.GetPosition context vesselSingleStatisticSource
+        |> Avatar.GetPosition context
     Assert.AreEqual(expected, actual)
 
 [<Test>]
