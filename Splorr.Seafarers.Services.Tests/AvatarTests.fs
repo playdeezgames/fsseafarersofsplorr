@@ -47,6 +47,9 @@ type TestAvatarCreateContext
 type TestAvatarMoveContext(shipmateRationItemSource, shipmateSingleStatisticSink, shipmateSingleStatisticSource, vesselSingleStatisticSink, vesselSingleStatisticSource) =
     interface AvatarMoveContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarSetPositionContext with
+        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarGetSpeedContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarGetPositionContext with
@@ -99,8 +102,10 @@ type TestAvatarSetSpeedContext() =
 type TestAvatarSetHeadingContext() =
     interface AvatarSetHeadingContext
 
-type TestAvatarSetPositionContext() =
-    interface AvatarSetPositionContext
+type TestAvatarSetPositionContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
+    interface AvatarSetPositionContext with
+        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 type TestAvatarAddInventoryContext() =
     interface AvatarAddInventoryContext
@@ -412,7 +417,7 @@ let ``SetPosition.It sets a given position.`` () =
             Assert.AreEqual(expectedPosition |> snd, statistic.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "Sink - Dont call me.")
-    let context = TestAvatarSetPositionContext() :> AvatarSetPositionContext
+    let context = TestAvatarSetPositionContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarSetPositionContext
     input
     |> Avatar.SetPosition context vesselSingleStatisticSource vesselSingleStatisticSink inputPosition
 
