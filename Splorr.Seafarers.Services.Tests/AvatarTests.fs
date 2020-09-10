@@ -419,7 +419,7 @@ let ``SetPosition.It sets a given position.`` () =
             raise (System.NotImplementedException "Sink - Dont call me.")
     let context = TestAvatarSetPositionContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarSetPositionContext
     input
-    |> Avatar.SetPosition context vesselSingleStatisticSource vesselSingleStatisticSink inputPosition
+    |> Avatar.SetPosition context inputPosition
 
 [<Test>]
 let ``Move.It moves the avatar.`` () =
