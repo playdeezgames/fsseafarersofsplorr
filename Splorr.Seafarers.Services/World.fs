@@ -337,7 +337,6 @@ module World =
         avatarId
         |> Avatar.GetSpeed 
             context
-            vesselSingleStatisticSource
         |> Option.iter
             (fun newSpeed ->
                 avatarId

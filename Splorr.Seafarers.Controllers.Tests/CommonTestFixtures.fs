@@ -296,6 +296,8 @@ type TestAtSeaRunContext
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarGetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarGetSpeedContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AtSeaRunContext with
         member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource

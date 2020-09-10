@@ -82,6 +82,9 @@ type SplorrContext
         member _.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
+    interface AvatarGetSpeedContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
     interface AtSeaHandleCommandContext with
         member _.avatarInventorySink            : AvatarInventorySink        =avatarInventorySink        
         member _.avatarInventorySource          : AvatarInventorySource      =avatarInventorySource      

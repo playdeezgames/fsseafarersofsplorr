@@ -31,8 +31,7 @@ type AvatarSetPrimaryStatisticContext =
     inherit ShipmateTransformStatisticContext
 
 type AvatarGetSpeedContext =
-    interface
-    end
+    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
 
 type AvatarGetHeadingContext =
     interface
@@ -139,8 +138,8 @@ module Avatar =
         context.avatarJobSink avatarId None
 
     let GetPosition
-            (context : AvatarGetPositionContext)
-            (avatarId                    : string)
+            (context  : AvatarGetPositionContext)
+            (avatarId : string)
             : Location option =
         let positionX =
             VesselStatisticIdentifier.PositionX
@@ -157,12 +156,11 @@ module Avatar =
             None
 
     let GetSpeed
-            (context : AvatarGetSpeedContext)
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
-            (avatarId                    : string)
+            (context  : AvatarGetSpeedContext)
+            (avatarId : string)
             : float option =
         VesselStatisticIdentifier.Speed
-        |> vesselSingleStatisticSource avatarId 
+        |> context.vesselSingleStatisticSource avatarId 
         |> Option.map Statistic.GetCurrentValue
 
     let GetHeading
@@ -359,7 +357,7 @@ module Avatar =
             (avatarId                    : string)
             : float =
         let currentValue = GetCurrentFouling context vesselSingleStatisticSource avatarId
-        let currentSpeed = GetSpeed context vesselSingleStatisticSource avatarId |> Option.get
+        let currentSpeed = GetSpeed context avatarId |> Option.get
         (currentSpeed * (1.0 - currentValue))
 
     let TransformShipmates 

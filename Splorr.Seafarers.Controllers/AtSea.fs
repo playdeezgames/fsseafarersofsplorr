@@ -141,7 +141,7 @@ module AtSea =
 
         let speed = 
             avatarId
-            |> Avatar.GetSpeed context vesselSingleStatisticSource 
+            |> Avatar.GetSpeed context 
             |> Option.get
         let heading = 
             avatarId 

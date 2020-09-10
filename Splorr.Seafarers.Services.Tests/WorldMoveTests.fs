@@ -30,6 +30,8 @@ type TestWorldMoveContext
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarGetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarGetSpeedContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface WorldMoveContext
 
 [<Test>]

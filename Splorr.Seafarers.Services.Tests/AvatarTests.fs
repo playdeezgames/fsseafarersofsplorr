@@ -47,6 +47,8 @@ type TestAvatarCreateContext
 type TestAvatarMoveContext(shipmateRationItemSource, shipmateSingleStatisticSink, shipmateSingleStatisticSource, vesselSingleStatisticSink, vesselSingleStatisticSource) =
     interface AvatarMoveContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarGetSpeedContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarGetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface ShipmateEatContext with
@@ -118,7 +120,9 @@ type TestAvatarAddMetricContext() =
 type TestAvatarGetUsedTonnageContext() =
     interface AvatarGetUsedTonnageContext
 
-type TestAvatarGetEffectiveSpeedContext() =
+type TestAvatarGetEffectiveSpeedContext(vesselSingleStatisticSource) =
+    interface AvatarGetSpeedContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarGetEffectiveSpeedContext
 
 type TestAvatarGetCurrentFoulingContext() = 
@@ -127,8 +131,9 @@ type TestAvatarGetCurrentFoulingContext() =
 type TestAvatarGetMaximumFoulingContext() =
     interface AvatarGetMaximumFoulingContext
 
-type TestAvatarGetSpeedContext() =
-    interface AvatarGetSpeedContext
+type TestAvatarGetSpeedContext(vesselSingleStatisticSource) =
+    interface AvatarGetSpeedContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 type TestAvatarGetHeadingContext() = 
     interface AvatarGetHeadingContext
@@ -1138,7 +1143,7 @@ let ``GetUsedTonnage.It calculates the used tonnage based on inventory and item 
 [<Test>]
 let ``GetEffectiveSpeed.It returns full speed when there is no fouling.`` () =
     let expected = 1.0
-    let context = TestAvatarGetEffectiveSpeedContext() :> AvatarGetEffectiveSpeedContext
+    let context = TestAvatarGetEffectiveSpeedContext(vesselSingleStatisticSource) :> AvatarGetEffectiveSpeedContext
     let actual =
         Avatar.GetEffectiveSpeed context vesselSingleStatisticSource inputAvatarId
     Assert.AreEqual(expected, actual)
@@ -1147,7 +1152,7 @@ let ``GetEffectiveSpeed.It returns full speed when there is no fouling.`` () =
 let ``GetEffectiveSpeed.It returns proportionally reduced speed when there is fouling.`` () =
     let expected = 0.125
     let vesselSingleStatisticSource (_) (_) = {MinimumValue=0.0;MaximumValue=0.25;CurrentValue=0.25} |> Some
-    let context = TestAvatarGetEffectiveSpeedContext() :> AvatarGetEffectiveSpeedContext
+    let context = TestAvatarGetEffectiveSpeedContext(vesselSingleStatisticSource) :> AvatarGetEffectiveSpeedContext
     let actual =
         Avatar.GetEffectiveSpeed context vesselSingleStatisticSource inputAvatarId
     Assert.AreEqual(expected, actual)
@@ -1265,10 +1270,10 @@ let ``GetSpeed.It gets the speed of an avatar.`` () =
             None
     let inputAvatarId="avatar"
     let expected = 0.5 |> Some
-    let context = TestAvatarGetSpeedContext() :> AvatarGetSpeedContext
+    let context = TestAvatarGetSpeedContext(vesselSingleStatisticSource) :> AvatarGetSpeedContext
     let actual =
         inputAvatarId
-        |> Avatar.GetSpeed context vesselSingleStatisticSource
+        |> Avatar.GetSpeed context
     Assert.AreEqual(expected, actual)
 
 [<Test>]
