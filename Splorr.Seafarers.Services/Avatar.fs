@@ -20,8 +20,9 @@ type AvatarCreateContext =
     abstract member avatarJobSink : AvatarJobSink
 
 type AvatarAddMetricContext =
-    interface
-    end
+    abstract member avatarSingleMetricSink   : AvatarSingleMetricSink
+    abstract member avatarSingleMetricSource : AvatarSingleMetricSource
+
 
 type AvatarEatContext =
     inherit ShipmateEatContext

@@ -73,6 +73,10 @@ type TestDockedRunContext
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
 
+    interface AvatarAddMetricContext with
+        member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
+        member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
+
     interface DockedHandleCommandContext with
         member _.avatarInventorySink            : AvatarInventorySink           =avatarInventorySink            
         member _.avatarInventorySource          : AvatarInventorySource         =avatarInventorySource          

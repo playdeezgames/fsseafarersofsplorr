@@ -7,13 +7,18 @@ open WorldTestFixtures
 open CommonTestFixtures
 
 type TestWorldCleanHullContext
-        (shipmateSingleStatisticSink,
+        (avatarSingleMetricSink,
+        avatarSingleMetricSource,
+        shipmateSingleStatisticSink,
         shipmateSingleStatisticSource,
         vesselSingleStatisticSink, 
         vesselSingleStatisticSource) =
     interface WorldCleanHullContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarAddMetricContext with
+        member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
+        member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
     interface ShipmateTransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
@@ -36,7 +41,9 @@ let ``CleanHull.It returns the original world when given a bogus avatar id and w
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
     let context = 
         TestWorldCleanHullContext
-            (shipmateSingleStatisticSink,
+            ((assertAvatarSingleMetricSink [Metric.CleanedHull, 1UL]),
+            avatarSingleMetricSourceStub,
+            shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
             vesselSingleStatisticSink, 
             vesselSingleStatisticSource) :> WorldCleanHullContext
@@ -71,7 +78,9 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
     let context = 
         TestWorldCleanHullContext
-            (shipmateSingleStatisticSink,
+            ((assertAvatarSingleMetricSink [Metric.CleanedHull, 1UL]),
+            avatarSingleMetricSourceStub,
+            shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
             vesselSingleStatisticSink, 
             vesselSingleStatisticSource) 

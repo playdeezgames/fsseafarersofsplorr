@@ -5,10 +5,17 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
 
-type TestWorldAcceptJobContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) =
+type TestWorldAcceptJobContext
+        (avatarIslandSingleMetricSink, 
+        avatarIslandSingleMetricSource,
+        avatarSingleMetricSink,
+        avatarSingleMetricSource) =
     interface WorldAcceptJobContext with
         member this.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+    interface AvatarAddMetricContext with
+        member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
+        member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
 
 [<Test>]
 let ``AcceptJob.It does nothing when given an invalid island location.`` () =
@@ -29,7 +36,12 @@ let ``AcceptJob.It does nothing when given an invalid island location.`` () =
     let islandSingleJobSource (_) (_) =
         Assert.Fail("islandSingleJobSource")
         None
-    let context = TestWorldAcceptJobContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> WorldAcceptJobContext
+    let context = 
+        TestWorldAcceptJobContext
+            (avatarIslandSingleMetricSink, 
+            avatarIslandSingleMetricSource,
+            avatarSingleMetricSinkExplode,
+            avatarSingleMetricSourceStub) :> WorldAcceptJobContext
     avatarId
     |> World.AcceptJob 
         context
@@ -73,7 +85,12 @@ let ``AcceptJob.It adds a message to the world when given an 0 job index for the
     let islandSingleJobSource (_) (_) =
         Assert.Fail("islandSingleJobSource")
         None
-    let context = TestWorldAcceptJobContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> WorldAcceptJobContext
+    let context = 
+        TestWorldAcceptJobContext
+            (avatarIslandSingleMetricSink, 
+            avatarIslandSingleMetricSource,
+            avatarSingleMetricSinkExplode,
+            avatarSingleMetricSourceStub) :> WorldAcceptJobContext
     inputWorld
     |> World.AcceptJob 
         context
@@ -112,7 +129,12 @@ let ``AcceptJob.It adds a message to the world when given an invalid job index f
         None
     let islandSource() =
         [inputLocation]
-    let context = TestWorldAcceptJobContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> WorldAcceptJobContext
+    let context = 
+        TestWorldAcceptJobContext
+            (avatarIslandSingleMetricSink, 
+            avatarIslandSingleMetricSource,
+            avatarSingleMetricSinkExplode,
+            avatarSingleMetricSourceStub) :> WorldAcceptJobContext
     inputWorld
     |> World.AcceptJob 
         context
@@ -158,7 +180,12 @@ let ``AcceptJob.It adds a message to the world when the job is valid but the ava
         None
     let islandSource() =
         [inputLocation]
-    let context = TestWorldAcceptJobContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> WorldAcceptJobContext
+    let context = 
+        TestWorldAcceptJobContext
+            (avatarIslandSingleMetricSink, 
+            avatarIslandSingleMetricSource,
+            avatarSingleMetricSinkExplode,
+            avatarSingleMetricSourceStub) :> WorldAcceptJobContext
     inputWorld
     |> World.AcceptJob 
         context
@@ -214,7 +241,12 @@ let ``AcceptJob.It adds the given job to the avatar and eliminates it from the i
             inputLocation
             inputDestination
         ]
-    let context = TestWorldAcceptJobContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> WorldAcceptJobContext
+    let context = 
+        TestWorldAcceptJobContext
+            (avatarIslandSingleMetricSink, 
+            avatarIslandSingleMetricSource,
+            (assertAvatarSingleMetricSink [Metric.AcceptedJob, 1UL]),
+            avatarSingleMetricSourceStub) :> WorldAcceptJobContext
     World.AcceptJob 
         context
         avatarIslandSingleMetricSink

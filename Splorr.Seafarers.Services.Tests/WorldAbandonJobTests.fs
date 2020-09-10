@@ -5,8 +5,15 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
 
-type TestWorldAbandonJobContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
+type TestWorldAbandonJobContext
+        (avatarSingleMetricSink,
+        avatarSingleMetricSource,
+        shipmateSingleStatisticSink, 
+        shipmateSingleStatisticSource) =
     interface WorldAbandonJobContext
+    interface AvatarAddMetricContext with
+        member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
+        member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
     interface ShipmateTransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
@@ -28,7 +35,12 @@ let ``AbandonJob.It adds a message when the avatar has no job.`` () =
         Assert.Fail("avatarJobSink")
     let avatarJobSource (_) =
         None
-    let context = TestWorldAbandonJobContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> WorldAbandonJobContext
+    let context = 
+        TestWorldAbandonJobContext
+            ((assertAvatarSingleMetricSink [Metric.AcceptedJob, 1UL]),
+            avatarSingleMetricSourceStub,
+            shipmateSingleStatisticSink, 
+            shipmateSingleStatisticSource) :> WorldAbandonJobContext
     input
     |> World.AbandonJob
         context
@@ -66,7 +78,12 @@ let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a
             Destination = (0.0,0.0)
         } 
         |> Some
-    let context = TestWorldAbandonJobContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> WorldAbandonJobContext
+    let context = 
+        TestWorldAbandonJobContext
+            ((assertAvatarSingleMetricSink [Metric.AbandonedJob, 1UL]),
+            avatarSingleMetricSourceStub,
+            shipmateSingleStatisticSink, 
+            shipmateSingleStatisticSource) :> WorldAbandonJobContext
     input
     |> World.AbandonJob
         context

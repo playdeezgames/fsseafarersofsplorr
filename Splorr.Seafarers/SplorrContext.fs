@@ -239,6 +239,10 @@ type SplorrContext
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
+    interface AvatarAddMetricContext with
+        member _.avatarSingleMetricSink   : AvatarSingleMetricSink = avatarSingleMetricSink
+        member _.avatarSingleMetricSource : AvatarSingleMetricSource = avatarSingleMetricSource
+
     interface WorldDockContext with
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
         member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource

@@ -64,6 +64,9 @@ type TestWorldDockContext
         member _.itemSource                     : ItemSource =itemSource
         member _.shipmateSingleStatisticSink    : ShipmateSingleStatisticSink=shipmateSingleStatisticSink
         member _.shipmateSingleStatisticSource  : ShipmateSingleStatisticSource=shipmateSingleStatisticSource
+    interface AvatarAddMetricContext with
+        member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
+        member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
     interface ShipmateTransformStatisticContext with
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource

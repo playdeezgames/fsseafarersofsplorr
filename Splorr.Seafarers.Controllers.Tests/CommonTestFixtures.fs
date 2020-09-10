@@ -287,36 +287,40 @@ type TestAtSeaRunContext
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface ShipmateGetStatusContext with
-        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+        member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
     interface ShipmateTransformStatisticContext with
-        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
-        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+        member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
     interface ShipmateEatContext with
-        member this.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
-        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+        member _.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
+        member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
     interface AvatarGetPositionContext with
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface AvatarGetSpeedContext with
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface AvatarGetHeadingContext with
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface AvatarSetPositionContext with
-        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface AvatarSetSpeedContext with
-        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface AvatarSetHeadingContext with
-        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
+    interface AvatarAddMetricContext with
+        member _.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
+        member _.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
 
     interface AtSeaRunContext with
         member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink
