@@ -3,13 +3,17 @@
 open NUnit.Framework
 open Splorr.Seafarers.Controllers
 open CommonTestFixtures
+open Splorr.Seafarers.Services
 
 let private previousGameState =
     None
     |> Gamestate.MainMenu
 
-type TestIslandListRunContext() =
+type TestIslandListRunContext(vesselSingleStatisticSource) =
     interface IslandListRunContext
+    interface AvatarGetPositionContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
 
 [<Test>]
 let ``Run.It returns the given gamestate.`` () =
@@ -18,7 +22,7 @@ let ``Run.It returns the given gamestate.`` () =
     let expected =
         input
         |> Some
-    let context = TestIslandListRunContext() :> IslandListRunContext
+    let context = TestIslandListRunContext(vesselSingleStatisticSourceStub) :> IslandListRunContext
     let actual =
         input
         |> IslandList.Run

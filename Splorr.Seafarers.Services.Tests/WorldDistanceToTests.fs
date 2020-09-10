@@ -6,7 +6,9 @@ open Splorr.Seafarers.Models
 open WorldTestFixtures
 open CommonTestFixtures
 
-type TestWorldDistanceToContext() =
+type TestWorldDistanceToContext(vesselSingleStatisticSource) =
+    interface AvatarGetPositionContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface WorldDistanceToContext
 
 [<Test>]
@@ -30,7 +32,7 @@ let ``DistanceTo.It adds a 'unknown island' message when given a bogus island na
         None
     let islandLocationByNameSource (_) =
         None
-    let context = TestWorldDistanceToContext() :> WorldDistanceToContext
+    let context = TestWorldDistanceToContext(vesselSingleStatisticSource) :> WorldDistanceToContext
     input
     |> World.DistanceTo 
         context
@@ -67,7 +69,7 @@ let ``DistanceTo.It adds a 'unknown island' message when given a valid island na
             |> Some
         else
             None
-    let context = TestWorldDistanceToContext() :> WorldDistanceToContext
+    let context = TestWorldDistanceToContext(vesselSingleStatisticSource) :> WorldDistanceToContext
     input
     |> World.DistanceTo 
         context
@@ -107,7 +109,7 @@ let ``DistanceTo.It adds a 'distance to island' message when given a valid islan
             |> Some
         else
             None
-    let context = TestWorldDistanceToContext() :> WorldDistanceToContext
+    let context = TestWorldDistanceToContext(vesselSingleStatisticSource) :> WorldDistanceToContext
     input
     |> World.DistanceTo 
         context

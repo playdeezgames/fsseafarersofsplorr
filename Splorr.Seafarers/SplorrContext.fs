@@ -134,6 +134,9 @@ type SplorrContext
     interface AvatarCreateContext with
         member _.avatarJobSink: AvatarJobSink = avatarJobSink
 
+    interface AvatarGetPositionContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
     interface WorldCreateContext with
         member _.avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink    = avatarIslandSingleMetricSink   
         member _.avatarJobSink                   : AvatarJobSink                   = avatarJobSink                  

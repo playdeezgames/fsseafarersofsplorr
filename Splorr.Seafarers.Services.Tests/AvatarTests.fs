@@ -47,6 +47,8 @@ type TestAvatarCreateContext
 type TestAvatarMoveContext(shipmateRationItemSource, shipmateSingleStatisticSink, shipmateSingleStatisticSource, vesselSingleStatisticSink, vesselSingleStatisticSource) =
     interface AvatarMoveContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarGetPositionContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface ShipmateEatContext with
         member this.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
@@ -131,8 +133,10 @@ type TestAvatarGetSpeedContext() =
 type TestAvatarGetHeadingContext() = 
     interface AvatarGetHeadingContext
 
-type TestAvatarGetPositionContext() =
-    interface AvatarGetPositionContext
+type TestAvatarGetPositionContext(vesselSingleStatisticSource) =
+    interface AvatarGetPositionContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+            
 
 [<Test>]
 let ``GetReputation.It retrieves the reputation of the primary shipmate.`` () =
@@ -1292,7 +1296,7 @@ let ``GetPosition.It gets the position of an avatar.`` () =
     let expected = 
         (actualX.CurrentValue, actualY.CurrentValue) 
         |> Some
-    let context = TestAvatarGetPositionContext() :> AvatarGetPositionContext
+    let context = TestAvatarGetPositionContext(vesselSingleStatisticSource) :> AvatarGetPositionContext
     let actual =
         inputAvatarId
         |> Avatar.GetPosition context vesselSingleStatisticSource

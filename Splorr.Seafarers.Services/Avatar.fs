@@ -71,8 +71,7 @@ type AvatarIncrementMetricContext =
     inherit AvatarAddMetricContext
 
 type AvatarGetPositionContext = 
-    interface
-    end
+    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
 
 type AvatarMoveContext =
     inherit VesselBefoulContext
