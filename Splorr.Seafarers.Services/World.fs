@@ -322,8 +322,6 @@ module World =
 
     let SetSpeed 
             (context : WorldSetSpeedContext)
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
-            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
             (avatarMessageSink           : AvatarMessageSink)
             (speed                       : float) 
             (avatarId                    : string) 
@@ -331,8 +329,6 @@ module World =
         avatarId
         |> Avatar.SetSpeed 
             context
-            vesselSingleStatisticSource 
-            vesselSingleStatisticSink 
             speed 
         avatarId
         |> Avatar.GetSpeed 
@@ -353,13 +349,10 @@ module World =
         avatarId
         |> Avatar.SetHeading 
             context
-            vesselSingleStatisticSource 
-            vesselSingleStatisticSink 
             heading 
         avatarId
         |> Avatar.GetHeading 
             context
-            vesselSingleStatisticSource
         |> Option.iter
             (fun newHeading ->
                 avatarId
@@ -840,8 +833,6 @@ module World =
                 avatarId
                 |> Avatar.RemoveInventory 
                     context
-                    avatarInventorySource
-                    avatarInventorySink
                     item 
                     quantity 
         | None, Some island ->

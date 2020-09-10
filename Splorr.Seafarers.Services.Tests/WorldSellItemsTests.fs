@@ -6,7 +6,9 @@ open Splorr.Seafarers.Models
 open CommonTestFixtures
 
 type TestWorldSellItemsContext
-        (commoditySource, 
+        (avatarInventorySink,
+        avatarInventorySource,
+        commoditySource, 
         islandMarketSource, 
         islandSingleMarketSink,
         islandSingleMarketSource,
@@ -17,6 +19,9 @@ type TestWorldSellItemsContext
         member _.commoditySource: CommoditySource = commoditySource
         member _.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
         member _.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
+    interface AvatarRemoveInventoryContext with
+        member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
+        member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
     interface WorldSellItemsContext with
         member _.commoditySource: CommoditySource = commoditySource
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
@@ -45,7 +50,9 @@ let ``SellItems.It gives a message when given a bogus island location.`` () =
         |> Map.tryFind x
     let context = 
         TestWorldSellItemsContext
-            (commoditySource, 
+            (avatarInventorySink,
+            avatarInventorySource,
+            commoditySource, 
             islandMarketSourceStub, 
             islandSingleMarketSinkStub ,
             islandSingleMarketSourceStub, 
@@ -92,7 +99,9 @@ let ``SellItems.It gives a message when given a valid island location and bogus 
         |> Map.tryFind x
     let context = 
         TestWorldSellItemsContext
-            (commoditySource, 
+            (avatarInventorySink,
+            avatarInventorySource,
+            commoditySource, 
             islandMarketSourceStub, 
             islandSingleMarketSinkStub ,
             islandSingleMarketSourceStub, 
@@ -135,7 +144,9 @@ let ``SellItems.It gives a message when the avatar has insufficient items in inv
         |> Map.tryFind x
     let context = 
         TestWorldSellItemsContext
-            (commoditySource, 
+            (avatarInventorySink,
+            avatarInventorySource,
+            commoditySource, 
             islandMarketSourceStub, 
             islandSingleMarketSinkStub ,
             islandSingleMarketSourceStub, 
@@ -178,7 +189,9 @@ let ``SellItems.It gives a message when the avatar has no items in inventory and
         |> Map.tryFind x
     let context = 
         TestWorldSellItemsContext
-            (commoditySource, 
+            (avatarInventorySink,
+            avatarInventorySource,
+            commoditySource, 
             islandMarketSourceStub, 
             islandSingleMarketSinkStub ,
             islandSingleMarketSourceStub,
@@ -242,7 +255,9 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
         |> Map.tryFind x
     let context = 
         TestWorldSellItemsContext
-            (commoditySource, 
+            (avatarInventorySink,
+            avatarInventorySource,
+            commoditySource, 
             islandMarketSource, 
             islandSingleMarketSink ,
             islandSingleMarketSourceStub ,
@@ -306,7 +321,9 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
         |> Map.tryFind x
     let context = 
         TestWorldSellItemsContext
-            (commoditySource, 
+            (avatarInventorySink,
+            avatarInventorySource,
+            commoditySource, 
             islandMarketSource, 
             islandSingleMarketSink ,
             islandSingleMarketSourceStub ,

@@ -6,10 +6,13 @@ open Splorr.Seafarers.Models
 open WorldTestFixtures
 open CommonTestFixtures
 
-type TestWorldHeadForContext(vesselSingleStatisticSource) =
+type TestWorldHeadForContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
     interface AvatarGetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarGetHeadingContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarSetHeadingContext with
+        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface WorldHeadForContext
 
@@ -32,7 +35,7 @@ let ``HeadFor.It adds a message when the island name does not exist.`` () =
         None
     let islandLocationByNameSource (_) =
         None
-    let context = TestWorldHeadForContext(vesselSingleStatisticSource) :> WorldHeadForContext
+    let context = TestWorldHeadForContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldHeadForContext
     inputWorld
     |> World.HeadFor 
         context
@@ -67,7 +70,7 @@ let ``HeadFor.It adds a message when the island name exists but is not known.`` 
     let islandLocationByNameSource (_) =
         []
         |> List.tryHead
-    let context = TestWorldHeadForContext(vesselSingleStatisticSource) :> WorldHeadForContext
+    let context = TestWorldHeadForContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldHeadForContext
     inputWorld
     |> World.HeadFor 
         context
@@ -109,7 +112,7 @@ let ``HeadFor.It sets the heading when the island name exists and is known.`` ()
     let islandLocationByNameSource (_) =
         [(0.0, 0.0)]
         |> List.tryHead
-    let context = TestWorldHeadForContext(vesselSingleStatisticSource) :> WorldHeadForContext
+    let context = TestWorldHeadForContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldHeadForContext
     inputWorld
     |> World.HeadFor 
         context

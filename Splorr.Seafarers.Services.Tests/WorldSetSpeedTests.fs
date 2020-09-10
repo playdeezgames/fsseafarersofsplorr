@@ -5,8 +5,11 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
 
-type TestWorldSetSpeedContext(vesselSingleStatisticSource) =
+type TestWorldSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
     interface AvatarGetSpeedContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarSetSpeedContext with
+        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface WorldSetSpeedContext
 
@@ -24,12 +27,10 @@ let ``SetSpeed.It produces all stop in the avatar when less than zero is passed.
         Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
     let inputSpeed = -1.0
-    let context = TestWorldSetSpeedContext(vesselSingleStatisticSource) :> WorldSetSpeedContext
+    let context = TestWorldSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
     avatarId
     |> World.SetSpeed 
         context
-        vesselSingleStatisticSource 
-        vesselSingleStatisticSink 
         avatarMessageSinkStub 
         inputSpeed
     |> ignore
@@ -48,12 +49,10 @@ let ``SetSpeed.It produces full speed when greater than one is passed.`` () =
         Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
     let inputSpeed = 2.0
-    let context = TestWorldSetSpeedContext(vesselSingleStatisticSource) :> WorldSetSpeedContext
+    let context = TestWorldSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
     avatarId
     |> World.SetSpeed 
         context
-        vesselSingleStatisticSource 
-        vesselSingleStatisticSink 
         avatarMessageSinkStub 
         inputSpeed
     |> ignore
@@ -73,12 +72,10 @@ let ``SetSpeed.It produces half speed when one half is passed.`` () =
         Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
     let inputSpeed = 0.5
-    let context = TestWorldSetSpeedContext(vesselSingleStatisticSource) :> WorldSetSpeedContext
+    let context = TestWorldSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
     avatarId
     |> World.SetSpeed 
         context
-        vesselSingleStatisticSource 
-        vesselSingleStatisticSink 
         avatarMessageSinkStub 
         inputSpeed
     |> ignore
@@ -101,12 +98,10 @@ let ``SetSpeed.It does nothing when a bogus avatarid is passed.`` () =
     let inputSpeed = 1.0
     let avatarMessageSink (_) (_) =
         Assert.Fail("Dont call me.")
-    let context = TestWorldSetSpeedContext(vesselSingleStatisticSource) :> WorldSetSpeedContext
+    let context = TestWorldSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
     inputWorld
     |> World.SetSpeed 
         context
-        vesselSingleStatisticSource 
-        vesselSingleStatisticSink 
         avatarMessageSink 
         inputSpeed
 
@@ -124,12 +119,10 @@ let ``SetSpeed.It produces full speed when one is passed.`` () =
         Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
     let inputSpeed = 1.0
-    let context = TestWorldSetSpeedContext(vesselSingleStatisticSource) :> WorldSetSpeedContext
+    let context = TestWorldSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
     avatarId
     |> World.SetSpeed 
         context
-        vesselSingleStatisticSource 
-        vesselSingleStatisticSink 
         avatarMessageSinkStub 
         inputSpeed
     |> ignore
@@ -149,12 +142,10 @@ let ``SetSpeed.It sets all stop when given zero`` () =
         Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
     let inputSpeed = 0.0
-    let context = TestWorldSetSpeedContext(vesselSingleStatisticSource) :> WorldSetSpeedContext
+    let context = TestWorldSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
     avatarId
     |> World.SetSpeed 
         context
-        vesselSingleStatisticSource 
-        vesselSingleStatisticSink 
         avatarMessageSinkStub 
         inputSpeed
     |> ignore

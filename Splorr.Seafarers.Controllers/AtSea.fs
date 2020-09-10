@@ -141,11 +141,13 @@ module AtSea =
 
         let speed = 
             avatarId
-            |> Avatar.GetSpeed context 
+            |> Avatar.GetSpeed 
+                context 
             |> Option.get
         let heading = 
             avatarId 
-            |> Avatar.GetHeading context vesselSingleStatisticSource 
+            |> Avatar.GetHeading 
+                context 
             |> Option.get
         let speedHue =DetermineSpeedHue speed
         let turn = shipmateSingleStatisticSource avatarId Primary ShipmateStatisticIdentifier.Turn |> Option.get
@@ -378,8 +380,6 @@ module AtSea =
             avatarId
             |> World.SetSpeed 
                 context
-                context.vesselSingleStatisticSource
-                context.vesselSingleStatisticSink
                 context.avatarMessageSink
                 speed
             avatarId

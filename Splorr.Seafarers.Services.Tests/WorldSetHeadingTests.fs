@@ -6,8 +6,11 @@ open Splorr.Seafarers.Models
 open WorldTestFixtures
 open CommonTestFixtures
 
-type TestWorldSetHeadingContext(vesselSingleStatisticSource) =
+type TestWorldSetHeadingContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
     interface AvatarGetHeadingContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarSetHeadingContext with
+        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface WorldSetHeadingContext
 
@@ -25,7 +28,7 @@ let ``SetHeading.It sets a new heading when given a valid avatar id.`` () =
     let vesselSingleStatisticSink (_) (identifier:VesselStatisticIdentifier, statistic:Statistic) =
         Assert.AreEqual(VesselStatisticIdentifier.Heading, identifier)
         Assert.AreEqual(expectedHeading, statistic.CurrentValue)
-    let context = TestWorldSetHeadingContext(vesselSingleStatisticSource) :> WorldSetHeadingContext
+    let context = TestWorldSetHeadingContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetHeadingContext
     avatarId
     |> World.SetHeading 
         context
@@ -45,7 +48,7 @@ let ``SetHeading.It does nothing when given an invalid avatar id`` () =
     let vesselSingleStatisticSink (_) (_) =
         raise (System.NotImplementedException "Kaboom set")
     let heading = 1.5
-    let context = TestWorldSetHeadingContext(vesselSingleStatisticSource) :> WorldSetHeadingContext
+    let context = TestWorldSetHeadingContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetHeadingContext
     input
     |> World.SetHeading 
         context

@@ -41,8 +41,8 @@ type AvatarSetPositionContext =
     abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
 
 type AvatarSetSpeedContext =
-    interface
-    end
+    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
+    abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
 
 type AvatarGetCurrentFoulingContext =
     interface
@@ -58,12 +58,12 @@ type AvatarGetEffectiveSpeedContext =
 
 
 type AvatarSetHeadingContext =
-    interface
-    end
+    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
+    abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
 
 type AvatarRemoveInventoryContext =
-    interface
-    end
+    abstract member avatarInventorySource : AvatarInventorySource
+    abstract member avatarInventorySink   : AvatarInventorySink
 
 type AvatarIncrementMetricContext =
     inherit AvatarAddMetricContext
@@ -164,11 +164,10 @@ module Avatar =
 
     let GetHeading
             (context : AvatarGetHeadingContext)
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (avatarId                    : string)
             : float option =
         VesselStatisticIdentifier.Heading
-        |> vesselSingleStatisticSource avatarId 
+        |> context.vesselSingleStatisticSource avatarId 
         |> Option.map Statistic.GetCurrentValue
 
     let SetPosition 
@@ -198,46 +197,40 @@ module Avatar =
         | _ -> ()
 
     let SetSpeed 
-            (context : AvatarSetSpeedContext)
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
-            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
-            (speed                       : float) 
-            (avatarId                    : string) 
+            (context  : AvatarSetSpeedContext)
+            (speed    : float) 
+            (avatarId : string) 
             : unit =
-        vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Speed
+        context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Speed
         |> Option.iter
             (fun statistic ->
                 (VesselStatisticIdentifier.Speed, 
                     statistic
                     |> Statistic.SetCurrentValue speed)
-                |> vesselSingleStatisticSink avatarId)
+                |> context.vesselSingleStatisticSink avatarId)
 
     let SetHeading 
             (context : AvatarSetHeadingContext)
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
-            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
             (heading : float) 
             (avatarId  : string) 
             : unit =
-        vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Heading
+        context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Heading
         |> Option.iter
             (fun statistic ->
                 (VesselStatisticIdentifier.Heading, 
                     statistic
                     |> Statistic.SetCurrentValue (heading |> Angle.ToRadians))
-                |> vesselSingleStatisticSink avatarId)
+                |> context.vesselSingleStatisticSink avatarId)
 
     let RemoveInventory 
-            (context : AvatarRemoveInventoryContext)
-            (avatarInventorySource : AvatarInventorySource)
-            (avatarInventorySink   : AvatarInventorySink)
-            (item                  : uint64) 
-            (quantity              : uint64) 
-            (avatarId              : string) 
+            (context  : AvatarRemoveInventoryContext)
+            (item     : uint64) 
+            (quantity : uint64) 
+            (avatarId : string) 
             : unit =
         let inventory = 
             avatarId 
-            |>  avatarInventorySource
+            |>  context.avatarInventorySource
         match inventory.TryFind item with
         | Some count ->
             if count > quantity then
@@ -248,7 +241,7 @@ module Avatar =
                 |> Map.remove item
         | _ ->
             inventory
-        |> avatarInventorySink avatarId
+        |> context.avatarInventorySink avatarId
 
     let AddMetric 
             (context : AvatarAddMetricContext)
