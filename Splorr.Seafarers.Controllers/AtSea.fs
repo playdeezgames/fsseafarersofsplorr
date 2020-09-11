@@ -88,8 +88,6 @@ module AtSea =
 
     let private GetVisibleIslands 
             (context : AtSeaGetVisibleIslandsContext)
-            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
-            (islandSingleNameSource         : IslandSingleNameSource)
             (islandSource                   : IslandSource)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (avatarId                       : string) 
@@ -125,9 +123,7 @@ module AtSea =
 
     let private UpdateDisplay 
             (context : AtSeaUpdateDisplayContext)
-            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (avatarMessageSource            : AvatarMessageSource)
-            (islandSingleNameSource         : IslandSingleNameSource)
             (islandSource                   : IslandSource)
             (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
@@ -174,8 +170,6 @@ module AtSea =
         avatarId
         |> GetVisibleIslands 
             context
-            avatarIslandSingleMetricSource
-            islandSingleNameSource
             islandSource
             vesselSingleStatisticSource
         |> List.iter
@@ -216,8 +210,6 @@ module AtSea =
             avatarId
             |> GetVisibleIslands 
                 context
-                context.avatarIslandSingleMetricSource
-                context.islandSingleNameSource
                 context.islandSource
                 context.vesselSingleStatisticSource
         let dockTarget = 
@@ -413,9 +405,7 @@ module AtSea =
             : Gamestate option =
         UpdateDisplay 
             context
-            context.avatarIslandSingleMetricSource
             context.avatarMessageSource
-            context.islandSingleNameSource
             context.islandSource
             context.shipmateSingleStatisticSource
             context.vesselSingleStatisticSource

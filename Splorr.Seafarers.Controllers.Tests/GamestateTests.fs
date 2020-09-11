@@ -4,7 +4,6 @@ open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
-open System
 open CommonTestFixtures
 
 type TestGamestateCheckForAvatarDeathContext (shipmateSingleStatisticSource) =
@@ -167,7 +166,6 @@ let ``CheckForAvatarDeath.It returns the original gamestate when the avatar embe
         |> Gamestate.CheckForAvatarDeath
             context
             avatarMessageSourceDummy
-            shipmateSingleStatisticSourceStub
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -184,7 +182,6 @@ let ``CheckForAvatarDeath.It returns the original gamestate when there is not a 
         |> Gamestate.CheckForAvatarDeath
             context
             avatarMessageSourceDummy
-            shipmateSingleStatisticSourceStub
     Assert.AreEqual(expected, actual)
 
 
@@ -210,5 +207,4 @@ let ``CheckForAvatarDeath.It returns gameover when the avatar embedded therein i
         |> Gamestate.CheckForAvatarDeath 
             context
             avatarMessageSourceDummy
-            shipmateSingleStatisticSource
     Assert.AreEqual(expected, actual)

@@ -201,6 +201,8 @@ type SplorrContext
     interface AvatarRemoveInventoryContext with
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
+    interface AvatarGetUsedTonnageContext with
+        member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
 
     interface DockedHandleCommandContext with
         member _.commoditySource                : CommoditySource                =commoditySource               
@@ -256,7 +258,8 @@ type SplorrContext
 
     interface AvatarAddMessagesContext with
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
-
+    interface AvatarGetPrimaryStatisticContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface WorldDockContext with
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
         member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
@@ -283,6 +286,9 @@ type SplorrContext
 
     interface AvatarGetMaximumFoulingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
+    interface AvatarCleanHullContext with
+        member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
 
     interface RunnerRunContext with
         member _.avatarMetricSource              : AvatarMetricSource=avatarMetricSource

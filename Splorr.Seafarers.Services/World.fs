@@ -316,7 +316,6 @@ module World =
             : unit =
         Avatar.AddMessages
             context
-            avatarMessageSink 
             messages 
             avatarId
 
@@ -391,7 +390,6 @@ module World =
             |> AddMessages context avatarMessageSink [ "Steady as she goes." ]
             Avatar.Move 
                 context
-                avatarShipmateSource
                 vesselSingleStatisticSource 
                 avatarId 
             avatarId
@@ -715,15 +713,14 @@ module World =
                 avatarId
                 |> Avatar.GetUsedTonnage
                     context
-                    avatarInventorySource
                     items
             let quantity =
                 match tradeQuantity with
                 | Specific amount -> amount
-                | Maximum -> min (floor(availableTonnage / descriptor.Tonnage)) (floor((avatarId |> Avatar.GetMoney context shipmateSingleStatisticSource) / unitPrice)) |> uint64
+                | Maximum -> min (floor(availableTonnage / descriptor.Tonnage)) (floor((avatarId |> Avatar.GetMoney context) / unitPrice)) |> uint64
             let price = (quantity |> float) * unitPrice
             let tonnageNeeded = (quantity |> float) * descriptor.Tonnage
-            if price > (avatarId |> Avatar.GetMoney context shipmateSingleStatisticSource) then
+            if price > (avatarId |> Avatar.GetMoney context) then
                 avatarId
                 |> AddMessages context avatarMessageSink ["You don't have enough money."]
             elif usedTonnage + tonnageNeeded > availableTonnage then
@@ -841,7 +838,6 @@ module World =
         avatarId 
         |> Avatar.CleanHull 
             context
-            avatarShipmateSource
             side 
 
     let Undock

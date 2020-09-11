@@ -14,7 +14,9 @@ type TestWorldCleanHullContext
         shipmateSingleStatisticSource,
         vesselSingleStatisticSink, 
         vesselSingleStatisticSource) =
-    interface WorldCleanHullContext with
+    interface WorldCleanHullContext
+    interface AvatarCleanHullContext with
+        member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarTransformShipmatesContext with

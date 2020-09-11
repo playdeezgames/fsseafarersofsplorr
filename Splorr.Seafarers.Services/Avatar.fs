@@ -80,8 +80,7 @@ type AvatarGetPositionContext =
     abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
 
 type AvatarGetPrimaryStatisticContext =
-    interface
-    end
+    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
 
 type AvatarAbandonJobContext =
     inherit AvatarSetReputationContext
@@ -96,8 +95,7 @@ type AvatarAddMessagesContext =
     abstract member avatarMessageSink : AvatarMessageSink
 
 type AvatarGetUsedTonnageContext =
-    interface
-    end
+    abstract member avatarInventorySource : AvatarInventorySource
 
 type AvatarCompleteJobContext =
     inherit AvatarSetReputationContext
@@ -133,6 +131,7 @@ type AvatarCleanHullContext =
     inherit ShipmateTransformStatisticContext
     inherit AvatarIncrementMetricContext
     inherit AvatarTransformShipmatesContext
+    abstract member avatarShipmateSource          : AvatarShipmateSource
 
 module Avatar =
     let Create 
@@ -191,7 +190,7 @@ module Avatar =
             context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PositionX, 
             context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PositionY 
             with
-        | Some x, Some y ->
+        | Some x, Some _ ->
             context.vesselSingleStatisticSink 
                 avatarId 
                 (VesselStatisticIdentifier.PositionX, 
@@ -345,17 +344,15 @@ module Avatar =
 
     let TransformShipmates 
             (context : AvatarTransformShipmatesContext)
-            (avatarShipmateSource : AvatarShipmateSource)
             (transform            : ShipmateIdentifier -> unit) 
             (avatarId             : string) 
             : unit =
         avatarId
-        |> avatarShipmateSource
+        |> context.avatarShipmateSource
         |> List.iter transform
 
     let Move
             (context : AvatarMoveContext)
-            (avatarShipmateSource          : AvatarShipmateSource)
             (vesselSingleStatisticSource   : VesselSingleStatisticSource)
             (avatarId                      : string)
             : unit =
@@ -378,7 +375,6 @@ module Avatar =
         SetPosition context newPosition avatarId
         TransformShipmates
             context
-            avatarShipmateSource
             (fun identifier -> 
                 Shipmate.TransformStatistic 
                     context
@@ -416,10 +412,9 @@ module Avatar =
     let private GetPrimaryStatistic 
             (context : AvatarGetPrimaryStatisticContext)
             (identifier : ShipmateStatisticIdentifier) 
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (avatarId     : string) 
             : float =
-        shipmateSingleStatisticSource 
+        context.shipmateSingleStatisticSource 
             avatarId 
             Primary 
             identifier
@@ -448,7 +443,6 @@ module Avatar =
                     context
                     ((GetReputation 
                         context
-                        shipmateSingleStatisticSource 
                         avatarId) + 
                             reputationCostForAbandoningAJob) 
                     
@@ -472,7 +466,6 @@ module Avatar =
                 context
                 ((GetReputation 
                     context
-                    shipmateSingleStatisticSource 
                     avatarId) + 
                         1.0)
                 avatarId
@@ -501,7 +494,7 @@ module Avatar =
         if amount > 0.0 then
             SetMoney 
                 context
-                ((GetMoney context shipmateSingleStatisticSource avatarId) + amount)
+                ((GetMoney context avatarId) + amount)
                 avatarId
 
     let SpendMoney 
@@ -514,7 +507,7 @@ module Avatar =
         if amount > 0.0 then
             SetMoney 
                 context
-                ((GetMoney context shipmateSingleStatisticSource avatarId) - amount)
+                ((GetMoney context avatarId) - amount)
                 avatarId
 
     let GetItemCount 
@@ -531,9 +524,9 @@ module Avatar =
             (context : AvatarAddInventoryContext)
             (avatarInventorySink   : AvatarInventorySink)
             (avatarInventorySource : AvatarInventorySource)
-            (item                  : uint64) 
-            (quantity              : uint64) 
-            (avatarId              : string) 
+            (item : uint64) 
+            (quantity : uint64) 
+            (avatarId : string) 
             : unit =
         let newQuantity = (avatarId |> GetItemCount context avatarInventorySource item) + quantity
         avatarId
@@ -543,21 +536,19 @@ module Avatar =
 
     let AddMessages 
             (context : AvatarAddMessagesContext)
-            (avatarMessageSink : AvatarMessageSink)
             (messages : string list) 
             (avatarId : string) 
             : unit =
         messages
-        |> List.iter (avatarMessageSink avatarId)
+        |> List.iter (context.avatarMessageSink avatarId)
 
 
     let GetUsedTonnage
             (context : AvatarGetUsedTonnageContext)
-            (avatarInventorySource : AvatarInventorySource)
-            (items                 : Map<uint64, ItemDescriptor>) //TODO: to source
-            (avatarId              : string) 
+            (items : Map<uint64, ItemDescriptor>) //TODO: to source
+            (avatarId : string) 
             : float =
-        (0.0, avatarId |> avatarInventorySource)
+        (0.0, avatarId |> context.avatarInventorySource)
         ||> Map.fold
             (fun result item quantity -> 
                 let d = items.[item]
@@ -565,9 +556,8 @@ module Avatar =
 
     let CleanHull 
             (context : AvatarCleanHullContext)
-            (avatarShipmateSource          : AvatarShipmateSource)
-            (side                          : Side) 
-            (avatarId                      : string)
+            (side : Side) 
+            (avatarId : string)
             : unit =
         Vessel.TransformFouling 
             context
@@ -578,7 +568,6 @@ module Avatar =
                     CurrentValue = x.MinimumValue})
         TransformShipmates 
             context
-            avatarShipmateSource 
             (Shipmate.TransformStatistic
                 context
                 ShipmateStatisticIdentifier.Turn 

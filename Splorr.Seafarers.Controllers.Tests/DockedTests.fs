@@ -80,6 +80,10 @@ type TestDockedRunContext
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
 
+    interface AvatarGetUsedTonnageContext with
+        member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
+    interface AvatarGetPrimaryStatisticContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface DockedHandleCommandContext with
         member _.avatarInventorySink            : AvatarInventorySink           =avatarInventorySink            
         member _.avatarInventorySource          : AvatarInventorySource         =avatarInventorySource          

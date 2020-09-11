@@ -135,16 +135,16 @@ module CommandSource=
         | [ _ ] ->
             None
         | "maximum" :: tail ->
-            let itemName = System.String.Join(" ", tail)
+            let itemName = String.Join(" ", tail)
             (Maximum, itemName)
             |> Command.Buy
             |> Some
-        | "0" :: tail ->
+        | "0" :: _ ->
             None
         | number :: tail ->
             match UInt64.TryParse(number) with
             | true, quantity ->
-                let itemName = System.String.Join(" ", tail)
+                let itemName = String.Join(" ", tail)
                 (quantity |> Specific, itemName)
                 |> Command.Buy
                 |> Some
@@ -156,17 +156,17 @@ module CommandSource=
         function
         | [ _ ] ->
             None
-        | "0" :: tail ->
+        | "0" :: _ ->
             None
         | "all" :: tail ->
-            let itemName = System.String.Join(" ", tail)
+            let itemName = String.Join(" ", tail)
             (Maximum, itemName)
             |> Command.Sell
             |> Some
         | number :: tail ->
             match UInt64.TryParse(number) with
             | true, quantity ->
-                let itemName = System.String.Join(" ", tail)
+                let itemName = String.Join(" ", tail)
                 (Specific quantity, itemName)
                 |> Command.Sell
                 |> Some
@@ -215,7 +215,7 @@ module CommandSource=
             : Command option =
         match input with
         | "chart" :: tail ->
-            System.String.Join(" ", tail) 
+            String.Join(" ", tail) 
             |> Command.Chart 
             |> Some
 
@@ -229,7 +229,7 @@ module CommandSource=
 
 
         | [ "start" ] ->
-            System.Guid.NewGuid().ToString()
+            Guid.NewGuid().ToString()
             |> Command.Start
             |> Some
 
@@ -275,7 +275,7 @@ module CommandSource=
     let Read 
             (lineReader: unit -> string) 
             : Command option =
-        System.Console.Write ">"
+        Console.Write ">"
         lineReader().ToLower().Split([|' '|]) 
         |> List.ofArray
         |> Parse

@@ -6,7 +6,8 @@ open Splorr.Seafarers.Models
 open CommonTestFixtures
 
 type TestWorldBuyItemsContext
-        (avatarMessageSink,
+        (avatarInventorySource,
+        avatarMessageSink,
         commoditySource, 
         islandMarketSource, 
         islandSingleMarketSink,
@@ -20,6 +21,10 @@ type TestWorldBuyItemsContext
         member this.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
     interface AvatarAddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface AvatarGetUsedTonnageContext with
+        member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
+    interface AvatarGetPrimaryStatisticContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface WorldBuyItemsContext with
         member this.commoditySource: CommoditySource = commoditySource
         member this.islandMarketSource: IslandMarketSource = islandMarketSource
@@ -52,7 +57,8 @@ let ``BuyItems.It gives a message when given a bogus island location.`` () =
         []
     let context = 
         TestWorldBuyItemsContext
-            ((avatarExpectedMessageSink expectedMessage),
+            (avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
             commoditySource, 
             islandMarketSourceStub,
             islandSingleMarketSinkStub,
@@ -105,7 +111,8 @@ let ``BuyItems.It gives a message when given a valid island location and a bogus
         ]
     let context = 
         TestWorldBuyItemsContext
-            ((avatarExpectedMessageSink expectedMessage),
+            (avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
             commoditySource, 
             islandMarketSourceStub,
             islandSingleMarketSinkStub ,
@@ -171,7 +178,8 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds.`` () =
             None
     let context = 
         TestWorldBuyItemsContext
-            ((avatarExpectedMessageSink expectedMessage),
+            (avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
             commoditySource, 
             islandMarketSource,
             islandSingleMarketSinkStub ,
@@ -238,7 +246,8 @@ let ``BuyItems.It gives a message when the avatar has insufficient tonnage.`` ()
             None
     let context = 
         TestWorldBuyItemsContext
-            ((avatarExpectedMessageSink expectedMessage),
+            (avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
             commoditySource, 
             islandMarketSource,
             islandSingleMarketSinkStub ,
@@ -312,7 +321,8 @@ let ``BuyItems.It gives a message and completes the purchase when the avatar has
             None
     let context = 
         TestWorldBuyItemsContext
-            ((avatarExpectedMessageSink expectedMessage),
+            (avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
             commoditySource, 
             islandMarketSource,
             islandSingleMarketSinkStub ,
@@ -380,7 +390,8 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds for a s
             None
     let context = 
         TestWorldBuyItemsContext
-            ((avatarExpectedMessageSink expectedMessage),
+            (avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
             commoditySource, 
             islandMarketSource,
             islandSingleMarketSinkStub ,
@@ -452,7 +463,8 @@ let ``BuyItems.It gives a message indicating purchased quantity and completes th
             None
     let context = 
         TestWorldBuyItemsContext
-            ((avatarExpectedMessageSink expectedMessage),
+            (avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
             commoditySource, 
             islandMarketSource,
             islandSingleMarketSinkStub ,

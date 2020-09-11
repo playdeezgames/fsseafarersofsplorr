@@ -3,8 +3,10 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
-type TestAvatarGetUsedTonnageContext() =
-    interface AvatarGetUsedTonnageContext
+type TestAvatarGetUsedTonnageContext(avatarInventorySource) =
+    interface AvatarGetUsedTonnageContext with
+        member this.avatarInventorySource: AvatarInventorySource = 
+            raise (System.NotImplementedException())
 
 module Inventory =
     let private RunWorld 
@@ -53,7 +55,6 @@ module Inventory =
             avatarId 
             |> Avatar.GetUsedTonnage 
                 context
-                avatarInventorySource
                 items
         [
             (Hue.Sublabel, "Cargo Limit: " |> Text) |> Hued

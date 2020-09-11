@@ -26,9 +26,11 @@ type TestCareenedRunContext
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarTransformShipmatesContext with
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
-    interface CareenedRunContext with
-        member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
-        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarCleanHullContext with
+        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
+    interface CareenedRunContext
     interface ShipmateTransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource

@@ -53,7 +53,7 @@ module ItemList =
             ())
         [
             (Hue.Label, "Money: " |> Text) |> Hued
-            (Hue.Value, avatarId |> Avatar.GetMoney context shipmateSingleStatisticSource |> sprintf "%f" |> Line) |> Hued
+            (Hue.Value, avatarId |> Avatar.GetMoney context |> sprintf "%f" |> Line) |> Hued
         ]
         |> List.iter messageSink
         avatarId

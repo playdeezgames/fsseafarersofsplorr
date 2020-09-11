@@ -59,7 +59,7 @@ module Runner =
                         avatarId
 
                 | _ ->
-                    raise (System.NotImplementedException "InPlay state with unknown configuration")
+                    raise (NotImplementedException "InPlay state with unknown configuration")
 
 
             | Gamestate.Careened (side, avatarId) -> 
@@ -115,10 +115,10 @@ module Runner =
                         feature.location 
                         avatarId
                 | _ ->
-                    raise (System.NotImplementedException "Gamestate.ItemList with unexpected inner gamestate")
+                    raise (NotImplementedException "Gamestate.ItemList with unexpected inner gamestate")
 
             | Gamestate.ItemList _ -> 
-                raise (System.NotImplementedException "Gamestate.ItemList with unexpected inner gamestate")
+                raise (NotImplementedException "Gamestate.ItemList with unexpected inner gamestate")
 
             | Gamestate.Jobs (Gamestate.InPlay avatarId) -> 
                 match context.avatarIslandFeatureSource avatarId with
@@ -131,9 +131,9 @@ module Runner =
                         feature.location
                         avatarId
                 | _ ->
-                    raise (System.NotImplementedException "Gamestate.Jobs with unexpected inner gamestate")
+                    raise (NotImplementedException "Gamestate.Jobs with unexpected inner gamestate")
             | Gamestate.Jobs _ -> 
-                raise (System.NotImplementedException "Gamestate.Jobs with unexpected inner gamestate")
+                raise (NotImplementedException "Gamestate.Jobs with unexpected inner gamestate")
 
             | Gamestate.GameOver messages -> 
                 GameOver.Run 
@@ -197,7 +197,6 @@ module Runner =
             |> Gamestate.CheckForAvatarDeath 
                 context
                 context.avatarMessageSource
-                context.shipmateSingleStatisticSource
 
         match nextGamestate with
         | Some state ->

@@ -20,6 +20,8 @@ type TestAvatarAbandonJobContext
         shipmateSingleStatisticSink, 
         shipmateSingleStatisticSource) =
     interface AvatarAbandonJobContext
+    interface AvatarGetPrimaryStatisticContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarAddMetricContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
@@ -33,6 +35,8 @@ type TestAvatarCompleteJobContext
         shipmateSingleStatisticSink, 
         shipmateSingleStatisticSource) =
     interface AvatarCompleteJobContext
+    interface AvatarGetPrimaryStatisticContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarAddMetricContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
@@ -108,6 +112,7 @@ type TestAvatarCleanHullContext
         vesselSingleStatisticSink, 
         vesselSingleStatisticSource) =
     interface AvatarCleanHullContext with
+        member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarTransformShipmatesContext with
@@ -125,12 +130,16 @@ type TestShipmateGetStatusContext(shipmateSingleStatisticSource) =
 
 type TestAvatarEarnMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
     interface AvatarEarnMoneyContext
+    interface AvatarGetPrimaryStatisticContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface ShipmateTransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 type TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
     interface AvatarSpendMoneyContext
+    interface AvatarGetPrimaryStatisticContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface ShipmateTransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
@@ -140,8 +149,9 @@ type TestShipmateTransformStatisticContext(shipmateSingleStatisticSink, shipmate
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-type TestAvatarGetPrimaryStatisticContext() = 
-    interface AvatarGetPrimaryStatisticContext
+type TestAvatarGetPrimaryStatisticContext(shipmateSingleStatisticSource) = 
+    interface AvatarGetPrimaryStatisticContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 type TestAvatarSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
     interface AvatarSetSpeedContext with
@@ -180,8 +190,9 @@ type TestAvatarAddMetricContext
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
 
-type TestAvatarGetUsedTonnageContext() =
-    interface AvatarGetUsedTonnageContext
+type TestAvatarGetUsedTonnageContext(avatarInventorySource) =
+    interface AvatarGetUsedTonnageContext with
+        member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
 
 type TestAvatarGetEffectiveSpeedContext(vesselSingleStatisticSource) =
     interface AvatarGetSpeedContext with
@@ -234,10 +245,10 @@ let ``GetReputation.It retrieves the reputation of the primary shipmate.`` () =
         | _ ->
             raise (System.NotImplementedException "Kaboom Get")
             None
-    let context = TestAvatarGetPrimaryStatisticContext() :> AvatarGetPrimaryStatisticContext
+    let context = TestAvatarGetPrimaryStatisticContext(shipmateSingleStatisticSource) :> AvatarGetPrimaryStatisticContext
     let actual =
         input
-        |> Avatar.GetReputation context shipmateSingleStatisticSource
+        |> Avatar.GetReputation context
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -254,10 +265,10 @@ let ``GetMoney.It retrieves the money of the primary shipmate.`` () =
         | _ ->
             raise (System.NotImplementedException "Kaboom Get")
             None
-    let context = TestAvatarGetPrimaryStatisticContext() :> AvatarGetPrimaryStatisticContext
+    let context = TestAvatarGetPrimaryStatisticContext(shipmateSingleStatisticSource) :> AvatarGetPrimaryStatisticContext
     let actual =
         input
-        |> Avatar.GetMoney context shipmateSingleStatisticSource
+        |> Avatar.GetMoney context
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -265,7 +276,6 @@ let ``SetMoney.It assigns the amount of money of the primary shipmate.`` () =
     let inputMoney = 100.0
     let input =
         avatarId
-    let expected = inputMoney
     let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) = 
         match identifier with
         | ShipmateStatisticIdentifier.Money ->
@@ -290,7 +300,6 @@ let ``SetReputation.It assigns the amount of reputation of the primary shipmate.
     let inputReputation = 100.0
     let input =
         avatarId
-    let expected = inputReputation
     let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) = 
         match identifier with
         | ShipmateStatisticIdentifier.Reputation ->
@@ -519,7 +528,6 @@ let ``Move.It moves the avatar.`` () =
             vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
-        avatarShipmateSourceStub
         vesselSingleStatisticSource 
         inputAvatarId
 
@@ -566,7 +574,6 @@ let ``Move.It removes a ration when the given avatar has rations and full satiet
             vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
-        avatarShipmateSource
         vesselSingleStatisticSource 
         inputAvatarId
 
@@ -612,7 +619,6 @@ let ``Move.It removes a ration and increases satiety when the given avatar has r
             vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
-        avatarShipmateSource
         vesselSingleStatisticSource 
         inputAvatarId
     
@@ -658,7 +664,6 @@ let ``Move.It lowers the avatar's satiety but does not affect turns when the giv
             vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
-        avatarShipmateSource
         vesselSingleStatisticSource 
         inputAvatarId
 
@@ -713,7 +718,6 @@ let ``Move.It lowers the avatar's maximum turn and updates the starvation metric
             vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
-        avatarShipmateSource
         vesselSingleStatisticSource 
         inputAvatarId
 
@@ -1042,8 +1046,6 @@ let ``RemoveInventory.It does nothing.When given a quantity of 0 items to remove
         ([<Values(0UL, 1UL)>]inputQuantity:uint64) =
     let input = avatarId
     let inputItem = 1UL
-    let expected =
-        input
     let avatarInventorySource (_) =
         Map.empty
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
@@ -1064,7 +1066,6 @@ let ``RemoveInventory.It reduces the given avatars inventory to 0 when the given
     let avatarInventorySource (_) =
         Map.empty
         |> Map.add inputItem originalQuantity
-    let expectedQuantity = 0UL
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(0, inventory.Count)
     let context = TestAvatarRemoveInventoryContext(avatarInventorySink, avatarInventorySource) :> AvatarRemoveInventoryContext
@@ -1172,7 +1173,7 @@ let ``AddMessages.It adds messages to a given avatar.`` () =
             Assert.Fail("Got an unexpected message.")
     let context = TestAvatarAddMessagesContext(avatarMessageSink) :> AvatarAddMessagesContext
     input
-    |> Avatar.AddMessages context avatarMessageSink inputMessages
+    |> Avatar.AddMessages context inputMessages
 
 
 [<Test>]
@@ -1228,12 +1229,11 @@ let ``GetUsedTonnage.It calculates the used tonnage based on inventory and item 
         Map.empty
         |> Map.add 1UL 3UL
         |> Map.add 2UL 4UL
-    let context = TestAvatarGetUsedTonnageContext() :> AvatarGetUsedTonnageContext
+    let context = TestAvatarGetUsedTonnageContext(avatarInventorySource) :> AvatarGetUsedTonnageContext
     let actual =
         input
         |> Avatar.GetUsedTonnage 
             context
-            avatarInventorySource
             inputItems
     Assert.AreEqual(expected, actual)
 
@@ -1256,7 +1256,6 @@ let ``GetEffectiveSpeed.It returns proportionally reduced speed when there is fo
 
 [<Test>]
 let ``CleanHull.It cleans the hull of the given avatar.`` () =
-    let input = avatarId
     let inputSide = Port
     let vesselSingleStatisticSource (_) (_) = {MinimumValue=0.0;MaximumValue=0.5;CurrentValue=0.5} |> Some
     let vesselSingleStatisticSink (_) (_:VesselStatisticIdentifier, statistic:Statistic) : unit =
@@ -1287,7 +1286,6 @@ let ``CleanHull.It cleans the hull of the given avatar.`` () =
             vesselSingleStatisticSource) :> AvatarCleanHullContext
     Avatar.CleanHull
         context
-        avatarShipmateSource
         inputSide
         inputAvatarId 
 
@@ -1491,7 +1489,6 @@ let ``Move.It transforms the avatar within the given world.`` () =
             vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
             context
-            avatarShipmateSource
             vesselSingleStatisticSource 
             avatarId
     Assert.AreEqual(1, xPositionCalled)

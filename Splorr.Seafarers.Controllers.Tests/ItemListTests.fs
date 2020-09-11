@@ -13,6 +13,8 @@ type TestItemListRunContext
         itemSingleSource,
         shipmateSingleStatisticSource) =
     interface ItemListRunContext
+    interface AvatarGetPrimaryStatisticContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface ShipmateGetStatusContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface ItemDeterminePriceContext with
