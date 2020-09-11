@@ -37,9 +37,9 @@ module Careened =
             | Port -> "port"
             | Starboard -> "starboard"
         let currentValue =
-            Avatar.GetCurrentFouling context vesselSingleStatisticSource avatarId
+            Avatar.GetCurrentFouling context avatarId
         let maximumValue = 
-            Avatar.GetMaximumFouling context vesselSingleStatisticSource avatarId
+            Avatar.GetMaximumFouling context avatarId
         let foulage =
             100.0 * currentValue / maximumValue
         [

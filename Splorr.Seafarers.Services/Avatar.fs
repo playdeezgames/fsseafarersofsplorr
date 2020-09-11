@@ -55,12 +55,10 @@ type AvatarSetSpeedContext =
     abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
 
 type AvatarGetCurrentFoulingContext =
-    interface
-    end
+    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
 
 type AvatarGetMaximumFoulingContext =
-    interface
-    end
+    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
 
 type AvatarGetEffectiveSpeedContext =
     inherit AvatarGetCurrentFoulingContext
@@ -81,14 +79,6 @@ type AvatarIncrementMetricContext =
 type AvatarGetPositionContext = 
     abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
 
-type AvatarMoveContext =
-    inherit VesselBefoulContext
-    inherit ShipmateTransformStatisticContext
-    inherit AvatarEatContext
-    inherit AvatarGetEffectiveSpeedContext
-    inherit AvatarSetPositionContext
-    inherit AvatarGetPositionContext
-
 type AvatarGetPrimaryStatisticContext =
     interface
     end
@@ -103,8 +93,7 @@ type AvatarGetItemCountContext =
     end
 
 type AvatarAddMessagesContext =
-    interface
-    end
+    abstract member avatarMessageSink : AvatarMessageSink
 
 type AvatarGetUsedTonnageContext =
     interface
@@ -127,10 +116,23 @@ type AvatarSpendMoneyContext =
 type AvatarAddInventoryContext =
     inherit AvatarGetItemCountContext
 
+type AvatarTransformShipmatesContext =
+    abstract avatarShipmateSource : AvatarShipmateSource
+
+type AvatarMoveContext =
+    inherit VesselBefoulContext
+    inherit ShipmateTransformStatisticContext
+    inherit AvatarEatContext
+    inherit AvatarGetEffectiveSpeedContext
+    inherit AvatarSetPositionContext
+    inherit AvatarGetPositionContext
+    inherit AvatarTransformShipmatesContext
+
 type AvatarCleanHullContext =
     inherit VesselTransformFoulingContext
     inherit ShipmateTransformStatisticContext
     inherit AvatarIncrementMetricContext
+    inherit AvatarTransformShipmatesContext
 
 module Avatar =
     let Create 
@@ -305,47 +307,44 @@ module Avatar =
                 Metric.Starved 
                 starved
 
+    let GetFouling
+            //TODO: context me
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (getter : Statistic -> float)
+            (avatarId                    : string)
+            :float =
+        [
+            VesselStatisticIdentifier.PortFouling
+            VesselStatisticIdentifier.StarboardFouling
+        ]
+        |> List.map
+            (vesselSingleStatisticSource avatarId
+                >> Option.map getter
+                >> Option.defaultValue 0.0)
+        |> List.reduce (+)
     
     let GetCurrentFouling
-            (context : AvatarGetCurrentFoulingContext)
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
-            (avatarId                    : string)
-            :float =
-        let portFouling = 
-            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PortFouling
-            |> Option.map (fun x -> x.CurrentValue)
-            |> Option.defaultValue 0.0
-        let starboardFouling = 
-            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.StarboardFouling
-            |> Option.map (fun x -> x.CurrentValue)
-            |> Option.defaultValue 0.0
-        portFouling + starboardFouling
+            (context : AvatarGetCurrentFoulingContext) =
+        GetFouling 
+            context.vesselSingleStatisticSource 
+            Statistic.GetCurrentValue
     
     let GetMaximumFouling
-            (context : AvatarGetMaximumFoulingContext)
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
-            (avatarId                    : string)
-            :float =
-        let portFouling = 
-            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PortFouling
-            |> Option.map (fun x -> x.MaximumValue)
-            |> Option.defaultValue 0.0
-        let starboardFouling = 
-            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.StarboardFouling
-            |> Option.map (fun x -> x.MaximumValue)
-            |> Option.defaultValue 0.0
-        portFouling + starboardFouling
+            (context : AvatarGetMaximumFoulingContext) =
+        GetFouling 
+            context.vesselSingleStatisticSource 
+            Statistic.GetMaximumValue 
 
     let GetEffectiveSpeed 
             (context : AvatarGetEffectiveSpeedContext)
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (avatarId                    : string)
             : float =
-        let currentValue = GetCurrentFouling context vesselSingleStatisticSource avatarId
+        let currentValue = GetCurrentFouling context avatarId
         let currentSpeed = GetSpeed context avatarId |> Option.get
         (currentSpeed * (1.0 - currentValue))
 
     let TransformShipmates 
+            (context : AvatarTransformShipmatesContext)
             (avatarShipmateSource : AvatarShipmateSource)
             (transform            : ShipmateIdentifier -> unit) 
             (avatarId             : string) 
@@ -362,7 +361,7 @@ module Avatar =
             : unit =
         let actualSpeed = 
             avatarId 
-            |> GetEffectiveSpeed context vesselSingleStatisticSource
+            |> GetEffectiveSpeed context
         let actualHeading = 
             vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Heading 
             |> Option.map Statistic.GetCurrentValue 
@@ -378,6 +377,7 @@ module Avatar =
         let newPosition = ((avatarPosition |> fst) + System.Math.Cos(actualHeading) * actualSpeed, (avatarPosition |> snd) + System.Math.Sin(actualHeading) * actualSpeed)
         SetPosition context newPosition avatarId
         TransformShipmates
+            context
             avatarShipmateSource
             (fun identifier -> 
                 Shipmate.TransformStatistic 
@@ -544,8 +544,8 @@ module Avatar =
     let AddMessages 
             (context : AvatarAddMessagesContext)
             (avatarMessageSink : AvatarMessageSink)
-            (messages          : string list) 
-            (avatarId          : string) 
+            (messages : string list) 
+            (avatarId : string) 
             : unit =
         messages
         |> List.iter (avatarMessageSink avatarId)
@@ -573,8 +573,11 @@ module Avatar =
             context
             avatarId 
             side 
-            (fun x-> {x with CurrentValue = x.MinimumValue})
+            (fun x-> 
+                {x with 
+                    CurrentValue = x.MinimumValue})
         TransformShipmates 
+            context
             avatarShipmateSource 
             (Shipmate.TransformStatistic
                 context

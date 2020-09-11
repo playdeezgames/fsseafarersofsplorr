@@ -7,7 +7,8 @@ open WorldTestFixtures
 open CommonTestFixtures
 
 type TestWorldCleanHullContext
-        (avatarSingleMetricSink,
+        (avatarShipmateSource,
+        avatarSingleMetricSink,
         avatarSingleMetricSource,
         shipmateSingleStatisticSink,
         shipmateSingleStatisticSource,
@@ -16,6 +17,8 @@ type TestWorldCleanHullContext
     interface WorldCleanHullContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarTransformShipmatesContext with
+        member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
     interface AvatarAddMetricContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
@@ -41,7 +44,8 @@ let ``CleanHull.It returns the original world when given a bogus avatar id and w
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
     let context = 
         TestWorldCleanHullContext
-            ((assertAvatarSingleMetricSink [Metric.CleanedHull, 1UL]),
+            (avatarShipmateSource,
+            (assertAvatarSingleMetricSink [Metric.CleanedHull, 1UL]),
             avatarSingleMetricSourceStub,
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
@@ -78,7 +82,8 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
     let context = 
         TestWorldCleanHullContext
-            ((assertAvatarSingleMetricSink [Metric.CleanedHull, 1UL]),
+            (avatarShipmateSource,
+            (assertAvatarSingleMetricSink [Metric.CleanedHull, 1UL]),
             avatarSingleMetricSourceStub,
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,

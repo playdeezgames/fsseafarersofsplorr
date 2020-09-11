@@ -18,12 +18,14 @@ type TestIslandFeatureRunContext
         member _.islandSingleNameSource : IslandSingleNameSource = islandSingleNameSource
         member _.islandSingleFeatureSource : IslandSingleFeatureSource = islandSingleFeatureSource
 
+    interface AvatarAddMessagesContext with
+        member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+
     interface IslandFeatureRunDarkAlleyContext with
         member _.avatarMessageSource : AvatarMessageSource = avatarMessageSource
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
         member _.islandSingleStatisticSource   : IslandSingleStatisticSource = islandSingleStatisticSource
         member _.shipmateSingleStatisticSource : ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-
 
 [<Test>]
 let ``Run.It should return AtSea when the given island does not exist.`` () =

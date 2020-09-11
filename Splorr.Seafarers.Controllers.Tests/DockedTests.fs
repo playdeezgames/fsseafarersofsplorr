@@ -46,7 +46,10 @@ type TestDockedRunContext
         member _.avatarMessageSource            : AvatarMessageSource            = avatarMessageSource           
         member _.islandSingleNameSource         : IslandSingleNameSource         = islandSingleNameSource  
         member _.islandFeatureSource            : IslandFeatureSource            = islandFeatureSource
-        
+       
+    interface AvatarAddMessagesContext with
+        member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+
     interface WorldUndockContext with
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink

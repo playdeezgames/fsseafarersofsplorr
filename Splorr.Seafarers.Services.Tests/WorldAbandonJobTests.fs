@@ -6,11 +6,14 @@ open Splorr.Seafarers.Models
 open CommonTestFixtures
 
 type TestWorldAbandonJobContext
-        (avatarSingleMetricSink,
+        (avatarMessageSink,
+        avatarSingleMetricSink,
         avatarSingleMetricSource,
         shipmateSingleStatisticSink, 
         shipmateSingleStatisticSource) =
     interface WorldAbandonJobContext
+    interface AvatarAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface AvatarAddMetricContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
@@ -37,7 +40,8 @@ let ``AbandonJob.It adds a message when the avatar has no job.`` () =
         None
     let context = 
         TestWorldAbandonJobContext
-            ((assertAvatarSingleMetricSink [Metric.AcceptedJob, 1UL]),
+            ((avatarExpectedMessageSink expectedMessage),
+            (assertAvatarSingleMetricSink [Metric.AcceptedJob, 1UL]),
             avatarSingleMetricSourceStub,
             shipmateSingleStatisticSink, 
             shipmateSingleStatisticSource) :> WorldAbandonJobContext
@@ -80,7 +84,8 @@ let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a
         |> Some
     let context = 
         TestWorldAbandonJobContext
-            ((assertAvatarSingleMetricSink [Metric.AbandonedJob, 1UL]),
+            ((avatarExpectedMessageSink expectedMessage),
+            (assertAvatarSingleMetricSink [Metric.AbandonedJob, 1UL]),
             avatarSingleMetricSourceStub,
             shipmateSingleStatisticSink, 
             shipmateSingleStatisticSource) :> WorldAbandonJobContext

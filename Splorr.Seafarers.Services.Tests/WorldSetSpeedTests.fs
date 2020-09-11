@@ -5,12 +5,14 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
 
-type TestWorldSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
+type TestWorldSetSpeedContext(avatarMessageSink, vesselSingleStatisticSink, vesselSingleStatisticSource) =
     interface AvatarGetSpeedContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarSetSpeedContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface WorldSetSpeedContext
 
 [<Test>]
@@ -27,7 +29,7 @@ let ``SetSpeed.It produces all stop in the avatar when less than zero is passed.
         Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
     let inputSpeed = -1.0
-    let context = TestWorldSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
+    let context = TestWorldSetSpeedContext(avatarMessageSinkStub, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
     avatarId
     |> World.SetSpeed 
         context
@@ -49,7 +51,7 @@ let ``SetSpeed.It produces full speed when greater than one is passed.`` () =
         Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
     let inputSpeed = 2.0
-    let context = TestWorldSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
+    let context = TestWorldSetSpeedContext(avatarMessageSinkStub, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
     avatarId
     |> World.SetSpeed 
         context
@@ -72,7 +74,7 @@ let ``SetSpeed.It produces half speed when one half is passed.`` () =
         Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
     let inputSpeed = 0.5
-    let context = TestWorldSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
+    let context = TestWorldSetSpeedContext(avatarMessageSinkStub, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
     avatarId
     |> World.SetSpeed 
         context
@@ -98,7 +100,7 @@ let ``SetSpeed.It does nothing when a bogus avatarid is passed.`` () =
     let inputSpeed = 1.0
     let avatarMessageSink (_) (_) =
         Assert.Fail("Dont call me.")
-    let context = TestWorldSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
+    let context = TestWorldSetSpeedContext(avatarMessageSink, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
     inputWorld
     |> World.SetSpeed 
         context
@@ -119,7 +121,7 @@ let ``SetSpeed.It produces full speed when one is passed.`` () =
         Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
     let inputSpeed = 1.0
-    let context = TestWorldSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
+    let context = TestWorldSetSpeedContext(avatarMessageSinkStub, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
     avatarId
     |> World.SetSpeed 
         context
@@ -142,7 +144,7 @@ let ``SetSpeed.It sets all stop when given zero`` () =
         Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
     let inputSpeed = 0.0
-    let context = TestWorldSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
+    let context = TestWorldSetSpeedContext(avatarMessageSinkStub, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
     avatarId
     |> World.SetSpeed 
         context

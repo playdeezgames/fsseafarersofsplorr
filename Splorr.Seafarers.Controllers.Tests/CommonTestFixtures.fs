@@ -327,6 +327,9 @@ type TestAtSeaRunContext
         member _.avatarInventorySource : AvatarInventorySource=avatarInventorySource
         member _.avatarShipmateSource : AvatarShipmateSource=avatarShipmateSource
 
+    interface AvatarGetCurrentFoulingContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
     interface AtSeaRunContext with
         member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource
@@ -360,6 +363,12 @@ type TestAtSeaRunContext
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
         member _.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
+
+    interface AvatarAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+
+    interface AvatarTransformShipmatesContext with
+        member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
 
 let commandSourceExplode () : Command option =
     raise (System.NotImplementedException "There should be no input handling here!")

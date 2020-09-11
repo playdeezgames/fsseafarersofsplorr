@@ -73,6 +73,10 @@ type TestAvatarMoveContext
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
+    interface AvatarGetCurrentFoulingContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarTransformShipmatesContext with
+        member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
     interface AvatarMoveContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarAddMetricContext with
@@ -96,7 +100,8 @@ type TestAvatarMoveContext
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 type TestAvatarCleanHullContext
-        (avatarSingleMetricSink,
+        (avatarShipmateSource,
+        avatarSingleMetricSink,
         avatarSingleMetricSource,
         shipmateSingleStatisticSink, 
         shipmateSingleStatisticSource, 
@@ -105,6 +110,8 @@ type TestAvatarCleanHullContext
     interface AvatarCleanHullContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarTransformShipmatesContext with
+        member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
     interface AvatarAddMetricContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
@@ -162,8 +169,9 @@ type TestAvatarRemoveInventoryContext(avatarInventorySink, avatarInventorySource
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
 
-type TestAvatarAddMessagesContext() =
-    interface AvatarAddMessagesContext
+type TestAvatarAddMessagesContext(avatarMessageSink) =
+    interface AvatarAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
 
 type TestAvatarAddMetricContext
         (avatarSingleMetricSink,
@@ -178,13 +186,17 @@ type TestAvatarGetUsedTonnageContext() =
 type TestAvatarGetEffectiveSpeedContext(vesselSingleStatisticSource) =
     interface AvatarGetSpeedContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarGetCurrentFoulingContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarGetEffectiveSpeedContext
 
-type TestAvatarGetCurrentFoulingContext() = 
-    interface AvatarGetCurrentFoulingContext
+type TestAvatarGetCurrentFoulingContext(vesselSingleStatisticSource) = 
+    interface AvatarGetCurrentFoulingContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-type TestAvatarGetMaximumFoulingContext() =
-    interface AvatarGetMaximumFoulingContext
+type TestAvatarGetMaximumFoulingContext(vesselSingleStatisticSource) =
+    interface AvatarGetMaximumFoulingContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 type TestAvatarGetSpeedContext(vesselSingleStatisticSource) =
     interface AvatarGetSpeedContext with
@@ -1158,7 +1170,7 @@ let ``AddMessages.It adds messages to a given avatar.`` () =
             ()
         | _ ->
             Assert.Fail("Got an unexpected message.")
-    let context = TestAvatarAddMessagesContext() :> AvatarAddMessagesContext
+    let context = TestAvatarAddMessagesContext(avatarMessageSink) :> AvatarAddMessagesContext
     input
     |> Avatar.AddMessages context avatarMessageSink inputMessages
 
@@ -1230,7 +1242,7 @@ let ``GetEffectiveSpeed.It returns full speed when there is no fouling.`` () =
     let expected = 1.0
     let context = TestAvatarGetEffectiveSpeedContext(vesselSingleStatisticSource) :> AvatarGetEffectiveSpeedContext
     let actual =
-        Avatar.GetEffectiveSpeed context vesselSingleStatisticSource inputAvatarId
+        Avatar.GetEffectiveSpeed context inputAvatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -1239,7 +1251,7 @@ let ``GetEffectiveSpeed.It returns proportionally reduced speed when there is fo
     let vesselSingleStatisticSource (_) (_) = {MinimumValue=0.0;MaximumValue=0.25;CurrentValue=0.25} |> Some
     let context = TestAvatarGetEffectiveSpeedContext(vesselSingleStatisticSource) :> AvatarGetEffectiveSpeedContext
     let actual =
-        Avatar.GetEffectiveSpeed context vesselSingleStatisticSource inputAvatarId
+        Avatar.GetEffectiveSpeed context inputAvatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -1266,7 +1278,8 @@ let ``CleanHull.It cleans the hull of the given avatar.`` () =
             raise (System.NotImplementedException "Kaboom shipmateSingleStatisticSink")
     let context = 
         TestAvatarCleanHullContext
-            ((assertAvatarSingleMetricSink [(Metric.CleanedHull, 1UL)]),
+            (avatarShipmateSource,
+            (assertAvatarSingleMetricSink [(Metric.CleanedHull, 1UL)]),
             avatarSingleMetricSourceStub,
             shipmateSingleStatisticSink, 
             shipmateSingleStatisticSource, 
@@ -1323,9 +1336,9 @@ let ``GetCurrentFouling.It returns the current fouling for the Avatar.`` () =
         {MaximumValue=0.5; MinimumValue=0.0; CurrentValue=0.25} |> Some
     let inputAvatarId = "avatar"
     let expected = 0.5
-    let context = TestAvatarGetCurrentFoulingContext() :> AvatarGetCurrentFoulingContext
+    let context = TestAvatarGetCurrentFoulingContext(vesselSingleStatisticSource) :> AvatarGetCurrentFoulingContext
     let actual = 
-        Avatar.GetCurrentFouling context vesselSingleStatisticSource inputAvatarId
+        Avatar.GetCurrentFouling context inputAvatarId
     Assert.AreEqual(expected, actual)
 
 
@@ -1335,9 +1348,9 @@ let ``GetMaximumFouling.It returns the maximum fouling for the Avatar.`` () =
         {MaximumValue=0.5; MinimumValue=0.0; CurrentValue=0.25} |> Some
     let inputAvatarId = "avatar"
     let expected = 1.0
-    let context = TestAvatarGetMaximumFoulingContext() :> AvatarGetMaximumFoulingContext
+    let context = TestAvatarGetMaximumFoulingContext(vesselSingleStatisticSource) :> AvatarGetMaximumFoulingContext
     let actual = 
-        Avatar.GetMaximumFouling context vesselSingleStatisticSource inputAvatarId
+        Avatar.GetMaximumFouling context inputAvatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]

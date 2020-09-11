@@ -8,6 +8,7 @@ open CommonTestFixtures
 type TestWorldSellItemsContext
         (avatarInventorySink,
         avatarInventorySource,
+        avatarMessageSink,
         commoditySource, 
         islandMarketSource, 
         islandSingleMarketSink,
@@ -26,6 +27,8 @@ type TestWorldSellItemsContext
         member _.commoditySource: CommoditySource = commoditySource
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
         member _.itemSingleSource : ItemSingleSource = itemSingleSource
+    interface AvatarAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface ShipmateTransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
@@ -52,6 +55,7 @@ let ``SellItems.It gives a message when given a bogus island location.`` () =
         TestWorldSellItemsContext
             (avatarInventorySink,
             avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
             commoditySource, 
             islandMarketSourceStub, 
             islandSingleMarketSinkStub ,
@@ -101,6 +105,7 @@ let ``SellItems.It gives a message when given a valid island location and bogus 
         TestWorldSellItemsContext
             (avatarInventorySink,
             avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
             commoditySource, 
             islandMarketSourceStub, 
             islandSingleMarketSinkStub ,
@@ -146,6 +151,7 @@ let ``SellItems.It gives a message when the avatar has insufficient items in inv
         TestWorldSellItemsContext
             (avatarInventorySink,
             avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
             commoditySource, 
             islandMarketSourceStub, 
             islandSingleMarketSinkStub ,
@@ -191,6 +197,7 @@ let ``SellItems.It gives a message when the avatar has no items in inventory and
         TestWorldSellItemsContext
             (avatarInventorySink,
             avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
             commoditySource, 
             islandMarketSourceStub, 
             islandSingleMarketSinkStub ,
@@ -257,6 +264,7 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
         TestWorldSellItemsContext
             (avatarInventorySink,
             avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
             commoditySource, 
             islandMarketSource, 
             islandSingleMarketSink ,
@@ -323,6 +331,7 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
         TestWorldSellItemsContext
             (avatarInventorySink,
             avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
             commoditySource, 
             islandMarketSource, 
             islandSingleMarketSink ,

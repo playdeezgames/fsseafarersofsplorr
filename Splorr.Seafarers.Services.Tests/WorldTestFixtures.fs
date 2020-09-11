@@ -47,12 +47,12 @@ type TestWorldDockContext
             worldSingleStatisticSource     : WorldSingleStatisticSource
         ) =
     interface WorldDockContext with
+        member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         member _.avatarIslandFeatureSink        : AvatarIslandFeatureSink = avatarIslandFeatureSink
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource= avatarIslandSingleMetricSource
         member _.avatarJobSink                  : AvatarJobSink= avatarJobSink
         member _.avatarJobSource                : AvatarJobSource=avatarJobSource
-        member _.avatarMessageSink              : AvatarMessageSink=avatarMessageSink
         member _.avatarSingleMetricSink         : AvatarSingleMetricSink=avatarSingleMetricSink
         member _.avatarSingleMetricSource       : AvatarSingleMetricSource=avatarSingleMetricSource
         member _.commoditySource                : CommoditySource =commoditySource
@@ -64,31 +64,42 @@ type TestWorldDockContext
         member _.itemSource                     : ItemSource =itemSource
         member _.shipmateSingleStatisticSink    : ShipmateSingleStatisticSink=shipmateSingleStatisticSink
         member _.shipmateSingleStatisticSource  : ShipmateSingleStatisticSource=shipmateSingleStatisticSource
+
+    interface AvatarAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+
     interface AvatarAddMetricContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
+
     interface ShipmateTransformStatisticContext with
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+
     interface IslandGenerateItemsContext with
         member _.islandItemSink: IslandItemSink = islandItemSink
         member _.islandItemSource: IslandItemSource = islandItemSource
         member _.itemSource: ItemSource = itemSource
         member _.random: Random = random
+
     interface IslandGenerateCommoditiesContext with
         member _.commoditySource: CommoditySource = commoditySource
         member _.islandMarketSink: IslandMarketSink = islandMarketSink
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
         member _.random : Random = random
+
     interface IslandAddVisitContext with
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
+
     interface IslandGenerateJobsContext with
         member _.islandJobSink              : IslandJobSink=islandJobSink
         member _.islandJobSource            : IslandJobSource=islandJobSource
+
     interface UtilitySortListRandomlyContext with
         member _.random : Random = random
+
     interface JobCreateContext with 
         member _.termSources                : TermSources = termSources
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource

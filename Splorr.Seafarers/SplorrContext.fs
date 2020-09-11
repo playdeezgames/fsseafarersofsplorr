@@ -105,17 +105,23 @@ type SplorrContext
         member _.avatarInventorySource         : AvatarInventorySource=avatarInventorySource
         member _.avatarShipmateSource          : AvatarShipmateSource=avatarShipmateSource
 
+    interface AvatarTransformShipmatesContext with
+        member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
+
     interface AtSeaHandleCommandContext with
+        member _.avatarShipmateSource           : AvatarShipmateSource = avatarShipmateSource
         member _.avatarInventorySink            : AvatarInventorySink        =avatarInventorySink        
         member _.avatarInventorySource          : AvatarInventorySource      =avatarInventorySource      
         member _.avatarMessagePurger            : AvatarMessagePurger        =avatarMessagePurger        
-        member _.avatarShipmateSource           : AvatarShipmateSource       =avatarShipmateSource       
         member _.islandLocationByNameSource     : IslandLocationByNameSource =islandLocationByNameSource 
         member _.islandSingleNameSource         : IslandSingleNameSource     =islandSingleNameSource     
         member _.islandSingleStatisticSource    : IslandSingleStatisticSource=islandSingleStatisticSource
         member _.shipmateRationItemSource       : ShipmateRationItemSource   =shipmateRationItemSource   
         member _.vesselSingleStatisticSink      : VesselSingleStatisticSink  =vesselSingleStatisticSink  
         member _.vesselSingleStatisticSource    : VesselSingleStatisticSource=vesselSingleStatisticSource
+
+    interface AvatarGetCurrentFoulingContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface AtSeaRunContext with
         member _.avatarMessageSource: AvatarMessageSource = avatarMessageSource
@@ -248,6 +254,9 @@ type SplorrContext
         member _.avatarSingleMetricSink   : AvatarSingleMetricSink = avatarSingleMetricSink
         member _.avatarSingleMetricSource : AvatarSingleMetricSource = avatarSingleMetricSource
 
+    interface AvatarAddMessagesContext with
+        member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
+
     interface WorldDockContext with
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
         member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
@@ -271,6 +280,9 @@ type SplorrContext
 
     interface HelpRunContext with
         member _.avatarIslandFeatureSource : AvatarIslandFeatureSource = avatarIslandFeatureSource
+
+    interface AvatarGetMaximumFoulingContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface RunnerRunContext with
         member _.avatarMetricSource              : AvatarMetricSource=avatarMetricSource

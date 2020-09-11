@@ -9,6 +9,7 @@ open CommonTestFixtures
 type TestWorldMoveContext
         (avatarInventorySink,
         avatarInventorySource,
+        avatarMessageSink,
         avatarShipmateSource,
         avatarSingleMetricSink,
         avatarSingleMetricSource,
@@ -47,6 +48,12 @@ type TestWorldMoveContext
         member _.avatarInventorySink           : AvatarInventorySink=avatarInventorySink
         member _.avatarInventorySource         : AvatarInventorySource=avatarInventorySource
         member _.avatarShipmateSource          : AvatarShipmateSource=avatarShipmateSource
+    interface AvatarGetCurrentFoulingContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface AvatarTransformShipmatesContext with
+        member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
     interface WorldMoveContext
 
 [<Test>]
@@ -114,6 +121,7 @@ let ``Move.It moves the avatar one unit when give 1u for distance when given a v
         TestWorldMoveContext
             (avatarInventorySink,
             avatarInventorySource,
+            avatarMessageSinkStub,
             avatarShipmateSource,
             (assertAvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL]),
             avatarSingleMetricSourceStub,
@@ -208,6 +216,7 @@ let ``Move.It moves the avatar almost two units when give 2u for distance.`` () 
         TestWorldMoveContext
             (avatarInventorySink,
             avatarInventorySource,
+            avatarMessageSinkStub,
             avatarShipmateSource,
             (assertAvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL]),
             avatarSingleMetricSourceStub,

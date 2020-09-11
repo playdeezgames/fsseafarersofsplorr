@@ -6,7 +6,7 @@ open Splorr.Seafarers.Models
 open WorldTestFixtures
 open CommonTestFixtures
 
-type TestWorldHeadForContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
+type TestWorldHeadForContext(avatarMessageSink, vesselSingleStatisticSink, vesselSingleStatisticSource) =
     interface AvatarGetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarGetHeadingContext with
@@ -14,6 +14,8 @@ type TestWorldHeadForContext(vesselSingleStatisticSink, vesselSingleStatisticSou
     interface AvatarSetHeadingContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface WorldHeadForContext
 
 [<Test>]
@@ -35,7 +37,7 @@ let ``HeadFor.It adds a message when the island name does not exist.`` () =
         None
     let islandLocationByNameSource (_) =
         None
-    let context = TestWorldHeadForContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldHeadForContext
+    let context = TestWorldHeadForContext((avatarExpectedMessageSink expectedMessage), vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldHeadForContext
     inputWorld
     |> World.HeadFor 
         context
@@ -70,7 +72,7 @@ let ``HeadFor.It adds a message when the island name exists but is not known.`` 
     let islandLocationByNameSource (_) =
         []
         |> List.tryHead
-    let context = TestWorldHeadForContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldHeadForContext
+    let context = TestWorldHeadForContext((avatarExpectedMessageSink expectedMessage), vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldHeadForContext
     inputWorld
     |> World.HeadFor 
         context
@@ -112,7 +114,7 @@ let ``HeadFor.It sets the heading when the island name exists and is known.`` ()
     let islandLocationByNameSource (_) =
         [(0.0, 0.0)]
         |> List.tryHead
-    let context = TestWorldHeadForContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldHeadForContext
+    let context = TestWorldHeadForContext((avatarMessagesSinkFake [firstExpectedMessage; secondExpectedMessage]), vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldHeadForContext
     inputWorld
     |> World.HeadFor 
         context

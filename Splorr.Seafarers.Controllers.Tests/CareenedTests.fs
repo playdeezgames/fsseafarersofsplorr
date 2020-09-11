@@ -8,7 +8,8 @@ open CommonTestFixtures
 open AtSeaTestFixtures
 
 type TestCareenedRunContext 
-        (avatarSingleMetricSink,
+        (avatarShipmateSource,
+        avatarSingleMetricSink,
         avatarSingleMetricSource,
         shipmateSingleStatisticSink,
         shipmateSingleStatisticSource,
@@ -19,6 +20,12 @@ type TestCareenedRunContext
     interface AvatarAddMetricContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
+    interface AvatarGetCurrentFoulingContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarGetMaximumFoulingContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarTransformShipmatesContext with
+        member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
     interface CareenedRunContext with
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
@@ -30,7 +37,8 @@ let private functionUnderTest
         (avatarSingleMetricSink : AvatarSingleMetricSink)= 
     let context = 
         TestCareenedRunContext 
-            (avatarSingleMetricSink,
+            (avatarShipmateSourceStub,
+            avatarSingleMetricSink,
             avatarSingleMetricSourceStub,
             shipmateSingleStatisticSinkStub, 
             shipmateSingleStatisticSourceStub, 
@@ -68,7 +76,8 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
             raise (System.NotImplementedException (identifier.ToString() |> sprintf "shipmateSingleStatisticSource - %s"))
     let context = 
         TestCareenedRunContext 
-            (avatarSingleMetricSinkExplode,
+            (avatarShipmateSourceStub,
+            avatarSingleMetricSinkExplode,
             avatarSingleMetricSourceStub,
             shipmateSingleStatisticSinkStub,
             shipmateSingleStatisticSource, 
