@@ -275,13 +275,10 @@ module Avatar =
 
     let private Eat
             (context : AvatarEatContext)
-            (avatarInventorySink           : AvatarInventorySink)
-            (avatarInventorySource         : AvatarInventorySource)
-            (avatarShipmateSource          : AvatarShipmateSource)
             (avatarId                      : string)
             : unit =
         let inventory, eaten, starved =
-            ((avatarInventorySource avatarId, 0UL, 0UL), avatarShipmateSource avatarId)
+            ((context.avatarInventorySource avatarId, 0UL, 0UL), context.avatarShipmateSource avatarId)
             ||> List.fold 
                 (fun (inventory,eatMetric, starveMetric) identifier -> 
                     let updateInventory, ate, starved =
@@ -294,7 +291,7 @@ module Avatar =
                         (if ate then eatMetric+1UL else eatMetric), 
                             (if starved then starveMetric+1UL else starveMetric))) 
         inventory
-        |> avatarInventorySink avatarId
+        |> context.avatarInventorySink avatarId
         if eaten > 0UL then
             avatarId
             |> AddMetric 
@@ -359,8 +356,6 @@ module Avatar =
 
     let Move
             (context : AvatarMoveContext)
-            (avatarInventorySink           : AvatarInventorySink)
-            (avatarInventorySource         : AvatarInventorySource)
             (avatarShipmateSource          : AvatarShipmateSource)
             (vesselSingleStatisticSource   : VesselSingleStatisticSource)
             (avatarId                      : string)
@@ -400,9 +395,6 @@ module Avatar =
         avatarId
         |> Eat 
             context
-            avatarInventorySink
-            avatarInventorySource
-            avatarShipmateSource
 
     let private SetPrimaryStatistic
             (context    : AvatarSetPrimaryStatisticContext)

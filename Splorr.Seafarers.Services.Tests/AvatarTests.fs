@@ -507,8 +507,6 @@ let ``Move.It moves the avatar.`` () =
             vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
-        avatarInventorySink
-        avatarInventorySource
         avatarShipmateSourceStub
         vesselSingleStatisticSource 
         inputAvatarId
@@ -556,8 +554,6 @@ let ``Move.It removes a ration when the given avatar has rations and full satiet
             vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
-        avatarInventorySink
-        avatarInventorySource
         avatarShipmateSource
         vesselSingleStatisticSource 
         inputAvatarId
@@ -604,8 +600,6 @@ let ``Move.It removes a ration and increases satiety when the given avatar has r
             vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
-        avatarInventorySink
-        avatarInventorySource
         avatarShipmateSource
         vesselSingleStatisticSource 
         inputAvatarId
@@ -652,8 +646,6 @@ let ``Move.It lowers the avatar's satiety but does not affect turns when the giv
             vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
-        avatarInventorySink
-        avatarInventorySource
         avatarShipmateSource
         vesselSingleStatisticSource 
         inputAvatarId
@@ -709,8 +701,6 @@ let ``Move.It lowers the avatar's maximum turn and updates the starvation metric
             vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
-        avatarInventorySink
-        avatarInventorySource
         avatarShipmateSource
         vesselSingleStatisticSource 
         inputAvatarId
@@ -1488,8 +1478,6 @@ let ``Move.It transforms the avatar within the given world.`` () =
             vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
             context
-            avatarInventorySink
-            avatarInventorySource
             avatarShipmateSource
             vesselSingleStatisticSource 
             avatarId

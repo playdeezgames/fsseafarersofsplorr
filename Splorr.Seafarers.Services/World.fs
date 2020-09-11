@@ -391,8 +391,6 @@ module World =
             |> AddMessages context avatarMessageSink [ "Steady as she goes." ]
             Avatar.Move 
                 context
-                avatarInventorySink
-                avatarInventorySource
                 avatarShipmateSource
                 vesselSingleStatisticSource 
                 avatarId 
