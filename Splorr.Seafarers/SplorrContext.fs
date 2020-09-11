@@ -100,6 +100,11 @@ type SplorrContext
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
+    interface AvatarEatContext with
+        member _.avatarInventorySink           : AvatarInventorySink=avatarInventorySink
+        member _.avatarInventorySource         : AvatarInventorySource=avatarInventorySource
+        member _.avatarShipmateSource          : AvatarShipmateSource=avatarShipmateSource
+
     interface AtSeaHandleCommandContext with
         member _.avatarInventorySink            : AvatarInventorySink        =avatarInventorySink        
         member _.avatarInventorySource          : AvatarInventorySource      =avatarInventorySource      

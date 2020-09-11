@@ -7,7 +7,10 @@ open WorldTestFixtures
 open CommonTestFixtures
 
 type TestWorldMoveContext
-        (avatarSingleMetricSink,
+        (avatarInventorySink,
+        avatarInventorySource,
+        avatarShipmateSource,
+        avatarSingleMetricSink,
         avatarSingleMetricSource,
         shipmateRationItemSource,
         shipmateSingleStatisticSink,
@@ -40,6 +43,10 @@ type TestWorldMoveContext
     interface AvatarAddMetricContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
+    interface AvatarEatContext with
+        member _.avatarInventorySink           : AvatarInventorySink=avatarInventorySink
+        member _.avatarInventorySource         : AvatarInventorySource=avatarInventorySource
+        member _.avatarShipmateSource          : AvatarShipmateSource=avatarShipmateSource
     interface WorldMoveContext
 
 [<Test>]
@@ -105,7 +112,10 @@ let ``Move.It moves the avatar one unit when give 1u for distance when given a v
         []
     let context = 
         TestWorldMoveContext
-            ((assertAvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL]),
+            (avatarInventorySink,
+            avatarInventorySource,
+            avatarShipmateSource,
+            (assertAvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL]),
             avatarSingleMetricSourceStub,
             shipmateRationItemSourceStub,
             shipmateSingleStatisticSink,
@@ -196,7 +206,10 @@ let ``Move.It moves the avatar almost two units when give 2u for distance.`` () 
         []
     let context = 
         TestWorldMoveContext
-            ((assertAvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL]),
+            (avatarInventorySink,
+            avatarInventorySource,
+            avatarShipmateSource,
+            (assertAvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL]),
             avatarSingleMetricSourceStub,
             shipmateRationItemSourceStub,
             shipmateSingleStatisticSink,

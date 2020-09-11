@@ -394,12 +394,6 @@ module World =
                 avatarInventorySink
                 avatarInventorySource
                 avatarShipmateSource
-                avatarSingleMetricSink
-                avatarSingleMetricSource
-                shipmateRationItemSource 
-                shipmateSingleStatisticSink
-                shipmateSingleStatisticSource
-                vesselSingleStatisticSink 
                 vesselSingleStatisticSource 
                 avatarId 
             avatarId
@@ -461,8 +455,6 @@ module World =
                 context
                 avatarJobSink
                 avatarJobSource
-                avatarSingleMetricSink
-                avatarSingleMetricSource
                 shipmateSingleStatisticSink 
                 shipmateSingleStatisticSource 
                 avatarId
@@ -512,8 +504,6 @@ module World =
             avatarId
             |> Avatar.AddMetric 
                 context
-                context.avatarSingleMetricSink
-                context.avatarSingleMetricSource
                 Metric.VisitedIsland 
                 (if newVisitCount > oldVisitCount then 1UL else 0UL)
             avatarId
@@ -636,8 +626,6 @@ module World =
                 avatarId
                 |> Avatar.AddMetric 
                     context
-                    avatarSingleMetricSink
-                    avatarSingleMetricSource
                     Metric.AcceptedJob 
                     1UL
                 avatarJobSink avatarId (job|>Some)
@@ -674,8 +662,6 @@ module World =
                 context
                 avatarJobSink
                 avatarJobSource
-                avatarSingleMetricSink
-                avatarSingleMetricSource
                 shipmateSingleStatisticSink 
                 shipmateSingleStatisticSource 
                 avatarId
@@ -858,12 +844,6 @@ module World =
         |> Avatar.CleanHull 
             context
             avatarShipmateSource
-            avatarSingleMetricSink
-            avatarSingleMetricSource
-            shipmateSingleStatisticSink
-            shipmateSingleStatisticSource
-            vesselSingleStatisticSink 
-            vesselSingleStatisticSource
             side 
 
     let Undock

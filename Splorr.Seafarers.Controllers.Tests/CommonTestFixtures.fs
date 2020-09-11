@@ -315,12 +315,17 @@ type TestAtSeaRunContext
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface AvatarSetHeadingContext with
-        member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
-        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        member _.vesselSingleStatisticSink : VesselSingleStatisticSink = vesselSingleStatisticSink
+        member _.vesselSingleStatisticSource : VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface AvatarAddMetricContext with
         member _.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member _.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
+
+    interface AvatarEatContext with
+        member _.avatarInventorySink : AvatarInventorySink=avatarInventorySink
+        member _.avatarInventorySource : AvatarInventorySource=avatarInventorySource
+        member _.avatarShipmateSource : AvatarShipmateSource=avatarShipmateSource
 
     interface AtSeaRunContext with
         member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink
