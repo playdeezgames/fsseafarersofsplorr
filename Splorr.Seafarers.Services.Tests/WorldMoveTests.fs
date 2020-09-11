@@ -9,10 +9,12 @@ open CommonTestFixtures
 type TestWorldMoveContext
         (avatarInventorySink,
         avatarInventorySource,
+        avatarIslandSingleMetricSink,
         avatarMessageSink,
         avatarShipmateSource,
         avatarSingleMetricSink,
         avatarSingleMetricSource,
+        islandSource,
         shipmateRationItemSource,
         shipmateSingleStatisticSink,
         shipmateSingleStatisticSource,
@@ -49,11 +51,15 @@ type TestWorldMoveContext
         member _.avatarInventorySource         : AvatarInventorySource=avatarInventorySource
         member _.avatarShipmateSource          : AvatarShipmateSource=avatarShipmateSource
     interface AvatarGetCurrentFoulingContext with
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarAddMessagesContext with
-        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+        member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface AvatarTransformShipmatesContext with
-        member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
+        member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
+    interface WorldUpdateChartsContext with
+        member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+        member _.islandSource: IslandSource = islandSource
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface WorldMoveContext
 
 [<Test>]
@@ -121,10 +127,12 @@ let ``Move.It moves the avatar one unit when give 1u for distance when given a v
         TestWorldMoveContext
             (avatarInventorySink,
             avatarInventorySource,
+            avatarIslandSingleMetricSinkStub,
             avatarMessageSinkStub,
             avatarShipmateSource,
             (assertAvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL]),
             avatarSingleMetricSourceStub,
+            islandSource,
             shipmateRationItemSourceStub,
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
@@ -216,10 +224,12 @@ let ``Move.It moves the avatar almost two units when give 2u for distance.`` () 
         TestWorldMoveContext
             (avatarInventorySink,
             avatarInventorySource,
+            avatarIslandSingleMetricSinkStub,
             avatarMessageSinkStub,
             avatarShipmateSource,
             (assertAvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL]),
             avatarSingleMetricSourceStub,
+            islandSource,
             shipmateRationItemSourceStub,
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,

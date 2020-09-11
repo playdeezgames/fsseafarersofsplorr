@@ -17,27 +17,28 @@ type DockedHandleCommandContext =
     inherit WorldBuyItemsContext
     inherit WorldSellItemsContext
     inherit WorldAbandonJobContext
-    abstract member avatarInventorySink            : AvatarInventorySink
-    abstract member avatarInventorySource          : AvatarInventorySource
-    abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
+    inherit WorldClearMessagesContext
+    abstract member avatarInventorySink : AvatarInventorySink
+    abstract member avatarInventorySource : AvatarInventorySource
+    abstract member avatarIslandSingleMetricSink : AvatarIslandSingleMetricSink
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
-    abstract member avatarJobSink                  : AvatarJobSink
-    abstract member avatarJobSource                : AvatarJobSource
-    abstract member avatarMessagePurger            : AvatarMessagePurger
-    abstract member avatarMessageSink              : AvatarMessageSink
-    abstract member avatarSingleMetricSink         : AvatarSingleMetricSink
-    abstract member avatarSingleMetricSource       : AvatarSingleMetricSource
-    abstract member commoditySource                : CommoditySource 
-    abstract member islandJobPurger                : IslandJobPurger
-    abstract member islandMarketSource             : IslandMarketSource 
-    abstract member islandSingleJobSource          : IslandSingleJobSource
-    abstract member islandSingleMarketSink         : IslandSingleMarketSink 
-    abstract member islandSingleMarketSource       : IslandSingleMarketSource 
-    abstract member islandSource                   : IslandSource
-    abstract member itemSource                     : ItemSource 
-    abstract member shipmateSingleStatisticSink    : ShipmateSingleStatisticSink
-    abstract member shipmateSingleStatisticSource  : ShipmateSingleStatisticSource
-    abstract member vesselSingleStatisticSource    : VesselSingleStatisticSource
+    abstract member avatarJobSink : AvatarJobSink
+    abstract member avatarJobSource : AvatarJobSource
+    abstract member avatarMessagePurger : AvatarMessagePurger
+    abstract member avatarMessageSink : AvatarMessageSink
+    abstract member avatarSingleMetricSink : AvatarSingleMetricSink
+    abstract member avatarSingleMetricSource : AvatarSingleMetricSource
+    abstract member commoditySource : CommoditySource 
+    abstract member islandJobPurger : IslandJobPurger
+    abstract member islandMarketSource : IslandMarketSource 
+    abstract member islandSingleJobSource : IslandSingleJobSource
+    abstract member islandSingleMarketSink : IslandSingleMarketSink 
+    abstract member islandSingleMarketSource : IslandSingleMarketSource 
+    abstract member islandSource : IslandSource
+    abstract member itemSource : ItemSource 
+    abstract member shipmateSingleStatisticSink : ShipmateSingleStatisticSink
+    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
+    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
 
 type DockedRunBoilerplateContext =
     inherit WorldIsAvatarAliveContext
@@ -84,7 +85,7 @@ module Docked =
             (avatarId                       : string) 
             : Gamestate option =
         avatarId
-        |> World.ClearMessages context.avatarMessagePurger
+        |> World.ClearMessages context context.avatarMessagePurger
 
         match command with
         | Some (Command.GoTo feature) ->

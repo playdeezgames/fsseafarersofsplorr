@@ -40,6 +40,9 @@ type TestWorldCreateContext
     interface UtilitySortListRandomlyContext with 
         member _.random : Random = random
 
+    interface WorldGenerateIslandNameContext with
+        member this.random: Random = random
+
     interface WorldNameIslandsContext with
         member _.islandSingleNameSink: IslandSingleNameSink = islandSingleNameSink
         member _.nameSource: TermSource = termNameSource
@@ -60,10 +63,15 @@ type TestWorldCreateContext
         member _.shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
 
     interface AvatarCreateContext with
-        member this.avatarJobSink: AvatarJobSink = avatarJobSink
+        member _.avatarJobSink: AvatarJobSink = avatarJobSink
 
     interface AvatarGetPositionContext with
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
+    interface WorldUpdateChartsContext with
+        member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+        member _.islandSource: IslandSource = islandSource
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface WorldCreateContext with
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink

@@ -20,6 +20,7 @@ type AtSeaCanCareenContext =
     inherit AvatarGetPositionContext
 
 type AtSeaHandleCommandContext =
+    inherit WorldClearMessagesContext
     inherit WorldDockContext
     inherit AtSeaGetVisibleIslandsContext
     inherit AtSeaUpdateDisplayContext
@@ -192,7 +193,7 @@ module AtSea =
             (avatarId                       : string) 
             : Gamestate option =
         avatarId
-        |> World.ClearMessages context.avatarMessagePurger
+        |> World.ClearMessages context context.avatarMessagePurger
 
         let canCareen = 
             CanCareen 

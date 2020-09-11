@@ -141,6 +141,9 @@ type SplorrContext
         member _.islandSingleFeatureSink      : IslandSingleFeatureSink     =islandSingleFeatureSink     
         member _.islandSource                 : IslandSource                =islandSource     
 
+    interface WorldGenerateIslandNameContext with
+        member _.random: Random = random
+
     interface WorldNameIslandsContext with
         member _.islandSingleNameSink: IslandSingleNameSink = islandSingleNameSink
         member _.islandSource: IslandSource = islandSource
@@ -167,16 +170,21 @@ type SplorrContext
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface WorldCreateContext with
-        member _.avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink    = avatarIslandSingleMetricSink   
-        member _.avatarJobSink                   : AvatarJobSink                   = avatarJobSink                  
-        member _.worldSingleStatisticSource      : WorldSingleStatisticSource      = worldSingleStatisticSource     
-        member _.shipmateStatisticTemplateSource : ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
-        member _.shipmateSingleStatisticSink     : ShipmateSingleStatisticSink     = shipmateSingleStatisticSink    
-        member _.rationItemSource                : RationItemSource                = rationItemSource               
-        member _.vesselStatisticTemplateSource   : VesselStatisticTemplateSource   = vesselStatisticTemplateSource  
-        member _.vesselStatisticSink             : VesselStatisticSink             = vesselStatisticSink            
-        member _.vesselSingleStatisticSource     : VesselSingleStatisticSource     = vesselSingleStatisticSource    
-        member _.shipmateRationItemSink          : ShipmateRationItemSink          = shipmateRationItemSink         
+        member this.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+        member this.avatarJobSink: AvatarJobSink = avatarJobSink
+        member this.rationItemSource: RationItemSource = rationItemSource
+        member this.shipmateRationItemSink: ShipmateRationItemSink = shipmateRationItemSink
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        member this.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
+        member this.vesselStatisticTemplateSource: VesselStatisticTemplateSource = vesselStatisticTemplateSource
+        member this.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
+
+    interface WorldUpdateChartsContext with
+        member this.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+        member this.islandSource: IslandSource = islandSource
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface DockedUpdateDisplayContext with
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource 

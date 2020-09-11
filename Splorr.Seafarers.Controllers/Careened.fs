@@ -5,6 +5,7 @@ open Splorr.Seafarers.Services
 
 type CareenedHandleCommandContext =
     inherit WorldCleanHullContext
+    inherit WorldClearMessagesContext
 
 type CareenedUpdateDisplayContext = 
     inherit AvatarGetCurrentFoulingContext
@@ -63,7 +64,7 @@ module Careened =
             (avatarId                      : string) 
             : Gamestate option =
         avatarId
-        |> World.ClearMessages avatarMessagePurger
+        |> World.ClearMessages context avatarMessagePurger
         match command with
         | Some Command.Metrics ->
             (side, avatarId)

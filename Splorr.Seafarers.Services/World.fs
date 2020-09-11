@@ -12,6 +12,9 @@ type IslandSource = unit -> Location list
 type IslandFeatureGeneratorSource = unit -> Map<IslandFeatureIdentifier, IslandFeatureGenerator>
 type IslandSingleFeatureSink = Location -> IslandFeatureIdentifier -> unit
 
+type WorldGenerateIslandNameContext =
+    abstract member random : Random
+
 type WorldAddMessagesContext = 
     inherit AvatarAddMessagesContext
 
@@ -20,9 +23,13 @@ type WorldUndockContext =
     abstract member avatarMessageSink       : AvatarMessageSink
     abstract member avatarIslandFeatureSink : AvatarIslandFeatureSink
 
+type WorldClearMessagesContext =
+    interface
+    end
 
 type WorldGenerateIslandNamesContext =
     inherit UtilitySortListRandomlyContext
+    inherit WorldGenerateIslandNameContext
 
 type WorldNameIslandsContext =
     inherit WorldGenerateIslandNamesContext
@@ -46,6 +53,9 @@ type WorldGenerateIslandsContext =
 
 type WorldUpdateChartsContext = 
     inherit AvatarGetPositionContext
+    abstract member avatarIslandSingleMetricSink : AvatarIslandSingleMetricSink
+    abstract member islandSource                 : IslandSource
+    abstract member vesselSingleStatisticSource  : VesselSingleStatisticSource
 
 type WorldCreateContext =
     inherit WorldGenerateIslandsContext
@@ -148,23 +158,22 @@ type WorldHeadForContext =
     inherit AvatarGetPositionContext
 
 module World =
-//TODO: top of "world generator" refactor
-    let private GenerateIslandName //TODO: move to world generator?
-            (random:Random) 
+    let private GenerateIslandName
+            (context: WorldGenerateIslandNameContext)
             : string =
         let consonants = [| "h"; "k"; "l"; "m"; "p" |]
         let vowels = [| "a"; "e"; "i"; "o"; "u" |]
-        let vowel = random.Next(2)>0
-        let nameLength = random.Next(3) + random.Next(3) + random.Next(3) + 3
+        let vowel = context.random.Next(2)>0
+        let nameLength = context.random.Next(3) + context.random.Next(3) + context.random.Next(3) + 3
         [1..(nameLength)]
         |> List.map 
             (fun i -> i % 2 = (if vowel then 1 else 0))
         |> List.map
             (fun v -> 
                 if v then
-                    vowels.[random.Next(vowels.Length)]
+                    vowels.[context.random.Next(vowels.Length)]
                 else
-                    consonants.[random.Next(consonants.Length)])
+                    consonants.[context.random.Next(consonants.Length)])
         |> List.reduce (+)
 
     let rec private GenerateIslandNames  //TODO: move to world generator?
@@ -179,10 +188,10 @@ module World =
             |> List.take nameCount
         else
             names
-            |> Set.add (GenerateIslandName context.random)
+            |> Set.add (GenerateIslandName context)
             |> GenerateIslandNames context nameCount
 
-    let private NameIslands  //TODO: move to world generator?
+    let private NameIslands
             (context: WorldNameIslandsContext)
             : unit =
         let locations = 
@@ -303,6 +312,7 @@ module World =
             context.vesselSingleStatisticSource
 
     let ClearMessages 
+            (context : WorldClearMessagesContext)
             (avatarMessagePurger : AvatarMessagePurger) 
             (avatarId            : string)
             : unit =

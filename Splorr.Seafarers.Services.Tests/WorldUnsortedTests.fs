@@ -8,6 +8,9 @@ type TestWorldAddMessagesContext(avatarMessageSink) =
     interface WorldAddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
 
+type TestWorldClearMessagesContext() =
+    interface WorldClearMessagesContext
+
 [<Test>]
 let ``GetNearbyLocations.It returns locations within a given distance from another given location.`` () =
     let viewDistance = 5.0
@@ -46,8 +49,9 @@ let ``ClearMessages.It removes any messages from the given avatar in the world.`
     let mutable counter = 0
     let avatarMessagePurger (_) =
         counter <- counter + 1
+    let context = TestWorldClearMessagesContext() :> WorldClearMessagesContext
     inputWorld
-    |> World.ClearMessages avatarMessagePurger
+    |> World.ClearMessages context avatarMessagePurger
     Assert.AreEqual(1, counter)
 
 [<Test>]
