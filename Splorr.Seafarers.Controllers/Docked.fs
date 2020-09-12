@@ -85,7 +85,7 @@ module Docked =
             (avatarId                       : string) 
             : Gamestate option =
         avatarId
-        |> World.ClearMessages context context.avatarMessagePurger
+        |> World.ClearMessages context
 
         match command with
         | Some (Command.GoTo feature) ->

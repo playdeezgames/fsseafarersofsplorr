@@ -7,9 +7,12 @@ open CommonTestFixtures
 type TestWorldAddMessagesContext(avatarMessageSink) =
     interface WorldAddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface AvatarAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
 
-type TestWorldClearMessagesContext() =
-    interface WorldClearMessagesContext
+type TestWorldClearMessagesContext(avatarMessagePurger) =
+    interface WorldClearMessagesContext with
+        member this.avatarMessagePurger: AvatarMessagePurger = avatarMessagePurger
 
 [<Test>]
 let ``GetNearbyLocations.It returns locations within a given distance from another given location.`` () =
@@ -49,9 +52,9 @@ let ``ClearMessages.It removes any messages from the given avatar in the world.`
     let mutable counter = 0
     let avatarMessagePurger (_) =
         counter <- counter + 1
-    let context = TestWorldClearMessagesContext() :> WorldClearMessagesContext
+    let context = TestWorldClearMessagesContext(avatarMessagePurger) :> WorldClearMessagesContext
     inputWorld
-    |> World.ClearMessages context avatarMessagePurger
+    |> World.ClearMessages context
     Assert.AreEqual(1, counter)
 
 [<Test>]

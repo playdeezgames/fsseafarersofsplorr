@@ -15,11 +15,15 @@ type TestAvatarSetPrimaryStatisticContext(shipmateSingleStatisticSink, shipmateS
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 type TestAvatarAbandonJobContext 
-        (avatarSingleMetricSink,
+        (avatarJobSink,
+        avatarJobSource,
+        avatarSingleMetricSink,
         avatarSingleMetricSource,
         shipmateSingleStatisticSink, 
         shipmateSingleStatisticSource) =
-    interface AvatarAbandonJobContext
+    interface AvatarAbandonJobContext with
+        member this.avatarJobSink: AvatarJobSink = avatarJobSink
+        member this.avatarJobSource: AvatarJobSource = avatarJobSource
     interface AvatarGetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarAddMetricContext with
@@ -730,17 +734,15 @@ let ``AbandonJob.It does nothing when the given avatar has no job.`` () =
         None
     let context = 
         TestAvatarAbandonJobContext 
-            (avatarSingleMetricSinkExplode,
+            (avatarJobSink,
+            avatarJobSource,
+            avatarSingleMetricSinkExplode,
             avatarSingleMetricSourceStub,
             shipmateSingleStatisticSinkStub, 
             shipmateSingleStatisticSourceStub) :> AvatarAbandonJobContext
     input
     |> Avatar.AbandonJob
         context
-        avatarJobSink
-        avatarJobSource
-        shipmateSingleStatisticSinkStub
-        shipmateSingleStatisticSourceStub
 
 [<Test>]
 let ``AbandonJob.It set job to None when the given avatar has a job.`` () =
@@ -769,16 +771,14 @@ let ``AbandonJob.It set job to None when the given avatar has a job.`` () =
         |> Some
     let context = 
         TestAvatarAbandonJobContext
-            ((assertAvatarSingleMetricSink [(Metric.AbandonedJob, 1UL)]),
+            (avatarJobSink,
+            avatarJobSource,
+            (assertAvatarSingleMetricSink [(Metric.AbandonedJob, 1UL)]),
             avatarSingleMetricSourceStub,
             shipmateSingleStatisticSink, 
             shipmateSingleStatisticSource) :> AvatarAbandonJobContext
     Avatar.AbandonJob
         context
-        avatarJobSink
-        avatarJobSource
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
         avatarId
     
     

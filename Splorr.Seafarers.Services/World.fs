@@ -17,6 +17,7 @@ type WorldGenerateIslandNameContext =
 
 type WorldAddMessagesContext = 
     inherit AvatarAddMessagesContext
+    abstract member avatarMessageSink : AvatarMessageSink
 
 type WorldUndockContext = 
     inherit WorldAddMessagesContext
@@ -24,8 +25,7 @@ type WorldUndockContext =
     abstract member avatarIslandFeatureSink : AvatarIslandFeatureSink
 
 type WorldClearMessagesContext =
-    interface
-    end
+    abstract member avatarMessagePurger : AvatarMessagePurger
 
 type WorldGenerateIslandNamesContext =
     inherit UtilitySortListRandomlyContext
@@ -231,7 +231,6 @@ module World =
                 context
             PopulateIslands
                 context
-                
         else
             let locations = context.islandSource()
             let candidateLocation = (context.random.NextDouble() * (worldSize |> fst), context.random.NextDouble() * (worldSize |> snd))
@@ -253,13 +252,10 @@ module World =
 //end of "world generator"
     let UpdateCharts 
             (context : WorldUpdateChartsContext)
-            (avatarIslandSingleMetricSink : AvatarIslandSingleMetricSink)
-            (islandSource                 : IslandSource)
-            (vesselSingleStatisticSource  : VesselSingleStatisticSource)
-            (avatarId                     : string) 
+            (avatarId : string) 
             : unit =
         let viewDistance = 
-            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.ViewDistance 
+            context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.ViewDistance 
             |> Option.get 
             |> Statistic.GetCurrentValue
         let avatarPosition = 
@@ -267,17 +263,16 @@ module World =
             |> Avatar.GetPosition 
                 context
             |> Option.get
-        islandSource()
+        context.islandSource()
         |> List.filter
             (fun location -> 
                 ((avatarPosition |> Location.DistanceTo location)<=viewDistance))
         |> List.iter
             (fun location ->
-                avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.Seen 1UL)
+                context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.Seen 1UL)
 
     let Create 
             (context  : WorldCreateContext)
-            (random   : Random) 
             (avatarId : string)
             : unit =
         let maximumGenerationRetries =
@@ -307,16 +302,12 @@ module World =
         avatarId
         |> UpdateCharts 
             context
-            context.avatarIslandSingleMetricSink
-            context.islandSource
-            context.vesselSingleStatisticSource
 
     let ClearMessages 
-            (context : WorldClearMessagesContext)
-            (avatarMessagePurger : AvatarMessagePurger) 
-            (avatarId            : string)
+            (context  : WorldClearMessagesContext)
+            (avatarId : string)
             : unit =
-        avatarMessagePurger avatarId
+        context.avatarMessagePurger avatarId
 
     let AddMessages
             (context : WorldAddMessagesContext)
@@ -405,9 +396,6 @@ module World =
             avatarId
             |> UpdateCharts 
                 context
-                avatarIslandSingleMetricSink
-                islandSource
-                vesselSingleStatisticSource
             if IsAvatarAlive 
                     context
                     avatarId |> not then
@@ -664,13 +652,9 @@ module World =
         | Some _ ->
             avatarId
             |> AddMessages context avatarMessageSink [ "You abandon your job." ]
-            Avatar.AbandonJob 
+            avatarId
+            |> Avatar.AbandonJob 
                 context
-                avatarJobSink
-                avatarJobSource
-                shipmateSingleStatisticSink 
-                shipmateSingleStatisticSource 
-                avatarId
         | _ ->
             avatarId
             |> AddMessages context avatarMessageSink [ "You have no job to abandon." ]

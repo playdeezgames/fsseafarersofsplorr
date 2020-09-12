@@ -32,7 +32,6 @@ type AtSeaHandleCommandContext =
     inherit AtSeaCanCareenContext
     abstract member avatarInventorySink            : AvatarInventorySink
     abstract member avatarInventorySource          : AvatarInventorySource
-    abstract member avatarMessagePurger            : AvatarMessagePurger
     abstract member avatarShipmateSource           : AvatarShipmateSource
     abstract member islandLocationByNameSource     : IslandLocationByNameSource
     abstract member islandSingleNameSource         : IslandSingleNameSource
@@ -193,7 +192,7 @@ module AtSea =
             (avatarId                       : string) 
             : Gamestate option =
         avatarId
-        |> World.ClearMessages context context.avatarMessagePurger
+        |> World.ClearMessages context
 
         let canCareen = 
             CanCareen 

@@ -331,10 +331,14 @@ type TestAtSeaRunContext
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarGetPrimaryStatisticContext with
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+    interface AvatarAbandonJobContext with
+        member this.avatarJobSink: AvatarJobSink = avatarJobSink
+        member this.avatarJobSource: AvatarJobSource = avatarJobSource
+    interface WorldClearMessagesContext with
+        member this.avatarMessagePurger: AvatarMessagePurger = avatarMessagePurger
     interface AtSeaHandleCommandContext with
         member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource
-        member _.avatarMessagePurger: AvatarMessagePurger = avatarMessagePurger
         member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
         member _.islandLocationByNameSource: IslandLocationByNameSource = islandLocationByNameSource
         member _.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
@@ -350,6 +354,8 @@ type TestAtSeaRunContext
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarAddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface WorldAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface WorldDockContext with
         member _.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink

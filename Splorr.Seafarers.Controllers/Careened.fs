@@ -64,7 +64,7 @@ module Careened =
             (avatarId                      : string) 
             : Gamestate option =
         avatarId
-        |> World.ClearMessages context avatarMessagePurger
+        |> World.ClearMessages context
         match command with
         | Some Command.Metrics ->
             (side, avatarId)

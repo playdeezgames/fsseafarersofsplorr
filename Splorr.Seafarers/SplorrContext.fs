@@ -108,23 +108,28 @@ type SplorrContext
     interface AvatarTransformShipmatesContext with
         member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
 
+    interface WorldAddMessagesContext with
+        member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
+
+    interface WorldClearMessagesContext with
+        member this.avatarMessagePurger: AvatarMessagePurger = avatarMessagePurger
+
     interface AtSeaHandleCommandContext with
-        member _.avatarShipmateSource           : AvatarShipmateSource = avatarShipmateSource
-        member _.avatarInventorySink            : AvatarInventorySink        =avatarInventorySink        
-        member _.avatarInventorySource          : AvatarInventorySource      =avatarInventorySource      
-        member _.avatarMessagePurger            : AvatarMessagePurger        =avatarMessagePurger        
-        member _.islandLocationByNameSource     : IslandLocationByNameSource =islandLocationByNameSource 
-        member _.islandSingleNameSource         : IslandSingleNameSource     =islandSingleNameSource     
-        member _.islandSingleStatisticSource    : IslandSingleStatisticSource=islandSingleStatisticSource
-        member _.shipmateRationItemSource       : ShipmateRationItemSource   =shipmateRationItemSource   
-        member _.vesselSingleStatisticSink      : VesselSingleStatisticSink  =vesselSingleStatisticSink  
-        member _.vesselSingleStatisticSource    : VesselSingleStatisticSource=vesselSingleStatisticSource
+        member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
+        member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
+        member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
+        member this.islandLocationByNameSource: IslandLocationByNameSource = islandLocationByNameSource
+        member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
+        member this.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
+        member this.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
+        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface AvatarGetCurrentFoulingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface AtSeaRunContext with
-        member _.avatarMessageSource: AvatarMessageSource = avatarMessageSource
+        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
 
     interface IslandCreateContext with
         member _.islandSingleStatisticSink     : IslandSingleStatisticSink    =islandSingleStatisticSink    
@@ -209,31 +214,36 @@ type SplorrContext
     interface AvatarRemoveInventoryContext with
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
+
     interface AvatarGetUsedTonnageContext with
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
 
+    interface AvatarAbandonJobContext with
+        member this.avatarJobSink: AvatarJobSink = avatarJobSink
+        member this.avatarJobSource: AvatarJobSource = avatarJobSource
+
     interface DockedHandleCommandContext with
-        member _.commoditySource                : CommoditySource                =commoditySource               
-        member _.islandMarketSource             : IslandMarketSource             =islandMarketSource            
-        member _.avatarInventorySink            : AvatarInventorySink            =avatarInventorySink            
-        member _.avatarInventorySource          : AvatarInventorySource          =avatarInventorySource          
-        member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink   =avatarIslandSingleMetricSink   
-        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource =avatarIslandSingleMetricSource 
-        member _.avatarJobSink                  : AvatarJobSink                  =avatarJobSink                 
-        member _.avatarJobSource                : AvatarJobSource                =avatarJobSource               
-        member _.avatarMessagePurger            : AvatarMessagePurger            =avatarMessagePurger           
-        member _.avatarMessageSink              : AvatarMessageSink              =avatarMessageSink             
-        member _.avatarSingleMetricSink         : AvatarSingleMetricSink         =avatarSingleMetricSink        
-        member _.avatarSingleMetricSource       : AvatarSingleMetricSource       =avatarSingleMetricSource      
-        member _.islandJobPurger                : IslandJobPurger                =islandJobPurger               
-        member _.islandSingleJobSource          : IslandSingleJobSource          =islandSingleJobSource         
-        member _.islandSingleMarketSink         : IslandSingleMarketSink         =islandSingleMarketSink        
-        member _.islandSingleMarketSource       : IslandSingleMarketSource       =islandSingleMarketSource      
-        member _.islandSource                   : IslandSource                   =islandSource                  
-        member _.itemSource                     : ItemSource                     =itemSource                    
-        member _.shipmateSingleStatisticSink    : ShipmateSingleStatisticSink    =shipmateSingleStatisticSink   
-        member _.shipmateSingleStatisticSource  : ShipmateSingleStatisticSource  =shipmateSingleStatisticSource 
-        member _.vesselSingleStatisticSource    : VesselSingleStatisticSource    =vesselSingleStatisticSource   
+        member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
+        member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
+        member this.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+        member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        member this.avatarJobSink: AvatarJobSink = avatarJobSink
+        member this.avatarJobSource: AvatarJobSource = avatarJobSource
+        member this.avatarMessagePurger: AvatarMessagePurger = avatarMessagePurger
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+        member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
+        member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
+        member this.commoditySource: CommoditySource = commoditySource
+        member this.islandJobPurger: IslandJobPurger = islandJobPurger
+        member this.islandMarketSource: IslandMarketSource = islandMarketSource
+        member this.islandSingleJobSource: IslandSingleJobSource = islandSingleJobSource
+        member this.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
+        member this.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
+        member this.islandSource: IslandSource = islandSource
+        member this.itemSource: ItemSource = itemSource
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface JobCreateContext with
         member _.termSources: TermSources = termSources
@@ -266,28 +276,30 @@ type SplorrContext
 
     interface AvatarAddMessagesContext with
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
+
     interface AvatarGetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+
     interface WorldDockContext with
-        member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
-        member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
-        member _.avatarJobSource: AvatarJobSource = avatarJobSource
-        member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-        member _.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
-        member _.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
-        member _.commoditySource: CommoditySource = commoditySource
-        member _.islandItemSink: IslandItemSink = islandItemSink
-        member _.islandItemSource: IslandItemSource = islandItemSource
-        member _.islandJobSink: IslandJobSink = islandJobSink
-        member _.islandJobSource: IslandJobSource = islandJobSource
-        member _.islandMarketSink: IslandMarketSink = islandMarketSink
-        member _.islandMarketSource: IslandMarketSource = islandMarketSource
-        member _.itemSource: ItemSource = itemSource
-        member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-        member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
-        member _.avatarJobSink: AvatarJobSink = avatarJobSink
-        member _.islandSource: IslandSource = islandSource
-        member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
+        member this.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+        member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        member this.avatarJobSink: AvatarJobSink = avatarJobSink
+        member this.avatarJobSource: AvatarJobSource = avatarJobSource
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+        member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
+        member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
+        member this.commoditySource: CommoditySource = commoditySource
+        member this.islandItemSink: IslandItemSink = islandItemSink
+        member this.islandItemSource: IslandItemSource = islandItemSource
+        member this.islandJobSink: IslandJobSink = islandJobSink
+        member this.islandJobSource: IslandJobSource = islandJobSource
+        member this.islandMarketSink: IslandMarketSink = islandMarketSink
+        member this.islandMarketSource: IslandMarketSource = islandMarketSource
+        member this.islandSource: IslandSource = islandSource
+        member this.itemSource: ItemSource = itemSource
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
     interface HelpRunContext with
         member _.avatarIslandFeatureSource : AvatarIslandFeatureSource = avatarIslandFeatureSource
@@ -303,14 +315,14 @@ type SplorrContext
         member _.switchSource                    : SwitchSource      =switchSource      
 
     interface IslandFeatureRunIslandContext with
-        member _.islandSingleFeatureSource : IslandSingleFeatureSource = islandSingleFeatureSource
+        member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
     
     interface IslandFeatureRunContext with
-        member _.islandSingleNameSource    : IslandSingleNameSource = islandSingleNameSource
+        member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
 
     interface IslandFeatureRunDarkAlleyContext with
-        member _.avatarMessageSource : AvatarMessageSource = avatarMessageSource
-        member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
-        member _.islandSingleStatisticSource   : IslandSingleStatisticSource = islandSingleStatisticSource
-        member _.shipmateSingleStatisticSource : ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
+        member this.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 

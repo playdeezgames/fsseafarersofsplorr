@@ -86,6 +86,8 @@ type AvatarAbandonJobContext =
     inherit AvatarSetReputationContext
     inherit AvatarGetPrimaryStatisticContext
     inherit AvatarIncrementMetricContext
+    abstract member avatarJobSink : AvatarJobSink
+    abstract member avatarJobSource : AvatarJobSource
 
 type AvatarGetItemCountContext =
     interface
@@ -306,7 +308,7 @@ module Avatar =
                 Metric.Starved 
                 starved
 
-    let GetFouling
+    let private GetFouling
             //TODO: context me
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (getter : Statistic -> float)
@@ -427,15 +429,11 @@ module Avatar =
     
     let AbandonJob 
             (context : AvatarAbandonJobContext)
-            (avatarJobSink                 : AvatarJobSink)
-            (avatarJobSource               : AvatarJobSource)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (avatarId: string)
             : unit =
         let reputationCostForAbandoningAJob = -1.0
         avatarId
-        |> avatarJobSource
+        |> context.avatarJobSource
         |> Option.iter
             (fun _ -> 
                 avatarId
@@ -450,7 +448,7 @@ module Avatar =
                 |> IncrementMetric 
                     context
                     Metric.AbandonedJob
-                avatarJobSink avatarId None)
+                context.avatarJobSink avatarId None)
 
     let CompleteJob
             (context : AvatarCompleteJobContext)

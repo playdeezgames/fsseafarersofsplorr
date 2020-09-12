@@ -43,9 +43,6 @@ let ``UpdateChart.It does nothing when the given avatar is not near enough to an
     input
     |> World.UpdateCharts 
         context
-        avatarIslandSingleMetricSink
-        islandSource
-        vesselSingleStatisticSource
 
 
 [<Test>]
@@ -74,9 +71,6 @@ let ``UpdateChart.It does nothing when the given avatar has already seen all nea
     input
     |> World.UpdateCharts 
         context
-        avatarIslandSingleMetricSink
-        islandSource
-        vesselSingleStatisticSource
 
 [<Test>]
 let ``UpdateChart.It does set all islands within the avatar's view distance to "seen" when given avatar is near enough to previously unseen islands.`` () =
@@ -104,7 +98,4 @@ let ``UpdateChart.It does set all islands within the avatar's view distance to "
     input
     |> World.UpdateCharts
         context
-        avatarIslandSingleMetricSink
-        islandSource
-        vesselSingleStatisticSource
 

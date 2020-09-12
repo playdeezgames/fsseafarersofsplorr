@@ -84,13 +84,16 @@ type TestDockedRunContext
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
     interface AvatarGetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+    interface AvatarAbandonJobContext with
+        member _.avatarJobSink                  : AvatarJobSink                 =avatarJobSink                 
+        member _.avatarJobSource                : AvatarJobSource               =avatarJobSource               
     interface DockedHandleCommandContext with
+        member this.avatarJobSink: AvatarJobSink = avatarJobSink
+        member this.avatarJobSource: AvatarJobSource = avatarJobSource
         member _.avatarInventorySink            : AvatarInventorySink           =avatarInventorySink            
         member _.avatarInventorySource          : AvatarInventorySource         =avatarInventorySource          
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink  =avatarIslandSingleMetricSink   
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource=avatarIslandSingleMetricSource 
-        member _.avatarJobSink                  : AvatarJobSink                 =avatarJobSink                 
-        member _.avatarJobSource                : AvatarJobSource               =avatarJobSource               
         member _.avatarMessagePurger            : AvatarMessagePurger           =avatarMessagePurger           
         member _.avatarMessageSink              : AvatarMessageSink             =avatarMessageSink             
         member _.avatarSingleMetricSink         : AvatarSingleMetricSink        =avatarSingleMetricSink        
