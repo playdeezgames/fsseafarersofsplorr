@@ -36,9 +36,6 @@ let ``SetHeading.It sets a new heading when given a valid avatar id.`` () =
     avatarId
     |> World.SetHeading 
         context
-        vesselSingleStatisticSource 
-        vesselSingleStatisticSink 
-        avatarMessageSinkStub 
         heading
     |> ignore
     
@@ -56,9 +53,6 @@ let ``SetHeading.It does nothing when given an invalid avatar id`` () =
     input
     |> World.SetHeading 
         context
-        vesselSingleStatisticSource 
-        vesselSingleStatisticSink 
-        avatarMessageSinkStub 
         heading
     |> ignore
 

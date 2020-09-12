@@ -97,13 +97,8 @@ module Docked =
             avatarId 
             |> World.AcceptJob
                 context
-                context.avatarIslandSingleMetricSink
-                context.avatarIslandSingleMetricSource
                 context.avatarJobSink
                 context.avatarJobSource
-                context.avatarMessageSink 
-                context.avatarSingleMetricSink
-                context.avatarSingleMetricSource
                 context.islandJobPurger
                 context.islandSingleJobSource
                 context.islandSource
@@ -173,13 +168,7 @@ module Docked =
             avatarId 
             |> World.AbandonJob 
                 context
-                context.avatarJobSink
                 context.avatarJobSource
-                context.avatarMessageSink
-                context.avatarSingleMetricSink
-                context.avatarSingleMetricSource
-                context.shipmateSingleStatisticSink
-                context.shipmateSingleStatisticSource
             avatarId
             |> Gamestate.InPlay
             |> Some

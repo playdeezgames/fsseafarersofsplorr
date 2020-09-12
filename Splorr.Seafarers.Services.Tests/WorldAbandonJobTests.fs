@@ -58,13 +58,7 @@ let ``AbandonJob.It adds a message when the avatar has no job.`` () =
     input
     |> World.AbandonJob
         context
-        avatarJobSink
         avatarJobSource
-        (avatarExpectedMessageSink expectedMessage)
-        (assertAvatarSingleMetricSink [Metric.AcceptedJob, 1UL])
-        avatarSingleMetricSourceStub
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
 
 [<Test>]
 let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a job`` () =
@@ -104,13 +98,7 @@ let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a
     input
     |> World.AbandonJob
         context
-        avatarJobSink
         avatarJobSource
-        (avatarExpectedMessageSink expectedMessage)
-        (assertAvatarSingleMetricSink [Metric.AbandonedJob, 1UL])
-        avatarSingleMetricSourceStub
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
 
 
 

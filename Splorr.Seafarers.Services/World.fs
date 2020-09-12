@@ -320,9 +320,9 @@ module World =
             avatarId
 
     let SetSpeed 
-            (context : WorldSetSpeedContext)
-            (speed                       : float) 
-            (avatarId                    : string) 
+            (context  : WorldSetSpeedContext)
+            (speed    : float) 
+            (avatarId : string) 
             : unit = 
         avatarId
         |> Avatar.SetSpeed 
@@ -337,12 +337,9 @@ module World =
                 |> AddMessages context [newSpeed |> sprintf "You set your speed to %.2f."])
 
     let SetHeading 
-            (context : WorldSetHeadingContext)
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
-            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
-            (avatarMessageSink           : AvatarMessageSink)
-            (heading                     : float) 
-            (avatarId                    : string) 
+            (context  : WorldSetHeadingContext)
+            (heading  : float) 
+            (avatarId : string) 
             : unit =
         avatarId
         |> Avatar.SetHeading 
@@ -572,8 +569,12 @@ module World =
         match location, Avatar.GetPosition context avatarId with
         | Some l, Some avatarPosition ->
             [
-                AddMessages context [ islandName |> sprintf "You head for `%s`." ]
-                SetHeading context vesselSingleStatisticSource vesselSingleStatisticSink avatarMessageSink (Location.HeadingTo avatarPosition l |> Angle.ToDegrees)
+                AddMessages
+                    context
+                    [ islandName |> sprintf "You head for `%s`." ]
+                SetHeading
+                    context
+                    (Location.HeadingTo avatarPosition l |> Angle.ToDegrees)
             ]
             |> List.iter (fun f -> f avatarId)
         | _, Some _ ->
@@ -584,13 +585,8 @@ module World =
 
     let AcceptJob 
             (context : WorldAcceptJobContext)
-            (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
-            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (avatarJobSink                  : AvatarJobSink)
             (avatarJobSource                : AvatarJobSource)
-            (avatarMessageSink              : AvatarMessageSink)
-            (avatarSingleMetricSink         : AvatarSingleMetricSink)
-            (avatarSingleMetricSource       : AvatarSingleMetricSource)
             (islandJobPurger                : IslandJobPurger)
             (islandSingleJobSource          : IslandSingleJobSource)
             (islandSource                   : IslandSource)
@@ -630,13 +626,7 @@ module World =
 
     let AbandonJob
             (context : WorldAbandonJobContext)
-            (avatarJobSink                 : AvatarJobSink)
             (avatarJobSource               : AvatarJobSource)
-            (avatarMessageSink             : AvatarMessageSink)
-            (avatarSingleMetricSink        : AvatarSingleMetricSink)
-            (avatarSingleMetricSource      : AvatarSingleMetricSource)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (avatarId                      : string) 
             : unit =
         match avatarJobSource avatarId with

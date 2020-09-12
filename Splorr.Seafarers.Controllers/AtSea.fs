@@ -298,13 +298,7 @@ module AtSea =
             avatarId
             |> World.AbandonJob 
                 context
-                context.avatarJobSink
                 context.avatarJobSource
-                context.avatarMessageSink
-                context.avatarSingleMetricSink
-                context.avatarSingleMetricSource
-                context.shipmateSingleStatisticSink
-                context.shipmateSingleStatisticSource
             avatarId
             |> Gamestate.InPlay
             |> Some
@@ -358,9 +352,6 @@ module AtSea =
             avatarId
             |> World.SetHeading 
                 context
-                context.vesselSingleStatisticSource 
-                context.vesselSingleStatisticSink 
-                context.avatarMessageSink 
                 heading
             avatarId
             |> Gamestate.InPlay

@@ -51,13 +51,8 @@ let ``AcceptJob.It does nothing when given an invalid island location.`` () =
     avatarId
     |> World.AcceptJob 
         context
-        avatarIslandSingleMetricSink
-        avatarIslandSingleMetricSource
         avatarJobSink
         avatarJobSource
-        avatarMessageSinkStub 
-        avatarSingleMetricSinkExplode
-        avatarSingleMetricSourceStub
         islandJobPurger
         islandSingleJobSource
         islandSource
@@ -101,13 +96,8 @@ let ``AcceptJob.It adds a message to the world when given an 0 job index for the
     inputWorld
     |> World.AcceptJob 
         context
-        avatarIslandSingleMetricSink
-        avatarIslandSingleMetricSource
         avatarJobSink
         avatarJobSource
-        (avatarExpectedMessageSink expectedMessage)
-        avatarSingleMetricSinkExplode
-        avatarSingleMetricSourceStub
         islandJobPurger
         islandSingleJobSource
         islandSource
@@ -146,13 +136,8 @@ let ``AcceptJob.It adds a message to the world when given an invalid job index f
     inputWorld
     |> World.AcceptJob 
         context
-        avatarIslandSingleMetricSink
-        avatarIslandSingleMetricSource
         avatarJobSink
         avatarJobSource
-        (avatarExpectedMessageSink expectedMessage)
-        avatarSingleMetricSinkExplode
-        avatarSingleMetricSourceStub
         islandJobPurger
         islandSingleJobSource
         islandSource
@@ -198,13 +183,8 @@ let ``AcceptJob.It adds a message to the world when the job is valid but the ava
     inputWorld
     |> World.AcceptJob 
         context
-        avatarIslandSingleMetricSink
-        avatarIslandSingleMetricSource
         avatarJobSink
         avatarJobSource
-        (avatarExpectedMessageSink expectedMessage)
-        avatarSingleMetricSinkExplode
-        avatarSingleMetricSourceStub
         islandJobPurger
         islandSingleJobSource
         islandSource
@@ -259,13 +239,8 @@ let ``AcceptJob.It adds the given job to the avatar and eliminates it from the i
             avatarSingleMetricSourceStub) :> WorldAcceptJobContext
     World.AcceptJob 
         context
-        avatarIslandSingleMetricSink
-        avatarIslandSingleMetricSource
         avatarJobSink
         avatarJobSource
-        (avatarExpectedMessageSink expectedMessage)
-        (assertAvatarSingleMetricSink [Metric.AcceptedJob, 1UL])
-        avatarSingleMetricSourceStub
         islandJobPurger
         islandSingleJobSource
         islandSource
