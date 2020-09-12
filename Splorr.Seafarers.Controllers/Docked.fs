@@ -97,11 +97,6 @@ module Docked =
             avatarId 
             |> World.AcceptJob
                 context
-                context.avatarJobSink
-                context.avatarJobSource
-                context.islandJobPurger
-                context.islandSingleJobSource
-                context.islandSource
                 index 
                 location
             avatarId
@@ -112,7 +107,6 @@ module Docked =
             avatarId 
             |> World.BuyItems 
                 context
-                context.islandMarketSource 
                 context.islandSource
                 context.itemSource 
                 context.vesselSingleStatisticSource 

@@ -8,16 +8,27 @@ open CommonTestFixtures
 type TestWorldAcceptJobContext
         (avatarIslandSingleMetricSink, 
         avatarIslandSingleMetricSource,
+        avatarJobSink,
+        avatarJobSource,
         avatarMessageSink,
         avatarSingleMetricSink,
-        avatarSingleMetricSource) =
-    interface WorldAcceptJobContext with
-        member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
-        member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        avatarSingleMetricSource,
+        islandJobPurger,
+        islandSingleJobSource,
+        islandSource) =
     interface AvatarAddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface WorldAddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface IslandMakeKnownContext with
+        member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+    interface WorldAcceptJobContext with
+        member _.avatarJobSink         : AvatarJobSink = avatarJobSink
+        member _.avatarJobSource       : AvatarJobSource = avatarJobSource
+        member _.islandJobPurger       : IslandJobPurger = islandJobPurger
+        member _.islandSingleJobSource : IslandSingleJobSource = islandSingleJobSource
+        member _.islandSource          : IslandSource = islandSource
     interface AvatarAddMetricContext with
         member _.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member _.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
@@ -45,17 +56,17 @@ let ``AcceptJob.It does nothing when given an invalid island location.`` () =
         TestWorldAcceptJobContext
             (avatarIslandSingleMetricSink, 
             avatarIslandSingleMetricSource,
+            avatarJobSink,
+            avatarJobSource,
             avatarMessageSinkStub,
             avatarSingleMetricSinkExplode,
-            avatarSingleMetricSourceStub) :> WorldAcceptJobContext
+            avatarSingleMetricSourceStub,
+            islandJobPurger,
+            islandSingleJobSource,
+            islandSource) :> WorldAcceptJobContext
     avatarId
     |> World.AcceptJob 
         context
-        avatarJobSink
-        avatarJobSource
-        islandJobPurger
-        islandSingleJobSource
-        islandSource
         1u 
         inputLocation
 
@@ -90,17 +101,17 @@ let ``AcceptJob.It adds a message to the world when given an 0 job index for the
         TestWorldAcceptJobContext
             (avatarIslandSingleMetricSink, 
             avatarIslandSingleMetricSource,
+            avatarJobSink,
+            avatarJobSource,
             avatarMessageSinkStub,
             avatarSingleMetricSinkExplode,
-            avatarSingleMetricSourceStub) :> WorldAcceptJobContext
+            avatarSingleMetricSourceStub,
+            islandJobPurger,
+            islandSingleJobSource,
+            islandSource) :> WorldAcceptJobContext
     inputWorld
     |> World.AcceptJob 
         context
-        avatarJobSink
-        avatarJobSource
-        islandJobPurger
-        islandSingleJobSource
-        islandSource
         0u 
         inputLocation
 
@@ -130,17 +141,17 @@ let ``AcceptJob.It adds a message to the world when given an invalid job index f
         TestWorldAcceptJobContext
             (avatarIslandSingleMetricSink, 
             avatarIslandSingleMetricSource,
+            avatarJobSink,
+            avatarJobSource,
             avatarMessageSinkStub,
             avatarSingleMetricSinkExplode,
-            avatarSingleMetricSourceStub) :> WorldAcceptJobContext
+            avatarSingleMetricSourceStub,
+            islandJobPurger,
+            islandSingleJobSource,
+            islandSource) :> WorldAcceptJobContext
     inputWorld
     |> World.AcceptJob 
         context
-        avatarJobSink
-        avatarJobSource
-        islandJobPurger
-        islandSingleJobSource
-        islandSource
         0xFFFFFFFFu 
         inputLocation
 
@@ -177,17 +188,17 @@ let ``AcceptJob.It adds a message to the world when the job is valid but the ava
         TestWorldAcceptJobContext
             (avatarIslandSingleMetricSink, 
             avatarIslandSingleMetricSource,
+            avatarJobSink,
+            avatarJobSource,
             avatarMessageSinkStub,
             avatarSingleMetricSinkExplode,
-            avatarSingleMetricSourceStub) :> WorldAcceptJobContext
+            avatarSingleMetricSourceStub,
+            islandJobPurger,
+            islandSingleJobSource,
+            islandSource) :> WorldAcceptJobContext
     inputWorld
     |> World.AcceptJob 
         context
-        avatarJobSink
-        avatarJobSource
-        islandJobPurger
-        islandSingleJobSource
-        islandSource
         1u 
         inputLocation
 
@@ -234,16 +245,16 @@ let ``AcceptJob.It adds the given job to the avatar and eliminates it from the i
         TestWorldAcceptJobContext
             (avatarIslandSingleMetricSink, 
             avatarIslandSingleMetricSource,
+            avatarJobSink,
+            avatarJobSource,
             avatarMessageSinkStub,
             (assertAvatarSingleMetricSink [Metric.AcceptedJob, 1UL]),
-            avatarSingleMetricSourceStub) :> WorldAcceptJobContext
+            avatarSingleMetricSourceStub,
+            islandJobPurger,
+            islandSingleJobSource,
+            islandSource) :> WorldAcceptJobContext
     World.AcceptJob 
         context
-        avatarJobSink
-        avatarJobSource
-        islandJobPurger
-        islandSingleJobSource
-        islandSource
         1u 
         inputLocation
         inputWorld

@@ -230,7 +230,14 @@ type SplorrContext
     interface AvatarAddInventoryContext with
         member _.avatarInventorySink   : AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
-        
+    interface WorldAcceptJobContext with
+        member _.avatarJobSink         : AvatarJobSink = avatarJobSink
+        member _.avatarJobSource       : AvatarJobSource = avatarJobSource
+        member _.islandJobPurger       : IslandJobPurger = islandJobPurger
+        member _.islandSingleJobSource : IslandSingleJobSource = islandSingleJobSource
+        member _.islandSource          : IslandSource = islandSource
+    interface WorldAbandonJobContext with
+        member _.avatarJobSource : AvatarJobSource = avatarJobSource
     interface DockedHandleCommandContext with
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource

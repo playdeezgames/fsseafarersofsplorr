@@ -338,6 +338,8 @@ type TestAtSeaRunContext
         member this.avatarMessagePurger: AvatarMessagePurger = avatarMessagePurger
     interface AvatarMoveContext with
         member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface WorldAbandonJobContext with
+        member _.avatarJobSource : AvatarJobSource = avatarJobSource
     interface AtSeaHandleCommandContext with
         member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource

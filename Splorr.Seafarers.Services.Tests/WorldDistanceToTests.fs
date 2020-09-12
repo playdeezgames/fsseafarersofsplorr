@@ -41,9 +41,7 @@ let ``DistanceTo.It adds a 'unknown island' message when given a bogus island na
     |> World.DistanceTo 
         context
         avatarIslandSingleMetricSource
-        (avatarExpectedMessageSink expectedMessage)
         islandLocationByNameSource
-        vesselSingleStatisticSource 
         inputName
 
 [<Test>]
@@ -78,9 +76,7 @@ let ``DistanceTo.It adds a 'unknown island' message when given a valid island na
     |> World.DistanceTo 
         context
         avatarIslandSingleMetricSource
-        (avatarExpectedMessageSink expectedMessage)
         islandLocationByNameSource
-        vesselSingleStatisticSource 
         inputName
 
 [<Test>]
@@ -118,8 +114,6 @@ let ``DistanceTo.It adds a 'distance to island' message when given a valid islan
     |> World.DistanceTo 
         context
         avatarIslandSingleMetricSource
-        (avatarExpectedMessageSink expectedMessage)
         islandLocationByNameSource
-        vesselSingleStatisticSource
         inputName
 

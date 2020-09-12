@@ -111,6 +111,11 @@ type WorldAcceptJobContext =
     inherit IslandMakeKnownContext
     inherit AvatarAddMetricContext
     inherit WorldAddMessagesContext
+    abstract member avatarJobSink         : AvatarJobSink
+    abstract member avatarJobSource       : AvatarJobSource
+    abstract member islandJobPurger       : IslandJobPurger
+    abstract member islandSingleJobSource : IslandSingleJobSource
+    abstract member islandSource          : IslandSource
 
 type WorldBuyItemsContext =
     inherit ItemDetermineSalePriceContext
@@ -131,6 +136,7 @@ type WorldSellItemsContext =
 type WorldAbandonJobContext =
     inherit AvatarAbandonJobContext
     inherit WorldAddMessagesContext
+    abstract member avatarJobSource  : AvatarJobSource
 
 type WorldSetSpeedContext =
     inherit AvatarSetSpeedContext
@@ -363,22 +369,9 @@ module World =
             Primary) = Alive
 
     let rec Move
-            (context : WorldMoveContext)
-            (avatarInventorySink           : AvatarInventorySink)
-            (avatarInventorySource         : AvatarInventorySource)
-            (avatarIslandSingleMetricSink  : AvatarIslandSingleMetricSink)
-            (avatarMessageSink             : AvatarMessageSink)
-            (avatarShipmateSource          : AvatarShipmateSource)
-            (avatarSingleMetricSink        : AvatarSingleMetricSink)
-            (avatarSingleMetricSource      : AvatarSingleMetricSource)
-            (islandSource                  : IslandSource)
-            (shipmateRationItemSource      : ShipmateRationItemSource)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (vesselSingleStatisticSink     : VesselSingleStatisticSink)
-            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
-            (distance                      : uint32) 
-            (avatarId                      : string) 
+            (context  : WorldMoveContext)
+            (distance : uint32) 
+            (avatarId : string) 
             : unit =
         match distance with
         | x when x > 0u ->
@@ -398,19 +391,6 @@ module World =
             else
                 Move
                     context
-                    avatarInventorySink
-                    avatarInventorySource
-                    avatarIslandSingleMetricSink
-                    avatarMessageSink 
-                    avatarShipmateSource
-                    avatarSingleMetricSink
-                    avatarSingleMetricSource
-                    islandSource
-                    shipmateRationItemSource 
-                    shipmateSingleStatisticSink
-                    shipmateSingleStatisticSource
-                    vesselSingleStatisticSink 
-                    vesselSingleStatisticSource 
                     (x-1u) 
                     avatarId
         | _ -> 
@@ -426,17 +406,10 @@ module World =
 
 
     let private DoJobCompletion
-            (context : WorldDoJobCompletionContext)
-            (avatarJobSink                 : AvatarJobSink)
-            (avatarJobSource               : AvatarJobSource)
-            (avatarMessageSink             : AvatarMessageSink)
-            (avatarSingleMetricSink        : AvatarSingleMetricSink)
-            (avatarSingleMetricSource      : AvatarSingleMetricSource)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (location                      : Location) 
-            (job                           : Job) 
-            (avatarId                      : string) 
+            (context  : WorldDoJobCompletionContext)
+            (location : Location) 
+            (job      : Job) 
+            (avatarId : string) 
             : unit = 
         if location = job.Destination then
             Avatar.CompleteJob 
@@ -447,7 +420,6 @@ module World =
 
     let Dock
             (context  : WorldDockContext)
-            (random   : Random) 
             (location : Location) 
             (avatarId : string) 
             : unit =
@@ -494,13 +466,6 @@ module World =
                 (fun job w ->
                     DoJobCompletion
                         context
-                        context.avatarJobSink
-                        context.avatarJobSource
-                        context.avatarMessageSink
-                        context.avatarSingleMetricSink
-                        context.avatarSingleMetricSource
-                        context.shipmateSingleStatisticSink 
-                        context.shipmateSingleStatisticSource 
                         location
                         job
                         w
@@ -524,9 +489,7 @@ module World =
     let DistanceTo 
             (context : WorldDistanceToContext)
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
-            (avatarMessageSink              : AvatarMessageSink)
             (islandLocationByNameSource     : IslandLocationByNameSource)
-            (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (islandName                     : string) 
             (avatarId                       : string) 
             : unit =
@@ -551,10 +514,7 @@ module World =
     let HeadFor
             (context : WorldHeadForContext)
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
-            (avatarMessageSink              : AvatarMessageSink)
             (islandLocationByNameSource     : IslandLocationByNameSource)
-            (vesselSingleStatisticSource    : VesselSingleStatisticSource)
-            (vesselSingleStatisticSink      : VesselSingleStatisticSink)
             (islandName                     : string) 
             (avatarId                       : string) 
             : unit =
@@ -584,23 +544,18 @@ module World =
             ()
 
     let AcceptJob 
-            (context : WorldAcceptJobContext)
-            (avatarJobSink                  : AvatarJobSink)
-            (avatarJobSource                : AvatarJobSource)
-            (islandJobPurger                : IslandJobPurger)
-            (islandSingleJobSource          : IslandSingleJobSource)
-            (islandSource                   : IslandSource)
-            (jobIndex                       : uint32) 
-            (location                       : Location) 
-            (avatarId                       : string) 
+            (context  : WorldAcceptJobContext)
+            (jobIndex : uint32) 
+            (location : Location) 
+            (avatarId : string) 
             : unit =
-        let locations = islandSource()
-        match jobIndex, locations |> List.tryFind (fun x -> x = location), avatarJobSource avatarId with
+        let locations = context.islandSource()
+        match jobIndex, locations |> List.tryFind (fun x -> x = location), context.avatarJobSource avatarId with
         | 0u, _, _ ->
             avatarId
             |> AddMessages context [ "That job is currently unavailable." ]
         | _, Some location, None ->
-            match islandSingleJobSource location jobIndex with
+            match context.islandSingleJobSource location jobIndex with
             | Some job ->
                 avatarId
                 |> AddMessages context [ "You accepted the job!" ]
@@ -609,25 +564,25 @@ module World =
                     context
                     Metric.AcceptedJob 
                     1UL
-                avatarJobSink avatarId (job|>Some)
+                context.avatarJobSink avatarId (job|>Some)
                 Island.MakeKnown
                     context
                     avatarId
                     job.Destination
-                islandJobPurger location jobIndex
+                context.islandJobPurger location jobIndex
             | _ ->
                 avatarId
                 |> AddMessages context [ "That job is currently unavailable." ]
-        | _, Some island, Some job ->
+        | _, Some _, Some _ ->
             avatarId
             |> AddMessages context [ "You must complete or abandon your current job before taking on a new one." ]
         | _ -> 
             ()
 
     let AbandonJob
-            (context : WorldAbandonJobContext)
-            (avatarJobSource               : AvatarJobSource)
-            (avatarId                      : string) 
+            (context  : WorldAbandonJobContext)
+            (avatarJobSource  : AvatarJobSource)
+            (avatarId : string) 
             : unit =
         match avatarJobSource avatarId with
         | Some _ ->
@@ -650,7 +605,6 @@ module World =
 
     let BuyItems 
             (context                       : WorldBuyItemsContext)
-            (islandMarketSource            : IslandMarketSource)
             (islandSource                  : IslandSource)
             (itemSource                    : ItemSource) 
             (vesselSingleStatisticSource   : VesselSingleStatisticSource)
@@ -662,8 +616,6 @@ module World =
         let items = itemSource()
         match items |> FindItemByName itemName, islandSource() |> List.tryFind (fun x-> x = location) with
         | Some (item, descriptor) , Some _ ->
-            let markets =
-                islandMarketSource location
             let unitPrice = 
                 Item.DetermineSalePrice 
                     context

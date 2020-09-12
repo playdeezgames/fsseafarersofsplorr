@@ -98,11 +98,18 @@ type TestDockedRunContext
     interface AvatarAddInventoryContext with
         member _.avatarInventorySink   : AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
-        
+    interface WorldAcceptJobContext with
+        member _.avatarJobSink         : AvatarJobSink = avatarJobSink
+        member _.avatarJobSource       : AvatarJobSource = avatarJobSource
+        member _.islandJobPurger       : IslandJobPurger = islandJobPurger
+        member _.islandSingleJobSource : IslandSingleJobSource = islandSingleJobSource
+        member _.islandSource          : IslandSource = islandSource
+    interface WorldAbandonJobContext with
+        member _.avatarJobSource : AvatarJobSource = avatarJobSource
     interface DockedHandleCommandContext with
+        member _.avatarJobSource : AvatarJobSource = avatarJobSource
         member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
         member this.avatarJobSink: AvatarJobSink = avatarJobSink
-        member this.avatarJobSource: AvatarJobSource = avatarJobSource
         member _.avatarInventorySink            : AvatarInventorySink           =avatarInventorySink            
         member _.avatarInventorySource          : AvatarInventorySource         =avatarInventorySource          
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink  =avatarIslandSingleMetricSink   

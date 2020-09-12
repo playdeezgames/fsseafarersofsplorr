@@ -79,7 +79,6 @@ let ``BuyItems.It gives a message when given a bogus island location.`` () =
     input 
     |> World.BuyItems
         context
-        islandMarketSourceStub 
         islandSource
         genericWorldItemSource
         vesselSingleStatisticSourceStub 
@@ -126,7 +125,6 @@ let ``BuyItems.It gives a message when given a valid island location and a bogus
     input 
     |> World.BuyItems 
         context
-        islandMarketSourceStub 
         islandSource
         genericWorldItemSource
         vesselSingleStatisticSourceStub 
@@ -186,7 +184,6 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds.`` () =
     input 
     |> World.BuyItems 
         context
-        islandMarketSource 
         islandSource
         genericWorldItemSource
         vesselSingleStatisticSource 
@@ -247,7 +244,6 @@ let ``BuyItems.It gives a message when the avatar has insufficient tonnage.`` ()
     input 
     |> World.BuyItems
         context
-        islandMarketSource 
         islandSource
         genericWorldItemSource
         vesselSingleStatisticSource
@@ -315,7 +311,6 @@ let ``BuyItems.It gives a message and completes the purchase when the avatar has
     input 
     |> World.BuyItems 
         context
-        islandMarketSource 
         islandSource
         genericWorldItemSource
         vesselSingleStatisticSource
@@ -377,7 +372,6 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds for a s
     input 
     |> World.BuyItems
         context
-        islandMarketSource 
         islandSource
         genericWorldItemSource
         vesselSingleStatisticSource
@@ -443,7 +437,6 @@ let ``BuyItems.It gives a message indicating purchased quantity and completes th
     input 
     |> World.BuyItems 
         context
-        islandMarketSource 
         islandSource
         genericWorldItemSource
         vesselSingleStatisticSource

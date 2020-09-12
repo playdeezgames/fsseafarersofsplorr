@@ -45,10 +45,7 @@ let ``HeadFor.It adds a message when the island name does not exist.`` () =
     |> World.HeadFor 
         context
         avatarIslandSingleMetricSource
-        (avatarExpectedMessageSink expectedMessage)
         islandLocationByNameSource
-        vesselSingleStatisticSource 
-        vesselSingleStatisticSink 
         "yermom"
 
 [<Test>]
@@ -80,10 +77,7 @@ let ``HeadFor.It adds a message when the island name exists but is not known.`` 
     |> World.HeadFor 
         context
         avatarIslandSingleMetricSource
-        (avatarExpectedMessageSink expectedMessage)
         islandLocationByNameSource
-        vesselSingleStatisticSource 
-        vesselSingleStatisticSink 
         "Uno"
 
 [<Test>]
@@ -122,10 +116,7 @@ let ``HeadFor.It sets the heading when the island name exists and is known.`` ()
     |> World.HeadFor 
         context
         avatarIslandSingleMetricSource
-        (avatarMessagesSinkFake [firstExpectedMessage; secondExpectedMessage])
         islandLocationByNameSource
-        vesselSingleStatisticSource 
-        vesselSingleStatisticSink 
         "Uno"
 
 

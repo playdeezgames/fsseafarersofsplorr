@@ -233,10 +233,7 @@ module AtSea =
             |> World.HeadFor
                 context
                 context.avatarIslandSingleMetricSource
-                context.avatarMessageSink 
                 context.islandLocationByNameSource
-                context.vesselSingleStatisticSource 
-                context.vesselSingleStatisticSink 
                 name
             (avatarId)
             |> Gamestate.InPlay
@@ -247,9 +244,7 @@ module AtSea =
             |> World.DistanceTo 
                 context
                 context.avatarIslandSingleMetricSource
-                context.avatarMessageSink 
                 context.islandLocationByNameSource
-                context.vesselSingleStatisticSource 
                 name
             (avatarId)
             |> Gamestate.InPlay
@@ -275,7 +270,6 @@ module AtSea =
                 avatarId 
                 |> World.Dock 
                     context
-                    random 
                     location
                 avatarId
                 |> Gamestate.InPlay
@@ -330,19 +324,6 @@ module AtSea =
             avatarId
             |> World.Move 
                 context
-                context.avatarInventorySink
-                context.avatarInventorySource
-                context.avatarIslandSingleMetricSink
-                context.avatarMessageSink 
-                context.avatarShipmateSource
-                context.avatarSingleMetricSink
-                context.avatarSingleMetricSource
-                context.islandSource
-                context.shipmateRationItemSource 
-                context.shipmateSingleStatisticSink
-                context.shipmateSingleStatisticSource
-                context.vesselSingleStatisticSink 
-                context.vesselSingleStatisticSource 
                 distance
             avatarId
             |> Gamestate.InPlay

@@ -14,8 +14,10 @@ type TestWorldAbandonJobContext
         shipmateSingleStatisticSink, 
         shipmateSingleStatisticSource) =
     interface WorldAbandonJobContext with
-        member this.avatarJobSink: AvatarJobSink = avatarJobSink
         member this.avatarJobSource: AvatarJobSource = avatarJobSource
+    interface AvatarAbandonJobContext with
+        member _.avatarJobSink : AvatarJobSink = avatarJobSink
+        member _.avatarJobSource : AvatarJobSource = avatarJobSource
     interface AvatarGetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarAddMessagesContext with
