@@ -67,6 +67,5 @@ let ``AddMessages.It appends new messages to previously existing messages in the
     inputWorld
     |> World.AddMessages 
         context
-        (avatarMessagesSinkFake newMessages) 
         newMessages
 

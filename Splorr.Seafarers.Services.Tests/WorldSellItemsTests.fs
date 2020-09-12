@@ -72,17 +72,10 @@ let ``SellItems.It gives a message when given a bogus island location.`` () =
     input 
     |> World.SellItems 
         context
-        avatarInventorySink
-        avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
-        commoditySource 
         islandMarketSourceStub 
-        islandSingleMarketSinkStub 
-        islandSingleMarketSourceStub 
         islandSource
         genericWorldItemSource
-        shipmateSingleStatisticSinkStub
-        shipmateSingleStatisticSourceStub
         inputLocation 
         inputQuantity 
         inputItemName
@@ -122,17 +115,10 @@ let ``SellItems.It gives a message when given a valid island location and bogus 
     input 
     |> World.SellItems 
         context
-        avatarInventorySink
-        avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
-        commoditySource 
         islandMarketSourceStub 
-        islandSingleMarketSinkStub 
-        islandSingleMarketSourceStub 
         islandSource
         genericWorldItemSource
-        shipmateSingleStatisticSinkStub
-        shipmateSingleStatisticSourceStub
         inputLocation 
         inputQuantity 
         inputItemName
@@ -168,17 +154,10 @@ let ``SellItems.It gives a message when the avatar has insufficient items in inv
     input 
     |> World.SellItems 
         context
-        avatarInventorySink
-        avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
-        commoditySource 
         islandMarketSourceStub 
-        islandSingleMarketSinkStub 
-        islandSingleMarketSourceStub 
         islandSource
         genericWorldItemSource 
-        shipmateSingleStatisticSinkStub
-        shipmateSingleStatisticSourceStub
         inputLocation 
         inputQuantity 
         inputItemName
@@ -214,17 +193,10 @@ let ``SellItems.It gives a message when the avatar has no items in inventory and
     input 
     |> World.SellItems 
         context
-        avatarInventorySink
-        avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
-        commoditySource 
         islandMarketSourceStub 
-        islandSingleMarketSinkStub 
-        islandSingleMarketSourceStub 
         islandSource
         genericWorldItemSource 
-        shipmateSingleStatisticSinkStub
-        shipmateSingleStatisticSourceStub
         inputLocation 
         inputQuantity 
         inputItemName
@@ -281,17 +253,10 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
     input 
     |> World.SellItems 
         context
-        avatarInventorySink
-        avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
-        commoditySource 
         islandMarketSource 
-        islandSingleMarketSink 
-        islandSingleMarketSourceStub 
         islandSource
         genericWorldItemSource 
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
         inputLocation 
         inputQuantity 
         inputItemName
@@ -348,17 +313,10 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
     input 
     |> World.SellItems 
         context
-        avatarInventorySink
-        avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
-        commoditySource 
         islandMarketSource 
-        islandSingleMarketSink 
-        islandSingleMarketSourceStub 
         islandSource
         genericWorldItemSource 
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
         inputLocation 
         inputQuantity 
         inputItemName

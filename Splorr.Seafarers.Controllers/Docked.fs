@@ -140,17 +140,10 @@ module Docked =
             avatarId 
             |> World.SellItems 
                 context
-                context.avatarInventorySink
-                context.avatarInventorySource
                 context.avatarMessageSink
-                context.commoditySource 
                 context.islandMarketSource 
-                context.islandSingleMarketSink 
-                context.islandSingleMarketSource 
                 context.islandSource
                 context.itemSource 
-                context.shipmateSingleStatisticSink
-                context.shipmateSingleStatisticSource
                 location 
                 quantity 
                 itemName

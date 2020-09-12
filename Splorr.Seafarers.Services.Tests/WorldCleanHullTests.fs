@@ -3,7 +3,6 @@
 open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
-open WorldTestFixtures
 open CommonTestFixtures
 
 type TestWorldCleanHullContext
@@ -56,13 +55,6 @@ let ``CleanHull.It returns the original world when given a bogus avatar id and w
     inputWorld
     |> World.CleanHull
         context
-        avatarShipmateSource
-        (assertAvatarSingleMetricSink [Metric.CleanedHull, 1UL])
-        avatarSingleMetricSourceStub
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
-        vesselSingleStatisticSink 
-        vesselSingleStatisticSource 
         inputSide
 
 
@@ -95,13 +87,6 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
     inputWorld
     |> World.CleanHull 
         context
-        avatarShipmateSource
-        (assertAvatarSingleMetricSink [Metric.CleanedHull, 1UL])
-        avatarSingleMetricSourceStub
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
-        vesselSingleStatisticSink 
-        vesselSingleStatisticSource 
         inputSide
 
 

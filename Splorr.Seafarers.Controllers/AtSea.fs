@@ -264,7 +264,6 @@ module AtSea =
                 avatarId
                 |> World.AddMessages 
                     context
-                    context.avatarMessageSink 
                     [ "You cannot careen here." ]
                 avatarId
                 |> Gamestate.InPlay
@@ -285,7 +284,6 @@ module AtSea =
                 avatarId
                 |> World.AddMessages 
                     context
-                    context.avatarMessageSink 
                     [ "There is no place to dock." ]
                 avatarId
                 |> Gamestate.InPlay
@@ -372,7 +370,6 @@ module AtSea =
             avatarId
             |> World.SetSpeed 
                 context
-                context.avatarMessageSink
                 speed
             avatarId
             |> Gamestate.InPlay

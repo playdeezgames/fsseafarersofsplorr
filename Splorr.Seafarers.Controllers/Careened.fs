@@ -95,13 +95,6 @@ module Careened =
             avatarId 
             |> World.CleanHull
                 context
-                avatarShipmateSource
-                avatarSingleMetricSink
-                avatarSingleMetricSource
-                shipmateSingleStatisticSink
-                shipmateSingleStatisticSource
-                vesselSingleStatisticSink
-                vesselSingleStatisticSource
                 (if side=Port then Starboard else Port)
             (side, avatarId)
             |> Gamestate.Careened
