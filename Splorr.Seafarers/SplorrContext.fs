@@ -285,7 +285,9 @@ type SplorrContext
 
     interface AvatarGetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-
+    interface AvatarCompleteJobContext with
+        member _.avatarJobSink : AvatarJobSink = avatarJobSink
+        member _.avatarJobSource : AvatarJobSource = avatarJobSource
     interface WorldDockContext with
         member this.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
         member this.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink

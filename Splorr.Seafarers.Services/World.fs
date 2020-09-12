@@ -446,8 +446,6 @@ module World =
         if location = job.Destination then
             Avatar.CompleteJob 
                 context
-                avatarJobSink
-                avatarJobSource
                 avatarId
             avatarId
             |> AddMessages context avatarMessageSink [ "You complete your job." ]

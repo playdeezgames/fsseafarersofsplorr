@@ -103,6 +103,8 @@ type AvatarCompleteJobContext =
     inherit ShipmateTransformStatisticContext
     inherit AvatarGetPrimaryStatisticContext
     inherit AvatarAddMetricContext
+    abstract member avatarJobSink : AvatarJobSink
+    abstract member avatarJobSource : AvatarJobSource
 
 type AvatarEarnMoneyContext =
     inherit AvatarSetMoneyContext
@@ -354,8 +356,8 @@ module Avatar =
         |> List.iter transform
 
     let Move
-            (context : AvatarMoveContext)
-            (avatarId                      : string)
+            (context  : AvatarMoveContext)
+            (avatarId : string)
             : unit =
         let actualSpeed = 
             avatarId 
@@ -451,11 +453,9 @@ module Avatar =
 
     let CompleteJob
             (context : AvatarCompleteJobContext)
-            (avatarJobSink                 : AvatarJobSink)
-            (avatarJobSource               : AvatarJobSource)
             (avatarId:string)
             : unit =
-        match avatarId |> avatarJobSource with
+        match avatarId |> context.avatarJobSource with
         | Some job ->
             SetReputation 
                 context
@@ -476,7 +476,7 @@ module Avatar =
                 Metric.CompletedJob 
                 1UL
             None
-            |> avatarJobSink avatarId
+            |> context.avatarJobSink avatarId
         | _ -> ()
 
     let EarnMoney 

@@ -64,6 +64,10 @@ type TestWorldDockContext
         member _.islandSource                   : IslandSource=islandSource
         member _.itemSource                     : ItemSource =itemSource
         member _.shipmateSingleStatisticSink    : ShipmateSingleStatisticSink=shipmateSingleStatisticSink
+    interface AvatarCompleteJobContext with
+        member _.avatarJobSink : AvatarJobSink = avatarJobSink
+        member _.avatarJobSource : AvatarJobSource = avatarJobSource
+    
     interface WorldAddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface AvatarGetPrimaryStatisticContext with

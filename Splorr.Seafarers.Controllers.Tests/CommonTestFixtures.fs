@@ -358,6 +358,10 @@ type TestAtSeaRunContext
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface WorldAddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface AvatarCompleteJobContext with
+        member _.avatarJobSink : AvatarJobSink = avatarJobSink
+        member _.avatarJobSource : AvatarJobSource = avatarJobSource
+
     interface WorldDockContext with
         member _.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink

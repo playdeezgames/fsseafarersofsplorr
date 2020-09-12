@@ -34,11 +34,16 @@ type TestAvatarAbandonJobContext
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 type TestAvatarCompleteJobContext 
-        (avatarSingleMetricSink,
+        (avatarJobSink,
+        avatarJobSource,
+        avatarSingleMetricSink,
         avatarSingleMetricSource,
         shipmateSingleStatisticSink, 
         shipmateSingleStatisticSource) =
-    interface AvatarCompleteJobContext
+    interface AvatarCompleteJobContext with
+        member _.avatarJobSink : AvatarJobSink = avatarJobSink
+        member _.avatarJobSource : AvatarJobSource = avatarJobSource
+
     interface AvatarGetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarAddMetricContext with
@@ -806,14 +811,14 @@ let ``CompleteJob.It does nothing when the given avatar has no job.`` () =
         None
     let context = 
         TestAvatarCompleteJobContext 
-            (avatarSingleMetricSinkExplode,
+            (avatarJobSink,
+            avatarJobSource,
+            avatarSingleMetricSinkExplode,
             avatarSingleMetricSourceStub,
             shipmateSingleStatisticSink, 
             shipmateSingleStatisticSource) :> AvatarCompleteJobContext
     Avatar.CompleteJob
         context
-        avatarJobSink
-        avatarJobSource
         avatarId
 
 [<Test>]
@@ -849,14 +854,14 @@ let ``CompleteJob.It sets job to None, adds reward money, adds reputation and me
         |> Some
     let context = 
         TestAvatarCompleteJobContext
-            ((assertAvatarSingleMetricSink [(Metric.CompletedJob, 1UL)]),
+            (avatarJobSink,
+            avatarJobSource,
+            (assertAvatarSingleMetricSink [(Metric.CompletedJob, 1UL)]),
             avatarSingleMetricSourceStub,
             shipmateSingleStatisticSink, 
             shipmateSingleStatisticSource) :> AvatarCompleteJobContext
     Avatar.CompleteJob
         context
-        avatarJobSink
-        avatarJobSource
         avatarId
 
 [<Test>]
