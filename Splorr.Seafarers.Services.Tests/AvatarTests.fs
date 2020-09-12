@@ -1004,8 +1004,6 @@ let ``AddInventory.It adds a given number of given items to the given avatar's i
     input
     |> Avatar.AddInventory 
         context
-        avatarInventorySink
-        avatarInventorySource
         inputItem 
         inputQuantity
 

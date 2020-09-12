@@ -733,8 +733,6 @@ module World =
                 avatarId
                 |> Avatar.AddInventory 
                     context
-                    avatarInventorySink
-                    avatarInventorySource
                     item 
                     quantity
         | None, Some _ ->

@@ -119,12 +119,6 @@ type AvatarAddInventoryContext =
     abstract member avatarInventorySink   : AvatarInventorySink
     abstract member avatarInventorySource : AvatarInventorySource
 
-(*
-interface AvatarAddInventoryContext with
-    member _.avatarInventorySink   : AvatarInventorySink = avatarInventorySink
-    member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
-*)
-
 type AvatarTransformShipmatesContext =
     abstract avatarShipmateSource : AvatarShipmateSource
 
@@ -520,17 +514,15 @@ module Avatar =
 
     let AddInventory 
             (context : AvatarAddInventoryContext)
-            (avatarInventorySink   : AvatarInventorySink)
-            (avatarInventorySource : AvatarInventorySource)
             (item : uint64) 
             (quantity : uint64) 
             (avatarId : string) 
             : unit =
         let newQuantity = (avatarId |> GetItemCount context item) + quantity
         avatarId
-        |> avatarInventorySource
+        |> context.avatarInventorySource
         |> Map.add item newQuantity
-        |> avatarInventorySink avatarId
+        |> context.avatarInventorySink avatarId
 
     let AddMessages 
             (context : AvatarAddMessagesContext)
