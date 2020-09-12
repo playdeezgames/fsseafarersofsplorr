@@ -116,6 +116,14 @@ type AvatarSpendMoneyContext =
 
 type AvatarAddInventoryContext =
     inherit AvatarGetItemCountContext
+    abstract member avatarInventorySink   : AvatarInventorySink
+    abstract member avatarInventorySource : AvatarInventorySource
+
+(*
+interface AvatarAddInventoryContext with
+    member _.avatarInventorySink   : AvatarInventorySink = avatarInventorySink
+    member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
+*)
 
 type AvatarTransformShipmatesContext =
     abstract avatarShipmateSource : AvatarShipmateSource

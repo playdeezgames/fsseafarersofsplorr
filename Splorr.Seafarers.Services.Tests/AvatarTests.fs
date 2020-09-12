@@ -190,10 +190,12 @@ type TestAvatarSetPositionContext(vesselSingleStatisticSink, vesselSingleStatist
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-type TestAvatarAddInventoryContext(avatarInventorySource) =
+type TestAvatarAddInventoryContext(avatarInventorySink, avatarInventorySource) =
     interface AvatarGetItemCountContext with
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
-    interface AvatarAddInventoryContext
+    interface AvatarAddInventoryContext with
+        member _.avatarInventorySink   : AvatarInventorySink = avatarInventorySink
+        member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
 
 type TestAvatarGetItemCountContext(avatarInventorySource) =
     interface AvatarGetItemCountContext with
@@ -998,7 +1000,7 @@ let ``AddInventory.It adds a given number of given items to the given avatar's i
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(1, inventory.Count)
         Assert.AreEqual(inputQuantity, inventory.[inputItem])
-    let context = TestAvatarAddInventoryContext(avatarInventorySource) :> AvatarAddInventoryContext
+    let context = TestAvatarAddInventoryContext(avatarInventorySink, avatarInventorySource) :> AvatarAddInventoryContext
     input
     |> Avatar.AddInventory 
         context

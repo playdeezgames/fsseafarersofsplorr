@@ -95,6 +95,9 @@ type TestDockedRunContext
         
     interface AvatarGetItemCountContext with
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
+    interface AvatarAddInventoryContext with
+        member _.avatarInventorySink   : AvatarInventorySink = avatarInventorySink
+        member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
         
     interface DockedHandleCommandContext with
         member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
