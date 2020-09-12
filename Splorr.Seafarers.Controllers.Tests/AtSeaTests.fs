@@ -7,7 +7,7 @@ open Splorr.Seafarers.Controllers
 open CommonTestFixtures
 open AtSeaTestFixtures
 
-let private functionUnderTest 
+let private functionUnderTest
         (avatarIslandFeatureSink        : AvatarIslandFeatureSink)
         (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
         (avatarJobSink                  : AvatarJobSink)
@@ -36,6 +36,7 @@ let private functionUnderTest
             avatarSingleMetricSink,
             avatarSingleMetricSourceStub,
             atSeaCommoditySource ,
+            (fun () -> System.DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64),
             atSeaIslandItemSink ,
             atSeaIslandItemSource, 
             islandJobSinkStub,
@@ -58,7 +59,8 @@ let private functionUnderTest
         context
         random 
 
-let private functionUsuallyUnderTest = 
+let private functionUsuallyUnderTest
+        (islandSingleNameSource: IslandSingleNameSource)= 
     functionUnderTest 
         avatarIslandFeatureSinkDummy
         avatarIslandSingleMetricSourceStub
@@ -67,7 +69,7 @@ let private functionUsuallyUnderTest =
         avatarJobSinkStub
         avatarSingleMetricSinkExplode
         islandLocationByNameSourceStub
-        islandSingleNameSourceStub
+        islandSingleNameSource
         islandSingleStatisticSourceStub
         shipmateSingleStatisticSourceStub
         vesselSingleStatisticSourceStub 
@@ -119,9 +121,13 @@ let ``Run.It returns ConfirmQuit when given Quit command.`` () =
         |> Gamestate.InPlay 
         |> Gamestate.ConfirmQuit 
         |> Some
+    let islandSingleNameSource (_) = "island name" |> Some
     let actual = 
         input
-        |> functionUsuallyUnderTest inputSource sinkDummy
+        |> functionUsuallyUnderTest
+            islandSingleNameSource
+            inputSource 
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -135,9 +141,13 @@ let ``Run.It returns InvalidInput when given invalid command.`` () =
         |> Gamestate.InPlay)
         |> Gamestate.ErrorMessage
         |> Some
+    let islandSingleNameSource (_) = "island name" |> Some
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkDummy
+        |> functionUsuallyUnderTest
+            islandSingleNameSource
+            inputSource 
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -155,6 +165,7 @@ let ``Run.It returns AtSea with new speed when given Set Speed command.`` () =
         input
         |> Gamestate.InPlay
         |> Some
+    let islandSingleNameSource (_) = "i am a rock" |> Some
     let actual =
         input
         |> functionUnderTest 
@@ -165,7 +176,7 @@ let ``Run.It returns AtSea with new speed when given Set Speed command.`` () =
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
             islandLocationByNameSourceStub
-            islandSingleNameSourceStub
+            islandSingleNameSource
             islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub 
@@ -191,6 +202,7 @@ let ``Run.It returns AtSea with new heading when given Set Heading command.`` ()
         input
         |> Gamestate.InPlay
         |> Some
+    let islandSingleNameSource (_) = "i am a rock" |> Some
     let actual =
         input
         |> functionUnderTest 
@@ -201,7 +213,7 @@ let ``Run.It returns AtSea with new heading when given Set Heading command.`` ()
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
             islandLocationByNameSourceStub
-            islandSingleNameSourceStub
+            islandSingleNameSource
             islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
@@ -228,6 +240,7 @@ let ``Run.It moves the avatar when given Move command.`` () =
             Assert.AreEqual(1UL, value)
         | _ ->
             Assert.Fail(metric.ToString() |> sprintf "avatarSingleMetricSink - %s")
+    let islandSingleNameSource (_) = "island name" |> Some
     let actual =
         input
         |> functionUnderTest 
@@ -238,7 +251,7 @@ let ``Run.It moves the avatar when given Move command.`` () =
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSink
             islandLocationByNameSourceStub
-            islandSingleNameSourceStub
+            islandSingleNameSource
             islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
@@ -258,9 +271,13 @@ let ``Run.It returns At Sea Help when given the Help command.`` () =
         |> Gamestate.InPlay 
         |> Gamestate.Help 
         |> Some
+    let islandSingleNameSource (_) = "i am a rock" |> Some
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkDummy
+        |> functionUsuallyUnderTest 
+            islandSingleNameSource
+            inputSource 
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -275,9 +292,13 @@ let ``Run.It returns At Sea Metrics when given the Metrics command.`` () =
         |> Gamestate.InPlay 
         |> Gamestate.Metrics 
         |> Some
+    let islandSingleNameSource (_) = "i am a rock" |> Some
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkDummy
+        |> functionUsuallyUnderTest 
+            islandSingleNameSource
+            inputSource 
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -292,9 +313,13 @@ let ``Run.It returns At Sea Inventory when given the Inventory command.`` () =
         |> Gamestate.InPlay 
         |> Gamestate.Inventory 
         |> Some
+    let islandSingleNameSource (_) = "i am a rock" |> Some
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkDummy
+        |> functionUsuallyUnderTest 
+            islandSingleNameSource
+            inputSource 
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -309,9 +334,13 @@ let ``Run.It returns Main Menu when given the Menu command.`` () =
         |> Some 
         |> Gamestate.MainMenu 
         |> Some
+    let islandSingleNameSource (_) = "island name" |> Some
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkDummy
+        |> functionUsuallyUnderTest 
+            islandSingleNameSource
+            inputSource 
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -326,9 +355,13 @@ let ``Run.It returns Island List when given the Islands command.`` () =
         (0u, input |> Gamestate.InPlay) 
         |> Gamestate.IslandList 
         |> Some
+    let islandSingleNameSource (_) = "island name" |> Some
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkDummy
+        |> functionUsuallyUnderTest 
+            islandSingleNameSource
+            inputSource 
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -389,6 +422,7 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
             Assert.Fail(metric.ToString() |> sprintf "avatarSingleMetricSink - %s")
     let avatarIslandFeatureSink (feature:AvatarIslandFeature option, _) =
         Assert.AreEqual(IslandFeatureIdentifier.Dock, feature.Value.featureId)
+    let islandSingleNameSource (_) = "island name" |> Some
     let actual =
         input
         |> functionUnderTest
@@ -399,7 +433,7 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSink
             islandLocationByNameSourceStub
-            islandSingleNameSourceStub
+            islandSingleNameSource
             islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
@@ -420,6 +454,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
         input
         |> Gamestate.InPlay
         |> Some
+    let islandSingleNameSource (_) = "island name" |> Some
     let actual = 
         input
         |> functionUnderTest 
@@ -430,7 +465,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
             islandLocationByNameSourceStub
-            islandSingleNameSourceStub
+            islandSingleNameSource
             islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
@@ -451,6 +486,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
         input
         |> Gamestate.InPlay
         |> Some
+    let islandSingleNameSource (_) = "island name" |> Some
     let actual = 
         input
         |> functionUnderTest
@@ -461,7 +497,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
             islandLocationByNameSourceStub
-            islandSingleNameSourceStub
+            islandSingleNameSource
             islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
@@ -525,9 +561,13 @@ let ``Run.It returns Chart when given the command Chart.`` () =
         (inputChartName, input)
         |> Gamestate.Chart 
         |> Some
+    let islandSingleNameSource (_) = "island name" |> Some
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkDummy
+        |> functionUsuallyUnderTest 
+            islandSingleNameSource
+            inputSource 
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -542,9 +582,13 @@ let ``Run.It returns Status when given the command Status.`` () =
         |> Gamestate.InPlay
         |> Gamestate.Status 
         |> Some
+    let islandSingleNameSource (_) = "island name" |> Some
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkDummy
+        |> functionUsuallyUnderTest 
+            islandSingleNameSource
+            inputSource 
+            sinkDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -560,6 +604,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
         input
         |> Gamestate.InPlay
         |> Some
+    let islandSingleNameSource (_) = "island name" |> Some
     let actual =
         input
         |> functionUnderTest 
@@ -570,7 +615,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
             islandLocationByNameSourceStub
-            islandSingleNameSourceStub
+            islandSingleNameSource
             islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
@@ -604,6 +649,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
             Assert.AreEqual(1UL, value)
         | _ ->
             Assert.Fail(metric.ToString() |> sprintf "avatarSingleMetricSink - %s")
+    let islandSingleNameSource (_) = "island name" |> Some
     let actual =
         input
         |> functionUnderTest 
@@ -614,7 +660,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSink
             islandLocationByNameSourceStub
-            islandSingleNameSourceStub
+            islandSingleNameSource
             islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
@@ -657,6 +703,7 @@ let ``Run.It gives a message and returns AtSea when the avatar is too far away f
         | _ ->
             Assert.Fail("Kaboom get")
             None
+    let islandSingleNameSource (_) = "island name" |> Some
     let actual =
         input
         |> functionUnderTest 
@@ -667,7 +714,7 @@ let ``Run.It gives a message and returns AtSea when the avatar is too far away f
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
             islandLocationByNameSourceStub
-            islandSingleNameSourceStub
+            islandSingleNameSource
             islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSource
@@ -687,9 +734,13 @@ let ``Run.It returns Careen Port when given the careen port command and the avat
         (Port, input)
         |> Gamestate.Careened
         |> Some
+    let islandSingleNameSource (_) = "island name" |> Some
     let actual =
         input
-        |> functionUsuallyUnderTest inputSource sinkDummy
+        |> functionUsuallyUnderTest 
+            islandSingleNameSource
+            inputSource 
+            sinkDummy
     Assert.AreEqual(expected, actual)
     
 [<Test>]
@@ -708,6 +759,7 @@ let ``Run.It adds a message when given a Distance To command with an island name
         expectedWorld
         |> Gamestate.InPlay
         |> Some
+    let islandSingleNameSource (_) = "island name" |> Some
     let actual =
         input
         |> functionUnderTest
@@ -718,7 +770,7 @@ let ``Run.It adds a message when given a Distance To command with an island name
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
             islandLocationByNameSourceStub
-            islandSingleNameSourceStub
+            islandSingleNameSource
             islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub
@@ -750,6 +802,7 @@ let ``Run.It adds a message when given a Distance To command with an island name
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
             None
+    let islandSingleNameSource (_) = "island name" |> Some
     let actual =
         input
         |> functionUnderTest
@@ -760,7 +813,7 @@ let ``Run.It adds a message when given a Distance To command with an island name
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
             islandLocationByNameSourceStub
-            islandSingleNameSourceStub
+            islandSingleNameSource
             islandSingleStatisticSourceStub
             shipmateSingleStatisticSourceStub
             vesselSingleStatisticSourceStub

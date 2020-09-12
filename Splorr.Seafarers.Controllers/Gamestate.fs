@@ -3,9 +3,10 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
-
-
 type AvatarMessageSource = string -> string list
+
+type GamestateCheckForAvatarDeathContext =
+    inherit WorldIsAvatarAliveContext
 
 [<RequireQualifiedAccess>]
 type Gamestate = 
@@ -45,8 +46,8 @@ module Gamestate =
         | _ -> None
 
     let CheckForAvatarDeath 
+            (context : GamestateCheckForAvatarDeathContext)
             (avatarMessageSource           : AvatarMessageSource)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (gamestate                     : Gamestate option) 
             : Gamestate option =
         gamestate
@@ -54,7 +55,7 @@ module Gamestate =
             (GetWorld)
         |> Option.fold 
             (fun g w -> 
-                if w |> World.IsAvatarAlive shipmateSingleStatisticSource then
+                if w |> World.IsAvatarAlive context then
                     g
                 else
                     w

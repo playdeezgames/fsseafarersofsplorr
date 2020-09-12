@@ -6,6 +6,66 @@ open Splorr.Seafarers.Models
 open WorldTestFixtures
 open CommonTestFixtures
 
+type TestWorldMoveContext
+        (avatarInventorySink,
+        avatarInventorySource,
+        avatarIslandSingleMetricSink,
+        avatarMessageSink,
+        avatarShipmateSource,
+        avatarSingleMetricSink,
+        avatarSingleMetricSource,
+        islandSource,
+        shipmateRationItemSource,
+        shipmateSingleStatisticSink,
+        shipmateSingleStatisticSource,
+        vesselSingleStatisticSink, 
+        vesselSingleStatisticSource) =
+    interface VesselTransformFoulingContext with
+        member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
+    interface VesselBefoulContext with
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
+    interface ShipmateGetStatusContext with
+        member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+    interface ShipmateEatContext with
+        member this.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+    interface AvatarGetPositionContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarGetSpeedContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarSetPositionContext with
+        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarAddMetricContext with
+        member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
+        member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
+    interface AvatarEatContext with
+        member _.avatarInventorySink           : AvatarInventorySink=avatarInventorySink
+        member _.avatarInventorySource         : AvatarInventorySource=avatarInventorySource
+        member _.avatarShipmateSource          : AvatarShipmateSource=avatarShipmateSource
+    interface AvatarGetCurrentFoulingContext with
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarAddMessagesContext with
+        member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface AvatarTransformShipmatesContext with
+        member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
+    interface WorldUpdateChartsContext with
+        member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+        member _.islandSource: IslandSource = islandSource
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface WorldAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface AvatarMoveContext with
+        member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface WorldMoveContext
+
 [<Test>]
 let ``Move.It moves the avatar one unit when give 1u for distance when given a valid avatar id.`` () =
     let vesselSingleStatisticSource (_) (identifier) =
@@ -67,8 +127,24 @@ let ``Move.It moves the avatar one unit when give 1u for distance when given a v
         Assert.AreEqual(Map.empty, inventory)
     let islandSource () =
         []
+    let context = 
+        TestWorldMoveContext
+            (avatarInventorySink,
+            avatarInventorySource,
+            avatarIslandSingleMetricSinkStub,
+            avatarMessageSinkStub,
+            avatarShipmateSource,
+            (assertAvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL]),
+            avatarSingleMetricSourceStub,
+            islandSource,
+            shipmateRationItemSourceStub,
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource,
+            vesselSingleStatisticSink, 
+            vesselSingleStatisticSource) :> WorldMoveContext
     avatarId
     |> World.Move 
+        context
         avatarInventorySink
         avatarInventorySource
         avatarIslandSingleMetricSinkStub
@@ -148,8 +224,24 @@ let ``Move.It moves the avatar almost two units when give 2u for distance.`` () 
         Assert.AreEqual(Map.empty, inventory)
     let islandSource () =
         []
+    let context = 
+        TestWorldMoveContext
+            (avatarInventorySink,
+            avatarInventorySource,
+            avatarIslandSingleMetricSinkStub,
+            avatarMessageSinkStub,
+            avatarShipmateSource,
+            (assertAvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL]),
+            avatarSingleMetricSourceStub,
+            islandSource,
+            shipmateRationItemSourceStub,
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource,
+            vesselSingleStatisticSink, 
+            vesselSingleStatisticSource) :> WorldMoveContext
     avatarId
     |> World.Move 
+        context
         avatarInventorySink
         avatarInventorySource
         avatarIslandSingleMetricSinkStub

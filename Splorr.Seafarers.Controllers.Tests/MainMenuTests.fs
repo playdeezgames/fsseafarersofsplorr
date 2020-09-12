@@ -28,37 +28,61 @@ type TestWorldCreateContext
         worldSingleStatisticSource) =
 
     interface IslandCreateContext with 
-        member this.islandStatisticTemplateSource: IslandStatisticTemplateSource = islandStatisticTemplateSource
-        member this.islandSingleStatisticSink: IslandSingleStatisticSink = islandSingleStatisticSink
+        member _.islandStatisticTemplateSource: IslandStatisticTemplateSource = islandStatisticTemplateSource
+        member _.islandSingleStatisticSink: IslandSingleStatisticSink = islandSingleStatisticSink
 
     interface WorldPopulateIslandsContext with
-        member this.islandFeatureGeneratorSource: IslandFeatureGeneratorSource = islandFeatureGeneratorSource
-        member this.islandSingleFeatureSink: IslandSingleFeatureSink = islandSingleFeatureSink
-        member this.random: Random = random
-        member this.islandSource: IslandSource = islandSource
+        member _.islandFeatureGeneratorSource: IslandFeatureGeneratorSource = islandFeatureGeneratorSource
+        member _.islandSingleFeatureSink: IslandSingleFeatureSink = islandSingleFeatureSink
+        member _.random: Random = random
+        member _.islandSource: IslandSource = islandSource
 
     interface UtilitySortListRandomlyContext with 
-        member this.random : Random = random
+        member _.random : Random = random
+
+    interface WorldGenerateIslandNameContext with
+        member this.random: Random = random
 
     interface WorldNameIslandsContext with
-        member this.islandSingleNameSink: IslandSingleNameSink = islandSingleNameSink
-        member this.nameSource: TermSource = termNameSource
-        member this.islandSource: IslandSource = islandSource
+        member _.islandSingleNameSink: IslandSingleNameSink = islandSingleNameSink
+        member _.nameSource: TermSource = termNameSource
+        member _.islandSource: IslandSource = islandSource
 
     interface WorldGenerateIslandsContext with
-        member this.termNameSource: TermSource = termNameSource
-        member this.islandSingleNameSink : IslandSingleNameSink = islandSingleNameSink
+        member _.termNameSource: TermSource = termNameSource
+        member _.islandSingleNameSink : IslandSingleNameSink = islandSingleNameSink
+
+    interface VesselCreateContext with
+        member _.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
+        member _.vesselStatisticTemplateSource: VesselStatisticTemplateSource = vesselStatisticTemplateSource
+
+    interface ShipmateCreateContext with
+        member _.rationItemSource: RationItemSource = rationItemSource
+        member _.shipmateRationItemSink: ShipmateRationItemSink = shipmateRationItemSink
+        member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member _.shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
+
+    interface AvatarCreateContext with
+        member _.avatarJobSink: AvatarJobSink = avatarJobSink
+
+    interface AvatarGetPositionContext with
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
+    interface WorldUpdateChartsContext with
+        member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+        member _.islandSource: IslandSource = islandSource
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface WorldCreateContext with
-        member this.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
-        member this.avatarJobSink: AvatarJobSink = avatarJobSink
-        member this.rationItemSource: RationItemSource = rationItemSource
-        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
-        member this.shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-        member this.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
-        member this.vesselStatisticTemplateSource: VesselStatisticTemplateSource = vesselStatisticTemplateSource
-        member this.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
+        member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+        member _.avatarJobSink: AvatarJobSink = avatarJobSink
+        member _.rationItemSource: RationItemSource = rationItemSource
+        member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member _.shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        member _.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
+        member _.vesselStatisticTemplateSource: VesselStatisticTemplateSource = vesselStatisticTemplateSource
+        member _.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
         member _.shipmateRationItemSink          : ShipmateRationItemSink = shipmateRationItemSink
 
 let private world = 

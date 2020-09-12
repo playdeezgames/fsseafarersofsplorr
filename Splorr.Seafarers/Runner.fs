@@ -6,13 +6,19 @@ open System
 open Splorr.Seafarers.Models
 
 type RunnerRunContext =
+    inherit StatusRunContext
     inherit AtSeaRunContext
     inherit WorldCreateContext
     inherit DockedRunContext
     inherit IslandFeatureRunContext
     inherit HelpRunContext
-    abstract member avatarMetricSource              : AvatarMetricSource
-    abstract member switchSource                    : SwitchSource
+    inherit ItemListRunContext
+    inherit CareenedRunContext
+    inherit GamestateCheckForAvatarDeathContext
+    inherit ChartRunContext
+    inherit IslandListRunContext
+    abstract member avatarMetricSource : AvatarMetricSource
+    abstract member switchSource : SwitchSource
 
 module Runner =
     let rec private Loop 
@@ -53,11 +59,12 @@ module Runner =
                         avatarId
 
                 | _ ->
-                    raise (System.NotImplementedException "InPlay state with unknown configuration")
+                    raise (NotImplementedException "InPlay state with unknown configuration")
 
 
             | Gamestate.Careened (side, avatarId) -> 
                 Careened.Run 
+                    context
                     context.avatarMessagePurger
                     context.avatarMessageSource
                     context.avatarShipmateSource
@@ -74,6 +81,7 @@ module Runner =
 
             | Gamestate.Chart (chartName, avatarId) -> 
                 Chart.Run 
+                    context
                     context.avatarIslandSingleMetricSource
                     context.islandSingleNameSource
                     context.islandSource 
@@ -95,6 +103,7 @@ module Runner =
                 match context.avatarIslandFeatureSource avatarId with
                 | Some feature ->
                     ItemList.Run 
+                        context
                         context.avatarMessageSource
                         context.commoditySource 
                         context.islandItemSource 
@@ -106,10 +115,10 @@ module Runner =
                         feature.location 
                         avatarId
                 | _ ->
-                    raise (System.NotImplementedException "Gamestate.ItemList with unexpected inner gamestate")
+                    raise (NotImplementedException "Gamestate.ItemList with unexpected inner gamestate")
 
             | Gamestate.ItemList _ -> 
-                raise (System.NotImplementedException "Gamestate.ItemList with unexpected inner gamestate")
+                raise (NotImplementedException "Gamestate.ItemList with unexpected inner gamestate")
 
             | Gamestate.Jobs (Gamestate.InPlay avatarId) -> 
                 match context.avatarIslandFeatureSource avatarId with
@@ -122,9 +131,9 @@ module Runner =
                         feature.location
                         avatarId
                 | _ ->
-                    raise (System.NotImplementedException "Gamestate.Jobs with unexpected inner gamestate")
+                    raise (NotImplementedException "Gamestate.Jobs with unexpected inner gamestate")
             | Gamestate.Jobs _ -> 
-                raise (System.NotImplementedException "Gamestate.Jobs with unexpected inner gamestate")
+                raise (NotImplementedException "Gamestate.Jobs with unexpected inner gamestate")
 
             | Gamestate.GameOver messages -> 
                 GameOver.Run 
@@ -153,6 +162,7 @@ module Runner =
 
             | Gamestate.IslandList (page, state) -> 
                 IslandList.Run 
+                    context
                     context.avatarIslandSingleMetricSource
                     context.islandSingleNameSource
                     context.islandSource
@@ -176,6 +186,7 @@ module Runner =
 
             | Gamestate.Status state -> 
                 Status.Run 
+                    context
                     context.avatarJobSource
                     context.islandSingleNameSource
                     context.shipmateSingleStatisticSource
@@ -184,8 +195,8 @@ module Runner =
                     state
 
             |> Gamestate.CheckForAvatarDeath 
+                context
                 context.avatarMessageSource
-                context.shipmateSingleStatisticSource
 
         match nextGamestate with
         | Some state ->

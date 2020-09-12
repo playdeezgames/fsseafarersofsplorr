@@ -1,6 +1,5 @@
 ﻿namespace Splorr.Seafarers.Services
 
-open Splorr.Seafarers.Models
 open System
 
 module Angle =

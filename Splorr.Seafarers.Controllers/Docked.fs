@@ -12,33 +12,41 @@ type DockedUpdateDisplayContext =
     abstract member islandFeatureSource            : IslandFeatureSource
 
 type DockedHandleCommandContext = 
+    inherit WorldAcceptJobContext
     inherit WorldUndockContext
-    abstract member avatarInventorySink            : AvatarInventorySink
-    abstract member avatarInventorySource          : AvatarInventorySource
-    abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
+    inherit WorldBuyItemsContext
+    inherit WorldSellItemsContext
+    inherit WorldAbandonJobContext
+    inherit WorldClearMessagesContext
+    abstract member avatarInventorySink : AvatarInventorySink
+    abstract member avatarInventorySource : AvatarInventorySource
+    abstract member avatarIslandSingleMetricSink : AvatarIslandSingleMetricSink
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
-    abstract member avatarJobSink                  : AvatarJobSink
-    abstract member avatarJobSource                : AvatarJobSource
-    abstract member avatarMessagePurger            : AvatarMessagePurger
-    abstract member avatarMessageSink              : AvatarMessageSink
-    abstract member avatarSingleMetricSink         : AvatarSingleMetricSink
-    abstract member avatarSingleMetricSource       : AvatarSingleMetricSource
-    abstract member commoditySource                : CommoditySource 
-    abstract member islandJobPurger                : IslandJobPurger
-    abstract member islandMarketSource             : IslandMarketSource 
-    abstract member islandSingleJobSource          : IslandSingleJobSource
-    abstract member islandSingleMarketSink         : IslandSingleMarketSink 
-    abstract member islandSingleMarketSource       : IslandSingleMarketSource 
-    abstract member islandSource                   : IslandSource
-    abstract member itemSource                     : ItemSource 
-    abstract member shipmateSingleStatisticSink    : ShipmateSingleStatisticSink
-    abstract member shipmateSingleStatisticSource  : ShipmateSingleStatisticSource
-    abstract member vesselSingleStatisticSource    : VesselSingleStatisticSource
+    abstract member avatarJobSink : AvatarJobSink
+    abstract member avatarJobSource : AvatarJobSource
+    abstract member avatarMessagePurger : AvatarMessagePurger
+    abstract member avatarMessageSink : AvatarMessageSink
+    abstract member avatarSingleMetricSink : AvatarSingleMetricSink
+    abstract member avatarSingleMetricSource : AvatarSingleMetricSource
+    abstract member commoditySource : CommoditySource 
+    abstract member islandJobPurger : IslandJobPurger
+    abstract member islandMarketSource : IslandMarketSource 
+    abstract member islandSingleJobSource : IslandSingleJobSource
+    abstract member islandSingleMarketSink : IslandSingleMarketSink 
+    abstract member islandSingleMarketSource : IslandSingleMarketSource 
+    abstract member islandSource : IslandSource
+    abstract member itemSource : ItemSource 
+    abstract member shipmateSingleStatisticSink : ShipmateSingleStatisticSink
+    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
+    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
 
+type DockedRunBoilerplateContext =
+    inherit WorldIsAvatarAliveContext
 
 type DockedRunContext =
     inherit DockedUpdateDisplayContext
     inherit DockedHandleCommandContext
+    inherit DockedRunBoilerplateContext
 
 module Docked = 
     let private getFeatureDisplayName (feature:IslandFeatureIdentifier) : Message =
@@ -77,7 +85,7 @@ module Docked =
             (avatarId                       : string) 
             : Gamestate option =
         avatarId
-        |> World.ClearMessages context.avatarMessagePurger
+        |> World.ClearMessages context
 
         match command with
         | Some (Command.GoTo feature) ->
@@ -88,6 +96,7 @@ module Docked =
         | Some (Command.AcceptJob index) ->
             avatarId 
             |> World.AcceptJob
+                context
                 context.avatarIslandSingleMetricSink
                 context.avatarIslandSingleMetricSource
                 context.avatarJobSink
@@ -107,6 +116,7 @@ module Docked =
         | Some (Command.Buy (quantity, itemName))->
             avatarId 
             |> World.BuyItems 
+                context
                 context.avatarInventorySink
                 context.avatarInventorySource
                 context.avatarMessageSink 
@@ -129,6 +139,7 @@ module Docked =
         | Some (Command.Sell (quantity, itemName))->
             avatarId 
             |> World.SellItems 
+                context
                 context.avatarInventorySink
                 context.avatarInventorySource
                 context.avatarMessageSink
@@ -168,6 +179,7 @@ module Docked =
         | Some (Command.Abandon Job) ->
             avatarId 
             |> World.AbandonJob 
+                context
                 context.avatarJobSink
                 context.avatarJobSource
                 context.avatarMessageSink
@@ -236,6 +248,7 @@ module Docked =
             location 
 
     let internal RunBoilerplate 
+            (context : DockedRunBoilerplateContext)
             (avatarMessageSource           : AvatarMessageSource)
             (islandSource                  : IslandSource)
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
@@ -243,7 +256,7 @@ module Docked =
             (location                      : Location) 
             (avatarId                      : string) 
             : Gamestate option =
-        if avatarId |> World.IsAvatarAlive shipmateSingleStatisticSource then
+        if avatarId |> World.IsAvatarAlive context then
             if islandSource() |> List.exists (fun x->x= location) then
                 func location avatarId
             else
@@ -261,6 +274,7 @@ module Docked =
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) =
         RunBoilerplate 
+            context
             context.avatarMessageSource
             context.islandSource
             context.shipmateSingleStatisticSource

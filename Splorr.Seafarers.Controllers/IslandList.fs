@@ -3,8 +3,15 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
+type IslandListRunWorldContext =
+    inherit AvatarGetPositionContext
+
+type IslandListRunContext =
+    inherit IslandListRunWorldContext
+
 module IslandList =
     let private RunWorld 
+            (context: IslandListRunWorldContext)
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (islandSingleNameSource         : IslandSingleNameSource)
             (islandSource                   : IslandSource)
@@ -40,7 +47,7 @@ module IslandList =
         if page < totalPages then
             let avatarPosition = 
                 avatarId
-                |> Avatar.GetPosition vesselSingleStatisticSource
+                |> Avatar.GetPosition context
                 |> Option.get
             knownIslands
             |> List.skip (skippedItems |> int)
@@ -66,6 +73,7 @@ module IslandList =
     let private pageSize = 20u
 
     let Run 
+            (context : IslandListRunContext)
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (islandSingleNameSource         : IslandSingleNameSource)
             (islandSource                   : IslandSource)
@@ -78,6 +86,7 @@ module IslandList =
         |> Gamestate.GetWorld
         |> Option.iter 
             (RunWorld 
+                context
                 avatarIslandSingleMetricSource
                 islandSingleNameSource
                 islandSource

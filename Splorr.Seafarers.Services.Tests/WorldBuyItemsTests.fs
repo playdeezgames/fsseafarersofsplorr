@@ -5,6 +5,43 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
 
+type TestWorldBuyItemsContext
+        (avatarInventorySink,
+        avatarInventorySource,
+        avatarMessageSink,
+        commoditySource, 
+        islandMarketSource, 
+        islandSingleMarketSink,
+        islandSingleMarketSource,
+        itemSingleSource,
+        shipmateSingleStatisticSink,
+        shipmateSingleStatisticSource)=
+    interface IslandUpdateMarketForItemContext with
+        member this.commoditySource: CommoditySource = commoditySource
+        member this.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
+        member this.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
+    interface AvatarAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface WorldAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface AvatarGetUsedTonnageContext with
+        member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
+    interface AvatarGetPrimaryStatisticContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+    interface AvatarGetItemCountContext with
+        member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
+    interface AvatarAddInventoryContext with
+        member _.avatarInventorySink   : AvatarInventorySink = avatarInventorySink
+        member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
+
+    interface WorldBuyItemsContext with
+        member this.commoditySource: CommoditySource = commoditySource
+        member this.islandMarketSource: IslandMarketSource = islandMarketSource
+        member this.itemSingleSource : ItemSingleSource = itemSingleSource
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+
 [<Test>]
 let ``BuyItems.It gives a message when given a bogus island location.`` () =
     let input = avatarId
@@ -27,8 +64,21 @@ let ``BuyItems.It gives a message when given a bogus island location.`` () =
         ()
     let islandSource() =
         []
+    let context = 
+        TestWorldBuyItemsContext
+            (avatarInventorySink,
+            avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
+            commoditySource, 
+            islandMarketSourceStub,
+            islandSingleMarketSinkStub,
+            islandSingleMarketSourceStub,
+            (fun x -> genericWorldItemSource() |> Map.tryFind x),
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource)
     input 
-    |> World.BuyItems 
+    |> World.BuyItems
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
@@ -69,8 +119,21 @@ let ``BuyItems.It gives a message when given a valid island location and a bogus
         [
             inputLocation
         ]
+    let context = 
+        TestWorldBuyItemsContext
+            (avatarInventorySink,
+            avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
+            commoditySource, 
+            islandMarketSourceStub,
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub, 
+            (fun x -> genericWorldItemSource() |> Map.tryFind x),
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource)
     input 
     |> World.BuyItems 
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
@@ -124,8 +187,21 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds.`` () =
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "vesselSingleStatisticSource - %s")
             None
+    let context = 
+        TestWorldBuyItemsContext
+            (avatarInventorySink,
+            avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
+            commoditySource, 
+            islandMarketSource,
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub, 
+            (fun x -> genericWorldItemSource() |> Map.tryFind x),
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource)
     input 
     |> World.BuyItems 
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
@@ -180,8 +256,21 @@ let ``BuyItems.It gives a message when the avatar has insufficient tonnage.`` ()
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "vesselSingleStatisticSource - %s")
             None
+    let context = 
+        TestWorldBuyItemsContext
+            (avatarInventorySink,
+            avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
+            commoditySource, 
+            islandMarketSource,
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub, 
+            (fun x -> genericWorldItemSource() |> Map.tryFind x),
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource)
     input 
     |> World.BuyItems
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
@@ -243,8 +332,21 @@ let ``BuyItems.It gives a message and completes the purchase when the avatar has
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "vesselSingleStatisticSource - %s")
             None
+    let context = 
+        TestWorldBuyItemsContext
+            (avatarInventorySink,
+            avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
+            commoditySource, 
+            islandMarketSource,
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub, 
+            (fun x -> genericWorldItemSource() |> Map.tryFind x),
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource)
     input 
     |> World.BuyItems 
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
@@ -300,8 +402,21 @@ let ``BuyItems.It gives a message when the avatar has insufficient funds for a s
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "vesselSingleStatisticSource - %s")
             None
+    let context = 
+        TestWorldBuyItemsContext
+            (avatarInventorySink,
+            avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
+            commoditySource, 
+            islandMarketSource,
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub, 
+            (fun x -> genericWorldItemSource() |> Map.tryFind x),
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource)
     input 
     |> World.BuyItems
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
@@ -361,8 +476,21 @@ let ``BuyItems.It gives a message indicating purchased quantity and completes th
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "vesselSingleStatisticSource - %s")
             None
+    let context = 
+        TestWorldBuyItemsContext
+            (avatarInventorySink,
+            avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
+            commoditySource, 
+            islandMarketSource,
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub, 
+            (fun x -> genericWorldItemSource() |> Map.tryFind x),
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource)
     input 
     |> World.BuyItems 
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)

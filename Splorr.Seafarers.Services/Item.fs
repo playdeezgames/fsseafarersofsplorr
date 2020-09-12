@@ -1,35 +1,46 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
-type CommoditySource = unit -> Map<uint64, CommodityDescriptor>
-type IslandMarketSource = Location -> Map<uint64, Market>
+type CommoditySource     = unit -> Map<uint64, CommodityDescriptor>
+type IslandMarketSource  = Location -> Map<uint64, Market>
+type ItemSingleSource    = uint64 -> ItemDescriptor option
+type private UnitPriceDeterminer = CommodityDescriptor * Market -> float
+
+type ItemDeterminePriceContext =
+    abstract member commoditySource    : CommoditySource
+    abstract member islandMarketSource : IslandMarketSource
+    abstract member itemSingleSource   : ItemSingleSource
+
+type ItemDetermineSalePriceContext =
+    inherit ItemDeterminePriceContext
+
+type ItemDeterminePurchasePriceContext =
+    inherit ItemDeterminePriceContext
 
 module Item =
-    let DetermineSalePrice 
-            (commoditySource    : CommoditySource)
-            (markets            : Map<uint64, Market>)  //TODO: refactor me to use source?
-            (itemDescriptor     : ItemDescriptor) 
+    let private DeterminePrice 
+            (context             : ItemDeterminePriceContext)
+            (unitPriceDeterminer : UnitPriceDeterminer)
+            (itemIndex           : uint64) 
+            (location            : Location)
             : float =
-        let commodities = commoditySource()
-        itemDescriptor.Commodities
-        |> Map.map
-            (fun commodity amount -> 
-                amount * (Market.DetermineSalePrice (commodities.[commodity], markets.[commodity])))
-        |> Map.toList
-        |> List.map snd
-        |> List.reduce (+)
+        context.itemSingleSource itemIndex
+        |> Option.fold
+            (fun _ itemDescriptor->
+                let commodities = context.commoditySource()
+                let markets = context.islandMarketSource location
+                itemDescriptor.Commodities
+                |> Map.map
+                    (fun commodity amount -> 
+                        amount * (unitPriceDeterminer (commodities.[commodity], markets.[commodity])))
+                |> Map.toList
+                |> List.map snd
+                |> List.reduce (+)) System.Double.NaN
+
+    let DetermineSalePrice 
+            (context : ItemDetermineSalePriceContext) =
+        DeterminePrice context Market.DetermineSalePrice
 
     let DeterminePurchasePrice 
-            (commoditySource    : CommoditySource)
-            (markets        : Map<uint64, Market>)  //TODO: refactor me to use source?
-            (itemDescriptor : ItemDescriptor) 
-            : float =
-        let commodities = commoditySource()
-        itemDescriptor.Commodities
-        |> Map.map
-            (fun commodity amount -> 
-                amount * (Market.DeterminePurchasePrice (commodities.[commodity], markets.[commodity])))
-        |> Map.toList
-        |> List.map snd
-        |> List.reduce (+)
-
+            (context : ItemDeterminePurchasePriceContext) =
+        DeterminePrice context Market.DeterminePurchasePrice

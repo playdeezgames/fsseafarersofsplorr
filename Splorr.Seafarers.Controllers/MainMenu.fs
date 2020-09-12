@@ -77,7 +77,6 @@ module MainMenu =
         | Some (Command.Start avatarId)->
             World.Create 
                 context
-                (System.Random())
                 avatarId
             avatarId
             |> Gamestate.InPlay

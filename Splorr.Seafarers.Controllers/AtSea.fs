@@ -5,11 +5,33 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Persistence
 
+type AtSeaGetVisibleIslandsContext =
+    inherit AvatarGetPositionContext
+    inherit IslandGetDisplayNameContext
+
+type AtSeaUpdateDisplayContext =
+    inherit AtSeaGetVisibleIslandsContext
+    inherit AvatarGetSpeedContext
+    inherit AvatarGetHeadingContext
+    inherit AvatarGetEffectiveSpeedContext
+    inherit WorldDistanceToContext
+
+type AtSeaCanCareenContext =
+    inherit AvatarGetPositionContext
+
 type AtSeaHandleCommandContext =
+    inherit WorldClearMessagesContext
     inherit WorldDockContext
+    inherit AtSeaGetVisibleIslandsContext
+    inherit AtSeaUpdateDisplayContext
+    inherit WorldMoveContext
+    inherit WorldAbandonJobContext
+    inherit WorldHeadForContext
+    inherit WorldAddMessagesContext
+    inherit WorldSetSpeedContext
+    inherit AtSeaCanCareenContext
     abstract member avatarInventorySink            : AvatarInventorySink
     abstract member avatarInventorySource          : AvatarInventorySource
-    abstract member avatarMessagePurger            : AvatarMessagePurger
     abstract member avatarShipmateSource           : AvatarShipmateSource
     abstract member islandLocationByNameSource     : IslandLocationByNameSource
     abstract member islandSingleNameSource         : IslandSingleNameSource
@@ -21,6 +43,7 @@ type AtSeaHandleCommandContext =
 type AtSeaRunContext =
     inherit AtSeaHandleCommandContext
     abstract member avatarMessageSource             : AvatarMessageSource
+
 
 
 module AtSea =
@@ -35,6 +58,7 @@ module AtSea =
             Hue.Error
 
     let private CanCareen 
+            (context : AtSeaCanCareenContext)
             (islandSingleStatisticSource : IslandSingleStatisticSource)
             (islandSource                : IslandSource)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
@@ -45,7 +69,9 @@ module AtSea =
             |> Option.get 
             |> Statistic.GetCurrentValue
         let avatarPosition =
-            Avatar.GetPosition vesselSingleStatisticSource avatarId
+            Avatar.GetPosition 
+                context 
+                avatarId
             |> Option.get
         World.GetNearbyLocations 
             islandSource
@@ -61,8 +87,7 @@ module AtSea =
         |> List.exists (fun (l,d) -> Location.DistanceTo l avatarPosition < d)
 
     let private GetVisibleIslands 
-            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
-            (islandSingleNameSource         : IslandSingleNameSource)
+            (context : AtSeaGetVisibleIslandsContext)
             (islandSource                   : IslandSource)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (avatarId                       : string) 
@@ -73,7 +98,7 @@ module AtSea =
             |> Statistic.GetCurrentValue
         let avatarPosition =
             avatarId
-            |> Avatar.GetPosition vesselSingleStatisticSource
+            |> Avatar.GetPosition context
             |> Option.get
         World.GetNearbyLocations 
             islandSource
@@ -91,16 +116,14 @@ module AtSea =
                             avatarPosition 
                             location, 
                                 (Island.GetDisplayName 
-                                    avatarIslandSingleMetricSource
-                                    islandSingleNameSource
+                                    context
                                     avatarId
                                     location)))
         |> List.sortBy (fun (_,_,d,_)->d)
 
     let private UpdateDisplay 
-            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
+            (context : AtSeaUpdateDisplayContext)
             (avatarMessageSource            : AvatarMessageSource)
-            (islandSingleNameSource         : IslandSingleNameSource)
             (islandSource                   : IslandSource)
             (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
@@ -114,11 +137,13 @@ module AtSea =
 
         let speed = 
             avatarId
-            |> Avatar.GetSpeed vesselSingleStatisticSource 
+            |> Avatar.GetSpeed 
+                context 
             |> Option.get
         let heading = 
             avatarId 
-            |> Avatar.GetHeading vesselSingleStatisticSource 
+            |> Avatar.GetHeading 
+                context 
             |> Option.get
         let speedHue =DetermineSpeedHue speed
         let turn = shipmateSingleStatisticSource avatarId Primary ShipmateStatisticIdentifier.Turn |> Option.get
@@ -132,7 +157,7 @@ module AtSea =
             (Hue.Label, "Speed: " |> Text) |> Hued
             (speedHue, (speed * 100.0) |> sprintf "%.0f%%" |> Text) |> Hued
             avatarId 
-            |> Avatar.GetEffectiveSpeed vesselSingleStatisticSource 
+            |> Avatar.GetEffectiveSpeed context 
             |> sprintf "(Effective rate: %.2f)" |> Line
             (Hue.Subheading, "Nearby:" |> Line) |> Hued
         ]
@@ -144,8 +169,7 @@ module AtSea =
             |> Statistic.GetCurrentValue
         avatarId
         |> GetVisibleIslands 
-            avatarIslandSingleMetricSource
-            islandSingleNameSource
+            context
             islandSource
             vesselSingleStatisticSource
         |> List.iter
@@ -168,10 +192,11 @@ module AtSea =
             (avatarId                       : string) 
             : Gamestate option =
         avatarId
-        |> World.ClearMessages context.avatarMessagePurger
+        |> World.ClearMessages context
 
         let canCareen = 
             CanCareen 
+                context
                 context.islandSingleStatisticSource   
                 context.islandSource
                 context.vesselSingleStatisticSource 
@@ -184,8 +209,7 @@ module AtSea =
         let nearby = 
             avatarId
             |> GetVisibleIslands 
-                context.avatarIslandSingleMetricSource
-                context.islandSingleNameSource
+                context
                 context.islandSource
                 context.vesselSingleStatisticSource
         let dockTarget = 
@@ -207,6 +231,7 @@ module AtSea =
         | Some (Command.HeadFor name) ->
             avatarId
             |> World.HeadFor
+                context
                 context.avatarIslandSingleMetricSource
                 context.avatarMessageSink 
                 context.islandLocationByNameSource
@@ -220,6 +245,7 @@ module AtSea =
         | Some (Command.DistanceTo name) ->
             avatarId
             |> World.DistanceTo 
+                context
                 context.avatarIslandSingleMetricSource
                 context.avatarMessageSink 
                 context.islandLocationByNameSource
@@ -237,6 +263,7 @@ module AtSea =
             else
                 avatarId
                 |> World.AddMessages 
+                    context
                     context.avatarMessageSink 
                     [ "You cannot careen here." ]
                 avatarId
@@ -257,6 +284,7 @@ module AtSea =
             | None ->
                 avatarId
                 |> World.AddMessages 
+                    context
                     context.avatarMessageSink 
                     [ "There is no place to dock." ]
                 avatarId
@@ -271,6 +299,7 @@ module AtSea =
         | Some (Command.Abandon Job) ->
             avatarId
             |> World.AbandonJob 
+                context
                 context.avatarJobSink
                 context.avatarJobSource
                 context.avatarMessageSink
@@ -308,6 +337,7 @@ module AtSea =
         | Some (Command.Move distance)->
             avatarId
             |> World.Move 
+                context
                 context.avatarInventorySink
                 context.avatarInventorySource
                 context.avatarIslandSingleMetricSink
@@ -329,6 +359,7 @@ module AtSea =
         | Some (Command.Set (SetCommand.Heading heading)) ->
             avatarId
             |> World.SetHeading 
+                context
                 context.vesselSingleStatisticSource 
                 context.vesselSingleStatisticSink 
                 context.avatarMessageSink 
@@ -340,8 +371,7 @@ module AtSea =
         | Some (Command.Set (Speed speed)) ->
             avatarId
             |> World.SetSpeed 
-                context.vesselSingleStatisticSource
-                context.vesselSingleStatisticSink
+                context
                 context.avatarMessageSink
                 speed
             avatarId
@@ -374,9 +404,8 @@ module AtSea =
             (avatarId      : string) 
             : Gamestate option =
         UpdateDisplay 
-            context.avatarIslandSingleMetricSource
+            context
             context.avatarMessageSource
-            context.islandSingleNameSource
             context.islandSource
             context.shipmateSingleStatisticSource
             context.vesselSingleStatisticSource
@@ -395,7 +424,7 @@ module AtSea =
             (messageSink   : MessageSink) 
             (avatarId      : string) 
             : Gamestate option =
-        if avatarId |> World.IsAvatarAlive context.shipmateSingleStatisticSource then
+        if avatarId |> World.IsAvatarAlive context then
             RunAlive
                 context
                 random 

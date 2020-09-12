@@ -17,77 +17,87 @@ type ShipmateSingleStatisticSink = string -> ShipmateIdentifier -> (ShipmateStat
 type ShipmateSingleStatisticSource = string -> ShipmateIdentifier -> ShipmateStatisticIdentifier -> Statistic option
 type AvatarInventory = Map<uint64,uint64>
 
+type ShipmateCreateContext =
+    abstract member shipmateStatisticTemplateSource   : ShipmateStatisticTemplateSource
+    abstract member shipmateSingleStatisticSink       : ShipmateSingleStatisticSink
+    abstract member rationItemSource                  : RationItemSource
+    abstract member shipmateRationItemSink            : ShipmateRationItemSink
+
+type ShipmateGetStatusContext =
+    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
+
+type ShipmateTransformStatisticContext =
+    abstract member shipmateSingleStatisticSink   : ShipmateSingleStatisticSink
+    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
+
+
+type ShipmateEatContext =
+    inherit ShipmateTransformStatisticContext
+    abstract member shipmateRationItemSource      : ShipmateRationItemSource
+    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
+
 module Shipmate =
     let Create
-            (shipmateStatisticTemplateSource   : ShipmateStatisticTemplateSource)
-            (shipmateSingleStatisticSink       : ShipmateSingleStatisticSink)
-            (rationItemSource                  : RationItemSource)
-            (shipmateRationItemSink            : ShipmateRationItemSink)
-            (avatarId                          : string)
-            (shipmateId                        : ShipmateIdentifier)
+            (context    : ShipmateCreateContext)
+            (avatarId   : string)
+            (shipmateId : ShipmateIdentifier)
             : unit =
-        rationItemSource()
-        |> shipmateRationItemSink avatarId shipmateId 
-        shipmateStatisticTemplateSource()
+        context.rationItemSource()
+        |> context.shipmateRationItemSink avatarId shipmateId 
+        context.shipmateStatisticTemplateSource()
         |> Map.iter
             (fun identifier statisticTemplate ->
-                shipmateSingleStatisticSink avatarId shipmateId (identifier, statisticTemplate |> Statistic.CreateFromTemplate |> Some))
+                context.shipmateSingleStatisticSink avatarId shipmateId (identifier, statisticTemplate |> Statistic.CreateFromTemplate |> Some))
 
     let GetStatus
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (avatarId                      : string)
-            (shipmateId                    : ShipmateIdentifier)
+            (context    : ShipmateGetStatusContext)
+            (avatarId   : string)
+            (shipmateId : ShipmateIdentifier)
             : ShipmateStatus=
-        let health = shipmateSingleStatisticSource avatarId shipmateId ShipmateStatisticIdentifier.Health |> Option.get
+        let health = context.shipmateSingleStatisticSource avatarId shipmateId ShipmateStatisticIdentifier.Health |> Option.get
         if health.CurrentValue <= health.MinimumValue then
             ZeroHealth |> Dead
         else
-            let turn = shipmateSingleStatisticSource avatarId shipmateId ShipmateStatisticIdentifier.Turn |> Option.get
+            let turn = context.shipmateSingleStatisticSource avatarId shipmateId ShipmateStatisticIdentifier.Turn |> Option.get
             if turn.CurrentValue >= turn.MaximumValue then
                 OldAge |> Dead
             else
                 Alive
 
     let TransformStatistic 
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
+            (context    : ShipmateTransformStatisticContext)
             (identifier : ShipmateStatisticIdentifier) 
             (transform  : Statistic -> Statistic option) 
-            (avatarId: string)
-            (shipmateId: ShipmateIdentifier) 
+            (avatarId   : string)
+            (shipmateId : ShipmateIdentifier) 
             : unit =
         identifier
-        |> shipmateSingleStatisticSource avatarId shipmateId
+        |> context.shipmateSingleStatisticSource avatarId shipmateId
         |> Option.iter
             (fun s -> 
-                shipmateSingleStatisticSink avatarId shipmateId (identifier, (s |> transform) ) )
+                context.shipmateSingleStatisticSink avatarId shipmateId (identifier, (s |> transform) ) )
 
     let Eat 
-            (shipmateRationItemSource      : ShipmateRationItemSource)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (inventory                     : AvatarInventory) 
-            (avatarId                      : string)
-            (shipmateId                    : ShipmateIdentifier)
+            (context    : ShipmateEatContext)
+            (inventory  : AvatarInventory) 
+            (avatarId   : string)
+            (shipmateId : ShipmateIdentifier)
             : AvatarInventory * bool * bool =
         let satietyDecrease = -1.0
         let satietyIncrease = 1.0
         let rationConsumptionRate = 1UL
-        let rationItems = shipmateRationItemSource avatarId shipmateId
         let rationItem =
-            rationItems
+            context.shipmateRationItemSource avatarId shipmateId
             |> List.tryPick 
                 (fun item -> 
                     match inventory |> Map.tryFind item with
                     | Some count when count >= rationConsumptionRate ->
                         item |> Some
                     | _ -> None)
-        
         match rationItem with
         | Some item ->
             TransformStatistic 
-                shipmateSingleStatisticSource
-                shipmateSingleStatisticSink
+                context
                 ShipmateStatisticIdentifier.Satiety 
                 (Statistic.ChangeCurrentBy satietyIncrease >> Some)
                 avatarId
@@ -95,19 +105,18 @@ module Shipmate =
             let updatedInventory =
                 inventory
                 |> Map.add item (inventory.[item] - rationConsumptionRate)
-                |> Map.filter (fun k v -> v > 0UL)
+                |> Map.filter (fun _ v -> v > 0UL)
             (updatedInventory, true, false)
         | _ ->
             let satiety = 
-                shipmateSingleStatisticSource 
+                context.shipmateSingleStatisticSource 
                     avatarId
                     shipmateId
                     ShipmateStatisticIdentifier.Satiety
                 |> Option.get
             if satiety.CurrentValue > satiety.MinimumValue then
                 TransformStatistic 
-                    shipmateSingleStatisticSource
-                    shipmateSingleStatisticSink
+                    context
                     ShipmateStatisticIdentifier.Satiety 
                     (Statistic.ChangeCurrentBy (satietyDecrease) >> Some) 
                     avatarId
@@ -115,8 +124,7 @@ module Shipmate =
                 (inventory, false, false)
             else
                 TransformStatistic 
-                    shipmateSingleStatisticSource
-                    shipmateSingleStatisticSink
+                    context
                     ShipmateStatisticIdentifier.Turn 
                     (Statistic.ChangeMaximumBy (satietyDecrease) >> Some)
                     avatarId

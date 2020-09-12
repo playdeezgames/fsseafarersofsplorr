@@ -6,6 +6,7 @@ open Splorr.Seafarers.Services
 type IslandSingleFeatureSource = Location -> IslandFeatureIdentifier -> bool
 
 type IslandFeatureRunDarkAlleyContext =
+    inherit WorldAddMessagesContext
     abstract member avatarMessageSource           : AvatarMessageSource
     abstract member avatarMessageSink             : AvatarMessageSink
     abstract member islandSingleStatisticSource   : IslandSingleStatisticSource
@@ -47,6 +48,7 @@ module IslandFeature =
         if money < minimumBet then
             avatarId
             |> World.AddMessages
+                context
                 context.avatarMessageSink
                 [ "Come back when you've got more money!" ]
             avatarId

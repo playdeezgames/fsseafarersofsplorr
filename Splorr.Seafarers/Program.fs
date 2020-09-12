@@ -22,7 +22,7 @@ module private Persister =
     let unpackOrThrow (result:Result<'T,string>) : 'T =
         match result with
         | Ok x -> x
-        | Error x -> raise (System.InvalidOperationException x)
+        | Error x -> raise (InvalidOperationException x)
 
 [<EntryPoint>]
 let main argv =
@@ -146,7 +146,7 @@ let main argv =
     let stringToShipmateIdentifier =
         function
         | "primary" -> Primary
-        | x -> raise (System.NotImplementedException (x |> sprintf "stringToShipmateIdentifier %s"))
+        | x -> raise (NotImplementedException (x |> sprintf "stringToShipmateIdentifier %s"))
 
     let shipmateRationItemSource
             (avatarId   : string) =
@@ -311,6 +311,10 @@ let main argv =
         AvatarIslandFeature.GetFeatureForAvatar connection
         >> Persister.unpackOrThrow
 
+    let itemSingleSource (index:uint64) : ItemDescriptor option =
+        itemSource()
+        |> Map.tryFind index
+
     let context : RunnerRunContext =
         SplorrContext
             (avatarInventorySink,
@@ -329,6 +333,7 @@ let main argv =
             avatarSingleMetricSink,
             avatarSingleMetricSource,
             commoditySource,
+            (fun () -> DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64),
             islandFeatureGeneratorSource,
             islandFeatureSource,
             islandItemSink ,
@@ -350,6 +355,7 @@ let main argv =
             islandSingleStatisticSource,
             islandSource,
             islandStatisticTemplateSource,
+            itemSingleSource,
             itemSource ,
             Random(),
             rationItemSource,

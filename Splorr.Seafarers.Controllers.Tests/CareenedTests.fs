@@ -7,9 +7,51 @@ open Splorr.Seafarers.Controllers
 open CommonTestFixtures
 open AtSeaTestFixtures
 
+type TestCareenedRunContext 
+        (avatarMessagePurger,
+        avatarShipmateSource,
+        avatarSingleMetricSink,
+        avatarSingleMetricSource,
+        shipmateSingleStatisticSink,
+        shipmateSingleStatisticSource,
+        vesselSingleStatisticSink, 
+        vesselSingleStatisticSource) =
+    interface ShipmateGetStatusContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+    interface AvatarAddMetricContext with
+        member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
+        member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
+    interface AvatarGetCurrentFoulingContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarGetMaximumFoulingContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarTransformShipmatesContext with
+        member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
+    interface AvatarCleanHullContext with
+        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
+    interface WorldClearMessagesContext with
+        member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
+    interface CareenedRunContext
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+
 let private functionUnderTest 
         (avatarSingleMetricSink : AvatarSingleMetricSink)= 
+    let context = 
+        TestCareenedRunContext 
+            (avatarMessagePurgerStub,
+            avatarShipmateSourceStub,
+            avatarSingleMetricSink,
+            avatarSingleMetricSourceStub,
+            shipmateSingleStatisticSinkStub, 
+            shipmateSingleStatisticSourceStub, 
+            vesselSingleStatisticSinkStub, 
+            vesselSingleStatisticSourceStub) :> CareenedRunContext
     Careened.Run 
+        context
         avatarMessagePurgerStub
         avatarMessageSourceDummy
         avatarShipmateSourceStub
@@ -38,9 +80,20 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
             Statistic.Create (0.0, 100.0) 0.0 |> Some
         | _ ->
             raise (System.NotImplementedException (identifier.ToString() |> sprintf "shipmateSingleStatisticSource - %s"))
+    let context = 
+        TestCareenedRunContext 
+            (avatarMessagePurgerStub,
+            avatarShipmateSourceStub,
+            avatarSingleMetricSinkExplode,
+            avatarSingleMetricSourceStub,
+            shipmateSingleStatisticSinkStub,
+            shipmateSingleStatisticSource, 
+            vesselSingleStatisticSinkStub, 
+            vesselSingleStatisticSourceStub) :> CareenedRunContext
     let actual =
         inputWorld
         |> Careened.Run 
+            context
             avatarMessagePurgerStub
             avatarMessageSourceDummy
             avatarShipmateSourceStub

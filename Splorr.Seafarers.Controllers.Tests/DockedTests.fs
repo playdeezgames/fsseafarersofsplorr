@@ -30,31 +30,83 @@ type TestDockedRunContext
             islandSingleNameSource,
             islandSingleMarketSource,
             islandSource,
+            itemSingleSource,
             itemSource,
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
             vesselSingleStatisticSource   
         ) =
     interface DockedRunContext
+
+    interface ShipmateGetStatusContext with
+        member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
         
     interface DockedUpdateDisplayContext with
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.avatarMessageSource            : AvatarMessageSource            = avatarMessageSource           
         member _.islandSingleNameSource         : IslandSingleNameSource         = islandSingleNameSource  
         member _.islandFeatureSource            : IslandFeatureSource            = islandFeatureSource
+       
+    interface AvatarAddMessagesContext with
+        member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+        
+    interface WorldAddMessagesContext with
+        member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         
     interface WorldUndockContext with
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
 
+    interface ItemDeterminePriceContext with
+        member _.commoditySource                : CommoditySource               =commoditySource  
+        member _.islandMarketSource             : IslandMarketSource            =islandMarketSource   
+        member _.itemSingleSource               : ItemSingleSource              = itemSingleSource
+
+    interface IslandMakeKnownContext with
+        member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+        member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+    
+    interface IslandUpdateMarketForItemContext with
+        member _.commoditySource: CommoditySource = commoditySource
+        member _.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
+        member _.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
+
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+
+    interface AvatarRemoveInventoryContext with
+        member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
+        member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
+
+    interface AvatarAddMetricContext with
+        member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
+        member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
+
+    interface AvatarGetUsedTonnageContext with
+        member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
+    interface AvatarGetPrimaryStatisticContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+    interface AvatarAbandonJobContext with
+        member _.avatarJobSink                  : AvatarJobSink                 =avatarJobSink                 
+        member _.avatarJobSource                : AvatarJobSource               =avatarJobSource
+    interface WorldClearMessagesContext with
+        member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
+        
+    interface AvatarGetItemCountContext with
+        member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
+    interface AvatarAddInventoryContext with
+        member _.avatarInventorySink   : AvatarInventorySink = avatarInventorySink
+        member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
+        
     interface DockedHandleCommandContext with
+        member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
+        member this.avatarJobSink: AvatarJobSink = avatarJobSink
+        member this.avatarJobSource: AvatarJobSource = avatarJobSource
         member _.avatarInventorySink            : AvatarInventorySink           =avatarInventorySink            
         member _.avatarInventorySource          : AvatarInventorySource         =avatarInventorySource          
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink  =avatarIslandSingleMetricSink   
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource=avatarIslandSingleMetricSource 
-        member _.avatarJobSink                  : AvatarJobSink                 =avatarJobSink                 
-        member _.avatarJobSource                : AvatarJobSource               =avatarJobSource               
-        member _.avatarMessagePurger            : AvatarMessagePurger           =avatarMessagePurger           
         member _.avatarMessageSink              : AvatarMessageSink             =avatarMessageSink             
         member _.avatarSingleMetricSink         : AvatarSingleMetricSink        =avatarSingleMetricSink        
         member _.avatarSingleMetricSource       : AvatarSingleMetricSource      =avatarSingleMetricSource      
@@ -69,8 +121,6 @@ type TestDockedRunContext
         member _.shipmateSingleStatisticSink    : ShipmateSingleStatisticSink   =shipmateSingleStatisticSink   
         member _.shipmateSingleStatisticSource  : ShipmateSingleStatisticSource =shipmateSingleStatisticSource 
         member _.vesselSingleStatisticSource    : VesselSingleStatisticSource   =vesselSingleStatisticSource   
-
-
 
 let private functionUnderTest
         (avatarInventorySink           : AvatarInventorySink)
@@ -106,6 +156,7 @@ let private functionUnderTest
             islandSingleNameSource,
             dockedItemSingleMarketSourceStub,
             islandSourceStub,
+            (fun x -> itemSource() |> Map.tryFind x),
             itemSource ,
             shipmateSingleStatisticSinkStub,
             shipmateSingleStatisticSource,

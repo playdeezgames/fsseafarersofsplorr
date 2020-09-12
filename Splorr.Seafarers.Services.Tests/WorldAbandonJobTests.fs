@@ -5,6 +5,30 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
 
+type TestWorldAbandonJobContext
+        (avatarJobSink,
+        avatarJobSource,
+        avatarMessageSink,
+        avatarSingleMetricSink,
+        avatarSingleMetricSource,
+        shipmateSingleStatisticSink, 
+        shipmateSingleStatisticSource) =
+    interface WorldAbandonJobContext with
+        member this.avatarJobSink: AvatarJobSink = avatarJobSink
+        member this.avatarJobSource: AvatarJobSource = avatarJobSource
+    interface AvatarGetPrimaryStatisticContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+    interface AvatarAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface WorldAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface AvatarAddMetricContext with
+        member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
+        member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+
 [<Test>]
 let ``AbandonJob.It adds a message when the avatar has no job.`` () =
     let input = ""
@@ -22,8 +46,18 @@ let ``AbandonJob.It adds a message when the avatar has no job.`` () =
         Assert.Fail("avatarJobSink")
     let avatarJobSource (_) =
         None
+    let context = 
+        TestWorldAbandonJobContext
+            (avatarJobSink,
+            avatarJobSource,
+            (avatarExpectedMessageSink expectedMessage),
+            (assertAvatarSingleMetricSink [Metric.AcceptedJob, 1UL]),
+            avatarSingleMetricSourceStub,
+            shipmateSingleStatisticSink, 
+            shipmateSingleStatisticSource) :> WorldAbandonJobContext
     input
     |> World.AbandonJob
+        context
         avatarJobSink
         avatarJobSource
         (avatarExpectedMessageSink expectedMessage)
@@ -58,8 +92,18 @@ let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a
             Destination = (0.0,0.0)
         } 
         |> Some
+    let context = 
+        TestWorldAbandonJobContext
+            (avatarJobSink,
+            avatarJobSource,
+            (avatarExpectedMessageSink expectedMessage),
+            (assertAvatarSingleMetricSink [Metric.AbandonedJob, 1UL]),
+            avatarSingleMetricSourceStub,
+            shipmateSingleStatisticSink, 
+            shipmateSingleStatisticSource) :> WorldAbandonJobContext
     input
     |> World.AbandonJob
+        context
         avatarJobSink
         avatarJobSource
         (avatarExpectedMessageSink expectedMessage)

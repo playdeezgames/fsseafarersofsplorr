@@ -1,11 +1,27 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
-open System
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
+type CareenedHandleCommandContext =
+    inherit WorldCleanHullContext
+    inherit WorldClearMessagesContext
+
+type CareenedUpdateDisplayContext = 
+    inherit AvatarGetCurrentFoulingContext
+    inherit AvatarGetMaximumFoulingContext
+
+type CareenedRunAliveContext =
+    inherit CareenedHandleCommandContext
+    inherit CareenedUpdateDisplayContext
+
+type CareenedRunContext =
+    inherit CareenedRunAliveContext
+    inherit WorldIsAvatarAliveContext
+
 module Careened = 
     let private UpdateDisplay 
+            (context : CareenedUpdateDisplayContext)
             (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (avatarMessageSource         : AvatarMessageSource)
             (messageSink                 : MessageSink) 
@@ -22,9 +38,9 @@ module Careened =
             | Port -> "port"
             | Starboard -> "starboard"
         let currentValue =
-            Avatar.GetCurrentFouling vesselSingleStatisticSource avatarId
+            Avatar.GetCurrentFouling context avatarId
         let maximumValue = 
-            Avatar.GetMaximumFouling vesselSingleStatisticSource avatarId
+            Avatar.GetMaximumFouling context avatarId
         let foulage =
             100.0 * currentValue / maximumValue
         [
@@ -34,6 +50,7 @@ module Careened =
         |> List.iter messageSink
 
     let private HandleCommand
+            (context : CareenedHandleCommandContext)
             (avatarMessagePurger           : AvatarMessagePurger)
             (avatarShipmateSource          : AvatarShipmateSource)
             (avatarSingleMetricSink        : AvatarSingleMetricSink)
@@ -47,7 +64,7 @@ module Careened =
             (avatarId                      : string) 
             : Gamestate option =
         avatarId
-        |> World.ClearMessages avatarMessagePurger
+        |> World.ClearMessages context
         match command with
         | Some Command.Metrics ->
             (side, avatarId)
@@ -77,6 +94,7 @@ module Careened =
         | Some Command.CleanHull ->
             avatarId 
             |> World.CleanHull
+                context
                 avatarShipmateSource
                 avatarSingleMetricSink
                 avatarSingleMetricSource
@@ -99,6 +117,7 @@ module Careened =
             |> Some
 
     let private RunAlive
+            (context : CareenedRunAliveContext)
             (avatarMessagePurger           : AvatarMessagePurger)
             (avatarMessageSource           : AvatarMessageSource)
             (avatarShipmateSource          : AvatarShipmateSource)
@@ -114,12 +133,14 @@ module Careened =
             (avatarId                      : string) 
             : Gamestate option =
         UpdateDisplay 
+            context
             vesselSingleStatisticSource
             avatarMessageSource
             sink 
             side 
             avatarId
         HandleCommand
+            context
             avatarMessagePurger
             avatarShipmateSource
             avatarSingleMetricSink
@@ -133,6 +154,7 @@ module Careened =
             avatarId
 
     let Run 
+            (context : CareenedRunContext)
             (avatarMessagePurger           : AvatarMessagePurger)
             (avatarMessageSource           : AvatarMessageSource)
             (avatarShipmateSource          : AvatarShipmateSource)
@@ -147,8 +169,9 @@ module Careened =
             (side                          : Side) 
             (avatarId                      : string) 
             : Gamestate option =
-        if avatarId |> World.IsAvatarAlive shipmateSingleStatisticSource then
+        if avatarId |> World.IsAvatarAlive context then
             RunAlive 
+                context
                 avatarMessagePurger
                 avatarMessageSource
                 avatarShipmateSource

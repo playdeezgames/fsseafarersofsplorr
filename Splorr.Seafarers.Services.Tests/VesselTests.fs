@@ -6,6 +6,23 @@ open Splorr.Seafarers.Models
 
 let private inputAvatarId = "avatar"
 
+type TestVesselCreateContext(vesselStatisticSink, vesselStatisticTemplateSource) =
+    interface VesselCreateContext with
+        member _.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
+        member _.vesselStatisticTemplateSource: VesselStatisticTemplateSource = vesselStatisticTemplateSource
+
+type TestVesselTransformFoulingContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
+    interface VesselTransformFoulingContext with
+        member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
+type TestVesselBefoulContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
+    interface VesselTransformFoulingContext with
+        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface VesselBefoulContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
 [<Test>]
 let ``Create.It creates a vessel.`` () =
     let inputAvatarId = "avatar"
@@ -21,7 +38,10 @@ let ``Create.It creates a vessel.`` () =
     let vesselStatisticSink (avatarId:string) (statistics:Map<VesselStatisticIdentifier, Statistic>) : unit =
         Assert.AreEqual(inputAvatarId, avatarId)
         Assert.AreEqual(expectedStatistics, statistics)
-    Vessel.Create vesselStatisticTemplateSource vesselStatisticSink inputAvatarId
+    let context = TestVesselCreateContext(vesselStatisticSink, vesselStatisticTemplateSource) :> VesselCreateContext
+    Vessel.Create 
+        context
+        inputAvatarId
 
 [<Test>]
 let ``TransformFouling.It transforms fouling on the port side when the port side is specified.`` () =
@@ -31,7 +51,12 @@ let ``TransformFouling.It transforms fouling on the port side when the port side
         None
     let vesselSingleStatisticSink  (avatarId:string) (identifier:VesselStatisticIdentifier, statistic: Statistic) : unit = 
         Assert.AreEqual(VesselStatisticIdentifier.PortFouling, identifier)
-    Vessel.TransformFouling vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId inputSide (Statistic.ChangeCurrentBy 0.25)
+    let context = TestVesselTransformFoulingContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> VesselTransformFoulingContext
+    Vessel.TransformFouling 
+        context
+        inputAvatarId 
+        inputSide 
+        (Statistic.ChangeCurrentBy 0.25)
 
 [<Test>]
 let ``TransformFouling.It transforms fouling on the starboard side when the starboard side is specified.`` () =
@@ -43,7 +68,12 @@ let ``TransformFouling.It transforms fouling on the starboard side when the star
     let vesselSingleStatisticSink (_) (identifier:VesselStatisticIdentifier,statistic:Statistic) =
         Assert.AreEqual(VesselStatisticIdentifier.StarboardFouling, identifier)
         Assert.AreEqual(expectedValue, statistic.CurrentValue)
-    Vessel.TransformFouling vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId inputSide (Statistic.ChangeCurrentBy inputValue)
+    let context = TestVesselTransformFoulingContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> VesselTransformFoulingContext
+    Vessel.TransformFouling 
+        context
+        inputAvatarId 
+        inputSide 
+        (Statistic.ChangeCurrentBy inputValue)
 
 [<Test>]
 let ``Befoul.It increases how fouled the vessel's hull is by the vessel's foul rate.`` () =
@@ -61,7 +91,10 @@ let ``Befoul.It increases how fouled the vessel's hull is by the vessel's foul r
             None
     let vesselSingleStatisticSink (_) (_:VesselStatisticIdentifier, statistic:Statistic):unit =
         Assert.AreEqual(expectedFoulage, statistic.CurrentValue)
-    Vessel.Befoul vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId
+    let context = TestVesselBefoulContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> VesselBefoulContext
+    Vessel.Befoul 
+        context
+        inputAvatarId
 
 [<Test>]
 let ``Befoul.It will not increase the vessel's fouling when the vessel is already at maximum fouling.`` () =
@@ -70,4 +103,7 @@ let ``Befoul.It will not increase the vessel's fouling when the vessel is alread
         {MaximumValue=0.25; MinimumValue=0.0; CurrentValue=0.25} |> Some
     let vesselSingleStatisticSink (_) (_:VesselStatisticIdentifier, statistic:Statistic):unit =
         Assert.AreEqual(expectedFoulage, statistic.CurrentValue)
-    Vessel.Befoul vesselSingleStatisticSource vesselSingleStatisticSink inputAvatarId
+    let context = TestVesselBefoulContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> VesselBefoulContext
+    Vessel.Befoul 
+        context
+        inputAvatarId

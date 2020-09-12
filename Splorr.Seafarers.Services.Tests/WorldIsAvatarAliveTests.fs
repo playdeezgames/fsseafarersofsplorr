@@ -5,6 +5,11 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
 
+type TestWorldIsAvatarAliveContext(shipmateSingleStatisticSource) = 
+    interface WorldIsAvatarAliveContext with
+        member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+            
+
 [<Test>]
 let ``IsAvatarAlive.It returns a true when given a world with an avatar with above minimum health.`` () =
     let shipmateSingleStatisticSource (_) (_) (identifier:ShipmateStatisticIdentifier) =
@@ -16,7 +21,8 @@ let ``IsAvatarAlive.It returns a true when given a world with an avatar with abo
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSource")
             None
-    if avatarId |> World.IsAvatarAlive shipmateSingleStatisticSource then
+    let context = TestWorldIsAvatarAliveContext(shipmateSingleStatisticSource) :> WorldIsAvatarAliveContext
+    if avatarId |> World.IsAvatarAlive context then
         ()
     else
         Assert.Fail("It detected that the avatar is not alive")
@@ -30,7 +36,8 @@ let ``IsAvatarAlive.It returns a false when given a world with an avatar minimum
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSource")
             None
-    if avatarId |> World.IsAvatarAlive shipmateSingleStatisticSource |> not then
+    let context = TestWorldIsAvatarAliveContext(shipmateSingleStatisticSource) :> WorldIsAvatarAliveContext
+    if avatarId |> World.IsAvatarAlive context |> not then
         ()
     else
         Assert.Fail("It detected that the avatar is not dead")

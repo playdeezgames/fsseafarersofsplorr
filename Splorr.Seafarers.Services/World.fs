@@ -12,12 +12,24 @@ type IslandSource = unit -> Location list
 type IslandFeatureGeneratorSource = unit -> Map<IslandFeatureIdentifier, IslandFeatureGenerator>
 type IslandSingleFeatureSink = Location -> IslandFeatureIdentifier -> unit
 
+type WorldGenerateIslandNameContext =
+    abstract member random : Random
+
+type WorldAddMessagesContext = 
+    inherit AvatarAddMessagesContext
+    abstract member avatarMessageSink : AvatarMessageSink
+
 type WorldUndockContext = 
+    inherit WorldAddMessagesContext
     abstract member avatarMessageSink       : AvatarMessageSink
     abstract member avatarIslandFeatureSink : AvatarIslandFeatureSink
 
+type WorldClearMessagesContext =
+    abstract member avatarMessagePurger : AvatarMessagePurger
+
 type WorldGenerateIslandNamesContext =
     inherit UtilitySortListRandomlyContext
+    inherit WorldGenerateIslandNameContext
 
 type WorldNameIslandsContext =
     inherit WorldGenerateIslandNamesContext
@@ -39,8 +51,16 @@ type WorldGenerateIslandsContext =
     abstract member islandSingleNameSink          : IslandSingleNameSink
     abstract member termNameSource                : TermSource
 
+type WorldUpdateChartsContext = 
+    inherit AvatarGetPositionContext
+    abstract member avatarIslandSingleMetricSink : AvatarIslandSingleMetricSink
+    abstract member islandSource                 : IslandSource
+    abstract member vesselSingleStatisticSource  : VesselSingleStatisticSource
+
 type WorldCreateContext =
     inherit WorldGenerateIslandsContext
+    inherit AvatarCreateContext
+    inherit WorldUpdateChartsContext
     abstract member avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink
     abstract member avatarJobSink                   : AvatarJobSink
     abstract member worldSingleStatisticSource      : WorldSingleStatisticSource
@@ -52,9 +72,23 @@ type WorldCreateContext =
     abstract member vesselSingleStatisticSource     : VesselSingleStatisticSource
     abstract member shipmateRationItemSink          : ShipmateRationItemSink
 
+type WorldCleanHullContext =
+    inherit AvatarCleanHullContext
+
+type WorldIsAvatarAliveContext = 
+    inherit ShipmateGetStatusContext
+
+type WorldDoJobCompletionContext =
+    inherit AvatarCompleteJobContext
+    inherit WorldAddMessagesContext
 
 type WorldDockContext =
-    inherit IslandJobsGenerationContext
+    inherit IslandAddVisitContext
+    inherit IslandGenerateJobsContext
+    inherit IslandGenerateCommoditiesContext
+    inherit IslandGenerateItemsContext
+    inherit WorldDoJobCompletionContext
+    inherit WorldAddMessagesContext
     abstract member avatarIslandFeatureSink        : AvatarIslandFeatureSink
     abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
@@ -73,24 +107,73 @@ type WorldDockContext =
     abstract member shipmateSingleStatisticSink    : ShipmateSingleStatisticSink
     abstract member shipmateSingleStatisticSource  : ShipmateSingleStatisticSource
 
+type WorldAcceptJobContext =
+    inherit IslandMakeKnownContext
+    inherit AvatarAddMetricContext
+    inherit WorldAddMessagesContext
+
+type WorldBuyItemsContext =
+    inherit ItemDetermineSalePriceContext
+    inherit IslandUpdateMarketForItemContext
+    inherit AvatarSpendMoneyContext
+    inherit AvatarAddInventoryContext
+    inherit AvatarGetUsedTonnageContext
+    inherit WorldAddMessagesContext
+
+type WorldSellItemsContext =
+    inherit ItemDeterminePurchasePriceContext
+    inherit IslandUpdateMarketForItemContext
+    inherit AvatarEarnMoneyContext
+    inherit AvatarGetItemCountContext
+    inherit AvatarRemoveInventoryContext
+    inherit WorldAddMessagesContext
+
+type WorldAbandonJobContext =
+    inherit AvatarAbandonJobContext
+    inherit WorldAddMessagesContext
+
+type WorldSetSpeedContext =
+    inherit AvatarSetSpeedContext
+    inherit AvatarGetSpeedContext
+    inherit WorldAddMessagesContext
+
+type WorldSetHeadingContext =
+    inherit AvatarSetHeadingContext
+    inherit AvatarGetHeadingContext
+    inherit WorldAddMessagesContext
+
+type WorldMoveContext =
+    inherit AvatarMoveContext
+    inherit WorldIsAvatarAliveContext
+    inherit WorldAddMessagesContext
+    inherit WorldUpdateChartsContext
+
+type WorldDistanceToContext =
+    inherit WorldAddMessagesContext
+    inherit AvatarGetPositionContext
+
+type WorldHeadForContext =
+    inherit WorldAddMessagesContext
+    inherit WorldSetHeadingContext
+    inherit AvatarGetPositionContext
+
 module World =
-//TODO: top of "world generator" refactor
-    let private GenerateIslandName //TODO: move to world generator?
-            (random:Random) 
+    let private GenerateIslandName
+            (context: WorldGenerateIslandNameContext)
             : string =
         let consonants = [| "h"; "k"; "l"; "m"; "p" |]
         let vowels = [| "a"; "e"; "i"; "o"; "u" |]
-        let vowel = random.Next(2)>0
-        let nameLength = random.Next(3) + random.Next(3) + random.Next(3) + 3
+        let vowel = context.random.Next(2)>0
+        let nameLength = context.random.Next(3) + context.random.Next(3) + context.random.Next(3) + 3
         [1..(nameLength)]
         |> List.map 
             (fun i -> i % 2 = (if vowel then 1 else 0))
         |> List.map
             (fun v -> 
                 if v then
-                    vowels.[random.Next(vowels.Length)]
+                    vowels.[context.random.Next(vowels.Length)]
                 else
-                    consonants.[random.Next(consonants.Length)])
+                    consonants.[context.random.Next(consonants.Length)])
         |> List.reduce (+)
 
     let rec private GenerateIslandNames  //TODO: move to world generator?
@@ -105,10 +188,10 @@ module World =
             |> List.take nameCount
         else
             names
-            |> Set.add (GenerateIslandName context.random)
+            |> Set.add (GenerateIslandName context)
             |> GenerateIslandNames context nameCount
 
-    let private NameIslands  //TODO: move to world generator?
+    let private NameIslands
             (context: WorldNameIslandsContext)
             : unit =
         let locations = 
@@ -148,7 +231,6 @@ module World =
                 context
             PopulateIslands
                 context
-                
         else
             let locations = context.islandSource()
             let candidateLocation = (context.random.NextDouble() * (worldSize |> fst), context.random.NextDouble() * (worldSize |> snd))
@@ -169,31 +251,28 @@ module World =
                     (maximumGenerationTries, 0u) 
 //end of "world generator"
     let UpdateCharts 
-            (avatarIslandSingleMetricSink : AvatarIslandSingleMetricSink)
-            (islandSource                 : IslandSource)
-            (vesselSingleStatisticSource  : VesselSingleStatisticSource)
-            (avatarId                     : string) 
+            (context : WorldUpdateChartsContext)
+            (avatarId : string) 
             : unit =
         let viewDistance = 
-            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.ViewDistance 
+            context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.ViewDistance 
             |> Option.get 
             |> Statistic.GetCurrentValue
         let avatarPosition = 
             avatarId 
             |> Avatar.GetPosition 
-                vesselSingleStatisticSource 
+                context
             |> Option.get
-        islandSource()
+        context.islandSource()
         |> List.filter
             (fun location -> 
                 ((avatarPosition |> Location.DistanceTo location)<=viewDistance))
         |> List.iter
             (fun location ->
-                avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.Seen 1UL)
+                context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.Seen 1UL)
 
     let Create 
             (context  : WorldCreateContext)
-            (random   : Random) 
             (avatarId : string)
             : unit =
         let maximumGenerationRetries =
@@ -213,13 +292,7 @@ module World =
                 |> context.worldSingleStatisticSource 
                 |> Statistic.GetMaximumValue)
         Avatar.Create 
-            context.avatarJobSink
-            context.rationItemSource
-            context.shipmateRationItemSink
-            context.shipmateSingleStatisticSink
-            context.shipmateStatisticTemplateSource
-            context.vesselStatisticSink
-            context.vesselStatisticTemplateSource
+            context
             avatarId
         GenerateIslands 
             context 
@@ -228,40 +301,45 @@ module World =
             (maximumGenerationRetries, 0u)
         avatarId
         |> UpdateCharts 
-            context.avatarIslandSingleMetricSink
-            context.islandSource
-            context.vesselSingleStatisticSource
+            context
 
     let ClearMessages 
-            (avatarMessagePurger : AvatarMessagePurger) 
-            (avatarId            : string)
+            (context  : WorldClearMessagesContext)
+            (avatarId : string)
             : unit =
-        avatarMessagePurger avatarId
+        context.avatarMessagePurger avatarId
 
     let AddMessages
+            (context : WorldAddMessagesContext)
             (avatarMessageSink : AvatarMessageSink)
             (messages          : string list) 
             (avatarId          : string) 
             : unit =
-        Avatar.AddMessages avatarMessageSink messages avatarId
+        Avatar.AddMessages
+            context
+            messages 
+            avatarId
 
     let SetSpeed 
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
-            (vesselSingleStatisticSink   : VesselSingleStatisticSink)
+            (context : WorldSetSpeedContext)
             (avatarMessageSink           : AvatarMessageSink)
             (speed                       : float) 
             (avatarId                    : string) 
             : unit = 
         avatarId
-        |> Avatar.SetSpeed vesselSingleStatisticSource vesselSingleStatisticSink speed 
+        |> Avatar.SetSpeed 
+            context
+            speed 
         avatarId
-        |> Avatar.GetSpeed vesselSingleStatisticSource
+        |> Avatar.GetSpeed 
+            context
         |> Option.iter
             (fun newSpeed ->
                 avatarId
-                |> AddMessages avatarMessageSink [newSpeed |> sprintf "You set your speed to %.2f."])
+                |> AddMessages context avatarMessageSink [newSpeed |> sprintf "You set your speed to %.2f."])
 
     let SetHeading 
+            (context : WorldSetHeadingContext)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (vesselSingleStatisticSink   : VesselSingleStatisticSink)
             (avatarMessageSink           : AvatarMessageSink)
@@ -269,24 +347,28 @@ module World =
             (avatarId                    : string) 
             : unit =
         avatarId
-        |> Avatar.SetHeading vesselSingleStatisticSource vesselSingleStatisticSink heading 
+        |> Avatar.SetHeading 
+            context
+            heading 
         avatarId
-        |> Avatar.GetHeading vesselSingleStatisticSource
+        |> Avatar.GetHeading 
+            context
         |> Option.iter
             (fun newHeading ->
                 avatarId
-                |> AddMessages avatarMessageSink [newHeading |> Angle.ToDegrees |> Angle.ToString |> sprintf "You set your heading to %s." ])
+                |> AddMessages context avatarMessageSink [newHeading |> Angle.ToDegrees |> Angle.ToString |> sprintf "You set your heading to %s." ])
 
     let IsAvatarAlive
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (avatarId                      : string) 
+            (context  : WorldIsAvatarAliveContext)
+            (avatarId : string) 
             : bool =
         (Shipmate.GetStatus 
-            shipmateSingleStatisticSource
+            context
             avatarId
             Primary) = Alive
 
     let rec Move
+            (context : WorldMoveContext)
             (avatarInventorySink           : AvatarInventorySink)
             (avatarInventorySource         : AvatarInventorySource)
             (avatarIslandSingleMetricSink  : AvatarIslandSingleMetricSink)
@@ -306,31 +388,21 @@ module World =
         match distance with
         | x when x > 0u ->
             avatarId
-            |> AddMessages avatarMessageSink [ "Steady as she goes." ]
+            |> AddMessages context avatarMessageSink [ "Steady as she goes." ]
             Avatar.Move 
-                avatarInventorySink
-                avatarInventorySource
-                avatarShipmateSource
-                avatarSingleMetricSink
-                avatarSingleMetricSource
-                shipmateRationItemSource 
-                shipmateSingleStatisticSink
-                shipmateSingleStatisticSource
-                vesselSingleStatisticSink 
-                vesselSingleStatisticSource 
+                context
                 avatarId 
             avatarId
             |> UpdateCharts 
-                avatarIslandSingleMetricSink
-                islandSource
-                vesselSingleStatisticSource
+                context
             if IsAvatarAlive 
-                    shipmateSingleStatisticSource 
+                    context
                     avatarId |> not then
                 avatarId
-                |> AddMessages avatarMessageSink [ "You die of old age!" ]
+                |> AddMessages context avatarMessageSink [ "You die of old age!" ]
             else
                 Move
+                    context
                     avatarInventorySink
                     avatarInventorySource
                     avatarIslandSingleMetricSink
@@ -359,6 +431,7 @@ module World =
 
 
     let private DoJobCompletion
+            (context : WorldDoJobCompletionContext)
             (avatarJobSink                 : AvatarJobSink)
             (avatarJobSource               : AvatarJobSource)
             (avatarMessageSink             : AvatarMessageSink)
@@ -372,15 +445,10 @@ module World =
             : unit = 
         if location = job.Destination then
             Avatar.CompleteJob 
-                avatarJobSink
-                avatarJobSource
-                avatarSingleMetricSink
-                avatarSingleMetricSource
-                shipmateSingleStatisticSink 
-                shipmateSingleStatisticSource 
+                context
                 avatarId
             avatarId
-            |> AddMessages avatarMessageSink [ "You complete your job." ]
+            |> AddMessages context avatarMessageSink [ "You complete your job." ]
 
     let Dock
             (context  : WorldDockContext)
@@ -399,9 +467,7 @@ module World =
                 context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
                 |> Option.defaultValue 0UL
             Island.AddVisit
-                context.avatarIslandSingleMetricSink
-                context.avatarIslandSingleMetricSource
-                (DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64)
+                context
                 avatarId
                 location
             let newVisitCount =
@@ -412,32 +478,28 @@ module World =
                 context 
                 destinations 
             Island.GenerateCommodities 
-                context.commoditySource 
-                context.islandMarketSource 
-                context.islandMarketSink 
-                random 
+                context
                 location
             Island.GenerateItems 
-                context.islandItemSource 
-                context.islandItemSink 
-                random 
-                context.itemSource location
+                context
+                location
             avatarId
             |> AddMessages 
+                context
                 context.avatarMessageSink 
                 [ 
                     "You dock." 
                 ]
             avatarId
             |> Avatar.AddMetric 
-                context.avatarSingleMetricSink
-                context.avatarSingleMetricSource
+                context
                 Metric.VisitedIsland 
                 (if newVisitCount > oldVisitCount then 1UL else 0UL)
             avatarId
             |> Option.foldBack 
                 (fun job w ->
                     DoJobCompletion
+                        context
                         context.avatarJobSink
                         context.avatarJobSource
                         context.avatarMessageSink
@@ -460,12 +522,14 @@ module World =
         | _ -> 
             avatarId
             |> AddMessages 
+                context
                 context.avatarMessageSink 
                 [ 
                     "There is no place to dock there." 
                 ]
 
     let DistanceTo 
+            (context : WorldDistanceToContext)
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (avatarMessageSink              : AvatarMessageSink)
             (islandLocationByNameSource     : IslandLocationByNameSource)
@@ -481,17 +545,18 @@ module World =
                         Some l
                     else
                         None)
-        match location, Avatar.GetPosition vesselSingleStatisticSource avatarId with
+        match location, Avatar.GetPosition context avatarId with
         | Some l, Some avatarPosition ->
             avatarId
-            |> AddMessages avatarMessageSink [ (islandName, Location.DistanceTo l avatarPosition ) ||> sprintf "Distance to `%s` is %f." ]
+            |> AddMessages context avatarMessageSink [ (islandName, Location.DistanceTo l avatarPosition ) ||> sprintf "Distance to `%s` is %f." ]
         | _, Some _ ->
             avatarId
-            |> AddMessages avatarMessageSink [ islandName |> sprintf "I don't know how to get to `%s`." ]
+            |> AddMessages context avatarMessageSink [ islandName |> sprintf "I don't know how to get to `%s`." ]
         | _ ->
             ()
 
     let HeadFor
+            (context : WorldHeadForContext)
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (avatarMessageSink              : AvatarMessageSink)
             (islandLocationByNameSource     : IslandLocationByNameSource)
@@ -508,20 +573,21 @@ module World =
                         Some l
                     else
                         None)
-        match location, Avatar.GetPosition vesselSingleStatisticSource avatarId with
+        match location, Avatar.GetPosition context avatarId with
         | Some l, Some avatarPosition ->
             [
-                AddMessages avatarMessageSink [ islandName |> sprintf "You head for `%s`." ]
-                SetHeading vesselSingleStatisticSource vesselSingleStatisticSink avatarMessageSink (Location.HeadingTo avatarPosition l |> Angle.ToDegrees)
+                AddMessages context avatarMessageSink [ islandName |> sprintf "You head for `%s`." ]
+                SetHeading context vesselSingleStatisticSource vesselSingleStatisticSink avatarMessageSink (Location.HeadingTo avatarPosition l |> Angle.ToDegrees)
             ]
             |> List.iter (fun f -> f avatarId)
         | _, Some _ ->
             avatarId
-            |> AddMessages avatarMessageSink [ islandName |> sprintf "I don't know how to get to `%s`." ]
+            |> AddMessages context avatarMessageSink [ islandName |> sprintf "I don't know how to get to `%s`." ]
         | _ ->
             ()
 
     let AcceptJob 
+            (context : WorldAcceptJobContext)
             (avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink)
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (avatarJobSink                  : AvatarJobSink)
@@ -540,35 +606,34 @@ module World =
         match jobIndex, locations |> List.tryFind (fun x -> x = location), avatarJobSource avatarId with
         | 0u, _, _ ->
             avatarId
-            |> AddMessages avatarMessageSink [ "That job is currently unavailable." ]
+            |> AddMessages context avatarMessageSink [ "That job is currently unavailable." ]
         | _, Some location, None ->
             match islandSingleJobSource location jobIndex with
             | Some job ->
                 avatarId
-                |> AddMessages avatarMessageSink [ "You accepted the job!" ]
+                |> AddMessages context avatarMessageSink [ "You accepted the job!" ]
                 avatarId
                 |> Avatar.AddMetric 
-                    avatarSingleMetricSink
-                    avatarSingleMetricSource
+                    context
                     Metric.AcceptedJob 
                     1UL
                 avatarJobSink avatarId (job|>Some)
                 Island.MakeKnown
-                    avatarIslandSingleMetricSink
-                    avatarIslandSingleMetricSource
+                    context
                     avatarId
                     job.Destination
                 islandJobPurger location jobIndex
             | _ ->
                 avatarId
-                |> AddMessages avatarMessageSink [ "That job is currently unavailable." ]
+                |> AddMessages context avatarMessageSink [ "That job is currently unavailable." ]
         | _, Some island, Some job ->
             avatarId
-            |> AddMessages avatarMessageSink [ "You must complete or abandon your current job before taking on a new one." ]
+            |> AddMessages context avatarMessageSink [ "You must complete or abandon your current job before taking on a new one." ]
         | _ -> 
             ()
 
     let AbandonJob
+            (context : WorldAbandonJobContext)
             (avatarJobSink                 : AvatarJobSink)
             (avatarJobSource               : AvatarJobSource)
             (avatarMessageSink             : AvatarMessageSink)
@@ -581,18 +646,13 @@ module World =
         match avatarJobSource avatarId with
         | Some _ ->
             avatarId
-            |> AddMessages avatarMessageSink [ "You abandon your job." ]
-            Avatar.AbandonJob 
-                avatarJobSink
-                avatarJobSource
-                avatarSingleMetricSink
-                avatarSingleMetricSource
-                shipmateSingleStatisticSink 
-                shipmateSingleStatisticSource 
-                avatarId
+            |> AddMessages context avatarMessageSink [ "You abandon your job." ]
+            avatarId
+            |> Avatar.AbandonJob 
+                context
         | _ ->
             avatarId
-            |> AddMessages avatarMessageSink [ "You have no job to abandon." ]
+            |> AddMessages context avatarMessageSink [ "You have no job to abandon." ]
     
     //TODO: this function is in the wrong place!
     let private FindItemByName 
@@ -603,6 +663,7 @@ module World =
         |> Map.tryPick (fun k v -> if v.ItemName = itemName then Some (k,v) else None)
 
     let BuyItems 
+            (context                       : WorldBuyItemsContext)
             (avatarInventorySink           : AvatarInventorySink)
             (avatarInventorySource         : AvatarInventorySource)
             (avatarMessageSink             : AvatarMessageSink)
@@ -626,7 +687,10 @@ module World =
             let markets =
                 islandMarketSource location
             let unitPrice = 
-                Item.DetermineSalePrice commoditySource markets descriptor 
+                Item.DetermineSalePrice 
+                    context
+                    item 
+                    location
             let availableTonnage = 
                 vesselSingleStatisticSource 
                     avatarId 
@@ -637,46 +701,49 @@ module World =
             let usedTonnage =
                 avatarId
                 |> Avatar.GetUsedTonnage
-                    avatarInventorySource
+                    context
                     items
             let quantity =
                 match tradeQuantity with
                 | Specific amount -> amount
-                | Maximum -> min (floor(availableTonnage / descriptor.Tonnage)) (floor((avatarId |> Avatar.GetMoney shipmateSingleStatisticSource) / unitPrice)) |> uint64
+                | Maximum -> min (floor(availableTonnage / descriptor.Tonnage)) (floor((avatarId |> Avatar.GetMoney context) / unitPrice)) |> uint64
             let price = (quantity |> float) * unitPrice
             let tonnageNeeded = (quantity |> float) * descriptor.Tonnage
-            if price > (avatarId |> Avatar.GetMoney shipmateSingleStatisticSource) then
+            if price > (avatarId |> Avatar.GetMoney context) then
                 avatarId
-                |> AddMessages avatarMessageSink ["You don't have enough money."]
+                |> AddMessages context avatarMessageSink ["You don't have enough money."]
             elif usedTonnage + tonnageNeeded > availableTonnage then
                 avatarId
-                |> AddMessages avatarMessageSink ["You don't have enough tonnage."]
+                |> AddMessages context avatarMessageSink ["You don't have enough tonnage."]
             elif quantity = 0UL then
                 avatarId
-                |> AddMessages avatarMessageSink ["You don't have enough money to buy any of those."]
+                |> AddMessages context avatarMessageSink ["You don't have enough money to buy any of those."]
             else
-                Island.UpdateMarketForItemSale islandSingleMarketSource islandSingleMarketSink commoditySource descriptor quantity location
+                Island.UpdateMarketForItemSale 
+                    context
+                    descriptor 
+                    quantity 
+                    location
                 avatarId
-                |> AddMessages avatarMessageSink [(quantity, descriptor.ItemName) ||> sprintf "You complete the purchase of %u %s."]
+                |> AddMessages context avatarMessageSink [(quantity, descriptor.ItemName) ||> sprintf "You complete the purchase of %u %s."]
                 avatarId
                 |> Avatar.SpendMoney 
-                    shipmateSingleStatisticSink
-                    shipmateSingleStatisticSource
+                    context
                     price 
                 avatarId
                 |> Avatar.AddInventory 
-                    avatarInventorySink
-                    avatarInventorySource
+                    context
                     item 
                     quantity
         | None, Some _ ->
             avatarId
-            |> AddMessages avatarMessageSink ["Round these parts, we don't sell things like that."]
+            |> AddMessages context avatarMessageSink ["Round these parts, we don't sell things like that."]
         | _ ->
             avatarId
-            |> AddMessages avatarMessageSink ["You cannot buy items here."]
+            |> AddMessages context avatarMessageSink ["You cannot buy items here."]
 
     let SellItems 
+            (context : WorldSellItemsContext)
             (avatarInventorySink           : AvatarInventorySink)
             (avatarInventorySource         : AvatarInventorySource)
             (avatarMessageSink             : AvatarMessageSink)
@@ -701,40 +768,46 @@ module World =
                 | Specific q -> q
                 | Maximum -> 
                     avatarId 
-                    |> Avatar.GetItemCount avatarInventorySource item
-            if quantity > (avatarId |> Avatar.GetItemCount avatarInventorySource item) then
+                    |> Avatar.GetItemCount context item
+            if quantity > (avatarId |> Avatar.GetItemCount context item) then
                 avatarId
-                |> AddMessages avatarMessageSink ["You don't have enough of those to sell."]
+                |> AddMessages context avatarMessageSink ["You don't have enough of those to sell."]
             elif quantity = 0UL then
                 avatarId
-                |> AddMessages avatarMessageSink ["You don't have any of those to sell."]
+                |> AddMessages context avatarMessageSink ["You don't have any of those to sell."]
             else
                 let markets = islandMarketSource location
                 let unitPrice = 
-                    Item.DeterminePurchasePrice commoditySource markets descriptor 
+                    Item.DeterminePurchasePrice 
+                        context
+                        item 
+                        location
                 let price = (quantity |> float) * unitPrice
-                Island.UpdateMarketForItemPurchase islandSingleMarketSource islandSingleMarketSink commoditySource descriptor quantity location
+                Island.UpdateMarketForItemPurchase 
+                    context
+                    descriptor 
+                    quantity 
+                    location
                 avatarId
-                |> AddMessages avatarMessageSink [(quantity, descriptor.ItemName) ||> sprintf "You complete the sale of %u %s."]
+                |> AddMessages context avatarMessageSink [(quantity, descriptor.ItemName) ||> sprintf "You complete the sale of %u %s."]
                 Avatar.EarnMoney 
-                    shipmateSingleStatisticSink
-                    shipmateSingleStatisticSource
+                    context
                     price 
                     avatarId
                 avatarId
                 |> Avatar.RemoveInventory 
-                    avatarInventorySource
-                    avatarInventorySink
+                    context
                     item 
                     quantity 
         | None, Some island ->
             avatarId
-            |> AddMessages avatarMessageSink ["Round these parts, we don't buy things like that."]
+            |> AddMessages context avatarMessageSink ["Round these parts, we don't buy things like that."]
         | _ ->
             avatarId
-            |> AddMessages avatarMessageSink ["You cannot sell items here."]
+            |> AddMessages context avatarMessageSink ["You cannot sell items here."]
 
     let CleanHull //TODO: this just passes everything along to avatar.CleanHull, so eliminate
+            (context : WorldCleanHullContext)
             (avatarShipmateSource          : AvatarShipmateSource)
             (avatarSingleMetricSink        : AvatarSingleMetricSink)
             (avatarSingleMetricSource      : AvatarSingleMetricSource)
@@ -747,13 +820,7 @@ module World =
             : unit =
         avatarId 
         |> Avatar.CleanHull 
-            avatarShipmateSource
-            avatarSingleMetricSink
-            avatarSingleMetricSource
-            shipmateSingleStatisticSink
-            shipmateSingleStatisticSource
-            vesselSingleStatisticSink 
-            vesselSingleStatisticSource
+            context
             side 
 
     let Undock
@@ -761,7 +828,7 @@ module World =
             (avatarId : string)
             : unit =
         avatarId
-        |> AddMessages  context.avatarMessageSink [ "You undock." ]
+        |> AddMessages context context.avatarMessageSink [ "You undock." ]
         context.avatarIslandFeatureSink (None, avatarId)
         
             

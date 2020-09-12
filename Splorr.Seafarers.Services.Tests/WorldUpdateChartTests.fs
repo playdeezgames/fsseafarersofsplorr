@@ -6,6 +6,17 @@ open Splorr.Seafarers.Models
 open WorldTestFixtures
 open CommonTestFixtures
 
+type TestWorldUpdateChartsContext
+            (avatarIslandSingleMetricSink,
+            islandSource,
+            vesselSingleStatisticSource) =
+    interface AvatarGetPositionContext with
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface WorldUpdateChartsContext with
+        member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+        member _.islandSource: IslandSource = islandSource
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+
 [<Test>]
 let ``UpdateChart.It does nothing when the given avatar is not near enough to any islands within the avatar's view distance.`` () =
     let input =
@@ -28,11 +39,10 @@ let ``UpdateChart.It does nothing when the given avatar is not near enough to an
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
     let islandSource() =
         []
+    let context = TestWorldUpdateChartsContext(avatarIslandSingleMetricSink, islandSource, vesselSingleStatisticSource) :> WorldUpdateChartsContext
     input
     |> World.UpdateCharts 
-        avatarIslandSingleMetricSink
-        islandSource
-        vesselSingleStatisticSource
+        context
 
 
 [<Test>]
@@ -57,11 +67,10 @@ let ``UpdateChart.It does nothing when the given avatar has already seen all nea
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
     let islandSource() =
         []
+    let context = TestWorldUpdateChartsContext(avatarIslandSingleMetricSink, islandSource, vesselSingleStatisticSource) :> WorldUpdateChartsContext
     input
     |> World.UpdateCharts 
-        avatarIslandSingleMetricSink
-        islandSource
-        vesselSingleStatisticSource
+        context
 
 [<Test>]
 let ``UpdateChart.It does set all islands within the avatar's view distance to "seen" when given avatar is near enough to previously unseen islands.`` () =
@@ -85,9 +94,8 @@ let ``UpdateChart.It does set all islands within the avatar's view distance to "
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
     let islandSource() =
         []
+    let context = TestWorldUpdateChartsContext(avatarIslandSingleMetricSink, islandSource, vesselSingleStatisticSource) :> WorldUpdateChartsContext
     input
-    |> World.UpdateCharts 
-        avatarIslandSingleMetricSink
-        islandSource
-        vesselSingleStatisticSource
+    |> World.UpdateCharts
+        context
 

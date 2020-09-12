@@ -5,6 +5,40 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
 
+type TestWorldSellItemsContext
+        (avatarInventorySink,
+        avatarInventorySource,
+        avatarMessageSink,
+        commoditySource, 
+        islandMarketSource, 
+        islandSingleMarketSink,
+        islandSingleMarketSource,
+        itemSingleSource,
+        shipmateSingleStatisticSink,
+        shipmateSingleStatisticSource) =
+    interface IslandUpdateMarketForItemContext with
+        member _.commoditySource: CommoditySource = commoditySource
+        member _.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
+        member _.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
+    interface AvatarRemoveInventoryContext with
+        member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
+        member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
+    interface AvatarGetPrimaryStatisticContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+    interface WorldAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface AvatarGetItemCountContext with
+        member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
+    interface WorldSellItemsContext with
+        member _.commoditySource: CommoditySource = commoditySource
+        member _.islandMarketSource: IslandMarketSource = islandMarketSource
+        member _.itemSingleSource : ItemSingleSource = itemSingleSource
+    interface AvatarAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface ShipmateTransformStatisticContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+
 [<Test>]
 let ``SellItems.It gives a message when given a bogus island location.`` () =
     let input = avatarId
@@ -20,8 +54,24 @@ let ``SellItems.It gives a message when given a bogus island location.`` () =
         ()
     let islandSource() =
         []
+    let itemSingleSource (x) =
+        genericWorldItemSource()
+        |> Map.tryFind x
+    let context = 
+        TestWorldSellItemsContext
+            (avatarInventorySink,
+            avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
+            commoditySource, 
+            islandMarketSourceStub, 
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub, 
+            itemSingleSource,
+            shipmateSingleStatisticSinkStub,
+            shipmateSingleStatisticSourceStub) :> WorldSellItemsContext
     input 
     |> World.SellItems 
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
@@ -54,8 +104,24 @@ let ``SellItems.It gives a message when given a valid island location and bogus 
         ()
     let islandSource() =
         [inputLocation]
+    let itemSingleSource (x) =
+        genericWorldItemSource()
+        |> Map.tryFind x
+    let context = 
+        TestWorldSellItemsContext
+            (avatarInventorySink,
+            avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
+            commoditySource, 
+            islandMarketSourceStub, 
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub, 
+            itemSingleSource,
+            shipmateSingleStatisticSinkStub,
+            shipmateSingleStatisticSourceStub) :> WorldSellItemsContext
     input 
     |> World.SellItems 
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
@@ -84,8 +150,24 @@ let ``SellItems.It gives a message when the avatar has insufficient items in inv
         Assert.AreEqual(Map.empty, inventory)
     let islandSource() =
         [inputLocation]
+    let itemSingleSource (x) =
+        genericWorldItemSource()
+        |> Map.tryFind x
+    let context = 
+        TestWorldSellItemsContext
+            (avatarInventorySink,
+            avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
+            commoditySource, 
+            islandMarketSourceStub, 
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub, 
+            itemSingleSource,
+            shipmateSingleStatisticSinkStub,
+            shipmateSingleStatisticSourceStub) :> WorldSellItemsContext
     input 
     |> World.SellItems 
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
@@ -114,8 +196,24 @@ let ``SellItems.It gives a message when the avatar has no items in inventory and
         Assert.AreEqual(Map.empty, inventory)
     let islandSource() =
         [inputLocation]
+    let itemSingleSource (x) =
+        genericWorldItemSource()
+        |> Map.tryFind x
+    let context = 
+        TestWorldSellItemsContext
+            (avatarInventorySink,
+            avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
+            commoditySource, 
+            islandMarketSourceStub, 
+            islandSingleMarketSinkStub ,
+            islandSingleMarketSourceStub,
+            itemSingleSource,
+            shipmateSingleStatisticSinkStub,
+            shipmateSingleStatisticSourceStub) :> WorldSellItemsContext
     input 
     |> World.SellItems 
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
@@ -165,8 +263,24 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
         Assert.AreEqual(Map.empty, inventory)
     let islandSource() =
         [inputLocation]
+    let itemSingleSource (x) =
+        genericWorldItemSource()
+        |> Map.tryFind x
+    let context = 
+        TestWorldSellItemsContext
+            (avatarInventorySink,
+            avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
+            commoditySource, 
+            islandMarketSource, 
+            islandSingleMarketSink ,
+            islandSingleMarketSourceStub ,
+            itemSingleSource,
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource) :> WorldSellItemsContext
     input 
     |> World.SellItems 
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)
@@ -216,8 +330,24 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
         Assert.AreEqual(Map.empty, inventory)
     let islandSource() =
         [inputLocation]
+    let itemSingleSource (x) =
+        genericWorldItemSource()
+        |> Map.tryFind x
+    let context = 
+        TestWorldSellItemsContext
+            (avatarInventorySink,
+            avatarInventorySource,
+            (avatarExpectedMessageSink expectedMessage),
+            commoditySource, 
+            islandMarketSource, 
+            islandSingleMarketSink ,
+            islandSingleMarketSourceStub ,
+            itemSingleSource,
+            shipmateSingleStatisticSink,
+            shipmateSingleStatisticSource) :> WorldSellItemsContext
     input 
     |> World.SellItems 
+        context
         avatarInventorySink
         avatarInventorySource
         (avatarExpectedMessageSink expectedMessage)

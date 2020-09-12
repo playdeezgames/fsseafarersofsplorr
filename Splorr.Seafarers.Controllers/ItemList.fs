@@ -3,8 +3,18 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
+type ItemListRunWithIslandContext =
+    inherit ItemDetermineSalePriceContext
+    inherit ItemDeterminePurchasePriceContext
+    inherit AvatarGetPrimaryStatisticContext
+
+type ItemListRunContext =
+    inherit ItemListRunWithIslandContext
+    inherit DockedRunBoilerplateContext
+
 module ItemList = 
     let private RunWithIsland 
+            (context            : ItemListRunWithIslandContext)
             (commoditySource    : unit -> Map<uint64, CommodityDescriptor>) 
             (itemSource         : unit -> Map<uint64, ItemDescriptor>) 
             (islandMarketSource : Location -> Map<uint64,Market>) 
@@ -30,8 +40,8 @@ module ItemList =
         |> Set.iter (fun item -> 
             let descriptor = items.[item]
             let markets = islandMarketSource location
-            let sellPrice: float = descriptor |> Item.DetermineSalePrice commoditySource markets
-            let buyPrice: float = descriptor |> Item.DeterminePurchasePrice commoditySource markets
+            let sellPrice: float = (item, location) ||> Item.DetermineSalePrice context
+            let buyPrice: float = (item, location) ||> Item.DeterminePurchasePrice context
             [
                 (Hue.Value, descriptor.ItemName |> sprintf "%-20s" |> Text) |> Hued
                 (Hue.Sublabel, " | " |> Text) |> Hued
@@ -43,7 +53,7 @@ module ItemList =
             ())
         [
             (Hue.Label, "Money: " |> Text) |> Hued
-            (Hue.Value, avatarId |> Avatar.GetMoney shipmateSingleStatisticSource |> sprintf "%f" |> Line) |> Hued
+            (Hue.Value, avatarId |> Avatar.GetMoney context |> sprintf "%f" |> Line) |> Hued
         ]
         |> List.iter messageSink
         avatarId
@@ -51,6 +61,7 @@ module ItemList =
         |> Some
 
     let Run 
+            (context : ItemListRunContext)
             (avatarMessageSource           : AvatarMessageSource)
             (commoditySource               : CommoditySource) 
             (islandItemSource              : IslandItemSource)
@@ -60,6 +71,7 @@ module ItemList =
             (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (messageSink                   : MessageSink) =
         RunWithIsland 
+            context
             commoditySource 
             itemSource 
             islandMarketSource 
@@ -67,6 +79,7 @@ module ItemList =
             shipmateSingleStatisticSource 
             messageSink
         |> Docked.RunBoilerplate 
+            context
             avatarMessageSource
             islandSource
             shipmateSingleStatisticSource 

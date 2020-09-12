@@ -6,6 +6,15 @@ open Splorr.Seafarers.Models
 open WorldTestFixtures
 open CommonTestFixtures
 
+type TestWorldDistanceToContext(avatarMessageSink, vesselSingleStatisticSource) =
+    interface AvatarGetPositionContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface WorldAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface WorldDistanceToContext
+
 [<Test>]
 let ``DistanceTo.It adds a 'unknown island' message when given a bogus island name.`` () =
     let input = avatarId
@@ -27,8 +36,10 @@ let ``DistanceTo.It adds a 'unknown island' message when given a bogus island na
         None
     let islandLocationByNameSource (_) =
         None
+    let context = TestWorldDistanceToContext((avatarExpectedMessageSink expectedMessage), vesselSingleStatisticSource) :> WorldDistanceToContext
     input
     |> World.DistanceTo 
+        context
         avatarIslandSingleMetricSource
         (avatarExpectedMessageSink expectedMessage)
         islandLocationByNameSource
@@ -62,8 +73,10 @@ let ``DistanceTo.It adds a 'unknown island' message when given a valid island na
             |> Some
         else
             None
+    let context = TestWorldDistanceToContext((avatarExpectedMessageSink expectedMessage), vesselSingleStatisticSource) :> WorldDistanceToContext
     input
     |> World.DistanceTo 
+        context
         avatarIslandSingleMetricSource
         (avatarExpectedMessageSink expectedMessage)
         islandLocationByNameSource
@@ -100,8 +113,10 @@ let ``DistanceTo.It adds a 'distance to island' message when given a valid islan
             |> Some
         else
             None
+    let context = TestWorldDistanceToContext((avatarExpectedMessageSink expectedMessage), vesselSingleStatisticSource) :> WorldDistanceToContext
     input
     |> World.DistanceTo 
+        context
         avatarIslandSingleMetricSource
         (avatarExpectedMessageSink expectedMessage)
         islandLocationByNameSource
