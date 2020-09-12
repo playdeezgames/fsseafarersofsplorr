@@ -391,7 +391,6 @@ module World =
             |> AddMessages context avatarMessageSink [ "Steady as she goes." ]
             Avatar.Move 
                 context
-                vesselSingleStatisticSource 
                 avatarId 
             avatarId
             |> UpdateCharts 
@@ -449,8 +448,6 @@ module World =
                 context
                 avatarJobSink
                 avatarJobSource
-                shipmateSingleStatisticSink 
-                shipmateSingleStatisticSource 
                 avatarId
             avatarId
             |> AddMessages context avatarMessageSink [ "You complete your job." ]
@@ -734,8 +731,6 @@ module World =
                 avatarId
                 |> Avatar.SpendMoney 
                     context
-                    shipmateSingleStatisticSink
-                    shipmateSingleStatisticSource
                     price 
                 avatarId
                 |> Avatar.AddInventory 
@@ -777,8 +772,8 @@ module World =
                 | Specific q -> q
                 | Maximum -> 
                     avatarId 
-                    |> Avatar.GetItemCount context avatarInventorySource item
-            if quantity > (avatarId |> Avatar.GetItemCount context avatarInventorySource item) then
+                    |> Avatar.GetItemCount context item
+            if quantity > (avatarId |> Avatar.GetItemCount context item) then
                 avatarId
                 |> AddMessages context avatarMessageSink ["You don't have enough of those to sell."]
             elif quantity = 0UL then
@@ -801,8 +796,6 @@ module World =
                 |> AddMessages context avatarMessageSink [(quantity, descriptor.ItemName) ||> sprintf "You complete the sale of %u %s."]
                 Avatar.EarnMoney 
                     context
-                    shipmateSingleStatisticSink
-                    shipmateSingleStatisticSource
                     price 
                     avatarId
                 avatarId

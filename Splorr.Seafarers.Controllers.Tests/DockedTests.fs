@@ -92,6 +92,10 @@ type TestDockedRunContext
         member _.avatarJobSource                : AvatarJobSource               =avatarJobSource
     interface WorldClearMessagesContext with
         member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
+        
+    interface AvatarGetItemCountContext with
+        member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
+        
     interface DockedHandleCommandContext with
         member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
         member this.avatarJobSink: AvatarJobSink = avatarJobSink

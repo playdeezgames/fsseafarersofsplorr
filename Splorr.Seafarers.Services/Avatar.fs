@@ -90,8 +90,7 @@ type AvatarAbandonJobContext =
     abstract member avatarJobSource : AvatarJobSource
 
 type AvatarGetItemCountContext =
-    interface
-    end
+    abstract member avatarInventorySource : AvatarInventorySource
 
 type AvatarAddMessagesContext =
     abstract member avatarMessageSink : AvatarMessageSink
@@ -127,6 +126,7 @@ type AvatarMoveContext =
     inherit AvatarSetPositionContext
     inherit AvatarGetPositionContext
     inherit AvatarTransformShipmatesContext
+    abstract member vesselSingleStatisticSource   : VesselSingleStatisticSource
 
 type AvatarCleanHullContext =
     inherit VesselTransformFoulingContext
@@ -176,8 +176,8 @@ module Avatar =
         |> Option.map Statistic.GetCurrentValue
 
     let GetHeading
-            (context : AvatarGetHeadingContext)
-            (avatarId                    : string)
+            (context  : AvatarGetHeadingContext)
+            (avatarId : string)
             : float option =
         VesselStatisticIdentifier.Heading
         |> context.vesselSingleStatisticSource avatarId 
@@ -223,9 +223,9 @@ module Avatar =
                 |> context.vesselSingleStatisticSink avatarId)
 
     let SetHeading 
-            (context : AvatarSetHeadingContext)
-            (heading : float) 
-            (avatarId  : string) 
+            (context  : AvatarSetHeadingContext)
+            (heading  : float) 
+            (avatarId : string) 
             : unit =
         context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Heading
         |> Option.iter
@@ -257,17 +257,17 @@ module Avatar =
         |> context.avatarInventorySink avatarId
 
     let AddMetric 
-            (context : AvatarAddMetricContext)
-            (metric                   : Metric) 
-            (amount                   : uint64) 
-            (avatarId                 : string)
+            (context  : AvatarAddMetricContext)
+            (metric   : Metric) 
+            (amount   : uint64) 
+            (avatarId : string)
             : unit =
         context.avatarSingleMetricSink avatarId (metric, (context.avatarSingleMetricSource avatarId metric) + amount)
 
     let private IncrementMetric 
-            (context : AvatarIncrementMetricContext)
-            (metric                   : Metric) 
-            (avatarId                 : string) 
+            (context  : AvatarIncrementMetricContext)
+            (metric   : Metric) 
+            (avatarId : string) 
             : unit =
         let rateOfIncrement = 1UL
         avatarId
@@ -337,17 +337,17 @@ module Avatar =
             Statistic.GetMaximumValue 
 
     let GetEffectiveSpeed 
-            (context : AvatarGetEffectiveSpeedContext)
-            (avatarId                    : string)
+            (context  : AvatarGetEffectiveSpeedContext)
+            (avatarId : string)
             : float =
         let currentValue = GetCurrentFouling context avatarId
         let currentSpeed = GetSpeed context avatarId |> Option.get
         (currentSpeed * (1.0 - currentValue))
 
     let TransformShipmates 
-            (context : AvatarTransformShipmatesContext)
-            (transform            : ShipmateIdentifier -> unit) 
-            (avatarId             : string) 
+            (context   : AvatarTransformShipmatesContext)
+            (transform : ShipmateIdentifier -> unit) 
+            (avatarId  : string) 
             : unit =
         avatarId
         |> context.avatarShipmateSource
@@ -355,14 +355,13 @@ module Avatar =
 
     let Move
             (context : AvatarMoveContext)
-            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
             (avatarId                      : string)
             : unit =
         let actualSpeed = 
             avatarId 
             |> GetEffectiveSpeed context
         let actualHeading = 
-            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Heading 
+            context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Heading 
             |> Option.map Statistic.GetCurrentValue 
             |> Option.get
         Vessel.Befoul 
@@ -454,8 +453,6 @@ module Avatar =
             (context : AvatarCompleteJobContext)
             (avatarJobSink                 : AvatarJobSink)
             (avatarJobSource               : AvatarJobSource)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (avatarId:string)
             : unit =
         match avatarId |> avatarJobSource with
@@ -484,8 +481,6 @@ module Avatar =
 
     let EarnMoney 
             (context : AvatarEarnMoneyContext)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (amount                        : float) 
             (avatarId                      : string)
             : unit =
@@ -497,8 +492,6 @@ module Avatar =
 
     let SpendMoney 
             (context : AvatarSpendMoneyContext)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (amount                        : float) 
             (avatarId                      : string)
             : unit =
@@ -510,11 +503,10 @@ module Avatar =
 
     let GetItemCount 
             (context : AvatarGetItemCountContext)
-            (avatarInventorySource : AvatarInventorySource)
             (item                  : uint64) 
             (avatarId              : string) 
             : uint64 =
-        match avatarId |> avatarInventorySource |> Map.tryFind item with
+        match avatarId |> context.avatarInventorySource |> Map.tryFind item with
         | Some x -> x
         | None -> 0UL
 
@@ -526,7 +518,7 @@ module Avatar =
             (quantity : uint64) 
             (avatarId : string) 
             : unit =
-        let newQuantity = (avatarId |> GetItemCount context avatarInventorySource item) + quantity
+        let newQuantity = (avatarId |> GetItemCount context item) + quantity
         avatarId
         |> avatarInventorySource
         |> Map.add item newQuantity

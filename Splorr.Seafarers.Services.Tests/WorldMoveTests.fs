@@ -62,7 +62,8 @@ type TestWorldMoveContext
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface WorldAddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-
+    interface AvatarMoveContext with
+        member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
     interface WorldMoveContext
 
 [<Test>]

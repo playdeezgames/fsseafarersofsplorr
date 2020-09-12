@@ -105,7 +105,7 @@ module Shipmate =
             let updatedInventory =
                 inventory
                 |> Map.add item (inventory.[item] - rationConsumptionRate)
-                |> Map.filter (fun k v -> v > 0UL)
+                |> Map.filter (fun _ v -> v > 0UL)
             (updatedInventory, true, false)
         | _ ->
             let satiety = 

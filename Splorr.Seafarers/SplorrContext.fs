@@ -113,6 +113,9 @@ type SplorrContext
 
     interface WorldClearMessagesContext with
         member this.avatarMessagePurger: AvatarMessagePurger = avatarMessagePurger
+        
+    interface AvatarMoveContext with
+        member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface AtSeaHandleCommandContext with
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
@@ -221,7 +224,10 @@ type SplorrContext
     interface AvatarAbandonJobContext with
         member this.avatarJobSink: AvatarJobSink = avatarJobSink
         member this.avatarJobSource: AvatarJobSource = avatarJobSource
-
+        
+    interface AvatarGetItemCountContext with
+        member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
+        
     interface DockedHandleCommandContext with
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource

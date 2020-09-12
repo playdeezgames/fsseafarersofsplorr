@@ -81,28 +81,41 @@ type TestAvatarMoveContext
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
+        
     interface AvatarGetCurrentFoulingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        
     interface AvatarTransformShipmatesContext with
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
+        
+    interface VesselBefoulContext with
+        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        
     interface AvatarMoveContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        
     interface AvatarAddMetricContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
+        
     interface AvatarSetPositionContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        
     interface AvatarGetSpeedContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        
     interface AvatarGetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        
     interface ShipmateEatContext with
         member this.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+        
     interface VesselTransformFoulingContext with
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        
     interface ShipmateTransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
@@ -172,11 +185,14 @@ type TestAvatarSetPositionContext(vesselSingleStatisticSink, vesselSingleStatist
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-type TestAvatarAddInventoryContext() =
+type TestAvatarAddInventoryContext(avatarInventorySource) =
+    interface AvatarGetItemCountContext with
+        member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
     interface AvatarAddInventoryContext
 
-type TestAvatarGetItemCountContext() =
-    interface AvatarGetItemCountContext
+type TestAvatarGetItemCountContext(avatarInventorySource) =
+    interface AvatarGetItemCountContext with
+        member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
 
 type TestAvatarRemoveInventoryContext(avatarInventorySink, avatarInventorySource) =
     interface AvatarRemoveInventoryContext with
@@ -532,7 +548,6 @@ let ``Move.It moves the avatar.`` () =
             vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
-        vesselSingleStatisticSource 
         inputAvatarId
 
 [<Test>]
@@ -578,7 +593,6 @@ let ``Move.It removes a ration when the given avatar has rations and full satiet
             vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
-        vesselSingleStatisticSource 
         inputAvatarId
 
 [<Test>]
@@ -623,7 +637,6 @@ let ``Move.It removes a ration and increases satiety when the given avatar has r
             vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
-        vesselSingleStatisticSource 
         inputAvatarId
     
 
@@ -668,7 +681,6 @@ let ``Move.It lowers the avatar's satiety but does not affect turns when the giv
             vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
-        vesselSingleStatisticSource 
         inputAvatarId
 
 
@@ -722,7 +734,6 @@ let ``Move.It lowers the avatar's maximum turn and updates the starvation metric
             vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
         context
-        vesselSingleStatisticSource 
         inputAvatarId
 
 [<Test>]
@@ -803,8 +814,6 @@ let ``CompleteJob.It does nothing when the given avatar has no job.`` () =
         context
         avatarJobSink
         avatarJobSource
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
         avatarId
 
 [<Test>]
@@ -848,8 +857,6 @@ let ``CompleteJob.It sets job to None, adds reward money, adds reputation and me
         context
         avatarJobSink
         avatarJobSource
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
         avatarId
 
 [<Test>]
@@ -865,8 +872,6 @@ let ``SpendMoney.It has no effect when given a negative amount to spend.`` () =
     input
     |> Avatar.SpendMoney 
         context
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
         inputAmount
 
 
@@ -883,8 +888,6 @@ let ``EarnMoney.It has no effect when given a negative amount to earn.`` () =
     input
     |> Avatar.EarnMoney 
         context
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
         inputAmount
 
 
@@ -909,8 +912,6 @@ let ``SpendMoney.It has no effect when the given avatar has no money.`` () =
     input
     |> Avatar.SpendMoney 
         context
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
         inputAmount
 
 [<Test>]
@@ -934,8 +935,6 @@ let ``SpendMoney.It reduces the avatar's money to zero when the given amount exc
     input
     |> Avatar.SpendMoney 
         context
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
         inputAmount
 
 [<Test>]
@@ -959,8 +958,6 @@ let ``SpendMoney.It updates the avatars money when the given amount is less than
     input
     |> Avatar.SpendMoney 
         context
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
         inputAmount
 
 [<Test>]
@@ -984,8 +981,6 @@ let ``EarnMoney.It updates the avatars money by adding the given amount.`` () =
     input
     |> Avatar.EarnMoney 
         context
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
         inputAmount
 
 [<Test>]
@@ -998,7 +993,7 @@ let ``AddInventory.It adds a given number of given items to the given avatar's i
     let avatarInventorySink (_) (inventory:Map<uint64, uint64>) =
         Assert.AreEqual(1, inventory.Count)
         Assert.AreEqual(inputQuantity, inventory.[inputItem])
-    let context = TestAvatarAddInventoryContext() :> AvatarAddInventoryContext
+    let context = TestAvatarAddInventoryContext(avatarInventorySource) :> AvatarAddInventoryContext
     input
     |> Avatar.AddInventory 
         context
@@ -1015,12 +1010,11 @@ let ``GetItemCount.It returns zero when the given avatar has no entry for the gi
     let expected = 0u
     let avatarInventorySource (_) =
         Map.empty
-    let context = TestAvatarGetItemCountContext() :> AvatarGetItemCountContext
+    let context = TestAvatarGetItemCountContext(avatarInventorySource) :> AvatarGetItemCountContext
     let actual =
         input
         |> Avatar.GetItemCount 
             context
-            avatarInventorySource
             inputItem
     Assert.AreEqual(expected, actual)
 
@@ -1032,12 +1026,11 @@ let ``GetItemCount.It returns the item count when the given avatar has an entry 
     let avatarInventorySource (_) =
         Map.empty
         |> Map.add inputItem expected
-    let context = TestAvatarGetItemCountContext() :> AvatarGetItemCountContext
+    let context = TestAvatarGetItemCountContext(avatarInventorySource) :> AvatarGetItemCountContext
     let actual =
         input
         |> Avatar.GetItemCount 
             context
-            avatarInventorySource
             inputItem
     Assert.AreEqual(expected, actual)
 
@@ -1489,7 +1482,6 @@ let ``Move.It transforms the avatar within the given world.`` () =
             vesselSingleStatisticSource) :> AvatarMoveContext
     Avatar.Move 
             context
-            vesselSingleStatisticSource 
             avatarId
     Assert.AreEqual(1, xPositionCalled)
     Assert.AreEqual(1, yPositionCalled)

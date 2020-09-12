@@ -87,7 +87,7 @@ module Island =
         | None, Some _ ->
             "(unknown)"
         | _ ->
-            raise (System.NotImplementedException "This island does not exist!")
+            raise (NotImplementedException "This island does not exist!")
     
     let AddVisit 
             (context      : IslandAddVisitContext)
