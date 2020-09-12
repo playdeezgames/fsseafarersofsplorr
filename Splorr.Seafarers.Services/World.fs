@@ -650,17 +650,9 @@ module World =
 
     let BuyItems 
             (context                       : WorldBuyItemsContext)
-            (avatarInventorySink           : AvatarInventorySink)
-            (avatarInventorySource         : AvatarInventorySource)
-            (avatarMessageSink             : AvatarMessageSink)
-            (commoditySource               : CommoditySource) 
             (islandMarketSource            : IslandMarketSource)
-            (islandSingleMarketSink        : IslandSingleMarketSink) 
-            (islandSingleMarketSource      : IslandSingleMarketSource) 
             (islandSource                  : IslandSource)
             (itemSource                    : ItemSource) 
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (vesselSingleStatisticSource   : VesselSingleStatisticSource)
             (location                      : Location) 
             (tradeQuantity                 : TradeQuantity) 
@@ -730,8 +722,6 @@ module World =
 
     let SellItems 
             (context : WorldSellItemsContext)
-            (avatarMessageSink             : AvatarMessageSink)
-            (islandMarketSource            : IslandMarketSource) 
             (islandSource                  : IslandSource)
             (itemSource                    : ItemSource)
             (location                      : Location) 

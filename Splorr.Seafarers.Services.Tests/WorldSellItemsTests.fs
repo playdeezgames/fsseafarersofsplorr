@@ -72,8 +72,6 @@ let ``SellItems.It gives a message when given a bogus island location.`` () =
     input 
     |> World.SellItems 
         context
-        (avatarExpectedMessageSink expectedMessage)
-        islandMarketSourceStub 
         islandSource
         genericWorldItemSource
         inputLocation 
@@ -115,8 +113,6 @@ let ``SellItems.It gives a message when given a valid island location and bogus 
     input 
     |> World.SellItems 
         context
-        (avatarExpectedMessageSink expectedMessage)
-        islandMarketSourceStub 
         islandSource
         genericWorldItemSource
         inputLocation 
@@ -154,8 +150,6 @@ let ``SellItems.It gives a message when the avatar has insufficient items in inv
     input 
     |> World.SellItems 
         context
-        (avatarExpectedMessageSink expectedMessage)
-        islandMarketSourceStub 
         islandSource
         genericWorldItemSource 
         inputLocation 
@@ -193,8 +187,6 @@ let ``SellItems.It gives a message when the avatar has no items in inventory and
     input 
     |> World.SellItems 
         context
-        (avatarExpectedMessageSink expectedMessage)
-        islandMarketSourceStub 
         islandSource
         genericWorldItemSource 
         inputLocation 
@@ -253,8 +245,6 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
     input 
     |> World.SellItems 
         context
-        (avatarExpectedMessageSink expectedMessage)
-        islandMarketSource 
         islandSource
         genericWorldItemSource 
         inputLocation 
@@ -313,8 +303,6 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
     input 
     |> World.SellItems 
         context
-        (avatarExpectedMessageSink expectedMessage)
-        islandMarketSource 
         islandSource
         genericWorldItemSource 
         inputLocation 
