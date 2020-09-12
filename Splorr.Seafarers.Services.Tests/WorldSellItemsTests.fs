@@ -25,6 +25,8 @@ type TestWorldSellItemsContext
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
     interface AvatarGetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+    interface WorldAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface WorldSellItemsContext with
         member _.commoditySource: CommoditySource = commoditySource
         member _.islandMarketSource: IslandMarketSource = islandMarketSource

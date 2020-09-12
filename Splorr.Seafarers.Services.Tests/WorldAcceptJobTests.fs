@@ -16,6 +16,8 @@ type TestWorldAcceptJobContext
         member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
     interface AvatarAddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface WorldAddMessagesContext with
+        member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface AvatarAddMetricContext with
         member _.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member _.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource

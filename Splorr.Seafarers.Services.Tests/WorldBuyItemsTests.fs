@@ -21,6 +21,8 @@ type TestWorldBuyItemsContext
         member this.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
     interface AvatarAddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface WorldAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface AvatarGetUsedTonnageContext with
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
     interface AvatarGetPrimaryStatisticContext with

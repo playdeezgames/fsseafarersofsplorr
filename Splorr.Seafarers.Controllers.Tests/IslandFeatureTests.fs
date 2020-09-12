@@ -20,7 +20,8 @@ type TestIslandFeatureRunContext
 
     interface AvatarAddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-
+    interface WorldAddMessagesContext with
+        member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface IslandFeatureRunDarkAlleyContext with
         member _.avatarMessageSource : AvatarMessageSource = avatarMessageSource
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink

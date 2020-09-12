@@ -49,7 +49,10 @@ type TestDockedRunContext
        
     interface AvatarAddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-
+        
+    interface WorldAddMessagesContext with
+        member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+        
     interface WorldUndockContext with
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
@@ -86,15 +89,17 @@ type TestDockedRunContext
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarAbandonJobContext with
         member _.avatarJobSink                  : AvatarJobSink                 =avatarJobSink                 
-        member _.avatarJobSource                : AvatarJobSource               =avatarJobSource               
+        member _.avatarJobSource                : AvatarJobSource               =avatarJobSource
+    interface WorldClearMessagesContext with
+        member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
     interface DockedHandleCommandContext with
+        member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
         member this.avatarJobSink: AvatarJobSink = avatarJobSink
         member this.avatarJobSource: AvatarJobSource = avatarJobSource
         member _.avatarInventorySink            : AvatarInventorySink           =avatarInventorySink            
         member _.avatarInventorySource          : AvatarInventorySource         =avatarInventorySource          
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink  =avatarIslandSingleMetricSink   
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource=avatarIslandSingleMetricSource 
-        member _.avatarMessagePurger            : AvatarMessagePurger           =avatarMessagePurger           
         member _.avatarMessageSink              : AvatarMessageSink             =avatarMessageSink             
         member _.avatarSingleMetricSink         : AvatarSingleMetricSink        =avatarSingleMetricSink        
         member _.avatarSingleMetricSource       : AvatarSingleMetricSource      =avatarSingleMetricSource      

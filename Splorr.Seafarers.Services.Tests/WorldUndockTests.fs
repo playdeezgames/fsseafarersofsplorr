@@ -14,6 +14,9 @@ type TestWorldUndockContext
 
     interface AvatarAddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+        
+    interface WorldAddMessagesContext with
+        member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
 
 [<Test>]
 let ``Undock.It removes the feature for the avatar and adds a message.`` () =

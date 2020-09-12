@@ -8,7 +8,8 @@ open CommonTestFixtures
 open AtSeaTestFixtures
 
 type TestCareenedRunContext 
-        (avatarShipmateSource,
+        (avatarMessagePurger,
+        avatarShipmateSource,
         avatarSingleMetricSink,
         avatarSingleMetricSource,
         shipmateSingleStatisticSink,
@@ -30,6 +31,8 @@ type TestCareenedRunContext
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
+    interface WorldClearMessagesContext with
+        member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
     interface CareenedRunContext
     interface ShipmateTransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
@@ -39,7 +42,8 @@ let private functionUnderTest
         (avatarSingleMetricSink : AvatarSingleMetricSink)= 
     let context = 
         TestCareenedRunContext 
-            (avatarShipmateSourceStub,
+            (avatarMessagePurgerStub,
+            avatarShipmateSourceStub,
             avatarSingleMetricSink,
             avatarSingleMetricSourceStub,
             shipmateSingleStatisticSinkStub, 
@@ -78,7 +82,8 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
             raise (System.NotImplementedException (identifier.ToString() |> sprintf "shipmateSingleStatisticSource - %s"))
     let context = 
         TestCareenedRunContext 
-            (avatarShipmateSourceStub,
+            (avatarMessagePurgerStub,
+            avatarShipmateSourceStub,
             avatarSingleMetricSinkExplode,
             avatarSingleMetricSourceStub,
             shipmateSingleStatisticSinkStub,

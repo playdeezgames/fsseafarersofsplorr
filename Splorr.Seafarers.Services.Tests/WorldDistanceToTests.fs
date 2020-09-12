@@ -11,6 +11,8 @@ type TestWorldDistanceToContext(avatarMessageSink, vesselSingleStatisticSource) 
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarAddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface WorldAddMessagesContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface WorldDistanceToContext
 
 [<Test>]
