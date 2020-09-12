@@ -255,7 +255,7 @@ module World =
                     worldSize 
                     minimumIslandDistance 
                     (maximumGenerationTries, 0u) 
-//end of "world generator"
+
     let UpdateCharts 
             (context : WorldUpdateChartsContext)
             (avatarId : string) 
