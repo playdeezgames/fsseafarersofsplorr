@@ -15,7 +15,6 @@ module IslandList =
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (islandSingleNameSource         : IslandSingleNameSource)
             (islandSource                   : IslandSource)
-            (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (messageSink                    : MessageSink) 
             (pageSize                       : uint32) 
             (page                           : uint32) 
@@ -77,7 +76,6 @@ module IslandList =
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (islandSingleNameSource         : IslandSingleNameSource)
             (islandSource                   : IslandSource)
-            (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (messageSink                    : MessageSink) 
             (page                           : uint32) 
             (gamestate                      : Gamestate) 
@@ -90,7 +88,6 @@ module IslandList =
                 avatarIslandSingleMetricSource
                 islandSingleNameSource
                 islandSource
-                vesselSingleStatisticSource 
                 messageSink 
                 pageSize 
                 page)

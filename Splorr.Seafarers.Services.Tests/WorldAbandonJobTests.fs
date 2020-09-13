@@ -14,8 +14,10 @@ type TestWorldAbandonJobContext
         shipmateSingleStatisticSink, 
         shipmateSingleStatisticSource) =
     interface WorldAbandonJobContext with
-        member this.avatarJobSink: AvatarJobSink = avatarJobSink
         member this.avatarJobSource: AvatarJobSource = avatarJobSource
+    interface AvatarAbandonJobContext with
+        member _.avatarJobSink : AvatarJobSink = avatarJobSink
+        member _.avatarJobSource : AvatarJobSource = avatarJobSource
     interface AvatarGetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarAddMessagesContext with
@@ -38,7 +40,7 @@ let ``AbandonJob.It adds a message when the avatar has no job.`` () =
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSource")
             None
-    let shipmateSingleStatisticSink (_) (_) (identifier: ShipmateStatisticIdentifier, statistic: Statistic option) =
+    let shipmateSingleStatisticSink (_) (_) (identifier: ShipmateStatisticIdentifier, _: Statistic option) =
         match identifier with
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
@@ -58,13 +60,6 @@ let ``AbandonJob.It adds a message when the avatar has no job.`` () =
     input
     |> World.AbandonJob
         context
-        avatarJobSink
-        avatarJobSource
-        (avatarExpectedMessageSink expectedMessage)
-        (assertAvatarSingleMetricSink [Metric.AcceptedJob, 1UL])
-        avatarSingleMetricSourceStub
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
 
 [<Test>]
 let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a job`` () =
@@ -104,13 +99,6 @@ let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a
     input
     |> World.AbandonJob
         context
-        avatarJobSink
-        avatarJobSource
-        (avatarExpectedMessageSink expectedMessage)
-        (assertAvatarSingleMetricSink [Metric.AbandonedJob, 1UL])
-        avatarSingleMetricSourceStub
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
 
 
 

@@ -15,11 +15,8 @@ type ItemListRunContext =
 module ItemList = 
     let private RunWithIsland 
             (context            : ItemListRunWithIslandContext)
-            (commoditySource    : unit -> Map<uint64, CommodityDescriptor>) 
             (itemSource         : unit -> Map<uint64, ItemDescriptor>) 
-            (islandMarketSource : Location -> Map<uint64,Market>) 
             (islandItemSource   : Location -> Set<uint64>) 
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (messageSink        : MessageSink) 
             (location           : Location) 
             (avatarId           : string) 
@@ -39,7 +36,6 @@ module ItemList =
         |> islandItemSource
         |> Set.iter (fun item -> 
             let descriptor = items.[item]
-            let markets = islandMarketSource location
             let sellPrice: float = (item, location) ||> Item.DetermineSalePrice context
             let buyPrice: float = (item, location) ||> Item.DeterminePurchasePrice context
             [
@@ -63,25 +59,18 @@ module ItemList =
     let Run 
             (context : ItemListRunContext)
             (avatarMessageSource           : AvatarMessageSource)
-            (commoditySource               : CommoditySource) 
             (islandItemSource              : IslandItemSource)
-            (islandMarketSource            : IslandMarketSource) 
             (islandSource                  : IslandSource)
             (itemSource                    : ItemSource) 
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (messageSink                   : MessageSink) =
         RunWithIsland 
             context
-            commoditySource 
             itemSource 
-            islandMarketSource 
             islandItemSource 
-            shipmateSingleStatisticSource 
             messageSink
         |> Docked.RunBoilerplate 
             context
             avatarMessageSource
             islandSource
-            shipmateSingleStatisticSource 
     
 

@@ -1,7 +1,6 @@
 ﻿namespace Splorr.Seafarers.Persistence
 
 open System.Data.SQLite
-open Splorr.Seafarers.Models
 
 module RationItem =
     let rec private getRationItems 

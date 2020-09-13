@@ -49,7 +49,6 @@ module IslandFeature =
             avatarId
             |> World.AddMessages
                 context
-                context.avatarMessageSink
                 [ "Come back when you've got more money!" ]
             avatarId
             |> Gamestate.InPlay

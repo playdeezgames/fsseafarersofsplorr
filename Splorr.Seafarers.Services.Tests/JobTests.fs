@@ -3,7 +3,6 @@
 open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
-open CommonTestFixtures
 open AvatarTestFixtures
 
 let rewardRange = (1.0, 10.0)

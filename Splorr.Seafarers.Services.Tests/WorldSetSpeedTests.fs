@@ -35,7 +35,6 @@ let ``SetSpeed.It produces all stop in the avatar when less than zero is passed.
     avatarId
     |> World.SetSpeed 
         context
-        avatarMessageSinkStub 
         inputSpeed
     |> ignore
 
@@ -57,7 +56,6 @@ let ``SetSpeed.It produces full speed when greater than one is passed.`` () =
     avatarId
     |> World.SetSpeed 
         context
-        avatarMessageSinkStub 
         inputSpeed
     |> ignore
 
@@ -80,7 +78,6 @@ let ``SetSpeed.It produces half speed when one half is passed.`` () =
     avatarId
     |> World.SetSpeed 
         context
-        avatarMessageSinkStub 
         inputSpeed
     |> ignore
 
@@ -106,7 +103,6 @@ let ``SetSpeed.It does nothing when a bogus avatarid is passed.`` () =
     inputWorld
     |> World.SetSpeed 
         context
-        avatarMessageSink 
         inputSpeed
 
 [<Test>]
@@ -127,7 +123,6 @@ let ``SetSpeed.It produces full speed when one is passed.`` () =
     avatarId
     |> World.SetSpeed 
         context
-        avatarMessageSinkStub 
         inputSpeed
     |> ignore
 
@@ -150,7 +145,6 @@ let ``SetSpeed.It sets all stop when given zero`` () =
     avatarId
     |> World.SetSpeed 
         context
-        avatarMessageSinkStub 
         inputSpeed
     |> ignore
 

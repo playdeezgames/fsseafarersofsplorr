@@ -116,6 +116,16 @@ type SplorrContext
         
     interface AvatarMoveContext with
         member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
+        
+    interface WorldDistanceToContext with
+        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        member _.islandLocationByNameSource     : IslandLocationByNameSource = islandLocationByNameSource
+    interface WorldHeadForContext with
+        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        member _.islandLocationByNameSource     : IslandLocationByNameSource = islandLocationByNameSource
+
+    interface WorldGetNearbyLocationsContext with
+        member _.islandSource : IslandSource = islandSource
 
     interface AtSeaHandleCommandContext with
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
@@ -230,7 +240,19 @@ type SplorrContext
     interface AvatarAddInventoryContext with
         member _.avatarInventorySink   : AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
-        
+    interface WorldAcceptJobContext with
+        member _.avatarJobSink         : AvatarJobSink = avatarJobSink
+        member _.avatarJobSource       : AvatarJobSource = avatarJobSource
+        member _.islandJobPurger       : IslandJobPurger = islandJobPurger
+        member _.islandSingleJobSource : IslandSingleJobSource = islandSingleJobSource
+        member _.islandSource          : IslandSource = islandSource
+    interface WorldAbandonJobContext with
+        member _.avatarJobSource : AvatarJobSource = avatarJobSource
+    interface WorldBuyItemsContext with
+        member _.islandSource                  : IslandSource = islandSource
+        member _.itemSource                    : ItemSource =  itemSource
+        member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
+
     interface DockedHandleCommandContext with
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
@@ -253,6 +275,9 @@ type SplorrContext
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface WorldSellItemsContext with
+      member _.islandSource                  : IslandSource = islandSource
+       member _.itemSource                    : ItemSource = itemSource
 
     interface JobCreateContext with
         member _.termSources: TermSources = termSources

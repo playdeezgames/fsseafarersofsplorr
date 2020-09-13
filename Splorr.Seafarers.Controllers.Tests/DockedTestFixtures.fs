@@ -2,8 +2,6 @@
 
 open CommonTestFixtures
 open Splorr.Seafarers.Models
-open Splorr.Seafarers.Services
-open AtSeaTestFixtures
 
 let internal dockWorld = 
     avatarId

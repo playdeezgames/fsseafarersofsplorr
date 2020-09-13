@@ -1,9 +1,7 @@
 ﻿module HelpTests
 
-open CommonTestFixtures
 open NUnit.Framework
 open Splorr.Seafarers.Controllers
-open Splorr.Seafarers.Models
 open System
 
 

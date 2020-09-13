@@ -93,7 +93,7 @@ let internal avatarMessageSinkStub (_) (_) = ()
 let internal avatarMessagePurgerStub (_) = ()
 
 let internal avatarMessageSinkExplode (_) (_) =
-    raise (System.NotImplementedException "avatarMessageSinkExplode")
+    raise (NotImplementedException "avatarMessageSinkExplode")
 
 let internal avatarMessageSinkExpected (expected:string list) (_) (message:string) =
     match expected |> List.tryFind ((=) message) with
@@ -132,7 +132,7 @@ let internal worldSingleStatisticSourceStub (identifier: WorldStatisticIdentifie
     | WorldStatisticIdentifier.JobReward ->
         {MinimumValue=1.0; MaximumValue=10.0; CurrentValue=5.5}
     | _ ->
-        raise (System.NotImplementedException "worldSingleStatisticSourceStub")
+        raise (NotImplementedException "worldSingleStatisticSourceStub")
 
 let internal shipmateSingleStatisticSinkStub (_) (_) (_) =
     ()
@@ -149,7 +149,7 @@ let internal shipmateSingleStatisticSourceStub (_) (_) (identifier:ShipmateStati
     | ShipmateStatisticIdentifier.Reputation ->
         Statistic.Create (-1000.0, 1000.0) 0.0 |> Some
     | _ -> 
-        raise (System.NotImplementedException (identifier.ToString() |> sprintf "shipmateSingleStatisticSourceStub %s"))
+        raise (NotImplementedException (identifier.ToString() |> sprintf "shipmateSingleStatisticSourceStub %s"))
         None
     
 
@@ -161,9 +161,9 @@ let internal avatarInventorySourceStub (_) =
 let internal avatarInventorySinkStub (_) (_) =
     ()
 
-let internal avatarSingleMetricSinkStub (_) (actual:Metric * uint64) = ()
+let internal avatarSingleMetricSinkStub (_) (_:Metric * uint64) = ()
 let internal avatarSingleMetricSinkExplode (_) (actual:Metric * uint64) =
-    raise (System.NotImplementedException (sprintf "avatarSingleMetricSinkExplode - %s %u" ((actual|>fst).ToString()) (actual |> snd)))
+    raise (NotImplementedException (sprintf "avatarSingleMetricSinkExplode - %s %u" ((actual|>fst).ToString()) (actual |> snd)))
 let internal assertAvatarSingleMetricSink (expected:(Metric * uint64) list) (_) (actual:Metric * uint64) =
     let found = 
         expected
@@ -179,7 +179,7 @@ let internal avatarSingleMetricSourceStub (_) (_) =
     0UL
 
 let internal avatarMetricSourceStub (_) =
-    (System.Enum.GetValues(typedefof<Metric>)) :?> (Metric array)
+    (Enum.GetValues(typedefof<Metric>)) :?> (Metric array)
     |> Array.map (fun m -> (m, 1UL))
     |> Map.ofArray
 
@@ -217,7 +217,7 @@ let islandSingleJobSourceStub (_) (_) = None
 let islandFeatureSourceStub (_) = []
 
 let internal avatarIslandFeatureSinkDummy (_) : unit =
-    raise (System.NotImplementedException "avatarIslandFeatureSinkDummy")
+    raise (NotImplementedException "avatarIslandFeatureSinkDummy")
 
 type TestAtSeaRunContext 
         (
@@ -338,6 +338,17 @@ type TestAtSeaRunContext
         member this.avatarMessagePurger: AvatarMessagePurger = avatarMessagePurger
     interface AvatarMoveContext with
         member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface WorldAbandonJobContext with
+        member _.avatarJobSource : AvatarJobSource = avatarJobSource
+    interface WorldDistanceToContext with
+        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        member _.islandLocationByNameSource     : IslandLocationByNameSource = islandLocationByNameSource
+    interface WorldHeadForContext with
+        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        member _.islandLocationByNameSource     : IslandLocationByNameSource = islandLocationByNameSource
+    interface WorldGetNearbyLocationsContext with
+        member _.islandSource : IslandSource = islandSource
+
     interface AtSeaHandleCommandContext with
         member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource
@@ -388,7 +399,7 @@ type TestAtSeaRunContext
         member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
 
 let commandSourceExplode () : Command option =
-    raise (System.NotImplementedException "There should be no input handling here!")
+    raise (NotImplementedException "There should be no input handling here!")
 
 let commandSourceFake (expectedCommand:Command option) : unit -> Command option =
     fun () -> expectedCommand

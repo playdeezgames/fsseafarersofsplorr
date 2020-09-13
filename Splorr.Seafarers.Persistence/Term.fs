@@ -1,7 +1,6 @@
 ﻿namespace Splorr.Seafarers.Persistence
 
 open System.Data.SQLite
-open System
 
 module Term =
     let GetForTermType 

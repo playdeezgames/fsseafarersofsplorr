@@ -88,7 +88,7 @@ module Docked =
         |> World.ClearMessages context
 
         match command with
-        | Some (Command.GoTo feature) ->
+        | Some (Command.GoTo _) ->
             avatarId
             |> Gamestate.InPlay
             |> Some
@@ -97,16 +97,6 @@ module Docked =
             avatarId 
             |> World.AcceptJob
                 context
-                context.avatarIslandSingleMetricSink
-                context.avatarIslandSingleMetricSource
-                context.avatarJobSink
-                context.avatarJobSource
-                context.avatarMessageSink 
-                context.avatarSingleMetricSink
-                context.avatarSingleMetricSource
-                context.islandJobPurger
-                context.islandSingleJobSource
-                context.islandSource
                 index 
                 location
             avatarId
@@ -117,18 +107,6 @@ module Docked =
             avatarId 
             |> World.BuyItems 
                 context
-                context.avatarInventorySink
-                context.avatarInventorySource
-                context.avatarMessageSink 
-                context.commoditySource 
-                context.islandMarketSource 
-                context.islandSingleMarketSink 
-                context.islandSingleMarketSource 
-                context.islandSource
-                context.itemSource 
-                context.shipmateSingleStatisticSink
-                context.shipmateSingleStatisticSource
-                context.vesselSingleStatisticSource 
                 location 
                 quantity 
                 itemName
@@ -140,17 +118,6 @@ module Docked =
             avatarId 
             |> World.SellItems 
                 context
-                context.avatarInventorySink
-                context.avatarInventorySource
-                context.avatarMessageSink
-                context.commoditySource 
-                context.islandMarketSource 
-                context.islandSingleMarketSink 
-                context.islandSingleMarketSource 
-                context.islandSource
-                context.itemSource 
-                context.shipmateSingleStatisticSink
-                context.shipmateSingleStatisticSource
                 location 
                 quantity 
                 itemName
@@ -180,13 +147,6 @@ module Docked =
             avatarId 
             |> World.AbandonJob 
                 context
-                context.avatarJobSink
-                context.avatarJobSource
-                context.avatarMessageSink
-                context.avatarSingleMetricSink
-                context.avatarSingleMetricSource
-                context.shipmateSingleStatisticSink
-                context.shipmateSingleStatisticSource
             avatarId
             |> Gamestate.InPlay
             |> Some
@@ -251,7 +211,6 @@ module Docked =
             (context : DockedRunBoilerplateContext)
             (avatarMessageSource           : AvatarMessageSource)
             (islandSource                  : IslandSource)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (func                          : Location -> string -> Gamestate option) 
             (location                      : Location) 
             (avatarId                      : string) 
@@ -277,7 +236,6 @@ module Docked =
             context
             context.avatarMessageSource
             context.islandSource
-            context.shipmateSingleStatisticSource
             (RunWithIsland 
                 context
                 commandSource                

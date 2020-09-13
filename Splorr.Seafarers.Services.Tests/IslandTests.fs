@@ -330,7 +330,7 @@ let ``GenerateCommodities.It generates commodities when the given island has no 
 [<Test>]
 let ``GenerateItems.It has no effect when the given island already has items in the shop.`` () =
     let input = (0.0,0.0)
-    let islandItemSource (l:Location) = [1UL] |> Set.ofList
+    let islandItemSource (_:Location) = [1UL] |> Set.ofList
     let islandItemSink (_) (_) =
         Assert.Fail("This should not be called")
     let context = 
@@ -350,7 +350,7 @@ let ``GenerateItems.It has no effect when the given island already has items in 
 let ``GenerateItems.It generates the shop when the given island has no items in the shop.`` () =
     let mutable counter = 0
     let input = (0.0,0.0)
-    let islandItemSource (l:Location) = Set.empty
+    let islandItemSource (_:Location) = Set.empty
     let islandItemSink (_) (_) =
         counter <- counter + 1
     let context = 
@@ -372,9 +372,6 @@ let ``UpdateMarketForItemSale.It updates market commodity demands based on the g
     let inputQuantity = 1UL
     let inputDescriptor = items.[1UL]
     let market = {Supply=1.0;Demand=1.0}
-    let islandMarketSource (_) =
-        Map.empty
-        |> Map.add 1UL market
     let expectedMarket = 
         {Supply=1.0;Demand=market.Demand+1.0}
     let islandSingleMarketSink (_) (commodityId, market) =
@@ -436,7 +433,7 @@ type TestIslandCreateContext
 let ``Create.It sets up statistics for an island.`` () =
     let givenLocation = (1.0, 2.0)
     let mutable statisticCounter : uint64 = 0UL
-    let islandSingleStatisticSink (location:Location) (identifier: IslandStatisticIdentifier, statistic: Statistic option) =
+    let islandSingleStatisticSink (location:Location) (_: IslandStatisticIdentifier, _: Statistic option) =
         statisticCounter <- statisticCounter + 1UL
         Assert.AreEqual(givenLocation, location)
     let islandStatisticTemplateSource () =

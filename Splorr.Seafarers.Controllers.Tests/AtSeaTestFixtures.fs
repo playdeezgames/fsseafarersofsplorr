@@ -1,7 +1,6 @@
 ﻿module AtSeaTestFixtures
 
 open Splorr.Seafarers.Models
-open Splorr.Seafarers.Services
 open CommonTestFixtures
 open System
 
@@ -18,7 +17,7 @@ let internal worldSingleStatisticSourceStub (identfier: WorldStatisticIdentifier
     | WorldStatisticIdentifier.PositionY ->
         {MinimumValue=0.0; MaximumValue=10.0; CurrentValue=5.0}
     | _ ->
-        raise (System.NotImplementedException "worldSingleStatisticSourceStub")
+        raise (NotImplementedException "worldSingleStatisticSourceStub")
 
 let private random = Random()
 
@@ -29,7 +28,7 @@ let internal avatarIslandSingleMetricSinkStub (_) (_) (_) (_) = ()
 let internal avatarIslandSingleMetricSourceStub (_) (_) (_) = None
 let internal islandFeatureGeneratorSourceStub () = Map.empty
 let internal islandSingleFeatureSinkStub (_) (_) =
-    raise (System.NotImplementedException "islandSingleFeatureSinkStub")
+    raise (NotImplementedException "islandSingleFeatureSinkStub")
 
 let internal world = avatarId
 
@@ -51,7 +50,7 @@ let internal emptyWorldSingleStatisticSource (identfier: WorldStatisticIdentifie
         {MinimumValue=0.0; MaximumValue=1.0; CurrentValue=5.0}
 
     | _ ->
-        raise (System.NotImplementedException "emptyWorldSingleStatisticSource")
+        raise (NotImplementedException "emptyWorldSingleStatisticSource")
 
 let internal emptyWorld = world
 
@@ -68,7 +67,7 @@ let internal dockWorldSingleStatisticSource (identfier: WorldStatisticIdentifier
     | WorldStatisticIdentifier.PositionY ->
         {MinimumValue=0.0; MaximumValue=0.0; CurrentValue=5.0}
     | _ ->
-        raise (System.NotImplementedException (sprintf "dockWorldSingleStatisticSource %s" (identfier.ToString())))
+        raise (NotImplementedException (sprintf "dockWorldSingleStatisticSource %s" (identfier.ToString())))
 let internal dockWorld = world
 
 let internal commoditySourceStub () = Map.empty

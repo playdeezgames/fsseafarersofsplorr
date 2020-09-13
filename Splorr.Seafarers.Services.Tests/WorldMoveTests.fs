@@ -3,7 +3,6 @@
 open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
-open WorldTestFixtures
 open CommonTestFixtures
 
 type TestWorldMoveContext
@@ -145,19 +144,6 @@ let ``Move.It moves the avatar one unit when give 1u for distance when given a v
     avatarId
     |> World.Move 
         context
-        avatarInventorySink
-        avatarInventorySource
-        avatarIslandSingleMetricSinkStub
-        avatarMessageSinkStub 
-        avatarShipmateSource
-        (assertAvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL])
-        avatarSingleMetricSourceStub
-        islandSource
-        shipmateRationItemSourceStub 
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
-        vesselSingleStatisticSink 
-        vesselSingleStatisticSource 
         1u
     |> ignore
     Assert.AreEqual(1, positionXCalls)
@@ -242,19 +228,6 @@ let ``Move.It moves the avatar almost two units when give 2u for distance.`` () 
     avatarId
     |> World.Move 
         context
-        avatarInventorySink
-        avatarInventorySource
-        avatarIslandSingleMetricSinkStub
-        avatarMessageSinkStub 
-        avatarShipmateSource
-        (assertAvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL])
-        avatarSingleMetricSourceStub
-        islandSource
-        shipmateRationItemSourceStub 
-        shipmateSingleStatisticSink
-        shipmateSingleStatisticSource
-        vesselSingleStatisticSink 
-        vesselSingleStatisticSource 
         2u
     |> ignore
     Assert.AreEqual(2, positionXCalls)

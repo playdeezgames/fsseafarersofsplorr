@@ -1,6 +1,5 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
-open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module MainMenu =

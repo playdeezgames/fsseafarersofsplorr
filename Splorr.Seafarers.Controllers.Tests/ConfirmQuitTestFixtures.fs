@@ -1,6 +1,5 @@
 ﻿module ConfirmQuitTestFixtures
 
-open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
 open System
@@ -18,7 +17,7 @@ let internal worldSingleStatisticSourceStub (identfier: WorldStatisticIdentifier
     | WorldStatisticIdentifier.PositionY ->
         {MinimumValue=0.0; MaximumValue=10.0; CurrentValue=5.0}
     | _ ->
-        raise (System.NotImplementedException "worldSingleStatisticSourceStub")
+        raise (NotImplementedException "worldSingleStatisticSourceStub")
 let private vesselStatisticTemplateSourceStub () = 
     Map.empty
 

@@ -17,7 +17,7 @@ let ``Dock.It does not modify avatar when given avatar has a job for a different
         | _ ->
             raise (System.NotImplementedException (identifier.ToString() |> sprintf "kaboom get %s"))
             None
-    let shipmateSingleStatisticSink (_) (_) (identifier: ShipmateStatisticIdentifier, statistic: Statistic option) =
+    let shipmateSingleStatisticSink (_) (_) (identifier: ShipmateStatisticIdentifier, _: Statistic option) =
         match identifier with
         | _ ->
             raise (System.NotImplementedException (identifier.ToString() |> sprintf "kaboom get %s"))
@@ -73,7 +73,6 @@ let ``Dock.It does not modify avatar when given avatar has a job for a different
     avatarId
     |> World.Dock
         context
-        random 
         inputLocation
     |> ignore
 
@@ -171,7 +170,6 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
     avatarId
     |> World.Dock
         context
-        random 
         jobLocation
 
 [<Test>]
@@ -222,15 +220,12 @@ let ``Dock.It does nothing when given an invalid avatar id.`` () =
     bogusAvatarId
     |> World.Dock 
         context
-        random 
         (0.0, 0.0)
 
 [<Test>]
 let ``Dock.It adds a message when the given location has no island.`` () =
     let inputWorld = avatarId
     let expectedMessage = "There is no place to dock there."
-    let expected =
-        inputWorld
     let avatarJobSink (_) (_) =
         Assert.Fail("avatarJobSink")
     let avatarJobSource (_) =
@@ -277,16 +272,13 @@ let ``Dock.It adds a message when the given location has no island.`` () =
     inputWorld
     |> World.Dock
         context
-        random 
         (0.0, 0.0)
 
 [<Test>]
-let ``Dock.It updates the island's visit count and last visit when the given location has an island.`` () =
+let ``Dock.It updates the island's visit count and last visit when the given location has an island.`` (): unit =
     let inputWorld = avatarId
     let inputLocation = (0.0, 0.0)
     let expectedMessage = "You dock."
-    let expected = 
-        inputWorld
     let shipmateSingleStatisticSource (_) (_) (identifier: ShipmateStatisticIdentifier) =
         match identifier with
         | ShipmateStatisticIdentifier.Turn ->
@@ -294,7 +286,7 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
         | _ ->
             raise (System.NotImplementedException (identifier.ToString() |> sprintf "kaboom get %s"))
             None
-    let shipmateSingleStatisticSink (_) (_) (identifier: ShipmateStatisticIdentifier, statistic: Statistic option) =
+    let shipmateSingleStatisticSink (_) (_) (identifier: ShipmateStatisticIdentifier, _: Statistic option) =
         match identifier with
         | _ ->
             raise (System.NotImplementedException (identifier.ToString() |> sprintf "kaboom get %s"))
@@ -368,7 +360,6 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
     inputWorld
     |> World.Dock
         context
-        random 
         inputLocation
 
 
