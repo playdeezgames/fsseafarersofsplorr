@@ -346,6 +346,8 @@ type TestAtSeaRunContext
     interface WorldHeadForContext with
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.islandLocationByNameSource     : IslandLocationByNameSource = islandLocationByNameSource
+    interface WorldGetNearbyLocationsContext with
+        member _.islandSource : IslandSource = islandSource
 
     interface AtSeaHandleCommandContext with
         member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink

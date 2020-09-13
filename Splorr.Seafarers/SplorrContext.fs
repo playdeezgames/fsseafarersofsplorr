@@ -124,6 +124,8 @@ type SplorrContext
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.islandLocationByNameSource     : IslandLocationByNameSource = islandLocationByNameSource
 
+    interface WorldGetNearbyLocationsContext with
+        member _.islandSource : IslandSource = islandSource
 
     interface AtSeaHandleCommandContext with
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
@@ -273,6 +275,9 @@ type SplorrContext
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface WorldSellItemsContext with
+      member _.islandSource                  : IslandSource = islandSource
+       member _.itemSource                    : ItemSource = itemSource
 
     interface JobCreateContext with
         member _.termSources: TermSources = termSources

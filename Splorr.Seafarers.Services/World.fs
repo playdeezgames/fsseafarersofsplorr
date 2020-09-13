@@ -78,6 +78,9 @@ type WorldCleanHullContext =
 type WorldIsAvatarAliveContext = 
     inherit ShipmateGetStatusContext
 
+type WorldGetNearbyLocationsContext =
+    abstract member islandSource : IslandSource
+
 type WorldDoJobCompletionContext =
     inherit AvatarCompleteJobContext
     inherit WorldAddMessagesContext
@@ -135,6 +138,8 @@ type WorldSellItemsContext =
     inherit AvatarGetItemCountContext
     inherit AvatarRemoveInventoryContext
     inherit WorldAddMessagesContext
+    abstract member islandSource                  : IslandSource
+    abstract member itemSource                    : ItemSource
 
 type WorldAbandonJobContext =
     inherit AvatarAbandonJobContext
@@ -404,11 +409,11 @@ module World =
             ()
 
     let GetNearbyLocations
-            (islandSource                : IslandSource)
+            (context : WorldGetNearbyLocationsContext)
             (from                        : Location) 
             (maximumDistance             : float) 
             : Location list =
-        islandSource()
+        context.islandSource()
         |> List.filter (fun i -> Location.DistanceTo from i <= maximumDistance)
 
 
@@ -584,10 +589,9 @@ module World =
 
     let AbandonJob
             (context  : WorldAbandonJobContext)
-            (avatarJobSource  : AvatarJobSource)
             (avatarId : string) 
             : unit =
-        match avatarJobSource avatarId with
+        match context.avatarJobSource avatarId with
         | Some _ ->
             avatarId
             |> AddMessages context [ "You abandon your job." ]
@@ -679,15 +683,13 @@ module World =
 
     let SellItems 
             (context : WorldSellItemsContext)
-            (islandSource                  : IslandSource)
-            (itemSource                    : ItemSource)
             (location                      : Location) 
             (tradeQuantity                 : TradeQuantity) 
             (itemName                      : string) 
             (avatarId                      : string) 
             : unit =
-        let items = itemSource()
-        match items |> FindItemByName itemName, islandSource()|> List.tryFind ((=)location) with
+        let items = context.itemSource()
+        match items |> FindItemByName itemName, context.islandSource()|> List.tryFind ((=)location) with
         | Some (item, descriptor), Some _ ->
             let quantity = 
                 match tradeQuantity with

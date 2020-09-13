@@ -7,6 +7,7 @@ open Splorr.Seafarers.Persistence
 type AtSeaGetVisibleIslandsContext =
     inherit AvatarGetPositionContext
     inherit IslandGetDisplayNameContext
+    inherit WorldGetNearbyLocationsContext
 
 type AtSeaUpdateDisplayContext =
     inherit AtSeaGetVisibleIslandsContext
@@ -17,6 +18,7 @@ type AtSeaUpdateDisplayContext =
 
 type AtSeaCanCareenContext =
     inherit AvatarGetPositionContext
+    inherit WorldGetNearbyLocationsContext
 
 type AtSeaHandleCommandContext =
     inherit WorldClearMessagesContext
@@ -72,8 +74,8 @@ module AtSea =
                 context 
                 avatarId
             |> Option.get
-        World.GetNearbyLocations 
-            islandSource
+        World.GetNearbyLocations
+            context
             avatarPosition 
             viewDistance
         |> List.map 
@@ -99,8 +101,8 @@ module AtSea =
             avatarId
             |> Avatar.GetPosition context
             |> Option.get
-        World.GetNearbyLocations 
-            islandSource
+        World.GetNearbyLocations
+            context
             avatarPosition 
             viewDistance
         |> List.map
@@ -286,7 +288,6 @@ module AtSea =
             avatarId
             |> World.AbandonJob 
                 context
-                context.avatarJobSource
             avatarId
             |> Gamestate.InPlay
             |> Some

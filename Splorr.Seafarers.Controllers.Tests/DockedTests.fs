@@ -110,6 +110,9 @@ type TestDockedRunContext
         member _.islandSource                  : IslandSource = islandSource
         member _.itemSource                    : ItemSource =  itemSource
         member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface WorldSellItemsContext with
+        member _.islandSource                  : IslandSource = islandSource
+        member _.itemSource                    : ItemSource = itemSource
 
     interface DockedHandleCommandContext with
         member _.avatarJobSource : AvatarJobSource = avatarJobSource

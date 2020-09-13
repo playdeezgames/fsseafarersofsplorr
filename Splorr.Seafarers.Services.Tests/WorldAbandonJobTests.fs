@@ -60,7 +60,6 @@ let ``AbandonJob.It adds a message when the avatar has no job.`` () =
     input
     |> World.AbandonJob
         context
-        avatarJobSource
 
 [<Test>]
 let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a job`` () =
@@ -100,7 +99,6 @@ let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a
     input
     |> World.AbandonJob
         context
-        avatarJobSource
 
 
 

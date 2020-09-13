@@ -13,6 +13,10 @@ type TestWorldAddMessagesContext(avatarMessageSink) =
 type TestWorldClearMessagesContext(avatarMessagePurger) =
     interface WorldClearMessagesContext with
         member this.avatarMessagePurger: AvatarMessagePurger = avatarMessagePurger
+        
+type TestWorldGetNearbyLocationsContext(islandSource) =
+    interface WorldGetNearbyLocationsContext with
+        member _.islandSource : IslandSource = islandSource
 
 [<Test>]
 let ``GetNearbyLocations.It returns locations within a given distance from another given location.`` () =
@@ -30,9 +34,10 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
             ( 5.0, 10.0)
             (10.0, 10.0)
         ]
+    let context = TestWorldGetNearbyLocationsContext(islandSource) :> WorldGetNearbyLocationsContext
     let actual = 
-        World.GetNearbyLocations 
-            islandSource
+        World.GetNearbyLocations
+            context
             avatarPosition 
             viewDistance
     Assert.AreEqual(5, actual.Length)

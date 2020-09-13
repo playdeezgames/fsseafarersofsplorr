@@ -118,8 +118,6 @@ module Docked =
             avatarId 
             |> World.SellItems 
                 context
-                context.islandSource
-                context.itemSource 
                 location 
                 quantity 
                 itemName
@@ -149,7 +147,6 @@ module Docked =
             avatarId 
             |> World.AbandonJob 
                 context
-                context.avatarJobSource
             avatarId
             |> Gamestate.InPlay
             |> Some
