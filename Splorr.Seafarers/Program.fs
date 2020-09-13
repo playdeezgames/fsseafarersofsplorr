@@ -314,10 +314,15 @@ let main argv =
     let itemSingleSource (index:uint64) : ItemDescriptor option =
         itemSource()
         |> Map.tryFind index
+        
+    let avatarGamblingHandSource =
+        AvatarGamblingHand.GetForAvatar connection
+        >> Persister.unpackOrThrow
 
     let context : RunnerRunContext =
         SplorrContext
-            (avatarInventorySink,
+            (avatarGamblingHandSource,
+            avatarInventorySink,
             avatarInventorySource,
             avatarIslandFeatureSink,
             avatarIslandFeatureSource,

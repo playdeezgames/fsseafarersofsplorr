@@ -1,5 +1,6 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
+open System
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
@@ -7,6 +8,7 @@ type IslandSingleFeatureSource = Location -> IslandFeatureIdentifier -> bool
 
 type IslandFeatureRunDarkAlleyContext =
     inherit WorldAddMessagesContext
+    inherit AvatarGetGamblingHandContext
     abstract member avatarMessageSource           : AvatarMessageSource
     abstract member avatarMessageSink             : AvatarMessageSink
     abstract member islandSingleStatisticSource   : IslandSingleStatisticSource
@@ -31,53 +33,57 @@ module IslandFeature =
             (messageSink   : MessageSink) 
             (location      : Location)
             (avatarId      : string)
-            : Gamestate option = 
-        let minimumBet = 
-            context.islandSingleStatisticSource 
-                location 
-                IslandStatisticIdentifier.MinimumGamblingStakes
-            |> Option.get
-            |> Statistic.GetCurrentValue
-        let money =
-            context.shipmateSingleStatisticSource 
-                avatarId 
-                ShipmateIdentifier.Primary 
-                ShipmateStatisticIdentifier.Money
-            |> Option.get
-            |> Statistic.GetCurrentValue
-        if money < minimumBet then
-            avatarId
-            |> World.AddMessages
-                context
-                [ "Come back when you've got more money!" ]
-            avatarId
-            |> Gamestate.InPlay
-            |> Some
-        else
-            "" |> Line |> messageSink
-            avatarId
-            |> context.avatarMessageSource
-            |> Utility.DumpMessages messageSink
-            [
-                (Hue.Heading, "You are in the dark alley." |> Line) |> Hued
-            ]
-            |> List.iter messageSink
-            match commandSource() with
-            | Some Command.Help ->
+            : Gamestate option =
+        match Avatar.GetGamblingHand context avatarId with
+        | Some hand ->
+            raise (NotImplementedException "")
+        | None ->
+            let minimumBet = 
+                context.islandSingleStatisticSource 
+                    location 
+                    IslandStatisticIdentifier.MinimumGamblingStakes
+                |> Option.get
+                |> Statistic.GetCurrentValue
+            let money =
+                context.shipmateSingleStatisticSource 
+                    avatarId 
+                    ShipmateIdentifier.Primary 
+                    ShipmateStatisticIdentifier.Money
+                |> Option.get
+                |> Statistic.GetCurrentValue
+            if money < minimumBet then
                 avatarId
-                |> Gamestate.InPlay
-                |> Gamestate.Help
-                |> Some
-            | Some Command.Leave ->
+                |> World.AddMessages
+                    context
+                    [ "Come back when you've got more money!" ]
                 avatarId
                 |> Gamestate.InPlay
                 |> Some
-            | _ ->
-                ("Maybe try 'help'?",
+            else
+                "" |> Line |> messageSink
+                avatarId
+                |> context.avatarMessageSource
+                |> Utility.DumpMessages messageSink
+                [
+                    (Hue.Heading, "You are in the dark alley." |> Line) |> Hued
+                ]
+                |> List.iter messageSink
+                match commandSource() with
+                | Some Command.Help ->
                     avatarId
-                    |> Gamestate.InPlay)
-                |> Gamestate.ErrorMessage
-                |> Some
+                    |> Gamestate.InPlay
+                    |> Gamestate.Help
+                    |> Some
+                | Some Command.Leave ->
+                    avatarId
+                    |> Gamestate.InPlay
+                    |> Some
+                | _ ->
+                    ("Maybe try 'help'?",
+                        avatarId
+                        |> Gamestate.InPlay)
+                    |> Gamestate.ErrorMessage
+                    |> Some
 
 
     let private RunFeature

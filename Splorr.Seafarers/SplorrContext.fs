@@ -5,7 +5,8 @@ open System
 
 
 type SplorrContext 
-        (avatarInventorySink: AvatarInventorySink ,
+        (avatarGamblingHandSource: AvatarGamblingHandSource,
+        avatarInventorySink: AvatarInventorySink ,
         avatarInventorySource: AvatarInventorySource ,
         avatarIslandFeatureSink : AvatarIslandFeatureSink, 
         avatarIslandFeatureSource : AvatarIslandFeatureSource,
@@ -355,6 +356,10 @@ type SplorrContext
     
     interface IslandFeatureRunContext with
         member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
+        
+    interface AvatarGetGamblingHandContext with
+        member _.avatarGamblingHandSource : AvatarGamblingHandSource = avatarGamblingHandSource
+
 
     interface IslandFeatureRunDarkAlleyContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink

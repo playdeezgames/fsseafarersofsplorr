@@ -5,6 +5,7 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
 open AvatarTestFixtures
+open Tarot
 
 let private inputAvatarId = "avatar"
 
@@ -257,6 +258,11 @@ type TestAvatarSetReputationContext(shipmateSingleStatisticSink, shipmateSingleS
     interface AvatarSetReputationContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+
+type TestAvatarGetGamblingHandContext (avatarGamblingHandSource) =
+    interface AvatarGetGamblingHandContext with
+        member _.avatarGamblingHandSource : AvatarGamblingHandSource = avatarGamblingHandSource
+
 
 [<Test>]
 let ``GetReputation.It retrieves the reputation of the primary shipmate.`` () =
@@ -1490,3 +1496,19 @@ let ``Move.It transforms the avatar within the given world.`` () =
             avatarId
     Assert.AreEqual(1, xPositionCalled)
     Assert.AreEqual(1, yPositionCalled)
+
+[<Test>]
+let ``GetGamblingHand.It retrieves a gambling hand for a given avatar.`` () =
+    let expected =
+        (Minor (Wands, Rank.Ace),Minor (Wands, Rank.Deuce),Minor (Wands, Rank.Three)) |> Some
+    let avatarGamblingHandSource (_) =
+        Assert.Fail "avatarGamblingHandSource"
+        None
+    let context = TestAvatarGetGamblingHandContext (avatarGamblingHandSource) :> AvatarGetGamblingHandContext
+    let actual =
+        Avatar.GetGamblingHand
+            context
+            avatarId
+    Assert.AreEqual(expected, actual)
+    
+    

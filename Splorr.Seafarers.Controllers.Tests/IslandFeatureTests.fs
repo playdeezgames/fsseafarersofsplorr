@@ -8,7 +8,8 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
 type TestIslandFeatureRunContext
-        (avatarMessageSink,
+        (avatarGamblingHandSource,
+        avatarMessageSink,
         avatarMessageSource,
         islandSingleFeatureSource,
         islandSingleNameSource,
@@ -22,6 +23,9 @@ type TestIslandFeatureRunContext
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface WorldAddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface AvatarGetGamblingHandContext with
+        member _.avatarGamblingHandSource : AvatarGamblingHandSource = avatarGamblingHandSource
+
     interface IslandFeatureRunDarkAlleyContext with
         member _.avatarMessageSource : AvatarMessageSource = avatarMessageSource
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
@@ -37,9 +41,13 @@ let ``Run.It should return AtSea when the given island does not exist.`` () =
         givenAvatarId
         |> Gamestate.InPlay
         |> Some
+    let avatarGamblingHandSource (_) =
+        Assert.Fail "avatarGamblingHandSource"
+        None
     let context = 
         TestIslandFeatureRunContext
-            (avatarMessageSinkExplode,
+            (avatarGamblingHandSource,
+            avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSourceStub,
             islandSingleNameSourceStub,
@@ -66,9 +74,14 @@ let ``Run.It should return Dock state when the given island exists but does not 
         |> Gamestate.InPlay
         |> Some
     let islandSingleNameSource (_) = Some ""
+    let avatarGamblingHandSource (_) =
+        Assert.Fail "avatarGamblingHandSource"
+        None
+
     let context = 
         TestIslandFeatureRunContext
-            (avatarMessageSinkExplode,
+            (avatarGamblingHandSource,
+            avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSourceStub,
             islandSingleNameSource,
@@ -85,10 +98,9 @@ let ``Run.It should return Dock state when the given island exists but does not 
             givenAvatarId
     Assert.AreEqual(expected, actual)
 
-
 [<Test>]
-let ``Run.It should return Dock state when dark alley exists but the player does not have minimum gambling stakes.`` () =
-    let givenLocation = noDarkAlleyIslandLocation
+let ``Run.It should return Gambling state when dark alley exists and the player is gambling.`` () =
+    let givenLocation = darkAlleyIslandLocation
     let givenAvatarId = avatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let expected=
@@ -98,10 +110,14 @@ let ``Run.It should return Dock state when dark alley exists but the player does
     let islandSingleFeatureSource (_) (_) = true
     let islandSingleNameSource (_) = Some ""
     let islandSingleStatisticSource (_) (_) = Statistic.Create (5.0, 5.0) 5.0 |> Some
-    let shipmateSingleStatisticSource (_) (_) (_) = Statistic.Create (4.0, 4.0) 4.0 |> Some
+    let shipmateSingleStatisticSource (_) (_) (_) = Statistic.Create (5.0, 5.0) 5.0 |> Some
+    let avatarGamblingHandSource (_) =
+        Assert.Fail "avatarGamblingHandSource"
+        None
     let context = 
         TestIslandFeatureRunContext
-            (avatarMessageSinkExpected ["Come back when you've got more money!"],
+            (avatarGamblingHandSource,
+            avatarMessageSinkExpected ["Come back when you've got more money!"],
             avatarMessageSourceDummy,
             islandSingleFeatureSource,
             islandSingleNameSource,
@@ -118,6 +134,40 @@ let ``Run.It should return Dock state when dark alley exists but the player does
             givenAvatarId
     Assert.AreEqual(expected, actual)
 
+[<Test>]
+let ``Run.It should return Dock state when dark alley exists but the player does not have minimum gambling stakes.`` () =
+    let givenLocation = darkAlleyIslandLocation
+    let givenAvatarId = avatarId
+    let givenFeature = IslandFeatureIdentifier.DarkAlley
+    let expected=
+        givenAvatarId
+        |> Gamestate.InPlay 
+        |> Some
+    let islandSingleFeatureSource (_) (_) = true
+    let islandSingleNameSource (_) = Some ""
+    let islandSingleStatisticSource (_) (_) = Statistic.Create (5.0, 5.0) 5.0 |> Some
+    let shipmateSingleStatisticSource (_) (_) (_) = Statistic.Create (4.0, 4.0) 4.0 |> Some
+    let avatarGamblingHandSource (_) =
+        None
+    let context = 
+        TestIslandFeatureRunContext
+            (avatarGamblingHandSource,
+            avatarMessageSinkExpected ["Come back when you've got more money!"],
+            avatarMessageSourceDummy,
+            islandSingleFeatureSource,
+            islandSingleNameSource,
+            islandSingleStatisticSource,
+            shipmateSingleStatisticSource) 
+        :> IslandFeatureRunContext
+    let actual =
+        IslandFeature.Run 
+            context
+            commandSourceExplode
+            sinkDummy
+            givenLocation
+            givenFeature
+            givenAvatarId
+    Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.When in the dark alley, the leave command will take the player back to the dock.`` () =
@@ -134,9 +184,12 @@ let ``Run.When in the dark alley, the leave command will take the player back to
         avatarId
         |> Gamestate.InPlay
         |> Some
+    let avatarGamblingHandSource (_) =
+        None
     let context = 
         TestIslandFeatureRunContext
-            (avatarMessageSinkExplode,
+            (avatarGamblingHandSource,
+            avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSource,
             islandSingleNameSource,
@@ -168,9 +221,12 @@ let ``Run.When in the dark alley, the help command will take the player to the h
         |> Gamestate.InPlay
         |> Gamestate.Help
         |> Some
+    let avatarGamblingHandSource (_) =
+        None
     let context = 
         TestIslandFeatureRunContext
-            (avatarMessageSinkExplode,
+            (avatarGamblingHandSource,
+            avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSource,
             islandSingleNameSource,
@@ -203,9 +259,12 @@ let ``Run.When in the dark alley, the an invalid command gives you an error mess
             |> Gamestate.InPlay)
         |> Gamestate.ErrorMessage
         |> Some
+    let avatarGamblingHandSource (_) =
+        None
     let context = 
         TestIslandFeatureRunContext
-            (avatarMessageSinkExplode,
+            (avatarGamblingHandSource,
+            avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSource,
             islandSingleNameSource,

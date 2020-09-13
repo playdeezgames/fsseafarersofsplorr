@@ -1,4 +1,5 @@
 ﻿namespace Splorr.Seafarers.Services
+open System
 open Splorr.Seafarers.Models
 
 type MessagePurger = string -> unit
@@ -12,7 +13,7 @@ type AvatarSingleMetricSink = string -> Metric * uint64 -> unit
 type AvatarJobSource = string -> Job option
 type AvatarJobSink = string -> Job option -> unit
 type AvatarIslandFeatureSink = AvatarIslandFeature option * string -> unit
-//type AvatarIslandFeatureSource = string -> IslandFeatureIdentifier option
+type AvatarGamblingHandSource = string -> AvatarGamblingHand option
 
 type AvatarCreateContext =
     inherit VesselCreateContext
@@ -138,6 +139,13 @@ type AvatarCleanHullContext =
     inherit AvatarIncrementMetricContext
     inherit AvatarTransformShipmatesContext
     abstract member avatarShipmateSource          : AvatarShipmateSource
+
+type AvatarGetGamblingHandContext =
+    abstract member avatarGamblingHandSource : AvatarGamblingHandSource
+(*
+interface AvatarGetGamblingHandContext with
+    member _.avatarGamblingHandSource : AvatarGamblingHandSource = avatarGamblingHandSource
+*)
 
 module Avatar =
     let Create 
@@ -568,3 +576,9 @@ module Avatar =
         |> IncrementMetric
             context
             Metric.CleanedHull
+
+    let GetGamblingHand
+            (context : AvatarGetGamblingHandContext)
+            (avatarId: string)
+            : AvatarGamblingHand option =
+        context.avatarGamblingHandSource avatarId
