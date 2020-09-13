@@ -2,10 +2,7 @@
 
 open NUnit.Framework
 open Splorr.Seafarers.Controllers
-open Splorr.Seafarers.Services
-open Splorr.Seafarers.Models
 open CommonTestFixtures
-open AtSeaTestFixtures
 
 let private dockWorld = 
     avatarId

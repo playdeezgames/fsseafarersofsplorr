@@ -3,13 +3,15 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
-type TestAvatarGetUsedTonnageContext(avatarInventorySource) =
-    interface AvatarGetUsedTonnageContext with
-        member this.avatarInventorySource: AvatarInventorySource = 
-            raise (System.NotImplementedException())
+type InventoryRunWorldContext =
+    inherit AvatarGetUsedTonnageContext
+    
+type InventoryRunContext =
+    inherit InventoryRunWorldContext
 
 module Inventory =
-    let private RunWorld 
+    let private RunWorld
+            (context : InventoryRunWorldContext)
             (itemSource                  : ItemSource)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (avatarInventorySource       : AvatarInventorySource)
@@ -50,7 +52,6 @@ module Inventory =
             vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Tonnage
             |> Option.map Statistic.GetCurrentValue
             |> Option.get
-        let context = TestAvatarGetUsedTonnageContext() :> AvatarGetUsedTonnageContext
         let usedTonnage = 
             avatarId 
             |> Avatar.GetUsedTonnage 
@@ -64,7 +65,8 @@ module Inventory =
         ]
         |> List.iter messageSink
 
-    let Run 
+    let Run
+            (context : InventoryRunContext)
             (avatarInventorySource       : AvatarInventorySource)
             (itemSource                  : ItemSource) 
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
@@ -74,7 +76,8 @@ module Inventory =
         gamestate 
         |> Gamestate.GetWorld
         |> Option.iter 
-            (RunWorld 
+            (RunWorld
+                context
                 itemSource 
                 vesselSingleStatisticSource 
                 avatarInventorySource

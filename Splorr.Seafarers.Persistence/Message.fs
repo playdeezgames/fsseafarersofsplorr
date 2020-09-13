@@ -1,8 +1,6 @@
 ﻿namespace Splorr.Seafarers.Persistence
 
-open System
 open System.Data.SQLite
-open Splorr.Seafarers.Models
 
 module Message =
     let private convertor (reader:SQLiteDataReader) : string =

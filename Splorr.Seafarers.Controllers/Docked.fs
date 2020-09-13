@@ -88,7 +88,7 @@ module Docked =
         |> World.ClearMessages context
 
         match command with
-        | Some (Command.GoTo feature) ->
+        | Some (Command.GoTo _) ->
             avatarId
             |> Gamestate.InPlay
             |> Some
@@ -211,7 +211,6 @@ module Docked =
             (context : DockedRunBoilerplateContext)
             (avatarMessageSource           : AvatarMessageSource)
             (islandSource                  : IslandSource)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
             (func                          : Location -> string -> Gamestate option) 
             (location                      : Location) 
             (avatarId                      : string) 
@@ -237,7 +236,6 @@ module Docked =
             context
             context.avatarMessageSource
             context.islandSource
-            context.shipmateSingleStatisticSource
             (RunWithIsland 
                 context
                 commandSource                

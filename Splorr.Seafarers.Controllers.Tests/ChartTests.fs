@@ -26,7 +26,6 @@ let ``Run.It returns the At Sea state with the given world.`` () =
             avatarIslandSingleMetricSourceStub
             islandSingleNameSourceStub
             islandSourceStub
-            vesselSingleStatisticSourceStub 
             worldSingleStatisticSourceStub 
             sinkDummy 
             inputName 

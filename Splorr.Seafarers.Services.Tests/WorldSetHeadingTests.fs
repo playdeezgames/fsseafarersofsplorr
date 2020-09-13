@@ -3,7 +3,6 @@
 open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
-open WorldTestFixtures
 open CommonTestFixtures
 
 type TestWorldSetHeadingContext(avatarMessageSink, vesselSingleStatisticSink, vesselSingleStatisticSource) =

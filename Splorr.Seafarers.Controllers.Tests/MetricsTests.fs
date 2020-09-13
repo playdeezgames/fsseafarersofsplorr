@@ -3,7 +3,6 @@
 open NUnit.Framework
 open Splorr.Seafarers.Controllers
 open CommonTestFixtures
-open Splorr.Seafarers.Models
 open AtSeaTestFixtures
 
 let private previousGameState =

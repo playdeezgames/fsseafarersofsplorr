@@ -3,7 +3,6 @@
 open NUnit.Framework
 open CommonTestFixtures
 open Splorr.Seafarers.Persistence
-open System.Data.SQLite
 open Splorr.Seafarers.Models
 
 [<Test>]

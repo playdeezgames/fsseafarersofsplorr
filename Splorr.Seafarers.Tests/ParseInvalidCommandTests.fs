@@ -2,8 +2,6 @@
 
 open NUnit.Framework
 open Splorr.Seafarers
-open Splorr.Seafarers.Controllers
-open Splorr.Seafarers.Models
 
 [<Test>]
 let ``Parse.It returns invalid command when given ["quit";"foo"]`` () =

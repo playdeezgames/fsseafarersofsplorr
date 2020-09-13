@@ -252,7 +252,7 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
     let input = 
         None
     let inputSource = 
-        System.Guid.NewGuid().ToString() 
+        Guid.NewGuid().ToString() 
         |> Command.Start 
         |> Some 
         |> toSource

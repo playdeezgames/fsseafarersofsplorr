@@ -4,10 +4,9 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open CommonTestFixtures
 open System
-open NUnit.Framework
 
-let internal genericWorldSingleStatisticSource (identfier: WorldStatisticIdentifier) : Statistic =
-    match identfier with
+let internal genericWorldSingleStatisticSource (identifier: WorldStatisticIdentifier) : Statistic =
+    match identifier with
     | WorldStatisticIdentifier.IslandGenerationRetries ->
         {MinimumValue=500.0; MaximumValue=500.0; CurrentValue=500.0}
     | WorldStatisticIdentifier.IslandDistance ->
@@ -19,7 +18,7 @@ let internal genericWorldSingleStatisticSource (identfier: WorldStatisticIdentif
     | WorldStatisticIdentifier.PositionY ->
         {MinimumValue=0.0; MaximumValue=11.0; CurrentValue=5.5}
     | _ ->
-        raise (System.NotImplementedException "soloIslandSingleStatisticSource")
+        raise (NotImplementedException "soloIslandSingleStatisticSource")
 
 type TestWorldDockContext
         (

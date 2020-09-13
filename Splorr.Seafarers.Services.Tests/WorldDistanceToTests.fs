@@ -3,7 +3,6 @@
 open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
-open WorldTestFixtures
 open CommonTestFixtures
 
 type TestWorldDistanceToContext
@@ -26,8 +25,6 @@ let ``DistanceTo.It adds a 'unknown island' message when given a bogus island na
     let input = avatarId
     let inputName = "$$$$$$$"
     let expectedMessage = inputName |> sprintf "I don't know how to get to `%s`."
-    let expected =
-        input
     let vesselSingleStatisticSource (_) (identifier) = 
         match identifier with
         | VesselStatisticIdentifier.PositionX ->

@@ -52,15 +52,7 @@ let private functionUnderTest
             vesselSingleStatisticSourceStub) :> CareenedRunContext
     Careened.Run 
         context
-        avatarMessagePurgerStub
         avatarMessageSourceDummy
-        avatarShipmateSourceStub
-        avatarSingleMetricSink
-        avatarSingleMetricSourceStub
-        shipmateSingleStatisticSinkStub
-        shipmateSingleStatisticSourceStub
-        vesselSingleStatisticSinkStub
-        vesselSingleStatisticSourceStub
 
 [<Test>]
 let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
@@ -94,15 +86,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
         inputWorld
         |> Careened.Run 
             context
-            avatarMessagePurgerStub
             avatarMessageSourceDummy
-            avatarShipmateSourceStub
-            avatarSingleMetricSinkExplode
-            avatarSingleMetricSourceStub
-            shipmateSingleStatisticSinkStub
-            shipmateSingleStatisticSource
-            vesselSingleStatisticSinkStub
-            vesselSingleStatisticSourceStub
             inputSource 
             sinkDummy 
             inputSide

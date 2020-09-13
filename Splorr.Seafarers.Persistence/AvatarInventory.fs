@@ -1,7 +1,6 @@
 ﻿namespace Splorr.Seafarers.Persistence
 
 open System.Data.SQLite
-open Splorr.Seafarers.Models
 
 module AvatarInventory =
     let private convertor 

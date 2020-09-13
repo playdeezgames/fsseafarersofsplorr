@@ -3,7 +3,6 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open System
-open System.IO
 
 type ChartOutputChartContext =
     inherit AvatarGetPositionContext
@@ -23,7 +22,6 @@ module Chart =
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (islandSingleNameSource         : IslandSingleNameSource)
             (islandSource                   : IslandSource)
-            (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (worldSize                      : Location) 
             (messageSink                    : MessageSink) 
             (chartName                      : string) 
@@ -125,7 +123,6 @@ module Chart =
             (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
             (islandSingleNameSource         : IslandSingleNameSource)
             (islandSource                   : IslandSource)
-            (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (worldSingleStatisticSource     : WorldSingleStatisticSource) 
             (messageSink                    : MessageSink) 
             (chartName                      : string) 
@@ -142,7 +139,6 @@ module Chart =
             avatarIslandSingleMetricSource
             islandSingleNameSource
             islandSource
-            vesselSingleStatisticSource
             (worldSingleStatisticSource WorldStatisticIdentifier.PositionX |> Statistic.GetMaximumValue, 
                 worldSingleStatisticSource WorldStatisticIdentifier.PositionY |> Statistic.GetMaximumValue) 
             messageSink 

@@ -40,7 +40,7 @@ let ``AbandonJob.It adds a message when the avatar has no job.`` () =
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSource")
             None
-    let shipmateSingleStatisticSink (_) (_) (identifier: ShipmateStatisticIdentifier, statistic: Statistic option) =
+    let shipmateSingleStatisticSink (_) (_) (identifier: ShipmateStatisticIdentifier, _: Statistic option) =
         match identifier with
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")

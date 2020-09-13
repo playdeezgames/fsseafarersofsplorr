@@ -2,7 +2,6 @@
 
 open System.Data.SQLite
 open Splorr.Seafarers.Models
-open System
 
 module IslandMarket = 
     let GetForIsland 

@@ -22,7 +22,6 @@ type CareenedRunContext =
 module Careened = 
     let private UpdateDisplay 
             (context : CareenedUpdateDisplayContext)
-            (vesselSingleStatisticSource : string -> VesselStatisticIdentifier -> Statistic option)
             (avatarMessageSource         : AvatarMessageSource)
             (messageSink                 : MessageSink) 
             (side                        : Side)
@@ -51,14 +50,6 @@ module Careened =
 
     let private HandleCommand
             (context : CareenedHandleCommandContext)
-            (avatarMessagePurger           : AvatarMessagePurger)
-            (avatarShipmateSource          : AvatarShipmateSource)
-            (avatarSingleMetricSink        : AvatarSingleMetricSink)
-            (avatarSingleMetricSource      : AvatarSingleMetricSource)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (vesselSingleStatisticSink     : VesselSingleStatisticSink)
-            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
             (command                       : Command option) 
             (side                          : Side) 
             (avatarId                      : string) 
@@ -111,15 +102,7 @@ module Careened =
 
     let private RunAlive
             (context : CareenedRunAliveContext)
-            (avatarMessagePurger           : AvatarMessagePurger)
             (avatarMessageSource           : AvatarMessageSource)
-            (avatarShipmateSource          : AvatarShipmateSource)
-            (avatarSingleMetricSink        : AvatarSingleMetricSink)
-            (avatarSingleMetricSource      : AvatarSingleMetricSource)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (vesselSingleStatisticSink     : VesselSingleStatisticSink)
-            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
             (source                        : CommandSource) 
             (sink                          : MessageSink) 
             (side                          : Side) 
@@ -127,36 +110,19 @@ module Careened =
             : Gamestate option =
         UpdateDisplay 
             context
-            vesselSingleStatisticSource
             avatarMessageSource
             sink 
             side 
             avatarId
         HandleCommand
             context
-            avatarMessagePurger
-            avatarShipmateSource
-            avatarSingleMetricSink
-            avatarSingleMetricSource
-            shipmateSingleStatisticSink
-            shipmateSingleStatisticSource
-            vesselSingleStatisticSink
-            vesselSingleStatisticSource
             (source())
             side
             avatarId
 
     let Run 
             (context : CareenedRunContext)
-            (avatarMessagePurger           : AvatarMessagePurger)
             (avatarMessageSource           : AvatarMessageSource)
-            (avatarShipmateSource          : AvatarShipmateSource)
-            (avatarSingleMetricSink        : AvatarSingleMetricSink)
-            (avatarSingleMetricSource      : AvatarSingleMetricSource)
-            (shipmateSingleStatisticSink   : ShipmateSingleStatisticSink)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (vesselSingleStatisticSink     : VesselSingleStatisticSink)
-            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
             (commandSource                 : CommandSource) 
             (messageSink                   : MessageSink) 
             (side                          : Side) 
@@ -165,15 +131,7 @@ module Careened =
         if avatarId |> World.IsAvatarAlive context then
             RunAlive 
                 context
-                avatarMessagePurger
                 avatarMessageSource
-                avatarShipmateSource
-                avatarSingleMetricSink
-                avatarSingleMetricSource
-                shipmateSingleStatisticSink
-                shipmateSingleStatisticSource
-                vesselSingleStatisticSink
-                vesselSingleStatisticSource
                 commandSource 
                 messageSink 
                 side 

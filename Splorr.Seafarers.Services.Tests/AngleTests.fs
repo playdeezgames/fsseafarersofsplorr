@@ -1,7 +1,6 @@
 module AngleTests
 
 open NUnit.Framework
-open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 [<Test>]

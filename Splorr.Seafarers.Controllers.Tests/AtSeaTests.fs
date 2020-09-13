@@ -405,7 +405,6 @@ let ``Run.It returns AtSea when given the Dock command and there is no sufficien
 let ``Run.It returns Docked (at Dock) when given the Dock command and there is a near enough island.`` () =
     let input = dockWorld
     let inputSource = Command.Dock |> Some |> toSource
-    let expectedLocation = (0.0, 0.0)
     let expectedMessages = ["You dock."]
     let expectedWorld = 
         input

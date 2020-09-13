@@ -68,7 +68,7 @@ let ``AddToAvatar.It adds messages for a given avatar id.`` () =
             Message.AddForAvatar connection (inputAvatarId, inputMessage)
         Assert.AreEqual(expected, actual)
         match Message.GetForAvatar connection inputAvatarId with
-        | Ok [ inputMessage ] ->
+        | Ok [ _ ] ->
             ()
         | _ ->
             Assert.Fail("This is not a valid result.")

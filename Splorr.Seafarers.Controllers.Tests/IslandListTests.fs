@@ -30,7 +30,6 @@ let ``Run.It returns the given gamestate.`` () =
             avatarIslandSingleMetricSourceStub
             islandSingleNameSourceStub
             islandSourceStub
-            vesselSingleStatisticSourceStub 
             sinkDummy 
             0u
     Assert.AreEqual(expected, actual)

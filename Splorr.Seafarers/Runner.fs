@@ -17,6 +17,7 @@ type RunnerRunContext =
     inherit GamestateCheckForAvatarDeathContext
     inherit ChartRunContext
     inherit IslandListRunContext
+    inherit InventoryRunContext
     abstract member avatarMetricSource : AvatarMetricSource
     abstract member switchSource : SwitchSource
 
@@ -64,15 +65,7 @@ module Runner =
             | Gamestate.Careened (side, avatarId) -> 
                 Careened.Run 
                     context
-                    context.avatarMessagePurger
                     context.avatarMessageSource
-                    context.avatarShipmateSource
-                    context.avatarSingleMetricSink
-                    context.avatarSingleMetricSource
-                    context.shipmateSingleStatisticSink
-                    context.shipmateSingleStatisticSource
-                    context.vesselSingleStatisticSink
-                    context.vesselSingleStatisticSource
                     commandSource 
                     messageSink 
                     side 
@@ -84,7 +77,6 @@ module Runner =
                     context.avatarIslandSingleMetricSource
                     context.islandSingleNameSource
                     context.islandSource 
-                    context.vesselSingleStatisticSource
                     context.worldSingleStatisticSource
                     messageSink 
                     chartName 
@@ -104,12 +96,9 @@ module Runner =
                     ItemList.Run 
                         context
                         context.avatarMessageSource
-                        context.commoditySource 
                         context.islandItemSource 
-                        context.islandMarketSource 
                         context.islandSource
                         context.itemSource 
-                        context.shipmateSingleStatisticSource
                         messageSink 
                         feature.location 
                         avatarId
@@ -152,7 +141,8 @@ module Runner =
                     state
 
             | Gamestate.Inventory gameState -> 
-                Inventory.Run 
+                Inventory.Run
+                    context
                     context.avatarInventorySource
                     context.itemSource 
                     context.vesselSingleStatisticSource
@@ -165,7 +155,6 @@ module Runner =
                     context.avatarIslandSingleMetricSource
                     context.islandSingleNameSource
                     context.islandSource
-                    context.vesselSingleStatisticSource
                     messageSink 
                     page 
                     state

@@ -61,7 +61,6 @@ module AtSea =
     let private CanCareen 
             (context : AtSeaCanCareenContext)
             (islandSingleStatisticSource : IslandSingleStatisticSource)
-            (islandSource                : IslandSource)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (avatarId                    : string) 
             : bool =
@@ -89,7 +88,6 @@ module AtSea =
 
     let private GetVisibleIslands 
             (context : AtSeaGetVisibleIslandsContext)
-            (islandSource                   : IslandSource)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (avatarId                       : string) 
             : (Location * string * float * string) list =
@@ -125,7 +123,6 @@ module AtSea =
     let private UpdateDisplay 
             (context : AtSeaUpdateDisplayContext)
             (avatarMessageSource            : AvatarMessageSource)
-            (islandSource                   : IslandSource)
             (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (messageSink                    : MessageSink) 
@@ -171,7 +168,6 @@ module AtSea =
         avatarId
         |> GetVisibleIslands 
             context
-            islandSource
             vesselSingleStatisticSource
         |> List.iter
             (fun (_, heading, distance, name) -> 
@@ -198,7 +194,6 @@ module AtSea =
             CanCareen 
                 context
                 context.islandSingleStatisticSource   
-                context.islandSource
                 context.vesselSingleStatisticSource 
                 avatarId
 
@@ -210,7 +205,6 @@ module AtSea =
             avatarId
             |> GetVisibleIslands 
                 context
-                context.islandSource
                 context.vesselSingleStatisticSource
         let dockTarget = 
             nearby
@@ -369,7 +363,6 @@ module AtSea =
         UpdateDisplay 
             context
             context.avatarMessageSource
-            context.islandSource
             context.shipmateSingleStatisticSource
             context.vesselSingleStatisticSource
             messageSink 

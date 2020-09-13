@@ -47,9 +47,9 @@ let ``Create.It creates a vessel.`` () =
 let ``TransformFouling.It transforms fouling on the port side when the port side is specified.`` () =
     let inputSide = Port
     let inputAvatarId = "avatar"
-    let vesselSingleStatisticSource (avatarId:string) (identifier:VesselStatisticIdentifier) : Statistic option =
+    let vesselSingleStatisticSource (_:string) (_:VesselStatisticIdentifier) : Statistic option =
         None
-    let vesselSingleStatisticSink  (avatarId:string) (identifier:VesselStatisticIdentifier, statistic: Statistic) : unit = 
+    let vesselSingleStatisticSink  (_:string) (identifier:VesselStatisticIdentifier, _: Statistic) : unit = 
         Assert.AreEqual(VesselStatisticIdentifier.PortFouling, identifier)
     let context = TestVesselTransformFoulingContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> VesselTransformFoulingContext
     Vessel.TransformFouling 

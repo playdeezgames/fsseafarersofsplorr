@@ -42,11 +42,8 @@ let ``Run.It returns Docked (at Shop) gamestate.`` () =
         ||> ItemList.Run 
             context
             avatarMessageSourceDummy
-            atSeaCommoditySource 
             atSeaIslandItemSource 
-            atSeaIslandMarketSource 
             islandSourceStub
             atSeaItemSource 
-            shipmateSingleStatisticSourceStub
             sinkDummy
     Assert.AreEqual(expected, actual)
