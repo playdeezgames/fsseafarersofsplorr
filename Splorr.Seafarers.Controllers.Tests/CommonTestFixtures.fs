@@ -340,6 +340,13 @@ type TestAtSeaRunContext
         member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
     interface WorldAbandonJobContext with
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
+    interface WorldDistanceToContext with
+        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        member _.islandLocationByNameSource     : IslandLocationByNameSource = islandLocationByNameSource
+    interface WorldHeadForContext with
+        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        member _.islandLocationByNameSource     : IslandLocationByNameSource = islandLocationByNameSource
+
     interface AtSeaHandleCommandContext with
         member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource

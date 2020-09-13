@@ -124,6 +124,9 @@ type WorldBuyItemsContext =
     inherit AvatarAddInventoryContext
     inherit AvatarGetUsedTonnageContext
     inherit WorldAddMessagesContext
+    abstract member islandSource                  : IslandSource
+    abstract member itemSource                    : ItemSource
+    abstract member vesselSingleStatisticSource   : VesselSingleStatisticSource
 
 type WorldSellItemsContext =
     inherit ItemDeterminePurchasePriceContext
@@ -157,11 +160,15 @@ type WorldMoveContext =
 type WorldDistanceToContext =
     inherit WorldAddMessagesContext
     inherit AvatarGetPositionContext
+    abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
+    abstract member islandLocationByNameSource     : IslandLocationByNameSource
 
 type WorldHeadForContext =
     inherit WorldAddMessagesContext
     inherit WorldSetHeadingContext
     inherit AvatarGetPositionContext
+    abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
+    abstract member islandLocationByNameSource     : IslandLocationByNameSource
 
 module World =
     let private GenerateIslandName
@@ -487,17 +494,15 @@ module World =
                 ]
 
     let DistanceTo 
-            (context : WorldDistanceToContext)
-            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
-            (islandLocationByNameSource     : IslandLocationByNameSource)
-            (islandName                     : string) 
-            (avatarId                       : string) 
+            (context    : WorldDistanceToContext)
+            (islandName : string) 
+            (avatarId   : string) 
             : unit =
         let location =
-            islandLocationByNameSource islandName
+            context.islandLocationByNameSource islandName
             |> Option.bind
                 (fun l ->
-                    if (avatarIslandSingleMetricSource avatarId l AvatarIslandMetricIdentifier.VisitCount).IsSome then
+                    if (context.avatarIslandSingleMetricSource avatarId l AvatarIslandMetricIdentifier.VisitCount).IsSome then
                         Some l
                     else
                         None)
@@ -513,16 +518,14 @@ module World =
 
     let HeadFor
             (context : WorldHeadForContext)
-            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
-            (islandLocationByNameSource     : IslandLocationByNameSource)
             (islandName                     : string) 
             (avatarId                       : string) 
             : unit =
         let location =
-            islandLocationByNameSource islandName
+            context.islandLocationByNameSource islandName
             |> Option.bind
                 (fun l ->
-                    if (avatarIslandSingleMetricSource avatarId l AvatarIslandMetricIdentifier.VisitCount).IsSome then
+                    if (context.avatarIslandSingleMetricSource avatarId l AvatarIslandMetricIdentifier.VisitCount).IsSome then
                         Some l
                     else
                         None)
@@ -601,20 +604,22 @@ module World =
             (items    : Map<uint64, ItemDescriptor>) 
             : (uint64 * ItemDescriptor) option =
         items
-        |> Map.tryPick (fun k v -> if v.ItemName = itemName then Some (k,v) else None)
+        |> Map.tryPick
+            (fun itemId descriptor ->
+                if descriptor.ItemName = itemName then
+                    Some (itemId,descriptor)
+                else
+                    None)
 
     let BuyItems 
             (context                       : WorldBuyItemsContext)
-            (islandSource                  : IslandSource)
-            (itemSource                    : ItemSource) 
-            (vesselSingleStatisticSource   : VesselSingleStatisticSource)
             (location                      : Location) 
             (tradeQuantity                 : TradeQuantity) 
             (itemName                      : string) 
             (avatarId                      : string) 
             : unit =
-        let items = itemSource()
-        match items |> FindItemByName itemName, islandSource() |> List.tryFind (fun x-> x = location) with
+        let items = context.itemSource()
+        match items |> FindItemByName itemName, context.islandSource() |> List.tryFind (fun x-> x = location) with
         | Some (item, descriptor) , Some _ ->
             let unitPrice = 
                 Item.DetermineSalePrice 
@@ -622,7 +627,7 @@ module World =
                     item 
                     location
             let availableTonnage = 
-                vesselSingleStatisticSource 
+                context.vesselSingleStatisticSource 
                     avatarId 
                     VesselStatisticIdentifier.Tonnage 
                 |> Option.map 

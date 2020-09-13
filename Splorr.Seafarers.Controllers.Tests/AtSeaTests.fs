@@ -57,7 +57,6 @@ let private functionUnderTest
             worldSingleStatisticSourceStub) :> AtSeaRunContext
     AtSea.Run 
         context
-        random 
 
 let private functionUsuallyUnderTest
         (islandSingleNameSource: IslandSingleNameSource)= 

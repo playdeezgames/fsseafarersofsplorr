@@ -6,14 +6,20 @@ open Splorr.Seafarers.Models
 open WorldTestFixtures
 open CommonTestFixtures
 
-type TestWorldDistanceToContext(avatarMessageSink, vesselSingleStatisticSource) =
+type TestWorldDistanceToContext
+        (avatarIslandSingleMetricSource,
+        avatarMessageSink,
+        islandLocationByNameSource,
+        vesselSingleStatisticSource) =
     interface AvatarGetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarAddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface WorldAddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface WorldDistanceToContext
+    interface WorldDistanceToContext with
+        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        member _.islandLocationByNameSource     : IslandLocationByNameSource = islandLocationByNameSource
 
 [<Test>]
 let ``DistanceTo.It adds a 'unknown island' message when given a bogus island name.`` () =
@@ -36,12 +42,10 @@ let ``DistanceTo.It adds a 'unknown island' message when given a bogus island na
         None
     let islandLocationByNameSource (_) =
         None
-    let context = TestWorldDistanceToContext((avatarExpectedMessageSink expectedMessage), vesselSingleStatisticSource) :> WorldDistanceToContext
+    let context = TestWorldDistanceToContext(avatarIslandSingleMetricSource, (avatarExpectedMessageSink expectedMessage), islandLocationByNameSource, vesselSingleStatisticSource) :> WorldDistanceToContext
     input
     |> World.DistanceTo 
         context
-        avatarIslandSingleMetricSource
-        islandLocationByNameSource
         inputName
 
 [<Test>]
@@ -71,12 +75,10 @@ let ``DistanceTo.It adds a 'unknown island' message when given a valid island na
             |> Some
         else
             None
-    let context = TestWorldDistanceToContext((avatarExpectedMessageSink expectedMessage), vesselSingleStatisticSource) :> WorldDistanceToContext
+    let context = TestWorldDistanceToContext(avatarIslandSingleMetricSource, (avatarExpectedMessageSink expectedMessage), islandLocationByNameSource, vesselSingleStatisticSource) :> WorldDistanceToContext
     input
     |> World.DistanceTo 
         context
-        avatarIslandSingleMetricSource
-        islandLocationByNameSource
         inputName
 
 [<Test>]
@@ -109,11 +111,9 @@ let ``DistanceTo.It adds a 'distance to island' message when given a valid islan
             |> Some
         else
             None
-    let context = TestWorldDistanceToContext((avatarExpectedMessageSink expectedMessage), vesselSingleStatisticSource) :> WorldDistanceToContext
+    let context = TestWorldDistanceToContext(avatarIslandSingleMetricSource, (avatarExpectedMessageSink expectedMessage), islandLocationByNameSource, vesselSingleStatisticSource) :> WorldDistanceToContext
     input
     |> World.DistanceTo 
         context
-        avatarIslandSingleMetricSource
-        islandLocationByNameSource
         inputName
 

@@ -36,7 +36,6 @@ module Runner =
                 | None ->
                     AtSea.Run 
                         context
-                        random 
                         commandSource 
                         messageSink 
                         avatarId

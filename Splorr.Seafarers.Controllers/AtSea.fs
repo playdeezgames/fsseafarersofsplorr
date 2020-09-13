@@ -1,6 +1,5 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
-open System
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Persistence
@@ -187,7 +186,6 @@ module AtSea =
 
     let private HandleCommand
             (context                        : AtSeaHandleCommandContext)
-            (random                         : Random) 
             (command                        : Command option) 
             (avatarId                       : string) 
             : Gamestate option =
@@ -232,8 +230,6 @@ module AtSea =
             avatarId
             |> World.HeadFor
                 context
-                context.avatarIslandSingleMetricSource
-                context.islandLocationByNameSource
                 name
             (avatarId)
             |> Gamestate.InPlay
@@ -243,8 +239,6 @@ module AtSea =
             avatarId
             |> World.DistanceTo 
                 context
-                context.avatarIslandSingleMetricSource
-                context.islandLocationByNameSource
                 name
             (avatarId)
             |> Gamestate.InPlay
@@ -367,7 +361,6 @@ module AtSea =
 
     let private RunAlive
             (context       : AtSeaRunContext)
-            (random        : Random) 
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (avatarId      : string) 
@@ -382,13 +375,11 @@ module AtSea =
             avatarId
         HandleCommand
             context
-            random
             (commandSource())
             avatarId
 
     let Run 
             (context       : AtSeaRunContext)
-            (random        : Random) 
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (avatarId      : string) 
@@ -396,7 +387,6 @@ module AtSea =
         if avatarId |> World.IsAvatarAlive context then
             RunAlive
                 context
-                random 
                 commandSource 
                 messageSink 
                 avatarId

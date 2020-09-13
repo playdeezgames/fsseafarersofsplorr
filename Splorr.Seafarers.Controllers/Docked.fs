@@ -107,9 +107,6 @@ module Docked =
             avatarId 
             |> World.BuyItems 
                 context
-                context.islandSource
-                context.itemSource 
-                context.vesselSingleStatisticSource 
                 location 
                 quantity 
                 itemName

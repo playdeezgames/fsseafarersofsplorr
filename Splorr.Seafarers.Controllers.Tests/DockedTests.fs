@@ -106,6 +106,11 @@ type TestDockedRunContext
         member _.islandSource          : IslandSource = islandSource
     interface WorldAbandonJobContext with
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
+    interface WorldBuyItemsContext with
+        member _.islandSource                  : IslandSource = islandSource
+        member _.itemSource                    : ItemSource =  itemSource
+        member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
+
     interface DockedHandleCommandContext with
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
         member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
@@ -191,13 +196,13 @@ let private functionUnderTestStubbed
 
 [<Test>]
 let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
-    let input = deadDockWorld   
-    let inputLocation= deadDockLocation
+    let input: string = deadDockWorld   
+    let inputLocation: Location= deadDockLocation
     let inputSource(): Command option =
         Assert.Fail("It will not reach for user input because the avatar is dead.")
         None
     let expectedMessages = []
-    let expected =
+    let expected: Gamestate option =
         expectedMessages
         |> Gamestate.GameOver
         |> Some
@@ -207,7 +212,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
             Statistic.Create (0.0, 100.0) 0.0 |> Some
         | _ ->
             raise (System.NotImplementedException (identifier.ToString() |> sprintf "shipmateSingleStatisticSource - %s"))
-    let actual =
+    let actual: Gamestate option =
         (inputLocation, input)
         ||> functionUnderTestStubbed
             avatarIslandFeatureSinkDummy
@@ -498,7 +503,6 @@ let ``Run.It gives a message when given the Accept Job command and the given job
     let input = smallWorldDocked
     let inputLocation = smallWorldIslandLocation
     let inputSource = 0u |> Command.AcceptJob |> Some |> toSource
-    let expectedMessages = [ "That job is currently unavailable." ]
     let expectedWorld = 
         input
     let expected = 
@@ -643,9 +647,6 @@ let ``Run.It adds a message when given the Buy command and the avatar does not h
         Map.empty
         |> Map.add 1UL {Demand=5.0; Supply=5.0}
     let islandMarketSource (_) = markets
-    let islandSingleMarketSource x y =
-        islandMarketSource x
-        |> Map.tryFind y
     let islandSingleMarketSink (_) (_) =
         Assert.Fail("This should not be called.")
     let expectedMessages = ["You don't have enough money."]
@@ -684,7 +685,6 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
         |> Map.add 1UL {Demand=5.0; Supply=5.0}
     let islandMarketSource (_) = markets
     let commodities = commoditySource()
-    let smallWorldItems = itemSource()
     let expectedDemand = 
         markets.[1UL].Demand + commodities.[1UL].SaleFactor
     let islandSingleMarketSink (_) (commodityId, market) =
@@ -785,14 +785,10 @@ let ``Run.It adds a message when given the Sell command and the avatar does not 
 [<Test>]
 let ``Run.It adds a message and completes the sale when given the Sell command and the avatar sufficient items to sell.`` () =
     let inputLocation = smallWorldIslandLocation
-    let inputItems = [(1UL, 1UL)] |> Map.ofList
     let markets =
         Map.empty
         |> Map.add 1UL {Supply = 5.0; Demand =5.0}
     let islandMarketSource (_) = markets
-    let islandSingleMarketSource x y =
-        islandMarketSource x
-        |> Map.tryFind y
     let inputWorld = 
         shopWorld
     let inputSource = (Specific 1UL, "item under test") |> Command.Sell |> Some |> toSource
