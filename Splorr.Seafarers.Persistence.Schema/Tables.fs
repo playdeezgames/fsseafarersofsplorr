@@ -1,6 +1,16 @@
 ﻿namespace Splorr.Seafarers.Persistence.Schema
 
 module Tables =
+    let AvatarGamblingHands : string = "CREATE TABLE IF NOT EXISTS [AvatarGamblingHands]
+		(
+			[AvatarId] TEXT NOT NULL
+				CONSTRAINT AvatarGamblingHands_pk
+					PRIMARY KEY,
+			[FirstCard] INT NOT NULL,
+			[SecondCard] INT NOT NULL,
+			[FinalCard] INT NOT NULL
+		);"
+    
     let AvatarInventories : string ="CREATE TABLE IF NOT EXISTS [AvatarInventories] (
 		[AvatarId]	TEXT NOT NULL,
 		[ItemId]	INTEGER NOT NULL,

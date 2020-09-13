@@ -174,6 +174,8 @@ let private setupTerms
 
 let internal ExistingAvatarId = "avatar"
 let internal DockedAvatarId = "docked"
+let internal WinningGamblingAvatarId = "gambling-win"
+let internal LosingGamblingAvatarId = "gambling-lose"
 
 let private setupMessages
         (connection:SQLiteConnection)
@@ -354,6 +356,16 @@ let private setupAvatarIslandFeatures
     ]
     |> runCommands connection
 
+let private setupAvatarGamblingHands
+        (avatarId:string)
+        (first : int, second: int, third: int)
+        (connection: SQLiteConnection)
+        : unit =
+    [
+        Tables.AvatarGamblingHands
+        sprintf "REPLACE INTO [AvatarGamblingHands] ([AvatarId], [FirstCard], [SecondCard], [FinalCard]) VALUES ('%s', %d, %d, %d)" avatarId first second third
+    ]
+    |> runCommands connection
 
 let internal SetupConnection() : SQLiteConnection = 
     let connection = new SQLiteConnection(connectionString)
@@ -386,6 +398,8 @@ let internal SetupConnection() : SQLiteConnection =
         setupIslandFeatures VisitedIslandLocation [IslandFeatureIdentifier.DarkAlley]
         setupIslandFeatures UnvisitedIslandLocation [IslandFeatureIdentifier.DarkAlley]
         setupAvatarIslandFeatures DockedAvatarId
+        setupAvatarGamblingHands WinningGamblingAvatarId (1, 14, 7)
+        setupAvatarGamblingHands LosingGamblingAvatarId (1, 7, 14)
     ]
     |> List.iter (fun f -> f connection)
 
