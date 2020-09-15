@@ -513,13 +513,17 @@ let ``Run.It returns Docked (at DarkAlley) gamestate when given the command GoTo
         didSetFeature<-true
         Assert.AreEqual(IslandFeatureIdentifier.DarkAlley, feature.Value.featureId)
         Assert.AreEqual(inputLocation, feature.Value.location)
+    let islandSingleFeatureSource (location) (feature) = 
+        Assert.AreEqual(inputLocation, location)
+        Assert.AreEqual(IslandFeatureIdentifier.DarkAlley, feature)
+        true
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
             avatarIslandFeatureSink
             avatarMessageSinkStub
             avatarSingleMetricSinkExplode
-            islandSingleFeatureSourceStub
+            islandSingleFeatureSource
             islandSingleNameSource
             shipmateSingleStatisticSourceStub
             inputSource 
