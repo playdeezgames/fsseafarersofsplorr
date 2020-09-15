@@ -18,6 +18,7 @@ type DockedHandleCommandContext =
     inherit WorldSellItemsContext
     inherit WorldAbandonJobContext
     inherit WorldClearMessagesContext
+    inherit AvatarEnterIslandFeatureContext
     abstract member avatarInventorySink : AvatarInventorySink
     abstract member avatarInventorySource : AvatarInventorySource
     abstract member avatarIslandSingleMetricSink : AvatarIslandSingleMetricSink
@@ -88,7 +89,14 @@ module Docked =
         |> World.ClearMessages context
 
         match command with
-        | Some (Command.GoTo _) ->
+        | Some (Command.GoTo feature) ->
+            //enter the feature if the island has it
+            Avatar.EnterIslandFeature 
+                context 
+                avatarId 
+                location 
+                feature
+            //context.avatarIslandFeatureSink ({featureId = feature; location = location} |> Some, avatarId)//TODO: this should become an avatar module function
             avatarId
             |> Gamestate.InPlay
             |> Some

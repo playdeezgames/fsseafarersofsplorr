@@ -4,7 +4,6 @@ open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open IslandTestFixtures
-open CommonTestFixtures
 open System
 
 type TestIslandGetDisplayNameContext
@@ -62,7 +61,7 @@ let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =
         inputLocation
         |> Island.GetDisplayName 
             context
-            avatarId
+            Fixtures.Common.Dummy.AvatarId
     Assert.AreEqual("(unknown)", actual)
 
 [<Test>]
@@ -86,7 +85,7 @@ let ``GetDisplayName.It returns the island's name when there is a visit count.``
     let actual = 
         Island.GetDisplayName 
             context
-            avatarId
+            Fixtures.Common.Dummy.AvatarId
             inputLocation
     Assert.AreEqual(name, actual)
 
@@ -114,7 +113,7 @@ let ``AddVisit.It increases visit count to one and sets last visit to given turn
     let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> IslandAddVisitContext
     Island.AddVisit 
         context
-        avatarId
+        Fixtures.Common.Dummy.AvatarId
         location
 
 [<Test>]
@@ -143,7 +142,7 @@ let ``AddVisit.It increases visit count by one and sets last visit to given turn
     let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> IslandAddVisitContext
     Island.AddVisit 
         context
-        avatarId
+        Fixtures.Common.Dummy.AvatarId
         location
 
 [<Test>]
@@ -173,7 +172,7 @@ let ``AddVisit.It increases visit count by one and sets last visit to given turn
     let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> IslandAddVisitContext
     Island.AddVisit 
         context
-        avatarId
+        Fixtures.Common.Dummy.AvatarId
         location
 
 [<Test>]
@@ -197,7 +196,7 @@ let ``AddVisit.It does not update visit count when given turn was prior or equal
     let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> IslandAddVisitContext
     Island.AddVisit 
         context
-        avatarId
+        Fixtures.Common.Dummy.AvatarId
         location
 
 type TestIslandJobsGenerationContext
@@ -228,8 +227,8 @@ let ``GenerateJob.It generates a job when no job is present on the island.`` () 
         TestIslandJobsGenerationContext
             (islandJobSink,
             islandJobSource,
-            termSourcesStub,
-            worldSingleStatisticSourceStub) 
+            Fixtures.Common.Stub.TermSources,
+            Fixtures.Common.Stub.WorldSingleStatisticSource) 
         :> IslandGenerateJobsContext
     inputLocation
     |> Island.GenerateJobs 
@@ -254,8 +253,8 @@ let ``GenerateJob.It does nothing when no job is present on the island and no po
         TestIslandJobsGenerationContext
             (islandJobSink,
             islandJobSource,
-            termSourcesStub,
-            worldSingleStatisticSourceStub) 
+            Fixtures.Common.Stub.TermSources,
+            Fixtures.Common.Stub.WorldSingleStatisticSource) 
         :> IslandGenerateJobsContext
     inputLocation
     |> Island.GenerateJobs 
@@ -277,7 +276,7 @@ let ``MakeKnown.It does nothing when the given island is already known.`` () =
     let context = TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> IslandMakeKnownContext
     Island.MakeKnown 
         context
-        avatarId
+        Fixtures.Common.Dummy.AvatarId
         location
 
 [<Test>]
@@ -299,7 +298,7 @@ let ``MakeKnown.It mutates the island's visit count to Some 0 when the given isl
     let context = TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> IslandMakeKnownContext
     Island.MakeKnown 
         context
-        avatarId
+        Fixtures.Common.Dummy.AvatarId
         location
 
 [<Test>]

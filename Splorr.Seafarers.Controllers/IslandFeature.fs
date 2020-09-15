@@ -3,12 +3,19 @@
 open System
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
+open Tarot
 
 type IslandSingleFeatureSource = Location -> IslandFeatureIdentifier -> bool
 
+type IslandFeatureRunDarkAlleyGamblingHand =
+    interface
+    end
+
 type IslandFeatureRunDarkAlleyContext =
+    inherit IslandFeatureRunDarkAlleyGamblingHand
     inherit WorldAddMessagesContext
     inherit AvatarGetGamblingHandContext
+    inherit AvatarDealGamblingHandContext
     abstract member avatarMessageSource           : AvatarMessageSource
     abstract member avatarMessageSink             : AvatarMessageSink
     abstract member islandSingleStatisticSource   : IslandSingleStatisticSource
@@ -27,6 +34,31 @@ type IslandFeatureRunContext =
     abstract member islandSingleNameSource    : IslandSingleNameSource
 
 module IslandFeature =
+    let private RunDarkAlleyGamblingHand
+            (context       : IslandFeatureRunDarkAlleyGamblingHand)
+            (commandSource : CommandSource) 
+            (messageSink   : MessageSink) 
+            (location      : Location)
+            (avatarId      : string)
+            (hand          : AvatarGamblingHand)
+            : Gamestate option =
+        //display the hand
+        let (first, second, _) = hand
+        [
+            Line "The cards that you've been dealt:"
+            Cards [ first; second ]
+        ]
+        |> Group
+        |> messageSink
+        //get input
+        match commandSource() with
+        
+        | _ ->
+            ("Maybe try 'help'?",
+                        avatarId
+                        |> Gamestate.InPlay)
+                    |> Gamestate.ErrorMessage
+                    |> Some
     let private RunDarkAlley
             (context       : IslandFeatureRunDarkAlleyContext)
             (commandSource : CommandSource) 
@@ -36,7 +68,13 @@ module IslandFeature =
             : Gamestate option =
         match Avatar.GetGamblingHand context avatarId with
         | Some hand ->
-            raise (NotImplementedException "")
+            RunDarkAlleyGamblingHand
+                context
+                commandSource
+                messageSink
+                location
+                avatarId
+                hand
         | None ->
             let minimumBet = 
                 context.islandSingleStatisticSource 
@@ -75,6 +113,13 @@ module IslandFeature =
                     |> Gamestate.Help
                     |> Some
                 | Some Command.Leave ->
+                    avatarId
+                    |> Gamestate.InPlay
+                    |> Some
+                | Some Command.Gamble ->
+                    avatarId
+                    |> Avatar.DealGamblingHand
+                        context 
                     avatarId
                     |> Gamestate.InPlay
                     |> Some

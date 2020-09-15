@@ -1,5 +1,7 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
+open Tarot
+
 type Hue =
     | Error      = 1
     | Flavor     = 2
@@ -16,6 +18,7 @@ type Message =
     | Hued  of Hue * Message
     | Line  of string
     | Text  of string
+    | Cards of Card list
 
 type MessageSink = 
     Message -> unit

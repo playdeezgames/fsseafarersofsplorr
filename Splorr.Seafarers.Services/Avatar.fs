@@ -1,6 +1,7 @@
 ﻿namespace Splorr.Seafarers.Services
 open System
 open Splorr.Seafarers.Models
+open Tarot
 
 type MessagePurger = string -> unit
 
@@ -14,6 +15,7 @@ type AvatarJobSource = string -> Job option
 type AvatarJobSink = string -> Job option -> unit
 type AvatarIslandFeatureSink = AvatarIslandFeature option * string -> unit
 type AvatarGamblingHandSource = string -> AvatarGamblingHand option
+type AvatarGamblingHandSink = string -> AvatarGamblingHand option -> unit
 
 type AvatarCreateContext =
     inherit VesselCreateContext
@@ -142,10 +144,19 @@ type AvatarCleanHullContext =
 
 type AvatarGetGamblingHandContext =
     abstract member avatarGamblingHandSource : AvatarGamblingHandSource
+
+type AvatarDealGamblingHandContext =
+    abstract member avatarGamblingHandSink : AvatarGamblingHandSink
+    abstract member random : Random
 (*
-interface AvatarGetGamblingHandContext with
-    member _.avatarGamblingHandSource : AvatarGamblingHandSource = avatarGamblingHandSource
+interface AvatarDealGamblingHandContext with
+    member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
+    member _.random : Random = random
 *)
+
+type AvatarEnterIslandFeatureContext =
+    interface
+    end
 
 module Avatar =
     let Create 
@@ -582,3 +593,23 @@ module Avatar =
             (avatarId: string)
             : AvatarGamblingHand option =
         context.avatarGamblingHandSource avatarId
+        
+    let DealGamblingHand
+            (context  : AvatarDealGamblingHandContext)
+            (avatarId : string)
+            : unit =
+        match Deck.Create()
+            |> List.sortBy (fun _ -> context.random.Next()) with
+        | first :: second :: third :: _ ->
+            (first, second, third)
+            |> Some
+            |> context.avatarGamblingHandSink avatarId
+        | _ ->
+            raise (NotImplementedException "DealGamblingHand did not have at least three cards")
+
+    let EnterIslandFeature
+            (context : AvatarEnterIslandFeatureContext)
+            (avatarId : string)
+            (location: Location)
+            (feature: IslandFeatureIdentifier) =
+        raise (NotImplementedException "EnterIslandFeature")

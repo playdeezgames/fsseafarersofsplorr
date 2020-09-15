@@ -2,6 +2,7 @@
 
 open Splorr.Seafarers.Controllers
 open System
+open Tarot
 
 module MessageSink =
     let private colorMap 
@@ -39,5 +40,14 @@ module MessageSink =
 
         | Text text ->
             Console.Write text
+            
+        | Cards cards ->
+            cards
+            |> List.iter
+                (fun card ->
+                    card
+                    |> Card.ToText
+                    |> List.iter Console.WriteLine)
+            
             
 

@@ -318,10 +318,15 @@ let main argv =
     let avatarGamblingHandSource =
         AvatarGamblingHand.GetForAvatar connection
         >> Persister.unpackOrThrow
+        
+    let avatarGamblingHandSink (avatarId: string) =
+        AvatarGamblingHand.SetForAvatar connection avatarId
+        >> Persister.unpackOrThrow
 
     let context : RunnerRunContext =
         SplorrContext
-            (avatarGamblingHandSource,
+            (avatarGamblingHandSink,
+            avatarGamblingHandSource,
             avatarInventorySink,
             avatarInventorySource,
             avatarIslandFeatureSink,

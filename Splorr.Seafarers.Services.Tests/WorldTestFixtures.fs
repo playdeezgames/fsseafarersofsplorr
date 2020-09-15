@@ -2,7 +2,6 @@
 
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
-open CommonTestFixtures
 open System
 
 let internal genericWorldSingleStatisticSource (identifier: WorldStatisticIdentifier) : Statistic =
@@ -87,13 +86,13 @@ type TestWorldDockContext
         member _.islandItemSink: IslandItemSink = islandItemSink
         member _.islandItemSource: IslandItemSource = islandItemSource
         member _.itemSource: ItemSource = itemSource
-        member _.random: Random = random
+        member _.random: Random = Fixtures.Common.Dummy.Random
 
     interface IslandGenerateCommoditiesContext with
         member _.commoditySource: CommoditySource = commoditySource
         member _.islandMarketSink: IslandMarketSink = islandMarketSink
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
-        member _.random : Random = random
+        member _.random : Random = Fixtures.Common.Dummy.Random
 
     interface IslandAddVisitContext with
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
@@ -105,7 +104,7 @@ type TestWorldDockContext
         member _.islandJobSource            : IslandJobSource=islandJobSource
 
     interface UtilitySortListRandomlyContext with
-        member _.random : Random = random
+        member _.random : Random = Fixtures.Common.Dummy.Random
 
     interface JobCreateContext with 
         member _.termSources                : TermSources = termSources

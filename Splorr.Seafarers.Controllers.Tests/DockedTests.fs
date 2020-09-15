@@ -1,5 +1,6 @@
 ﻿module DockedTests
 
+open System
 open NUnit.Framework
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Controllers
@@ -488,10 +489,15 @@ let ``Run.It returns Docked (at DarkAlley) gamestate when given the command GoTo
     let islandSingleNameSource (_) =
         "yermom"
         |> Some
+    let mutable didSetFeature = false
+    let avatarIslandFeatureSink (feature:AvatarIslandFeature option,_) =
+        didSetFeature<-true
+        Assert.AreEqual(IslandFeatureIdentifier.DarkAlley, feature.Value.featureId)
+        Assert.AreEqual(inputLocation, feature.Value.location)
     let actual =
         (inputLocation, input)
         ||> functionUnderTestStubbed 
-            avatarIslandFeatureSinkDummy
+            avatarIslandFeatureSink
             avatarMessageSinkStub
             avatarSingleMetricSinkExplode
             islandSingleNameSource
@@ -499,6 +505,7 @@ let ``Run.It returns Docked (at DarkAlley) gamestate when given the command GoTo
             inputSource 
             sinkDummy
     Assert.AreEqual(expected, actual)
+    Assert.IsTrue(didSetFeature)
 
 
 [<Test>]
