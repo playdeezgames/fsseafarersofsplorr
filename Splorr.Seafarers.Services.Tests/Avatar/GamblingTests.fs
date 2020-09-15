@@ -17,10 +17,7 @@ type TestAvatarDealGamblingHandContext(avatarGamblingHandSink, random) =
 
 type TestAvatarEnterIslandFeatureContext
         (avatarIslandFeatureSink, 
-        islandSingleFeatureSource,
-        vesselSingleStatisticSource) =
-    interface AvatarGetPositionContext with
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+        islandSingleFeatureSource) =
     interface AvatarEnterIslandFeatureContext with
         member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
         member this.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
@@ -76,8 +73,7 @@ let ``EnterIslandFeature.It does not enter the dark alley when one is not presen
     let context = 
         TestAvatarEnterIslandFeatureContext
             (avatarIslandFeatureSink,
-            islandSingleFeatureSource,
-            vesselSingleStatisticSource) 
+            islandSingleFeatureSource) 
         :> AvatarEnterIslandFeatureContext
     Avatar.EnterIslandFeature
         context
@@ -87,17 +83,8 @@ let ``EnterIslandFeature.It does not enter the dark alley when one is not presen
 
 
 [<Test>]
-let ``EnterIslandFeature.It enters the dark alley when one is present.`` () =
+let ``EnterIslandFeature.It enters the dark alley when one is present.💩`` () =
     let inputLocation = (1.0, 2.0)
-    let vesselSingleStatisticSource (_) (id:VesselStatisticIdentifier) =
-        match id with
-        | VesselStatisticIdentifier.PositionX ->
-            Statistic.Create (0.0, 100.0) (inputLocation |> fst) |> Some
-        | VesselStatisticIdentifier.PositionY ->
-            Statistic.Create (0.0, 100.0) (inputLocation |> snd) |> Some
-        | _ ->
-            Assert.Fail(id.ToString() |> sprintf "vesselSingleStatisticSource - %s")
-            None
     let mutable called = false
     let avatarIslandFeatureSink (feature: AvatarIslandFeature option, _) =
         match feature with 
@@ -112,8 +99,7 @@ let ``EnterIslandFeature.It enters the dark alley when one is present.`` () =
     let context = 
         TestAvatarEnterIslandFeatureContext
             (avatarIslandFeatureSink,
-            islandSingleFeatureSource,
-            vesselSingleStatisticSource) 
+            islandSingleFeatureSource) 
         :> AvatarEnterIslandFeatureContext
     Avatar.EnterIslandFeature
         context

@@ -14,6 +14,7 @@ type IslandFeatureRunDarkAlleyContext =
     inherit WorldAddMessagesContext
     inherit AvatarGetGamblingHandContext
     inherit AvatarDealGamblingHandContext
+    inherit AvatarEnterIslandFeatureContext
     abstract member avatarMessageSource           : AvatarMessageSource
     abstract member avatarMessageSink             : AvatarMessageSink
     abstract member islandSingleStatisticSource   : IslandSingleStatisticSource
@@ -92,6 +93,11 @@ module IslandFeature =
                 |> World.AddMessages
                     context
                     [ "Come back when you've got more money!" ]
+                Avatar.EnterIslandFeature 
+                    context 
+                    avatarId 
+                    location 
+                    IslandFeatureIdentifier.Dock
                 avatarId
                 |> Gamestate.InPlay
                 |> Some
@@ -111,6 +117,11 @@ module IslandFeature =
                     |> Gamestate.Help
                     |> Some
                 | Some Command.Leave ->
+                    Avatar.EnterIslandFeature 
+                        context 
+                        avatarId 
+                        location
+                        IslandFeatureIdentifier.Dock
                     avatarId
                     |> Gamestate.InPlay
                     |> Some

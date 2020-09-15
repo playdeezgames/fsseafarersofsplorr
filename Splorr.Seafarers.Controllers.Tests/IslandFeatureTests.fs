@@ -12,6 +12,7 @@ open Tarot
 type TestIslandFeatureRunContext
         (avatarGamblingHandSink,
         avatarGamblingHandSource,
+        avatarIslandFeatureSink,
         avatarMessageSink,
         avatarMessageSource,
         islandSingleFeatureSource,
@@ -31,6 +32,9 @@ type TestIslandFeatureRunContext
     interface AvatarDealGamblingHandContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
         member _.random : Random = random
+    interface AvatarEnterIslandFeatureContext with
+        member this.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
+        member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
     interface IslandFeatureRunDarkAlleyContext with
         member _.avatarMessageSource : AvatarMessageSource = avatarMessageSource
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
@@ -55,6 +59,7 @@ let ``Run.It should return AtSea when the given island does not exist.`` () =
         TestIslandFeatureRunContext
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
+            Fixtures.Common.Stub.AvatarIslandFeatureSink,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSourceStub,
@@ -91,6 +96,7 @@ let ``Run.It should return Dock state when the given island exists but does not 
         TestIslandFeatureRunContext
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
+            Fixtures.Common.Stub.AvatarIslandFeatureSink,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSourceStub,
@@ -131,6 +137,7 @@ let ``Run.It should return InPlay state when dark alley exists and the player is
         TestIslandFeatureRunContext
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
+            Fixtures.Common.Stub.AvatarIslandFeatureSink,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSource,
@@ -169,6 +176,7 @@ let ``Run.It should return Dock state when dark alley exists but the player does
         TestIslandFeatureRunContext
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
+            Fixtures.Common.Stub.AvatarIslandFeatureSink,
             avatarMessageSinkExpected ["Come back when you've got more money!"],
             avatarMessageSourceDummy,
             islandSingleFeatureSource,
@@ -209,6 +217,7 @@ let ``Run.When in the dark alley, the leave command will take the player back to
         TestIslandFeatureRunContext
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
+            Fixtures.Common.Stub.AvatarIslandFeatureSink,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSource,
@@ -251,6 +260,7 @@ let ``Run.When in the dark alley, the gamble command will deal to the player som
         TestIslandFeatureRunContext
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
+            Fixtures.Common.Stub.AvatarIslandFeatureSink,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSource,
@@ -291,6 +301,7 @@ let ``Run.When in the dark alley, the help command will take the player to the h
         TestIslandFeatureRunContext
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
+            Fixtures.Common.Stub.AvatarIslandFeatureSink,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSource,
@@ -332,6 +343,7 @@ let ``Run.When in the dark alley, the an invalid command gives you an error mess
         TestIslandFeatureRunContext
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
+            Fixtures.Common.Stub.AvatarIslandFeatureSink,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSource,

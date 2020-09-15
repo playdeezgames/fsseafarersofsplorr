@@ -155,7 +155,6 @@ interface AvatarDealGamblingHandContext with
 *)
 
 type AvatarEnterIslandFeatureContext =
-    inherit AvatarGetPositionContext
     abstract member avatarIslandFeatureSink : AvatarIslandFeatureSink
     abstract member islandSingleFeatureSource : IslandSingleFeatureSource
 
@@ -614,10 +613,7 @@ module Avatar =
             (location : Location)
             (feature  : IslandFeatureIdentifier)
             : unit =
-        let avatarPosition = 
-            GetPosition context avatarId
-            |> Option.get
-        if avatarPosition = location && (context.islandSingleFeatureSource location feature) then
+        if context.islandSingleFeatureSource location feature then
             context.avatarIslandFeatureSink 
                 ({featureId = feature; location = location} |> Some, 
                     avatarId)
