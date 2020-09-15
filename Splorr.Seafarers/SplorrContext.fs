@@ -254,7 +254,9 @@ type SplorrContext
         member _.islandSource                  : IslandSource = islandSource
         member _.itemSource                    : ItemSource =  itemSource
         member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
-
+    interface AvatarEnterIslandFeatureContext with
+        member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
+        member this.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
     interface DockedHandleCommandContext with
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource

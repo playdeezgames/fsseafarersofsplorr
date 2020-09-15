@@ -155,8 +155,9 @@ interface AvatarDealGamblingHandContext with
 *)
 
 type AvatarEnterIslandFeatureContext =
-    interface
-    end
+    inherit AvatarGetPositionContext
+    abstract member avatarIslandFeatureSink : AvatarIslandFeatureSink
+    abstract member islandSingleFeatureSource : IslandSingleFeatureSource
 
 module Avatar =
     let Create 
@@ -608,8 +609,15 @@ module Avatar =
             raise (NotImplementedException "DealGamblingHand did not have at least three cards")
 
     let EnterIslandFeature
-            (context : AvatarEnterIslandFeatureContext)
+            (context  : AvatarEnterIslandFeatureContext)
             (avatarId : string)
-            (location: Location)
-            (feature: IslandFeatureIdentifier) =
-        raise (NotImplementedException "EnterIslandFeature")
+            (location : Location)
+            (feature  : IslandFeatureIdentifier)
+            : unit =
+        let avatarPosition = 
+            GetPosition context avatarId
+            |> Option.get
+        if avatarPosition = location && (context.islandSingleFeatureSource location feature) then
+            context.avatarIslandFeatureSink 
+                ({featureId = feature; location = location} |> Some, 
+                    avatarId)

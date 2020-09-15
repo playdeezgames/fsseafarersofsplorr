@@ -15,8 +15,15 @@ type TestAvatarDealGamblingHandContext(avatarGamblingHandSink, random) =
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
         member _.random : Random = random
 
-type TestAvatarEnterIslandFeatureContext() =
-    interface AvatarEnterIslandFeatureContext
+type TestAvatarEnterIslandFeatureContext
+        (avatarIslandFeatureSink, 
+        islandSingleFeatureSource,
+        vesselSingleStatisticSource) =
+    interface AvatarGetPositionContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AvatarEnterIslandFeatureContext with
+        member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
+        member this.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
 
 
 [<Test>]
@@ -51,15 +58,68 @@ let ``DealGamblingHand.It deals a new hand to the given avatar.`` () =
     Assert.True(called)
 
 [<Test>]
-[<Ignore("Refactoring this large file into smaller files")>]
 let ``EnterIslandFeature.It does not enter the dark alley when one is not present.`` () =
-    let inputLocation = (0.0, 0.0)
-    let context = TestAvatarEnterIslandFeatureContext() :> AvatarEnterIslandFeatureContext
+    let inputLocation = (1.0, 2.0)
+    let vesselSingleStatisticSource (_) (id:VesselStatisticIdentifier) =
+        match id with
+        | VesselStatisticIdentifier.PositionX ->
+            Statistic.Create (0.0, 100.0) (inputLocation |> fst) |> Some
+        | VesselStatisticIdentifier.PositionY ->
+            Statistic.Create (0.0, 100.0) (inputLocation |> snd) |> Some
+        | _ ->
+            Assert.Fail(id.ToString() |> sprintf "vesselSingleStatisticSource - %s")
+            None
+    let avatarIslandFeatureSink (_) =
+        Assert.Fail("avatarIslandFeatureSink")
+    let islandSingleFeatureSource (_) (_) =
+        false
+    let context = 
+        TestAvatarEnterIslandFeatureContext
+            (avatarIslandFeatureSink,
+            islandSingleFeatureSource,
+            vesselSingleStatisticSource) 
+        :> AvatarEnterIslandFeatureContext
     Avatar.EnterIslandFeature
         context
         Fixtures.Common.Dummy.AvatarId
         inputLocation
         IslandFeatureIdentifier.DarkAlley
 
+
+[<Test>]
+let ``EnterIslandFeature.It enters the dark alley when one is present.`` () =
+    let inputLocation = (1.0, 2.0)
+    let vesselSingleStatisticSource (_) (id:VesselStatisticIdentifier) =
+        match id with
+        | VesselStatisticIdentifier.PositionX ->
+            Statistic.Create (0.0, 100.0) (inputLocation |> fst) |> Some
+        | VesselStatisticIdentifier.PositionY ->
+            Statistic.Create (0.0, 100.0) (inputLocation |> snd) |> Some
+        | _ ->
+            Assert.Fail(id.ToString() |> sprintf "vesselSingleStatisticSource - %s")
+            None
+    let mutable called = false
+    let avatarIslandFeatureSink (feature: AvatarIslandFeature option, _) =
+        match feature with 
+        | Some f ->
+            called <- true
+            Assert.AreEqual(IslandFeatureIdentifier.DarkAlley, f.featureId)
+            Assert.AreEqual(inputLocation, f.location)
+        | _ -> 
+            Assert.Fail("avatarIslandFeatureSink")
+    let islandSingleFeatureSource (_) (_) =
+        true
+    let context = 
+        TestAvatarEnterIslandFeatureContext
+            (avatarIslandFeatureSink,
+            islandSingleFeatureSource,
+            vesselSingleStatisticSource) 
+        :> AvatarEnterIslandFeatureContext
+    Avatar.EnterIslandFeature
+        context
+        Fixtures.Common.Dummy.AvatarId
+        inputLocation
+        IslandFeatureIdentifier.DarkAlley
+    Assert.True(called)
 
 

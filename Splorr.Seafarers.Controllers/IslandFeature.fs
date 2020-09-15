@@ -5,8 +5,6 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open Tarot
 
-type IslandSingleFeatureSource = Location -> IslandFeatureIdentifier -> bool
-
 type IslandFeatureRunDarkAlleyGamblingHand =
     interface
     end

@@ -20,6 +20,9 @@ type IslandSingleStatisticSink = Location->IslandStatisticIdentifier*Statistic o
 type IslandSingleStatisticSource = Location->IslandStatisticIdentifier->Statistic option
 type IslandStatisticTemplateSource = unit -> Map<IslandStatisticIdentifier, StatisticTemplate>
 type ItemSource = unit -> Map<uint64, ItemDescriptor>
+type IslandSingleFeatureSource = Location -> IslandFeatureIdentifier -> bool
+
+
 
 type IslandGenerateJobsContext =
     inherit JobCreateContext
@@ -59,6 +62,7 @@ type IslandUpdateMarketForItemContext =
     abstract member commoditySource          : CommoditySource
     abstract member islandSingleMarketSink   : IslandSingleMarketSink
     abstract member islandSingleMarketSource : IslandSingleMarketSource
+
 
 module Island =
     let  Create
@@ -227,3 +231,4 @@ module Island =
             (fun commodity quantityContained -> 
                 let totalQuantity = quantityContained * (quantityPurchased |> float) * commodities.[commodity].PurchaseFactor
                 ChangeMarketSupply context.islandSingleMarketSource context.islandSingleMarketSink commodity totalQuantity location)
+
