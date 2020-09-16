@@ -11,7 +11,7 @@ let ``Run function.When Yes command passed, return None.`` () =
     let inputSource = 
         Command.Yes 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = None
     let actual = 
         input
@@ -38,7 +38,7 @@ let ``Run function.When No command passed, return previous State.`` () =
     let inputSource = 
         Command.No 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         input 
         |> Some
@@ -52,7 +52,7 @@ let ``Run function.When invalid command passed, return ConfirmQuit.`` () =
     let input = previousState
     let inputSource = 
         None 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         input 
         |> Gamestate.ConfirmQuit 
@@ -69,7 +69,7 @@ let ``Run.It initiates Confirm Quit Help when given the Help command.`` () =
     let inputSource = 
         Command.Help 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         input 
         |> Gamestate.ConfirmQuit 

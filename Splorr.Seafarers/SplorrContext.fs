@@ -369,6 +369,12 @@ type SplorrContext
     interface AvatarFoldGamblingHand with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
 
+    interface WorldHasDarkAlleyMinimumStakesContext with
+        member _.shipmateSingleStatisticSource : ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+        member _.islandSingleStatisticSource : IslandSingleStatisticSource = islandSingleStatisticSource
+        member _.avatarIslandFeatureSource : AvatarIslandFeatureSource = avatarIslandFeatureSource
+
+
     interface IslandFeatureRunDarkAlleyContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource

@@ -15,6 +15,7 @@ type IslandFeatureRunDarkAlleyContext =
     inherit AvatarGetGamblingHandContext
     inherit AvatarDealGamblingHandContext
     inherit AvatarEnterIslandFeatureContext
+    inherit WorldHasDarkAlleyMinimumStakesContext
     abstract member avatarMessageSource           : AvatarMessageSource
     abstract member avatarMessageSink             : AvatarMessageSink
     abstract member islandSingleStatisticSource   : IslandSingleStatisticSource
@@ -41,7 +42,6 @@ module IslandFeature =
             (avatarId      : string)
             (hand          : AvatarGamblingHand)
             : Gamestate option =
-        //display the hand
         let (first, second, _) = hand
         [
             Line "The cards that you've been dealt:"
@@ -49,7 +49,6 @@ module IslandFeature =
         ]
         |> Group
         |> messageSink
-        //get input
         match commandSource() with
         | Some (Command.Bet None) ->
             avatarId
@@ -57,7 +56,14 @@ module IslandFeature =
                 context 
             avatarId
             |> Gamestate.InPlay
-            |> Some    
+            |> Some   
+        | Some (Command.Bet amount) ->
+            //does avatar have enough money? - error if no
+            //did avatar make minimum stakes bet? - error if no
+            //deduct money
+            avatarId
+            |> Gamestate.InPlay
+            |> Some   
         | _ ->
             ("Maybe try 'help'?",
                         avatarId
@@ -81,20 +87,8 @@ module IslandFeature =
                 avatarId
                 hand
         | None ->
-            let minimumBet = 
-                context.islandSingleStatisticSource 
-                    location 
-                    IslandStatisticIdentifier.MinimumGamblingStakes
-                |> Option.get
-                |> Statistic.GetCurrentValue
-            let money =
-                context.shipmateSingleStatisticSource 
-                    avatarId 
-                    ShipmateIdentifier.Primary 
-                    ShipmateStatisticIdentifier.Money
-                |> Option.get
-                |> Statistic.GetCurrentValue
-            if money < minimumBet then
+            //TODO : wrap this into World.EnsureDarkAlleyMinimumStakes
+            if World.HasDarkAlleyMinimumStakes context location avatarId |> Option.defaultValue false |> not then
                 avatarId
                 |> World.AddMessages
                     context

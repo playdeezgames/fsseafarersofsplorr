@@ -3,6 +3,7 @@
 open NUnit.Framework
 open Splorr.Seafarers.Controllers
 open System
+open Splorr.Seafarers.Services
 
 
 let private random = Random()

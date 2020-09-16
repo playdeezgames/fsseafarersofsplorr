@@ -242,7 +242,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
 let ``Run.It returns AtSea when given Undock Command.`` () =
     let input = dockWorld
     let inputLocation= dockLocation
-    let inputSource = Command.Undock |> Some |> toSource
+    let inputSource = Command.Undock |> Some |> Fixtures.Common.Mock.CommandSource
     let expected = 
         input
         |> Gamestate.InPlay
@@ -269,7 +269,7 @@ let ``Run.It returns AtSea when given Undock Command.`` () =
 let ``Run.It returns ConfirmQuit when given Quit Command.`` () =
     let input =dockWorld
     let inputLocation = dockLocation
-    let inputSource = Command.Quit |> Some |> toSource
+    let inputSource = Command.Quit |> Some |> Fixtures.Common.Mock.CommandSource
     let expected =
         input
         |> Gamestate.InPlay 
@@ -298,7 +298,7 @@ let ``Run.It returns Metrics when given Metrics Command.`` () =
     let inputSource = 
         Command.Metrics 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         input
         |> Gamestate.InPlay 
@@ -327,7 +327,7 @@ let ``Run.It returns Help when given Help Command.`` () =
     let inputSource = 
         Command.Help 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         input
         |> Gamestate.InPlay 
@@ -356,7 +356,7 @@ let ``Run.It returns Inventory when given Inventory Command.`` () =
     let inputSource = 
         Command.Inventory 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         input 
         |> Gamestate.InPlay 
@@ -384,7 +384,7 @@ let ``Run.It returns InvalidInput when given invalid Command.`` () =
     let inputLocation = dockLocation
     let inputSource =
         None 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         ("Maybe try 'help'?",input 
         |> Gamestate.InPlay)
@@ -439,7 +439,7 @@ let ``Run.It returns Status when given the command Status.`` () =
     let inputSource = 
         Command.Status 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         input 
         |> Gamestate.InPlay 
@@ -469,7 +469,7 @@ let ``Run.It returns Docked (at Jobs) gamestate when given the command Jobs.`` (
     let inputSource = 
         Command.Jobs 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         input
         |> Gamestate.InPlay 
@@ -500,7 +500,7 @@ let ``Run.It returns Docked (at DarkAlley) gamestate when given the command GoTo
         IslandFeatureIdentifier.DarkAlley
         |> Command.GoTo 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         input
         |> Gamestate.InPlay 
@@ -536,7 +536,7 @@ let ``Run.It returns Docked (at DarkAlley) gamestate when given the command GoTo
 let ``Run.It gives a message when given the Accept Job command and the given job number does not exist.`` () =
     let input = smallWorldDocked
     let inputLocation = smallWorldIslandLocation
-    let inputSource = 0u |> Command.AcceptJob |> Some |> toSource
+    let inputSource = 0u |> Command.AcceptJob |> Some |> Fixtures.Common.Mock.CommandSource
     let expectedWorld = 
         input
     let expected = 
@@ -568,7 +568,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
         Job 
         |> Command.Abandon 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expectedWorld = 
         input
     let expected = 
@@ -596,7 +596,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
 let ``Run.It gives a message and abandons the job when given the command Abandon Job and the avatar has a current job.`` () =
     let input = abandonJobWorld
     let inputLocation = dockLocation
-    let inputSource = Job |> Command.Abandon |> Some |> toSource
+    let inputSource = Job |> Command.Abandon |> Some |> Fixtures.Common.Mock.CommandSource
     let expectedWorld = 
         input
     let expected = 
@@ -627,7 +627,7 @@ let ``Run.It returns ItemList gamestate when given the Items command.`` () =
     let inputSource = 
         Command.Items 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         inputWorld
         |> Gamestate.InPlay
@@ -653,7 +653,7 @@ let ``Run.It returns ItemList gamestate when given the Items command.`` () =
 let ``Run.It adds a message when given the Buy command for a non-existent item.`` () =
     let inputLocation = smallWorldIslandLocation
     let inputWorld = shopWorld
-    let inputSource = (1UL |> Specific, "non existent item") |> Command.Buy |> Some |> toSource
+    let inputSource = (1UL |> Specific, "non existent item") |> Command.Buy |> Some |> Fixtures.Common.Mock.CommandSource
     let expectedMessages = ["Round these parts, we don't sell things like that."]
     let expectedWorld =
         inputWorld
@@ -681,7 +681,7 @@ let ``Run.It adds a message when given the Buy command for a non-existent item.`
 let ``Run.It adds a message when given the Buy command and the avatar does not have enough money to complete the purchase.`` () =
     let inputLocation = smallWorldIslandLocation
     let inputWorld = smallWorldDocked
-    let inputSource = (1UL |> Specific, "item under test") |> Command.Buy |> Some |> toSource
+    let inputSource = (1UL |> Specific, "item under test") |> Command.Buy |> Some |> Fixtures.Common.Mock.CommandSource
     let markets =
         Map.empty
         |> Map.add 1UL {Demand=5.0; Supply=5.0}
@@ -719,7 +719,7 @@ let ``Run.It adds a message when given the Buy command and the avatar does not h
 let ``Run.It adds a message and completes the purchase when given the Buy command and the avatar has enough money.`` () =
     let inputLocation = smallWorldIslandLocation
     let inputWorld = shopWorld
-    let inputSource = (1UL |> Specific, "item under test") |> Command.Buy |> Some |> toSource
+    let inputSource = (1UL |> Specific, "item under test") |> Command.Buy |> Some |> Fixtures.Common.Mock.CommandSource
     let markets =
         Map.empty
         |> Map.add 1UL {Demand=5.0; Supply=5.0}
@@ -773,7 +773,7 @@ let ``Run.It adds a message and completes the purchase when given the Buy comman
 let ``Run.It adds a message when given the Sell command for a non-existent item.`` () =
     let inputLocation = smallWorldIslandLocation
     let inputWorld = shopWorld
-    let inputSource = (Specific 1UL, "non existent item") |> Command.Sell |> Some |> toSource
+    let inputSource = (Specific 1UL, "non existent item") |> Command.Sell |> Some |> Fixtures.Common.Mock.CommandSource
     let expectedMessages = ["Round these parts, we don't buy things like that."]
     let expectedWorld =
         inputWorld
@@ -801,7 +801,7 @@ let ``Run.It adds a message when given the Sell command for a non-existent item.
 let ``Run.It adds a message when given the Sell command and the avatar does not sufficient items to sell.`` () =
     let inputLocation = smallWorldIslandLocation
     let inputWorld = shopWorld
-    let inputSource = (Specific 1UL, "item under test") |> Command.Sell |> Some |> toSource
+    let inputSource = (Specific 1UL, "item under test") |> Command.Sell |> Some |> Fixtures.Common.Mock.CommandSource
     let expectedMessages = ["You don't have enough of those to sell."]
     let expectedWorld =
         inputWorld
@@ -834,7 +834,7 @@ let ``Run.It adds a message and completes the sale when given the Sell command a
     let islandMarketSource (_) = markets
     let inputWorld = 
         shopWorld
-    let inputSource = (Specific 1UL, "item under test") |> Command.Sell |> Some |> toSource
+    let inputSource = (Specific 1UL, "item under test") |> Command.Sell |> Some |> Fixtures.Common.Mock.CommandSource
     let commodities = commoditySource()
     let expectedSupply = 
         markets.[1UL].Supply + commodities.[1UL].PurchaseFactor

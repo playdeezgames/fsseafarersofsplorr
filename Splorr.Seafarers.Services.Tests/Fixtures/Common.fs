@@ -1,6 +1,7 @@
 namespace Fixtures.Common
 
 open Splorr.Seafarers.Models
+open Splorr.Seafarers.Services
 open System
 open NUnit.Framework
 

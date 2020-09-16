@@ -11,6 +11,8 @@ type IslandLocationByNameSource = string -> Location option
 type IslandSource = unit -> Location list
 type IslandFeatureGeneratorSource = unit -> Map<IslandFeatureIdentifier, IslandFeatureGenerator>
 type IslandSingleFeatureSink = Location -> IslandFeatureIdentifier -> unit
+type AvatarIslandFeatureSource = string -> AvatarIslandFeature option
+
 
 type WorldGenerateIslandNameContext =
     abstract member random : Random
@@ -174,6 +176,19 @@ type WorldHeadForContext =
     inherit AvatarGetPositionContext
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
     abstract member islandLocationByNameSource     : IslandLocationByNameSource
+
+type WorldHasDarkAlleyMinimumStakesContext =
+    inherit AvatarEnterIslandFeatureContext
+    inherit WorldAddMessagesContext
+    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
+    abstract member islandSingleStatisticSource : IslandSingleStatisticSource 
+    abstract member avatarIslandFeatureSource : AvatarIslandFeatureSource
+(*
+interface WorldHasDarkAlleyMinimumStakesContext with
+    member _.shipmateSingleStatisticSource : ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+    member _.islandSingleStatisticSource : IslandSingleStatisticSource = islandSingleStatisticSource
+    member _.avatarIslandFeatureSource : AvatarIslandFeatureSource = avatarIslandFeatureSource
+*)
 
 module World =
     let private GenerateIslandName
@@ -750,5 +765,42 @@ module World =
         avatarId
         |> AddMessages context [ "You undock." ]
         context.avatarIslandFeatureSink (None, avatarId)
-        
+     
+    let HasDarkAlleyMinimumStakes
+            (context : WorldHasDarkAlleyMinimumStakesContext)
+            (location : Location)
+            (avatarId : string)
+            : bool option =
+        match context.avatarIslandFeatureSource avatarId with
+        | Some feature when feature.featureId = IslandFeatureIdentifier.DarkAlley ->
+            let minimumBet = 
+                context.islandSingleStatisticSource 
+                    location 
+                    IslandStatisticIdentifier.MinimumGamblingStakes
+                |> Option.get
+                |> Statistic.GetCurrentValue
+            let money =
+                context.shipmateSingleStatisticSource 
+                    avatarId 
+                    ShipmateIdentifier.Primary 
+                    ShipmateStatisticIdentifier.Money
+                |> Option.get
+                |> Statistic.GetCurrentValue
+            if money >= minimumBet then
+                Some true
+            else
+                Some false
+        | _ -> 
+            None
+
+    type CanPlaceBetContext =
+        inherit AvatarGetPrimaryStatisticContext
+
+    let CanPlaceBet
+            (context : CanPlaceBetContext)
+            (avatarId : string)
+            (amount : float)
+            : bool =
+        (Avatar.GetMoney context avatarId) >= amount
+            
             

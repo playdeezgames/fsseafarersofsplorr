@@ -51,6 +51,7 @@
     <Compile Include="World\CleanHullTests.fs" />
     <Compile Include="World\DistanceToTests.fs" />
     <Compile Include="World\DockTests.fs" />
+    <Compile Include="World\GambleTests.fs" />
     <Compile Include="World\HeadForTests.fs" />
     <Compile Include="World\IsAvatarAliveTests.fs" />
     <Compile Include="World\MoveTests.fs" />

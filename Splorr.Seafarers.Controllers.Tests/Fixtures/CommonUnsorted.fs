@@ -10,18 +10,10 @@ open NUnit.Framework
 let internal connectionString = 
     "Data Source=:memory:;Version=3;New=True;"
 
-let internal random = 
-    Random()
-
 let internal sinkDummy 
         (_ : Message) 
         : unit = 
     ()
-
-let internal toSource 
-        (command:Command option) 
-        : unit -> Command option= 
-    fun () -> command
 
 let internal createConnection () : SQLiteConnection =
     new SQLiteConnection(connectionString)
@@ -254,7 +246,7 @@ type TestAtSeaRunContext
             worldSingleStatisticSource: WorldSingleStatisticSource
         ) =
     interface UtilitySortListRandomlyContext with
-        member _.random : Random = random
+        member _.random : Random = Fixtures.Common.Dummy.Random
 
     interface IslandGetDisplayNameContext with
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
@@ -269,13 +261,13 @@ type TestAtSeaRunContext
         member _.commoditySource: CommoditySource = commoditySource
         member _.islandMarketSink: IslandMarketSink = islandMarketSink
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
-        member _.random : Random = random
+        member _.random : Random = Fixtures.Common.Dummy.Random
 
     interface IslandGenerateItemsContext with
         member _.islandItemSink: IslandItemSink = islandItemSink
         member _.islandItemSource: IslandItemSource = islandItemSource
         member _.itemSource: ItemSource = itemSource
-        member _.random: Random = random
+        member _.random: Random = Fixtures.Common.Dummy.Random
 
     interface VesselTransformFoulingContext with
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
@@ -395,9 +387,6 @@ type TestAtSeaRunContext
         member _.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
     interface AvatarTransformShipmatesContext with
         member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
-
-let commandSourceExplode () : Command option =
-    raise (NotImplementedException "There should be no input handling here!")
 
 let commandSourceFake (expectedCommand:Command option) : unit -> Command option =
     fun () -> expectedCommand

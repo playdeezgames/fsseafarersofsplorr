@@ -98,7 +98,7 @@ let ``Run.It returns ConfirmQuit when given Quit command.`` () =
     let inputSource = 
         Command.Quit
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let inputSide = Port
     let expected =
         (inputSide, inputWorld)
@@ -119,7 +119,7 @@ let ``Run.It returns InvalidInput when given invalid command.`` () =
     let inputWorld = world
     let inputSource = 
         None 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let inputSide = Port
     let expected =
         ("Maybe try 'help'?",(inputSide, inputWorld)
@@ -141,7 +141,7 @@ let ``Run.It returns Careened Help when given the Help command.`` () =
     let inputSource = 
         Command.Help
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let inputSide = Port
     let expected =
         (inputSide, inputWorld)
@@ -163,7 +163,7 @@ let ``Run.It returns Careened Metrics when given the Metrics command.`` () =
     let inputSource = 
         Command.Metrics
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let inputSide = Port
     let expected =
         (inputSide, inputWorld)
@@ -185,7 +185,7 @@ let ``Run.It returns Careened Inventory when given the Inventory command.`` () =
     let inputSource = 
         Command.Inventory
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let inputSide = Port
     let expected =
         (inputSide, inputWorld)
@@ -207,7 +207,7 @@ let ``Run.It returns Status when given the command Status.`` () =
     let inputSource = 
         Command.Status
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let inputSide = Port
     let expected =
         (inputSide, inputWorld)
@@ -229,7 +229,7 @@ let ``Run.It returns At Sea when given the command Weigh Anchor.`` () =
     let inputSource = 
         Command.WeighAnchor
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let inputSide = Port
     let expected =
         inputWorld
@@ -251,7 +251,7 @@ let ``Run.It returns Careened with a cleaned hull when given the command Clean H
     let inputSource = 
         Command.CleanHull
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let inputSide = Port
     let expected =
         (inputSide, inputWorld)

@@ -34,14 +34,14 @@ type TestWorldCreateContext
     interface WorldPopulateIslandsContext with
         member _.islandFeatureGeneratorSource: IslandFeatureGeneratorSource = islandFeatureGeneratorSource
         member _.islandSingleFeatureSink: IslandSingleFeatureSink = islandSingleFeatureSink
-        member _.random: Random = random
+        member _.random: Random = Fixtures.Common.Dummy.Random
         member _.islandSource: IslandSource = islandSource
 
     interface UtilitySortListRandomlyContext with 
-        member _.random : Random = random
+        member _.random : Random = Fixtures.Common.Dummy.Random
 
     interface WorldGenerateIslandNameContext with
-        member this.random: Random = random
+        member this.random: Random = Fixtures.Common.Dummy.Random
 
     interface WorldNameIslandsContext with
         member _.islandSingleNameSink: IslandSingleNameSink = islandSingleNameSink
@@ -95,7 +95,7 @@ let ``Run.It returns Confirm Quit when given Quit command and there is no world.
     let inputSource = 
         Command.Quit 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         input 
         |> Gamestate.MainMenu 
@@ -135,7 +135,7 @@ let ``Run.It returns Main Menu when given Quit command and there is a world.`` (
     let inputSource = 
         Command.Quit 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         ("Invalid command.", 
             input 
@@ -255,7 +255,7 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
         Guid.NewGuid().ToString() 
         |> Command.Start 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let avatarJobSink (_) (actual:Job option) = 
         Assert.AreEqual(None, actual)
     let context = 
@@ -294,7 +294,7 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
 
 [<Test>]
 let ``Run.It returns Main Menu when given Start command and there is a world.`` () =
-    let inputSource = "" |> Command.Start |> Some |> toSource
+    let inputSource = "" |> Command.Start |> Some |> Fixtures.Common.Mock.CommandSource
     let input = world
     let expected = 
         ("Invalid command.", 
@@ -336,7 +336,7 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
 [<Test>]
 let ``Run.It returns Main Menu with no world when given Abandon Game command and there is a world.`` () =
     let input = world
-    let inputSource = Game |> Command.Abandon |> Some |> toSource
+    let inputSource = Game |> Command.Abandon |> Some |> Fixtures.Common.Mock.CommandSource
     let expected = 
         None 
         |> Gamestate.MainMenu 
@@ -380,7 +380,7 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
         Game 
         |> Command.Abandon 
         |> Some
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         ("Invalid command.", 
             None 
@@ -420,7 +420,7 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
 [<Test>]
 let ``Run.It returns At Sea when given Resume command and there is a world.`` () =
     let input = world
-    let inputSource = Command.Resume |> Some |> toSource
+    let inputSource = Command.Resume |> Some |> Fixtures.Common.Mock.CommandSource
     let expected =
         input
         |> Gamestate.InPlay 
@@ -458,7 +458,7 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
 [<Test>]
 let ``Run.It returns Main Menu with no world when given Resume command and there is no world.`` () =
     let input = None
-    let inputSource = Command.Resume |> Some |> toSource
+    let inputSource = Command.Resume |> Some |> Fixtures.Common.Mock.CommandSource
     let expected = 
         ("Invalid command.", 
             input 
