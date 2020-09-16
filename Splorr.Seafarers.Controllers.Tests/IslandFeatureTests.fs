@@ -172,11 +172,18 @@ let ``Run.It should return Dock state when dark alley exists but the player does
         None
     let avatarGamblingHandSink (_) (_) =
         Assert.Fail("avatarGamblingHandSink")
+    let avatarIslandFeatureSink (f:AvatarIslandFeature option,_) =
+        match f with
+        | Some feature ->
+            Assert.AreEqual(IslandFeatureIdentifier.Dock, feature.featureId)
+            Assert.AreEqual(givenLocation, feature.location)
+        | _ ->
+            Assert.Fail("avatarIslandFeatureSink")
     let context = 
         TestIslandFeatureRunContext
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
-            Fixtures.Common.Stub.AvatarIslandFeatureSink,
+            avatarIslandFeatureSink,
             avatarMessageSinkExpected ["Come back when you've got more money!"],
             avatarMessageSourceDummy,
             islandSingleFeatureSource,
@@ -213,11 +220,19 @@ let ``Run.When in the dark alley, the leave command will take the player back to
         None
     let avatarGamblingHandSink (_) (_) =
         Assert.Fail("avatarGamblingHandSink")
+    let avatarIslandFeatureSink (f:AvatarIslandFeature option,_) =
+        match f with
+        | Some feature ->
+            Assert.AreEqual(IslandFeatureIdentifier.Dock, feature.featureId)
+            Assert.AreEqual(givenLocation, feature.location)
+        | _ ->
+            Assert.Fail("avatarIslandFeatureSink")
+
     let context = 
         TestIslandFeatureRunContext
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
-            Fixtures.Common.Stub.AvatarIslandFeatureSink,
+            avatarIslandFeatureSink,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSource,
