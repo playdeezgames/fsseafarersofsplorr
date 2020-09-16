@@ -30,7 +30,7 @@ let internal islandFeatureGeneratorSourceStub () = Map.empty
 let internal islandSingleFeatureSinkStub (_) (_) =
     raise (NotImplementedException "islandSingleFeatureSinkStub")
 
-let internal world = avatarId
+let internal world = Fixtures.Common.Dummy.AvatarId
 
 let internal deadWorld =
     world

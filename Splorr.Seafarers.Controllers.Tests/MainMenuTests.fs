@@ -86,7 +86,7 @@ type TestWorldCreateContext
         member _.shipmateRationItemSink          : ShipmateRationItemSink = shipmateRationItemSink
 
 let private world = 
-    avatarId
+    Fixtures.Common.Dummy.AvatarId
 
 [<Test>]
 let ``Run.It returns Confirm Quit when given Quit command and there is no world.`` () =

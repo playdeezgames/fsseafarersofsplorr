@@ -366,6 +366,9 @@ type SplorrContext
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
         member _.random : Random = random
 
+    interface AvatarFoldGamblingHand with
+        member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
+
     interface IslandFeatureRunDarkAlleyContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource

@@ -148,10 +148,12 @@ type AvatarGetGamblingHandContext =
 type AvatarDealGamblingHandContext =
     abstract member avatarGamblingHandSink : AvatarGamblingHandSink
     abstract member random : Random
+
+type AvatarFoldGamblingHand =
+    abstract member avatarGamblingHandSink : AvatarGamblingHandSink
 (*
-interface AvatarDealGamblingHandContext with
+interface AvatarFoldGamblingHand with
     member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
-    member _.random : Random = random
 *)
 
 type AvatarEnterIslandFeatureContext =
@@ -606,6 +608,12 @@ module Avatar =
             |> context.avatarGamblingHandSink avatarId
         | _ ->
             raise (NotImplementedException "DealGamblingHand did not have at least three cards")
+
+    let FoldGamblingHand
+            (context  : AvatarFoldGamblingHand)
+            (avatarId : string)
+            : unit =
+        context.avatarGamblingHandSink avatarId None
 
     let EnterIslandFeature
             (context  : AvatarEnterIslandFeatureContext)

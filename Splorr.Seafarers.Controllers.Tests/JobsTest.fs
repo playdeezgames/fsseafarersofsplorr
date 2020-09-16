@@ -5,7 +5,7 @@ open Splorr.Seafarers.Controllers
 open CommonTestFixtures
 
 let private dockWorld = 
-    avatarId
+    Fixtures.Common.Dummy.AvatarId
 
 let private dockLocation = (0.0, 0.0)
 

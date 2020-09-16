@@ -6,8 +6,8 @@ open Splorr.Seafarers.Services
 open Tarot
 
 type IslandFeatureRunDarkAlleyGamblingHand =
-    interface
-    end
+    inherit AvatarFoldGamblingHand
+
 
 type IslandFeatureRunDarkAlleyContext =
     inherit IslandFeatureRunDarkAlleyGamblingHand
@@ -51,7 +51,13 @@ module IslandFeature =
         |> messageSink
         //get input
         match commandSource() with
-        
+        | Some (Command.Bet None) ->
+            avatarId
+            |> Avatar.FoldGamblingHand
+                context 
+            avatarId
+            |> Gamestate.InPlay
+            |> Some    
         | _ ->
             ("Maybe try 'help'?",
                         avatarId

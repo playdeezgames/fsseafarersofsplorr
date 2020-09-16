@@ -26,8 +26,6 @@ let internal toSource
 let internal createConnection () : SQLiteConnection =
     new SQLiteConnection(connectionString)
 
-let internal avatarId : string = ""
-
 let private statisticDescriptors =
     [
         (ShipmateStatisticIdentifier.Satiety,{
