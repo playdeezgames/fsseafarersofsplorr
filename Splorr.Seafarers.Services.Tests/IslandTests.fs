@@ -452,3 +452,28 @@ let ``Create.It sets up statistics for an island.`` () =
         :> IslandCreateContext
     Island.Create context givenLocation
     Assert.AreEqual(1UL, statisticCounter)
+
+type TestIslandGetStatisticContext
+        (islandSingleStatisticSource) =
+    interface Island.GetStatisticContext with
+        member this.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
+
+[<Test>]
+let ``Get Statistic.It returns None when the statistic does not exist or the island does not exist.`` () =
+    let givenLocation = Fixtures.Common.Dummy.IslandLocation
+    let mutable called = false
+    let islandSingleStatisticSource (_) (_) =
+        called <- true
+        None
+    let context = 
+        TestIslandGetStatisticContext
+            (islandSingleStatisticSource) :> Island.GetStatisticContext
+    let expected : Statistic option = None
+    let actual =
+        Island.GetStatistic
+            context
+            IslandStatisticIdentifier.CareenDistance
+            givenLocation
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)
+

@@ -87,7 +87,23 @@ let ``AddMetric.It adds to a metric value when there is a previously existing me
         inputMetric 
         inputValue
 
+type TestAvatarGetIslandFeatureContext(avatarIslandFeatureSource) =
+    interface Avatar.GetIslandFeatureContext with
+        member this.avatarIslandFeatureSource: AvatarIslandFeatureSource = avatarIslandFeatureSource
 
+[<Test>]
+let ``GetIslandFeature.It retrieves none when the avatar is at sea.`` () =
+    let givenAvatarId = Fixtures.Common.Dummy.AvatarId
+    let mutable called = false
+    let avatarIslandFeatureSource (_) =
+        called <- true
+        None
+    let context = TestAvatarGetIslandFeatureContext(avatarIslandFeatureSource) :> Avatar.GetIslandFeatureContext
+    let expected : AvatarIslandFeature option = None
+    let actual = Avatar.GetIslandFeature context givenAvatarId
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)
+    
 
 
     

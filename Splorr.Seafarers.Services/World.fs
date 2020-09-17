@@ -11,8 +11,6 @@ type IslandLocationByNameSource = string -> Location option
 type IslandSource = unit -> Location list
 type IslandFeatureGeneratorSource = unit -> Map<IslandFeatureIdentifier, IslandFeatureGenerator>
 type IslandSingleFeatureSink = Location -> IslandFeatureIdentifier -> unit
-type AvatarIslandFeatureSource = string -> AvatarIslandFeature option
-
 
 type WorldGenerateIslandNameContext =
     abstract member random : Random
@@ -798,9 +796,44 @@ module World =
 
     let CanPlaceBet
             (context : CanPlaceBetContext)
-            (avatarId : string)
             (amount : float)
+            (avatarId : string)
             : bool =
         (Avatar.GetMoney context avatarId) >= amount
-            
+     
+    type ResolveHandContext =
+        inherit AvatarGetPrimaryStatisticContext
+        inherit Island.GetStatisticContext
+        inherit Avatar.GetIslandFeatureContext
+        inherit AvatarGetGamblingHandContext
+        inherit CanPlaceBetContext
+        inherit WorldAddMessagesContext
+
+    let ResolveHand
+            (context: ResolveHandContext)
+            (amount : float)
+            (avatarId: string)
+            : unit =
+        match Avatar.GetIslandFeature context avatarId with
+        | Some feature when feature.featureId = IslandFeatureIdentifier.DarkAlley ->
+            match Avatar.GetGamblingHand context avatarId with
+            | Some (first, second, third) ->
+                if CanPlaceBet context amount avatarId then
+                    let minimumStakes =
+                        Island.GetStatistic 
+                            context 
+                            IslandStatisticIdentifier.MinimumGamblingStakes 
+                            feature.location
+                        |> Option.get
+                        |> Statistic.GetCurrentValue
+                    if amount >= minimumStakes then
+                        ()
+                    else
+                        AddMessages context [sprintf "You have to be at least %.2f." minimumStakes] avatarId
+                else
+                    AddMessages context ["You don't have enough money."] avatarId
+            | _ ->
+                ()
+        | _ ->
+            ()
             

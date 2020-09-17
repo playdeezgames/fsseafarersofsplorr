@@ -232,3 +232,12 @@ module Island =
                 let totalQuantity = quantityContained * (quantityPurchased |> float) * commodities.[commodity].PurchaseFactor
                 ChangeMarketSupply context.islandSingleMarketSource context.islandSingleMarketSink commodity totalQuantity location)
 
+    type GetStatisticContext =
+        abstract member islandSingleStatisticSource : IslandSingleStatisticSource 
+
+    let GetStatistic
+            (context    : GetStatisticContext)
+            (identifier : IslandStatisticIdentifier)
+            (location   : Location)
+            : Statistic option =
+        context.islandSingleStatisticSource location identifier

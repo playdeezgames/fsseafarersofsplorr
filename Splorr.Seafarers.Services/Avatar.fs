@@ -14,6 +14,7 @@ type AvatarSingleMetricSink = string -> Metric * uint64 -> unit
 type AvatarJobSource = string -> Job option
 type AvatarJobSink = string -> Job option -> unit
 type AvatarIslandFeatureSink = AvatarIslandFeature option * string -> unit
+type AvatarIslandFeatureSource = string -> AvatarIslandFeature option
 type AvatarGamblingHandSource = string -> AvatarGamblingHand option
 type AvatarGamblingHandSink = string -> AvatarGamblingHand option -> unit
 
@@ -625,3 +626,12 @@ module Avatar =
             context.avatarIslandFeatureSink 
                 ({featureId = feature; location = location} |> Some, 
                     avatarId)
+
+    type GetIslandFeatureContext =
+        abstract member avatarIslandFeatureSource : AvatarIslandFeatureSource
+
+    let GetIslandFeature
+            (context : GetIslandFeatureContext)
+            (avatarId: string)
+            : AvatarIslandFeature option =
+        context.avatarIslandFeatureSource avatarId

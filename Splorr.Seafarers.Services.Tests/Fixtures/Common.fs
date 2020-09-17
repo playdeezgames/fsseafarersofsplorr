@@ -4,11 +4,14 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open System
 open NUnit.Framework
+open Tarot
 
 module internal Dummy =
     let internal AvatarId = "avatar"
     let internal BogusAvatarId = "bogus"
     let internal Random = Random()
+    let internal IslandLocation = (0.0, 0.0)
+    let internal GamblingHand = (Minor (Wands, Rank.Ace), Minor (Wands, Rank.Deuce), Minor (Wands, Rank.Three))
 
 module internal Stub =
     let internal AdverbSource()          : string list = [ "woefully" ]
@@ -122,6 +125,12 @@ module internal Mock =
             ()
         | None ->
             Assert.Fail(message |> sprintf "Received an invalid message - `%s`.")
+    let internal AvatarIslandFeatureSource (identifier: IslandFeatureIdentifier, location: Location) (_:string) =
+        {
+            featureId = identifier
+            location = location
+        }
+        |> Some
     
     
     
