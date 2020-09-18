@@ -8,7 +8,7 @@ type TestAvatarEarnMoneyContext(shipmateSingleStatisticSink, shipmateSingleStati
     interface AvatarEarnMoneyContext
     interface AvatarGetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface ShipmateTransformStatisticContext with
+    interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
@@ -16,7 +16,7 @@ type TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStat
     interface AvatarSpendMoneyContext
     interface AvatarGetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface ShipmateTransformStatisticContext with
+    interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 

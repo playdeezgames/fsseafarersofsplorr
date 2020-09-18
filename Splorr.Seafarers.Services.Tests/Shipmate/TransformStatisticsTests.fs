@@ -5,7 +5,7 @@ open NUnit.Framework
 open Splorr.Seafarers.Models
 
 type TestShipmateTransformStatisticContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
-    interface ShipmateTransformStatisticContext with
+    interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
@@ -25,7 +25,7 @@ let ``TransformStatistic.It replaces the statistic when that statistic is origin
             Assert.AreEqual(inputHealth, statistic.Value)
         | _ ->
             raise (System.NotImplementedException "Kaboom shipmateSingleStatisticSink")
-    let context = TestShipmateTransformStatisticContext (shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> ShipmateTransformStatisticContext
+    let context = TestShipmateTransformStatisticContext (shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> Shipmate.TransformStatisticContext
     Shipmate.TransformStatistic 
         context
         ShipmateStatisticIdentifier.Health 
@@ -40,7 +40,7 @@ let ``TransformStatistic.It does nothing when the given statistic is absent from
         None
     let shipmateSingleStatisticSink (_) (_) (_) =
         Assert.Fail("Dont call me.")
-    let context = TestShipmateTransformStatisticContext (shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> ShipmateTransformStatisticContext
+    let context = TestShipmateTransformStatisticContext (shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> Shipmate.TransformStatisticContext
     Shipmate.TransformStatistic 
         context
         ShipmateStatisticIdentifier.Health 

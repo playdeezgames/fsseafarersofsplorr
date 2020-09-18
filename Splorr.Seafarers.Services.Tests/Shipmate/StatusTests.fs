@@ -5,7 +5,7 @@ open NUnit.Framework
 open Splorr.Seafarers.Models
 
 type TestShipmateGetStatusContext(shipmateSingleStatisticSource) =
-    interface ShipmateGetStatusContext with
+    interface Shipmate.GetStatusContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 [<Test>]//TODO - bad name
@@ -21,7 +21,7 @@ let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a ALIVE when given an avatar with abo
             None
     let inputAvatarId = Fixtures.Common.Dummy.AvatarId
     let inputShipmateId = Primary
-    let context = TestShipmateGetStatusContext(shipmateSingleStatisticSource) :> ShipmateGetStatusContext
+    let context = TestShipmateGetStatusContext(shipmateSingleStatisticSource) :> Shipmate.GetStatusContext
     match Shipmate.GetStatus 
         context
         inputAvatarId 
@@ -42,7 +42,7 @@ let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a ZERO_HEALTH when given an avatar at
             None
     let inputAvatarId = Fixtures.Common.Dummy.AvatarId
     let inputShipmateId = Primary
-    let context = TestShipmateGetStatusContext(shipmateSingleStatisticSource) :> ShipmateGetStatusContext
+    let context = TestShipmateGetStatusContext(shipmateSingleStatisticSource) :> Shipmate.GetStatusContext
     match Shipmate.GetStatus 
         context
         inputAvatarId 
@@ -63,7 +63,7 @@ let ``ALIVE/ZERO_HEALTH/OLD_AGE.It returns a OLD_AGE when given an avatar at max
             None
     let inputAvatarId = Fixtures.Common.Dummy.AvatarId
     let inputShipmateId = Primary
-    let context = TestShipmateGetStatusContext(shipmateSingleStatisticSource) :> ShipmateGetStatusContext
+    let context = TestShipmateGetStatusContext(shipmateSingleStatisticSource) :> Shipmate.GetStatusContext
     match Shipmate.GetStatus 
         context
         inputAvatarId 

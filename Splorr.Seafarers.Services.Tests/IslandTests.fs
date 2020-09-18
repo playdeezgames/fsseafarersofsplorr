@@ -9,37 +9,37 @@ open System
 type TestIslandGetDisplayNameContext
         (avatarIslandSingleMetricSource, 
         islandSingleNameSource)=
-    interface IslandGetDisplayNameContext with
+    interface Island.GetDisplayNameContext with
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.islandSingleNameSource         : IslandSingleNameSource = islandSingleNameSource
 
 type TestIslandAddVisitContext (avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) =
-    interface IslandAddVisitContext with
+    interface Island.AddVisitContext with
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
 
 type TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) =
-    interface IslandMakeKnownContext with
+    interface Island.MakeKnownContext with
         member this.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
 
 type TestIslandGenerateCommoditiesContext(commoditySource, islandMarketSink, islandMarketSource) =
-    interface IslandGenerateCommoditiesContext with
+    interface Island.GenerateCommoditiesContext with
         member _.commoditySource: CommoditySource = commoditySource
         member _.islandMarketSink: IslandMarketSink = islandMarketSink
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
         member _.random : Random = random
 
 type TestIslandGenerateItemsContext(islandItemSink, islandItemSource, itemSource, random) =
-    interface IslandGenerateItemsContext with
+    interface Island.GenerateItemsContext with
         member _.islandItemSink: IslandItemSink = islandItemSink
         member _.islandItemSource: IslandItemSource = islandItemSource
         member _.itemSource: ItemSource = itemSource
         member _.random: Random = random
 
 type TestIslandUpdateMarketForItemSaleContext(commoditySource, islandSingleMarketSink, islandSingleMarketSource) =
-    interface IslandUpdateMarketForItemContext with
+    interface Island.UpdateMarketForItemContext with
         member _.commoditySource: CommoditySource = commoditySource
         member _.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
         member _.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
@@ -56,7 +56,7 @@ let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =
             None
     let islandSingleNameSource (_) =
         "island name" |> Some
-    let context = TestIslandGetDisplayNameContext(avatarIslandSingleMetricSource, islandSingleNameSource) :> IslandGetDisplayNameContext
+    let context = TestIslandGetDisplayNameContext(avatarIslandSingleMetricSource, islandSingleNameSource) :> Island.GetDisplayNameContext
     let actual = 
         inputLocation
         |> Island.GetDisplayName 
@@ -81,7 +81,7 @@ let ``GetDisplayName.It returns the island's name when there is a visit count.``
             |> Some
         else
             None
-    let context = TestIslandGetDisplayNameContext(avatarIslandSingleMetricSource, islandSingleNameSource) :> IslandGetDisplayNameContext
+    let context = TestIslandGetDisplayNameContext(avatarIslandSingleMetricSource, islandSingleNameSource) :> Island.GetDisplayNameContext
     let actual = 
         Island.GetDisplayName 
             context
@@ -110,7 +110,7 @@ let ``AddVisit.It increases visit count to one and sets last visit to given turn
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
     let epochSecondsSource = (fun () -> turn)
-    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> IslandAddVisitContext
+    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> Island.AddVisitContext
     Island.AddVisit 
         context
         Fixtures.Common.Dummy.AvatarId
@@ -139,7 +139,7 @@ let ``AddVisit.It increases visit count by one and sets last visit to given turn
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
     let epochSecondsSource = (fun () -> turn)
-    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> IslandAddVisitContext
+    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> Island.AddVisitContext
     Island.AddVisit 
         context
         Fixtures.Common.Dummy.AvatarId
@@ -169,7 +169,7 @@ let ``AddVisit.It increases visit count by one and sets last visit to given turn
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
     let epochSecondsSource = (fun () -> turn)
-    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> IslandAddVisitContext
+    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> Island.AddVisitContext
     Island.AddVisit 
         context
         Fixtures.Common.Dummy.AvatarId
@@ -193,7 +193,7 @@ let ``AddVisit.It does not update visit count when given turn was prior or equal
     let avatarIslandSingleMetricSink(_) (_) (_) (_)= 
         Assert.Fail("avatarIslandSingleMetricSink")
     let epochSecondsSource = (fun () -> turn)
-    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> IslandAddVisitContext
+    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> Island.AddVisitContext
     Island.AddVisit 
         context
         Fixtures.Common.Dummy.AvatarId
@@ -204,7 +204,7 @@ type TestIslandJobsGenerationContext
         islandJobSource            : IslandJobSource,
         termSources                : TermSources,
         worldSingleStatisticSource : WorldSingleStatisticSource) =
-    interface IslandGenerateJobsContext with
+    interface Island.GenerateJobsContext with
         member _.islandJobSink   : IslandJobSink = islandJobSink
         member _.islandJobSource : IslandJobSource = islandJobSource
 
@@ -224,13 +224,13 @@ let ``GenerateJob.It generates a job when no job is present on the island.`` () 
         sinkCalled<-true
     let islandJobSource (_) =
         []
-    let context : IslandGenerateJobsContext =
+    let context : Island.GenerateJobsContext =
         TestIslandJobsGenerationContext
             (islandJobSink,
             islandJobSource,
             Fixtures.Common.Stub.TermSources,
             Fixtures.Common.Stub.WorldSingleStatisticSource) 
-        :> IslandGenerateJobsContext
+        :> Island.GenerateJobsContext
     inputLocation
     |> Island.GenerateJobs 
         context
@@ -250,13 +250,13 @@ let ``GenerateJob.It does nothing when no job is present on the island and no po
                 Destination=(0.0, 0.0)
             }
         ]
-    let context : IslandGenerateJobsContext =
+    let context : Island.GenerateJobsContext =
         TestIslandJobsGenerationContext
             (islandJobSink,
             islandJobSource,
             Fixtures.Common.Stub.TermSources,
             Fixtures.Common.Stub.WorldSingleStatisticSource) 
-        :> IslandGenerateJobsContext
+        :> Island.GenerateJobsContext
     inputLocation
     |> Island.GenerateJobs 
         context 
@@ -274,7 +274,7 @@ let ``MakeKnown.It does nothing when the given island is already known.`` () =
             None
     let avatarIslandSingleMetricSink(_) (_) (_) (_)= 
         Assert.Fail("avatarIslandSingleMetricSink")
-    let context = TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> IslandMakeKnownContext
+    let context = TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> Island.MakeKnownContext
     Island.MakeKnown 
         context
         Fixtures.Common.Dummy.AvatarId
@@ -296,7 +296,7 @@ let ``MakeKnown.It mutates the island's visit count to Some 0 when the given isl
             Assert.AreEqual(0UL, value)
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
-    let context = TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> IslandMakeKnownContext
+    let context = TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> Island.MakeKnownContext
     Island.MakeKnown 
         context
         Fixtures.Common.Dummy.AvatarId
@@ -310,7 +310,7 @@ let ``GenerateCommodities.It does nothing when commodities already exists for th
         |> Map.add 1UL { Supply=1.0; Demand=1.0 }
     let islandMarketSink (_) (_) =
         Assert.Fail("This should not be called.")
-    let context = TestIslandGenerateCommoditiesContext(commoditySource, islandMarketSink, islandMarketSource) :> IslandGenerateCommoditiesContext
+    let context = TestIslandGenerateCommoditiesContext(commoditySource, islandMarketSink, islandMarketSource) :> Island.GenerateCommoditiesContext
     input
     |> Island.GenerateCommodities 
         context
@@ -322,7 +322,7 @@ let ``GenerateCommodities.It generates commodities when the given island has no 
         Map.empty
     let islandMarketSink (_) (markets:Map<uint64, Market>) =
         Assert.AreEqual(commodities.Count, markets.Count)
-    let context = TestIslandGenerateCommoditiesContext(commoditySource, islandMarketSink, islandMarketSource) :> IslandGenerateCommoditiesContext
+    let context = TestIslandGenerateCommoditiesContext(commoditySource, islandMarketSink, islandMarketSource) :> Island.GenerateCommoditiesContext
     input
     |> Island.GenerateCommodities 
         context
@@ -340,7 +340,7 @@ let ``GenerateItems.It has no effect when the given island already has items in 
                 islandItemSource ,
                 itemSource,
                 random 
-            ) :> IslandGenerateItemsContext
+            ) :> Island.GenerateItemsContext
     input
     |> Island.GenerateItems 
         context
@@ -360,7 +360,7 @@ let ``GenerateItems.It generates the shop when the given island has no items in 
                 islandItemSource ,
                 itemSource,
                 random 
-            ) :> IslandGenerateItemsContext
+            ) :> Island.GenerateItemsContext
     input
     |> Island.GenerateItems 
         context
@@ -384,7 +384,7 @@ let ``UpdateMarketForItemSale.It updates market commodity demands based on the g
             (commoditySource, 
             islandSingleMarketSink, 
             islandSingleMarketSource) 
-        :> IslandUpdateMarketForItemContext
+        :> Island.UpdateMarketForItemContext
     input
     |> Island.UpdateMarketForItemSale 
         context
@@ -415,7 +415,7 @@ let ``UpdateMarketForItemPurchase.It updates market commodity supply based on th
             (commoditySource, 
             islandMarketSink, 
             islandSingleMarketSource) 
-        :> IslandUpdateMarketForItemContext
+        :> Island.UpdateMarketForItemContext
     input
     |> Island.UpdateMarketForItemPurchase 
         context
@@ -425,7 +425,7 @@ let ``UpdateMarketForItemPurchase.It updates market commodity supply based on th
 type TestIslandCreateContext
         (islandSingleStatisticSink : IslandSingleStatisticSink,
         islandStatisticTemplateSource : IslandStatisticTemplateSource)=
-    interface IslandCreateContext with
+    interface Island.CreateContext with
         member this.islandStatisticTemplateSource: IslandStatisticTemplateSource = islandStatisticTemplateSource
         member _.islandSingleStatisticSink : IslandSingleStatisticSink = islandSingleStatisticSink
 
@@ -446,11 +446,11 @@ let ``Create.It sets up statistics for an island.`` () =
                 MaximumValue = 100.0
                 CurrentValue = 50.0
             }
-    let context : IslandCreateContext =
+    let context : Island.CreateContext =
         TestIslandCreateContext
             (islandSingleStatisticSink,
             islandStatisticTemplateSource) 
-        :> IslandCreateContext
+        :> Island.CreateContext
     Island.Create context givenLocation
     Assert.AreEqual(1UL, statisticCounter)
 

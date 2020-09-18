@@ -44,7 +44,7 @@ type WorldPopulateIslandsContext =
     abstract member islandSource                 : IslandSource
 
 type WorldGenerateIslandsContext =
-    inherit IslandCreateContext
+    inherit Island.CreateContext
     inherit WorldPopulateIslandsContext
     inherit WorldGenerateIslandNamesContext
     inherit WorldNameIslandsContext
@@ -76,7 +76,7 @@ type WorldCleanHullContext =
     inherit AvatarCleanHullContext
 
 type WorldIsAvatarAliveContext = 
-    inherit ShipmateGetStatusContext
+    inherit Shipmate.GetStatusContext
 
 type WorldGetNearbyLocationsContext =
     abstract member islandSource : IslandSource
@@ -86,10 +86,10 @@ type WorldDoJobCompletionContext =
     inherit WorldAddMessagesContext
 
 type WorldDockContext =
-    inherit IslandAddVisitContext
-    inherit IslandGenerateJobsContext
-    inherit IslandGenerateCommoditiesContext
-    inherit IslandGenerateItemsContext
+    inherit Island.AddVisitContext
+    inherit Island.GenerateJobsContext
+    inherit Island.GenerateCommoditiesContext
+    inherit Island.GenerateItemsContext
     inherit WorldDoJobCompletionContext
     inherit WorldAddMessagesContext
     abstract member avatarIslandFeatureSink        : AvatarIslandFeatureSink
@@ -111,7 +111,7 @@ type WorldDockContext =
     abstract member shipmateSingleStatisticSource  : ShipmateSingleStatisticSource
 
 type WorldAcceptJobContext =
-    inherit IslandMakeKnownContext
+    inherit Island.MakeKnownContext
     inherit AvatarAddMetricContext
     inherit WorldAddMessagesContext
     abstract member avatarJobSink         : AvatarJobSink
@@ -122,7 +122,7 @@ type WorldAcceptJobContext =
 
 type WorldBuyItemsContext =
     inherit Item.DeterminePriceContext
-    inherit IslandUpdateMarketForItemContext
+    inherit Island.UpdateMarketForItemContext
     inherit AvatarSpendMoneyContext
     inherit AvatarAddInventoryContext
     inherit AvatarGetUsedTonnageContext
@@ -133,7 +133,7 @@ type WorldBuyItemsContext =
 
 type WorldSellItemsContext =
     inherit Item.DeterminePriceContext
-    inherit IslandUpdateMarketForItemContext
+    inherit Island.UpdateMarketForItemContext
     inherit AvatarEarnMoneyContext
     inherit AvatarGetItemCountContext
     inherit AvatarRemoveInventoryContext

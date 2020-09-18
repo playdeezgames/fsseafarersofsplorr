@@ -6,7 +6,7 @@ open Splorr.Seafarers.Persistence
 
 type AtSeaGetVisibleIslandsContext =
     inherit AvatarGetPositionContext
-    inherit IslandGetDisplayNameContext
+    inherit Island.GetDisplayNameContext
     inherit WorldGetNearbyLocationsContext
 
 type AtSeaUpdateDisplayContext =

@@ -22,53 +22,16 @@ type IslandStatisticTemplateSource = unit -> Map<IslandStatisticIdentifier, Stat
 type ItemSource = unit -> Map<uint64, ItemDescriptor>
 type IslandSingleFeatureSource = Location -> IslandFeatureIdentifier -> bool
 
-
-
-type IslandGenerateJobsContext =
-    inherit JobCreateContext
-    abstract member islandJobSink              : IslandJobSink
-    abstract member islandJobSource            : IslandJobSource
-
-type IslandCreateContext = 
-    abstract member islandSingleStatisticSink     : IslandSingleStatisticSink
-    abstract member islandStatisticTemplateSource : IslandStatisticTemplateSource
-
-type IslandGetDisplayNameContext =
-    abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
-    abstract member islandSingleNameSource         : IslandSingleNameSource
-
-type IslandAddVisitContext =
-    abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
-    abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
-    abstract member epochSecondsSource : EpochSecondsSource
-
-type IslandMakeKnownContext = 
-    abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
-    abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
-
-type IslandGenerateCommoditiesContext =
-    abstract member commoditySource    : CommoditySource
-    abstract member islandMarketSource : IslandMarketSource
-    abstract member islandMarketSink   : IslandMarketSink
-    abstract member random             : Random
-
-type IslandGenerateItemsContext =
-    abstract member islandItemSink   : IslandItemSink
-    abstract member islandItemSource : IslandItemSource
-    abstract member itemSource       : ItemSource
-    abstract member random           : Random
-
-type IslandUpdateMarketForItemContext =
-    abstract member commoditySource          : CommoditySource
-    abstract member islandSingleMarketSink   : IslandSingleMarketSink
-    abstract member islandSingleMarketSource : IslandSingleMarketSource
-
-
 module Island =
+    type CreateContext = 
+        inherit OperatingContext
+        abstract member islandSingleStatisticSink     : IslandSingleStatisticSink
+        abstract member islandStatisticTemplateSource : IslandStatisticTemplateSource
     let  Create
-            (context  : IslandCreateContext)
+            (context  : OperatingContext)
             (location : Location)
             : unit =
+        let context = context :?> CreateContext
         context.islandStatisticTemplateSource()
         |> Map.map
             (fun _ template ->
@@ -78,11 +41,16 @@ module Island =
                 (identifier, statistic |> Some)
                 |> context.islandSingleStatisticSink location)
 
+    type GetDisplayNameContext =
+        inherit OperatingContext
+        abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
+        abstract member islandSingleNameSource         : IslandSingleNameSource
     let GetDisplayName 
-            (context  : IslandGetDisplayNameContext)
+            (context  : OperatingContext)
             (avatarId : string) 
             (location : Location)
             : string =
+        let context = context :?> GetDisplayNameContext
         let visitCount = context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
         let islandName = context.islandSingleNameSource location
         match visitCount, islandName with
@@ -93,11 +61,17 @@ module Island =
         | _ ->
             raise (NotImplementedException "This island does not exist!")
     
+    type AddVisitContext =
+        inherit OperatingContext
+        abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
+        abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
+        abstract member epochSecondsSource : EpochSecondsSource
     let AddVisit 
-            (context      : IslandAddVisitContext)
+            (context      : OperatingContext)
             (avatarId     : string) 
             (location     : Location)
             : unit =
+        let context = context :?> AddVisitContext
         let metricSource = context.avatarIslandSingleMetricSource avatarId location
         let metricSink = context.avatarIslandSingleMetricSink avatarId location
         let sinkMetrics(visitCount,lastVisit) =
@@ -116,22 +90,32 @@ module Island =
         | _ -> 
             ()
 
+    type GenerateJobsContext =
+        inherit OperatingContext
+        abstract member islandJobSink              : IslandJobSink
+        abstract member islandJobSource            : IslandJobSource
     let GenerateJobs 
-            (context      : IslandGenerateJobsContext)
+            (context      : OperatingContext)
             (destinations : Set<Location>) 
             (location     : Location)
             : unit =
+        let context = context :?> GenerateJobsContext
         if (context.islandJobSource location).IsEmpty && not destinations.IsEmpty then
             Job.Create 
                 context 
                 destinations
             |> context.islandJobSink location
-
+    
+    type MakeKnownContext = 
+        inherit OperatingContext
+        abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
+        abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
     let MakeKnown
-            (context  : IslandMakeKnownContext)
+            (context  : OperatingContext)
             (avatarId : string) 
             (location : Location)
             : unit =
+        let context = context :?> MakeKnownContext
         let visitCount = 
             context.avatarIslandSingleMetricSource 
                 avatarId 
@@ -149,10 +133,17 @@ module Island =
             : float = //TODO: move this function out!
         (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + 3.0
 
+    type GenerateCommoditiesContext =
+        inherit OperatingContext
+        abstract member commoditySource    : CommoditySource
+        abstract member islandMarketSource : IslandMarketSource
+        abstract member islandMarketSink   : IslandMarketSink
+        abstract member random             : Random
     let GenerateCommodities 
-            (context  : IslandGenerateCommoditiesContext)
+            (context  : OperatingContext)
             (location : Location) 
             : unit =
+        let context = context :?> GenerateCommoditiesContext
         if (context.islandMarketSource location).IsEmpty then
             (Map.empty, context.commoditySource())
             ||> Map.fold
@@ -166,10 +157,17 @@ module Island =
                         })
             |> context.islandMarketSink location
 
+    type GenerateItemsContext =
+        inherit OperatingContext
+        abstract member islandItemSink   : IslandItemSink
+        abstract member islandItemSource : IslandItemSource
+        abstract member itemSource       : ItemSource
+        abstract member random           : Random
     let GenerateItems 
-            (context  : IslandGenerateItemsContext)
+            (context  : OperatingContext)
             (location : Location) 
             : unit =
+        let context = context :?> GenerateItemsContext
         if (context.islandItemSource location).IsEmpty then
             (Set.empty, context.itemSource())
             ||> Map.fold 
@@ -206,12 +204,18 @@ module Island =
         |> Option.map (fun m -> Market.ChangeSupply (change, m))
         |> Option.iter (fun market -> islandSingleMarketSink location (commodity, market))
 
+    type UpdateMarketForItemContext =
+        inherit OperatingContext
+        abstract member commoditySource          : CommoditySource
+        abstract member islandSingleMarketSink   : IslandSingleMarketSink
+        abstract member islandSingleMarketSource : IslandSingleMarketSource
     let UpdateMarketForItemSale 
-            (context      : IslandUpdateMarketForItemContext)
+            (context      : OperatingContext)
             (descriptor   : ItemDescriptor) 
             (quantitySold : uint64) 
             (location     : Location) 
             : unit =
+        let context = context :?> UpdateMarketForItemContext
         let commodities = context.commoditySource()
         descriptor.Commodities
         |> Map.iter 
@@ -220,11 +224,12 @@ module Island =
                 ChangeMarketDemand context.islandSingleMarketSource context.islandSingleMarketSink commodity totalQuantity location)
 
     let UpdateMarketForItemPurchase 
-            (context      : IslandUpdateMarketForItemContext)
+            (context      : OperatingContext)
             (descriptor               : ItemDescriptor) 
             (quantityPurchased        : uint64) 
             (location                 : Location) 
             : unit =
+        let context = context :?> UpdateMarketForItemContext
         let commodities = context.commoditySource()
         descriptor.Commodities
         |> Map.iter 

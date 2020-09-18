@@ -19,8 +19,8 @@ type AvatarGamblingHandSource = string -> AvatarGamblingHand option
 type AvatarGamblingHandSink = string -> AvatarGamblingHand option -> unit
 
 type AvatarCreateContext =
-    inherit VesselCreateContext
-    inherit ShipmateCreateContext
+    inherit Vessel.CreateContext
+    inherit Shipmate.CreateContext
     abstract member avatarJobSink : AvatarJobSink
 
 type AvatarAddMetricContext =
@@ -29,14 +29,14 @@ type AvatarAddMetricContext =
 
 
 type AvatarEatContext =
-    inherit ShipmateEatContext
+    inherit Shipmate.EatContext
     inherit AvatarAddMetricContext
     abstract member avatarInventorySink           : AvatarInventorySink
     abstract member avatarInventorySource         : AvatarInventorySource
     abstract member avatarShipmateSource          : AvatarShipmateSource
 
 type AvatarSetPrimaryStatisticContext = 
-    inherit ShipmateTransformStatisticContext
+    inherit Shipmate.TransformStatisticContext
 
 type AvatarSetMoneyContext =
     inherit AvatarSetPrimaryStatisticContext
@@ -104,7 +104,7 @@ type AvatarGetUsedTonnageContext =
 
 type AvatarCompleteJobContext =
     inherit AvatarSetReputationContext
-    inherit ShipmateTransformStatisticContext
+    inherit Shipmate.TransformStatisticContext
     inherit AvatarGetPrimaryStatisticContext
     inherit AvatarAddMetricContext
     abstract member avatarJobSink : AvatarJobSink
@@ -127,8 +127,8 @@ type AvatarTransformShipmatesContext =
     abstract avatarShipmateSource : AvatarShipmateSource
 
 type AvatarMoveContext =
-    inherit VesselBefoulContext
-    inherit ShipmateTransformStatisticContext
+    inherit Vessel.BefoulContext
+    inherit Shipmate.TransformStatisticContext
     inherit AvatarEatContext
     inherit AvatarGetEffectiveSpeedContext
     inherit AvatarSetPositionContext
@@ -137,8 +137,8 @@ type AvatarMoveContext =
     abstract member vesselSingleStatisticSource   : VesselSingleStatisticSource
 
 type AvatarCleanHullContext =
-    inherit VesselTransformFoulingContext
-    inherit ShipmateTransformStatisticContext
+    inherit Vessel.TransformFoulingContext
+    inherit Shipmate.TransformStatisticContext
     inherit AvatarIncrementMetricContext
     inherit AvatarTransformShipmatesContext
     abstract member avatarShipmateSource          : AvatarShipmateSource

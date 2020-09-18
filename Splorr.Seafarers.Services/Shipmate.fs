@@ -17,31 +17,19 @@ type ShipmateSingleStatisticSink = string -> ShipmateIdentifier -> (ShipmateStat
 type ShipmateSingleStatisticSource = string -> ShipmateIdentifier -> ShipmateStatisticIdentifier -> Statistic option
 type AvatarInventory = Map<uint64,uint64>
 
-type ShipmateCreateContext =
-    abstract member shipmateStatisticTemplateSource   : ShipmateStatisticTemplateSource
-    abstract member shipmateSingleStatisticSink       : ShipmateSingleStatisticSink
-    abstract member rationItemSource                  : RationItemSource
-    abstract member shipmateRationItemSink            : ShipmateRationItemSink
-
-type ShipmateGetStatusContext =
-    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
-
-type ShipmateTransformStatisticContext =
-    abstract member shipmateSingleStatisticSink   : ShipmateSingleStatisticSink
-    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
-
-
-type ShipmateEatContext =
-    inherit ShipmateTransformStatisticContext
-    abstract member shipmateRationItemSource      : ShipmateRationItemSource
-    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
-
 module Shipmate =
+    type CreateContext =
+        inherit OperatingContext
+        abstract member shipmateStatisticTemplateSource   : ShipmateStatisticTemplateSource
+        abstract member shipmateSingleStatisticSink       : ShipmateSingleStatisticSink
+        abstract member rationItemSource                  : RationItemSource
+        abstract member shipmateRationItemSink            : ShipmateRationItemSink
     let Create
-            (context    : ShipmateCreateContext)
+            (context    : OperatingContext)
             (avatarId   : string)
             (shipmateId : ShipmateIdentifier)
             : unit =
+        let context = context :?> CreateContext
         context.rationItemSource()
         |> context.shipmateRationItemSink avatarId shipmateId 
         context.shipmateStatisticTemplateSource()
@@ -49,11 +37,15 @@ module Shipmate =
             (fun identifier statisticTemplate ->
                 context.shipmateSingleStatisticSink avatarId shipmateId (identifier, statisticTemplate |> Statistic.CreateFromTemplate |> Some))
 
+    type GetStatusContext =
+        inherit OperatingContext
+        abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
     let GetStatus
-            (context    : ShipmateGetStatusContext)
+            (context    : OperatingContext)
             (avatarId   : string)
             (shipmateId : ShipmateIdentifier)
             : ShipmateStatus=
+        let context = context :?> GetStatusContext
         let health = context.shipmateSingleStatisticSource avatarId shipmateId ShipmateStatisticIdentifier.Health |> Option.get
         if health.CurrentValue <= health.MinimumValue then
             ZeroHealth |> Dead
@@ -63,26 +55,36 @@ module Shipmate =
                 OldAge |> Dead
             else
                 Alive
-
+    
+    type TransformStatisticContext =
+        inherit OperatingContext
+        abstract member shipmateSingleStatisticSink   : ShipmateSingleStatisticSink
+        abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
     let TransformStatistic 
-            (context    : ShipmateTransformStatisticContext)
+            (context    : OperatingContext)
             (identifier : ShipmateStatisticIdentifier) 
             (transform  : Statistic -> Statistic option) 
             (avatarId   : string)
             (shipmateId : ShipmateIdentifier) 
             : unit =
+        let context = context :?> TransformStatisticContext
         identifier
         |> context.shipmateSingleStatisticSource avatarId shipmateId
         |> Option.iter
             (fun s -> 
                 context.shipmateSingleStatisticSink avatarId shipmateId (identifier, (s |> transform) ) )
 
+    type EatContext =
+        inherit OperatingContext
+        abstract member shipmateRationItemSource      : ShipmateRationItemSource
+        abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
     let Eat 
-            (context    : ShipmateEatContext)
+            (context    : OperatingContext)
             (inventory  : AvatarInventory) 
             (avatarId   : string)
             (shipmateId : ShipmateIdentifier)
             : AvatarInventory * bool * bool =
+        let context = context :?> EatContext
         let satietyDecrease = -1.0
         let satietyIncrease = 1.0
         let rationConsumptionRate = 1UL

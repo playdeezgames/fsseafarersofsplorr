@@ -27,7 +27,7 @@ type TestWorldCreateContext
         vesselStatisticTemplateSource,
         worldSingleStatisticSource) =
 
-    interface IslandCreateContext with 
+    interface Island.CreateContext with 
         member _.islandStatisticTemplateSource: IslandStatisticTemplateSource = islandStatisticTemplateSource
         member _.islandSingleStatisticSink: IslandSingleStatisticSink = islandSingleStatisticSink
 
@@ -54,11 +54,11 @@ type TestWorldCreateContext
         member _.termNameSource: TermSource = termNameSource
         member _.islandSingleNameSink : IslandSingleNameSink = islandSingleNameSink
 
-    interface VesselCreateContext with
+    interface Vessel.CreateContext with
         member _.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
         member _.vesselStatisticTemplateSource: VesselStatisticTemplateSource = vesselStatisticTemplateSource
 
-    interface ShipmateCreateContext with
+    interface Shipmate.CreateContext with
         member _.rationItemSource: RationItemSource = rationItemSource
         member _.shipmateRationItemSink: ShipmateRationItemSink = shipmateRationItemSink
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
