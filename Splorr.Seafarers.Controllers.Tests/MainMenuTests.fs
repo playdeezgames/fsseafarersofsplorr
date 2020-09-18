@@ -34,10 +34,12 @@ type TestWorldCreateContext
     interface WorldPopulateIslandsContext with
         member _.islandFeatureGeneratorSource: IslandFeatureGeneratorSource = islandFeatureGeneratorSource
         member _.islandSingleFeatureSink: IslandSingleFeatureSink = islandSingleFeatureSink
-        member _.random: Random = Fixtures.Common.Dummy.Random
         member _.islandSource: IslandSource = islandSource
 
-    interface UtilitySortListRandomlyContext with 
+    interface IslandFeatureGenerator.GenerateContext with
+        member _.random: Random = Fixtures.Common.Dummy.Random
+
+    interface Utility.SortListRandomlyContext with 
         member _.random : Random = Fixtures.Common.Dummy.Random
 
     interface WorldGenerateIslandNameContext with

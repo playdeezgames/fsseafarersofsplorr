@@ -1,21 +1,23 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
+open System
 
 type TermSource = unit -> string list
 type TermSources = TermSource * TermSource * TermSource * TermSource * TermSource * TermSource
 type WorldSingleStatisticSource = WorldStatisticIdentifier -> Statistic
 
 type JobCreateContext =
-    inherit UtilityPickRandomlyContext
+    inherit OperatingContext
     abstract member termSources                : TermSources
     abstract member worldSingleStatisticSource : WorldSingleStatisticSource
+    abstract member random                     : Random
 
 module Job =
     let Create 
-            (context      : JobCreateContext)
+            (context      : OperatingContext)
             (destinations : Set<Location>) 
             : Job =
-
+        let context = context :?> JobCreateContext
         let pickRandomly : string list -> string = 
             Utility.PickRandomly context
 

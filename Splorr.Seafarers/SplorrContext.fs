@@ -130,15 +130,7 @@ type SplorrContext
         member _.islandSource : IslandSource = islandSource
 
     interface AtSeaHandleCommandContext with
-        member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
-        member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
-        member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
-        member this.islandLocationByNameSource: IslandLocationByNameSource = islandLocationByNameSource
-        member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
         member this.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
-        member this.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
-        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface AvatarGetCurrentFoulingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
@@ -150,10 +142,10 @@ type SplorrContext
         member _.islandSingleStatisticSink     : IslandSingleStatisticSink    =islandSingleStatisticSink    
         member _.islandStatisticTemplateSource : IslandStatisticTemplateSource=islandStatisticTemplateSource
 
-    interface UtilitySortListRandomlyContext with
+    interface Utility.SortListRandomlyContext with
         member _.random : Random = random
 
-    interface IslandFeatureGeneratorGenerateContext with
+    interface IslandFeatureGenerator.GenerateContext with
         member _.random : Random = random
 
     interface WorldPopulateIslandsContext with
@@ -212,7 +204,7 @@ type SplorrContext
         member _.islandSingleNameSource         : IslandSingleNameSource         = islandSingleNameSource  
         member _.islandFeatureSource            : IslandFeatureSource            = islandFeatureSource
 
-    interface ItemDeterminePriceContext with
+    interface Item.DeterminePriceContext with
         member _.commoditySource                : CommoditySource                =commoditySource               
         member _.islandMarketSource             : IslandMarketSource             =islandMarketSource     
         member _.itemSingleSource               : ItemSingleSource               = itemSingleSource
@@ -286,6 +278,7 @@ type SplorrContext
     interface JobCreateContext with
         member _.termSources: TermSources = termSources
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
+        member _.random = random
 
     interface IslandAddVisitContext with
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink   

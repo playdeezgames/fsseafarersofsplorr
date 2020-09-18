@@ -208,12 +208,13 @@ type TestIslandJobsGenerationContext
         member _.islandJobSink   : IslandJobSink = islandJobSink
         member _.islandJobSource : IslandJobSource = islandJobSource
 
-    interface UtilitySortListRandomlyContext with
+    interface Utility.SortListRandomlyContext with
         member _.random : Random = random
 
     interface JobCreateContext with
         member _.termSources : TermSources = termSources
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
+        member _.random : Random = Fixtures.Common.Dummy.Random
 
 [<Test>]
 let ``GenerateJob.It generates a job when no job is present on the island.`` () =

@@ -4,8 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 type ItemListRunWithIslandContext =
-    inherit ItemDetermineSalePriceContext
-    inherit ItemDeterminePurchasePriceContext
+    inherit OperatingContext
     inherit AvatarGetPrimaryStatisticContext
 
 type ItemListRunContext =

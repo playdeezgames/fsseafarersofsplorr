@@ -28,7 +28,7 @@ type WorldClearMessagesContext =
     abstract member avatarMessagePurger : AvatarMessagePurger
 
 type WorldGenerateIslandNamesContext =
-    inherit UtilitySortListRandomlyContext
+    inherit Utility.SortListRandomlyContext
     inherit WorldGenerateIslandNameContext
 
 type WorldNameIslandsContext =
@@ -38,7 +38,7 @@ type WorldNameIslandsContext =
     abstract member nameSource           : TermSource
 
 type WorldPopulateIslandsContext =
-    inherit IslandFeatureGeneratorGenerateContext   
+    inherit IslandFeatureGenerator.GenerateContext   
     abstract member islandFeatureGeneratorSource : IslandFeatureGeneratorSource
     abstract member islandSingleFeatureSink      : IslandSingleFeatureSink
     abstract member islandSource                 : IslandSource
@@ -121,7 +121,7 @@ type WorldAcceptJobContext =
     abstract member islandSource          : IslandSource
 
 type WorldBuyItemsContext =
-    inherit ItemDetermineSalePriceContext
+    inherit Item.DeterminePriceContext
     inherit IslandUpdateMarketForItemContext
     inherit AvatarSpendMoneyContext
     inherit AvatarAddInventoryContext
@@ -132,7 +132,7 @@ type WorldBuyItemsContext =
     abstract member vesselSingleStatisticSource   : VesselSingleStatisticSource
 
 type WorldSellItemsContext =
-    inherit ItemDeterminePurchasePriceContext
+    inherit Item.DeterminePriceContext
     inherit IslandUpdateMarketForItemContext
     inherit AvatarEarnMoneyContext
     inherit AvatarGetItemCountContext

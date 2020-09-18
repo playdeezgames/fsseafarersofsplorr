@@ -103,11 +103,12 @@ type TestWorldDockContext
         member _.islandJobSink              : IslandJobSink=islandJobSink
         member _.islandJobSource            : IslandJobSource=islandJobSource
 
-    interface UtilitySortListRandomlyContext with
+    interface Utility.SortListRandomlyContext with
         member _.random : Random = Fixtures.Common.Dummy.Random
 
     interface JobCreateContext with 
         member _.termSources                : TermSources = termSources
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
+        member _.random : Random = Fixtures.Common.Dummy.Random
         
 

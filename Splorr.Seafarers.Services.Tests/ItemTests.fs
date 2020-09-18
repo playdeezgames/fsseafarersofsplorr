@@ -19,7 +19,7 @@ type TestItemDetermineSalePriceContext
         (commoditySource,
         islandMarketSource,
         itemSingleSource) =
-    interface ItemDetermineSalePriceContext with
+    interface Item.DeterminePriceContext with
         member _.commoditySource                : CommoditySource               = commoditySource  
         member _.islandMarketSource             : IslandMarketSource            = islandMarketSource            
         member _.itemSingleSource               : ItemSingleSource              = itemSingleSource
@@ -28,7 +28,7 @@ type TestItemDeterminePurchasePriceContext
         (commoditySource,
         islandMarketSource,
         itemSingleSource) = 
-    interface ItemDeterminePurchasePriceContext with
+    interface Item.DeterminePriceContext with
         member _.commoditySource                : CommoditySource               =commoditySource  
         member _.islandMarketSource             : IslandMarketSource            =islandMarketSource  
         member _.itemSingleSource               : ItemSingleSource               = itemSingleSource
@@ -40,12 +40,12 @@ let ``DetermineSalePrice.It calculates the sale price of an item in a given set 
     let inputMarkets = markets
     let givenLocation = (0.0, 0.0)
     let expected = 15.0
-    let context : ItemDetermineSalePriceContext = 
+    let context : Item.DeterminePriceContext = 
         TestItemDetermineSalePriceContext
             ((fun () -> inputCommodities),
             (fun(_) -> inputMarkets),
             (fun(_)->input |> Some)) 
-        :> ItemDetermineSalePriceContext
+        :> Item.DeterminePriceContext
     let actual = 
         (0UL, givenLocation)
         ||> Item.DetermineSalePrice 
@@ -64,7 +64,7 @@ let ``DeterminePurchasePrice.It calculates the purchase price of an item in a gi
             ((fun () -> inputCommodities),
             (fun(_) -> inputMarkets),
             (fun(_)->input |> Some))
-        :> ItemDeterminePurchasePriceContext
+        :> Item.DeterminePriceContext
     let actual = 
         (0UL, givenLocation)
         ||> Item.DeterminePurchasePrice 

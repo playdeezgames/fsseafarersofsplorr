@@ -245,7 +245,7 @@ type TestAtSeaRunContext
             vesselSingleStatisticSource: VesselSingleStatisticSource,
             worldSingleStatisticSource: WorldSingleStatisticSource
         ) =
-    interface UtilitySortListRandomlyContext with
+    interface Utility.SortListRandomlyContext with
         member _.random : Random = Fixtures.Common.Dummy.Random
 
     interface IslandGetDisplayNameContext with
@@ -340,15 +340,7 @@ type TestAtSeaRunContext
         member _.islandSource : IslandSource = islandSource
 
     interface AtSeaHandleCommandContext with
-        member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink
-        member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource
-        member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
-        member _.islandLocationByNameSource: IslandLocationByNameSource = islandLocationByNameSource
-        member _.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
         member _.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
-        member _.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
-        member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
-        member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AtSeaRunContext with
         member _.avatarMessageSource: AvatarMessageSource = avatarMessageSource
     interface WorldUpdateChartsContext with
@@ -362,6 +354,11 @@ type TestAtSeaRunContext
     interface AvatarCompleteJobContext with
         member _.avatarJobSink : AvatarJobSink = avatarJobSink
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
+
+    interface JobCreateContext with
+        member this.random: Random = Fixtures.Common.Dummy.Random
+        member this.termSources: TermSources = termSources
+        member this.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
 
     interface WorldDockContext with
         member _.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
@@ -383,8 +380,6 @@ type TestAtSeaRunContext
         member _.itemSource: ItemSource = itemSource
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-        member _.termSources: TermSources = termSources
-        member _.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
     interface AvatarTransformShipmatesContext with
         member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
 
