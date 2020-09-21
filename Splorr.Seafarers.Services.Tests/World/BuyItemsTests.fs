@@ -20,8 +20,6 @@ type TestWorldBuyItemsContext
         vesselSingleStatisticSource)=
     interface Island.UpdateMarketForItemContext with
         member this.commoditySource: CommoditySource = commoditySource
-        member this.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
-        member this.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
         
     interface AvatarAddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
@@ -53,6 +51,10 @@ type TestWorldBuyItemsContext
     interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+    interface Island.ChangeMarketContext with
+        member this.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
+        member this.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
+
 
 [<Test>]
 let ``BuyItems.It gives a message when given a bogus island location.`` () =

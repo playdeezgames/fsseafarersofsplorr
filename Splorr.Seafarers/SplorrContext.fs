@@ -66,6 +66,10 @@ type SplorrContext
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
 
+    interface Island.ChangeMarketContext with
+        member this.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
+        member this.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
+
     interface Island.GetDisplayNameContext with
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.islandSingleNameSource         : IslandSingleNameSource = islandSingleNameSource
@@ -215,8 +219,6 @@ type SplorrContext
     
     interface Island.UpdateMarketForItemContext with
         member _.commoditySource: CommoditySource = commoditySource
-        member _.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
-        member _.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
 
     interface AvatarRemoveInventoryContext with
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink

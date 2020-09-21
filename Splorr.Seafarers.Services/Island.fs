@@ -128,11 +128,6 @@ module Island =
                 AvatarIslandMetricIdentifier.VisitCount 
                 0UL
         
-    let private SupplyDemandGenerator 
-            (random:Random) 
-            : float = //TODO: move this function out!
-        (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + 3.0
-
     type GenerateCommoditiesContext =
         inherit OperatingContext
         abstract member commoditySource    : CommoditySource
@@ -152,8 +147,8 @@ module Island =
                     |> Map.add 
                         commodity 
                         {
-                            Supply = context.random |> SupplyDemandGenerator
-                            Demand = context.random |> SupplyDemandGenerator
+                            Supply = context.random |> Utility.SupplyDemandGenerator
+                            Demand = context.random |> Utility.SupplyDemandGenerator
                         })
             |> context.islandMarketSink location
 
@@ -178,37 +173,33 @@ module Island =
                         items)
             |> context.islandItemSink location
 
-    let private ChangeMarketDemand 
-            (islandSingleMarketSource : IslandSingleMarketSource)
-            (islandSingleMarketSink   : IslandSingleMarketSink) 
+    type ChangeMarketTransform = float * Market -> Market
+    type ChangeMarketContext =
+        inherit OperatingContext
+        abstract member islandSingleMarketSource : IslandSingleMarketSource
+        abstract member islandSingleMarketSink   : IslandSingleMarketSink
+    let private ChangeMarket
+            (transform: ChangeMarketTransform)
+            (context : OperatingContext)
             (commodity                : uint64) 
             (change                   : float) 
             (location                 : Location) 
             : unit =
+        let context = context :?> ChangeMarketContext
         commodity
-        |> islandSingleMarketSource location
-        |> Option.map (fun m -> Market.ChangeDemand (change, m))
-        |> Option.iter (fun market -> islandSingleMarketSink location (commodity, market))
+        |> context.islandSingleMarketSource location
+        |> Option.map (fun m -> transform (change, m))
+        |> Option.iter (fun market -> context.islandSingleMarketSink location (commodity, market))
 
-        
+    let private ChangeMarketDemand (context:OperatingContext) =
+        ChangeMarket Market.ChangeDemand context
 
-    let private ChangeMarketSupply 
-            (islandSingleMarketSource : IslandSingleMarketSource)
-            (islandSingleMarketSink   : IslandSingleMarketSink) 
-            (commodity                : uint64) 
-            (change                   : float) 
-            (location                 : Location) 
-            : unit =
-        commodity
-        |> islandSingleMarketSource location
-        |> Option.map (fun m -> Market.ChangeSupply (change, m))
-        |> Option.iter (fun market -> islandSingleMarketSink location (commodity, market))
+    let private ChangeMarketSupply (context:OperatingContext) = 
+        ChangeMarket Market.ChangeSupply context
 
     type UpdateMarketForItemContext =
         inherit OperatingContext
         abstract member commoditySource          : CommoditySource
-        abstract member islandSingleMarketSink   : IslandSingleMarketSink
-        abstract member islandSingleMarketSource : IslandSingleMarketSource
     let UpdateMarketForItemSale 
             (context      : OperatingContext)
             (descriptor   : ItemDescriptor) 
@@ -221,7 +212,7 @@ module Island =
         |> Map.iter 
             (fun commodity quantityContained -> 
                 let totalQuantity = quantityContained * (quantitySold |> float) * commodities.[commodity].SaleFactor
-                ChangeMarketDemand context.islandSingleMarketSource context.islandSingleMarketSink commodity totalQuantity location)
+                ChangeMarketDemand context commodity totalQuantity location)
 
     let UpdateMarketForItemPurchase 
             (context      : OperatingContext)
@@ -235,7 +226,7 @@ module Island =
         |> Map.iter 
             (fun commodity quantityContained -> 
                 let totalQuantity = quantityContained * (quantityPurchased |> float) * commodities.[commodity].PurchaseFactor
-                ChangeMarketSupply context.islandSingleMarketSource context.islandSingleMarketSink commodity totalQuantity location)
+                ChangeMarketSupply context commodity totalQuantity location)
 
     type GetStatisticContext =
         abstract member islandSingleStatisticSource : IslandSingleStatisticSource 

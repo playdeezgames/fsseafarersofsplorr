@@ -41,8 +41,9 @@ type TestIslandGenerateItemsContext(islandItemSink, islandItemSource, itemSource
 type TestIslandUpdateMarketForItemSaleContext(commoditySource, islandSingleMarketSink, islandSingleMarketSource) =
     interface Island.UpdateMarketForItemContext with
         member _.commoditySource: CommoditySource = commoditySource
-        member _.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
-        member _.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
+    interface Island.ChangeMarketContext with
+        member this.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
+        member this.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
 
 [<Test>]
 let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =

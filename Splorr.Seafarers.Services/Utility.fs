@@ -18,3 +18,10 @@ module Utility =
     let PickRandomly
             (context : OperatingContext) =
         SortListRandomly context >> List.head
+
+    let SupplyDemandGenerator 
+            (random:Random) //TODO: contextify
+            : float =
+        (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + 3.0
+
+
