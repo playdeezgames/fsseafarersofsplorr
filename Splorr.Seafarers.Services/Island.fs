@@ -230,7 +230,6 @@ module Island =
 
     type GetStatisticContext =
         abstract member islandSingleStatisticSource : IslandSingleStatisticSource 
-
     let GetStatistic
             (context    : GetStatisticContext)
             (identifier : IslandStatisticIdentifier)

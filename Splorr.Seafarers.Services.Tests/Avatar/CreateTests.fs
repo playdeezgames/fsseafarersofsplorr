@@ -13,6 +13,7 @@ type TestAvatarCreateContext
         vesselStatisticTemplateSource) =
     interface AvatarCreateContext with
         member _.avatarJobSink : AvatarJobSink = avatarJobSink
+    interface Vessel.CreateContext with
         member _.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
         member _.vesselStatisticTemplateSource: VesselStatisticTemplateSource = vesselStatisticTemplateSource
     interface Shipmate.CreateContext with

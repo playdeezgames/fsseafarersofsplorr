@@ -22,6 +22,7 @@ type TestAvatarCompleteJobContext
     interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+    interface AvatarSetPrimaryStatisticContext
 
 [<Test>]
 let ``CompleteJob.It does nothing when the given avatar has no job.`` () =

@@ -39,7 +39,7 @@ type TestDockedRunContext
             vesselSingleStatisticSource   
         ) =
     interface DockedRunContext
-
+    interface AvatarSetPrimaryStatisticContext
     interface Shipmate.GetStatusContext with
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 

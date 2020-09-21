@@ -42,6 +42,7 @@ type TestWorldSellItemsContext
     interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+    interface AvatarSetPrimaryStatisticContext
 
 [<Test>]
 let ``SellItems.It gives a message when given a bogus island location.`` () =

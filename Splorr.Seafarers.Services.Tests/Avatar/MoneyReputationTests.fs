@@ -11,15 +11,18 @@ type TestAvatarGetPrimaryStatisticContext(shipmateSingleStatisticSource) =
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 type TestAvatarSetMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
-    interface AvatarSetMoneyContext with
+    interface AvatarSetPrimaryStatisticContext
+    interface AvatarSetMoneyContext 
+    interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 type TestAvatarSetReputationContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
-    interface AvatarSetReputationContext with
+    interface AvatarSetPrimaryStatisticContext
+    interface AvatarSetReputationContext
+    interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-
 
 [<Test>]
 let ``GetReputation.It retrieves the reputation of the primary shipmate.`` () =
