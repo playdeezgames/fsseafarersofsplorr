@@ -6,15 +6,15 @@ open Splorr.Seafarers.Services
 open Tarot
 
 type IslandFeatureRunDarkAlleyGamblingHand =
-    inherit AvatarFoldGamblingHand
+    inherit Avatar.FoldGamblingHandContext
 
 
 type IslandFeatureRunDarkAlleyContext =
     inherit IslandFeatureRunDarkAlleyGamblingHand
     inherit WorldAddMessagesContext
-    inherit AvatarGetGamblingHandContext
-    inherit AvatarDealGamblingHandContext
-    inherit AvatarEnterIslandFeatureContext
+    inherit Avatar.GetGamblingHandContext
+    inherit Avatar.DealGamblingHandContext
+    inherit Avatar.EnterIslandFeatureContext
     inherit WorldHasDarkAlleyMinimumStakesContext
     abstract member avatarMessageSource           : AvatarMessageSource
     abstract member avatarMessageSink             : AvatarMessageSink

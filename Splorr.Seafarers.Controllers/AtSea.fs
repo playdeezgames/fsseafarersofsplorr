@@ -5,7 +5,7 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Persistence
 
 type AtSeaGetVisibleIslandsContext =
-    inherit AvatarGetPositionContext
+    inherit Avatar.GetPositionContext
     inherit Island.GetDisplayNameContext
     inherit WorldGetNearbyLocationsContext
 
@@ -13,11 +13,10 @@ type AtSeaUpdateDisplayContext =
     inherit AtSeaGetVisibleIslandsContext
     inherit Avatar.GetSpeedContext
     inherit Avatar.GetHeadingContext
-    inherit AvatarGetEffectiveSpeedContext
     inherit WorldDistanceToContext
 
 type AtSeaCanCareenContext =
-    inherit AvatarGetPositionContext
+    inherit Avatar.GetPositionContext
     inherit WorldGetNearbyLocationsContext
     abstract member islandSingleStatisticSource : IslandSingleStatisticSource
 

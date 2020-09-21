@@ -8,8 +8,8 @@ type CareenedHandleCommandContext =
     inherit WorldClearMessagesContext
 
 type CareenedUpdateDisplayContext = 
-    inherit AvatarGetCurrentFoulingContext
-    inherit AvatarGetMaximumFoulingContext
+    inherit Avatar.GetCurrentFoulingContext
+    inherit Avatar.GetMaximumFoulingContext
 
 type CareenedRunAliveContext =
     inherit CareenedHandleCommandContext

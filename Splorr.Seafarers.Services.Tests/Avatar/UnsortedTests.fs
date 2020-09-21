@@ -10,7 +10,7 @@ open Tarot
 let private inputAvatarId = "avatar"
 
 type TestAvatarAddMessagesContext(avatarMessageSink) =
-    interface AvatarAddMessagesContext with
+    interface Avatar.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
 
 type TestAvatarAddMetricContext
@@ -34,7 +34,7 @@ let ``AddMessages.It adds messages to a given avatar.`` () =
             ()
         | _ ->
             Assert.Fail("Got an unexpected message.")
-    let context = TestAvatarAddMessagesContext(avatarMessageSink) :> AvatarAddMessagesContext
+    let context = TestAvatarAddMessagesContext(avatarMessageSink) :> Avatar.AddMessagesContext
     input
     |> Avatar.AddMessages context inputMessages
 

@@ -94,15 +94,15 @@ type SplorrContext
     interface Avatar.GetHeadingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface AvatarSetPositionContext with
+    interface Avatar.SetPositionContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface AvatarSetSpeedContext with
+    interface Avatar.SetSpeedContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface AvatarSetHeadingContext with
+    interface Avatar.SetHeadingContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
@@ -111,7 +111,7 @@ type SplorrContext
         member _.avatarInventorySource         : AvatarInventorySource=avatarInventorySource
         member _.avatarShipmateSource          : AvatarShipmateSource=avatarShipmateSource
 
-    interface AvatarTransformShipmatesContext with
+    interface Avatar.TransformShipmatesContext with
         member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
 
     interface WorldAddMessagesContext with
@@ -120,7 +120,7 @@ type SplorrContext
     interface WorldClearMessagesContext with
         member this.avatarMessagePurger: AvatarMessagePurger = avatarMessagePurger
         
-    interface AvatarMoveContext with
+    interface Avatar.MoveContext with
         member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
         
     interface WorldDistanceToContext with
@@ -136,7 +136,7 @@ type SplorrContext
     interface AtSeaHandleCommandContext with
         member this.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
 
-    interface AvatarGetCurrentFoulingContext with
+    interface Avatar.GetCurrentFoulingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface AtSeaRunContext with
@@ -182,7 +182,7 @@ type SplorrContext
     interface Avatar.CreateContext with
         member _.avatarJobSink: AvatarJobSink = avatarJobSink
 
-    interface AvatarGetPositionContext with
+    interface Avatar.GetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface WorldCreateContext with
@@ -220,20 +220,20 @@ type SplorrContext
     interface Island.UpdateMarketForItemContext with
         member _.commoditySource: CommoditySource = commoditySource
 
-    interface AvatarRemoveInventoryContext with
+    interface Avatar.RemoveInventoryContext with
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
 
-    interface AvatarGetUsedTonnageContext with
+    interface Avatar.GetUsedTonnageContext with
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
 
-    interface AvatarAbandonJobContext with
+    interface Avatar.AbandonJobContext with
         member this.avatarJobSink: AvatarJobSink = avatarJobSink
         member this.avatarJobSource: AvatarJobSource = avatarJobSource
         
-    interface AvatarGetItemCountContext with
+    interface Avatar.GetItemCountContext with
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
-    interface AvatarAddInventoryContext with
+    interface Avatar.AddInventoryContext with
         member _.avatarInventorySink   : AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
     interface WorldAcceptJobContext with
@@ -248,7 +248,7 @@ type SplorrContext
         member _.islandSource                  : IslandSource = islandSource
         member _.itemSource                    : ItemSource =  itemSource
         member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface AvatarEnterIslandFeatureContext with
+    interface Avatar.EnterIslandFeatureContext with
         member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
         member this.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
     interface DockedHandleCommandContext with
@@ -307,12 +307,12 @@ type SplorrContext
         member _.avatarSingleMetricSink   : AvatarSingleMetricSink = avatarSingleMetricSink
         member _.avatarSingleMetricSource : AvatarSingleMetricSource = avatarSingleMetricSource
 
-    interface AvatarAddMessagesContext with
+    interface Avatar.AddMessagesContext with
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
 
-    interface AvatarGetPrimaryStatisticContext with
+    interface Avatar.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface AvatarCompleteJobContext with
+    interface Avatar.CompleteJobContext with
         member _.avatarJobSink : AvatarJobSink = avatarJobSink
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
     interface WorldDockContext with
@@ -339,10 +339,10 @@ type SplorrContext
     interface HelpRunContext with
         member _.avatarIslandFeatureSource : AvatarIslandFeatureSource = avatarIslandFeatureSource
 
-    interface AvatarGetMaximumFoulingContext with
+    interface Avatar.GetMaximumFoulingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface AvatarCleanHullContext with
+    interface Avatar.CleanHullContext with
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
 
     interface RunnerRunContext with
@@ -355,13 +355,13 @@ type SplorrContext
     interface IslandFeatureRunContext with
         member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
         
-    interface AvatarGetGamblingHandContext with
+    interface Avatar.GetGamblingHandContext with
         member _.avatarGamblingHandSource : AvatarGamblingHandSource = avatarGamblingHandSource
-    interface AvatarDealGamblingHandContext with
+    interface Avatar.DealGamblingHandContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
         member _.random : Random = random
 
-    interface AvatarFoldGamblingHand with
+    interface Avatar.FoldGamblingHandContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
 
     interface WorldHasDarkAlleyMinimumStakesContext with

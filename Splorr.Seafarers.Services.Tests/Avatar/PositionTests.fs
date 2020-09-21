@@ -5,12 +5,12 @@ open NUnit.Framework
 open Splorr.Seafarers.Models
 
 type TestAvatarSetPositionContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
-    interface AvatarSetPositionContext with
+    interface Avatar.SetPositionContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 type TestAvatarGetPositionContext(vesselSingleStatisticSource) =
-    interface AvatarGetPositionContext with
+    interface Avatar.GetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
      
 [<Test>]
@@ -36,7 +36,7 @@ let ``SetPosition.It sets a given position.`` () =
             Assert.AreEqual(expectedPosition |> snd, statistic.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "Sink - Dont call me.")
-    let context = TestAvatarSetPositionContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarSetPositionContext
+    let context = TestAvatarSetPositionContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> Avatar.SetPositionContext
     input
     |> Avatar.SetPosition context inputPosition
 
@@ -65,7 +65,7 @@ let ``GetPosition.It gets the position of an avatar.`` () =
     let expected = 
         (actualX.CurrentValue, actualY.CurrentValue) 
         |> Some
-    let context = TestAvatarGetPositionContext(vesselSingleStatisticSource) :> AvatarGetPositionContext
+    let context = TestAvatarGetPositionContext(vesselSingleStatisticSource) :> Avatar.GetPositionContext
     let actual =
         inputAvatarId
         |> Avatar.GetPosition context

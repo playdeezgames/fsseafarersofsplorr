@@ -8,7 +8,7 @@ type TestWorldUpdateChartsContext
             (avatarIslandSingleMetricSink,
             islandSource,
             vesselSingleStatisticSource) =
-    interface AvatarGetPositionContext with
+    interface Avatar.GetPositionContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface WorldUpdateChartsContext with
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink

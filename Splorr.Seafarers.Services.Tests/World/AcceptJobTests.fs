@@ -15,7 +15,7 @@ type TestWorldAcceptJobContext
         islandJobPurger,
         islandSingleJobSource,
         islandSource) =
-    interface AvatarAddMessagesContext with
+    interface Avatar.AddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface WorldAddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink

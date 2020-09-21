@@ -8,7 +8,7 @@ open Splorr.Seafarers.Services
 
 type TestChartRunContext(vesselSingleStatisticSource) =
     interface ChartRunContext
-    interface AvatarGetPositionContext with
+    interface Avatar.GetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 [<Test>]

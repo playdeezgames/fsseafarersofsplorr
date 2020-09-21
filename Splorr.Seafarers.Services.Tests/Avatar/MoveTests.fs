@@ -22,31 +22,30 @@ type TestAvatarMoveContext
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
-    interface AvatarGetEffectiveSpeedContext
-    interface AvatarGetCurrentFoulingContext with
+    interface Avatar.GetCurrentFoulingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface AvatarTransformShipmatesContext with
+    interface Avatar.TransformShipmatesContext with
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
 
     interface Vessel.BefoulContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface AvatarMoveContext with
+    interface Avatar.MoveContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface Avatar.AddMetricContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
 
-    interface AvatarSetPositionContext with
+    interface Avatar.SetPositionContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface Avatar.GetSpeedContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface AvatarGetPositionContext with
+    interface Avatar.GetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface Shipmate.EatContext with
@@ -98,7 +97,7 @@ let ``Move.It moves the avatar.`` () =
             Fixtures.Common.Fake.ShipmateSingleStatisticSink, 
             Fixtures.Common.Fake.ShipmateSingleStatisticSource, 
             vesselSingleStatisticSink, 
-            Fixtures.Common.Stub.VesselSingleStatisticSource) :> AvatarMoveContext
+            Fixtures.Common.Stub.VesselSingleStatisticSource) :> Avatar.MoveContext
     Avatar.Move 
         context
         inputAvatarId
@@ -160,7 +159,7 @@ let ``Move.It removes a ration when the given avatar has rations and full satiet
             shipmateSingleStatisticSink, 
             shipmateSingleStatisticSource, 
             vesselSingleStatisticSink, 
-            Fixtures.Common.Stub.VesselSingleStatisticSource) :> AvatarMoveContext
+            Fixtures.Common.Stub.VesselSingleStatisticSource) :> Avatar.MoveContext
     Avatar.Move 
         context
         inputAvatarId
@@ -221,7 +220,7 @@ let ``Move.It removes a ration and increases satiety when the given avatar has r
             shipmateSingleStatisticSink, 
             shipmateSingleStatisticSource, 
             vesselSingleStatisticSink, 
-            Fixtures.Common.Stub.VesselSingleStatisticSource) :> AvatarMoveContext
+            Fixtures.Common.Stub.VesselSingleStatisticSource) :> Avatar.MoveContext
     Avatar.Move 
         context
         inputAvatarId
@@ -282,7 +281,7 @@ let ``Move.It lowers the avatar's satiety but does not affect turns when the giv
             shipmateSingleStatisticSink, 
             shipmateSingleStatisticSource, 
             vesselSingleStatisticSink, 
-            Fixtures.Common.Stub.VesselSingleStatisticSource) :> AvatarMoveContext
+            Fixtures.Common.Stub.VesselSingleStatisticSource) :> Avatar.MoveContext
     Avatar.Move 
         context
         inputAvatarId
@@ -352,7 +351,7 @@ let ``Move.It lowers the avatar's maximum turn and updates the starvation metric
             shipmateSingleStatisticSink, 
             shipmateSingleStatisticSource, 
             vesselSingleStatisticSink, 
-            Fixtures.Common.Stub.VesselSingleStatisticSource) :> AvatarMoveContext
+            Fixtures.Common.Stub.VesselSingleStatisticSource) :> Avatar.MoveContext
     Avatar.Move 
         context
         inputAvatarId
@@ -425,7 +424,7 @@ let ``Move.It transforms the avatar within the given world.`` () =
             shipmateSingleStatisticSink, 
             shipmateSingleStatisticSource, 
             vesselSingleStatisticSink, 
-            vesselSingleStatisticSource) :> AvatarMoveContext
+            vesselSingleStatisticSource) :> Avatar.MoveContext
     Avatar.Move 
             context
             Fixtures.Common.Dummy.AvatarId

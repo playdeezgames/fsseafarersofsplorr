@@ -5,7 +5,7 @@ open NUnit.Framework
 open Splorr.Seafarers.Models
 
 type TestAvatarSetHeadingContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
-    interface AvatarSetHeadingContext with
+    interface Avatar.SetHeadingContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 type TestAvatarGetHeadingContext(vesselSingleStatisticSource) = 
@@ -29,7 +29,7 @@ let ``SetHeading.It sets a given heading.`` () =
     let vesselSingleStatisticSink (_) (identifier: VesselStatisticIdentifier, statistic:Statistic) = 
         Assert.AreEqual(VesselStatisticIdentifier.Heading,identifier)
         Assert.AreEqual(expectedHeading, statistic.CurrentValue)
-    let context = TestAvatarSetHeadingContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> AvatarSetHeadingContext
+    let context = TestAvatarSetHeadingContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> Avatar.SetHeadingContext
     input
     |> Avatar.SetHeading 
         context 

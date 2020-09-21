@@ -7,7 +7,7 @@ open Splorr.Seafarers.Services
 let avatarId = ""
 
 type TestAvatarGetPrimaryStatisticContext(shipmateSingleStatisticSource) = 
-    interface AvatarGetPrimaryStatisticContext with
+    interface Avatar.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 type TestAvatarSetMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
@@ -34,7 +34,7 @@ let ``GetReputation.It retrieves the reputation of the primary shipmate.`` () =
         | _ ->
             raise (System.NotImplementedException "Kaboom Get")
             None
-    let context = TestAvatarGetPrimaryStatisticContext(shipmateSingleStatisticSource) :> AvatarGetPrimaryStatisticContext
+    let context = TestAvatarGetPrimaryStatisticContext(shipmateSingleStatisticSource) :> Avatar.GetPrimaryStatisticContext
     let actual =
         input
         |> Avatar.GetReputation context
@@ -54,7 +54,7 @@ let ``GetMoney.It retrieves the money of the primary shipmate.`` () =
         | _ ->
             raise (System.NotImplementedException "Kaboom Get")
             None
-    let context = TestAvatarGetPrimaryStatisticContext(shipmateSingleStatisticSource) :> AvatarGetPrimaryStatisticContext
+    let context = TestAvatarGetPrimaryStatisticContext(shipmateSingleStatisticSource) :> Avatar.GetPrimaryStatisticContext
     let actual =
         input
         |> Avatar.GetMoney context

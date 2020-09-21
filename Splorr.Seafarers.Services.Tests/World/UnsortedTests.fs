@@ -6,7 +6,7 @@ open Splorr.Seafarers.Services
 type TestWorldAddMessagesContext(avatarMessageSink) =
     interface WorldAddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface AvatarAddMessagesContext with
+    interface Avatar.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
 
 type TestWorldClearMessagesContext(avatarMessagePurger) =

@@ -5,7 +5,7 @@ open Splorr.Seafarers.Services
 
 type ItemListRunWithIslandContext =
     inherit OperatingContext
-    inherit AvatarGetPrimaryStatisticContext
+    inherit Avatar.GetPrimaryStatisticContext
 
 type ItemListRunContext =
     inherit ItemListRunWithIslandContext

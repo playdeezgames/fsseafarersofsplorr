@@ -5,7 +5,7 @@ open Splorr.Seafarers.Services
 open System
 
 type ChartOutputChartContext =
-    inherit AvatarGetPositionContext
+    inherit Avatar.GetPositionContext
 
 type ChartRunContext = 
     inherit ChartOutputChartContext

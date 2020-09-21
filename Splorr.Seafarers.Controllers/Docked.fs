@@ -18,7 +18,7 @@ type DockedHandleCommandContext =
     inherit WorldSellItemsContext
     inherit WorldAbandonJobContext
     inherit WorldClearMessagesContext
-    inherit AvatarEnterIslandFeatureContext
+    inherit Avatar.EnterIslandFeatureContext
     abstract member avatarInventorySink : AvatarInventorySink
     abstract member avatarInventorySource : AvatarInventorySource
     abstract member avatarIslandSingleMetricSink : AvatarIslandSingleMetricSink

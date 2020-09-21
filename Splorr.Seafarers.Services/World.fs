@@ -16,7 +16,7 @@ type WorldGenerateIslandNameContext =
     abstract member random : Random
 
 type WorldAddMessagesContext = 
-    inherit AvatarAddMessagesContext
+    inherit Avatar.AddMessagesContext
     abstract member avatarMessageSink : AvatarMessageSink
 
 type WorldUndockContext = 
@@ -52,7 +52,7 @@ type WorldGenerateIslandsContext =
     abstract member termNameSource                : TermSource
 
 type WorldUpdateChartsContext = 
-    inherit AvatarGetPositionContext
+    inherit Avatar.GetPositionContext
     abstract member avatarIslandSingleMetricSink : AvatarIslandSingleMetricSink
     abstract member islandSource                 : IslandSource
     abstract member vesselSingleStatisticSource  : VesselSingleStatisticSource
@@ -73,7 +73,7 @@ type WorldCreateContext =
     abstract member shipmateRationItemSink          : ShipmateRationItemSink
 
 type WorldCleanHullContext =
-    inherit AvatarCleanHullContext
+    inherit Avatar.CleanHullContext
 
 type WorldIsAvatarAliveContext = 
     inherit Shipmate.GetStatusContext
@@ -82,7 +82,7 @@ type WorldGetNearbyLocationsContext =
     abstract member islandSource : IslandSource
 
 type WorldDoJobCompletionContext =
-    inherit AvatarCompleteJobContext
+    inherit Avatar.CompleteJobContext
     inherit WorldAddMessagesContext
 
 type WorldDockContext =
@@ -123,9 +123,8 @@ type WorldAcceptJobContext =
 type WorldBuyItemsContext =
     inherit Item.DeterminePriceContext
     inherit Island.UpdateMarketForItemContext
-    inherit AvatarSpendMoneyContext
-    inherit AvatarAddInventoryContext
-    inherit AvatarGetUsedTonnageContext
+    inherit Avatar.AddInventoryContext
+    inherit Avatar.GetUsedTonnageContext
     inherit WorldAddMessagesContext
     abstract member islandSource                  : IslandSource
     abstract member itemSource                    : ItemSource
@@ -134,49 +133,48 @@ type WorldBuyItemsContext =
 type WorldSellItemsContext =
     inherit Item.DeterminePriceContext
     inherit Island.UpdateMarketForItemContext
-    inherit AvatarEarnMoneyContext
-    inherit AvatarGetItemCountContext
-    inherit AvatarRemoveInventoryContext
+    inherit Avatar.GetItemCountContext
+    inherit Avatar.RemoveInventoryContext
     inherit WorldAddMessagesContext
     abstract member islandSource                  : IslandSource
     abstract member itemSource                    : ItemSource
 
 type WorldAbandonJobContext =
-    inherit AvatarAbandonJobContext
+    inherit Avatar.AbandonJobContext
     inherit WorldAddMessagesContext
     abstract member avatarJobSource  : AvatarJobSource
 
 type WorldSetSpeedContext =
-    inherit AvatarSetSpeedContext
+    inherit Avatar.SetSpeedContext
     inherit Avatar.GetSpeedContext
     inherit WorldAddMessagesContext
 
 type WorldSetHeadingContext =
-    inherit AvatarSetHeadingContext
+    inherit Avatar.SetHeadingContext
     inherit Avatar.GetHeadingContext
     inherit WorldAddMessagesContext
 
 type WorldMoveContext =
-    inherit AvatarMoveContext
+    inherit Avatar.MoveContext
     inherit WorldIsAvatarAliveContext
     inherit WorldAddMessagesContext
     inherit WorldUpdateChartsContext
 
 type WorldDistanceToContext =
     inherit WorldAddMessagesContext
-    inherit AvatarGetPositionContext
+    inherit Avatar.GetPositionContext
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
     abstract member islandLocationByNameSource     : IslandLocationByNameSource
 
 type WorldHeadForContext =
     inherit WorldAddMessagesContext
     inherit WorldSetHeadingContext
-    inherit AvatarGetPositionContext
+    inherit Avatar.GetPositionContext
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
     abstract member islandLocationByNameSource     : IslandLocationByNameSource
 
 type WorldHasDarkAlleyMinimumStakesContext =
-    inherit AvatarEnterIslandFeatureContext
+    inherit Avatar.EnterIslandFeatureContext
     inherit WorldAddMessagesContext
     abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
     abstract member islandSingleStatisticSource : IslandSingleStatisticSource 
@@ -792,7 +790,7 @@ module World =
             None
 
     type CanPlaceBetContext =
-        inherit AvatarGetPrimaryStatisticContext
+        inherit Avatar.GetPrimaryStatisticContext
 
     let CanPlaceBet
             (context : CanPlaceBetContext)
@@ -802,10 +800,10 @@ module World =
         (Avatar.GetMoney context avatarId) >= amount
      
     type ResolveHandContext =
-        inherit AvatarGetPrimaryStatisticContext
+        inherit Avatar.GetPrimaryStatisticContext
         inherit Island.GetStatisticContext
         inherit Avatar.GetIslandFeatureContext
-        inherit AvatarGetGamblingHandContext
+        inherit Avatar.GetGamblingHandContext
         inherit CanPlaceBetContext
         inherit WorldAddMessagesContext
 

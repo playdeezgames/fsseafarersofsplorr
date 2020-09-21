@@ -7,18 +7,18 @@ open Tarot
 open Splorr.Seafarers.Models
 
 type TestAvatarGetGamblingHandContext (avatarGamblingHandSource) =
-    interface AvatarGetGamblingHandContext with
+    interface Avatar.GetGamblingHandContext with
         member _.avatarGamblingHandSource : AvatarGamblingHandSource = avatarGamblingHandSource
 
 type TestAvatarDealGamblingHandContext(avatarGamblingHandSink, random) =
-    interface AvatarDealGamblingHandContext with
+    interface Avatar.DealGamblingHandContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
         member _.random : Random = random
 
 type TestAvatarEnterIslandFeatureContext
         (avatarIslandFeatureSink, 
         islandSingleFeatureSource) =
-    interface AvatarEnterIslandFeatureContext with
+    interface Avatar.EnterIslandFeatureContext with
         member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
         member this.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
 
@@ -31,7 +31,7 @@ let ``GetGamblingHand.It retrieves a gambling hand for a given avatar.`` () =
     let avatarGamblingHandSource (_) =
         called <- true
         expected
-    let context = TestAvatarGetGamblingHandContext (avatarGamblingHandSource) :> AvatarGetGamblingHandContext
+    let context = TestAvatarGetGamblingHandContext (avatarGamblingHandSource) :> Avatar.GetGamblingHandContext
     let actual =
         Avatar.GetGamblingHand
             context
@@ -48,7 +48,7 @@ let ``DealGamblingHand.It deals a new hand to the given avatar.`` () =
         called <- true
         Assert.AreEqual(expectedHand, hand)
     let random : Random = Random(1000)
-    let context = TestAvatarDealGamblingHandContext(avatarGamblingHandSink, random) :> AvatarDealGamblingHandContext 
+    let context = TestAvatarDealGamblingHandContext(avatarGamblingHandSink, random) :> Avatar.DealGamblingHandContext 
     Avatar.DealGamblingHand
         context
         Fixtures.Common.Dummy.AvatarId
@@ -74,7 +74,7 @@ let ``EnterIslandFeature.It does not enter the dark alley when one is not presen
         TestAvatarEnterIslandFeatureContext
             (avatarIslandFeatureSink,
             islandSingleFeatureSource) 
-        :> AvatarEnterIslandFeatureContext
+        :> Avatar.EnterIslandFeatureContext
     Avatar.EnterIslandFeature
         context
         Fixtures.Common.Dummy.AvatarId
@@ -100,7 +100,7 @@ let ``EnterIslandFeature.It enters the dark alley when one is present.💩`` () 
         TestAvatarEnterIslandFeatureContext
             (avatarIslandFeatureSink,
             islandSingleFeatureSource) 
-        :> AvatarEnterIslandFeatureContext
+        :> Avatar.EnterIslandFeatureContext
     Avatar.EnterIslandFeature
         context
         Fixtures.Common.Dummy.AvatarId

@@ -11,10 +11,10 @@ type TestAvatarAbandonJobContext
         avatarSingleMetricSource,
         shipmateSingleStatisticSink, 
         shipmateSingleStatisticSource) =
-    interface AvatarAbandonJobContext with
+    interface Avatar.AbandonJobContext with
         member this.avatarJobSink: AvatarJobSink = avatarJobSink
         member this.avatarJobSource: AvatarJobSource = avatarJobSource
-    interface AvatarGetPrimaryStatisticContext with
+    interface Avatar.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface Avatar.AddMetricContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
@@ -22,7 +22,6 @@ type TestAvatarAbandonJobContext
     interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface AvatarIncrementMetricContext
 
 [<Test>]
 let ``AbandonJob.It does nothing when the given avatar has no job.`` () =
@@ -38,7 +37,7 @@ let ``AbandonJob.It does nothing when the given avatar has no job.`` () =
             Fixtures.Common.Fake.AvatarSingleMetricSink,
             Fixtures.Common.Fake.AvatarSingleMetricSource,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink, 
-            Fixtures.Common.Fake.ShipmateSingleStatisticSource) :> AvatarAbandonJobContext
+            Fixtures.Common.Fake.ShipmateSingleStatisticSource) :> Avatar.AbandonJobContext
     input
     |> Avatar.AbandonJob
         context
@@ -82,7 +81,7 @@ let ``AbandonJob.It set job to None when the given avatar has a job.`` () =
             (Fixtures.Common.Mock.AvatarSingleMetricSink [(Metric.AbandonedJob, 1UL)]),
             avatarSingleMetricSource,
             shipmateSingleStatisticSink, 
-            shipmateSingleStatisticSource) :> AvatarAbandonJobContext
+            shipmateSingleStatisticSource) :> Avatar.AbandonJobContext
     Avatar.AbandonJob
         context
         Fixtures.Common.Dummy.AvatarId

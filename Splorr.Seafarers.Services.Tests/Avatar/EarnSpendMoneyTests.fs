@@ -5,16 +5,14 @@ open NUnit.Framework
 open Splorr.Seafarers.Models
 
 type TestAvatarEarnMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
-    interface AvatarEarnMoneyContext
-    interface AvatarGetPrimaryStatisticContext with
+    interface Avatar.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 type TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
-    interface AvatarSpendMoneyContext
-    interface AvatarGetPrimaryStatisticContext with
+    interface Avatar.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
@@ -30,7 +28,7 @@ let ``EarnMoney.It has no effect when given a negative amount to earn.`` () =
         None
     let shipmateSingleStatisticSink (_) (_) (_) =
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let context = TestAvatarEarnMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarEarnMoneyContext
+    let context = TestAvatarEarnMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> OperatingContext
     input
     |> Avatar.EarnMoney 
         context
@@ -53,7 +51,7 @@ let ``EarnMoney.It updates the avatars money by adding the given amount.`` () =
             Assert.AreEqual(inputAmount, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let context = TestAvatarEarnMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarEarnMoneyContext
+    let context = TestAvatarEarnMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> OperatingContext
     input
     |> Avatar.EarnMoney 
         context
@@ -68,7 +66,7 @@ let ``SpendMoney.It has no effect when given a negative amount to spend.`` () =
         None
     let shipmateSingleStatisticSink (_) (_) (_) =
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let context = TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarSpendMoneyContext
+    let context = TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> OperatingContext
     input
     |> Avatar.SpendMoney 
         context
@@ -91,7 +89,7 @@ let ``SpendMoney.It has no effect when the given avatar has no money.`` () =
             Assert.AreEqual(0.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let context = TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarSpendMoneyContext
+    let context = TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> OperatingContext
     input
     |> Avatar.SpendMoney 
         context
@@ -114,7 +112,7 @@ let ``SpendMoney.It reduces the avatar's money to zero when the given amount exc
             Assert.AreEqual(0.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let context = TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarSpendMoneyContext
+    let context = TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> OperatingContext
     input
     |> Avatar.SpendMoney 
         context
@@ -137,7 +135,7 @@ let ``SpendMoney.It updates the avatars money when the given amount is less than
             Assert.AreEqual(49.0, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
-    let context = TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarSpendMoneyContext
+    let context = TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> OperatingContext
     input
     |> Avatar.SpendMoney 
         context
