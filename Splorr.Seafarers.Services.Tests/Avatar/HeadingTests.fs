@@ -9,7 +9,7 @@ type TestAvatarSetHeadingContext(vesselSingleStatisticSink, vesselSingleStatisti
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 type TestAvatarGetHeadingContext(vesselSingleStatisticSource) = 
-    interface AvatarGetHeadingContext with
+    interface Avatar.GetHeadingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 
@@ -51,7 +51,7 @@ let ``GetHeading.It gets the heading of an avatar.`` () =
             None
     let inputAvatarId="avatar"
     let expected = 0.0 |> Some
-    let context = TestAvatarGetHeadingContext(vesselSingleStatisticSource) :> AvatarGetHeadingContext
+    let context = TestAvatarGetHeadingContext(vesselSingleStatisticSource) :> Avatar.GetHeadingContext
     let actual =
         inputAvatarId
         |> Avatar.GetHeading 

@@ -16,13 +16,12 @@ type TestAvatarAbandonJobContext
         member this.avatarJobSource: AvatarJobSource = avatarJobSource
     interface AvatarGetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface AvatarAddMetricContext with
+    interface Avatar.AddMetricContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
     interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface AvatarSetPrimaryStatisticContext
     interface AvatarIncrementMetricContext
 
 [<Test>]

@@ -11,15 +11,11 @@ type TestAvatarGetPrimaryStatisticContext(shipmateSingleStatisticSource) =
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 type TestAvatarSetMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
-    interface AvatarSetPrimaryStatisticContext
-    interface AvatarSetMoneyContext 
     interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 type TestAvatarSetReputationContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
-    interface AvatarSetPrimaryStatisticContext
-    interface AvatarSetReputationContext
     interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
@@ -82,7 +78,7 @@ let ``SetMoney.It assigns the amount of money of the primary shipmate.`` () =
             Assert.AreEqual(inputMoney, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "Kaboom set")
-    let context = TestAvatarSetMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarSetMoneyContext
+    let context = TestAvatarSetMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> OperatingContext
     input
     |> Avatar.SetMoney 
         context
@@ -106,7 +102,7 @@ let ``SetReputation.It assigns the amount of reputation of the primary shipmate.
             Assert.AreEqual(inputReputation, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "Kaboom set")
-    let context = TestAvatarSetReputationContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> AvatarSetReputationContext
+    let context = TestAvatarSetReputationContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> OperatingContext
     input
     |> Avatar.SetReputation 
         context

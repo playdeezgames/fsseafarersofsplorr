@@ -13,11 +13,11 @@ type TestAvatarSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticS
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 type TestAvatarGetSpeedContext(vesselSingleStatisticSource) =
-    interface AvatarGetSpeedContext with
+    interface Avatar.GetSpeedContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 type TestAvatarGetEffectiveSpeedContext(vesselSingleStatisticSource) =
-    interface AvatarGetSpeedContext with
+    interface Avatar.GetSpeedContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarGetCurrentFoulingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
@@ -152,7 +152,7 @@ let ``GetSpeed.It gets the speed of an avatar.`` () =
             None
     let inputAvatarId="avatar"
     let expected = 0.5 |> Some
-    let context = TestAvatarGetSpeedContext(vesselSingleStatisticSource) :> AvatarGetSpeedContext
+    let context = TestAvatarGetSpeedContext(vesselSingleStatisticSource) :> Avatar.GetSpeedContext
     let actual =
         inputAvatarId
         |> Avatar.GetSpeed context

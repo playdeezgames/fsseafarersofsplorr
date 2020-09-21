@@ -64,7 +64,7 @@ type TestWorldCreateContext
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member _.shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
 
-    interface AvatarCreateContext with
+    interface Avatar.CreateContext with
         member _.avatarJobSink: AvatarJobSink = avatarJobSink
 
     interface AvatarGetPositionContext with

@@ -18,7 +18,7 @@ type TestCareenedRunContext
         vesselSingleStatisticSource) =
     interface Shipmate.GetStatusContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface AvatarAddMetricContext with
+    interface Avatar.AddMetricContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
     interface AvatarGetCurrentFoulingContext with

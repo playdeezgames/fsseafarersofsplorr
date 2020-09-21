@@ -28,7 +28,7 @@ type TestWorldAcceptJobContext
         member _.islandJobPurger       : IslandJobPurger = islandJobPurger
         member _.islandSingleJobSource : IslandSingleJobSource = islandSingleJobSource
         member _.islandSource          : IslandSource = islandSource
-    interface AvatarAddMetricContext with
+    interface Avatar.AddMetricContext with
         member _.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member _.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
 

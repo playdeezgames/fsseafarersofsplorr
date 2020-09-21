@@ -16,7 +16,7 @@ type TestAvatarAddMessagesContext(avatarMessageSink) =
 type TestAvatarAddMetricContext
         (avatarSingleMetricSink,
         avatarSingleMetricSource) =
-    interface AvatarAddMetricContext with
+    interface Avatar.AddMetricContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
 
@@ -56,7 +56,7 @@ let ``AddMetric.It creates a metric value when there is no previously existing m
     let context = 
         TestAvatarAddMetricContext
             ((Fixtures.Common.Mock.AvatarSingleMetricSink [(Metric.Moved, 1UL)]),
-            avatarSingleMetricSource) :> AvatarAddMetricContext
+            avatarSingleMetricSource) :> Avatar.AddMetricContext
     input
     |> Avatar.AddMetric
         context
@@ -80,7 +80,7 @@ let ``AddMetric.It adds to a metric value when there is a previously existing me
     let context = 
         TestAvatarAddMetricContext
             ((Fixtures.Common.Mock.AvatarSingleMetricSink [(Metric.Moved, 1UL)]),
-            avatarSingleMetricSource) :> AvatarAddMetricContext
+            avatarSingleMetricSource) :> Avatar.AddMetricContext
     input
     |> Avatar.AddMetric 
         context

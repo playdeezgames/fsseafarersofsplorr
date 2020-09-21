@@ -59,7 +59,7 @@ type WorldUpdateChartsContext =
 
 type WorldCreateContext =
     inherit WorldGenerateIslandsContext
-    inherit AvatarCreateContext
+    inherit Avatar.CreateContext
     inherit WorldUpdateChartsContext
     abstract member avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink
     abstract member avatarJobSink                   : AvatarJobSink
@@ -112,7 +112,7 @@ type WorldDockContext =
 
 type WorldAcceptJobContext =
     inherit Island.MakeKnownContext
-    inherit AvatarAddMetricContext
+    inherit Avatar.AddMetricContext
     inherit WorldAddMessagesContext
     abstract member avatarJobSink         : AvatarJobSink
     abstract member avatarJobSource       : AvatarJobSource
@@ -148,12 +148,12 @@ type WorldAbandonJobContext =
 
 type WorldSetSpeedContext =
     inherit AvatarSetSpeedContext
-    inherit AvatarGetSpeedContext
+    inherit Avatar.GetSpeedContext
     inherit WorldAddMessagesContext
 
 type WorldSetHeadingContext =
     inherit AvatarSetHeadingContext
-    inherit AvatarGetHeadingContext
+    inherit Avatar.GetHeadingContext
     inherit WorldAddMessagesContext
 
 type WorldMoveContext =

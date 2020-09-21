@@ -11,8 +11,8 @@ type AtSeaGetVisibleIslandsContext =
 
 type AtSeaUpdateDisplayContext =
     inherit AtSeaGetVisibleIslandsContext
-    inherit AvatarGetSpeedContext
-    inherit AvatarGetHeadingContext
+    inherit Avatar.GetSpeedContext
+    inherit Avatar.GetHeadingContext
     inherit AvatarGetEffectiveSpeedContext
     inherit WorldDistanceToContext
 

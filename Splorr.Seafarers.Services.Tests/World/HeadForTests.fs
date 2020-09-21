@@ -12,7 +12,7 @@ type TestWorldHeadForContext
         vesselSingleStatisticSource) =
     interface AvatarGetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface AvatarGetHeadingContext with
+    interface Avatar.GetHeadingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarSetHeadingContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink

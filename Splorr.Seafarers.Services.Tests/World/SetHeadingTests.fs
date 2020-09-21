@@ -5,7 +5,7 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
 type TestWorldSetHeadingContext(avatarMessageSink, vesselSingleStatisticSink, vesselSingleStatisticSource) =
-    interface AvatarGetHeadingContext with
+    interface Avatar.GetHeadingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarSetHeadingContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink

@@ -20,7 +20,6 @@ type TestWorldBuyItemsContext
         vesselSingleStatisticSource)=
     interface Island.UpdateMarketForItemContext with
         member this.commoditySource: CommoditySource = commoditySource
-    interface AvatarSetPrimaryStatisticContext  
     interface AvatarAddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         

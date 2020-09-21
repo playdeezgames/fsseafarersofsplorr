@@ -88,10 +88,10 @@ type SplorrContext
         member _.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-    interface AvatarGetSpeedContext with
+    interface Avatar.GetSpeedContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface AvatarGetHeadingContext with
+    interface Avatar.GetHeadingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface AvatarSetPositionContext with
@@ -106,7 +106,7 @@ type SplorrContext
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface AvatarEatContext with
+    interface Avatar.EatContext with
         member _.avatarInventorySink           : AvatarInventorySink=avatarInventorySink
         member _.avatarInventorySource         : AvatarInventorySource=avatarInventorySource
         member _.avatarShipmateSource          : AvatarShipmateSource=avatarShipmateSource
@@ -179,7 +179,7 @@ type SplorrContext
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member _.shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
 
-    interface AvatarCreateContext with
+    interface Avatar.CreateContext with
         member _.avatarJobSink: AvatarJobSink = avatarJobSink
 
     interface AvatarGetPositionContext with
@@ -303,7 +303,7 @@ type SplorrContext
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-    interface AvatarAddMetricContext with
+    interface Avatar.AddMetricContext with
         member _.avatarSingleMetricSink   : AvatarSingleMetricSink = avatarSingleMetricSink
         member _.avatarSingleMetricSource : AvatarSingleMetricSource = avatarSingleMetricSource
 
