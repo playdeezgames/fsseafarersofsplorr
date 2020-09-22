@@ -17,7 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="CommonTestFixtures.fs" />
+    <Compile Include="Fixtures\Common.fs" />
+    <Compile Include="Fixtures\CommonUnsorted.fs" />
     <Compile Include="AtSeaTestFixtures.fs" />
     <Compile Include="DockedTestFixtures.fs" />
     <Compile Include="ConfirmQuitTestFixtures.fs" />

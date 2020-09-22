@@ -3,26 +3,25 @@
 open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
-open CommonTestFixtures
 
 type TestWorldSetSpeedContext(avatarMessageSink, vesselSingleStatisticSink, vesselSingleStatisticSource) =
-    interface AvatarGetSpeedContext with
+    interface Avatar.GetSpeedContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface AvatarSetSpeedContext with
+    interface Avatar.SetSpeedContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface AvatarAddMessagesContext with
+    interface Avatar.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface WorldAddMessagesContext with
+    interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface WorldSetSpeedContext
 
 [<Test>]
 let ``SetSpeed.It produces all stop in the avatar when less than zero is passed.`` () =
+    let mutable speed = 1.0
     let vesselSingleStatisticSource (_) (identifier) =
         match identifier with
         | VesselStatisticIdentifier.Speed ->
-            {MinimumValue=0.0;MaximumValue=1.0; CurrentValue=1.0} |> Some
+            {MinimumValue=0.0;MaximumValue=1.0; CurrentValue=speed} |> Some
         | _ -> 
             raise (System.NotImplementedException "Kaboom get")
             None
@@ -30,9 +29,14 @@ let ``SetSpeed.It produces all stop in the avatar when less than zero is passed.
     let vesselSingleStatisticSink (_) (identfier:VesselStatisticIdentifier, statistic:Statistic) = 
         Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
+        speed <- statistic.CurrentValue
     let inputSpeed = -1.0
-    let context = TestWorldSetSpeedContext(avatarMessageSinkStub, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
-    avatarId
+    let context = 
+        TestWorldSetSpeedContext
+            (Fixtures.Common.Mock.AvatarMessageSink "You set your speed to 0.00.", 
+            vesselSingleStatisticSink, 
+            vesselSingleStatisticSource) :> OperatingContext
+    Fixtures.Common.Dummy.AvatarId
     |> World.SetSpeed 
         context
         inputSpeed
@@ -40,10 +44,11 @@ let ``SetSpeed.It produces all stop in the avatar when less than zero is passed.
 
 [<Test>]
 let ``SetSpeed.It produces full speed when greater than one is passed.`` () =
+    let mutable speed = 1.0
     let vesselSingleStatisticSource (_) (identifier) =
         match identifier with
         | VesselStatisticIdentifier.Speed ->
-            {MinimumValue=0.0;MaximumValue=1.0; CurrentValue=0.0} |> Some
+            {MinimumValue=0.0;MaximumValue=1.0; CurrentValue=speed} |> Some
         | _ -> 
             raise (System.NotImplementedException "Kaboom get")
             None
@@ -51,9 +56,14 @@ let ``SetSpeed.It produces full speed when greater than one is passed.`` () =
     let vesselSingleStatisticSink (_) (identfier:VesselStatisticIdentifier, statistic:Statistic) = 
         Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
+        speed <- statistic.CurrentValue
     let inputSpeed = 2.0
-    let context = TestWorldSetSpeedContext(avatarMessageSinkStub, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
-    avatarId
+    let context = 
+        TestWorldSetSpeedContext
+            (Fixtures.Common.Mock.AvatarMessageSink "You set your speed to 1.00.", 
+            vesselSingleStatisticSink, 
+            vesselSingleStatisticSource) :> OperatingContext
+    Fixtures.Common.Dummy.AvatarId
     |> World.SetSpeed 
         context
         inputSpeed
@@ -62,10 +72,11 @@ let ``SetSpeed.It produces full speed when greater than one is passed.`` () =
 
 [<Test>]
 let ``SetSpeed.It produces half speed when one half is passed.`` () =
+    let mutable speed = 0.0
     let vesselSingleStatisticSource (_) (identifier) =
         match identifier with
         | VesselStatisticIdentifier.Speed ->
-            {MinimumValue=0.0;MaximumValue=1.0; CurrentValue=0.0} |> Some
+            {MinimumValue=0.0;MaximumValue=1.0; CurrentValue=speed} |> Some
         | _ -> 
             raise (System.NotImplementedException "Kaboom get")
             None
@@ -73,9 +84,14 @@ let ``SetSpeed.It produces half speed when one half is passed.`` () =
     let vesselSingleStatisticSink (_) (identfier:VesselStatisticIdentifier, statistic:Statistic) = 
         Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
+        speed <- statistic.CurrentValue
     let inputSpeed = 0.5
-    let context = TestWorldSetSpeedContext(avatarMessageSinkStub, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
-    avatarId
+    let context = 
+        TestWorldSetSpeedContext
+            (Fixtures.Common.Mock.AvatarMessageSink "You set your speed to 0.50.", 
+            vesselSingleStatisticSink, 
+            vesselSingleStatisticSource) :> OperatingContext
+    Fixtures.Common.Dummy.AvatarId
     |> World.SetSpeed 
         context
         inputSpeed
@@ -85,7 +101,7 @@ let ``SetSpeed.It produces half speed when one half is passed.`` () =
 [<Test>]
 let ``SetSpeed.It does nothing when a bogus avatarid is passed.`` () =
     let inputWorld = 
-        bogusAvatarId
+        Fixtures.Common.Dummy.BogusAvatarId
     let vesselSingleStatisticSource (_) (identifier) =
         match identifier with
         | VesselStatisticIdentifier.Speed ->
@@ -99,7 +115,11 @@ let ``SetSpeed.It does nothing when a bogus avatarid is passed.`` () =
     let inputSpeed = 1.0
     let avatarMessageSink (_) (_) =
         Assert.Fail("Dont call me.")
-    let context = TestWorldSetSpeedContext(avatarMessageSink, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
+    let context = 
+        TestWorldSetSpeedContext
+            (avatarMessageSink, 
+            vesselSingleStatisticSink, 
+            vesselSingleStatisticSource) :> OperatingContext
     inputWorld
     |> World.SetSpeed 
         context
@@ -107,10 +127,11 @@ let ``SetSpeed.It does nothing when a bogus avatarid is passed.`` () =
 
 [<Test>]
 let ``SetSpeed.It produces full speed when one is passed.`` () =
+    let mutable speed = 0.0
     let vesselSingleStatisticSource (_) (identifier) =
         match identifier with
         | VesselStatisticIdentifier.Speed ->
-            {MinimumValue=0.0;MaximumValue=1.0; CurrentValue=0.0} |> Some
+            {MinimumValue=0.0;MaximumValue=1.0; CurrentValue=speed} |> Some
         | _ -> 
             raise (System.NotImplementedException "Kaboom get")
             None
@@ -118,9 +139,14 @@ let ``SetSpeed.It produces full speed when one is passed.`` () =
     let vesselSingleStatisticSink (_) (identfier:VesselStatisticIdentifier, statistic:Statistic) = 
         Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
+        speed <- statistic.CurrentValue
     let inputSpeed = 1.0
-    let context = TestWorldSetSpeedContext(avatarMessageSinkStub, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
-    avatarId
+    let context = 
+        TestWorldSetSpeedContext
+            (Fixtures.Common.Mock.AvatarMessageSink "You set your speed to 1.00.", 
+            vesselSingleStatisticSink, 
+            vesselSingleStatisticSource) :> OperatingContext
+    Fixtures.Common.Dummy.AvatarId
     |> World.SetSpeed 
         context
         inputSpeed
@@ -129,6 +155,7 @@ let ``SetSpeed.It produces full speed when one is passed.`` () =
 
 [<Test>]
 let ``SetSpeed.It sets all stop when given zero`` () =
+    let mutable speed = 1.0
     let vesselSingleStatisticSource (_) (identifier) =
         match identifier with
         | VesselStatisticIdentifier.Speed ->
@@ -140,9 +167,14 @@ let ``SetSpeed.It sets all stop when given zero`` () =
     let vesselSingleStatisticSink (_) (identfier:VesselStatisticIdentifier, statistic:Statistic) = 
         Assert.AreEqual(VesselStatisticIdentifier.Speed, identfier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
+        speed <- statistic.CurrentValue
     let inputSpeed = 0.0
-    let context = TestWorldSetSpeedContext(avatarMessageSinkStub, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
-    avatarId
+    let context = 
+        TestWorldSetSpeedContext
+            (Fixtures.Common.Mock.AvatarMessageSink "You set your speed to 0.00.", 
+            vesselSingleStatisticSink, 
+            vesselSingleStatisticSource) :> OperatingContext
+    Fixtures.Common.Dummy.AvatarId
     |> World.SetSpeed 
         context
         inputSpeed

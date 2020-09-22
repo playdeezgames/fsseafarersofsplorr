@@ -21,8 +21,12 @@
     <Compile Include="Side.fs" />
     <Compile Include="Metric.fs" />
     <Compile Include="ShipmateIdentifier.fs" />
+    <Compile Include="AvatarGamblingHand.fs" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Update="FSharp.Core" Version="4.7.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Tarot\Tarot.fsproj" />
   </ItemGroup>
 </Project>

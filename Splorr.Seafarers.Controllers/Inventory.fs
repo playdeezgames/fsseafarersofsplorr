@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 type InventoryRunWorldContext =
-    inherit AvatarGetUsedTonnageContext
+    inherit Avatar.GetUsedTonnageContext
     
 type InventoryRunContext =
     inherit InventoryRunWorldContext

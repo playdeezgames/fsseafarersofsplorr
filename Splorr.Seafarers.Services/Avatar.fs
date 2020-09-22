@@ -1,8 +1,9 @@
 ﻿namespace Splorr.Seafarers.Services
+open System
 open Splorr.Seafarers.Models
+open Tarot
 
 type MessagePurger = string -> unit
-
 type AvatarMessageSink = string -> string -> unit
 type AvatarShipmateSource = string -> ShipmateIdentifier list
 type AvatarInventorySource = string -> AvatarInventory
@@ -12,138 +13,19 @@ type AvatarSingleMetricSink = string -> Metric * uint64 -> unit
 type AvatarJobSource = string -> Job option
 type AvatarJobSink = string -> Job option -> unit
 type AvatarIslandFeatureSink = AvatarIslandFeature option * string -> unit
-//type AvatarIslandFeatureSource = string -> IslandFeatureIdentifier option
-
-type AvatarCreateContext =
-    inherit VesselCreateContext
-    inherit ShipmateCreateContext
-    abstract member avatarJobSink : AvatarJobSink
-
-type AvatarAddMetricContext =
-    abstract member avatarSingleMetricSink   : AvatarSingleMetricSink
-    abstract member avatarSingleMetricSource : AvatarSingleMetricSource
-
-
-type AvatarEatContext =
-    inherit ShipmateEatContext
-    inherit AvatarAddMetricContext
-    abstract member avatarInventorySink           : AvatarInventorySink
-    abstract member avatarInventorySource         : AvatarInventorySource
-    abstract member avatarShipmateSource          : AvatarShipmateSource
-
-type AvatarSetPrimaryStatisticContext = 
-    inherit ShipmateTransformStatisticContext
-
-type AvatarSetMoneyContext =
-    inherit AvatarSetPrimaryStatisticContext
-
-type AvatarSetReputationContext = 
-    inherit AvatarSetPrimaryStatisticContext
-
-type AvatarGetSpeedContext =
-    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-
-type AvatarGetHeadingContext =
-    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-
-type AvatarSetPositionContext =
-    abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
-    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-
-type AvatarSetSpeedContext =
-    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-    abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
-
-type AvatarGetCurrentFoulingContext =
-    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-
-type AvatarGetMaximumFoulingContext =
-    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-
-type AvatarGetEffectiveSpeedContext =
-    inherit AvatarGetCurrentFoulingContext
-    inherit AvatarGetSpeedContext
-
-
-type AvatarSetHeadingContext =
-    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-    abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
-
-type AvatarRemoveInventoryContext =
-    abstract member avatarInventorySource : AvatarInventorySource
-    abstract member avatarInventorySink   : AvatarInventorySink
-
-type AvatarIncrementMetricContext =
-    inherit AvatarAddMetricContext
-
-type AvatarGetPositionContext = 
-    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-
-type AvatarGetPrimaryStatisticContext =
-    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
-
-type AvatarAbandonJobContext =
-    inherit AvatarSetReputationContext
-    inherit AvatarGetPrimaryStatisticContext
-    inherit AvatarIncrementMetricContext
-    abstract member avatarJobSink : AvatarJobSink
-    abstract member avatarJobSource : AvatarJobSource
-
-type AvatarGetItemCountContext =
-    abstract member avatarInventorySource : AvatarInventorySource
-
-type AvatarAddMessagesContext =
-    abstract member avatarMessageSink : AvatarMessageSink
-
-type AvatarGetUsedTonnageContext =
-    abstract member avatarInventorySource : AvatarInventorySource
-
-type AvatarCompleteJobContext =
-    inherit AvatarSetReputationContext
-    inherit ShipmateTransformStatisticContext
-    inherit AvatarGetPrimaryStatisticContext
-    inherit AvatarAddMetricContext
-    abstract member avatarJobSink : AvatarJobSink
-    abstract member avatarJobSource : AvatarJobSource
-
-type AvatarEarnMoneyContext =
-    inherit AvatarSetMoneyContext
-    inherit AvatarGetPrimaryStatisticContext
-
-type AvatarSpendMoneyContext =
-    inherit AvatarSetMoneyContext
-    inherit AvatarGetPrimaryStatisticContext
-
-type AvatarAddInventoryContext =
-    inherit AvatarGetItemCountContext
-    abstract member avatarInventorySink   : AvatarInventorySink
-    abstract member avatarInventorySource : AvatarInventorySource
-
-type AvatarTransformShipmatesContext =
-    abstract avatarShipmateSource : AvatarShipmateSource
-
-type AvatarMoveContext =
-    inherit VesselBefoulContext
-    inherit ShipmateTransformStatisticContext
-    inherit AvatarEatContext
-    inherit AvatarGetEffectiveSpeedContext
-    inherit AvatarSetPositionContext
-    inherit AvatarGetPositionContext
-    inherit AvatarTransformShipmatesContext
-    abstract member vesselSingleStatisticSource   : VesselSingleStatisticSource
-
-type AvatarCleanHullContext =
-    inherit VesselTransformFoulingContext
-    inherit ShipmateTransformStatisticContext
-    inherit AvatarIncrementMetricContext
-    inherit AvatarTransformShipmatesContext
-    abstract member avatarShipmateSource          : AvatarShipmateSource
+type AvatarIslandFeatureSource = string -> AvatarIslandFeature option
+type AvatarGamblingHandSource = string -> AvatarGamblingHand option
+type AvatarGamblingHandSink = string -> AvatarGamblingHand option -> unit
 
 module Avatar =
+    type CreateContext =
+        inherit OperatingContext
+        abstract member avatarJobSink : AvatarJobSink
     let Create 
-            (context  : AvatarCreateContext)
+            (context  : OperatingContext)
             (avatarId : string)
             : unit =
+        let context = context :?> CreateContext
         Vessel.Create 
             context
             avatarId
@@ -153,10 +35,14 @@ module Avatar =
             Primary
         context.avatarJobSink avatarId None
 
+    type GetPositionContext = 
+        inherit OperatingContext
+        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
     let GetPosition
-            (context  : AvatarGetPositionContext)
+            (context  : OperatingContext)
             (avatarId : string)
             : Location option =
+        let context = context :?> GetPositionContext
         let positionX =
             VesselStatisticIdentifier.PositionX
             |> context.vesselSingleStatisticSource avatarId
@@ -171,27 +57,40 @@ module Avatar =
         | _ ->
             None
 
+    type GetSpeedContext =
+        inherit OperatingContext
+        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
     let GetSpeed
-            (context  : AvatarGetSpeedContext)
+            (context  : OperatingContext)
             (avatarId : string)
             : float option =
+        let context = context :?> GetSpeedContext
         VesselStatisticIdentifier.Speed
         |> context.vesselSingleStatisticSource avatarId 
         |> Option.map Statistic.GetCurrentValue
 
+    type GetHeadingContext =
+        inherit OperatingContext
+        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
     let GetHeading
-            (context  : AvatarGetHeadingContext)
+            (context  : OperatingContext)
             (avatarId : string)
             : float option =
+        let context = context :?> GetHeadingContext
         VesselStatisticIdentifier.Heading
         |> context.vesselSingleStatisticSource avatarId 
         |> Option.map Statistic.GetCurrentValue
-
+    
+    type SetPositionContext =
+        inherit OperatingContext
+        abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
+        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
     let SetPosition 
-            (context  : AvatarSetPositionContext)
+            (context  : OperatingContext)
             (position : Location) 
             (avatarId : string) 
             : unit =
+        let context = context :?> SetPositionContext
         match 
             context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PositionX, 
             context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PositionY 
@@ -213,11 +112,16 @@ module Avatar =
                         |> snd))
         | _ -> ()
 
+    type SetSpeedContext =
+        inherit OperatingContext
+        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
+        abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
     let SetSpeed 
-            (context  : AvatarSetSpeedContext)
+            (context  : OperatingContext)
             (speed    : float) 
             (avatarId : string) 
             : unit =
+        let context = context :?> SetSpeedContext
         context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Speed
         |> Option.iter
             (fun statistic ->
@@ -226,11 +130,16 @@ module Avatar =
                     |> Statistic.SetCurrentValue speed)
                 |> context.vesselSingleStatisticSink avatarId)
 
+    type SetHeadingContext =
+        inherit OperatingContext
+        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
+        abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
     let SetHeading 
-            (context  : AvatarSetHeadingContext)
+            (context  : OperatingContext)
             (heading  : float) 
             (avatarId : string) 
             : unit =
+        let context = context :?> SetHeadingContext
         context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Heading
         |> Option.iter
             (fun statistic ->
@@ -239,12 +148,17 @@ module Avatar =
                     |> Statistic.SetCurrentValue (heading |> Angle.ToRadians))
                 |> context.vesselSingleStatisticSink avatarId)
 
+    type RemoveInventoryContext =
+        inherit OperatingContext
+        abstract member avatarInventorySource : AvatarInventorySource
+        abstract member avatarInventorySink   : AvatarInventorySink
     let RemoveInventory 
-            (context  : AvatarRemoveInventoryContext)
+            (context  : OperatingContext)
             (item     : uint64) 
             (quantity : uint64) 
             (avatarId : string) 
             : unit =
+        let context = context :?> RemoveInventoryContext
         let inventory = 
             avatarId 
             |>  context.avatarInventorySource
@@ -259,17 +173,22 @@ module Avatar =
         | _ ->
             inventory
         |> context.avatarInventorySink avatarId
-
+    
+    type AddMetricContext =
+        inherit OperatingContext
+        abstract member avatarSingleMetricSink   : AvatarSingleMetricSink
+        abstract member avatarSingleMetricSource : AvatarSingleMetricSource
     let AddMetric 
-            (context  : AvatarAddMetricContext)
+            (context  : OperatingContext)
             (metric   : Metric) 
             (amount   : uint64) 
             (avatarId : string)
             : unit =
+        let context = context :?> AddMetricContext
         context.avatarSingleMetricSink avatarId (metric, (context.avatarSingleMetricSource avatarId metric) + amount)
 
     let private IncrementMetric 
-            (context  : AvatarIncrementMetricContext)
+            (context  : OperatingContext)
             (metric   : Metric) 
             (avatarId : string) 
             : unit =
@@ -280,10 +199,16 @@ module Avatar =
             metric 
             rateOfIncrement
 
+    type EatContext =
+        inherit OperatingContext
+        abstract member avatarInventorySink           : AvatarInventorySink
+        abstract member avatarInventorySource         : AvatarInventorySource
+        abstract member avatarShipmateSource          : AvatarShipmateSource
     let private Eat
-            (context : AvatarEatContext)
+            (context : OperatingContext)
             (avatarId                      : string)
             : unit =
+        let context = context :?> EatContext
         let inventory, eaten, starved =
             ((context.avatarInventorySource avatarId, 0UL, 0UL), context.avatarShipmateSource avatarId)
             ||> List.fold 
@@ -327,40 +252,57 @@ module Avatar =
                 >> Option.map getter
                 >> Option.defaultValue 0.0)
         |> List.reduce (+)
-    
+
+    type GetCurrentFoulingContext =
+        inherit OperatingContext
+        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
     let GetCurrentFouling
-            (context : AvatarGetCurrentFoulingContext) =
+            (context : OperatingContext) =
+        let context = context :?> GetCurrentFoulingContext
         GetFouling 
             context.vesselSingleStatisticSource 
             Statistic.GetCurrentValue
     
+    type GetMaximumFoulingContext =
+        inherit OperatingContext
+        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
     let GetMaximumFouling
-            (context : AvatarGetMaximumFoulingContext) =
+            (context : OperatingContext) =
+        let context = context :?> GetMaximumFoulingContext
         GetFouling 
             context.vesselSingleStatisticSource 
             Statistic.GetMaximumValue 
 
     let GetEffectiveSpeed 
-            (context  : AvatarGetEffectiveSpeedContext)
+            (context  : OperatingContext)
             (avatarId : string)
             : float =
         let currentValue = GetCurrentFouling context avatarId
         let currentSpeed = GetSpeed context avatarId |> Option.get
         (currentSpeed * (1.0 - currentValue))
 
+    type TransformShipmatesContext =
+        inherit OperatingContext
+        abstract avatarShipmateSource : AvatarShipmateSource
     let TransformShipmates 
-            (context   : AvatarTransformShipmatesContext)
+            (context   : OperatingContext)
             (transform : ShipmateIdentifier -> unit) 
             (avatarId  : string) 
             : unit =
+        let context = context :?> TransformShipmatesContext
         avatarId
         |> context.avatarShipmateSource
         |> List.iter transform
 
+
+    type MoveContext =
+        inherit OperatingContext
+        abstract member vesselSingleStatisticSource   : VesselSingleStatisticSource
     let Move
-            (context  : AvatarMoveContext)
+            (context  : OperatingContext)
             (avatarId : string)
             : unit =
+        let context = context :?> MoveContext
         let actualSpeed = 
             avatarId 
             |> GetEffectiveSpeed context
@@ -398,7 +340,7 @@ module Avatar =
             context
 
     let private SetPrimaryStatistic
-            (context    : AvatarSetPrimaryStatisticContext)
+            (context    : OperatingContext)
             (identifier : ShipmateStatisticIdentifier)
             (amount     : float) 
             (avatarId   : string)
@@ -410,15 +352,19 @@ module Avatar =
             avatarId
             Primary
 
-    let SetMoney (context : AvatarSetMoneyContext) = SetPrimaryStatistic context ShipmateStatisticIdentifier.Money 
+    let SetMoney (context : OperatingContext) = SetPrimaryStatistic context ShipmateStatisticIdentifier.Money 
 
-    let SetReputation (context : AvatarSetReputationContext) = SetPrimaryStatistic context ShipmateStatisticIdentifier.Reputation 
+    let SetReputation (context : OperatingContext) = SetPrimaryStatistic context ShipmateStatisticIdentifier.Reputation 
 
+    type GetPrimaryStatisticContext =
+        inherit OperatingContext
+        abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
     let private GetPrimaryStatistic 
-            (context : AvatarGetPrimaryStatisticContext)
+            (context : OperatingContext)
             (identifier : ShipmateStatisticIdentifier) 
             (avatarId     : string) 
             : float =
+        let context = context :?> GetPrimaryStatisticContext
         context.shipmateSingleStatisticSource 
             avatarId 
             Primary 
@@ -426,14 +372,20 @@ module Avatar =
         |> Option.map (fun statistic -> statistic.CurrentValue)
         |> Option.defaultValue 0.0
 
-    let GetMoney context = GetPrimaryStatistic context ShipmateStatisticIdentifier.Money
+    let GetMoney (context:OperatingContext) = GetPrimaryStatistic context ShipmateStatisticIdentifier.Money
 
-    let GetReputation context = GetPrimaryStatistic context ShipmateStatisticIdentifier.Reputation
+    let GetReputation (context:OperatingContext) = GetPrimaryStatistic context ShipmateStatisticIdentifier.Reputation
     
+
+    type AbandonJobContext =
+        inherit OperatingContext
+        abstract member avatarJobSink : AvatarJobSink
+        abstract member avatarJobSource : AvatarJobSource
     let AbandonJob 
-            (context : AvatarAbandonJobContext)
+            (context : OperatingContext)
             (avatarId: string)
             : unit =
+        let context = context :?> AbandonJobContext
         let reputationCostForAbandoningAJob = -1.0
         avatarId
         |> context.avatarJobSource
@@ -453,10 +405,15 @@ module Avatar =
                     Metric.AbandonedJob
                 context.avatarJobSink avatarId None)
 
+    type CompleteJobContext =
+        inherit OperatingContext
+        abstract member avatarJobSink : AvatarJobSink
+        abstract member avatarJobSource : AvatarJobSource
     let CompleteJob
-            (context : AvatarCompleteJobContext)
+            (context : OperatingContext)
             (avatarId:string)
             : unit =
+        let context = context :?> CompleteJobContext
         match avatarId |> context.avatarJobSource with
         | Some job ->
             SetReputation 
@@ -482,7 +439,7 @@ module Avatar =
         | _ -> ()
 
     let EarnMoney 
-            (context : AvatarEarnMoneyContext)
+            (context : OperatingContext)
             (amount                        : float) 
             (avatarId                      : string)
             : unit =
@@ -493,7 +450,7 @@ module Avatar =
                 avatarId
 
     let SpendMoney 
-            (context : AvatarSpendMoneyContext)
+            (context : OperatingContext)
             (amount                        : float) 
             (avatarId                      : string)
             : unit =
@@ -503,52 +460,72 @@ module Avatar =
                 ((GetMoney context avatarId) - amount)
                 avatarId
 
+    type GetItemCountContext =
+        inherit OperatingContext
+        abstract member avatarInventorySource : AvatarInventorySource
     let GetItemCount 
-            (context : AvatarGetItemCountContext)
+            (context : OperatingContext)
             (item                  : uint64) 
             (avatarId              : string) 
             : uint64 =
+        let context = context :?> GetItemCountContext
         match avatarId |> context.avatarInventorySource |> Map.tryFind item with
         | Some x -> x
         | None -> 0UL
 
+    type AddInventoryContext =
+        inherit OperatingContext
+        abstract member avatarInventorySink   : AvatarInventorySink
+        abstract member avatarInventorySource : AvatarInventorySource
     let AddInventory 
-            (context : AvatarAddInventoryContext)
+            (context : OperatingContext)
             (item : uint64) 
             (quantity : uint64) 
             (avatarId : string) 
             : unit =
+        let context = context :?> AddInventoryContext
         let newQuantity = (avatarId |> GetItemCount context item) + quantity
         avatarId
         |> context.avatarInventorySource
         |> Map.add item newQuantity
         |> context.avatarInventorySink avatarId
 
+    type AddMessagesContext =
+        inherit OperatingContext
+        abstract member avatarMessageSink : AvatarMessageSink
     let AddMessages 
-            (context : AvatarAddMessagesContext)
+            (context : OperatingContext)
             (messages : string list) 
             (avatarId : string) 
             : unit =
+        let context = context :?> AddMessagesContext
         messages
         |> List.iter (context.avatarMessageSink avatarId)
 
-
+    type GetUsedTonnageContext =
+        inherit OperatingContext
+        abstract member avatarInventorySource : AvatarInventorySource
     let GetUsedTonnage
-            (context : AvatarGetUsedTonnageContext)
+            (context : OperatingContext)
             (items : Map<uint64, ItemDescriptor>) //TODO: to source
             (avatarId : string) 
             : float =
+        let context = context :?> GetUsedTonnageContext
         (0.0, avatarId |> context.avatarInventorySource)
         ||> Map.fold
             (fun result item quantity -> 
                 let d = items.[item]
                 result + (quantity |> float) * d.Tonnage)
 
+    type CleanHullContext =
+        inherit OperatingContext
+        abstract member avatarShipmateSource          : AvatarShipmateSource
     let CleanHull 
-            (context : AvatarCleanHullContext)
+            (context : OperatingContext)
             (side : Side) 
             (avatarId : string)
             : unit =
+        let context = context :?> CleanHullContext
         Vessel.TransformFouling 
             context
             avatarId 
@@ -568,3 +545,69 @@ module Avatar =
         |> IncrementMetric
             context
             Metric.CleanedHull
+
+    type GetGamblingHandContext =
+        inherit OperatingContext
+        abstract member avatarGamblingHandSource : AvatarGamblingHandSource
+    let GetGamblingHand
+            (context  : OperatingContext)
+            (avatarId : string)
+            : AvatarGamblingHand option =
+        let context = context :?> GetGamblingHandContext
+        context.avatarGamblingHandSource avatarId
+      
+      
+    type DealGamblingHandContext =
+        inherit OperatingContext
+        abstract member avatarGamblingHandSink : AvatarGamblingHandSink
+        abstract member random : Random
+    let DealGamblingHand
+            (context  : OperatingContext)
+            (avatarId : string)
+            : unit =
+        let context = context :?> DealGamblingHandContext
+        match Deck.Create()
+            |> List.sortBy (fun _ -> context.random.Next()) with
+        | first :: second :: third :: _ ->
+            (first, second, third)
+            |> Some
+            |> context.avatarGamblingHandSink avatarId
+        | _ ->
+            raise (NotImplementedException "DealGamblingHand did not have at least three cards")
+
+    type FoldGamblingHandContext =
+        inherit OperatingContext
+        abstract member avatarGamblingHandSink : AvatarGamblingHandSink
+    let FoldGamblingHand
+            (context  : OperatingContext)
+            (avatarId : string)
+            : unit =
+        let context = context :?> FoldGamblingHandContext
+        context.avatarGamblingHandSink avatarId None
+
+
+    type EnterIslandFeatureContext =
+        inherit OperatingContext
+        abstract member avatarIslandFeatureSink : AvatarIslandFeatureSink
+        abstract member islandSingleFeatureSource : IslandSingleFeatureSource
+    let EnterIslandFeature
+            (context  : OperatingContext)
+            (avatarId : string)
+            (location : Location)
+            (feature  : IslandFeatureIdentifier)
+            : unit =
+        let context = context :?> EnterIslandFeatureContext
+        if context.islandSingleFeatureSource location feature then
+            context.avatarIslandFeatureSink 
+                ({featureId = feature; location = location} |> Some, 
+                    avatarId)
+
+    type GetIslandFeatureContext =
+        inherit OperatingContext
+        abstract member avatarIslandFeatureSource : AvatarIslandFeatureSource
+    let GetIslandFeature
+            (context : OperatingContext)
+            (avatarId: string)
+            : AvatarIslandFeature option =
+        let context = context :?> GetIslandFeatureContext
+        context.avatarIslandFeatureSource avatarId

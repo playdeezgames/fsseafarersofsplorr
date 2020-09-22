@@ -3,15 +3,14 @@
 open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
-open CommonTestFixtures
 
 type TestWorldUpdateChartsContext
             (avatarIslandSingleMetricSink,
             islandSource,
             vesselSingleStatisticSource) =
-    interface AvatarGetPositionContext with
+    interface Avatar.GetPositionContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface WorldUpdateChartsContext with
+    interface World.UpdateChartsContext with
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.islandSource: IslandSource = islandSource
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
@@ -19,7 +18,7 @@ type TestWorldUpdateChartsContext
 [<Test>]
 let ``UpdateChart.It does nothing when the given avatar is not near enough to any islands within the avatar's view distance.`` () =
     let input =
-        avatarId
+        Fixtures.Common.Dummy.AvatarId
     let vesselSingleStatisticSource (_) (identifier) = 
         match identifier with
         | VesselStatisticIdentifier.PositionX
@@ -38,7 +37,7 @@ let ``UpdateChart.It does nothing when the given avatar is not near enough to an
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
     let islandSource() =
         []
-    let context = TestWorldUpdateChartsContext(avatarIslandSingleMetricSink, islandSource, vesselSingleStatisticSource) :> WorldUpdateChartsContext
+    let context = TestWorldUpdateChartsContext(avatarIslandSingleMetricSink, islandSource, vesselSingleStatisticSource) :> World.UpdateChartsContext
     input
     |> World.UpdateCharts 
         context
@@ -47,7 +46,7 @@ let ``UpdateChart.It does nothing when the given avatar is not near enough to an
 [<Test>]
 let ``UpdateChart.It does nothing when the given avatar has already seen all nearby islands.`` () =
     let input =
-        avatarId
+        Fixtures.Common.Dummy.AvatarId
     let vesselSingleStatisticSource (_) (identifier) = 
         match identifier with
         | VesselStatisticIdentifier.PositionX 
@@ -66,7 +65,7 @@ let ``UpdateChart.It does nothing when the given avatar has already seen all nea
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
     let islandSource() =
         []
-    let context = TestWorldUpdateChartsContext(avatarIslandSingleMetricSink, islandSource, vesselSingleStatisticSource) :> WorldUpdateChartsContext
+    let context = TestWorldUpdateChartsContext(avatarIslandSingleMetricSink, islandSource, vesselSingleStatisticSource) :> World.UpdateChartsContext
     input
     |> World.UpdateCharts 
         context
@@ -74,7 +73,7 @@ let ``UpdateChart.It does nothing when the given avatar has already seen all nea
 [<Test>]
 let ``UpdateChart.It does set all islands within the avatar's view distance to "seen" when given avatar is near enough to previously unseen islands.`` () =
     let input =
-        avatarId
+        Fixtures.Common.Dummy.AvatarId
     let vesselSingleStatisticSource (_) (identifier) = 
         match identifier with
         | VesselStatisticIdentifier.PositionX
@@ -93,7 +92,7 @@ let ``UpdateChart.It does set all islands within the avatar's view distance to "
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
     let islandSource() =
         []
-    let context = TestWorldUpdateChartsContext(avatarIslandSingleMetricSink, islandSource, vesselSingleStatisticSource) :> WorldUpdateChartsContext
+    let context = TestWorldUpdateChartsContext(avatarIslandSingleMetricSink, islandSource, vesselSingleStatisticSource) :> World.UpdateChartsContext
     input
     |> World.UpdateCharts
         context

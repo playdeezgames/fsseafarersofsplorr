@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 type IslandListRunWorldContext =
-    inherit AvatarGetPositionContext
+    inherit Avatar.GetPositionContext
 
 type IslandListRunContext =
     inherit IslandListRunWorldContext

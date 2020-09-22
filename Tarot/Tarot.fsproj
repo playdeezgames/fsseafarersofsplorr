@@ -9,6 +9,7 @@
     <Compile Include="Rank.fs" />
     <Compile Include="Arcana.fs" />
     <Compile Include="Card.fs" />
+    <Compile Include="Deck.fs" />
   </ItemGroup>
 
 </Project>

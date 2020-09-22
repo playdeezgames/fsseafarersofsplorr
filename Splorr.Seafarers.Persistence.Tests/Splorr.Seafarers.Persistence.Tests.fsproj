@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Compile Include="CommonTestFixtures.fs" />
+    <Compile Include="AvatarGamblingHandTests.fs" />
     <Compile Include="AvatarInventoryTests.fs" />
     <Compile Include="AvatarIslandFeatureTests.fs" />
     <Compile Include="AvatarIslandMetricTests.fs" />
@@ -48,6 +49,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Splorr.Seafarers.Persistence.Schema\Splorr.Seafarers.Persistence.Schema.fsproj" />
     <ProjectReference Include="..\Splorr.Seafarers.Persistence\Splorr.Seafarers.Persistence.fsproj" />
+    <ProjectReference Include="..\Tarot\Tarot.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

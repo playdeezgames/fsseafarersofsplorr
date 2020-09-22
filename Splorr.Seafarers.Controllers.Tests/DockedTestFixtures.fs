@@ -4,7 +4,7 @@ open CommonTestFixtures
 open Splorr.Seafarers.Models
 
 let internal dockWorld = 
-    avatarId
+    Fixtures.Common.Dummy.AvatarId
 
 let internal dockLocation : Location = (0.0, 0.0)
 
@@ -56,13 +56,10 @@ let internal smallWorldSingleStatisticSource (identifier: WorldStatisticIdentifi
         raise (System.NotImplementedException (sprintf "smallWorldSingleStatisticSource - %s" (identifier.ToString())))
 
 let internal smallWorld = 
-    avatarId
+    Fixtures.Common.Dummy.AvatarId
 
 let internal smallWorldIslandLocation = 
     (0.0, 0.0)
-
-let internal darkAlleyIslandLocation =
-    smallWorldIslandLocation
 
 let internal noDarkAlleyIslandLocation =
     (10.0, 20.0)

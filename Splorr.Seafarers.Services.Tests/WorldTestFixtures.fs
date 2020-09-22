@@ -2,7 +2,6 @@
 
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
-open CommonTestFixtures
 open System
 
 let internal genericWorldSingleStatisticSource (identifier: WorldStatisticIdentifier) : Statistic =
@@ -45,7 +44,7 @@ type TestWorldDockContext
             termSources                    : TermSources,
             worldSingleStatisticSource     : WorldSingleStatisticSource
         ) =
-    interface WorldDockContext with
+    interface World.DockContext with
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         member _.avatarIslandFeatureSink        : AvatarIslandFeatureSink = avatarIslandFeatureSink
@@ -63,52 +62,52 @@ type TestWorldDockContext
         member _.islandSource                   : IslandSource=islandSource
         member _.itemSource                     : ItemSource =itemSource
         member _.shipmateSingleStatisticSink    : ShipmateSingleStatisticSink=shipmateSingleStatisticSink
-    interface AvatarCompleteJobContext with
+    interface Avatar.CompleteJobContext with
         member _.avatarJobSink : AvatarJobSink = avatarJobSink
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
-    
-    interface WorldAddMessagesContext with
+    interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface AvatarGetPrimaryStatisticContext with
+    interface Avatar.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-    interface AvatarAddMessagesContext with
+    interface Avatar.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
 
-    interface AvatarAddMetricContext with
+    interface Avatar.AddMetricContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
 
-    interface ShipmateTransformStatisticContext with
+    interface Shipmate.TransformStatisticContext with
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-    interface IslandGenerateItemsContext with
+    interface Island.GenerateItemsContext with
         member _.islandItemSink: IslandItemSink = islandItemSink
         member _.islandItemSource: IslandItemSource = islandItemSource
         member _.itemSource: ItemSource = itemSource
-        member _.random: Random = random
+        member _.random: Random = Fixtures.Common.Dummy.Random
 
-    interface IslandGenerateCommoditiesContext with
+    interface Island.GenerateCommoditiesContext with
         member _.commoditySource: CommoditySource = commoditySource
         member _.islandMarketSink: IslandMarketSink = islandMarketSink
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
-        member _.random : Random = random
+        member _.random : Random = Fixtures.Common.Dummy.Random
 
-    interface IslandAddVisitContext with
+    interface Island.AddVisitContext with
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
 
-    interface IslandGenerateJobsContext with
+    interface Island.GenerateJobsContext with
         member _.islandJobSink              : IslandJobSink=islandJobSink
         member _.islandJobSource            : IslandJobSource=islandJobSource
 
-    interface UtilitySortListRandomlyContext with
-        member _.random : Random = random
+    interface Utility.SortListRandomlyContext with
+        member _.random : Random = Fixtures.Common.Dummy.Random
 
     interface JobCreateContext with 
         member _.termSources                : TermSources = termSources
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
+        member _.random : Random = Fixtures.Common.Dummy.Random
         
 

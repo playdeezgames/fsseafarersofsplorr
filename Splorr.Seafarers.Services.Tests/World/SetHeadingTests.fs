@@ -3,27 +3,26 @@
 open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
-open CommonTestFixtures
 
 type TestWorldSetHeadingContext(avatarMessageSink, vesselSingleStatisticSink, vesselSingleStatisticSource) =
-    interface AvatarGetHeadingContext with
+    interface Avatar.GetHeadingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface AvatarSetHeadingContext with
+    interface Avatar.SetHeadingContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface AvatarAddMessagesContext with
+    interface Avatar.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface WorldAddMessagesContext with
+    interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface WorldSetHeadingContext
 
 [<Test>]
 let ``SetHeading.It sets a new heading when given a valid avatar id.`` () =
     let heading = 1.5
+    let mutable currentHeading = 0.0
     let vesselSingleStatisticSource (_) (identifier) =
         match identifier with
         | VesselStatisticIdentifier.Heading ->
-            {MinimumValue=0.0; MaximumValue=6.3; CurrentValue=0.0} |> Some
+            {MinimumValue=0.0; MaximumValue=6.3; CurrentValue=currentHeading} |> Some
         | _ ->
             raise (System.NotImplementedException "Kaboom get")
             None
@@ -31,8 +30,13 @@ let ``SetHeading.It sets a new heading when given a valid avatar id.`` () =
     let vesselSingleStatisticSink (_) (identifier:VesselStatisticIdentifier, statistic:Statistic) =
         Assert.AreEqual(VesselStatisticIdentifier.Heading, identifier)
         Assert.AreEqual(expectedHeading, statistic.CurrentValue)
-    let context = TestWorldSetHeadingContext(avatarMessageSinkStub, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetHeadingContext
-    avatarId
+        currentHeading <- statistic.CurrentValue
+    let context = 
+        TestWorldSetHeadingContext
+            (Fixtures.Common.Mock.AvatarMessageSink "You set your heading to 1.50°.", 
+            vesselSingleStatisticSink, 
+            vesselSingleStatisticSource) :> OperatingContext
+    Fixtures.Common.Dummy.AvatarId
     |> World.SetHeading 
         context
         heading
@@ -42,13 +46,17 @@ let ``SetHeading.It sets a new heading when given a valid avatar id.`` () =
 [<Test>]
 let ``SetHeading.It does nothing when given an invalid avatar id`` () =
     let input = 
-        bogusAvatarId
+        Fixtures.Common.Dummy.BogusAvatarId
     let vesselSingleStatisticSource (_) (_) =
         None
     let vesselSingleStatisticSink (_) (_) =
         raise (System.NotImplementedException "Kaboom set")
     let heading = 1.5
-    let context = TestWorldSetHeadingContext(avatarMessageSinkStub, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetHeadingContext
+    let context = 
+        TestWorldSetHeadingContext
+            (Fixtures.Common.Fake.AvatarMessageSink, 
+            vesselSingleStatisticSink, 
+            vesselSingleStatisticSource) :> OperatingContext
     input
     |> World.SetHeading 
         context

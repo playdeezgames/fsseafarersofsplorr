@@ -16,25 +16,26 @@ type TestCareenedRunContext
         shipmateSingleStatisticSource,
         vesselSingleStatisticSink, 
         vesselSingleStatisticSource) =
-    interface ShipmateGetStatusContext with
+    interface Shipmate.GetStatusContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface AvatarAddMetricContext with
+    interface Avatar.AddMetricContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
-    interface AvatarGetCurrentFoulingContext with
+    interface Avatar.GetCurrentFoulingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface AvatarGetMaximumFoulingContext with
+    interface Avatar.GetMaximumFoulingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface AvatarTransformShipmatesContext with
+    interface Avatar.TransformShipmatesContext with
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
-    interface AvatarCleanHullContext with
-        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface Avatar.CleanHullContext with
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
-    interface WorldClearMessagesContext with
+    interface World.ClearMessagesContext with
         member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
     interface CareenedRunContext
-    interface ShipmateTransformStatisticContext with
+    interface Vessel.TransformFoulingContext with
+        member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
@@ -98,7 +99,7 @@ let ``Run.It returns ConfirmQuit when given Quit command.`` () =
     let inputSource = 
         Command.Quit
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let inputSide = Port
     let expected =
         (inputSide, inputWorld)
@@ -119,7 +120,7 @@ let ``Run.It returns InvalidInput when given invalid command.`` () =
     let inputWorld = world
     let inputSource = 
         None 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let inputSide = Port
     let expected =
         ("Maybe try 'help'?",(inputSide, inputWorld)
@@ -141,7 +142,7 @@ let ``Run.It returns Careened Help when given the Help command.`` () =
     let inputSource = 
         Command.Help
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let inputSide = Port
     let expected =
         (inputSide, inputWorld)
@@ -163,7 +164,7 @@ let ``Run.It returns Careened Metrics when given the Metrics command.`` () =
     let inputSource = 
         Command.Metrics
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let inputSide = Port
     let expected =
         (inputSide, inputWorld)
@@ -185,7 +186,7 @@ let ``Run.It returns Careened Inventory when given the Inventory command.`` () =
     let inputSource = 
         Command.Inventory
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let inputSide = Port
     let expected =
         (inputSide, inputWorld)
@@ -207,7 +208,7 @@ let ``Run.It returns Status when given the command Status.`` () =
     let inputSource = 
         Command.Status
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let inputSide = Port
     let expected =
         (inputSide, inputWorld)
@@ -229,7 +230,7 @@ let ``Run.It returns At Sea when given the command Weigh Anchor.`` () =
     let inputSource = 
         Command.WeighAnchor
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let inputSide = Port
     let expected =
         inputWorld
@@ -251,7 +252,7 @@ let ``Run.It returns Careened with a cleaned hull when given the command Clean H
     let inputSource = 
         Command.CleanHull
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let inputSide = Port
     let expected =
         (inputSide, inputWorld)

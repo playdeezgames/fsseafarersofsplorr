@@ -11,6 +11,7 @@
     <Compile Include="RankTests.fs" />
     <Compile Include="ArcanaTests.fs" />
     <Compile Include="CardTests.fs" />
+    <Compile Include="DeckTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

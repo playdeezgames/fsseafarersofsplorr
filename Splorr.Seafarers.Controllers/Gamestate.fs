@@ -6,7 +6,7 @@ open Splorr.Seafarers.Services
 type AvatarMessageSource = string -> string list
 
 type GamestateCheckForAvatarDeathContext =
-    inherit WorldIsAvatarAliveContext
+    inherit OperatingContext
 
 [<RequireQualifiedAccess>]
 type Gamestate = 

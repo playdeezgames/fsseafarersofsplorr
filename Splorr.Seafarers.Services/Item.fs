@@ -6,24 +6,20 @@ type IslandMarketSource  = Location -> Map<uint64, Market>
 type ItemSingleSource    = uint64 -> ItemDescriptor option
 type private UnitPriceDeterminer = CommodityDescriptor * Market -> float
 
-type ItemDeterminePriceContext =
-    abstract member commoditySource    : CommoditySource
-    abstract member islandMarketSource : IslandMarketSource
-    abstract member itemSingleSource   : ItemSingleSource
-
-type ItemDetermineSalePriceContext =
-    inherit ItemDeterminePriceContext
-
-type ItemDeterminePurchasePriceContext =
-    inherit ItemDeterminePriceContext
-
 module Item =
+    type DeterminePriceContext =
+        inherit OperatingContext
+        abstract member commoditySource    : CommoditySource
+        abstract member islandMarketSource : IslandMarketSource
+        abstract member itemSingleSource   : ItemSingleSource
+    
     let private DeterminePrice 
-            (context             : ItemDeterminePriceContext)
+            (context             : OperatingContext)
             (unitPriceDeterminer : UnitPriceDeterminer)
             (itemIndex           : uint64) 
             (location            : Location)
             : float =
+        let context = context :?> DeterminePriceContext
         context.itemSingleSource itemIndex
         |> Option.fold
             (fun _ itemDescriptor->
@@ -38,9 +34,9 @@ module Item =
                 |> List.reduce (+)) System.Double.NaN
 
     let DetermineSalePrice 
-            (context : ItemDetermineSalePriceContext) =
+            (context : OperatingContext) =
         DeterminePrice context Market.DetermineSalePrice
 
     let DeterminePurchasePrice 
-            (context : ItemDeterminePurchasePriceContext) =
+            (context : OperatingContext) =
         DeterminePrice context Market.DeterminePurchasePrice

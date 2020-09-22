@@ -8,7 +8,7 @@ open Splorr.Seafarers.Models
 type RunnerRunContext =
     inherit StatusRunContext
     inherit AtSeaRunContext
-    inherit WorldCreateContext
+    inherit World.CreateContext
     inherit DockedRunContext
     inherit IslandFeatureRunContext
     inherit HelpRunContext
@@ -112,9 +112,7 @@ module Runner =
                 match context.avatarIslandFeatureSource avatarId with
                 | Some feature ->
                     Jobs.Run 
-                        context.islandJobSource
-                        context.islandSingleNameSource
-                        context.islandSource
+                        context
                         messageSink 
                         feature.location
                         avatarId

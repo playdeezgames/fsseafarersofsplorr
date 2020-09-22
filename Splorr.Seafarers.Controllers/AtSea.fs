@@ -5,41 +5,31 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Persistence
 
 type AtSeaGetVisibleIslandsContext =
-    inherit AvatarGetPositionContext
-    inherit IslandGetDisplayNameContext
-    inherit WorldGetNearbyLocationsContext
+    inherit Avatar.GetPositionContext
+    inherit Island.GetDisplayNameContext
+    inherit World.GetNearbyLocationsContext
 
 type AtSeaUpdateDisplayContext =
     inherit AtSeaGetVisibleIslandsContext
-    inherit AvatarGetSpeedContext
-    inherit AvatarGetHeadingContext
-    inherit AvatarGetEffectiveSpeedContext
-    inherit WorldDistanceToContext
+    inherit Avatar.GetSpeedContext
+    inherit Avatar.GetHeadingContext
+    inherit World.DistanceToContext
 
 type AtSeaCanCareenContext =
-    inherit AvatarGetPositionContext
-    inherit WorldGetNearbyLocationsContext
+    inherit Avatar.GetPositionContext
+    inherit World.GetNearbyLocationsContext
+    abstract member islandSingleStatisticSource : IslandSingleStatisticSource
 
 type AtSeaHandleCommandContext =
-    inherit WorldClearMessagesContext
-    inherit WorldDockContext
+    inherit World.ClearMessagesContext
+    inherit World.DockContext
     inherit AtSeaGetVisibleIslandsContext
     inherit AtSeaUpdateDisplayContext
-    inherit WorldMoveContext
-    inherit WorldAbandonJobContext
-    inherit WorldHeadForContext
-    inherit WorldAddMessagesContext
-    inherit WorldSetSpeedContext
+    inherit World.AbandonJobContext
+    inherit World.HeadForContext
+    inherit World.AddMessagesContext
     inherit AtSeaCanCareenContext
-    abstract member avatarInventorySink            : AvatarInventorySink
-    abstract member avatarInventorySource          : AvatarInventorySource
-    abstract member avatarShipmateSource           : AvatarShipmateSource
-    abstract member islandLocationByNameSource     : IslandLocationByNameSource
-    abstract member islandSingleNameSource         : IslandSingleNameSource
-    abstract member islandSingleStatisticSource    : IslandSingleStatisticSource
-    abstract member shipmateRationItemSource       : ShipmateRationItemSource
-    abstract member vesselSingleStatisticSink      : VesselSingleStatisticSink
-    abstract member vesselSingleStatisticSource    : VesselSingleStatisticSource
+    //abstract member islandSingleStatisticSource    : IslandSingleStatisticSource
 
 type AtSeaRunContext =
     inherit AtSeaHandleCommandContext
@@ -60,7 +50,7 @@ module AtSea =
 
     let private CanCareen 
             (context : AtSeaCanCareenContext)
-            (islandSingleStatisticSource : IslandSingleStatisticSource)
+            //(islandSingleStatisticSource : IslandSingleStatisticSource)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (avatarId                    : string) 
             : bool =
@@ -81,7 +71,7 @@ module AtSea =
             (fun l -> 
                 (l,
                     IslandStatisticIdentifier.CareenDistance
-                    |> islandSingleStatisticSource l 
+                    |> context.islandSingleStatisticSource l 
                     |> Option.get
                     |> Statistic.GetCurrentValue))
         |> List.exists (fun (l,d) -> Location.DistanceTo l avatarPosition < d)
@@ -193,7 +183,6 @@ module AtSea =
         let canCareen = 
             CanCareen 
                 context
-                context.islandSingleStatisticSource   
                 context.vesselSingleStatisticSource 
                 avatarId
 

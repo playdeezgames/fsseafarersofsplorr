@@ -11,7 +11,7 @@ let private previousGameState =
 
 type TestStatusRunContext(shipmateSingleStatisticSource) =
     interface StatusRunContext
-    interface AvatarGetPrimaryStatisticContext with
+    interface Avatar.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 [<Test>]

@@ -6,7 +6,7 @@ open Splorr.Seafarers.Models
 open System
 
 type TestIslandFeatureGeneratorGenerateContext(random) =
-    interface IslandFeatureGeneratorGenerateContext with
+    interface IslandFeatureGenerator.GenerateContext with
         member _.random : Random = random
 
 [<Test>]

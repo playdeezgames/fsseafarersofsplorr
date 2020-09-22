@@ -4,7 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 type StatusRunWorldContext =
-    inherit AvatarGetPrimaryStatisticContext
+    inherit Avatar.GetPrimaryStatisticContext
 
 type StatusRunContext =
     inherit StatusRunWorldContext

@@ -11,7 +11,7 @@ let private previousGameState =
 
 type TestIslandListRunContext(vesselSingleStatisticSource) =
     interface IslandListRunContext
-    interface AvatarGetPositionContext with
+    interface Avatar.GetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 

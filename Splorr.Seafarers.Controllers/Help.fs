@@ -1,8 +1,7 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
 open Splorr.Seafarers.Models
-
-type AvatarIslandFeatureSource = string -> AvatarIslandFeature option
+open Splorr.Seafarers.Services
 
 type HelpRunContext =
     abstract member avatarIslandFeatureSource : AvatarIslandFeatureSource

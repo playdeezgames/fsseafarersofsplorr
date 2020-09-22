@@ -114,7 +114,7 @@ let ``Run.It returns ConfirmQuit when given Quit command.`` () =
     let inputSource = 
         Command.Quit 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         input
         |> Gamestate.InPlay 
@@ -134,7 +134,7 @@ let ``Run.It returns InvalidInput when given invalid command.`` () =
     let input = world
     let inputSource = 
         None 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         ("Maybe try 'help'?",input
         |> Gamestate.InPlay)
@@ -158,7 +158,7 @@ let ``Run.It returns AtSea with new speed when given Set Speed command.`` () =
         |> SetCommand.Speed 
         |> Command.Set 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expectedMessages = ["You set your speed to 1.00."]//note - the statistic sink does not actually track speed, so this value is "wrong" but the behavior is correct
     let expected = 
         input
@@ -192,7 +192,7 @@ let ``Run.It returns AtSea with new heading when given Set Heading command.`` ()
         |> SetCommand.Heading 
         |> Command.Set 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expectedMessages = 
         [
             "You set your heading to 0.00\u00b0." //note - because of stub function the actual heading is not stored, just testing that a message is added
@@ -227,7 +227,7 @@ let ``Run.It moves the avatar when given Move command.`` () =
         1u 
         |> Command.Move 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expectedMessages = ["Steady as she goes."]
     let expected = 
         input
@@ -264,7 +264,7 @@ let ``Run.It returns At Sea Help when given the Help command.`` () =
     let inputSource = 
         Command.Help 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         input
         |> Gamestate.InPlay 
@@ -285,7 +285,7 @@ let ``Run.It returns At Sea Metrics when given the Metrics command.`` () =
     let inputSource = 
         Command.Metrics 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         input
         |> Gamestate.InPlay 
@@ -306,7 +306,7 @@ let ``Run.It returns At Sea Inventory when given the Inventory command.`` () =
     let inputSource = 
         Command.Inventory 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         input
         |> Gamestate.InPlay 
@@ -327,7 +327,7 @@ let ``Run.It returns Main Menu when given the Menu command.`` () =
     let inputSource = 
         Command.Menu 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         input 
         |> Some 
@@ -349,7 +349,7 @@ let ``Run.It returns Island List when given the Islands command.`` () =
         0u 
         |> Command.Islands 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         (0u, input |> Gamestate.InPlay) 
         |> Gamestate.IslandList 
@@ -369,7 +369,7 @@ let ``Run.It returns AtSea when given the Dock command and there is no sufficien
     let inputSource = 
         Command.Dock 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expectedMessages = ["There is no place to dock."]
     let expected = 
         input
@@ -404,7 +404,7 @@ let ``Run.It returns AtSea when given the Dock command and there is no sufficien
 [<Test>]
 let ``Run.It returns Docked (at Dock) when given the Dock command and there is a near enough island.`` () =
     let input = dockWorld
-    let inputSource = Command.Dock |> Some |> toSource
+    let inputSource = Command.Dock |> Some |> Fixtures.Common.Mock.CommandSource
     let expectedMessages = ["You dock."]
     let expectedWorld = 
         input
@@ -446,7 +446,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
         "foo" 
         |> Command.HeadFor 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expectedMessages = ["I don't know how to get to `foo`."]
     let expected = 
         input
@@ -478,7 +478,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
         "yermom" 
         |> Command.HeadFor 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expectedMessages = ["I don't know how to get to `yermom`."]
     let expected = 
         input
@@ -506,7 +506,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
 [<Test>]
 let ``Run.It gives a message and changes heading when given a Head For command and the given island exists and is known.`` () =
     let input = headForWorldVisited
-    let inputSource = "yermom" |> Command.HeadFor |> Some |> toSource
+    let inputSource = "yermom" |> Command.HeadFor |> Some |> Fixtures.Common.Mock.CommandSource
     let expectedMessages = 
         [
             "You set your heading to 0.00\u00b0." //heading not actually set because of stub functions, so really just test that a message is added
@@ -554,7 +554,7 @@ let ``Run.It returns Chart when given the command Chart.`` () =
         inputChartName
         |> Command.Chart 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         (inputChartName, input)
         |> Gamestate.Chart 
@@ -574,7 +574,7 @@ let ``Run.It returns Status when given the command Status.`` () =
     let inputSource = 
         Command.Status 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         input
         |> Gamestate.InPlay
@@ -596,7 +596,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
         Job 
         |> Command.Abandon 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expectedMessages = ["You have no job to abandon."]
     let expected = 
         input
@@ -628,7 +628,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
         Job 
         |> Command.Abandon 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expectedMessages = ["You abandon your job."]
     let expected = 
         input
@@ -675,7 +675,7 @@ let ``Run.It gives a message and returns AtSea when the avatar is too far away f
         Port
         |> Command.Careen
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expectedMessages = ["You cannot careen here."]
     let expected =
         input
@@ -727,7 +727,7 @@ let ``Run.It returns Careen Port when given the careen port command and the avat
         Port
         |> Command.Careen
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected =
         (Port, input)
         |> Gamestate.Careened
@@ -749,7 +749,7 @@ let ``Run.It adds a message when given a Distance To command with an island name
         inputName
         |> Command.DistanceTo
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expectedMessages = [inputName |> sprintf "I don't know how to get to `%s`."]
     let expectedWorld =
         input
@@ -785,7 +785,7 @@ let ``Run.It adds a message when given a Distance To command with an island name
         inputIslandName
         |> Command.DistanceTo
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expectedMessages = [inputIslandName |> sprintf "I don't know how to get to `%s`."]
     let expectedWorld =
         input

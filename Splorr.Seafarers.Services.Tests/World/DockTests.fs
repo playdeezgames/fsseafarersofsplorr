@@ -4,7 +4,6 @@ open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open WorldTestFixtures
-open CommonTestFixtures
 
 [<Test>]
 let ``Dock.It does not modify avatar when given avatar has a job for a different destination.`` () =
@@ -46,31 +45,46 @@ let ``Dock.It does not modify avatar when given avatar has a job for a different
         ]
     let avatarIslandFeatureSink (feature: AvatarIslandFeature option, _) =
         Assert.AreEqual(IslandFeatureIdentifier.Dock, feature.Value.featureId)
-    let context : WorldDockContext =
+    let avatarSingleMetricSource (_) (id:Metric) =
+        match id with
+        | Metric.VisitedIsland ->
+            0UL
+        | _ ->
+            Assert.Fail(id.ToString() |> sprintf "avatarSingleMetricSource - %s")
+            0UL
+    let islandMarketSource (_) =
+        Map.empty
+    let islandMarketSink (_) (markets)= 
+        Assert.AreEqual(1, markets |> Map.count)
+    let islandItemSource (_) =
+        Set.empty
+    let islandItemSink (_) (x:Set<uint64>) = 
+        Assert.AreEqual(1, x.Count)
+    let context : World.DockContext =
         TestWorldDockContext
             (avatarIslandFeatureSink,
             avatarIslandSingleMetricSink,
             avatarIslandSingleMetricSource,
             avatarJobSink,
             avatarJobSource,
-            (avatarExpectedMessageSink expectedMessage),
-            (assertAvatarSingleMetricSink [Metric.VisitedIsland, 0UL; Metric.VisitedIsland, 1UL]),
-            avatarSingleMetricSourceStub,
-            commoditySource,
+            (Fixtures.Common.Mock.AvatarMessageSink expectedMessage),
+            (Fixtures.Common.Mock.AvatarSingleMetricSink [Metric.VisitedIsland, 0UL; Metric.VisitedIsland, 1UL]),
+            avatarSingleMetricSource,
+            Fixtures.Common.Stub.CommoditySource,
             (fun () -> System.DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64),
-            islandItemSinkStub ,
-            islandItemSourceStub, 
+            islandItemSink,
+            islandItemSource, 
             islandJobSink,
             islandJobSource,
-            islandMarketSinkStub ,
-            islandMarketSourceStub ,
+            islandMarketSink,
+            islandMarketSource,
             islandSource,
-            genericWorldItemSource ,
+            Fixtures.Common.Stub.ItemSource ,
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
-            termSourcesStub ,
-            worldSingleStatisticSourceStub) :> WorldDockContext
-    avatarId
+            Fixtures.Common.Stub.TermSources ,
+            Fixtures.Common.Stub.WorldSingleStatisticSource) :> World.DockContext
+    Fixtures.Common.Dummy.AvatarId
     |> World.Dock
         context
         inputLocation
@@ -142,32 +156,40 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
             Assert.AreEqual(1UL, value)
         | _ ->
             Assert.Fail(metric.ToString() |> sprintf "avatarSingleMetricSink - %s")
-    let context : WorldDockContext =
+    let islandMarketSource (_) =
+        Map.empty
+    let islandMarketSink (_) (markets)= 
+        Assert.AreEqual(1, markets |> Map.count)
+    let islandItemSource (_) =
+        Set.empty
+    let islandItemSink (_) (x:Set<uint64>) = 
+        Assert.AreEqual(1, x.Count)
+    let context : World.DockContext =
         TestWorldDockContext
             (avatarIslandFeatureSink,
             avatarIslandSingleMetricSink,
             avatarIslandSingleMetricSource,
             avatarJobSink,
             avatarJobSource,
-            (avatarMessagesSinkFake expectedMessages),
+            (Fixtures.Common.Mock.AvatarMessagesSink expectedMessages),
             avatarSingleMetricSink,
             avatarSingleMetricSource,
-            commoditySource ,
+            Fixtures.Common.Stub.CommoditySource ,
             (fun () -> System.DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64),
-            islandItemSinkStub ,
-            islandItemSourceStub,
+            islandItemSink ,
+            islandItemSource,
             islandJobSink,
             islandJobSource,
-            islandMarketSinkStub ,
-            islandMarketSourceStub, 
+            islandMarketSink,
+            islandMarketSource, 
             islandSource,
-            genericWorldItemSource ,
+            Fixtures.Common.Stub.ItemSource ,
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
-            termSourcesStub ,
-            worldSingleStatisticSourceStub)
-        :> WorldDockContext
-    avatarId
+            Fixtures.Common.Stub.TermSources ,
+            Fixtures.Common.Stub.WorldSingleStatisticSource)
+        :> World.DockContext
+    Fixtures.Common.Dummy.AvatarId
     |> World.Dock
         context
         jobLocation
@@ -193,38 +215,38 @@ let ``Dock.It does nothing when given an invalid avatar id.`` () =
         []
     let avatarIslandFeatureSink (_) =
         raise (System.NotImplementedException "avatarIslandFeatureSink")
-    let context : WorldDockContext =
+    let context : World.DockContext =
         TestWorldDockContext
             (avatarIslandFeatureSink,
             avatarIslandSingleMetricSink,
             avatarIslandSingleMetricSource,
             avatarJobSink,
             avatarJobSource,
-            avatarMessageSinkStub,
-            avatarSingleMetricSinkExplode,
-            avatarSingleMetricSourceStub,
-            commoditySource,
+            Fixtures.Common.Mock.AvatarMessageSink "There is no place to dock there.",
+            Fixtures.Common.Fake.AvatarSingleMetricSink,
+            Fixtures.Common.Fake.AvatarSingleMetricSource,
+            Fixtures.Common.Stub.CommoditySource,
             (fun () -> System.DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64),
-            islandItemSinkStub,
-            islandItemSourceStub, 
+            Fixtures.Common.Fake.IslandItemSink,
+            Fixtures.Common.Fake.IslandItemSource, 
             islandJobSink,
             islandJobSource,
-            islandMarketSinkStub,
-            islandMarketSourceStub, 
+            Fixtures.Common.Fake.IslandMarketSink,
+            Fixtures.Common.Fake.IslandMarketSource, 
             islandSource,
-            genericWorldItemSource,
-            shipmateSingleStatisticSinkStub,
-            shipmateSingleStatisticSourceStub,
-            termSourcesStub,
-            worldSingleStatisticSourceStub) :> WorldDockContext
-    bogusAvatarId
+            Fixtures.Common.Stub.ItemSource,
+            Fixtures.Common.Fake.ShipmateSingleStatisticSink,
+            Fixtures.Common.Fake.ShipmateSingleStatisticSource,
+            Fixtures.Common.Stub.TermSources,
+            Fixtures.Common.Stub.WorldSingleStatisticSource) :> World.DockContext
+    Fixtures.Common.Dummy.BogusAvatarId
     |> World.Dock 
         context
         (0.0, 0.0)
 
 [<Test>]
 let ``Dock.It adds a message when the given location has no island.`` () =
-    let inputWorld = avatarId
+    let inputWorld = Fixtures.Common.Dummy.AvatarId
     let expectedMessage = "There is no place to dock there."
     let avatarJobSink (_) (_) =
         Assert.Fail("avatarJobSink")
@@ -245,30 +267,30 @@ let ``Dock.It adds a message when the given location has no island.`` () =
         []
     let avatarIslandFeatureSink (_) =
         raise (System.NotImplementedException "avatarIslandFeatureSink")
-    let context : WorldDockContext =
+    let context : World.DockContext =
         TestWorldDockContext
             (avatarIslandFeatureSink,
             avatarIslandSingleMetricSink,
             avatarIslandSingleMetricSource,
             avatarJobSink,
             avatarJobSource,
-            (avatarExpectedMessageSink expectedMessage),
-            avatarSingleMetricSinkExplode,
-            avatarSingleMetricSourceStub,
-            commoditySource,
+            (Fixtures.Common.Mock.AvatarMessageSink expectedMessage),
+            Fixtures.Common.Fake.AvatarSingleMetricSink,
+            Fixtures.Common.Fake.AvatarSingleMetricSource,
+            Fixtures.Common.Stub.CommoditySource,
             (fun () -> System.DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64),
-            islandItemSinkStub ,
-            islandItemSourceStub, 
+            Fixtures.Common.Fake.IslandItemSink ,
+            Fixtures.Common.Fake.IslandItemSource, 
             islandJobSink,
             islandJobSource,
-            islandMarketSinkStub ,
-            islandMarketSourceStub, 
+            Fixtures.Common.Fake.IslandMarketSink ,
+            Fixtures.Common.Fake.IslandMarketSource, 
             islandSource,
-            genericWorldItemSource ,
-            shipmateSingleStatisticSinkStub,
-            shipmateSingleStatisticSourceStub,
-            termSourcesStub ,
-            worldSingleStatisticSourceStub) :> WorldDockContext
+            Fixtures.Common.Stub.ItemSource ,
+            Fixtures.Common.Fake.ShipmateSingleStatisticSink,
+            Fixtures.Common.Fake.ShipmateSingleStatisticSource,
+            Fixtures.Common.Stub.TermSources ,
+            Fixtures.Common.Stub.WorldSingleStatisticSource) :> World.DockContext
     inputWorld
     |> World.Dock
         context
@@ -276,7 +298,7 @@ let ``Dock.It adds a message when the given location has no island.`` () =
 
 [<Test>]
 let ``Dock.It updates the island's visit count and last visit when the given location has an island.`` (): unit =
-    let inputWorld = avatarId
+    let inputWorld = Fixtures.Common.Dummy.AvatarId
     let inputLocation = (0.0, 0.0)
     let expectedMessage = "You dock."
     let shipmateSingleStatisticSource (_) (_) (identifier: ShipmateStatisticIdentifier) =
@@ -332,31 +354,47 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
         [inputLocation]
     let avatarIslandFeatureSink (feature: AvatarIslandFeature option, _) =
         Assert.AreEqual(IslandFeatureIdentifier.Dock, feature.Value.featureId)
-    let context : WorldDockContext =
+    let avatarSingleMetricSource (_) (id:Metric) =
+        match id with
+        | Metric.VisitedIsland ->
+            0UL
+        | _ ->
+            Assert.Fail(id.ToString() |> sprintf "avatarSingleMetricSource - %s")
+            0UL
+    let islandMarketSource (_) =
+        Map.empty
+    let islandMarketSink (_) (markets)= 
+        Assert.AreEqual(0, markets |> Map.count)
+    let islandItemSource (_) =
+        Set.empty
+    let islandItemSink (_) (x:Set<uint64>) = 
+        Assert.AreEqual(0, x.Count)
+
+    let context : World.DockContext =
         TestWorldDockContext
             (avatarIslandFeatureSink,
             avatarIslandSingleMetricSink,
             avatarIslandSingleMetricSource,
             avatarJobSink,
             avatarJobSource,
-            (avatarExpectedMessageSink expectedMessage),
-            (assertAvatarSingleMetricSink [Metric.VisitedIsland, 1UL]),
-            avatarSingleMetricSourceStub,
+            (Fixtures.Common.Mock.AvatarMessageSink expectedMessage),
+            (Fixtures.Common.Mock.AvatarSingleMetricSink [Metric.VisitedIsland, 1UL]),
+            avatarSingleMetricSource,
             (fun()->Map.empty),
             (fun () -> System.DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64),
-            islandItemSinkStub, 
-            islandItemSourceStub,
+            islandItemSink, 
+            islandItemSource,
             islandJobSink,
             islandJobSource,
-            islandMarketSinkStub ,
-            islandMarketSourceStub, 
+            islandMarketSink,
+            islandMarketSource, 
             islandSource,
-            (fun()->Map.empty) ,
+            (fun()->Map.empty),
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
-            termSourcesStub ,
-            worldSingleStatisticSourceStub) 
-        :> WorldDockContext
+            Fixtures.Common.Stub.TermSources,
+            Fixtures.Common.Stub.WorldSingleStatisticSource) 
+        :> World.DockContext
     inputWorld
     |> World.Dock
         context

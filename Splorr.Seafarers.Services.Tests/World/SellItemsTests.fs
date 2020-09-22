@@ -3,7 +3,6 @@
 open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
-open CommonTestFixtures
 
 type TestWorldSellItemsContext
         (avatarInventorySink,
@@ -18,34 +17,36 @@ type TestWorldSellItemsContext
         itemSource,
         shipmateSingleStatisticSink,
         shipmateSingleStatisticSource) =
-    interface IslandUpdateMarketForItemContext with
+    interface Island.UpdateMarketForItemContext with
         member _.commoditySource: CommoditySource = commoditySource
-        member _.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
-        member _.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
-    interface AvatarRemoveInventoryContext with
+    interface Item.DeterminePriceContext with
+        member this.commoditySource: CommoditySource = commoditySource
+        member this.islandMarketSource: IslandMarketSource = islandMarketSource
+        member this.itemSingleSource: ItemSingleSource = itemSingleSource
+    interface Avatar.RemoveInventoryContext with
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
-    interface AvatarGetPrimaryStatisticContext with
+    interface Avatar.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface WorldAddMessagesContext with
+    interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface AvatarGetItemCountContext with
+    interface Avatar.GetItemCountContext with
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
-    interface WorldSellItemsContext with
+    interface World.SellItemsContext with
         member _.islandSource                  : IslandSource = islandSource
         member _.itemSource                    : ItemSource = itemSource
-        member _.commoditySource: CommoditySource = commoditySource
-        member _.islandMarketSource: IslandMarketSource = islandMarketSource
-        member _.itemSingleSource : ItemSingleSource = itemSingleSource
-    interface AvatarAddMessagesContext with
+    interface Avatar.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface ShipmateTransformStatisticContext with
+    interface Island.ChangeMarketContext with
+        member this.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
+        member this.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
+    interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 [<Test>]
 let ``SellItems.It gives a message when given a bogus island location.`` () =
-    let input = avatarId
+    let input = Fixtures.Common.Dummy.AvatarId
     let inputLocation = (-1.0, -1.0)
     let inputQuantity = 2UL |> Specific
     let inputItemName = "item under test"
@@ -59,22 +60,22 @@ let ``SellItems.It gives a message when given a bogus island location.`` () =
     let islandSource() =
         []
     let itemSingleSource (x) =
-        genericWorldItemSource()
+        Fixtures.Common.Stub.ItemSource()
         |> Map.tryFind x
     let context = 
         TestWorldSellItemsContext
             (avatarInventorySink,
             avatarInventorySource,
-            (avatarExpectedMessageSink expectedMessage),
-            commoditySource, 
-            islandMarketSourceStub, 
-            islandSingleMarketSinkStub ,
-            islandSingleMarketSourceStub,
+            (Fixtures.Common.Mock.AvatarMessageSink expectedMessage),
+            Fixtures.Common.Stub.CommoditySource, 
+            Fixtures.Common.Fake.IslandMarketSource, 
+            Fixtures.Common.Fake.IslandSingleMarketSink,
+            Fixtures.Common.Fake.IslandSingleMarketSource,
             islandSource,
             itemSingleSource,
-            genericWorldItemSource,
-            shipmateSingleStatisticSinkStub,
-            shipmateSingleStatisticSourceStub) :> WorldSellItemsContext
+            Fixtures.Common.Stub.ItemSource,
+            Fixtures.Common.Fake.ShipmateSingleStatisticSink,
+            Fixtures.Common.Fake.ShipmateSingleStatisticSource) :> World.SellItemsContext
     input 
     |> World.SellItems 
         context
@@ -84,7 +85,7 @@ let ``SellItems.It gives a message when given a bogus island location.`` () =
 
 [<Test>]
 let ``SellItems.It gives a message when given a valid island location and bogus item to buy.`` () =
-    let input = avatarId
+    let input = Fixtures.Common.Dummy.AvatarId
     let inputLocation = (0.0, 0.0)
     let inputQuantity = 2UL |> Specific
     let inputItemName = "bogus item"
@@ -98,22 +99,22 @@ let ``SellItems.It gives a message when given a valid island location and bogus 
     let islandSource() =
         [inputLocation]
     let itemSingleSource (x) =
-        genericWorldItemSource()
+        Fixtures.Common.Stub.ItemSource()
         |> Map.tryFind x
     let context = 
         TestWorldSellItemsContext
             (avatarInventorySink,
             avatarInventorySource,
-            (avatarExpectedMessageSink expectedMessage),
-            commoditySource, 
-            islandMarketSourceStub, 
-            islandSingleMarketSinkStub ,
-            islandSingleMarketSourceStub,
+            (Fixtures.Common.Mock.AvatarMessageSink expectedMessage),
+            Fixtures.Common.Stub.CommoditySource, 
+            Fixtures.Common.Fake.IslandMarketSource, 
+            Fixtures.Common.Fake.IslandSingleMarketSink,
+            Fixtures.Common.Fake.IslandSingleMarketSource,
             islandSource,
             itemSingleSource,
-            genericWorldItemSource,
-            shipmateSingleStatisticSinkStub,
-            shipmateSingleStatisticSourceStub) :> WorldSellItemsContext
+            Fixtures.Common.Stub.ItemSource,
+            Fixtures.Common.Fake.ShipmateSingleStatisticSink,
+            Fixtures.Common.Fake.ShipmateSingleStatisticSource) :> World.SellItemsContext
     input 
     |> World.SellItems 
         context
@@ -123,7 +124,7 @@ let ``SellItems.It gives a message when given a valid island location and bogus 
 
 [<Test>]
 let ``SellItems.It gives a message when the avatar has insufficient items in inventory.`` () =
-    let input = avatarId
+    let input = Fixtures.Common.Dummy.AvatarId
     let inputLocation = (0.0, 0.0)
     let inputQuantity = 2UL |> Specific
     let inputItemName = "item under test"
@@ -135,22 +136,22 @@ let ``SellItems.It gives a message when the avatar has insufficient items in inv
     let islandSource() =
         [inputLocation]
     let itemSingleSource (x) =
-        genericWorldItemSource()
+        Fixtures.Common.Stub.ItemSource()
         |> Map.tryFind x
     let context = 
         TestWorldSellItemsContext
             (avatarInventorySink,
             avatarInventorySource,
-            (avatarExpectedMessageSink expectedMessage),
-            commoditySource, 
-            islandMarketSourceStub, 
-            islandSingleMarketSinkStub ,
-            islandSingleMarketSourceStub,
+            (Fixtures.Common.Mock.AvatarMessageSink expectedMessage),
+            Fixtures.Common.Stub.CommoditySource, 
+            Fixtures.Common.Fake.IslandMarketSource, 
+            Fixtures.Common.Fake.IslandSingleMarketSink,
+            Fixtures.Common.Fake.IslandSingleMarketSource,
             islandSource,
             itemSingleSource,
-            genericWorldItemSource,
-            shipmateSingleStatisticSinkStub,
-            shipmateSingleStatisticSourceStub) :> WorldSellItemsContext
+            Fixtures.Common.Stub.ItemSource,
+            Fixtures.Common.Fake.ShipmateSingleStatisticSink,
+            Fixtures.Common.Fake.ShipmateSingleStatisticSource) :> World.SellItemsContext
     input 
     |> World.SellItems 
         context
@@ -160,7 +161,7 @@ let ``SellItems.It gives a message when the avatar has insufficient items in inv
 
 [<Test>]
 let ``SellItems.It gives a message when the avatar has no items in inventory and specifies maximum.`` () =
-    let input = avatarId
+    let input = Fixtures.Common.Dummy.AvatarId
     let inputLocation = (0.0, 0.0)
     let inputQuantity = Maximum
     let inputItemName = "item under test"
@@ -172,22 +173,22 @@ let ``SellItems.It gives a message when the avatar has no items in inventory and
     let islandSource() =
         [inputLocation]
     let itemSingleSource (x) =
-        genericWorldItemSource()
+        Fixtures.Common.Stub.ItemSource()
         |> Map.tryFind x
     let context = 
         TestWorldSellItemsContext
             (avatarInventorySink,
             avatarInventorySource,
-            (avatarExpectedMessageSink expectedMessage),
-            commoditySource, 
-            islandMarketSourceStub, 
-            islandSingleMarketSinkStub ,
-            islandSingleMarketSourceStub,
+            (Fixtures.Common.Mock.AvatarMessageSink expectedMessage),
+            Fixtures.Common.Stub.CommoditySource, 
+            Fixtures.Common.Fake.IslandMarketSource, 
+            Fixtures.Common.Fake.IslandSingleMarketSink,
+            Fixtures.Common.Fake.IslandSingleMarketSource,
             islandSource,
             itemSingleSource,
-            genericWorldItemSource,
-            shipmateSingleStatisticSinkStub,
-            shipmateSingleStatisticSourceStub) :> WorldSellItemsContext
+            Fixtures.Common.Stub.ItemSource,
+            Fixtures.Common.Fake.ShipmateSingleStatisticSink,
+            Fixtures.Common.Fake.ShipmateSingleStatisticSource) :> World.SellItemsContext
     input 
     |> World.SellItems 
         context
@@ -197,7 +198,7 @@ let ``SellItems.It gives a message when the avatar has no items in inventory and
 
 [<Test>]
 let ``SellItems.It gives a message and completes the sale when the avatar has sufficient quantity.`` () =
-    let input = avatarId
+    let input = Fixtures.Common.Dummy.AvatarId
     let inputLocation = (0.0, 0.0)
     let inputQuantity = 2UL |> Specific
     let inputItemName = "item under test"
@@ -230,22 +231,25 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
     let islandSource() =
         [inputLocation]
     let itemSingleSource (x) =
-        genericWorldItemSource()
+        Fixtures.Common.Stub.ItemSource()
         |> Map.tryFind x
+    let islandSingleMarketSource (_) (item:uint64) =
+        islandMarketSource()
+        |> Map.tryFind item
     let context = 
         TestWorldSellItemsContext
             (avatarInventorySink,
             avatarInventorySource,
-            (avatarExpectedMessageSink expectedMessage),
-            commoditySource, 
+            (Fixtures.Common.Mock.AvatarMessageSink expectedMessage),
+            Fixtures.Common.Stub.CommoditySource, 
             islandMarketSource, 
             islandSingleMarketSink ,
-            islandSingleMarketSourceStub ,
+            islandSingleMarketSource ,
             islandSource,
             itemSingleSource,
-            genericWorldItemSource,
+            Fixtures.Common.Stub.ItemSource,
             shipmateSingleStatisticSink,
-            shipmateSingleStatisticSource) :> WorldSellItemsContext
+            shipmateSingleStatisticSource) :> World.SellItemsContext
     input 
     |> World.SellItems 
         context
@@ -255,7 +259,7 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
 
 [<Test>]
 let ``SellItems.It gives a message and completes the sale when the avatar has sufficient quantity and specified a maximum sell.`` () =
-    let input = avatarId
+    let input = Fixtures.Common.Dummy.AvatarId
     let inputLocation = (0.0, 0.0)
     let inputQuantity = Maximum
     let inputItemName = "item under test"
@@ -288,22 +292,25 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
     let islandSource() =
         [inputLocation]
     let itemSingleSource (x) =
-        genericWorldItemSource()
+        Fixtures.Common.Stub.ItemSource()
         |> Map.tryFind x
+    let islandSingleMarketSource (_) (item:uint64) =
+        islandMarketSource()
+        |> Map.tryFind item
     let context = 
         TestWorldSellItemsContext
             (avatarInventorySink,
             avatarInventorySource,
-            (avatarExpectedMessageSink expectedMessage),
-            commoditySource, 
+            (Fixtures.Common.Mock.AvatarMessageSink expectedMessage),
+            Fixtures.Common.Stub.CommoditySource, 
             islandMarketSource, 
             islandSingleMarketSink ,
-            islandSingleMarketSourceStub ,
+            islandSingleMarketSource ,
             islandSource,
             itemSingleSource,
-            genericWorldItemSource,
+            Fixtures.Common.Stub.ItemSource,
             shipmateSingleStatisticSink,
-            shipmateSingleStatisticSource) :> WorldSellItemsContext
+            shipmateSingleStatisticSource) :> World.SellItemsContext
     input 
     |> World.SellItems 
         context

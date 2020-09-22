@@ -3,6 +3,7 @@
 open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
+open System
 open AvatarTestFixtures
 
 let rewardRange = (1.0, 10.0)
@@ -10,6 +11,24 @@ let random = System.Random()
 let singleDestination =
     [(0.0, 0.0)]
     |> Set.ofList
+
+type TestJobCreationContext
+        (
+            termSources                : TermSources, 
+            worldSingleStatisticSource : WorldSingleStatisticSource
+        ) =
+    interface Utility.SortListRandomlyContext with
+        member _.random : Random = Fixtures.Common.Dummy.Random
+
+    interface JobCreateContext with
+        member _.termSources : TermSources = termSources
+        member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
+        member _.random : Random = Fixtures.Common.Dummy.Random
+
+let internal jobCreationContextStub =
+    TestJobCreationContext
+        (Fixtures.Common.Stub.TermSources, 
+        Fixtures.Common.Stub.WorldSingleStatisticSource)
 
 [<Test>]
 let ``Create.It generates a job.`` () =

@@ -2,20 +2,19 @@
 
 open NUnit.Framework
 open Splorr.Seafarers.Services
-open CommonTestFixtures
 
 type TestWorldAddMessagesContext(avatarMessageSink) =
-    interface WorldAddMessagesContext with
+    interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface AvatarAddMessagesContext with
+    interface Avatar.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
 
 type TestWorldClearMessagesContext(avatarMessagePurger) =
-    interface WorldClearMessagesContext with
+    interface World.ClearMessagesContext with
         member this.avatarMessagePurger: AvatarMessagePurger = avatarMessagePurger
         
 type TestWorldGetNearbyLocationsContext(islandSource) =
-    interface WorldGetNearbyLocationsContext with
+    interface World.GetNearbyLocationsContext with
         member _.islandSource : IslandSource = islandSource
 
 [<Test>]
@@ -34,7 +33,7 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
             ( 5.0, 10.0)
             (10.0, 10.0)
         ]
-    let context = TestWorldGetNearbyLocationsContext(islandSource) :> WorldGetNearbyLocationsContext
+    let context = TestWorldGetNearbyLocationsContext(islandSource) :> World.GetNearbyLocationsContext
     let actual = 
         World.GetNearbyLocations
             context
@@ -53,11 +52,11 @@ let ``GetNearbyLocations.It returns locations within a given distance from anoth
 
 [<Test>]
 let ``ClearMessages.It removes any messages from the given avatar in the world.`` () =
-    let inputWorld = avatarId
+    let inputWorld = Fixtures.Common.Dummy.AvatarId
     let mutable counter = 0
     let avatarMessagePurger (_) =
         counter <- counter + 1
-    let context = TestWorldClearMessagesContext(avatarMessagePurger) :> WorldClearMessagesContext
+    let context = TestWorldClearMessagesContext(avatarMessagePurger) :> World.ClearMessagesContext
     inputWorld
     |> World.ClearMessages context
     Assert.AreEqual(1, counter)
@@ -67,8 +66,8 @@ let ``AddMessages.It appends new messages to previously existing messages in the
     let firstMessage = "three"
     let secondMessage = "four"
     let newMessages = [ firstMessage; secondMessage]
-    let inputWorld = avatarId
-    let context = TestWorldAddMessagesContext(avatarMessagesSinkFake newMessages) :> WorldAddMessagesContext
+    let inputWorld = Fixtures.Common.Dummy.AvatarId
+    let context = TestWorldAddMessagesContext(Fixtures.Common.Mock.AvatarMessagesSink newMessages) :> World.AddMessagesContext
     inputWorld
     |> World.AddMessages 
         context

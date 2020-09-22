@@ -70,7 +70,7 @@ module MainMenu =
             |> HandleInvalidCommand
 
     let private HandleCommandNoGame
-            (context : WorldCreateContext)
+            (context : World.CreateContext)
             =
         function
         | Some (Command.Start avatarId)->
@@ -91,7 +91,7 @@ module MainMenu =
 
 
     let private HandleCommand
-            (context  : WorldCreateContext)
+            (context  : World.CreateContext)
             (avatarId : string option) 
             (command  : Command option) 
             : Gamestate option =
@@ -104,7 +104,7 @@ module MainMenu =
                 command
 
     let Run 
-            (context       : WorldCreateContext)
+            (context       : World.CreateContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (avatarId      : string option) 

@@ -27,53 +27,56 @@ type TestWorldCreateContext
         vesselStatisticTemplateSource,
         worldSingleStatisticSource) =
 
-    interface IslandCreateContext with 
+    interface Island.CreateContext with 
         member _.islandStatisticTemplateSource: IslandStatisticTemplateSource = islandStatisticTemplateSource
         member _.islandSingleStatisticSink: IslandSingleStatisticSink = islandSingleStatisticSink
-
-    interface WorldPopulateIslandsContext with
+    interface World.PopulateIslandsContext with
         member _.islandFeatureGeneratorSource: IslandFeatureGeneratorSource = islandFeatureGeneratorSource
         member _.islandSingleFeatureSink: IslandSingleFeatureSink = islandSingleFeatureSink
-        member _.random: Random = random
         member _.islandSource: IslandSource = islandSource
 
-    interface UtilitySortListRandomlyContext with 
-        member _.random : Random = random
+    interface IslandFeatureGenerator.GenerateContext with
+        member _.random: Random = Fixtures.Common.Dummy.Random
 
-    interface WorldGenerateIslandNameContext with
-        member this.random: Random = random
+    interface Utility.SortListRandomlyContext with 
+        member _.random : Random = Fixtures.Common.Dummy.Random
 
-    interface WorldNameIslandsContext with
+    interface World.GenerateIslandNameContext with
+        member this.random: Random = Fixtures.Common.Dummy.Random
+
+    interface World.NameIslandsContext with
         member _.islandSingleNameSink: IslandSingleNameSink = islandSingleNameSink
         member _.nameSource: TermSource = termNameSource
         member _.islandSource: IslandSource = islandSource
 
-    interface WorldGenerateIslandsContext with
+    interface World.GenerateIslandsContext with
+        member this.islandSource: IslandSource = islandSource
+        member this.random: Random = Fixtures.Common.Dummy.Random
         member _.termNameSource: TermSource = termNameSource
         member _.islandSingleNameSink : IslandSingleNameSink = islandSingleNameSink
 
-    interface VesselCreateContext with
+    interface Vessel.CreateContext with
         member _.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
         member _.vesselStatisticTemplateSource: VesselStatisticTemplateSource = vesselStatisticTemplateSource
 
-    interface ShipmateCreateContext with
+    interface Shipmate.CreateContext with
         member _.rationItemSource: RationItemSource = rationItemSource
         member _.shipmateRationItemSink: ShipmateRationItemSink = shipmateRationItemSink
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member _.shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
 
-    interface AvatarCreateContext with
+    interface Avatar.CreateContext with
         member _.avatarJobSink: AvatarJobSink = avatarJobSink
 
-    interface AvatarGetPositionContext with
+    interface Avatar.GetPositionContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface WorldUpdateChartsContext with
+    interface World.UpdateChartsContext with
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.islandSource: IslandSource = islandSource
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface WorldCreateContext with
+    interface World.CreateContext with
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.avatarJobSink: AvatarJobSink = avatarJobSink
         member _.rationItemSource: RationItemSource = rationItemSource
@@ -86,7 +89,7 @@ type TestWorldCreateContext
         member _.shipmateRationItemSink          : ShipmateRationItemSink = shipmateRationItemSink
 
 let private world = 
-    avatarId
+    Fixtures.Common.Dummy.AvatarId
 
 [<Test>]
 let ``Run.It returns Confirm Quit when given Quit command and there is no world.`` () =
@@ -95,14 +98,14 @@ let ``Run.It returns Confirm Quit when given Quit command and there is no world.
     let inputSource = 
         Command.Quit 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         input 
         |> Gamestate.MainMenu 
         |> Gamestate.ConfirmQuit 
         |> Some
     let avatarJobSink (_) (_) = Assert.Fail("avatarJobSink")
-    let context : WorldCreateContext =
+    let context : World.CreateContext =
         TestWorldCreateContext 
             (avatarIslandSingleMetricSinkStub,
             avatarJobSink,
@@ -120,7 +123,7 @@ let ``Run.It returns Confirm Quit when given Quit command and there is no world.
             vesselSingleStatisticSourceStub,
             vesselStatisticSinkDummy,
             vesselStatisticTemplateSourceDummy,
-            worldSingleStatisticSourceStub) :> WorldCreateContext
+            worldSingleStatisticSourceStub) :> World.CreateContext
     let actual =
         input
         |> MainMenu.Run 
@@ -135,7 +138,7 @@ let ``Run.It returns Main Menu when given Quit command and there is a world.`` (
     let inputSource = 
         Command.Quit 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         ("Invalid command.", 
             input 
@@ -161,7 +164,7 @@ let ``Run.It returns Main Menu when given Quit command and there is a world.`` (
             vesselSingleStatisticSourceStub,
             vesselStatisticSinkDummy,
             vesselStatisticTemplateSourceDummy,
-            worldSingleStatisticSourceStub) :> WorldCreateContext
+            worldSingleStatisticSourceStub) :> World.CreateContext
     let actual =
         input
         |> Some
@@ -199,7 +202,7 @@ let ``Run.It returns Main Menu when given invalid command and there is no world.
             vesselSingleStatisticSourceStub,
             vesselStatisticSinkDummy,
             vesselStatisticTemplateSourceDummy,
-            worldSingleStatisticSourceStub) :> WorldCreateContext
+            worldSingleStatisticSourceStub) :> World.CreateContext
     let actual =
         input
         |> MainMenu.Run
@@ -237,7 +240,7 @@ let ``Run.It returns Main Menu when given invalid command and there is a world.`
             vesselSingleStatisticSourceStub,
             vesselStatisticSinkDummy,
             vesselStatisticTemplateSourceDummy,
-            worldSingleStatisticSourceStub) :> WorldCreateContext
+            worldSingleStatisticSourceStub) :> World.CreateContext
     let actual =
         input
         |> Some
@@ -255,7 +258,7 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
         Guid.NewGuid().ToString() 
         |> Command.Start 
         |> Some 
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let avatarJobSink (_) (actual:Job option) = 
         Assert.AreEqual(None, actual)
     let context = 
@@ -276,7 +279,7 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
             vesselSingleStatisticSourceStub,
             vesselStatisticSinkDummy,
             vesselStatisticTemplateSourceDummy,
-            worldSingleStatisticSourceStub) :> WorldCreateContext
+            worldSingleStatisticSourceStub) :> World.CreateContext
 
     let actual =
         input
@@ -294,7 +297,7 @@ let ``Run.It returns At Sea when given Start command and there is no world.`` ()
 
 [<Test>]
 let ``Run.It returns Main Menu when given Start command and there is a world.`` () =
-    let inputSource = "" |> Command.Start |> Some |> toSource
+    let inputSource = "" |> Command.Start |> Some |> Fixtures.Common.Mock.CommandSource
     let input = world
     let expected = 
         ("Invalid command.", 
@@ -322,7 +325,7 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
             vesselSingleStatisticSourceStub,
             vesselStatisticSinkDummy,
             vesselStatisticTemplateSourceDummy,
-            worldSingleStatisticSourceStub) :> WorldCreateContext
+            worldSingleStatisticSourceStub) :> World.CreateContext
 
     let actual =
         input
@@ -336,7 +339,7 @@ let ``Run.It returns Main Menu when given Start command and there is a world.`` 
 [<Test>]
 let ``Run.It returns Main Menu with no world when given Abandon Game command and there is a world.`` () =
     let input = world
-    let inputSource = Game |> Command.Abandon |> Some |> toSource
+    let inputSource = Game |> Command.Abandon |> Some |> Fixtures.Common.Mock.CommandSource
     let expected = 
         None 
         |> Gamestate.MainMenu 
@@ -360,7 +363,7 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
             vesselSingleStatisticSourceStub,
             vesselStatisticSinkDummy,
             vesselStatisticTemplateSourceDummy,
-            worldSingleStatisticSourceStub) :> WorldCreateContext
+            worldSingleStatisticSourceStub) :> World.CreateContext
 
     let actual =
         input
@@ -380,7 +383,7 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
         Game 
         |> Command.Abandon 
         |> Some
-        |> toSource
+        |> Fixtures.Common.Mock.CommandSource
     let expected = 
         ("Invalid command.", 
             None 
@@ -406,7 +409,7 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
             vesselSingleStatisticSourceStub,
             vesselStatisticSinkDummy,
             vesselStatisticTemplateSourceDummy,
-            worldSingleStatisticSourceStub) :> WorldCreateContext
+            worldSingleStatisticSourceStub) :> World.CreateContext
 
     let actual =
         input
@@ -420,7 +423,7 @@ let ``Run.It returns Main Menu with no world when given Abandon Game command and
 [<Test>]
 let ``Run.It returns At Sea when given Resume command and there is a world.`` () =
     let input = world
-    let inputSource = Command.Resume |> Some |> toSource
+    let inputSource = Command.Resume |> Some |> Fixtures.Common.Mock.CommandSource
     let expected =
         input
         |> Gamestate.InPlay 
@@ -444,7 +447,7 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
             vesselSingleStatisticSourceStub,
             vesselStatisticSinkDummy,
             vesselStatisticTemplateSourceDummy,
-            worldSingleStatisticSourceStub) :> WorldCreateContext
+            worldSingleStatisticSourceStub) :> World.CreateContext
 
     let actual =
         input
@@ -458,7 +461,7 @@ let ``Run.It returns At Sea when given Resume command and there is a world.`` ()
 [<Test>]
 let ``Run.It returns Main Menu with no world when given Resume command and there is no world.`` () =
     let input = None
-    let inputSource = Command.Resume |> Some |> toSource
+    let inputSource = Command.Resume |> Some |> Fixtures.Common.Mock.CommandSource
     let expected = 
         ("Invalid command.", 
             input 
@@ -484,7 +487,7 @@ let ``Run.It returns Main Menu with no world when given Resume command and there
             vesselSingleStatisticSourceStub,
             vesselStatisticSinkDummy,
             vesselStatisticTemplateSourceDummy,
-            worldSingleStatisticSourceStub) :> WorldCreateContext
+            worldSingleStatisticSourceStub) :> World.CreateContext
 
     let actual =
         input

@@ -3,7 +3,6 @@
 open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
-open CommonTestFixtures
 
 type TestWorldMoveContext
         (avatarInventorySink,
@@ -19,51 +18,49 @@ type TestWorldMoveContext
         shipmateSingleStatisticSource,
         vesselSingleStatisticSink, 
         vesselSingleStatisticSource) =
-    interface VesselTransformFoulingContext with
+    interface Vessel.TransformFoulingContext with
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-
-    interface VesselBefoulContext with
+    interface Vessel.BefoulContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-
-    interface ShipmateGetStatusContext with
+    interface Shipmate.GetStatusContext with
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-    interface ShipmateTransformStatisticContext with
+    interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface ShipmateEatContext with
+    interface Shipmate.EatContext with
         member this.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface AvatarGetPositionContext with
+    interface Avatar.GetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface AvatarGetSpeedContext with
+    interface Avatar.GetSpeedContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface AvatarSetPositionContext with
+    interface Avatar.SetPositionContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface AvatarAddMetricContext with
+    interface Avatar.AddMetricContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
-    interface AvatarEatContext with
+    interface Avatar.EatContext with
         member _.avatarInventorySink           : AvatarInventorySink=avatarInventorySink
         member _.avatarInventorySource         : AvatarInventorySource=avatarInventorySource
         member _.avatarShipmateSource          : AvatarShipmateSource=avatarShipmateSource
-    interface AvatarGetCurrentFoulingContext with
+    interface Avatar.GetCurrentFoulingContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface AvatarAddMessagesContext with
+    interface Avatar.AddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface AvatarTransformShipmatesContext with
+    interface Avatar.TransformShipmatesContext with
         member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
-    interface WorldUpdateChartsContext with
+    interface World.UpdateChartsContext with
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.islandSource: IslandSource = islandSource
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface WorldAddMessagesContext with
+    interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface AvatarMoveContext with
+    interface Avatar.MoveContext with
         member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface WorldMoveContext
+    interface OperatingContext
 
 [<Test>]
 let ``Move.It moves the avatar one unit when give 1u for distance when given a valid avatar id.`` () =
@@ -126,22 +123,29 @@ let ``Move.It moves the avatar one unit when give 1u for distance when given a v
         Assert.AreEqual(Map.empty, inventory)
     let islandSource () =
         []
+    let avatarSingleMetricSource (_) (id:Metric) =
+        match id with
+        | Metric.Moved ->
+            0UL
+        | _ ->
+            Assert.Fail(id.ToString() |> sprintf "avatarSingleMetricSource - %s")
+            0UL
     let context = 
         TestWorldMoveContext
             (avatarInventorySink,
             avatarInventorySource,
-            avatarIslandSingleMetricSinkStub,
-            avatarMessageSinkStub,
+            Fixtures.Common.Fake.AvatarIslandSingleMetricSink,
+            Fixtures.Common.Mock.AvatarMessageSink "Steady as she goes.",
             avatarShipmateSource,
-            (assertAvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL]),
-            avatarSingleMetricSourceStub,
+            (Fixtures.Common.Mock.AvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL]),
+            avatarSingleMetricSource,
             islandSource,
-            shipmateRationItemSourceStub,
+            Fixtures.Common.Stub.ShipmateRationItemSource,
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
             vesselSingleStatisticSink, 
-            vesselSingleStatisticSource) :> WorldMoveContext
-    avatarId
+            vesselSingleStatisticSource) :> OperatingContext
+    Fixtures.Common.Dummy.AvatarId
     |> World.Move 
         context
         1u
@@ -210,22 +214,29 @@ let ``Move.It moves the avatar almost two units when give 2u for distance.`` () 
         Assert.AreEqual(Map.empty, inventory)
     let islandSource () =
         []
+    let avatarSingleMetricSource (_) (id:Metric) =
+        match id with
+        | Metric.Moved ->
+            0UL
+        | _ ->
+            Assert.Fail(id.ToString() |> sprintf "avatarSingleMetricSource - %s")
+            0UL
     let context = 
         TestWorldMoveContext
             (avatarInventorySink,
             avatarInventorySource,
-            avatarIslandSingleMetricSinkStub,
-            avatarMessageSinkStub,
+            Fixtures.Common.Fake.AvatarIslandSingleMetricSink,
+            Fixtures.Common.Mock.AvatarMessageSink "Steady as she goes.",
             avatarShipmateSource,
-            (assertAvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL]),
-            avatarSingleMetricSourceStub,
+            (Fixtures.Common.Mock.AvatarSingleMetricSink [Metric.Moved, 1UL; Metric.Ate, 0UL]),
+            avatarSingleMetricSource,
             islandSource,
-            shipmateRationItemSourceStub,
+            Fixtures.Common.Stub.ShipmateRationItemSource,
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
             vesselSingleStatisticSink, 
-            vesselSingleStatisticSource) :> WorldMoveContext
-    avatarId
+            vesselSingleStatisticSource) :> OperatingContext
+    Fixtures.Common.Dummy.AvatarId
     |> World.Move 
         context
         2u

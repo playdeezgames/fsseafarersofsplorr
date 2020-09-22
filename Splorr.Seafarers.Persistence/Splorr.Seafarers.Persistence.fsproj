@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Utility.fs" />
+    <Compile Include="AvatarGamblingHand.fs" />
     <Compile Include="AvatarInventory.fs" />
     <Compile Include="AvatarIslandFeature.fs" />
     <Compile Include="AvatarIslandMetric.fs" />
@@ -33,6 +34,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Splorr.Seafarers.Models\Splorr.Seafarers.Models.fsproj" />
+    <ProjectReference Include="..\Tarot\Tarot.fsproj" />
   </ItemGroup>
 
   <ItemGroup>
