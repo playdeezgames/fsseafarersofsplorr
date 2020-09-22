@@ -7,6 +7,7 @@ open Splorr.Seafarers.Services
 open System
 open NUnit.Framework
 
+
 let internal connectionString = 
     "Data Source=:memory:;Version=3;New=True;"
 
@@ -247,7 +248,11 @@ type TestAtSeaRunContext
         ) =
     interface Utility.SortListRandomlyContext with
         member _.random : Random = Fixtures.Common.Dummy.Random
-
+    interface WorldIsAvatarAliveContext
+    interface WorldSetHeadingContext
+    interface Island.GenerateJobsContext with
+        member this.islandJobSink: IslandJobSink = islandJobSink
+        member this.islandJobSource: IslandJobSource = islandJobSource
     interface Island.GetDisplayNameContext with
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.islandSingleNameSource         : IslandSingleNameSource = islandSingleNameSource
@@ -372,8 +377,6 @@ type TestAtSeaRunContext
         member _.commoditySource: CommoditySource = commoditySource
         member _.islandItemSink: IslandItemSink = islandItemSink
         member _.islandItemSource: IslandItemSource = islandItemSource
-        member _.islandJobSink: IslandJobSink = islandJobSink
-        member _.islandJobSource: IslandJobSource = islandJobSource
         member _.islandMarketSink: IslandMarketSink = islandMarketSink
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
         member _.islandSource: IslandSource = islandSource

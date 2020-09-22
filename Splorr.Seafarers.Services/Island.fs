@@ -229,10 +229,12 @@ module Island =
                 ChangeMarketSupply context commodity totalQuantity location)
 
     type GetStatisticContext =
+        inherit OperatingContext
         abstract member islandSingleStatisticSource : IslandSingleStatisticSource 
     let GetStatistic
-            (context    : GetStatisticContext)
+            (context    : OperatingContext)
             (identifier : IslandStatisticIdentifier)
             (location   : Location)
             : Statistic option =
+        let context = context :?> GetStatisticContext
         context.islandSingleStatisticSource location identifier

@@ -65,6 +65,7 @@ type TestWorldDockContext
     interface Avatar.CompleteJobContext with
         member _.avatarJobSink : AvatarJobSink = avatarJobSink
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
+    interface WorldDoJobCompletionContext
     interface WorldAddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface Avatar.GetPrimaryStatisticContext with

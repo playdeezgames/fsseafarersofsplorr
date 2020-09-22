@@ -20,6 +20,10 @@ type TestWorldBuyItemsContext
         vesselSingleStatisticSource)=
     interface Island.UpdateMarketForItemContext with
         member this.commoditySource: CommoditySource = commoditySource
+    interface Item.DeterminePriceContext with
+        member this.commoditySource: CommoditySource = commoditySource
+        member this.islandMarketSource: IslandMarketSource = islandMarketSource
+        member this.itemSingleSource: ItemSingleSource = itemSingleSource
     interface Avatar.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         
@@ -43,9 +47,6 @@ type TestWorldBuyItemsContext
         member _.islandSource                  : IslandSource = islandSource
         member _.itemSource                    : ItemSource =  itemSource
         member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
-        member this.commoditySource: CommoditySource = commoditySource
-        member this.islandMarketSource: IslandMarketSource = islandMarketSource
-        member this.itemSingleSource : ItemSingleSource = itemSingleSource
         
     interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink

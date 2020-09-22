@@ -13,54 +13,52 @@ type IslandFeatureGeneratorSource = unit -> Map<IslandFeatureIdentifier, IslandF
 type IslandSingleFeatureSink = Location -> IslandFeatureIdentifier -> unit
 
 type WorldGenerateIslandNameContext =
+    inherit OperatingContext
     abstract member random : Random
 
 type WorldAddMessagesContext = 
-    inherit Avatar.AddMessagesContext
+    inherit OperatingContext
     abstract member avatarMessageSink : AvatarMessageSink
 
 type WorldUndockContext = 
-    inherit WorldAddMessagesContext
+    inherit OperatingContext
     abstract member avatarMessageSink       : AvatarMessageSink
     abstract member avatarIslandFeatureSink : AvatarIslandFeatureSink
 
 type WorldClearMessagesContext =
+    inherit OperatingContext
     abstract member avatarMessagePurger : AvatarMessagePurger
 
 type WorldGenerateIslandNamesContext =
-    inherit Utility.SortListRandomlyContext
-    inherit WorldGenerateIslandNameContext
+    inherit OperatingContext
 
 type WorldNameIslandsContext =
-    inherit WorldGenerateIslandNamesContext
+    inherit OperatingContext
     abstract member islandSingleNameSink : IslandSingleNameSink
     abstract member islandSource         : IslandSource
     abstract member nameSource           : TermSource
 
 type WorldPopulateIslandsContext =
-    inherit IslandFeatureGenerator.GenerateContext   
+    inherit OperatingContext
     abstract member islandFeatureGeneratorSource : IslandFeatureGeneratorSource
     abstract member islandSingleFeatureSink      : IslandSingleFeatureSink
     abstract member islandSource                 : IslandSource
 
 type WorldGenerateIslandsContext =
-    inherit Island.CreateContext
-    inherit WorldPopulateIslandsContext
-    inherit WorldGenerateIslandNamesContext
-    inherit WorldNameIslandsContext
+    inherit OperatingContext
     abstract member islandSingleNameSink          : IslandSingleNameSink
     abstract member termNameSource                : TermSource
+    abstract member islandSource : IslandSource
+    abstract member random : Random
 
 type WorldUpdateChartsContext = 
-    inherit Avatar.GetPositionContext
+    inherit OperatingContext
     abstract member avatarIslandSingleMetricSink : AvatarIslandSingleMetricSink
     abstract member islandSource                 : IslandSource
     abstract member vesselSingleStatisticSource  : VesselSingleStatisticSource
 
 type WorldCreateContext =
-    inherit WorldGenerateIslandsContext
-    inherit Avatar.CreateContext
-    inherit WorldUpdateChartsContext
+    inherit OperatingContext
     abstract member avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink
     abstract member avatarJobSink                   : AvatarJobSink
     abstract member worldSingleStatisticSource      : WorldSingleStatisticSource
@@ -73,25 +71,20 @@ type WorldCreateContext =
     abstract member shipmateRationItemSink          : ShipmateRationItemSink
 
 type WorldCleanHullContext =
-    inherit Avatar.CleanHullContext
+    inherit OperatingContext
 
 type WorldIsAvatarAliveContext = 
-    inherit Shipmate.GetStatusContext
+    inherit OperatingContext
 
 type WorldGetNearbyLocationsContext =
+    inherit OperatingContext
     abstract member islandSource : IslandSource
 
 type WorldDoJobCompletionContext =
-    inherit Avatar.CompleteJobContext
-    inherit WorldAddMessagesContext
+    inherit OperatingContext
 
 type WorldDockContext =
-    inherit Island.AddVisitContext
-    inherit Island.GenerateJobsContext
-    inherit Island.GenerateCommoditiesContext
-    inherit Island.GenerateItemsContext
-    inherit WorldDoJobCompletionContext
-    inherit WorldAddMessagesContext
+    inherit OperatingContext
     abstract member avatarIslandFeatureSink        : AvatarIslandFeatureSink
     abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
@@ -111,9 +104,7 @@ type WorldDockContext =
     abstract member shipmateSingleStatisticSource  : ShipmateSingleStatisticSource
 
 type WorldAcceptJobContext =
-    inherit Island.MakeKnownContext
-    inherit Avatar.AddMetricContext
-    inherit WorldAddMessagesContext
+    inherit OperatingContext
     abstract member avatarJobSink         : AvatarJobSink
     abstract member avatarJobSource       : AvatarJobSource
     abstract member islandJobPurger       : IslandJobPurger
@@ -121,75 +112,50 @@ type WorldAcceptJobContext =
     abstract member islandSource          : IslandSource
 
 type WorldBuyItemsContext =
-    inherit Item.DeterminePriceContext
-    inherit Island.UpdateMarketForItemContext
-    inherit Avatar.AddInventoryContext
-    inherit Avatar.GetUsedTonnageContext
-    inherit WorldAddMessagesContext
+    inherit OperatingContext
     abstract member islandSource                  : IslandSource
     abstract member itemSource                    : ItemSource
     abstract member vesselSingleStatisticSource   : VesselSingleStatisticSource
 
 type WorldSellItemsContext =
-    inherit Item.DeterminePriceContext
-    inherit Island.UpdateMarketForItemContext
-    inherit Avatar.GetItemCountContext
-    inherit Avatar.RemoveInventoryContext
-    inherit WorldAddMessagesContext
+    inherit OperatingContext
     abstract member islandSource                  : IslandSource
     abstract member itemSource                    : ItemSource
 
 type WorldAbandonJobContext =
-    inherit Avatar.AbandonJobContext
-    inherit WorldAddMessagesContext
+    inherit OperatingContext
     abstract member avatarJobSource  : AvatarJobSource
 
 type WorldSetSpeedContext =
-    inherit Avatar.SetSpeedContext
-    inherit Avatar.GetSpeedContext
-    inherit WorldAddMessagesContext
+    inherit OperatingContext
 
 type WorldSetHeadingContext =
-    inherit Avatar.SetHeadingContext
-    inherit Avatar.GetHeadingContext
-    inherit WorldAddMessagesContext
+    inherit OperatingContext
 
 type WorldMoveContext =
-    inherit Avatar.MoveContext
-    inherit WorldIsAvatarAliveContext
-    inherit WorldAddMessagesContext
-    inherit WorldUpdateChartsContext
+    inherit OperatingContext
 
 type WorldDistanceToContext =
-    inherit WorldAddMessagesContext
-    inherit Avatar.GetPositionContext
+    inherit OperatingContext
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
     abstract member islandLocationByNameSource     : IslandLocationByNameSource
 
 type WorldHeadForContext =
-    inherit WorldAddMessagesContext
-    inherit WorldSetHeadingContext
-    inherit Avatar.GetPositionContext
+    inherit OperatingContext
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
     abstract member islandLocationByNameSource     : IslandLocationByNameSource
 
 type WorldHasDarkAlleyMinimumStakesContext =
-    inherit Avatar.EnterIslandFeatureContext
-    inherit WorldAddMessagesContext
+    inherit OperatingContext
     abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
     abstract member islandSingleStatisticSource : IslandSingleStatisticSource 
     abstract member avatarIslandFeatureSource : AvatarIslandFeatureSource
-(*
-interface WorldHasDarkAlleyMinimumStakesContext with
-    member _.shipmateSingleStatisticSource : ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    member _.islandSingleStatisticSource : IslandSingleStatisticSource = islandSingleStatisticSource
-    member _.avatarIslandFeatureSource : AvatarIslandFeatureSource = avatarIslandFeatureSource
-*)
 
 module World =
     let private GenerateIslandName
-            (context: WorldGenerateIslandNameContext)
+            (context: OperatingContext)
             : string =
+        let context = context :?> WorldGenerateIslandNameContext
         let consonants = [| "h"; "k"; "l"; "m"; "p" |]
         let vowels = [| "a"; "e"; "i"; "o"; "u" |]
         let vowel = context.random.Next(2)>0
@@ -206,10 +172,11 @@ module World =
         |> List.reduce (+)
 
     let rec private GenerateIslandNames  //TODO: move to world generator?
-            (context : WorldGenerateIslandNamesContext) 
+            (context : OperatingContext) 
             (nameCount:int) 
             (names: Set<string>) 
             : List<string> =
+        let context = context :?> WorldGenerateIslandNamesContext
         if names.Count>=nameCount then
             names
             |> Set.toList
@@ -221,8 +188,9 @@ module World =
             |> GenerateIslandNames context nameCount
 
     let private NameIslands
-            (context: WorldNameIslandsContext)
+            (context: OperatingContext)
             : unit =
+        let context = context :?> WorldNameIslandsContext
         let locations = 
             context.islandSource()
         GenerateIslandNames 
@@ -236,8 +204,9 @@ module World =
                 context.islandSingleNameSink l (Some n))
 
     let private PopulateIslands
-            (context : WorldPopulateIslandsContext)
+            (context : OperatingContext)
             : unit =
+        let context = context :?> WorldPopulateIslandsContext
         let generators = context.islandFeatureGeneratorSource()
         context.islandSource()
         |> List.iter
@@ -249,12 +218,13 @@ module World =
                             context.islandSingleFeatureSink location identifier))
 
     let rec private GenerateIslands  //TODO: move to world generator?
-            (context                : WorldGenerateIslandsContext)
+            (context                : OperatingContext)
             (worldSize              : Location) 
             (minimumIslandDistance  : float)
             (maximumGenerationTries : uint32, 
              currentTry             : uint32) 
             : unit =
+        let context = context :?> WorldGenerateIslandsContext
         if currentTry>=maximumGenerationTries then
             NameIslands 
                 context
@@ -280,9 +250,10 @@ module World =
                     (maximumGenerationTries, 0u) 
 
     let UpdateCharts 
-            (context : WorldUpdateChartsContext)
+            (context : OperatingContext)
             (avatarId : string) 
             : unit =
+        let context = context :?> WorldUpdateChartsContext
         let viewDistance = 
             context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.ViewDistance 
             |> Option.get 
@@ -301,9 +272,10 @@ module World =
                 context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.Seen 1UL)
 
     let Create 
-            (context  : WorldCreateContext)
+            (context  : OperatingContext)
             (avatarId : string)
             : unit =
+        let context = context :?> WorldCreateContext
         let maximumGenerationRetries =
             WorldStatisticIdentifier.IslandGenerationRetries
             |> context.worldSingleStatisticSource 
@@ -333,26 +305,29 @@ module World =
             context
 
     let ClearMessages 
-            (context  : WorldClearMessagesContext)
+            (context  : OperatingContext)
             (avatarId : string)
             : unit =
+        let context = context :?> WorldClearMessagesContext
         context.avatarMessagePurger avatarId
 
     let AddMessages
-            (context : WorldAddMessagesContext)
+            (context : OperatingContext)
             (messages          : string list) 
             (avatarId          : string) 
             : unit =
+        let context = context :?> WorldAddMessagesContext
         Avatar.AddMessages
             context
             messages 
             avatarId
 
     let SetSpeed 
-            (context  : WorldSetSpeedContext)
+            (context  : OperatingContext)
             (speed    : float) 
             (avatarId : string) 
             : unit = 
+        let context = context :?> WorldSetSpeedContext
         avatarId
         |> Avatar.SetSpeed 
             context
@@ -366,10 +341,11 @@ module World =
                 |> AddMessages context [newSpeed |> sprintf "You set your speed to %.2f."])
 
     let SetHeading 
-            (context  : WorldSetHeadingContext)
+            (context  : OperatingContext)
             (heading  : float) 
             (avatarId : string) 
             : unit =
+        let context = context :?> WorldSetHeadingContext
         avatarId
         |> Avatar.SetHeading 
             context
@@ -383,19 +359,21 @@ module World =
                 |> AddMessages context [newHeading |> Angle.ToDegrees |> Angle.ToString |> sprintf "You set your heading to %s." ])
 
     let IsAvatarAlive
-            (context  : WorldIsAvatarAliveContext)
+            (context  : OperatingContext)
             (avatarId : string) 
             : bool =
+        let context = context :?> WorldIsAvatarAliveContext
         (Shipmate.GetStatus 
             context
             avatarId
             Primary) = Alive
 
     let rec Move
-            (context  : WorldMoveContext)
+            (context  : OperatingContext)
             (distance : uint32) 
             (avatarId : string) 
             : unit =
+        let context = context :?> WorldMoveContext
         match distance with
         | x when x > 0u ->
             avatarId
@@ -420,20 +398,22 @@ module World =
             ()
 
     let GetNearbyLocations
-            (context : WorldGetNearbyLocationsContext)
+            (context : OperatingContext)
             (from                        : Location) 
             (maximumDistance             : float) 
             : Location list =
+        let context = context :?> WorldGetNearbyLocationsContext
         context.islandSource()
         |> List.filter (fun i -> Location.DistanceTo from i <= maximumDistance)
 
 
     let private DoJobCompletion
-            (context  : WorldDoJobCompletionContext)
+            (context  : OperatingContext)
             (location : Location) 
             (job      : Job) 
             (avatarId : string) 
             : unit = 
+        let context = context :?> WorldDoJobCompletionContext
         if location = job.Destination then
             Avatar.CompleteJob 
                 context
@@ -442,10 +422,11 @@ module World =
             |> AddMessages context  [ "You complete your job." ]
 
     let Dock
-            (context  : WorldDockContext)
+            (context  : OperatingContext)
             (location : Location) 
             (avatarId : string) 
             : unit =
+        let context = context :?> WorldDockContext
         let locations = context.islandSource()
         match locations |> List.tryFind (fun x -> x = location) with
         | Some l ->
@@ -510,10 +491,11 @@ module World =
                 ]
 
     let DistanceTo 
-            (context    : WorldDistanceToContext)
+            (context    : OperatingContext)
             (islandName : string) 
             (avatarId   : string) 
             : unit =
+        let context = context :?> WorldDistanceToContext
         let location =
             context.islandLocationByNameSource islandName
             |> Option.bind
@@ -533,10 +515,11 @@ module World =
             ()
 
     let HeadFor
-            (context : WorldHeadForContext)
+            (context : OperatingContext)
             (islandName                     : string) 
             (avatarId                       : string) 
             : unit =
+        let context = context :?> WorldHeadForContext
         let location =
             context.islandLocationByNameSource islandName
             |> Option.bind
@@ -563,11 +546,12 @@ module World =
             ()
 
     let AcceptJob 
-            (context  : WorldAcceptJobContext)
+            (context  : OperatingContext)
             (jobIndex : uint32) 
             (location : Location) 
             (avatarId : string) 
             : unit =
+        let context = context :?> WorldAcceptJobContext
         let locations = context.islandSource()
         match jobIndex, locations |> List.tryFind (fun x -> x = location), context.avatarJobSource avatarId with
         | 0u, _, _ ->
@@ -599,9 +583,10 @@ module World =
             ()
 
     let AbandonJob
-            (context  : WorldAbandonJobContext)
+            (context  : OperatingContext)
             (avatarId : string) 
             : unit =
+        let context = context :?> WorldAbandonJobContext
         match context.avatarJobSource avatarId with
         | Some _ ->
             avatarId
@@ -627,12 +612,13 @@ module World =
                     None)
 
     let BuyItems 
-            (context                       : WorldBuyItemsContext)
+            (context                       : OperatingContext)
             (location                      : Location) 
             (tradeQuantity                 : TradeQuantity) 
             (itemName                      : string) 
             (avatarId                      : string) 
             : unit =
+        let context = context :?> WorldBuyItemsContext
         let items = context.itemSource()
         match items |> FindItemByName itemName, context.islandSource() |> List.tryFind (fun x-> x = location) with
         | Some (item, descriptor) , Some _ ->
@@ -693,12 +679,13 @@ module World =
             |> AddMessages context ["You cannot buy items here."]
 
     let SellItems 
-            (context : WorldSellItemsContext)
+            (context : OperatingContext)
             (location                      : Location) 
             (tradeQuantity                 : TradeQuantity) 
             (itemName                      : string) 
             (avatarId                      : string) 
             : unit =
+        let context = context :?> WorldSellItemsContext
         let items = context.itemSource()
         match items |> FindItemByName itemName, context.islandSource()|> List.tryFind ((=)location) with
         | Some (item, descriptor), Some _ ->
@@ -745,28 +732,31 @@ module World =
             |> AddMessages context ["You cannot sell items here."]
 
     let CleanHull //TODO: this just passes everything along to avatar.CleanHull, so eliminate
-            (context : WorldCleanHullContext)
+            (context : OperatingContext)
             (side                          : Side) 
             (avatarId                      : string) 
             : unit =
+        let context = context :?> WorldCleanHullContext
         avatarId 
         |> Avatar.CleanHull 
             context
             side 
 
     let Undock
-            (context : WorldUndockContext)
+            (context : OperatingContext)
             (avatarId : string)
             : unit =
+        let context = context :?> WorldUndockContext
         avatarId
         |> AddMessages context [ "You undock." ]
         context.avatarIslandFeatureSink (None, avatarId)
      
     let HasDarkAlleyMinimumStakes
-            (context : WorldHasDarkAlleyMinimumStakesContext)
+            (context : OperatingContext)
             (location : Location)
             (avatarId : string)
             : bool option =
+        let context = context :?> WorldHasDarkAlleyMinimumStakesContext
         match context.avatarIslandFeatureSource avatarId with
         | Some feature when feature.featureId = IslandFeatureIdentifier.DarkAlley ->
             let minimumBet = 
@@ -790,28 +780,26 @@ module World =
             None
 
     type CanPlaceBetContext =
+        inherit OperatingContext
         inherit Avatar.GetPrimaryStatisticContext
 
     let CanPlaceBet
-            (context : CanPlaceBetContext)
+            (context : OperatingContext)
             (amount : float)
             (avatarId : string)
             : bool =
+        let context = context :?> CanPlaceBetContext
         (Avatar.GetMoney context avatarId) >= amount
      
     type ResolveHandContext =
-        inherit Avatar.GetPrimaryStatisticContext
-        inherit Island.GetStatisticContext
-        inherit Avatar.GetIslandFeatureContext
-        inherit Avatar.GetGamblingHandContext
-        inherit CanPlaceBetContext
-        inherit WorldAddMessagesContext
+        inherit OperatingContext
 
     let ResolveHand
-            (context: ResolveHandContext)
+            (context: OperatingContext)
             (amount : float)
             (avatarId: string)
             : unit =
+        let context = context :?> ResolveHandContext
         match Avatar.GetIslandFeature context avatarId with
         | Some feature when feature.featureId = IslandFeatureIdentifier.DarkAlley ->
             match Avatar.GetGamblingHand context avatarId with

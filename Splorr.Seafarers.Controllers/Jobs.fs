@@ -4,12 +4,17 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module Jobs = 
+    type RunIslandContext =
+        inherit OperatingContext
+        abstract member islandSingleNameSource : IslandSingleNameSource
+        abstract member islandJobSource        : IslandJobSource
+
     let private RunIsland 
-            (islandSingleNameSource : IslandSingleNameSource)
-            (islandJobSource        : IslandJobSource)
+            (context:OperatingContext)
             (messageSink            : MessageSink) 
             (location               : Location) 
             : unit =
+        let context = context :?> RunIslandContext
         [
             "" |> Line
             (Hue.Heading, "Jobs Available:" |> Line) |> Hued
@@ -17,7 +22,7 @@ module Jobs =
         |> List.iter messageSink
         let jobs = 
             location
-            |> islandJobSource
+            |> context.islandJobSource
         jobs
         |> List.zip [1..jobs.Length]
         |> List.iter 
@@ -30,7 +35,7 @@ module Jobs =
                     Location.DistanceTo location job.Destination
                 [
                     (Hue.Label, index |> sprintf "%d. " |> Text) |> Hued
-                    (Hue.Value, job.Destination |> islandSingleNameSource |> Option.get |> sprintf "%s " |> Text) |> Hued
+                    (Hue.Value, job.Destination |> context.islandSingleNameSource |> Option.get |> sprintf "%s " |> Text) |> Hued
                     (Hue.Sublabel, "Bearing: " |> Text) |> Hued
                     (Hue.Value, bearing |> sprintf "%s " |> Text) |> Hued
                     (Hue.Sublabel, "Distance: " |> Text) |> Hued
@@ -43,21 +48,22 @@ module Jobs =
         if jobs.IsEmpty then
             "(none available)" |> Line |> messageSink
 
-        
+    
+    type RunContext =
+        inherit OperatingContext
+        abstract member islandSource           : IslandSource
     let Run  
-            (islandJobSource        : IslandJobSource)
-            (islandSingleNameSource : IslandSingleNameSource)
-            (islandSource           : IslandSource)
+            (context : OperatingContext)
             (messageSink            : MessageSink) 
             (location               : Location)
             (avatarId               : string) 
             : Gamestate option =
-        islandSource()
+        let context = context :?> RunContext
+        context.islandSource()
         |> List.tryFind(fun x->x= location)
         |> Option.iter 
             (RunIsland 
-                islandSingleNameSource
-                islandJobSource
+                context
                 messageSink)
         avatarId
         |> Gamestate.InPlay

@@ -167,7 +167,9 @@ type SplorrContext
 
     interface WorldGenerateIslandsContext with
         member _.islandSingleNameSink          : IslandSingleNameSink=islandSingleNameSink
-        member _.termNameSource                : TermSource          =termNameSource      
+        member _.termNameSource                : TermSource          =termNameSource     
+        member _.islandSource : IslandSource = islandSource
+        member _.random : Random = random
 
     interface Vessel.CreateContext with
         member _.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
@@ -327,8 +329,6 @@ type SplorrContext
         member this.commoditySource: CommoditySource = commoditySource
         member this.islandItemSink: IslandItemSink = islandItemSink
         member this.islandItemSource: IslandItemSource = islandItemSource
-        member this.islandJobSink: IslandJobSink = islandJobSink
-        member this.islandJobSource: IslandJobSource = islandJobSource
         member this.islandMarketSink: IslandMarketSink = islandMarketSink
         member this.islandMarketSource: IslandMarketSource = islandMarketSource
         member this.islandSource: IslandSource = islandSource

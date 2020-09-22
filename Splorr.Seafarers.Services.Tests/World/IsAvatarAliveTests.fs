@@ -5,8 +5,9 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
 type TestWorldIsAvatarAliveContext(shipmateSingleStatisticSource) = 
-    interface WorldIsAvatarAliveContext with
-        member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+    interface WorldIsAvatarAliveContext
+    interface Shipmate.GetStatusContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
             
 
 [<Test>]

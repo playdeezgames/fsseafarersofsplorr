@@ -21,7 +21,7 @@ type TestWorldHeadForContext
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface WorldAddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-
+    interface WorldSetHeadingContext
     interface WorldHeadForContext with
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.islandLocationByNameSource     : IslandLocationByNameSource = islandLocationByNameSource

@@ -30,7 +30,7 @@ type TestWorldCreateContext
     interface Island.CreateContext with 
         member _.islandStatisticTemplateSource: IslandStatisticTemplateSource = islandStatisticTemplateSource
         member _.islandSingleStatisticSink: IslandSingleStatisticSink = islandSingleStatisticSink
-
+    interface WorldGenerateIslandNamesContext
     interface WorldPopulateIslandsContext with
         member _.islandFeatureGeneratorSource: IslandFeatureGeneratorSource = islandFeatureGeneratorSource
         member _.islandSingleFeatureSink: IslandSingleFeatureSink = islandSingleFeatureSink
@@ -51,6 +51,8 @@ type TestWorldCreateContext
         member _.islandSource: IslandSource = islandSource
 
     interface WorldGenerateIslandsContext with
+        member this.islandSource: IslandSource = islandSource
+        member this.random: Random = Fixtures.Common.Dummy.Random
         member _.termNameSource: TermSource = termNameSource
         member _.islandSingleNameSink : IslandSingleNameSink = islandSingleNameSink
 
