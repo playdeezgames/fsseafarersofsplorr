@@ -29,7 +29,7 @@ type TestCareenedRunContext
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
     interface Avatar.CleanHullContext with
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
-    interface WorldClearMessagesContext with
+    interface World.ClearMessagesContext with
         member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
     interface CareenedRunContext
     interface Vessel.TransformFoulingContext with

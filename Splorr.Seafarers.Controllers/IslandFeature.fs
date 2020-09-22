@@ -11,11 +11,11 @@ type IslandFeatureRunDarkAlleyGamblingHand =
 
 type IslandFeatureRunDarkAlleyContext =
     inherit IslandFeatureRunDarkAlleyGamblingHand
-    inherit WorldAddMessagesContext
+    inherit World.AddMessagesContext
     inherit Avatar.GetGamblingHandContext
     inherit Avatar.DealGamblingHandContext
     inherit Avatar.EnterIslandFeatureContext
-    inherit WorldHasDarkAlleyMinimumStakesContext
+    inherit World.HasDarkAlleyMinimumStakesContext
     abstract member avatarMessageSource           : AvatarMessageSource
     abstract member avatarMessageSink             : AvatarMessageSink
     abstract member islandSingleStatisticSource   : IslandSingleStatisticSource

@@ -10,7 +10,7 @@ type TestWorldUpdateChartsContext
             vesselSingleStatisticSource) =
     interface Avatar.GetPositionContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface WorldUpdateChartsContext with
+    interface World.UpdateChartsContext with
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.islandSource: IslandSource = islandSource
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
@@ -37,7 +37,7 @@ let ``UpdateChart.It does nothing when the given avatar is not near enough to an
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
     let islandSource() =
         []
-    let context = TestWorldUpdateChartsContext(avatarIslandSingleMetricSink, islandSource, vesselSingleStatisticSource) :> WorldUpdateChartsContext
+    let context = TestWorldUpdateChartsContext(avatarIslandSingleMetricSink, islandSource, vesselSingleStatisticSource) :> World.UpdateChartsContext
     input
     |> World.UpdateCharts 
         context
@@ -65,7 +65,7 @@ let ``UpdateChart.It does nothing when the given avatar has already seen all nea
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
     let islandSource() =
         []
-    let context = TestWorldUpdateChartsContext(avatarIslandSingleMetricSink, islandSource, vesselSingleStatisticSource) :> WorldUpdateChartsContext
+    let context = TestWorldUpdateChartsContext(avatarIslandSingleMetricSink, islandSource, vesselSingleStatisticSource) :> World.UpdateChartsContext
     input
     |> World.UpdateCharts 
         context
@@ -92,7 +92,7 @@ let ``UpdateChart.It does set all islands within the avatar's view distance to "
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
     let islandSource() =
         []
-    let context = TestWorldUpdateChartsContext(avatarIslandSingleMetricSink, islandSource, vesselSingleStatisticSource) :> WorldUpdateChartsContext
+    let context = TestWorldUpdateChartsContext(avatarIslandSingleMetricSink, islandSource, vesselSingleStatisticSource) :> World.UpdateChartsContext
     input
     |> World.UpdateCharts
         context

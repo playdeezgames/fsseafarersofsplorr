@@ -12,12 +12,12 @@ type DockedUpdateDisplayContext =
     abstract member islandFeatureSource            : IslandFeatureSource
 
 type DockedHandleCommandContext = 
-    inherit WorldAcceptJobContext
-    inherit WorldUndockContext
-    inherit WorldBuyItemsContext
-    inherit WorldSellItemsContext
-    inherit WorldAbandonJobContext
-    inherit WorldClearMessagesContext
+    inherit World.AcceptJobContext
+    inherit World.UndockContext
+    inherit World.BuyItemsContext
+    inherit World.SellItemsContext
+    inherit World.AbandonJobContext
+    inherit World.ClearMessagesContext
     inherit Avatar.EnterIslandFeatureContext
     abstract member avatarInventorySink : AvatarInventorySink
     abstract member avatarInventorySource : AvatarInventorySource
@@ -42,7 +42,7 @@ type DockedHandleCommandContext =
     abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
 
 type DockedRunBoilerplateContext =
-    inherit WorldIsAvatarAliveContext
+    inherit OperatingContext
 
 type DockedRunContext =
     inherit DockedUpdateDisplayContext

@@ -12,9 +12,8 @@ type TestWorldSetHeadingContext(avatarMessageSink, vesselSingleStatisticSink, ve
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Avatar.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface WorldAddMessagesContext with
+    interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface WorldSetHeadingContext
 
 [<Test>]
 let ``SetHeading.It sets a new heading when given a valid avatar id.`` () =
@@ -36,7 +35,7 @@ let ``SetHeading.It sets a new heading when given a valid avatar id.`` () =
         TestWorldSetHeadingContext
             (Fixtures.Common.Mock.AvatarMessageSink "You set your heading to 1.50°.", 
             vesselSingleStatisticSink, 
-            vesselSingleStatisticSource) :> WorldSetHeadingContext
+            vesselSingleStatisticSource) :> OperatingContext
     Fixtures.Common.Dummy.AvatarId
     |> World.SetHeading 
         context
@@ -53,7 +52,11 @@ let ``SetHeading.It does nothing when given an invalid avatar id`` () =
     let vesselSingleStatisticSink (_) (_) =
         raise (System.NotImplementedException "Kaboom set")
     let heading = 1.5
-    let context = TestWorldSetHeadingContext(Fixtures.Common.Fake.AvatarMessageSink, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetHeadingContext
+    let context = 
+        TestWorldSetHeadingContext
+            (Fixtures.Common.Fake.AvatarMessageSink, 
+            vesselSingleStatisticSink, 
+            vesselSingleStatisticSource) :> OperatingContext
     input
     |> World.SetHeading 
         context

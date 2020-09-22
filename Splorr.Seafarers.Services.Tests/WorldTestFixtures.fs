@@ -44,7 +44,7 @@ type TestWorldDockContext
             termSources                    : TermSources,
             worldSingleStatisticSource     : WorldSingleStatisticSource
         ) =
-    interface WorldDockContext with
+    interface World.DockContext with
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         member _.avatarIslandFeatureSink        : AvatarIslandFeatureSink = avatarIslandFeatureSink
@@ -65,8 +65,7 @@ type TestWorldDockContext
     interface Avatar.CompleteJobContext with
         member _.avatarJobSink : AvatarJobSink = avatarJobSink
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
-    interface WorldDoJobCompletionContext
-    interface WorldAddMessagesContext with
+    interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface Avatar.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource

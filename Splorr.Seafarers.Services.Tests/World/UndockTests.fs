@@ -7,25 +7,25 @@ open Splorr.Seafarers.Models
 type TestWorldUndockContext
         (avatarIslandFeatureSink,
         avatarMessageSink) =
-    interface WorldUndockContext with
+    interface World.UndockContext with
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
 
     interface Avatar.AddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         
-    interface WorldAddMessagesContext with
+    interface World.AddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
 
 [<Test>]
 let ``Undock.It removes the feature for the avatar and adds a message.`` () =
     let avatarIslandFeatureSink (feature : AvatarIslandFeature option,_) =
         Assert.AreEqual(None, feature)
-    let context : WorldUndockContext = 
+    let context : World.UndockContext = 
         TestWorldUndockContext
             (avatarIslandFeatureSink,
             Fixtures.Common.Mock.AvatarMessageSink "You undock.") 
-        :> WorldUndockContext
+        :> World.UndockContext
     World.Undock
         context
         Fixtures.Common.Dummy.AvatarId

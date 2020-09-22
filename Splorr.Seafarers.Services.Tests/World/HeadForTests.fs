@@ -19,10 +19,9 @@ type TestWorldHeadForContext
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Avatar.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface WorldAddMessagesContext with
+    interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface WorldSetHeadingContext
-    interface WorldHeadForContext with
+    interface World.HeadForContext with
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.islandLocationByNameSource     : IslandLocationByNameSource = islandLocationByNameSource
 
@@ -46,7 +45,7 @@ let ``HeadFor.It adds a message when the island name does not exist.`` () =
         None
     let islandLocationByNameSource (_) =
         None
-    let context = TestWorldHeadForContext(avatarIslandSingleMetricSource, (Fixtures.Common.Mock.AvatarMessageSink expectedMessage), islandLocationByNameSource, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldHeadForContext
+    let context = TestWorldHeadForContext(avatarIslandSingleMetricSource, (Fixtures.Common.Mock.AvatarMessageSink expectedMessage), islandLocationByNameSource, vesselSingleStatisticSink, vesselSingleStatisticSource) :> World.HeadForContext
     inputWorld
     |> World.HeadFor 
         context
@@ -76,7 +75,7 @@ let ``HeadFor.It adds a message when the island name exists but is not known.`` 
     let islandLocationByNameSource (_) =
         []
         |> List.tryHead
-    let context = TestWorldHeadForContext(avatarIslandSingleMetricSource, (Fixtures.Common.Mock.AvatarMessageSink expectedMessage), islandLocationByNameSource, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldHeadForContext
+    let context = TestWorldHeadForContext(avatarIslandSingleMetricSource, (Fixtures.Common.Mock.AvatarMessageSink expectedMessage), islandLocationByNameSource, vesselSingleStatisticSink, vesselSingleStatisticSource) :> World.HeadForContext
     inputWorld
     |> World.HeadFor 
         context
@@ -113,7 +112,7 @@ let ``HeadFor.It sets the heading when the island name exists and is known.`` ()
     let islandLocationByNameSource (_) =
         [(0.0, 0.0)]
         |> List.tryHead
-    let context = TestWorldHeadForContext(avatarIslandSingleMetricSource, (Fixtures.Common.Mock.AvatarMessagesSink [firstExpectedMessage; secondExpectedMessage]), islandLocationByNameSource, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldHeadForContext
+    let context = TestWorldHeadForContext(avatarIslandSingleMetricSource, (Fixtures.Common.Mock.AvatarMessagesSink [firstExpectedMessage; secondExpectedMessage]), islandLocationByNameSource, vesselSingleStatisticSink, vesselSingleStatisticSource) :> World.HeadForContext
     inputWorld
     |> World.HeadFor 
         context

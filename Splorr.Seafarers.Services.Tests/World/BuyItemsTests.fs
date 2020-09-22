@@ -27,7 +27,7 @@ type TestWorldBuyItemsContext
     interface Avatar.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         
-    interface WorldAddMessagesContext with
+    interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         
     interface Avatar.GetUsedTonnageContext with
@@ -43,7 +43,7 @@ type TestWorldBuyItemsContext
         member _.avatarInventorySink   : AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
         
-    interface WorldBuyItemsContext with
+    interface World.BuyItemsContext with
         member _.islandSource                  : IslandSource = islandSource
         member _.itemSource                    : ItemSource =  itemSource
         member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource

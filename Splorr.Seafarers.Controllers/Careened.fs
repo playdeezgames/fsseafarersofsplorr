@@ -4,8 +4,7 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 type CareenedHandleCommandContext =
-    inherit WorldCleanHullContext
-    inherit WorldClearMessagesContext
+    inherit World.ClearMessagesContext
 
 type CareenedUpdateDisplayContext = 
     inherit Avatar.GetCurrentFoulingContext
@@ -17,7 +16,6 @@ type CareenedRunAliveContext =
 
 type CareenedRunContext =
     inherit CareenedRunAliveContext
-    inherit WorldIsAvatarAliveContext
 
 module Careened = 
     let private UpdateDisplay 

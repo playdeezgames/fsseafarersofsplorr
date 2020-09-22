@@ -60,7 +60,7 @@ let ``Dock.It does not modify avatar when given avatar has a job for a different
         Set.empty
     let islandItemSink (_) (x:Set<uint64>) = 
         Assert.AreEqual(1, x.Count)
-    let context : WorldDockContext =
+    let context : World.DockContext =
         TestWorldDockContext
             (avatarIslandFeatureSink,
             avatarIslandSingleMetricSink,
@@ -83,7 +83,7 @@ let ``Dock.It does not modify avatar when given avatar has a job for a different
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
             Fixtures.Common.Stub.TermSources ,
-            Fixtures.Common.Stub.WorldSingleStatisticSource) :> WorldDockContext
+            Fixtures.Common.Stub.WorldSingleStatisticSource) :> World.DockContext
     Fixtures.Common.Dummy.AvatarId
     |> World.Dock
         context
@@ -164,7 +164,7 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
         Set.empty
     let islandItemSink (_) (x:Set<uint64>) = 
         Assert.AreEqual(1, x.Count)
-    let context : WorldDockContext =
+    let context : World.DockContext =
         TestWorldDockContext
             (avatarIslandFeatureSink,
             avatarIslandSingleMetricSink,
@@ -188,7 +188,7 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
             shipmateSingleStatisticSource,
             Fixtures.Common.Stub.TermSources ,
             Fixtures.Common.Stub.WorldSingleStatisticSource)
-        :> WorldDockContext
+        :> World.DockContext
     Fixtures.Common.Dummy.AvatarId
     |> World.Dock
         context
@@ -215,7 +215,7 @@ let ``Dock.It does nothing when given an invalid avatar id.`` () =
         []
     let avatarIslandFeatureSink (_) =
         raise (System.NotImplementedException "avatarIslandFeatureSink")
-    let context : WorldDockContext =
+    let context : World.DockContext =
         TestWorldDockContext
             (avatarIslandFeatureSink,
             avatarIslandSingleMetricSink,
@@ -238,7 +238,7 @@ let ``Dock.It does nothing when given an invalid avatar id.`` () =
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
             Fixtures.Common.Fake.ShipmateSingleStatisticSource,
             Fixtures.Common.Stub.TermSources,
-            Fixtures.Common.Stub.WorldSingleStatisticSource) :> WorldDockContext
+            Fixtures.Common.Stub.WorldSingleStatisticSource) :> World.DockContext
     Fixtures.Common.Dummy.BogusAvatarId
     |> World.Dock 
         context
@@ -267,7 +267,7 @@ let ``Dock.It adds a message when the given location has no island.`` () =
         []
     let avatarIslandFeatureSink (_) =
         raise (System.NotImplementedException "avatarIslandFeatureSink")
-    let context : WorldDockContext =
+    let context : World.DockContext =
         TestWorldDockContext
             (avatarIslandFeatureSink,
             avatarIslandSingleMetricSink,
@@ -290,7 +290,7 @@ let ``Dock.It adds a message when the given location has no island.`` () =
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
             Fixtures.Common.Fake.ShipmateSingleStatisticSource,
             Fixtures.Common.Stub.TermSources ,
-            Fixtures.Common.Stub.WorldSingleStatisticSource) :> WorldDockContext
+            Fixtures.Common.Stub.WorldSingleStatisticSource) :> World.DockContext
     inputWorld
     |> World.Dock
         context
@@ -370,7 +370,7 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
     let islandItemSink (_) (x:Set<uint64>) = 
         Assert.AreEqual(0, x.Count)
 
-    let context : WorldDockContext =
+    let context : World.DockContext =
         TestWorldDockContext
             (avatarIslandFeatureSink,
             avatarIslandSingleMetricSink,
@@ -394,7 +394,7 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
             shipmateSingleStatisticSource,
             Fixtures.Common.Stub.TermSources,
             Fixtures.Common.Stub.WorldSingleStatisticSource) 
-        :> WorldDockContext
+        :> World.DockContext
     inputWorld
     |> World.Dock
         context

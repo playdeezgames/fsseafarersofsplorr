@@ -13,9 +13,9 @@ type TestWorldDistanceToContext
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Avatar.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface WorldAddMessagesContext with
+    interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface WorldDistanceToContext with
+    interface World.DistanceToContext with
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.islandLocationByNameSource     : IslandLocationByNameSource = islandLocationByNameSource
 
@@ -38,7 +38,7 @@ let ``DistanceTo.It adds a 'unknown island' message when given a bogus island na
         None
     let islandLocationByNameSource (_) =
         None
-    let context = TestWorldDistanceToContext(avatarIslandSingleMetricSource, (Fixtures.Common.Mock.AvatarMessageSink expectedMessage), islandLocationByNameSource, vesselSingleStatisticSource) :> WorldDistanceToContext
+    let context = TestWorldDistanceToContext(avatarIslandSingleMetricSource, (Fixtures.Common.Mock.AvatarMessageSink expectedMessage), islandLocationByNameSource, vesselSingleStatisticSource) :> World.DistanceToContext
     input
     |> World.DistanceTo 
         context
@@ -71,7 +71,7 @@ let ``DistanceTo.It adds a 'unknown island' message when given a valid island na
             |> Some
         else
             None
-    let context = TestWorldDistanceToContext(avatarIslandSingleMetricSource, (Fixtures.Common.Mock.AvatarMessageSink expectedMessage), islandLocationByNameSource, vesselSingleStatisticSource) :> WorldDistanceToContext
+    let context = TestWorldDistanceToContext(avatarIslandSingleMetricSource, (Fixtures.Common.Mock.AvatarMessageSink expectedMessage), islandLocationByNameSource, vesselSingleStatisticSource) :> World.DistanceToContext
     input
     |> World.DistanceTo 
         context
@@ -107,7 +107,7 @@ let ``DistanceTo.It adds a 'distance to island' message when given a valid islan
             |> Some
         else
             None
-    let context = TestWorldDistanceToContext(avatarIslandSingleMetricSource, (Fixtures.Common.Mock.AvatarMessageSink expectedMessage), islandLocationByNameSource, vesselSingleStatisticSource) :> WorldDistanceToContext
+    let context = TestWorldDistanceToContext(avatarIslandSingleMetricSource, (Fixtures.Common.Mock.AvatarMessageSink expectedMessage), islandLocationByNameSource, vesselSingleStatisticSource) :> World.DistanceToContext
     input
     |> World.DistanceTo 
         context

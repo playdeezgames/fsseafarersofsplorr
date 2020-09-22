@@ -55,7 +55,7 @@ type TestWorldResolveHandContext
     interface World.CanPlaceBetContext
     interface Avatar.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface WorldAddMessagesContext with
+    interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface Island.GetStatisticContext with
         member this.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource

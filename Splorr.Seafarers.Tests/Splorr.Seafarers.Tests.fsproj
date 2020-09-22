@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="Fixtures.fs" />
     <Compile Include="ParseInvalidCommandTests.fs" />
     <Compile Include="CommandSourceTests.fs" />
     <Compile Include="MessageSinkTests.fs" />

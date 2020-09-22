@@ -40,7 +40,7 @@ module Island =
             (fun identifier statistic ->
                 (identifier, statistic |> Some)
                 |> context.islandSingleStatisticSink location)
-
+    
     type GetDisplayNameContext =
         inherit OperatingContext
         abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource

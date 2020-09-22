@@ -12,7 +12,6 @@ type TestWorldCleanHullContext
         shipmateSingleStatisticSource,
         vesselSingleStatisticSink, 
         vesselSingleStatisticSource) =
-    interface WorldCleanHullContext
     interface Avatar.CleanHullContext with
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
     interface Vessel.TransformFoulingContext with
@@ -58,7 +57,7 @@ let ``CleanHull.It returns the original world when given a bogus avatar id and w
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
             vesselSingleStatisticSink, 
-            vesselSingleStatisticSource) :> WorldCleanHullContext
+            vesselSingleStatisticSource) :> OperatingContext
     inputWorld
     |> World.CleanHull
         context
@@ -97,7 +96,7 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
             shipmateSingleStatisticSource,
             vesselSingleStatisticSink, 
             vesselSingleStatisticSource) 
-        :> WorldCleanHullContext
+        :> OperatingContext
     inputWorld
     |> World.CleanHull 
         context

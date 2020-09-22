@@ -55,10 +55,10 @@ type TestDockedRunContext
     interface Avatar.AddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         
-    interface WorldAddMessagesContext with
+    interface World.AddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         
-    interface WorldUndockContext with
+    interface World.UndockContext with
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
 
@@ -93,7 +93,7 @@ type TestDockedRunContext
     interface Avatar.AbandonJobContext with
         member _.avatarJobSink                  : AvatarJobSink                 =avatarJobSink                 
         member _.avatarJobSource                : AvatarJobSource               =avatarJobSource
-    interface WorldClearMessagesContext with
+    interface World.ClearMessagesContext with
         member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
         
     interface Avatar.GetItemCountContext with
@@ -101,19 +101,19 @@ type TestDockedRunContext
     interface Avatar.AddInventoryContext with
         member _.avatarInventorySink   : AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
-    interface WorldAcceptJobContext with
+    interface World.AcceptJobContext with
         member _.avatarJobSink         : AvatarJobSink = avatarJobSink
         member _.avatarJobSource       : AvatarJobSource = avatarJobSource
         member _.islandJobPurger       : IslandJobPurger = islandJobPurger
         member _.islandSingleJobSource : IslandSingleJobSource = islandSingleJobSource
         member _.islandSource          : IslandSource = islandSource
-    interface WorldAbandonJobContext with
+    interface World.AbandonJobContext with
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
-    interface WorldBuyItemsContext with
+    interface World.BuyItemsContext with
         member _.islandSource                  : IslandSource = islandSource
         member _.itemSource                    : ItemSource =  itemSource
         member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface WorldSellItemsContext with
+    interface World.SellItemsContext with
         member _.islandSource                  : IslandSource = islandSource
         member _.itemSource                    : ItemSource = itemSource
     interface Avatar.GetPositionContext with

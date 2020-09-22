@@ -12,9 +12,8 @@ type TestWorldSetSpeedContext(avatarMessageSink, vesselSingleStatisticSink, vess
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Avatar.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface WorldAddMessagesContext with
+    interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface WorldSetSpeedContext
 
 [<Test>]
 let ``SetSpeed.It produces all stop in the avatar when less than zero is passed.`` () =
@@ -36,7 +35,7 @@ let ``SetSpeed.It produces all stop in the avatar when less than zero is passed.
         TestWorldSetSpeedContext
             (Fixtures.Common.Mock.AvatarMessageSink "You set your speed to 0.00.", 
             vesselSingleStatisticSink, 
-            vesselSingleStatisticSource) :> WorldSetSpeedContext
+            vesselSingleStatisticSource) :> OperatingContext
     Fixtures.Common.Dummy.AvatarId
     |> World.SetSpeed 
         context
@@ -63,7 +62,7 @@ let ``SetSpeed.It produces full speed when greater than one is passed.`` () =
         TestWorldSetSpeedContext
             (Fixtures.Common.Mock.AvatarMessageSink "You set your speed to 1.00.", 
             vesselSingleStatisticSink, 
-            vesselSingleStatisticSource) :> WorldSetSpeedContext
+            vesselSingleStatisticSource) :> OperatingContext
     Fixtures.Common.Dummy.AvatarId
     |> World.SetSpeed 
         context
@@ -91,7 +90,7 @@ let ``SetSpeed.It produces half speed when one half is passed.`` () =
         TestWorldSetSpeedContext
             (Fixtures.Common.Mock.AvatarMessageSink "You set your speed to 0.50.", 
             vesselSingleStatisticSink, 
-            vesselSingleStatisticSource) :> WorldSetSpeedContext
+            vesselSingleStatisticSource) :> OperatingContext
     Fixtures.Common.Dummy.AvatarId
     |> World.SetSpeed 
         context
@@ -116,7 +115,11 @@ let ``SetSpeed.It does nothing when a bogus avatarid is passed.`` () =
     let inputSpeed = 1.0
     let avatarMessageSink (_) (_) =
         Assert.Fail("Dont call me.")
-    let context = TestWorldSetSpeedContext(avatarMessageSink, vesselSingleStatisticSink, vesselSingleStatisticSource) :> WorldSetSpeedContext
+    let context = 
+        TestWorldSetSpeedContext
+            (avatarMessageSink, 
+            vesselSingleStatisticSink, 
+            vesselSingleStatisticSource) :> OperatingContext
     inputWorld
     |> World.SetSpeed 
         context
@@ -142,7 +145,7 @@ let ``SetSpeed.It produces full speed when one is passed.`` () =
         TestWorldSetSpeedContext
             (Fixtures.Common.Mock.AvatarMessageSink "You set your speed to 1.00.", 
             vesselSingleStatisticSink, 
-            vesselSingleStatisticSource) :> WorldSetSpeedContext
+            vesselSingleStatisticSource) :> OperatingContext
     Fixtures.Common.Dummy.AvatarId
     |> World.SetSpeed 
         context
@@ -170,7 +173,7 @@ let ``SetSpeed.It sets all stop when given zero`` () =
         TestWorldSetSpeedContext
             (Fixtures.Common.Mock.AvatarMessageSink "You set your speed to 0.00.", 
             vesselSingleStatisticSink, 
-            vesselSingleStatisticSource) :> WorldSetSpeedContext
+            vesselSingleStatisticSource) :> OperatingContext
     Fixtures.Common.Dummy.AvatarId
     |> World.SetSpeed 
         context

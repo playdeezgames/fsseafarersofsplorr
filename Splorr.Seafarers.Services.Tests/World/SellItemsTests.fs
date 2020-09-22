@@ -28,11 +28,11 @@ type TestWorldSellItemsContext
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
     interface Avatar.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface WorldAddMessagesContext with
+    interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface Avatar.GetItemCountContext with
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
-    interface WorldSellItemsContext with
+    interface World.SellItemsContext with
         member _.islandSource                  : IslandSource = islandSource
         member _.itemSource                    : ItemSource = itemSource
     interface Avatar.AddMessagesContext with
@@ -75,7 +75,7 @@ let ``SellItems.It gives a message when given a bogus island location.`` () =
             itemSingleSource,
             Fixtures.Common.Stub.ItemSource,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
-            Fixtures.Common.Fake.ShipmateSingleStatisticSource) :> WorldSellItemsContext
+            Fixtures.Common.Fake.ShipmateSingleStatisticSource) :> World.SellItemsContext
     input 
     |> World.SellItems 
         context
@@ -114,7 +114,7 @@ let ``SellItems.It gives a message when given a valid island location and bogus 
             itemSingleSource,
             Fixtures.Common.Stub.ItemSource,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
-            Fixtures.Common.Fake.ShipmateSingleStatisticSource) :> WorldSellItemsContext
+            Fixtures.Common.Fake.ShipmateSingleStatisticSource) :> World.SellItemsContext
     input 
     |> World.SellItems 
         context
@@ -151,7 +151,7 @@ let ``SellItems.It gives a message when the avatar has insufficient items in inv
             itemSingleSource,
             Fixtures.Common.Stub.ItemSource,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
-            Fixtures.Common.Fake.ShipmateSingleStatisticSource) :> WorldSellItemsContext
+            Fixtures.Common.Fake.ShipmateSingleStatisticSource) :> World.SellItemsContext
     input 
     |> World.SellItems 
         context
@@ -188,7 +188,7 @@ let ``SellItems.It gives a message when the avatar has no items in inventory and
             itemSingleSource,
             Fixtures.Common.Stub.ItemSource,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
-            Fixtures.Common.Fake.ShipmateSingleStatisticSource) :> WorldSellItemsContext
+            Fixtures.Common.Fake.ShipmateSingleStatisticSource) :> World.SellItemsContext
     input 
     |> World.SellItems 
         context
@@ -249,7 +249,7 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
             itemSingleSource,
             Fixtures.Common.Stub.ItemSource,
             shipmateSingleStatisticSink,
-            shipmateSingleStatisticSource) :> WorldSellItemsContext
+            shipmateSingleStatisticSource) :> World.SellItemsContext
     input 
     |> World.SellItems 
         context
@@ -310,7 +310,7 @@ let ``SellItems.It gives a message and completes the sale when the avatar has su
             itemSingleSource,
             Fixtures.Common.Stub.ItemSource,
             shipmateSingleStatisticSink,
-            shipmateSingleStatisticSource) :> WorldSellItemsContext
+            shipmateSingleStatisticSource) :> World.SellItemsContext
     input 
     |> World.SellItems 
         context

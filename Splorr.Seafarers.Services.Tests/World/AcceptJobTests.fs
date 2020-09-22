@@ -17,12 +17,12 @@ type TestWorldAcceptJobContext
         islandSource) =
     interface Avatar.AddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface WorldAddMessagesContext with
+    interface World.AddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface Island.MakeKnownContext with
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
-    interface WorldAcceptJobContext with
+    interface World.AcceptJobContext with
         member _.avatarJobSink         : AvatarJobSink = avatarJobSink
         member _.avatarJobSource       : AvatarJobSource = avatarJobSource
         member _.islandJobPurger       : IslandJobPurger = islandJobPurger
@@ -62,7 +62,7 @@ let ``AcceptJob.It does nothing when given an invalid island location.`` () =
             Fixtures.Common.Fake.AvatarSingleMetricSource,
             islandJobPurger,
             islandSingleJobSource,
-            islandSource) :> WorldAcceptJobContext
+            islandSource) :> World.AcceptJobContext
     Fixtures.Common.Dummy.AvatarId
     |> World.AcceptJob 
         context
@@ -100,7 +100,7 @@ let ``AcceptJob.It adds a message to the world when given an 0 job index for the
             Fixtures.Common.Fake.AvatarSingleMetricSource,
             islandJobPurger,
             islandSingleJobSource,
-            islandSource) :> WorldAcceptJobContext
+            islandSource) :> World.AcceptJobContext
     inputWorld
     |> World.AcceptJob 
         context
@@ -137,7 +137,7 @@ let ``AcceptJob.It adds a message to the world when given an invalid job index f
             Fixtures.Common.Fake.AvatarSingleMetricSource,
             islandJobPurger,
             islandSingleJobSource,
-            islandSource) :> WorldAcceptJobContext
+            islandSource) :> World.AcceptJobContext
     inputWorld
     |> World.AcceptJob 
         context
@@ -181,7 +181,7 @@ let ``AcceptJob.It adds a message to the world when the job is valid but the ava
             Fixtures.Common.Fake.AvatarSingleMetricSource,
             islandJobPurger,
             islandSingleJobSource,
-            islandSource) :> WorldAcceptJobContext
+            islandSource) :> World.AcceptJobContext
     inputWorld
     |> World.AcceptJob 
         context
@@ -236,7 +236,7 @@ let ``AcceptJob.It adds the given job to the avatar and eliminates it from the i
             avatarSingleMetricSource,
             islandJobPurger,
             islandSingleJobSource,
-            islandSource) :> WorldAcceptJobContext
+            islandSource) :> World.AcceptJobContext
     World.AcceptJob 
         context
         1u 

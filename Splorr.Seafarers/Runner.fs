@@ -8,7 +8,7 @@ open Splorr.Seafarers.Models
 type RunnerRunContext =
     inherit StatusRunContext
     inherit AtSeaRunContext
-    inherit WorldCreateContext
+    inherit World.CreateContext
     inherit DockedRunContext
     inherit IslandFeatureRunContext
     inherit HelpRunContext

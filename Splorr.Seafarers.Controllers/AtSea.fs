@@ -7,29 +7,27 @@ open Splorr.Seafarers.Persistence
 type AtSeaGetVisibleIslandsContext =
     inherit Avatar.GetPositionContext
     inherit Island.GetDisplayNameContext
-    inherit WorldGetNearbyLocationsContext
+    inherit World.GetNearbyLocationsContext
 
 type AtSeaUpdateDisplayContext =
     inherit AtSeaGetVisibleIslandsContext
     inherit Avatar.GetSpeedContext
     inherit Avatar.GetHeadingContext
-    inherit WorldDistanceToContext
+    inherit World.DistanceToContext
 
 type AtSeaCanCareenContext =
     inherit Avatar.GetPositionContext
-    inherit WorldGetNearbyLocationsContext
+    inherit World.GetNearbyLocationsContext
     abstract member islandSingleStatisticSource : IslandSingleStatisticSource
 
 type AtSeaHandleCommandContext =
-    inherit WorldClearMessagesContext
-    inherit WorldDockContext
+    inherit World.ClearMessagesContext
+    inherit World.DockContext
     inherit AtSeaGetVisibleIslandsContext
     inherit AtSeaUpdateDisplayContext
-    inherit WorldMoveContext
-    inherit WorldAbandonJobContext
-    inherit WorldHeadForContext
-    inherit WorldAddMessagesContext
-    inherit WorldSetSpeedContext
+    inherit World.AbandonJobContext
+    inherit World.HeadForContext
+    inherit World.AddMessagesContext
     inherit AtSeaCanCareenContext
     //abstract member islandSingleStatisticSource    : IslandSingleStatisticSource
 

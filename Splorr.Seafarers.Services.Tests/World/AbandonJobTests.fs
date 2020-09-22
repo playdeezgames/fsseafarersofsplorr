@@ -12,7 +12,7 @@ type TestWorldAbandonJobContext
         avatarSingleMetricSource,
         shipmateSingleStatisticSink, 
         shipmateSingleStatisticSource) =
-    interface WorldAbandonJobContext with
+    interface World.AbandonJobContext with
         member this.avatarJobSource: AvatarJobSource = avatarJobSource
     interface Avatar.AbandonJobContext with
         member _.avatarJobSink : AvatarJobSink = avatarJobSink
@@ -21,7 +21,7 @@ type TestWorldAbandonJobContext
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface Avatar.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface WorldAddMessagesContext with
+    interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface Avatar.AddMetricContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
@@ -56,7 +56,7 @@ let ``AbandonJob.It adds a message when the avatar has no job.`` () =
             (Fixtures.Common.Mock.AvatarSingleMetricSink [Metric.AcceptedJob, 1UL]),
             Fixtures.Common.Fake.AvatarSingleMetricSource,
             shipmateSingleStatisticSink, 
-            shipmateSingleStatisticSource) :> WorldAbandonJobContext
+            shipmateSingleStatisticSource) :> World.AbandonJobContext
     input
     |> World.AbandonJob
         context
@@ -102,7 +102,7 @@ let ``AbandonJob.It adds a messages and abandons the job when the avatar has a a
             (Fixtures.Common.Mock.AvatarSingleMetricSink [Metric.AbandonedJob, 1UL]),
             avatarSingleMetricSource,
             shipmateSingleStatisticSink, 
-            shipmateSingleStatisticSource) :> WorldAbandonJobContext
+            shipmateSingleStatisticSource) :> World.AbandonJobContext
     input
     |> World.AbandonJob
         context
