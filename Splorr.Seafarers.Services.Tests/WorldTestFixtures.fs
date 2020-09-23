@@ -44,6 +44,8 @@ type TestWorldDockContext
             termSources                    : TermSources,
             worldSingleStatisticSource     : WorldSingleStatisticSource
         ) =
+    interface Commodity.GetCommoditiesContext with
+        member this.commoditySource: CommoditySource = commoditySource
     interface World.DockContext with
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
@@ -54,7 +56,6 @@ type TestWorldDockContext
         member _.avatarJobSource                : AvatarJobSource=avatarJobSource
         member _.avatarSingleMetricSink         : AvatarSingleMetricSink=avatarSingleMetricSink
         member _.avatarSingleMetricSource       : AvatarSingleMetricSource=avatarSingleMetricSource
-        member _.commoditySource                : CommoditySource =commoditySource
         member _.islandItemSink                 : IslandItemSink =islandItemSink
         member _.islandItemSource               : IslandItemSource=islandItemSource
         member _.islandMarketSink               : IslandMarketSink =islandMarketSink
@@ -88,7 +89,6 @@ type TestWorldDockContext
         member _.random: Random = Fixtures.Common.Dummy.Random
 
     interface Island.GenerateCommoditiesContext with
-        member _.commoditySource: CommoditySource = commoditySource
         member _.islandMarketSink: IslandMarketSink = islandMarketSink
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
         member _.random : Random = Fixtures.Common.Dummy.Random
@@ -102,10 +102,10 @@ type TestWorldDockContext
         member _.islandJobSink              : IslandJobSink=islandJobSink
         member _.islandJobSource            : IslandJobSource=islandJobSource
 
-    interface Utility.SortListRandomlyContext with
+    interface Utility.RandomContext with
         member _.random : Random = Fixtures.Common.Dummy.Random
 
-    interface JobCreateContext with 
+    interface Job.CreateContext with 
         member _.termSources                : TermSources = termSources
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
         member _.random : Random = Fixtures.Common.Dummy.Random

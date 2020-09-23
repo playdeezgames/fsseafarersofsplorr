@@ -5,22 +5,26 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Persistence
 
 type AtSeaGetVisibleIslandsContext =
+    inherit OperatingContext
     inherit Avatar.GetPositionContext
     inherit Island.GetDisplayNameContext
     inherit World.GetNearbyLocationsContext
 
 type AtSeaUpdateDisplayContext =
+    inherit OperatingContext
     inherit AtSeaGetVisibleIslandsContext
     inherit Avatar.GetSpeedContext
     inherit Avatar.GetHeadingContext
     inherit World.DistanceToContext
 
 type AtSeaCanCareenContext =
+    inherit OperatingContext
     inherit Avatar.GetPositionContext
     inherit World.GetNearbyLocationsContext
     abstract member islandSingleStatisticSource : IslandSingleStatisticSource
 
 type AtSeaHandleCommandContext =
+    inherit OperatingContext
     inherit World.ClearMessagesContext
     inherit World.DockContext
     inherit AtSeaGetVisibleIslandsContext
@@ -32,10 +36,9 @@ type AtSeaHandleCommandContext =
     //abstract member islandSingleStatisticSource    : IslandSingleStatisticSource
 
 type AtSeaRunContext =
+    inherit OperatingContext
     inherit AtSeaHandleCommandContext
     abstract member avatarMessageSource             : AvatarMessageSource
-
-
 
 module AtSea =
     let private DetermineSpeedHue 
@@ -50,7 +53,6 @@ module AtSea =
 
     let private CanCareen 
             (context : AtSeaCanCareenContext)
-            //(islandSingleStatisticSource : IslandSingleStatisticSource)
             (vesselSingleStatisticSource : VesselSingleStatisticSource)
             (avatarId                    : string) 
             : bool =

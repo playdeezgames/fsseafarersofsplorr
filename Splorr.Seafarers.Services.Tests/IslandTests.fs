@@ -26,10 +26,11 @@ type TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingle
 
 type TestIslandGenerateCommoditiesContext(commoditySource, islandMarketSink, islandMarketSource) =
     interface Island.GenerateCommoditiesContext with
-        member _.commoditySource: CommoditySource = commoditySource
         member _.islandMarketSink: IslandMarketSink = islandMarketSink
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
         member _.random : Random = random
+    interface Commodity.GetCommoditiesContext with
+        member this.commoditySource: CommoditySource = commoditySource
 
 type TestIslandGenerateItemsContext(islandItemSink, islandItemSource, itemSource, random) =
     interface Island.GenerateItemsContext with
@@ -39,8 +40,9 @@ type TestIslandGenerateItemsContext(islandItemSink, islandItemSource, itemSource
         member _.random: Random = random
 
 type TestIslandUpdateMarketForItemSaleContext(commoditySource, islandSingleMarketSink, islandSingleMarketSource) =
-    interface Island.UpdateMarketForItemContext with
-        member _.commoditySource: CommoditySource = commoditySource
+    interface Island.UpdateMarketForItemContext
+    interface Commodity.GetCommoditiesContext with
+        member this.commoditySource: CommoditySource = commoditySource
     interface Island.ChangeMarketContext with
         member this.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
         member this.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
@@ -209,10 +211,10 @@ type TestIslandJobsGenerationContext
         member _.islandJobSink   : IslandJobSink = islandJobSink
         member _.islandJobSource : IslandJobSource = islandJobSource
 
-    interface Utility.SortListRandomlyContext with
+    interface Utility.RandomContext with
         member _.random : Random = random
 
-    interface JobCreateContext with
+    interface Job.CreateContext with
         member _.termSources : TermSources = termSources
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
         member _.random : Random = Fixtures.Common.Dummy.Random

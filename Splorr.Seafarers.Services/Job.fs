@@ -6,18 +6,17 @@ type TermSource = unit -> string list
 type TermSources = TermSource * TermSource * TermSource * TermSource * TermSource * TermSource
 type WorldSingleStatisticSource = WorldStatisticIdentifier -> Statistic
 
-type JobCreateContext =
-    inherit OperatingContext
-    abstract member termSources                : TermSources
-    abstract member worldSingleStatisticSource : WorldSingleStatisticSource
-    abstract member random                     : Random
-
 module Job =
+    type CreateContext =
+        inherit OperatingContext
+        abstract member termSources                : TermSources
+        abstract member worldSingleStatisticSource : WorldSingleStatisticSource
+        abstract member random                     : Random
     let Create 
             (context      : OperatingContext)
             (destinations : Set<Location>) 
             : Job =
-        let context = context :?> JobCreateContext
+        let context = context :?> CreateContext
         let pickRandomly : string list -> string = 
             Utility.PickRandomly context
 

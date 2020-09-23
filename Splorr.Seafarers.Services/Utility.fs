@@ -7,12 +7,12 @@ type OperatingContext =
     end
 
 module Utility =
-    type SortListRandomlyContext =
+    type RandomContext =
         inherit OperatingContext
         abstract member random : Random
     let SortListRandomly 
             (context : OperatingContext) =
-        let context = context :?> SortListRandomlyContext
+        let context = context :?> RandomContext
         List.sortBy (fun _ -> context.random.Next())
 
     let PickRandomly

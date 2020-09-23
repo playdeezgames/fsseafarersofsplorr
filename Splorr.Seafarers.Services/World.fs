@@ -331,7 +331,6 @@ module World =
         abstract member avatarMessageSink              : AvatarMessageSink
         abstract member avatarSingleMetricSink         : AvatarSingleMetricSink
         abstract member avatarSingleMetricSource       : AvatarSingleMetricSource
-        abstract member commoditySource                : CommoditySource 
         abstract member islandItemSink                 : IslandItemSink 
         abstract member islandItemSource               : IslandItemSource 
         abstract member islandMarketSink               : IslandMarketSink 

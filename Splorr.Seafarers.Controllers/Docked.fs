@@ -29,7 +29,6 @@ type DockedHandleCommandContext =
     abstract member avatarMessageSink : AvatarMessageSink
     abstract member avatarSingleMetricSink : AvatarSingleMetricSink
     abstract member avatarSingleMetricSource : AvatarSingleMetricSource
-    abstract member commoditySource : CommoditySource 
     abstract member islandJobPurger : IslandJobPurger
     abstract member islandMarketSource : IslandMarketSource 
     abstract member islandSingleJobSource : IslandSingleJobSource

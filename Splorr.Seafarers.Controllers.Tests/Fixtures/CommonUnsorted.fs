@@ -246,8 +246,10 @@ type TestAtSeaRunContext
             vesselSingleStatisticSource: VesselSingleStatisticSource,
             worldSingleStatisticSource: WorldSingleStatisticSource
         ) =
-    interface Utility.SortListRandomlyContext with
+    interface Utility.RandomContext with
         member _.random : Random = Fixtures.Common.Dummy.Random
+    interface Commodity.GetCommoditiesContext with
+        member this.commoditySource: CommoditySource = commoditySource
     interface Island.GenerateJobsContext with
         member _.islandJobSink: IslandJobSink = islandJobSink
         member _.islandJobSource: IslandJobSource = islandJobSource
@@ -259,7 +261,6 @@ type TestAtSeaRunContext
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
     interface Island.GenerateCommoditiesContext with
-        member _.commoditySource: CommoditySource = commoditySource
         member _.islandMarketSink: IslandMarketSink = islandMarketSink
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
         member _.random : Random = Fixtures.Common.Dummy.Random
@@ -339,7 +340,7 @@ type TestAtSeaRunContext
     interface Avatar.CompleteJobContext with
         member _.avatarJobSink : AvatarJobSink = avatarJobSink
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
-    interface JobCreateContext with
+    interface Job.CreateContext with
         member this.random: Random = Fixtures.Common.Dummy.Random
         member this.termSources: TermSources = termSources
         member this.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
@@ -352,7 +353,6 @@ type TestAtSeaRunContext
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         member _.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member _.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
-        member _.commoditySource: CommoditySource = commoditySource
         member _.islandItemSink: IslandItemSink = islandItemSink
         member _.islandItemSource: IslandItemSource = islandItemSource
         member _.islandMarketSink: IslandMarketSink = islandMarketSink

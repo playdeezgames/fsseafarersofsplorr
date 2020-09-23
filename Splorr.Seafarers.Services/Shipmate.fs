@@ -11,7 +11,6 @@ type ShipmateStatus =
 
 type ShipmateRationItemSource = string -> ShipmateIdentifier -> uint64 list
 type ShipmateRationItemSink = string -> ShipmateIdentifier -> uint64 list -> unit
-type RationItemSource = unit -> uint64 list
 type ShipmateStatisticTemplateSource = unit -> Map<ShipmateStatisticIdentifier, StatisticTemplate>
 type ShipmateSingleStatisticSink = string -> ShipmateIdentifier -> (ShipmateStatisticIdentifier * Statistic option) -> unit
 type ShipmateSingleStatisticSource = string -> ShipmateIdentifier -> ShipmateStatisticIdentifier -> Statistic option

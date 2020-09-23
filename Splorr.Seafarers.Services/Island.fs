@@ -19,7 +19,6 @@ type IslandSingleNameSource = Location -> string option
 type IslandSingleStatisticSink = Location->IslandStatisticIdentifier*Statistic option->unit
 type IslandSingleStatisticSource = Location->IslandStatisticIdentifier->Statistic option
 type IslandStatisticTemplateSource = unit -> Map<IslandStatisticIdentifier, StatisticTemplate>
-type ItemSource = unit -> Map<uint64, ItemDescriptor>
 type IslandSingleFeatureSource = Location -> IslandFeatureIdentifier -> bool
 
 module Island =
@@ -130,7 +129,6 @@ module Island =
         
     type GenerateCommoditiesContext =
         inherit OperatingContext
-        abstract member commoditySource    : CommoditySource
         abstract member islandMarketSource : IslandMarketSource
         abstract member islandMarketSink   : IslandMarketSink
         abstract member random             : Random
@@ -140,7 +138,7 @@ module Island =
             : unit =
         let context = context :?> GenerateCommoditiesContext
         if (context.islandMarketSource location).IsEmpty then
-            (Map.empty, context.commoditySource())
+            (Map.empty, Commodity.GetCommodities context)
             ||> Map.fold
                 (fun markets commodity _->
                     markets
@@ -199,7 +197,6 @@ module Island =
 
     type UpdateMarketForItemContext =
         inherit OperatingContext
-        abstract member commoditySource          : CommoditySource
     let UpdateMarketForItemSale 
             (context      : OperatingContext)
             (descriptor   : ItemDescriptor) 
@@ -207,7 +204,7 @@ module Island =
             (location     : Location) 
             : unit =
         let context = context :?> UpdateMarketForItemContext
-        let commodities = context.commoditySource()
+        let commodities = Commodity.GetCommodities context
         descriptor.Commodities
         |> Map.iter 
             (fun commodity quantityContained -> 
@@ -221,7 +218,7 @@ module Island =
             (location                 : Location) 
             : unit =
         let context = context :?> UpdateMarketForItemContext
-        let commodities = context.commoditySource()
+        let commodities = Commodity.GetCommodities context
         descriptor.Commodities
         |> Map.iter 
             (fun commodity quantityContained -> 

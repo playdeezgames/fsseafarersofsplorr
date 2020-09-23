@@ -63,7 +63,6 @@ type TestDockedRunContext
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
 
     interface Item.DeterminePriceContext with
-        member _.commoditySource                : CommoditySource               =commoditySource  
         member _.islandMarketSource             : IslandMarketSource            =islandMarketSource   
         member _.itemSingleSource               : ItemSingleSource              = itemSingleSource
 
@@ -71,8 +70,10 @@ type TestDockedRunContext
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
     
-    interface Island.UpdateMarketForItemContext with
+    interface Commodity.GetCommoditiesContext with
         member _.commoditySource: CommoditySource = commoditySource
+
+    interface Island.UpdateMarketForItemContext
 
     interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
@@ -132,7 +133,6 @@ type TestDockedRunContext
         member _.avatarMessageSink              : AvatarMessageSink             =avatarMessageSink             
         member _.avatarSingleMetricSink         : AvatarSingleMetricSink        =avatarSingleMetricSink        
         member _.avatarSingleMetricSource       : AvatarSingleMetricSource      =avatarSingleMetricSource      
-        member _.commoditySource                : CommoditySource               =commoditySource               
         member _.islandJobPurger                : IslandJobPurger               =islandJobPurger               
         member _.islandMarketSource             : IslandMarketSource            =islandMarketSource            
         member _.islandSingleJobSource          : IslandSingleJobSource         =islandSingleJobSource         

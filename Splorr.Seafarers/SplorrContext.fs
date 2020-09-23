@@ -66,6 +66,9 @@ type SplorrContext
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
 
+    interface Commodity.GetCommoditiesContext with
+        member this.commoditySource: CommoditySource = commoditySource
+
     interface Island.GenerateJobsContext with
         member this.islandJobSink: IslandJobSink = islandJobSink
         member this.islandJobSource: IslandJobSource = islandJobSource
@@ -157,7 +160,7 @@ type SplorrContext
         member _.islandSingleStatisticSink     : IslandSingleStatisticSink    =islandSingleStatisticSink    
         member _.islandStatisticTemplateSource : IslandStatisticTemplateSource=islandStatisticTemplateSource
 
-    interface Utility.SortListRandomlyContext with
+    interface Utility.RandomContext with
         member _.random : Random = random
 
     interface IslandFeatureGenerator.GenerateContext with
@@ -222,7 +225,6 @@ type SplorrContext
         member _.islandFeatureSource            : IslandFeatureSource            = islandFeatureSource
 
     interface Item.DeterminePriceContext with
-        member _.commoditySource                : CommoditySource                =commoditySource               
         member _.islandMarketSource             : IslandMarketSource             =islandMarketSource     
         member _.itemSingleSource               : ItemSingleSource               = itemSingleSource
 
@@ -230,8 +232,7 @@ type SplorrContext
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
     
-    interface Island.UpdateMarketForItemContext with
-        member _.commoditySource: CommoditySource = commoditySource
+    interface Island.UpdateMarketForItemContext
 
     interface Avatar.RemoveInventoryContext with
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
@@ -275,7 +276,6 @@ type SplorrContext
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
-        member this.commoditySource: CommoditySource = commoditySource
         member this.islandJobPurger: IslandJobPurger = islandJobPurger
         member this.islandMarketSource: IslandMarketSource = islandMarketSource
         member this.islandSingleJobSource: IslandSingleJobSource = islandSingleJobSource
@@ -290,7 +290,7 @@ type SplorrContext
       member _.islandSource                  : IslandSource = islandSource
        member _.itemSource                    : ItemSource = itemSource
 
-    interface JobCreateContext with
+    interface Job.CreateContext with
         member _.termSources: TermSources = termSources
         member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
         member _.random = random
@@ -301,7 +301,6 @@ type SplorrContext
         member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
 
     interface Island.GenerateCommoditiesContext with
-        member _.commoditySource: CommoditySource = commoditySource
         member _.islandMarketSink: IslandMarketSink = islandMarketSink
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
         member _.random : Random = random
@@ -337,7 +336,6 @@ type SplorrContext
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
-        member this.commoditySource: CommoditySource = commoditySource
         member this.islandItemSink: IslandItemSink = islandItemSink
         member this.islandItemSource: IslandItemSource = islandItemSource
         member this.islandMarketSink: IslandMarketSink = islandMarketSink

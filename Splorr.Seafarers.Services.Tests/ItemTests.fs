@@ -20,18 +20,20 @@ type TestItemDetermineSalePriceContext
         islandMarketSource,
         itemSingleSource) =
     interface Item.DeterminePriceContext with
-        member _.commoditySource                : CommoditySource               = commoditySource  
         member _.islandMarketSource             : IslandMarketSource            = islandMarketSource            
         member _.itemSingleSource               : ItemSingleSource              = itemSingleSource
+    interface Commodity.GetCommoditiesContext with
+        member this.commoditySource: CommoditySource = commoditySource
 
 type TestItemDeterminePurchasePriceContext
         (commoditySource,
         islandMarketSource,
         itemSingleSource) = 
     interface Item.DeterminePriceContext with
-        member _.commoditySource                : CommoditySource               =commoditySource  
         member _.islandMarketSource             : IslandMarketSource            =islandMarketSource  
         member _.itemSingleSource               : ItemSingleSource               = itemSingleSource
+    interface Commodity.GetCommoditiesContext with
+        member this.commoditySource: CommoditySource = commoditySource
 
 [<Test>]
 let ``DetermineSalePrice.It calculates the sale price of an item in a given set of markets with given commodities.`` () =

@@ -38,7 +38,7 @@ type TestWorldCreateContext
     interface IslandFeatureGenerator.GenerateContext with
         member _.random: Random = Fixtures.Common.Dummy.Random
 
-    interface Utility.SortListRandomlyContext with 
+    interface Utility.RandomContext with 
         member _.random : Random = Fixtures.Common.Dummy.Random
 
     interface World.GenerateIslandNameContext with
