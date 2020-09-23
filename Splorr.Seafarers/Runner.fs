@@ -7,8 +7,7 @@ open Splorr.Seafarers.Models
 
 module Runner =
     let rec private Loop 
-            (context       : OperatingContext)
-            (random        : Random) 
+            (context       : ServiceContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (gamestate     : Gamestate) 
@@ -150,7 +149,6 @@ module Runner =
         | Some state ->
             Loop 
                 context
-                random 
                 commandSource 
                 messageSink 
                 state
@@ -159,7 +157,7 @@ module Runner =
             ()
     
     let Run 
-            (context : OperatingContext)
+            (context : ServiceContext)
             : unit =
         Console.Title <- "Seafarers of SPLORR!!"
         let old = Console.ForegroundColor
@@ -169,7 +167,6 @@ module Runner =
         |> Gamestate.MainMenu
         |> Loop 
             context
-            (Random()) 
             (fun () -> CommandSource.Read Console.ReadLine) 
             MessageSink.Write
 

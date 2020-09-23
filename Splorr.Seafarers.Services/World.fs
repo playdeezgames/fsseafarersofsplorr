@@ -15,10 +15,10 @@ type WorldSingleStatisticSource = WorldStatisticIdentifier -> Statistic
 
 module World =
     type GenerateIslandNameContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member random : Random
     let private GenerateIslandName
-            (context: OperatingContext)
+            (context: ServiceContext)
             : string =
         let context = context :?> GenerateIslandNameContext
         let consonants = [| "h"; "k"; "l"; "m"; "p" |]
@@ -37,7 +37,7 @@ module World =
         |> List.reduce (+)
 
     let rec private GenerateIslandNames  //TODO: move to world generator?
-            (context : OperatingContext) 
+            (context : ServiceContext) 
             (nameCount:int) 
             (names: Set<string>) 
             : List<string> =
@@ -52,12 +52,12 @@ module World =
             |> GenerateIslandNames context nameCount
 
     type NameIslandsContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member islandSingleNameSink : IslandSingleNameSink
         abstract member islandSource         : IslandSource
         abstract member nameSource           : TermSource
     let private NameIslands
-            (context: OperatingContext)
+            (context: ServiceContext)
             : unit =
         let context = context :?> NameIslandsContext
         let locations = 
@@ -73,12 +73,12 @@ module World =
                 context.islandSingleNameSink l (Some n))
 
     type PopulateIslandsContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member islandFeatureGeneratorSource : IslandFeatureGeneratorSource
         abstract member islandSingleFeatureSink      : IslandSingleFeatureSink
         abstract member islandSource                 : IslandSource
     let private PopulateIslands
-            (context : OperatingContext)
+            (context : ServiceContext)
             : unit =
         let context = context :?> PopulateIslandsContext
         let generators = context.islandFeatureGeneratorSource()
@@ -92,13 +92,13 @@ module World =
                             context.islandSingleFeatureSink location identifier))
 
     type GenerateIslandsContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member islandSingleNameSink          : IslandSingleNameSink
         abstract member termNameSource                : TermSource
         abstract member islandSource : IslandSource
         abstract member random : Random
     let rec private GenerateIslands  //TODO: move to world generator?
-            (context                : OperatingContext)
+            (context                : ServiceContext)
             (worldSize              : Location) 
             (minimumIslandDistance  : float)
             (maximumGenerationTries : uint32, 
@@ -130,12 +130,12 @@ module World =
                     (maximumGenerationTries, 0u) 
 
     type UpdateChartsContext = 
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member avatarIslandSingleMetricSink : AvatarIslandSingleMetricSink
         abstract member islandSource                 : IslandSource
         abstract member vesselSingleStatisticSource  : VesselSingleStatisticSource
     let UpdateCharts 
-            (context : OperatingContext)
+            (context : ServiceContext)
             (avatarId : string) 
             : unit =
         let context = context :?> UpdateChartsContext
@@ -157,7 +157,7 @@ module World =
                 context.avatarIslandSingleMetricSink avatarId location AvatarIslandMetricIdentifier.Seen 1UL)
 
     type CreateContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member avatarIslandSingleMetricSink    : AvatarIslandSingleMetricSink
         abstract member avatarJobSink                   : AvatarJobSink
         abstract member worldSingleStatisticSource      : WorldSingleStatisticSource
@@ -169,7 +169,7 @@ module World =
         abstract member vesselSingleStatisticSource     : VesselSingleStatisticSource
         abstract member shipmateRationItemSink          : ShipmateRationItemSink
     let Create 
-            (context  : OperatingContext)
+            (context  : ServiceContext)
             (avatarId : string)
             : unit =
         let context = context :?> CreateContext
@@ -202,20 +202,20 @@ module World =
             context
 
     type ClearMessagesContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member avatarMessagePurger : AvatarMessagePurger
     let ClearMessages 
-            (context  : OperatingContext)
+            (context  : ServiceContext)
             (avatarId : string)
             : unit =
         let context = context :?> ClearMessagesContext
         context.avatarMessagePurger avatarId
 
     type AddMessagesContext = 
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member avatarMessageSink : AvatarMessageSink
     let AddMessages
-            (context : OperatingContext)
+            (context : ServiceContext)
             (messages          : string list) 
             (avatarId          : string) 
             : unit =
@@ -226,7 +226,7 @@ module World =
             avatarId
 
     let SetSpeed 
-            (context  : OperatingContext)
+            (context  : ServiceContext)
             (speed    : float) 
             (avatarId : string) 
             : unit = 
@@ -243,7 +243,7 @@ module World =
                 |> AddMessages context [newSpeed |> sprintf "You set your speed to %.2f."])
 
     let SetHeading 
-            (context  : OperatingContext)
+            (context  : ServiceContext)
             (heading  : float) 
             (avatarId : string) 
             : unit =
@@ -260,7 +260,7 @@ module World =
                 |> AddMessages context [newHeading |> Angle.ToDegrees |> Angle.ToString |> sprintf "You set your heading to %s." ])
 
     let IsAvatarAlive
-            (context  : OperatingContext)
+            (context  : ServiceContext)
             (avatarId : string) 
             : bool =
         (Shipmate.GetStatus 
@@ -269,7 +269,7 @@ module World =
             Primary) = Alive
 
     let rec Move
-            (context  : OperatingContext)
+            (context  : ServiceContext)
             (distance : uint32) 
             (avatarId : string) 
             : unit =
@@ -297,10 +297,10 @@ module World =
             ()
 
     type GetNearbyLocationsContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member islandSource : IslandSource
     let GetNearbyLocations
-            (context : OperatingContext)
+            (context : ServiceContext)
             (from                        : Location) 
             (maximumDistance             : float) 
             : Location list =
@@ -310,7 +310,7 @@ module World =
 
 
     let private DoJobCompletion
-            (context  : OperatingContext)
+            (context  : ServiceContext)
             (location : Location) 
             (job      : Job) 
             (avatarId : string) 
@@ -323,7 +323,7 @@ module World =
             |> AddMessages context  [ "You complete your job." ]
 
     type DockContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member avatarIslandFeatureSink        : AvatarIslandFeatureSink
         abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
         abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
@@ -341,7 +341,7 @@ module World =
         abstract member shipmateSingleStatisticSink    : ShipmateSingleStatisticSink
         abstract member shipmateSingleStatisticSource  : ShipmateSingleStatisticSource
     let Dock
-            (context  : OperatingContext)
+            (context  : ServiceContext)
             (location : Location) 
             (avatarId : string) 
             : unit =
@@ -409,11 +409,11 @@ module World =
                     "There is no place to dock there." 
                 ]
     type DistanceToContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
         abstract member islandLocationByNameSource     : IslandLocationByNameSource
     let DistanceTo 
-            (context    : OperatingContext)
+            (context    : ServiceContext)
             (islandName : string) 
             (avatarId   : string) 
             : unit =
@@ -437,11 +437,11 @@ module World =
             ()
 
     type HeadForContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
         abstract member islandLocationByNameSource     : IslandLocationByNameSource
     let HeadFor
-            (context : OperatingContext)
+            (context : ServiceContext)
             (islandName                     : string) 
             (avatarId                       : string) 
             : unit =
@@ -472,14 +472,14 @@ module World =
             ()
 
     type AcceptJobContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member avatarJobSink         : AvatarJobSink
         abstract member avatarJobSource       : AvatarJobSource
         abstract member islandJobPurger       : IslandJobPurger
         abstract member islandSingleJobSource : IslandSingleJobSource
         abstract member islandSource          : IslandSource
     let AcceptJob 
-            (context  : OperatingContext)
+            (context  : ServiceContext)
             (jobIndex : uint32) 
             (location : Location) 
             (avatarId : string) 
@@ -516,10 +516,10 @@ module World =
             ()
 
     type AbandonJobContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member avatarJobSource  : AvatarJobSource
     let AbandonJob
-            (context  : OperatingContext)
+            (context  : ServiceContext)
             (avatarId : string) 
             : unit =
         let context = context :?> AbandonJobContext
@@ -548,12 +548,12 @@ module World =
                     None)
 
     type BuyItemsContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member islandSource                  : IslandSource
         abstract member itemSource                    : ItemSource
         abstract member vesselSingleStatisticSource   : VesselSingleStatisticSource
     let BuyItems 
-            (context                       : OperatingContext)
+            (context                       : ServiceContext)
             (location                      : Location) 
             (tradeQuantity                 : TradeQuantity) 
             (itemName                      : string) 
@@ -620,11 +620,11 @@ module World =
             |> AddMessages context ["You cannot buy items here."]
 
     type SellItemsContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member islandSource                  : IslandSource
         abstract member itemSource                    : ItemSource
     let SellItems 
-            (context : OperatingContext)
+            (context : ServiceContext)
             (location                      : Location) 
             (tradeQuantity                 : TradeQuantity) 
             (itemName                      : string) 
@@ -677,7 +677,7 @@ module World =
             |> AddMessages context ["You cannot sell items here."]
 
     let CleanHull //TODO: this just passes everything along to avatar.CleanHull, so eliminate
-            (context : OperatingContext)
+            (context : ServiceContext)
             (side                          : Side) 
             (avatarId                      : string) 
             : unit =
@@ -687,11 +687,11 @@ module World =
             side 
 
     type UndockContext = 
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member avatarMessageSink       : AvatarMessageSink
         abstract member avatarIslandFeatureSink : AvatarIslandFeatureSink
     let Undock
-            (context : OperatingContext)
+            (context : ServiceContext)
             (avatarId : string)
             : unit =
         let context = context :?> UndockContext
@@ -700,12 +700,12 @@ module World =
         context.avatarIslandFeatureSink (None, avatarId)
     
     type HasDarkAlleyMinimumStakesContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
         abstract member islandSingleStatisticSource : IslandSingleStatisticSource 
         abstract member avatarIslandFeatureSource : AvatarIslandFeatureSource
     let HasDarkAlleyMinimumStakes
-            (context : OperatingContext)
+            (context : ServiceContext)
             (location : Location)
             (avatarId : string)
             : bool option =
@@ -733,11 +733,11 @@ module World =
             None
 
     type CanPlaceBetContext =
-        inherit OperatingContext
+        inherit ServiceContext
         inherit Avatar.GetPrimaryStatisticContext
 
     let CanPlaceBet
-            (context : OperatingContext)
+            (context : ServiceContext)
             (amount : float)
             (avatarId : string)
             : bool =
@@ -745,10 +745,10 @@ module World =
         (Avatar.GetMoney context avatarId) >= amount
      
     type ResolveHandContext =
-        inherit OperatingContext
+        inherit ServiceContext
 
     let ResolveHand
-            (context: OperatingContext)
+            (context: ServiceContext)
             (amount : float)
             (avatarId: string)
             : unit =

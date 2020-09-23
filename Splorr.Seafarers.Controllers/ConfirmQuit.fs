@@ -8,10 +8,10 @@ module ConfirmQuit =
     let private onStreamSwitch = "on-stream"
 
     type RunContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member switchSource : SwitchSource 
     let Run 
-            (context : OperatingContext)
+            (context : ServiceContext)
             (source       : CommandSource) 
             (sink         : MessageSink) 
             (state        : Gamestate) 

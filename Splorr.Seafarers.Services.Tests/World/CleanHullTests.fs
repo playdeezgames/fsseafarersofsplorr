@@ -57,7 +57,7 @@ let ``CleanHull.It returns the original world when given a bogus avatar id and w
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
             vesselSingleStatisticSink, 
-            vesselSingleStatisticSource) :> OperatingContext
+            vesselSingleStatisticSource) :> ServiceContext
     inputWorld
     |> World.CleanHull
         context
@@ -96,7 +96,7 @@ let ``CleanHull.It returns a cleaned hull when given a particular avatar id and 
             shipmateSingleStatisticSource,
             vesselSingleStatisticSink, 
             vesselSingleStatisticSource) 
-        :> OperatingContext
+        :> ServiceContext
     inputWorld
     |> World.CleanHull 
         context

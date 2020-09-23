@@ -5,12 +5,12 @@ open Splorr.Seafarers.Services
 
 module Jobs = 
     type RunIslandContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member islandSingleNameSource : IslandSingleNameSource
         abstract member islandJobSource        : IslandJobSource
 
     let private RunIsland 
-            (context:OperatingContext)
+            (context:ServiceContext)
             (messageSink            : MessageSink) 
             (location               : Location) 
             : unit =
@@ -50,10 +50,10 @@ module Jobs =
 
     
     type RunContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member islandSource           : IslandSource
     let Run  
-            (context : OperatingContext)
+            (context : ServiceContext)
             (messageSink            : MessageSink) 
             (location               : Location)
             (avatarId               : string) 

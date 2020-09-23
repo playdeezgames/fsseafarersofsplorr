@@ -4,14 +4,14 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 type InventoryRunWorldContext =
-    inherit OperatingContext
+    inherit ServiceContext
     abstract member itemSource                  : ItemSource
     abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
     abstract member avatarInventorySource       : AvatarInventorySource
 
     
 type InventoryRunContext =
-    inherit OperatingContext
+    inherit ServiceContext
     abstract member avatarInventorySource       : AvatarInventorySource
     abstract member itemSource                  : ItemSource
     abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
@@ -19,7 +19,7 @@ type InventoryRunContext =
 
 module Inventory =
     let private RunWorld
-            (context : OperatingContext)
+            (context : ServiceContext)
             (messageSink                 : MessageSink) 
             (avatarId                    : string) 
             : unit =
@@ -72,7 +72,7 @@ module Inventory =
         |> List.iter messageSink
 
     let Run
-            (context : OperatingContext)
+            (context : ServiceContext)
             (messageSink                 : MessageSink) 
             (gamestate                   : Gamestate) 
             : Gamestate option =

@@ -6,7 +6,7 @@ open System
 open Splorr.Seafarers.Controllers
 open NUnit.Framework
 
-let splorrContext : OperatingContext =
+let splorrContext : ServiceContext =
     SplorrContext
         (Fixtures.Stub.AvatarGamblingHandSink,
         Fixtures.Stub.AvatarGamblingHandSource,
@@ -64,7 +64,7 @@ let splorrContext : OperatingContext =
         Fixtures.Stub.VesselSingleStatisticSource,
         Fixtures.Stub.VesselStatisticSink,
         Fixtures.Stub.VesselStatisticTemplateSource,
-        Fixtures.Stub.WorldSingleStatisticSource) :> OperatingContext
+        Fixtures.Stub.WorldSingleStatisticSource) :> ServiceContext
 
 [<Test>]
 let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrContext.`` () =

@@ -4,16 +4,16 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 type ItemListRunWithIslandContext =
-    inherit OperatingContext
+    inherit ServiceContext
     abstract member itemSource         : ItemSource
     abstract member islandItemSource   : IslandItemSource
 
 type ItemListRunContext =
-    inherit OperatingContext
+    inherit ServiceContext
 
 module ItemList = 
     let private RunWithIsland 
-            (context            : OperatingContext)
+            (context            : ServiceContext)
             (messageSink        : MessageSink) 
             (location           : Location) 
             (avatarId           : string) 
@@ -55,7 +55,7 @@ module ItemList =
         |> Some
 
     let Run 
-            (context : OperatingContext)
+            (context : ServiceContext)
             (messageSink                   : MessageSink) =
         RunWithIsland 
             context

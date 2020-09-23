@@ -5,28 +5,28 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Persistence
 
 type AtSeaGetVisibleIslandsContext =
-    inherit OperatingContext
+    inherit ServiceContext
     abstract member vesselSingleStatisticSource    : VesselSingleStatisticSource
 
 type AtSeaUpdateDisplayContext =
-    inherit OperatingContext
+    inherit ServiceContext
     abstract member avatarMessageSource            : AvatarMessageSource
     abstract member shipmateSingleStatisticSource  : ShipmateSingleStatisticSource
     abstract member vesselSingleStatisticSource    : VesselSingleStatisticSource
 
 
 type AtSeaCanCareenContext =
-    inherit OperatingContext
+    inherit ServiceContext
     abstract member islandSingleStatisticSource : IslandSingleStatisticSource
     abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
 
 
 type AtSeaHandleCommandContext =
-    inherit OperatingContext
+    inherit ServiceContext
     abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
 
 type AtSeaRunContext =
-    inherit OperatingContext
+    inherit ServiceContext
     abstract member avatarMessageSource             : AvatarMessageSource
 
 module AtSea =
@@ -41,7 +41,7 @@ module AtSea =
             Hue.Error
 
     let private CanCareen 
-            (context : OperatingContext)
+            (context : ServiceContext)
             (avatarId                    : string) 
             : bool =
         let context = context :?> AtSeaCanCareenContext
@@ -68,7 +68,7 @@ module AtSea =
         |> List.exists (fun (l,d) -> Location.DistanceTo l avatarPosition < d)
 
     let private GetVisibleIslands 
-            (context : OperatingContext)
+            (context : ServiceContext)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (avatarId                       : string) 
             : (Location * string * float * string) list =
@@ -103,7 +103,7 @@ module AtSea =
         |> List.sortBy (fun (_,_,d,_)->d)
 
     let private UpdateDisplay 
-            (context : OperatingContext)
+            (context : ServiceContext)
             (messageSink                    : MessageSink) 
             (avatarId                       : string) 
             : unit =
@@ -163,7 +163,7 @@ module AtSea =
                 |> List.iter messageSink)
 
     let private HandleCommand
-            (context                        : OperatingContext)
+            (context                        : ServiceContext)
             (command                        : Command option) 
             (avatarId                       : string) 
             : Gamestate option =
@@ -334,7 +334,7 @@ module AtSea =
             |> Some
 
     let private RunAlive
-            (context       : OperatingContext)
+            (context       : ServiceContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (avatarId      : string) 
@@ -350,7 +350,7 @@ module AtSea =
             avatarId
 
     let Run 
-            (context       : OperatingContext)
+            (context       : ServiceContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (avatarId      : string) 

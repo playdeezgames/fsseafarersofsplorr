@@ -10,7 +10,7 @@ let private previousGameState =
     |> Gamestate.MainMenu
 
 type TestIslandListRunContext(vesselSingleStatisticSource) =
-    interface OperatingContext
+    interface ServiceContext
     interface Avatar.GetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
@@ -22,7 +22,7 @@ let ``Run.It returns the given gamestate.`` () =
     let expected =
         input
         |> Some
-    let context = TestIslandListRunContext(vesselSingleStatisticSourceStub) :> OperatingContext
+    let context = TestIslandListRunContext(vesselSingleStatisticSourceStub) :> ServiceContext
     let actual =
         input
         |> IslandList.Run

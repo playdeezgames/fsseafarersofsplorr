@@ -9,11 +9,11 @@ type VesselSingleStatisticSink     = string->VesselStatisticIdentifier*Statistic
 
 module Vessel =
     type CreateContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member vesselStatisticSink           : VesselStatisticSink
         abstract member vesselStatisticTemplateSource : VesselStatisticTemplateSource
     let Create
-            (context  : OperatingContext)
+            (context  : ServiceContext)
             (avatarId : string)
             : unit =
         let context = context :?> CreateContext
@@ -24,21 +24,21 @@ module Vessel =
         |> context.vesselStatisticSink avatarId
 
     type GetStatisticContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
     let GetStatistic
-            (context : OperatingContext)
+            (context : ServiceContext)
             (avatarId : string)
             (identifier: VesselStatisticIdentifier)
             : Statistic option =
         (context :?> GetStatisticContext).vesselSingleStatisticSource avatarId identifier
     
     type TransformFoulingContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
         abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
     let TransformFouling 
-            (context : OperatingContext)
+            (context : ServiceContext)
             (avatarId                    : string)
             (side                        : Side) 
             (transform                   : Statistic -> Statistic)
@@ -52,10 +52,10 @@ module Vessel =
         |> Option.iter (fun s -> (statisticIdentifier, s |> transform) |> context.vesselSingleStatisticSink avatarId)
     
     type BefoulContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
     let Befoul 
-            (context  : OperatingContext)
+            (context  : ServiceContext)
             (avatarId : string)
             : unit =
         let context = context :?> BefoulContext

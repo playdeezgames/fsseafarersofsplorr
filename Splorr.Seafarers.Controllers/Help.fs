@@ -293,7 +293,7 @@ module Help =
         |> List.iter messageSink
 
     let Run 
-            (context     : OperatingContext)
+            (context     : ServiceContext)
             (messageSink : MessageSink) 
             (gamestate   : Gamestate) 
             : Gamestate option =

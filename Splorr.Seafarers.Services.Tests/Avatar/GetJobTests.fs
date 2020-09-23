@@ -5,7 +5,7 @@ open NUnit.Framework
 
 type TestAvatarGetJobContext
         (avatarJobSource) =
-    interface OperatingContext
+    interface ServiceContext
     interface Avatar.GetJobContext with
         member this.avatarJobSource: AvatarJobSource = avatarJobSource
 
@@ -15,7 +15,7 @@ let ``GetJob.It calls the AvatarJobSource in the operating context.`` () =
     let avatarJobSource (_) =
         called <- true
         None
-    let context = TestAvatarGetJobContext(avatarJobSource) :> OperatingContext
+    let context = TestAvatarGetJobContext(avatarJobSource) :> ServiceContext
     let expected = None
     let actual =
         Avatar.GetJob context Fixtures.Common.Dummy.AvatarId

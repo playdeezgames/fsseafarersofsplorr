@@ -45,7 +45,7 @@ let ``Create.It creates a vessel.`` () =
 
 type TestVesselGetStatisticContext
         (vesselSingleStatisticSource) =
-    interface OperatingContext
+    interface ServiceContext
     interface Vessel.GetStatisticContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 [<Test>]
@@ -54,7 +54,7 @@ let ``GetStatistic.It calls XXXX in the context.`` () =
     let vesselSingleStatisticSource (_) (_) =
         called <- true
         None
-    let context = TestVesselGetStatisticContext(vesselSingleStatisticSource) :> OperatingContext
+    let context = TestVesselGetStatisticContext(vesselSingleStatisticSource) :> ServiceContext
     let expected = None
     let actual = 
         Vessel.GetStatistic

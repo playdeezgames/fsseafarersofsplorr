@@ -14,7 +14,7 @@ let private world =
     avatarId
 
 type TestHelpRunContext(avatarIslandFeatureSource) =
-    interface OperatingContext
+    interface ServiceContext
     interface HelpRunContext with
         member _.avatarIslandFeatureSource : AvatarIslandFeatureSource = avatarIslandFeatureSource
 
@@ -31,7 +31,7 @@ let ``Run.It returns the given AtSea Gamestate`` () =
         sinkCalled <- true
     let avatarIslandFeatureSource (_) = None
     let context = 
-        TestHelpRunContext(avatarIslandFeatureSource) :> OperatingContext
+        TestHelpRunContext(avatarIslandFeatureSource) :> ServiceContext
     let actual = 
         input
         |> Help.Run

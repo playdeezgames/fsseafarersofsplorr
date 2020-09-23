@@ -11,7 +11,7 @@ let private previousGameState =
     |> Gamestate.MainMenu
 
 type TestMetricsRunContext(avatarMetricSource) =
-    interface OperatingContext
+    interface ServiceContext
     interface Metrics.RunWorldContext with
         member this.avatarMetricSource: AvatarMetricSource = avatarMetricSource
 
@@ -19,7 +19,7 @@ type TestMetricsRunContext(avatarMetricSource) =
 let ``Run.It returns the given gamestate.`` () =
     let input =previousGameState
     let expected =previousGameState |> Some
-    let context = TestMetricsRunContext(avatarMetricSourceStub) :> OperatingContext
+    let context = TestMetricsRunContext(avatarMetricSourceStub) :> ServiceContext
     let actual =
         input
         |> Metrics.Run
@@ -35,7 +35,7 @@ let ``Run.It works when all of the metrics have counters.`` () =
         inputWorld
         |> Gamestate.InPlay
     let expected = input |> Some
-    let context = TestMetricsRunContext(avatarMetricSourceStub) :> OperatingContext
+    let context = TestMetricsRunContext(avatarMetricSourceStub) :> ServiceContext
     let actual =
         input
         |> Metrics.Run 

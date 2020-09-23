@@ -50,7 +50,7 @@ let ``TransformStatistic.It does nothing when the given statistic is absent from
 
 type TestShipmateGetStatisticContext
         (shipmateSingleStatisticSource) =
-    interface OperatingContext
+    interface ServiceContext
     interface Shipmate.GetStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 [<Test>]
@@ -59,7 +59,7 @@ let ``GetStatistic.It calls ShipmateSingleStatisticSource in the context.`` () =
     let shipmateSingleStatisticSource (_) (_) (_) =
         called <- true
         None
-    let context = TestShipmateGetStatisticContext(shipmateSingleStatisticSource) :> OperatingContext
+    let context = TestShipmateGetStatisticContext(shipmateSingleStatisticSource) :> ServiceContext
     let expected = None
     let actual = 
         Shipmate.GetStatistic

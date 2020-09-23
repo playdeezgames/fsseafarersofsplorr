@@ -104,7 +104,7 @@ module MainMenu =
                 command
 
     let Run 
-            (context       : OperatingContext)
+            (context       : ServiceContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (avatarId      : string option) 

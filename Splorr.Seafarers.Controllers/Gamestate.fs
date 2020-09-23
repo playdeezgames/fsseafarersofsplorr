@@ -6,7 +6,7 @@ open Splorr.Seafarers.Services
 type AvatarMessageSource = string -> string list
 
 type GamestateCheckForAvatarDeathContext =
-    inherit OperatingContext
+    inherit ServiceContext
     abstract member avatarMessageSource           : AvatarMessageSource
 
 
@@ -48,7 +48,7 @@ module Gamestate =
         | _ -> None
 
     let CheckForAvatarDeath 
-            (context : OperatingContext)
+            (context : ServiceContext)
             (gamestate                     : Gamestate option) 
             : Gamestate option =
         let context = context :?> GamestateCheckForAvatarDeathContext

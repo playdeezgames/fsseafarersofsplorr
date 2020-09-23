@@ -41,7 +41,7 @@ type DockedHandleCommandContext =
     abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
 
 type DockedRunBoilerplateContext =
-    inherit OperatingContext
+    inherit ServiceContext
     abstract member avatarMessageSource           : AvatarMessageSource
     abstract member islandSource                  : IslandSource
 
@@ -62,7 +62,7 @@ module Docked =
             raise (System.NotImplementedException (sprintf "%s" (feature.ToString())))
 
     let private UpdateDisplay 
-            (context     : OperatingContext)
+            (context     : ServiceContext)
             (messageSink : MessageSink) 
             (location    : Location) 
             (avatarId    : string) 
@@ -83,7 +83,7 @@ module Docked =
         |> List.iter messageSink
 
     let private HandleCommand
-            (context : OperatingContext)
+            (context : ServiceContext)
             (command                        : Command option) 
             (location                       : Location) 
             (avatarId                       : string) 
@@ -200,7 +200,7 @@ module Docked =
             |> Some
 
     let private RunWithIsland 
-            (context                        : OperatingContext)
+            (context                        : ServiceContext)
             (commandSource                  : CommandSource) 
             (messageSink                    : MessageSink) 
             (location                       : Location) 
@@ -219,7 +219,7 @@ module Docked =
             location 
 
     let internal RunBoilerplate 
-            (context : OperatingContext)
+            (context : ServiceContext)
             (func                          : Location -> string -> Gamestate option) 
             (location                      : Location) 
             (avatarId                      : string) 
@@ -239,7 +239,7 @@ module Docked =
             |> Some
 
     let Run 
-            (context       : OperatingContext)
+            (context       : ServiceContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) =
         RunBoilerplate 

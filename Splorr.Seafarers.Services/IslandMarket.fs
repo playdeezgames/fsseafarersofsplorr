@@ -11,11 +11,11 @@ type private UnitPriceDeterminer = CommodityDescriptor * Market -> float
 
 module IslandMarket =
     type DeterminePriceContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member islandMarketSource : IslandMarketSource
         abstract member itemSingleSource   : ItemSingleSource
     let private DeterminePrice 
-            (context             : OperatingContext)
+            (context             : ServiceContext)
             (unitPriceDeterminer : UnitPriceDeterminer)
             (itemIndex           : uint64) 
             (location            : Location)
@@ -35,9 +35,9 @@ module IslandMarket =
                 |> List.reduce (+)) System.Double.NaN
 
     let DetermineSalePrice 
-            (context : OperatingContext) =
+            (context : ServiceContext) =
         DeterminePrice context Market.DetermineSalePrice
 
     let DeterminePurchasePrice 
-            (context : OperatingContext) =
+            (context : ServiceContext) =
         DeterminePrice context Market.DeterminePurchasePrice

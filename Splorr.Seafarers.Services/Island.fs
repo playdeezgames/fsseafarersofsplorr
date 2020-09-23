@@ -23,11 +23,11 @@ type IslandSingleFeatureSource = Location -> IslandFeatureIdentifier -> bool
 
 module Island =
     type CreateContext = 
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member islandSingleStatisticSink     : IslandSingleStatisticSink
         abstract member islandStatisticTemplateSource : IslandStatisticTemplateSource
     let  Create
-            (context  : OperatingContext)
+            (context  : ServiceContext)
             (location : Location)
             : unit =
         let context = context :?> CreateContext
@@ -41,21 +41,21 @@ module Island =
                 |> context.islandSingleStatisticSink location)
     
     type GetNameContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member islandSingleNameSource : IslandSingleNameSource
     let GetName
-            (context : OperatingContext)
+            (context : ServiceContext)
             (location : Location) 
             : string option =
         raise (NotImplementedException "No Unit Tests")
         (context :?> GetNameContext).islandSingleNameSource location
 
     type GetDisplayNameContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
         abstract member islandSingleNameSource         : IslandSingleNameSource
     let GetDisplayName 
-            (context  : OperatingContext)
+            (context  : ServiceContext)
             (avatarId : string) 
             (location : Location)
             : string =
@@ -71,12 +71,12 @@ module Island =
             raise (NotImplementedException "This island does not exist!")
     
     type AddVisitContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
         abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
         abstract member epochSecondsSource : EpochSecondsSource
     let AddVisit 
-            (context      : OperatingContext)
+            (context      : ServiceContext)
             (avatarId     : string) 
             (location     : Location)
             : unit =
@@ -100,11 +100,11 @@ module Island =
             ()
 
     type GenerateJobsContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member islandJobSink              : IslandJobSink
         abstract member islandJobSource            : IslandJobSource
     let GenerateJobs 
-            (context      : OperatingContext)
+            (context      : ServiceContext)
             (destinations : Set<Location>) 
             (location     : Location)
             : unit =
@@ -116,11 +116,11 @@ module Island =
             |> context.islandJobSink location
     
     type MakeKnownContext = 
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
         abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
     let MakeKnown
-            (context  : OperatingContext)
+            (context  : ServiceContext)
             (avatarId : string) 
             (location : Location)
             : unit =
@@ -138,12 +138,12 @@ module Island =
                 0UL
         
     type GenerateCommoditiesContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member islandMarketSource : IslandMarketSource
         abstract member islandMarketSink   : IslandMarketSink
         abstract member random             : Random
     let GenerateCommodities 
-            (context  : OperatingContext)
+            (context  : ServiceContext)
             (location : Location) 
             : unit =
         let context = context :?> GenerateCommoditiesContext
@@ -161,13 +161,13 @@ module Island =
             |> context.islandMarketSink location
 
     type GenerateItemsContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member islandItemSink   : IslandItemSink
         abstract member islandItemSource : IslandItemSource
         abstract member itemSource       : ItemSource
         abstract member random           : Random
     let GenerateItems 
-            (context  : OperatingContext)
+            (context  : ServiceContext)
             (location : Location) 
             : unit =
         let context = context :?> GenerateItemsContext
@@ -183,12 +183,12 @@ module Island =
 
     type ChangeMarketTransform = float * Market -> Market
     type ChangeMarketContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member islandSingleMarketSource : IslandSingleMarketSource
         abstract member islandSingleMarketSink   : IslandSingleMarketSink
     let private ChangeMarket
             (transform: ChangeMarketTransform)
-            (context : OperatingContext)
+            (context : ServiceContext)
             (commodity                : uint64) 
             (change                   : float) 
             (location                 : Location) 
@@ -199,16 +199,16 @@ module Island =
         |> Option.map (fun m -> transform (change, m))
         |> Option.iter (fun market -> context.islandSingleMarketSink location (commodity, market))
 
-    let private ChangeMarketDemand (context:OperatingContext) =
+    let private ChangeMarketDemand (context:ServiceContext) =
         ChangeMarket Market.ChangeDemand context
 
-    let private ChangeMarketSupply (context:OperatingContext) = 
+    let private ChangeMarketSupply (context:ServiceContext) = 
         ChangeMarket Market.ChangeSupply context
 
     type UpdateMarketForItemContext =
-        inherit OperatingContext
+        inherit ServiceContext
     let UpdateMarketForItemSale 
-            (context      : OperatingContext)
+            (context      : ServiceContext)
             (descriptor   : ItemDescriptor) 
             (quantitySold : uint64) 
             (location     : Location) 
@@ -222,7 +222,7 @@ module Island =
                 ChangeMarketDemand context commodity totalQuantity location)
 
     let UpdateMarketForItemPurchase 
-            (context      : OperatingContext)
+            (context      : ServiceContext)
             (descriptor               : ItemDescriptor) 
             (quantityPurchased        : uint64) 
             (location                 : Location) 
@@ -236,10 +236,10 @@ module Island =
                 ChangeMarketSupply context commodity totalQuantity location)
 
     type GetStatisticContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member islandSingleStatisticSource : IslandSingleStatisticSource 
     let GetStatistic
-            (context    : OperatingContext)
+            (context    : ServiceContext)
             (identifier : IslandStatisticIdentifier)
             (location   : Location)
             : Statistic option =

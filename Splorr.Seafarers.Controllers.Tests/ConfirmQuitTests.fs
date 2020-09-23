@@ -18,7 +18,7 @@ let ``Run function.When Yes command passed, return None.`` () =
         |> Some 
         |> Fixtures.Common.Mock.CommandSource
     let expected = None
-    let context = TestConfirmQuitRunContext(fun ()->Set.empty) :> OperatingContext
+    let context = TestConfirmQuitRunContext(fun ()->Set.empty) :> ServiceContext
     let actual = 
         input
         |> ConfirmQuit.Run 
@@ -36,7 +36,7 @@ let ``Run function.When "on-stream" switch is set, return previous State and do 
     let expected = 
         input 
         |> Some
-    let context = TestConfirmQuitRunContext(fun () -> Set.empty |> Set.add "on-stream") :> OperatingContext
+    let context = TestConfirmQuitRunContext(fun () -> Set.empty |> Set.add "on-stream") :> ServiceContext
     let actual = 
         input
         |> ConfirmQuit.Run 
@@ -55,7 +55,7 @@ let ``Run function.When No command passed, return previous State.`` () =
     let expected = 
         input 
         |> Some
-    let context = TestConfirmQuitRunContext(fun () -> Set.empty) :> OperatingContext
+    let context = TestConfirmQuitRunContext(fun () -> Set.empty) :> ServiceContext
     let actual = 
         input
         |> ConfirmQuit.Run 
@@ -74,7 +74,7 @@ let ``Run function.When invalid command passed, return ConfirmQuit.`` () =
         input 
         |> Gamestate.ConfirmQuit 
         |> Some
-    let context = TestConfirmQuitRunContext(fun () -> Set.empty) :> OperatingContext
+    let context = TestConfirmQuitRunContext(fun () -> Set.empty) :> ServiceContext
     let actual = 
         input
         |> ConfirmQuit.Run 
@@ -96,7 +96,7 @@ let ``Run.It initiates Confirm Quit Help when given the Help command.`` () =
         |> Gamestate.ConfirmQuit 
         |> Gamestate.Help 
         |> Some
-    let context = TestConfirmQuitRunContext(fun () -> Set.empty) :> OperatingContext
+    let context = TestConfirmQuitRunContext(fun () -> Set.empty) :> ServiceContext
     let actual =
         input
         |> ConfirmQuit.Run 

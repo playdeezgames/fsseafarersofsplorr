@@ -184,7 +184,7 @@ module IslandFeature =
             |> Some
 
     let Run 
-            (context       : OperatingContext)
+            (context       : ServiceContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (location      : Location)

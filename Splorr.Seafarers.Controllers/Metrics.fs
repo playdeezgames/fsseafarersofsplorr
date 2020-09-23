@@ -19,10 +19,10 @@ module Metrics =
         | _ -> raise (System.NotImplementedException (metric.ToString() |> sprintf "'%s' is a metric with no name!"))
 
     type RunWorldContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract avatarMetricSource : AvatarMetricSource
     let private RunWorld
-            (context : OperatingContext)
+            (context : ServiceContext)
             (messageSink        : MessageSink) 
             (avatarId           : string) 
             : unit = 
@@ -50,8 +50,7 @@ module Metrics =
                     |> List.iter messageSink)
 
     let Run 
-            (context : OperatingContext)
-            
+            (context : ServiceContext)
             (messageSink        : MessageSink) 
             (gamestate          : Gamestate) 
             : Gamestate option =

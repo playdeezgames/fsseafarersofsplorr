@@ -323,7 +323,7 @@ let main argv =
         AvatarGamblingHand.SetForAvatar connection avatarId
         >> Persister.unpackOrThrow
 
-    let context : OperatingContext =
+    let context : ServiceContext =
         SplorrContext
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
@@ -382,7 +382,7 @@ let main argv =
             vesselStatisticSink,
             vesselStatisticTemplateSource,
             worldSingleStatisticSource) 
-        :> OperatingContext
+        :> ServiceContext
 
     try
         Runner.Run 

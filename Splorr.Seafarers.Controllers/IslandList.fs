@@ -4,14 +4,14 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 type IslandListRunWorldContext =
-    inherit OperatingContext
+    inherit ServiceContext
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
     abstract member islandSingleNameSource         : IslandSingleNameSource
     abstract member islandSource                   : IslandSource
 
 module IslandList =
     let private RunWorld 
-            (context: OperatingContext)
+            (context: ServiceContext)
             (messageSink                    : MessageSink) 
             (pageSize                       : uint32) 
             (page                           : uint32) 
@@ -70,7 +70,7 @@ module IslandList =
     let private pageSize = 20u
 
     let Run 
-            (context : OperatingContext)
+            (context : ServiceContext)
             (messageSink                    : MessageSink) 
             (page                           : uint32) 
             (gamestate                      : Gamestate) 

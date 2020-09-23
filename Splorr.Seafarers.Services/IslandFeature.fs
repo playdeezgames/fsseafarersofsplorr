@@ -4,11 +4,11 @@ open System
 
 module IslandFeature =
     type CreateContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member random : Random
     
     let Create 
-            (context   : OperatingContext) 
+            (context   : ServiceContext) 
             (generator : IslandFeatureGenerator)
             : bool = 
         let context = context :?> CreateContext

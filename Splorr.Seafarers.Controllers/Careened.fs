@@ -121,7 +121,7 @@ module Careened =
             avatarId
 
     let Run 
-            (context : OperatingContext)
+            (context : ServiceContext)
             (commandSource                 : CommandSource) 
             (messageSink                   : MessageSink) 
             (side                          : Side) 

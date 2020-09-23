@@ -5,7 +5,7 @@ open Splorr.Seafarers.Services
 
 module Status =
     let private RunWorld 
-            (context : OperatingContext)
+            (context : ServiceContext)
             (messageSink                   : MessageSink) 
             (avatarId                      : string) 
             : unit =
@@ -46,7 +46,7 @@ module Status =
                 |> List.iter messageSink)
 
     let Run 
-            (context : OperatingContext)
+            (context : ServiceContext)
             (messageSink                   : MessageSink) 
             (gamestate                     : Gamestate) 
             : Gamestate option =

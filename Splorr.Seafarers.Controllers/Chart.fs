@@ -5,7 +5,7 @@ open Splorr.Seafarers.Services
 open System
 
 type ChartOutputChartContext =
-    inherit OperatingContext
+    inherit ServiceContext
     inherit Avatar.GetPositionContext
     abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
     abstract member islandSingleNameSource         : IslandSingleNameSource
@@ -13,7 +13,7 @@ type ChartOutputChartContext =
 
 
 type ChartRunContext = 
-    inherit OperatingContext
+    inherit ServiceContext
     abstract member worldSingleStatisticSource     : WorldSingleStatisticSource
 
 
@@ -25,7 +25,7 @@ module Chart =
         ((location |> snd |> int) * scale - scale/2, (-(location |> fst |> int)) * scale + scale/2)
 
     let private outputChart 
-            (context : OperatingContext)
+            (context : ServiceContext)
             (worldSize                      : Location) 
             (messageSink                    : MessageSink) 
             (chartName                      : string) 
@@ -124,7 +124,7 @@ module Chart =
             chartName
 
     let Run 
-            (context : OperatingContext)
+            (context : ServiceContext)
             (messageSink                    : MessageSink) 
             (chartName                      : string) 
             (avatarId                       : string) 

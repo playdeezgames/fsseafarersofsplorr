@@ -25,7 +25,7 @@ let ``Run.It returns the given gamestate.`` () =
     let expected = 
         previousGameState 
         |> Some
-    let context = TestInventoryRunContext(avatarInventorySourceStub, atSeaItemSource, vesselSingleStatisticSourceStub) :> OperatingContext
+    let context = TestInventoryRunContext(avatarInventorySourceStub, atSeaItemSource, vesselSingleStatisticSourceStub) :> ServiceContext
     let actual =
         input
         |> Inventory.Run

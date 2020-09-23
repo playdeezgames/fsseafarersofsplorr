@@ -6,9 +6,9 @@ type CommoditySource     = unit -> Map<uint64, CommodityDescriptor>
 
 module Commodity =
     type GetCommoditiesContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member commoditySource: CommoditySource
     let GetCommodities
-            (context:OperatingContext)
+            (context:ServiceContext)
             : Map<uint64, CommodityDescriptor> =
         (context :?> GetCommoditiesContext).commoditySource()

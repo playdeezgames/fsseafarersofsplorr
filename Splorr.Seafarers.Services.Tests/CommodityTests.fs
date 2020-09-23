@@ -16,7 +16,7 @@ let ``GetList.It retrieves the list of commodities.`` () =
     let commoditySource() = 
         called <- true
         Map.empty
-    let context = TestCommodityGetList(commoditySource) :> OperatingContext
+    let context = TestCommodityGetList(commoditySource) :> ServiceContext
     let expected = 
         Map.empty
     let actual =
