@@ -16,6 +16,8 @@ type CareenedRunAliveContext =
 
 type CareenedRunContext =
     inherit CareenedRunAliveContext
+    abstract member avatarMessageSource           : AvatarMessageSource
+
 
 module Careened = 
     let private UpdateDisplay 
@@ -119,23 +121,23 @@ module Careened =
             avatarId
 
     let Run 
-            (context : CareenedRunContext)
-            (avatarMessageSource           : AvatarMessageSource)
+            (context : OperatingContext)
             (commandSource                 : CommandSource) 
             (messageSink                   : MessageSink) 
             (side                          : Side) 
             (avatarId                      : string) 
             : Gamestate option =
+        let context = context :?> CareenedRunContext
         if avatarId |> World.IsAvatarAlive context then
             RunAlive 
                 context
-                avatarMessageSource
+                context.avatarMessageSource
                 commandSource 
                 messageSink 
                 side 
                 avatarId
         else
             avatarId
-            |> avatarMessageSource
+            |> context.avatarMessageSource
             |> Gamestate.GameOver
             |> Some

@@ -5,10 +5,17 @@ open Splorr.Seafarers.Services
 open System
 
 type ChartOutputChartContext =
+    inherit OperatingContext
     inherit Avatar.GetPositionContext
+    abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
+    abstract member islandSingleNameSource         : IslandSingleNameSource
+    abstract member islandSource                   : IslandSource
+
 
 type ChartRunContext = 
-    inherit ChartOutputChartContext
+    inherit OperatingContext
+    abstract member worldSingleStatisticSource     : WorldSingleStatisticSource
+
 
 module Chart = 
     let private plotLocation 
@@ -18,15 +25,13 @@ module Chart =
         ((location |> snd |> int) * scale - scale/2, (-(location |> fst |> int)) * scale + scale/2)
 
     let private outputChart 
-            (context : ChartOutputChartContext)
-            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
-            (islandSingleNameSource         : IslandSingleNameSource)
-            (islandSource                   : IslandSource)
+            (context : OperatingContext)
             (worldSize                      : Location) 
             (messageSink                    : MessageSink) 
             (chartName                      : string) 
             (avatarId                       : string) 
             : unit =
+        let context = context :?> ChartOutputChartContext
         try
             use writer = System.IO.File.CreateText(sprintf "%s.html" chartName)
             writer.WriteLine("<html>")
@@ -40,16 +45,16 @@ module Chart =
             writer.WriteLine(sprintf "<svg width=\"%d\" height=\"%d\">" width height)
             writer.WriteLine(sprintf "<rect width=\"%d\" height=\"%d\" style=\"fill:#00008B;\"/>" width height)
             let legend: Map<uint,string> = 
-                islandSource()
+                context.islandSource()
                 |> List.fold
                     (fun leg location -> 
                         let x, y = plotLocation scale location
                         let seen = 
-                            avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.Seen 
+                            context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.Seen 
                             |> Option.map (fun x -> x > 0UL) 
                             |> Option.defaultValue false
                         let addToLegend =
-                            match avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount with
+                            match context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount with
                             | None -> false
                             | _ -> true
                         match seen, addToLegend with
@@ -64,7 +69,7 @@ module Chart =
                             let yOffset = if (-y)>height/2 then 20 else (-10)
                             writer.WriteLine(sprintf "<text x=\"%d\" y=\"%d\" fill=\"#ffffff\">%u</text>" x (y+height+yOffset) index)
                             leg
-                            |> Map.add index (islandSingleNameSource location |> Option.get)
+                            |> Map.add index (context.islandSingleNameSource location |> Option.get)
                         else
                             leg) Map.empty
             let avatarPosition = 
@@ -119,15 +124,12 @@ module Chart =
             chartName
 
     let Run 
-            (context : ChartRunContext)
-            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
-            (islandSingleNameSource         : IslandSingleNameSource)
-            (islandSource                   : IslandSource)
-            (worldSingleStatisticSource     : WorldSingleStatisticSource) 
+            (context : OperatingContext)
             (messageSink                    : MessageSink) 
             (chartName                      : string) 
             (avatarId                       : string) 
             : Gamestate option =
+        let context = context :?> ChartRunContext
         let chartName = 
             chartName 
             |> GetDefaultedChartName
@@ -136,11 +138,8 @@ module Chart =
             chartName
         outputChart 
             context
-            avatarIslandSingleMetricSource
-            islandSingleNameSource
-            islandSource
-            (worldSingleStatisticSource WorldStatisticIdentifier.PositionX |> Statistic.GetMaximumValue, 
-                worldSingleStatisticSource WorldStatisticIdentifier.PositionY |> Statistic.GetMaximumValue) 
+            (context.worldSingleStatisticSource WorldStatisticIdentifier.PositionX |> Statistic.GetMaximumValue, 
+                context.worldSingleStatisticSource WorldStatisticIdentifier.PositionY |> Statistic.GetMaximumValue) 
             messageSink 
             chartName 
             avatarId

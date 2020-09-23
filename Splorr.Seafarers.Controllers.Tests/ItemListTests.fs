@@ -8,11 +8,20 @@ open AtSeaTestFixtures
 open Splorr.Seafarers.Services
 
 type TestItemListRunContext
-        (commoditySource,
+        (avatarMessageSource,
+        commoditySource,
+        islandItemSource,
         islandMarketSource,
+        islandSource,
         itemSingleSource,
         shipmateSingleStatisticSource) =
     interface ItemListRunContext
+    interface ItemListRunWithIslandContext with
+        member this.islandItemSource: IslandItemSource = islandItemSource
+        member this.itemSource: ItemSource = itemSource
+    interface DockedRunBoilerplateContext with
+        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
+        member this.islandSource: IslandSource = islandSource
     interface Avatar.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface Shipmate.GetStatusContext with
@@ -31,8 +40,11 @@ let ``Run.It returns Docked (at Shop) gamestate.`` () =
         |> Some
     let context = 
         TestItemListRunContext
-            (atSeaCommoditySource, 
+            (avatarMessageSourceDummy,
+            atSeaCommoditySource, 
+            atSeaIslandItemSource,
             atSeaIslandMarketSource,
+            islandSourceStub,
             (fun x -> atSeaItemSource() |> Map.tryFind x ),
             shipmateSingleStatisticSourceStub) 
         :> ItemListRunContext
@@ -40,9 +52,5 @@ let ``Run.It returns Docked (at Shop) gamestate.`` () =
         (inputLocation, inputWorld)
         ||> ItemList.Run 
             context
-            avatarMessageSourceDummy
-            atSeaIslandItemSource 
-            islandSourceStub
-            atSeaItemSource 
             sinkDummy
     Assert.AreEqual(expected, actual)

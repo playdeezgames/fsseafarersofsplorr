@@ -4,20 +4,26 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 type InventoryRunWorldContext =
-    inherit Avatar.GetUsedTonnageContext
+    inherit OperatingContext
+    abstract member itemSource                  : ItemSource
+    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
+    abstract member avatarInventorySource       : AvatarInventorySource
+
     
 type InventoryRunContext =
-    inherit InventoryRunWorldContext
+    inherit OperatingContext
+    abstract member avatarInventorySource       : AvatarInventorySource
+    abstract member itemSource                  : ItemSource
+    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
+
 
 module Inventory =
     let private RunWorld
-            (context : InventoryRunWorldContext)
-            (itemSource                  : ItemSource)
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
-            (avatarInventorySource       : AvatarInventorySource)
+            (context : OperatingContext)
             (messageSink                 : MessageSink) 
             (avatarId                    : string) 
             : unit =
+        let context = context :?> InventoryRunWorldContext
         [
             "" |> Line
             (Hue.Heading, "Item" |> sprintf "%-20s" |> Text) |> Hued
@@ -28,10 +34,10 @@ module Inventory =
             (Hue.Label, "---------------------+--------+---------" |> Line ) |> Hued
         ]
         |> List.iter messageSink
-        let items = itemSource()
+        let items = context.itemSource()
         let inventoryEmpty =
             avatarId
-            |> avatarInventorySource
+            |> context.avatarInventorySource
             |> Map.fold
                 (fun _ item quantity -> 
                     let descriptor = items.[item]
@@ -49,7 +55,7 @@ module Inventory =
             (Hue.Usage, "(none)"  |> Line) |> Hued
             |> messageSink
         let availableTonnage = 
-            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Tonnage
+            context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Tonnage
             |> Option.map Statistic.GetCurrentValue
             |> Option.get
         let usedTonnage = 
@@ -66,21 +72,16 @@ module Inventory =
         |> List.iter messageSink
 
     let Run
-            (context : InventoryRunContext)
-            (avatarInventorySource       : AvatarInventorySource)
-            (itemSource                  : ItemSource) 
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (context : OperatingContext)
             (messageSink                 : MessageSink) 
             (gamestate                   : Gamestate) 
             : Gamestate option =
+        let context = context :?> InventoryRunContext
         gamestate 
         |> Gamestate.GetWorld
         |> Option.iter 
             (RunWorld
                 context
-                itemSource 
-                vesselSingleStatisticSource 
-                avatarInventorySource
                 messageSink)
         gamestate
         |> Some

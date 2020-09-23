@@ -246,6 +246,15 @@ type TestAtSeaRunContext
             vesselSingleStatisticSource: VesselSingleStatisticSource,
             worldSingleStatisticSource: WorldSingleStatisticSource
         ) =
+    interface AtSeaCanCareenContext with
+        member this.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AtSeaGetVisibleIslandsContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface AtSeaUpdateDisplayContext with
+        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Utility.RandomContext with
         member _.random : Random = Fixtures.Common.Dummy.Random
     interface Commodity.GetCommoditiesContext with
@@ -326,7 +335,7 @@ type TestAtSeaRunContext
     interface World.GetNearbyLocationsContext with
         member _.islandSource : IslandSource = islandSource
     interface AtSeaHandleCommandContext with
-        member _.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AtSeaRunContext with
         member _.avatarMessageSource: AvatarMessageSource = avatarMessageSource
     interface World.UpdateChartsContext with

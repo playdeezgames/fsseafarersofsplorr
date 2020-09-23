@@ -6,30 +6,20 @@ open System
 open Splorr.Seafarers.Models
 
 type RunnerRunContext =
-    inherit StatusRunContext
-    inherit AtSeaRunContext
-    inherit World.CreateContext
-    inherit DockedRunContext
-    inherit IslandFeatureRunContext
-    inherit HelpRunContext
-    inherit ItemListRunContext
-    inherit CareenedRunContext
-    inherit GamestateCheckForAvatarDeathContext
-    inherit ChartRunContext
-    inherit IslandListRunContext
-    inherit InventoryRunContext
+    inherit OperatingContext
     abstract member avatarMetricSource : AvatarMetricSource
     abstract member switchSource : SwitchSource
+    abstract member avatarIslandFeatureSource : AvatarIslandFeatureSource
 
 module Runner =
     let rec private Loop 
-            (context       : RunnerRunContext)
+            (context       : OperatingContext)
             (random        : Random) 
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (gamestate     : Gamestate) 
             : unit =
-
+        let context = context :?> RunnerRunContext
         let nextGamestate : Gamestate option = 
             match gamestate with
             | Gamestate.InPlay avatarId -> 
@@ -65,7 +55,6 @@ module Runner =
             | Gamestate.Careened (side, avatarId) -> 
                 Careened.Run 
                     context
-                    context.avatarMessageSource
                     commandSource 
                     messageSink 
                     side 
@@ -74,10 +63,6 @@ module Runner =
             | Gamestate.Chart (chartName, avatarId) -> 
                 Chart.Run 
                     context
-                    context.avatarIslandSingleMetricSource
-                    context.islandSingleNameSource
-                    context.islandSource 
-                    context.worldSingleStatisticSource
                     messageSink 
                     chartName 
                     avatarId
@@ -95,10 +80,6 @@ module Runner =
                 | Some feature ->
                     ItemList.Run 
                         context
-                        context.avatarMessageSource
-                        context.islandItemSource 
-                        context.islandSource
-                        context.itemSource 
                         messageSink 
                         feature.location 
                         avatarId
@@ -141,18 +122,12 @@ module Runner =
             | Gamestate.Inventory gameState -> 
                 Inventory.Run
                     context
-                    context.avatarInventorySource
-                    context.itemSource 
-                    context.vesselSingleStatisticSource
                     messageSink 
                     gameState
 
             | Gamestate.IslandList (page, state) -> 
                 IslandList.Run 
                     context
-                    context.avatarIslandSingleMetricSource
-                    context.islandSingleNameSource
-                    context.islandSource
                     messageSink 
                     page 
                     state
@@ -173,16 +148,11 @@ module Runner =
             | Gamestate.Status state -> 
                 Status.Run 
                     context
-                    context.avatarJobSource
-                    context.islandSingleNameSource
-                    context.shipmateSingleStatisticSource
-                    context.vesselSingleStatisticSource
                     messageSink 
                     state
 
             |> Gamestate.CheckForAvatarDeath 
                 context
-                context.avatarMessageSource
 
         match nextGamestate with
         | Some state ->
@@ -197,9 +167,9 @@ module Runner =
             ()
     
     let Run 
-            (context : RunnerRunContext)
+            (context : OperatingContext)
             : unit =
-
+        let context = context :?> RunnerRunContext
         Console.Title <- "Seafarers of SPLORR!!"
         let old = Console.ForegroundColor
         Console.ForegroundColor <- ConsoleColor.Gray

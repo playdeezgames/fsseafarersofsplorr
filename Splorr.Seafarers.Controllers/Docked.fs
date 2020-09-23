@@ -42,6 +42,9 @@ type DockedHandleCommandContext =
 
 type DockedRunBoilerplateContext =
     inherit OperatingContext
+    abstract member avatarMessageSource           : AvatarMessageSource
+    abstract member islandSource                  : IslandSource
+
 
 type DockedRunContext =
     inherit DockedUpdateDisplayContext
@@ -59,11 +62,12 @@ module Docked =
             raise (System.NotImplementedException (sprintf "%s" (feature.ToString())))
 
     let private UpdateDisplay 
-            (context     : DockedUpdateDisplayContext)
+            (context     : OperatingContext)
             (messageSink : MessageSink) 
             (location    : Location) 
             (avatarId    : string) 
             : unit =
+        let context = context :?> DockedUpdateDisplayContext
         "" |> Line |> messageSink
         avatarId
         |> context.avatarMessageSource
@@ -79,7 +83,7 @@ module Docked =
         |> List.iter messageSink
 
     let private HandleCommand
-            (context : DockedHandleCommandContext)
+            (context : OperatingContext)
             (command                        : Command option) 
             (location                       : Location) 
             (avatarId                       : string) 
@@ -196,7 +200,7 @@ module Docked =
             |> Some
 
     let private RunWithIsland 
-            (context                        : DockedRunContext)
+            (context                        : OperatingContext)
             (commandSource                  : CommandSource) 
             (messageSink                    : MessageSink) 
             (location                       : Location) 
@@ -215,15 +219,14 @@ module Docked =
             location 
 
     let internal RunBoilerplate 
-            (context : DockedRunBoilerplateContext)
-            (avatarMessageSource           : AvatarMessageSource)
-            (islandSource                  : IslandSource)
+            (context : OperatingContext)
             (func                          : Location -> string -> Gamestate option) 
             (location                      : Location) 
             (avatarId                      : string) 
             : Gamestate option =
+        let context = context :?> DockedRunBoilerplateContext
         if avatarId |> World.IsAvatarAlive context then
-            if islandSource() |> List.exists (fun x->x= location) then
+            if context.islandSource() |> List.exists (fun x->x= location) then
                 func location avatarId
             else
                 avatarId
@@ -231,18 +234,16 @@ module Docked =
                 |> Some
         else
             avatarId
-            |> avatarMessageSource
+            |> context.avatarMessageSource
             |> Gamestate.GameOver
             |> Some
 
     let Run 
-            (context       : DockedRunContext)
+            (context       : OperatingContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) =
         RunBoilerplate 
             context
-            context.avatarMessageSource
-            context.islandSource
             (RunWithIsland 
                 context
                 commandSource                

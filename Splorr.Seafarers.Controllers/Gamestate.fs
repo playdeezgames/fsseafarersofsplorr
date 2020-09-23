@@ -7,6 +7,8 @@ type AvatarMessageSource = string -> string list
 
 type GamestateCheckForAvatarDeathContext =
     inherit OperatingContext
+    abstract member avatarMessageSource           : AvatarMessageSource
+
 
 [<RequireQualifiedAccess>]
 type Gamestate = 
@@ -46,10 +48,10 @@ module Gamestate =
         | _ -> None
 
     let CheckForAvatarDeath 
-            (context : GamestateCheckForAvatarDeathContext)
-            (avatarMessageSource           : AvatarMessageSource)
+            (context : OperatingContext)
             (gamestate                     : Gamestate option) 
             : Gamestate option =
+        let context = context :?> GamestateCheckForAvatarDeathContext
         gamestate
         |> Option.bind
             (GetWorld)
@@ -59,6 +61,6 @@ module Gamestate =
                     g
                 else
                     w
-                    |> avatarMessageSource
+                    |> context.avatarMessageSource
                     |> Gamestate.GameOver
                     |> Some) gamestate

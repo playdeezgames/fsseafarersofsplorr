@@ -9,6 +9,7 @@ open AtSeaTestFixtures
 
 type TestCareenedRunContext 
         (avatarMessagePurger,
+        avatarMessageSource,
         avatarShipmateSource,
         avatarSingleMetricSink,
         avatarSingleMetricSource,
@@ -31,7 +32,8 @@ type TestCareenedRunContext
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
     interface World.ClearMessagesContext with
         member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
-    interface CareenedRunContext
+    interface CareenedRunContext with
+        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
     interface Vessel.TransformFoulingContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
@@ -44,6 +46,7 @@ let private functionUnderTest
     let context = 
         TestCareenedRunContext 
             (avatarMessagePurgerStub,
+            avatarMessageSourceDummy,
             avatarShipmateSourceStub,
             avatarSingleMetricSink,
             avatarSingleMetricSourceStub,
@@ -53,7 +56,6 @@ let private functionUnderTest
             vesselSingleStatisticSourceStub) :> CareenedRunContext
     Careened.Run 
         context
-        avatarMessageSourceDummy
 
 [<Test>]
 let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
@@ -76,6 +78,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
     let context = 
         TestCareenedRunContext 
             (avatarMessagePurgerStub,
+            avatarMessageSourceDummy,
             avatarShipmateSourceStub,
             avatarSingleMetricSinkExplode,
             avatarSingleMetricSourceStub,
@@ -87,7 +90,6 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
         inputWorld
         |> Careened.Run 
             context
-            avatarMessageSourceDummy
             inputSource 
             sinkDummy 
             inputSide

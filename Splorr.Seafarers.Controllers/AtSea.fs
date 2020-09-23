@@ -6,38 +6,27 @@ open Splorr.Seafarers.Persistence
 
 type AtSeaGetVisibleIslandsContext =
     inherit OperatingContext
-    inherit Avatar.GetPositionContext
-    inherit Island.GetDisplayNameContext
-    inherit World.GetNearbyLocationsContext
+    abstract member vesselSingleStatisticSource    : VesselSingleStatisticSource
 
 type AtSeaUpdateDisplayContext =
     inherit OperatingContext
-    inherit AtSeaGetVisibleIslandsContext
-    inherit Avatar.GetSpeedContext
-    inherit Avatar.GetHeadingContext
-    inherit World.DistanceToContext
+    abstract member avatarMessageSource            : AvatarMessageSource
+    abstract member shipmateSingleStatisticSource  : ShipmateSingleStatisticSource
+    abstract member vesselSingleStatisticSource    : VesselSingleStatisticSource
+
 
 type AtSeaCanCareenContext =
     inherit OperatingContext
-    inherit Avatar.GetPositionContext
-    inherit World.GetNearbyLocationsContext
     abstract member islandSingleStatisticSource : IslandSingleStatisticSource
+    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
+
 
 type AtSeaHandleCommandContext =
     inherit OperatingContext
-    inherit World.ClearMessagesContext
-    inherit World.DockContext
-    inherit AtSeaGetVisibleIslandsContext
-    inherit AtSeaUpdateDisplayContext
-    inherit World.AbandonJobContext
-    inherit World.HeadForContext
-    inherit World.AddMessagesContext
-    inherit AtSeaCanCareenContext
-    //abstract member islandSingleStatisticSource    : IslandSingleStatisticSource
+    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
 
 type AtSeaRunContext =
     inherit OperatingContext
-    inherit AtSeaHandleCommandContext
     abstract member avatarMessageSource             : AvatarMessageSource
 
 module AtSea =
@@ -52,12 +41,12 @@ module AtSea =
             Hue.Error
 
     let private CanCareen 
-            (context : AtSeaCanCareenContext)
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (context : OperatingContext)
             (avatarId                    : string) 
             : bool =
+        let context = context :?> AtSeaCanCareenContext
         let viewDistance =
-            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.ViewDistance 
+            context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.ViewDistance 
             |> Option.get 
             |> Statistic.GetCurrentValue
         let avatarPosition =
@@ -79,10 +68,11 @@ module AtSea =
         |> List.exists (fun (l,d) -> Location.DistanceTo l avatarPosition < d)
 
     let private GetVisibleIslands 
-            (context : AtSeaGetVisibleIslandsContext)
+            (context : OperatingContext)
             (vesselSingleStatisticSource    : VesselSingleStatisticSource)
             (avatarId                       : string) 
             : (Location * string * float * string) list =
+        let context = context :?> AtSeaGetVisibleIslandsContext
         let viewDistance =
             vesselSingleStatisticSource avatarId VesselStatisticIdentifier.ViewDistance 
             |> Option.get 
@@ -113,16 +103,14 @@ module AtSea =
         |> List.sortBy (fun (_,_,d,_)->d)
 
     let private UpdateDisplay 
-            (context : AtSeaUpdateDisplayContext)
-            (avatarMessageSource            : AvatarMessageSource)
-            (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
-            (vesselSingleStatisticSource    : VesselSingleStatisticSource)
+            (context : OperatingContext)
             (messageSink                    : MessageSink) 
             (avatarId                       : string) 
             : unit =
+        let context = context :?> AtSeaUpdateDisplayContext
         "" |> Line |> messageSink
         avatarId
-        |> avatarMessageSource
+        |> context.avatarMessageSource
         |> Utility.DumpMessages messageSink
 
         let speed = 
@@ -136,7 +124,7 @@ module AtSea =
                 context 
             |> Option.get
         let speedHue =DetermineSpeedHue speed
-        let turn = shipmateSingleStatisticSource avatarId Primary ShipmateStatisticIdentifier.Turn |> Option.get
+        let turn = context.shipmateSingleStatisticSource avatarId Primary ShipmateStatisticIdentifier.Turn |> Option.get
         [
             (Hue.Heading, "At Sea:" |> Line) |> Hued
             (Hue.Label, "Turn: " |> Text) |> Hued
@@ -154,13 +142,13 @@ module AtSea =
         |> List.iter messageSink
 
         let dockDistance = 
-            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.DockDistance 
+            context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.DockDistance 
             |> Option.get 
             |> Statistic.GetCurrentValue
         avatarId
         |> GetVisibleIslands 
             context
-            vesselSingleStatisticSource
+            context.vesselSingleStatisticSource
         |> List.iter
             (fun (_, heading, distance, name) -> 
                 [
@@ -175,17 +163,17 @@ module AtSea =
                 |> List.iter messageSink)
 
     let private HandleCommand
-            (context                        : AtSeaHandleCommandContext)
+            (context                        : OperatingContext)
             (command                        : Command option) 
             (avatarId                       : string) 
             : Gamestate option =
+        let context = context :?> AtSeaHandleCommandContext
         avatarId
         |> World.ClearMessages context
 
         let canCareen = 
             CanCareen 
                 context
-                context.vesselSingleStatisticSource 
                 avatarId
 
         let dockDistance = 
@@ -346,16 +334,14 @@ module AtSea =
             |> Some
 
     let private RunAlive
-            (context       : AtSeaRunContext)
+            (context       : OperatingContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (avatarId      : string) 
             : Gamestate option =
+        let context = context :?> AtSeaRunContext
         UpdateDisplay 
             context
-            context.avatarMessageSource
-            context.shipmateSingleStatisticSource
-            context.vesselSingleStatisticSource
             messageSink 
             avatarId
         HandleCommand
@@ -364,11 +350,12 @@ module AtSea =
             avatarId
 
     let Run 
-            (context       : AtSeaRunContext)
+            (context       : OperatingContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (avatarId      : string) 
             : Gamestate option =
+        let context = context :?> AtSeaRunContext
         if avatarId |> World.IsAvatarAlive context then
             RunAlive
                 context

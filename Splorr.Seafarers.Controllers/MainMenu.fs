@@ -104,11 +104,12 @@ module MainMenu =
                 command
 
     let Run 
-            (context       : World.CreateContext)
+            (context       : OperatingContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (avatarId      : string option) 
             : Gamestate option =
+        let context = context :?> World.CreateContext
         UpdateDisplay 
             messageSink 
             avatarId.IsSome

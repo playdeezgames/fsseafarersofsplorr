@@ -6,11 +6,12 @@ open Splorr.Seafarers.Controllers
 open Splorr.Seafarers.Models
 open CommonTestFixtures
 
-type TestGamestateCheckForAvatarDeathContext (shipmateSingleStatisticSource) =
+type TestGamestateCheckForAvatarDeathContext (avatarMessageSource, shipmateSingleStatisticSource) =
     interface Shipmate.GetStatusContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-    interface GamestateCheckForAvatarDeathContext
+    interface GamestateCheckForAvatarDeathContext with
+        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
 
 let private avatarId = ""
 
@@ -160,12 +161,11 @@ let ``CheckForAvatarDeath.It returns the original gamestate when the avatar embe
         |> Some
     let expected =
         input
-    let context = TestGamestateCheckForAvatarDeathContext (shipmateSingleStatisticSourceStub) :> GamestateCheckForAvatarDeathContext
+    let context = TestGamestateCheckForAvatarDeathContext (avatarMessageSourceDummy, shipmateSingleStatisticSourceStub) :> GamestateCheckForAvatarDeathContext
     let actual =
         input
         |> Gamestate.CheckForAvatarDeath
             context
-            avatarMessageSourceDummy
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -176,12 +176,11 @@ let ``CheckForAvatarDeath.It returns the original gamestate when there is not a 
         |> Some
     let expected =
         input
-    let context = TestGamestateCheckForAvatarDeathContext (shipmateSingleStatisticSourceStub) :> GamestateCheckForAvatarDeathContext
+    let context = TestGamestateCheckForAvatarDeathContext (avatarMessageSourceDummy, shipmateSingleStatisticSourceStub) :> GamestateCheckForAvatarDeathContext
     let actual =
         input
         |> Gamestate.CheckForAvatarDeath
             context
-            avatarMessageSourceDummy
     Assert.AreEqual(expected, actual)
 
 
@@ -201,10 +200,9 @@ let ``CheckForAvatarDeath.It returns gameover when the avatar embedded therein i
             Statistic.Create (0.0, 100.0) 0.0 |> Some
         | _ ->
             raise (System.NotImplementedException (identifier.ToString() |> sprintf "shipmateSingleStatisticSource - %s"))
-    let context = TestGamestateCheckForAvatarDeathContext (shipmateSingleStatisticSource) :> GamestateCheckForAvatarDeathContext
+    let context = TestGamestateCheckForAvatarDeathContext (avatarMessageSourceDummy, shipmateSingleStatisticSource) :> GamestateCheckForAvatarDeathContext
     let actual =
         input
         |> Gamestate.CheckForAvatarDeath 
             context
-            avatarMessageSourceDummy
     Assert.AreEqual(expected, actual)

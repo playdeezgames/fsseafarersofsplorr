@@ -4,25 +4,32 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 type StatusRunWorldContext =
-    inherit Avatar.GetPrimaryStatisticContext
+    inherit OperatingContext
+    abstract member avatarJobSource               : AvatarJobSource
+    abstract member islandSingleNameSource        : IslandSingleNameSource
+    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
+    abstract member vesselSingleStatisticSource   : VesselSingleStatisticSource
+
 
 type StatusRunContext =
-    inherit StatusRunWorldContext
+    inherit OperatingContext
+    abstract member avatarJobSource               : AvatarJobSource
+    abstract member islandSingleNameSource        : IslandSingleNameSource
+    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
+    abstract member vesselSingleStatisticSource   : VesselSingleStatisticSource
+
 
 module Status =
     let private RunWorld 
-            (context : StatusRunWorldContext)
-            (avatarJobSource               : AvatarJobSource)
-            (islandSingleNameSource        : IslandSingleNameSource)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
+            (context : OperatingContext)
             (messageSink                   : MessageSink) 
             (avatarId                      : string) 
             : unit =
-        let portFouling = vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PortFouling |> Option.get
-        let satiety = shipmateSingleStatisticSource avatarId Primary ShipmateStatisticIdentifier.Satiety |> Option.get
-        let health = shipmateSingleStatisticSource avatarId Primary ShipmateStatisticIdentifier.Health |> Option.get
-        let starboardFouling = vesselSingleStatisticSource avatarId VesselStatisticIdentifier.StarboardFouling |> Option.get
+        let context = context :?> StatusRunWorldContext
+        let portFouling = context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PortFouling |> Option.get
+        let satiety = context.shipmateSingleStatisticSource avatarId Primary ShipmateStatisticIdentifier.Satiety |> Option.get
+        let health = context.shipmateSingleStatisticSource avatarId Primary ShipmateStatisticIdentifier.Health |> Option.get
+        let starboardFouling = context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.StarboardFouling |> Option.get
         [
             "" |> Line
             (Hue.Heading, "Status:" |> Line) |> Hued
@@ -41,7 +48,7 @@ module Status =
         ]
         |> List.iter messageSink
         avatarId
-        |> avatarJobSource
+        |> context.avatarJobSource
         |> Option.iter
             (fun job ->
                 [
@@ -49,30 +56,23 @@ module Status =
                     (Hue.Sublabel, "Description: " |> Text) |> Hued
                     (Hue.Flavor, job.FlavorText |> sprintf "%s" |> Line) |> Hued
                     (Hue.Sublabel, "Destination: " |> Text) |> Hued
-                    (Hue.Value, job.Destination |> islandSingleNameSource |> Option.get |> sprintf "%s" |> Line) |> Hued
+                    (Hue.Value, job.Destination |> context.islandSingleNameSource |> Option.get |> sprintf "%s" |> Line) |> Hued
                     (Hue.Sublabel, "Reward: " |> Text) |> Hued
                     (Hue.Value, job.Reward |> sprintf "%f" |> Line) |> Hued
                 ]
                 |> List.iter messageSink)
 
     let Run 
-            (context : StatusRunContext)
-            (avatarJobSource               : AvatarJobSource)
-            (islandSingleNameSource        : IslandSingleNameSource)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
+            (context : OperatingContext)
             (messageSink                   : MessageSink) 
             (gamestate                     : Gamestate) 
             : Gamestate option =
+        let context = context :?> StatusRunContext
         gamestate
         |> Gamestate.GetWorld
         |> Option.iter 
             (RunWorld 
                 context
-                avatarJobSource
-                islandSingleNameSource
-                shipmateSingleStatisticSource 
-                vesselSingleStatisticSource 
                 messageSink)
         gamestate
         |> Some

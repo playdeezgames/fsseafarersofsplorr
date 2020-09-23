@@ -10,10 +10,13 @@ let private previousGameState =
     None
     |> Gamestate.MainMenu
     
-type TestInventoryRunContext(avatarInventorySource) =
+type TestInventoryRunContext(avatarInventorySource, itemSource, vesselSingleStatisticSource) =
     interface Avatar.GetUsedTonnageContext with
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
-    interface InventoryRunContext
+    interface InventoryRunContext with
+        member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
+        member this.itemSource: ItemSource = itemSource
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 [<Test>]
 let ``Run.It returns the given gamestate.`` () =
@@ -22,13 +25,10 @@ let ``Run.It returns the given gamestate.`` () =
     let expected = 
         previousGameState 
         |> Some
-    let context = TestInventoryRunContext(avatarInventorySourceStub) :> InventoryRunContext
+    let context = TestInventoryRunContext(avatarInventorySourceStub, atSeaItemSource, vesselSingleStatisticSourceStub) :> OperatingContext
     let actual =
         input
         |> Inventory.Run
             context
-            avatarInventorySourceStub
-            atSeaItemSource 
-            vesselSingleStatisticSourceStub 
             sinkDummy
     Assert.AreEqual(expected, actual)

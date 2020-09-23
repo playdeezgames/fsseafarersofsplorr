@@ -144,6 +144,26 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> World.HasDarkAlleyMinimumStakesContext
     let context = splorrContext :?> IslandFeatureRunDarkAlleyContext
     let context = splorrContext :?> Commodity.GetCommoditiesContext
+    let context = splorrContext :?> GamestateCheckForAvatarDeathContext
+    let context = splorrContext :?> AtSeaUpdateDisplayContext
+    let context = splorrContext :?> AtSeaGetVisibleIslandsContext
+    let context = splorrContext :?> AtSeaCanCareenContext
+    let context = splorrContext :?> DockedRunBoilerplateContext
+    let context = splorrContext :?> ItemListRunWithIslandContext
+    let context = splorrContext :?> StatusRunContext
+    let context = splorrContext :?> StatusRunWorldContext
+    let context = splorrContext :?> InventoryRunContext
+    let context = splorrContext :?> InventoryRunWorldContext
+    let context = splorrContext :?> IslandListRunWorldContext
+    let context = splorrContext :?> CareenedRunContext
+    let context = splorrContext :?> CareenedRunAliveContext
+    let context = splorrContext :?> CareenedUpdateDisplayContext
+    let context = splorrContext :?> CareenedHandleCommandContext
+    //let context = splorrContext :?> 
+    //let context = splorrContext :?> 
+    //let context = splorrContext :?> 
+    //let context = splorrContext :?> 
+    //let context = splorrContext :?> 
     Assert.Pass("If it makes it this far, it works!")
 
 

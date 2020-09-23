@@ -184,13 +184,14 @@ module IslandFeature =
             |> Some
 
     let Run 
-            (context       : IslandFeatureRunContext)
+            (context       : OperatingContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (location      : Location)
             (feature       : IslandFeatureIdentifier)
             (avatarId      : string)
             : Gamestate option =
+        let context = context :?> IslandFeatureRunContext
         match context.islandSingleNameSource location with
         | Some _ ->
             RunIsland

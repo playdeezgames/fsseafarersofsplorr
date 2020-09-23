@@ -293,10 +293,11 @@ module Help =
         |> List.iter messageSink
 
     let Run 
-            (context     : HelpRunContext)
+            (context     : OperatingContext)
             (messageSink : MessageSink) 
             (gamestate   : Gamestate) 
             : Gamestate option =
+        let context = context :?> HelpRunContext
         match gamestate with
         | Gamestate.InPlay avatarId ->
             match context.avatarIslandFeatureSource avatarId with
