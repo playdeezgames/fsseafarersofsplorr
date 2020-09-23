@@ -10,11 +10,6 @@ let private previousGameState =
     |> Gamestate.MainMenu
 
 type TestStatusRunContext(avatarJobSource, islandSingleNameSource, shipmateSingleStatisticSource, vesselSingleStatisticSource) =
-    interface StatusRunContext with
-        member this.avatarJobSource: AvatarJobSource = avatarJobSource
-        member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
-        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Avatar.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
@@ -28,15 +23,11 @@ let ``Run.It returns the given gamestate.`` () =
             islandSingleNameSourceStub, 
             shipmateSingleStatisticSourceStub, 
             vesselSingleStatisticSourceStub) 
-            :> StatusRunContext
+            :> OperatingContext
     let actual =
         input
         |> Status.Run 
             context
-            //avatarJobSourceStub
-            //islandSingleNameSourceStub
-            //shipmateSingleStatisticSourceStub
-            //vesselSingleStatisticSourceStub
             sinkDummy
     Assert.AreEqual(expected, actual)
 

@@ -1,5 +1,6 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
+open System
 
 type DemiseType =
     | ZeroHealth
@@ -54,6 +55,17 @@ module Shipmate =
                 OldAge |> Dead
             else
                 Alive
+
+    type GetStatisticContext =
+        inherit OperatingContext
+        abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
+    let GetStatistic
+            (context: OperatingContext)
+            (avatarId : string)
+            (shipmateId : ShipmateIdentifier)
+            (identifier : ShipmateStatisticIdentifier)
+            : Statistic option =
+        (context :?> GetStatisticContext).shipmateSingleStatisticSource avatarId shipmateId identifier
     
     type TransformStatisticContext =
         inherit OperatingContext

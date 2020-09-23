@@ -1,5 +1,6 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
+open System
 
 type VesselStatisticTemplateSource = unit -> Map<VesselStatisticIdentifier, StatisticTemplate>
 type VesselStatisticSink           = string -> Map<VesselStatisticIdentifier, Statistic> -> unit
@@ -21,6 +22,16 @@ module Vessel =
             (fun _ template ->
                 {MinimumValue = template.MinimumValue; MaximumValue=template.MaximumValue; CurrentValue = template.CurrentValue})
         |> context.vesselStatisticSink avatarId
+
+    type GetStatisticContext =
+        inherit OperatingContext
+        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
+    let GetStatistic
+            (context : OperatingContext)
+            (avatarId : string)
+            (identifier: VesselStatisticIdentifier)
+            : Statistic option =
+        (context :?> GetStatisticContext).vesselSingleStatisticSource avatarId identifier
     
     type TransformFoulingContext =
         inherit OperatingContext

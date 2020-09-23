@@ -24,6 +24,7 @@
     <Compile Include="AngleTests.fs" />
     <Compile Include="Avatar\AbandonJobTests.fs" />
     <Compile Include="Avatar\CompleteJobTests.fs" />
+    <Compile Include="Avatar\GetJobTests.fs" />
     <Compile Include="Avatar\CleanHullTests.fs" />
     <Compile Include="Avatar\CreateTests.fs" />
     <Compile Include="Avatar\MoneyReputationTests.fs" />

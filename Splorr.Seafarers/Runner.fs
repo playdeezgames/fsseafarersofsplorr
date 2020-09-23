@@ -5,12 +5,6 @@ open Splorr.Seafarers.Services
 open System
 open Splorr.Seafarers.Models
 
-type RunnerRunContext =
-    inherit OperatingContext
-    abstract member avatarMetricSource : AvatarMetricSource
-    abstract member switchSource : SwitchSource
-    abstract member avatarIslandFeatureSource : AvatarIslandFeatureSource
-
 module Runner =
     let rec private Loop 
             (context       : OperatingContext)
@@ -19,11 +13,10 @@ module Runner =
             (messageSink   : MessageSink) 
             (gamestate     : Gamestate) 
             : unit =
-        let context = context :?> RunnerRunContext
         let nextGamestate : Gamestate option = 
             match gamestate with
             | Gamestate.InPlay avatarId -> 
-                match context.avatarIslandFeatureSource avatarId with
+                match Avatar.GetIslandFeature context avatarId with
                 | None ->
                     AtSea.Run 
                         context
@@ -69,14 +62,13 @@ module Runner =
 
             | Gamestate.ConfirmQuit state -> 
                 ConfirmQuit.Run 
-                    context.switchSource 
+                    context 
                     commandSource 
                     messageSink 
                     state
-            
 
             | Gamestate.ItemList (Gamestate.InPlay avatarId) -> 
-                match context.avatarIslandFeatureSource avatarId with
+                match Avatar.GetIslandFeature context avatarId with
                 | Some feature ->
                     ItemList.Run 
                         context
@@ -90,7 +82,7 @@ module Runner =
                 raise (NotImplementedException "Gamestate.ItemList with unexpected inner gamestate")
 
             | Gamestate.Jobs (Gamestate.InPlay avatarId) -> 
-                match context.avatarIslandFeatureSource avatarId with
+                match Avatar.GetIslandFeature context avatarId with
                 | Some feature ->
                     Jobs.Run 
                         context
@@ -141,7 +133,7 @@ module Runner =
 
             | Gamestate.Metrics state -> 
                 Metrics.Run 
-                    context.avatarMetricSource
+                    context
                     messageSink 
                     state
 
@@ -169,7 +161,6 @@ module Runner =
     let Run 
             (context : OperatingContext)
             : unit =
-        let context = context :?> RunnerRunContext
         Console.Title <- "Seafarers of SPLORR!!"
         let old = Console.ForegroundColor
         Console.ForegroundColor <- ConsoleColor.Gray

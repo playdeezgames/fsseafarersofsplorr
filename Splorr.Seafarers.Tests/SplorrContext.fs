@@ -135,7 +135,6 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> HelpRunContext
     let context = splorrContext :?> Avatar.GetMaximumFoulingContext
     let context = splorrContext :?> Avatar.CleanHullContext
-    let context = splorrContext :?> RunnerRunContext
     let context = splorrContext :?> IslandFeatureRunIslandContext
     let context = splorrContext :?> IslandFeatureRunContext
     let context = splorrContext :?> Avatar.GetGamblingHandContext
@@ -150,8 +149,6 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> AtSeaCanCareenContext
     let context = splorrContext :?> DockedRunBoilerplateContext
     let context = splorrContext :?> ItemListRunWithIslandContext
-    let context = splorrContext :?> StatusRunContext
-    let context = splorrContext :?> StatusRunWorldContext
     let context = splorrContext :?> InventoryRunContext
     let context = splorrContext :?> InventoryRunWorldContext
     let context = splorrContext :?> IslandListRunWorldContext
@@ -161,6 +158,17 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> CareenedHandleCommandContext
     let context = splorrContext :?> ChartRunContext
     let context = splorrContext :?> ChartOutputChartContext
+    let context = splorrContext :?> Metrics.RunWorldContext
+    let context = splorrContext :?> ConfirmQuit.RunContext
+    let context = splorrContext :?> Avatar.GetJobContext
+    let context = splorrContext :?> Island.GetNameContext
+    let context = splorrContext :?> Vessel.GetStatisticContext
+    let context = splorrContext :?> Shipmate.GetStatisticContext
+    //let context = splorrContext :?> 
+    //let context = splorrContext :?> 
+    //let context = splorrContext :?> 
+    //let context = splorrContext :?> 
+    //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 

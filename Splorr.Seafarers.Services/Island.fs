@@ -40,6 +40,16 @@ module Island =
                 (identifier, statistic |> Some)
                 |> context.islandSingleStatisticSink location)
     
+    type GetNameContext =
+        inherit OperatingContext
+        abstract member islandSingleNameSource : IslandSingleNameSource
+    let GetName
+            (context : OperatingContext)
+            (location : Location) 
+            : string option =
+        raise (NotImplementedException "No Unit Tests")
+        (context :?> GetNameContext).islandSingleNameSource location
+
     type GetDisplayNameContext =
         inherit OperatingContext
         abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource

@@ -16,6 +16,7 @@ type AvatarIslandFeatureSink = AvatarIslandFeature option * string -> unit
 type AvatarIslandFeatureSource = string -> AvatarIslandFeature option
 type AvatarGamblingHandSource = string -> AvatarGamblingHand option
 type AvatarGamblingHandSink = string -> AvatarGamblingHand option -> unit
+type AvatarMetricSource = string -> Map<Metric, uint64>
 
 module Avatar =
     type CreateContext =
@@ -404,6 +405,15 @@ module Avatar =
                     context
                     Metric.AbandonedJob
                 context.avatarJobSink avatarId None)
+
+    type GetJobContext =
+        inherit OperatingContext
+        abstract member avatarJobSource : AvatarJobSource
+    let GetJob
+            (context : OperatingContext)
+            (avatarId : string)
+            : Job option =
+        (context :?> GetJobContext).avatarJobSource avatarId
 
     type CompleteJobContext =
         inherit OperatingContext

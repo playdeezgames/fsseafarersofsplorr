@@ -63,21 +63,20 @@ type SplorrContext
         vesselStatisticSink: VesselStatisticSink ,
         vesselStatisticTemplateSource: VesselStatisticTemplateSource ,
         worldSingleStatisticSource : WorldSingleStatisticSource) =
+    interface Vessel.GetStatisticContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+    interface Shipmate.GetStatisticContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+    interface Avatar.GetJobContext with
+        member this.avatarJobSource: AvatarJobSource = avatarJobSource
     interface GamestateCheckForAvatarDeathContext with
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
-
+    interface Metrics.RunWorldContext with
+        member this.avatarMetricSource: AvatarMetricSource = avatarMetricSource
     interface AtSeaGetVisibleIslandsContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface StatusRunContext with
-        member this.avatarJobSource: AvatarJobSource = avatarJobSource
+    interface Island.GetNameContext with
         member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
-        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface StatusRunWorldContext with
-        member this.avatarJobSource: AvatarJobSource = avatarJobSource
-        member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
-        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface ItemListRunWithIslandContext with
         member this.islandItemSource: IslandItemSource = islandItemSource
         member this.itemSource: ItemSource = itemSource
@@ -397,10 +396,8 @@ type SplorrContext
     interface Avatar.CleanHullContext with
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
 
-    interface RunnerRunContext with
-        member this.avatarIslandFeatureSource: AvatarIslandFeatureSource = avatarIslandFeatureSource
-        member _.avatarMetricSource              : AvatarMetricSource=avatarMetricSource
-        member _.switchSource                    : SwitchSource      =switchSource      
+    interface ConfirmQuit.RunContext with
+        member this.switchSource: SwitchSource = switchSource
 
     interface IslandFeatureRunIslandContext with
         member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
