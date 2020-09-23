@@ -417,6 +417,13 @@ type SplorrContext
     interface Avatar.FoldGamblingHandContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
 
+    interface ChartRunContext with
+        member this.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
+    interface ChartOutputChartContext with
+        member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+        member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
+        member this.islandSource: IslandSource = islandSource
+
     interface World.HasDarkAlleyMinimumStakesContext with
         member _.shipmateSingleStatisticSource : ShipmateSingleStatisticSource = shipmateSingleStatisticSource
         member _.islandSingleStatisticSource : IslandSingleStatisticSource = islandSingleStatisticSource

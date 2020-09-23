@@ -159,8 +159,8 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> CareenedRunAliveContext
     let context = splorrContext :?> CareenedUpdateDisplayContext
     let context = splorrContext :?> CareenedHandleCommandContext
-    //let context = splorrContext :?> 
-    //let context = splorrContext :?> 
+    let context = splorrContext :?> ChartRunContext
+    let context = splorrContext :?> ChartOutputChartContext
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
