@@ -17,7 +17,7 @@ type TestItemListRunContext
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface Shipmate.GetStatusContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface Item.DeterminePriceContext with
+    interface IslandMarket.DeterminePriceContext with
         member this.islandMarketSource: IslandMarketSource = islandMarketSource
         member this.itemSingleSource: ItemSingleSource = itemSingleSource
 

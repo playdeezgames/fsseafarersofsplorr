@@ -35,7 +35,7 @@ type TestWorldCreateContext
         member _.islandSingleFeatureSink: IslandSingleFeatureSink = islandSingleFeatureSink
         member _.islandSource: IslandSource = islandSource
 
-    interface IslandFeatureGenerator.GenerateContext with
+    interface IslandFeature.CreateContext with
         member _.random: Random = Fixtures.Common.Dummy.Random
 
     interface Utility.RandomContext with 

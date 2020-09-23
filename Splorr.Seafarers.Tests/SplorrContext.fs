@@ -96,7 +96,7 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> AtSeaRunContext
     let context = splorrContext :?> Island.CreateContext
     let context = splorrContext :?> Utility.RandomContext
-    let context = splorrContext :?> IslandFeatureGenerator.GenerateContext
+    let context = splorrContext :?> IslandFeature.CreateContext
     let context = splorrContext :?> World.PopulateIslandsContext
     let context = splorrContext :?> World.GenerateIslandNameContext
     let context = splorrContext :?> World.NameIslandsContext
@@ -108,7 +108,7 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> World.CreateContext
     let context = splorrContext :?> World.UpdateChartsContext
     let context = splorrContext :?> DockedUpdateDisplayContext
-    let context = splorrContext :?> Item.DeterminePriceContext
+    let context = splorrContext :?> IslandMarket.DeterminePriceContext
     let context = splorrContext :?> Island.MakeKnownContext
     let context = splorrContext :?> Island.UpdateMarketForItemContext
     let context = splorrContext :?> Avatar.RemoveInventoryContext

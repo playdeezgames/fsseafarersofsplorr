@@ -1,19 +1,19 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
-type IslandMarketSource  = Location -> Map<uint64, Market>
 type ItemSingleSource    = uint64 -> ItemDescriptor option
 type ItemSource = unit -> Map<uint64, ItemDescriptor>
 type RationItemSource = unit -> uint64 list
 
+type IslandMarketSource  = Location -> Map<uint64, Market>
+
 type private UnitPriceDeterminer = CommodityDescriptor * Market -> float
 
-module Item =
+module IslandMarket =
     type DeterminePriceContext =
         inherit OperatingContext
         abstract member islandMarketSource : IslandMarketSource
         abstract member itemSingleSource   : ItemSingleSource
-    
     let private DeterminePrice 
             (context             : OperatingContext)
             (unitPriceDeterminer : UnitPriceDeterminer)

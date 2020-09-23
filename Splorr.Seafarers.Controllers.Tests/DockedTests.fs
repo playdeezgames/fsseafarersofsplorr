@@ -62,7 +62,7 @@ type TestDockedRunContext
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
         member _.avatarIslandFeatureSink : AvatarIslandFeatureSink = avatarIslandFeatureSink
 
-    interface Item.DeterminePriceContext with
+    interface IslandMarket.DeterminePriceContext with
         member _.islandMarketSource             : IslandMarketSource            =islandMarketSource   
         member _.itemSingleSource               : ItemSingleSource              = itemSingleSource
 

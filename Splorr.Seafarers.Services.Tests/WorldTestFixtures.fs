@@ -107,7 +107,7 @@ type TestWorldDockContext
 
     interface Job.CreateContext with 
         member _.termSources                : TermSources = termSources
-        member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
+        member this.jobRewardStatisticSource: JobRewardStatisticSource = fun () -> worldSingleStatisticSource WorldStatisticIdentifier.JobReward
         member _.random : Random = Fixtures.Common.Dummy.Random
         
 

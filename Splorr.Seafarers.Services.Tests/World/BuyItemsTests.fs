@@ -21,7 +21,7 @@ type TestWorldBuyItemsContext
     interface Island.UpdateMarketForItemContext
     interface Commodity.GetCommoditiesContext with
         member this.commoditySource: CommoditySource = commoditySource
-    interface Item.DeterminePriceContext with
+    interface IslandMarket.DeterminePriceContext with
         member this.islandMarketSource: IslandMarketSource = islandMarketSource
         member this.itemSingleSource: ItemSingleSource = itemSingleSource
     interface Avatar.AddMessagesContext with

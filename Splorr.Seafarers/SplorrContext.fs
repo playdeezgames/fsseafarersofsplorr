@@ -2,6 +2,7 @@
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 open System
+open Splorr.Seafarers.Models
 
 
 type SplorrContext 
@@ -163,7 +164,7 @@ type SplorrContext
     interface Utility.RandomContext with
         member _.random : Random = random
 
-    interface IslandFeatureGenerator.GenerateContext with
+    interface IslandFeature.CreateContext with
         member _.random : Random = random
 
     interface World.PopulateIslandsContext with
@@ -224,7 +225,7 @@ type SplorrContext
         member _.islandSingleNameSource         : IslandSingleNameSource         = islandSingleNameSource  
         member _.islandFeatureSource            : IslandFeatureSource            = islandFeatureSource
 
-    interface Item.DeterminePriceContext with
+    interface IslandMarket.DeterminePriceContext with
         member _.islandMarketSource             : IslandMarketSource             =islandMarketSource     
         member _.itemSingleSource               : ItemSingleSource               = itemSingleSource
 
@@ -292,7 +293,7 @@ type SplorrContext
 
     interface Job.CreateContext with
         member _.termSources: TermSources = termSources
-        member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
+        member _.jobRewardStatisticSource : JobRewardStatisticSource = fun () -> worldSingleStatisticSource WorldStatisticIdentifier.JobReward
         member _.random = random
 
     interface Island.AddVisitContext with

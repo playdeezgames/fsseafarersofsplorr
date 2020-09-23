@@ -19,7 +19,7 @@ type TestItemDetermineSalePriceContext
         (commoditySource,
         islandMarketSource,
         itemSingleSource) =
-    interface Item.DeterminePriceContext with
+    interface IslandMarket.DeterminePriceContext with
         member _.islandMarketSource             : IslandMarketSource            = islandMarketSource            
         member _.itemSingleSource               : ItemSingleSource              = itemSingleSource
     interface Commodity.GetCommoditiesContext with
@@ -29,7 +29,7 @@ type TestItemDeterminePurchasePriceContext
         (commoditySource,
         islandMarketSource,
         itemSingleSource) = 
-    interface Item.DeterminePriceContext with
+    interface IslandMarket.DeterminePriceContext with
         member _.islandMarketSource             : IslandMarketSource            =islandMarketSource  
         member _.itemSingleSource               : ItemSingleSource               = itemSingleSource
     interface Commodity.GetCommoditiesContext with
@@ -42,15 +42,15 @@ let ``DetermineSalePrice.It calculates the sale price of an item in a given set 
     let inputMarkets = markets
     let givenLocation = (0.0, 0.0)
     let expected = 15.0
-    let context : Item.DeterminePriceContext = 
+    let context : IslandMarket.DeterminePriceContext = 
         TestItemDetermineSalePriceContext
             ((fun () -> inputCommodities),
             (fun(_) -> inputMarkets),
             (fun(_)->input |> Some)) 
-        :> Item.DeterminePriceContext
+        :> IslandMarket.DeterminePriceContext
     let actual = 
         (0UL, givenLocation)
-        ||> Item.DetermineSalePrice 
+        ||> IslandMarket.DetermineSalePrice 
             context
     Assert.AreEqual(expected, actual)
 
@@ -66,9 +66,9 @@ let ``DeterminePurchasePrice.It calculates the purchase price of an item in a gi
             ((fun () -> inputCommodities),
             (fun(_) -> inputMarkets),
             (fun(_)->input |> Some))
-        :> Item.DeterminePriceContext
+        :> IslandMarket.DeterminePriceContext
     let actual = 
         (0UL, givenLocation)
-        ||> Item.DeterminePurchasePrice 
+        ||> IslandMarket.DeterminePurchasePrice 
             context
     Assert.AreEqual(expected, actual)

@@ -11,6 +11,7 @@ type IslandLocationByNameSource = string -> Location option
 type IslandSource = unit -> Location list
 type IslandFeatureGeneratorSource = unit -> Map<IslandFeatureIdentifier, IslandFeatureGenerator>
 type IslandSingleFeatureSink = Location -> IslandFeatureIdentifier -> unit
+type WorldSingleStatisticSource = WorldStatisticIdentifier -> Statistic
 
 module World =
     type GenerateIslandNameContext =
@@ -87,7 +88,7 @@ module World =
                 generators
                 |> Map.iter
                     (fun identifier generator ->
-                        if IslandFeatureGenerator.Generate context generator then
+                        if IslandFeature.Create context generator then
                             context.islandSingleFeatureSink location identifier))
 
     type GenerateIslandsContext =
@@ -563,7 +564,7 @@ module World =
         match items |> FindItemByName itemName, context.islandSource() |> List.tryFind (fun x-> x = location) with
         | Some (item, descriptor) , Some _ ->
             let unitPrice = 
-                Item.DetermineSalePrice 
+                IslandMarket.DetermineSalePrice 
                     context
                     item 
                     location
@@ -647,7 +648,7 @@ module World =
                 |> AddMessages context ["You don't have any of those to sell."]
             else
                 let unitPrice = 
-                    Item.DeterminePurchasePrice 
+                    IslandMarket.DeterminePurchasePrice 
                         context
                         item 
                         location

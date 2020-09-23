@@ -2,16 +2,16 @@
 open Splorr.Seafarers.Models
 open System
 
-module IslandFeatureGenerator =
-    type GenerateContext =
+module IslandFeature =
+    type CreateContext =
         inherit OperatingContext
         abstract member random : Random
     
-    let Generate 
+    let Create 
             (context   : OperatingContext) 
             (generator : IslandFeatureGenerator)
             : bool = 
-        let context = context :?> GenerateContext
+        let context = context :?> CreateContext
         let total = 
             generator.FeaturelessWeight + generator.FeatureWeight
 

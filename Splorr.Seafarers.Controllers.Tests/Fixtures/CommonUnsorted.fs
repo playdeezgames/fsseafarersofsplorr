@@ -343,7 +343,7 @@ type TestAtSeaRunContext
     interface Job.CreateContext with
         member this.random: Random = Fixtures.Common.Dummy.Random
         member this.termSources: TermSources = termSources
-        member this.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
+        member this.jobRewardStatisticSource: JobRewardStatisticSource = fun () -> worldSingleStatisticSource WorldStatisticIdentifier.JobReward
     interface World.DockContext with
         member _.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
