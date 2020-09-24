@@ -48,7 +48,6 @@ module Island =
             (context : ServiceContext)
             (location : Location) 
             : string option =
-        raise (NotImplementedException "No Unit Tests")
         (context :?> GetNameContext).islandSingleNameSource location
 
     type GetDisplayNameContext =

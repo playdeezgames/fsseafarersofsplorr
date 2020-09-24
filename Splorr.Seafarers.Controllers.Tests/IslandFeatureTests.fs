@@ -29,10 +29,10 @@ type TestIslandFeatureRunContext
         islandSingleNameSource,
         islandSingleStatisticSource,
         shipmateSingleStatisticSource) =
-    interface IslandFeatureRunContext with
+    interface Island.GetNameContext with
         member _.islandSingleNameSource : IslandSingleNameSource = islandSingleNameSource
+    interface IslandFeatureRunIslandContext with
         member _.islandSingleFeatureSource : IslandSingleFeatureSource = islandSingleFeatureSource
-
     interface Avatar.AddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface World.AddMessagesContext with
@@ -83,7 +83,7 @@ let ``Run.It should return InPlay when the given island does not exist.`` () =
             islandSingleNameSourceStub,
             islandSingleStatisticSourceStub,
             shipmateSingleStatisticSourceStub) 
-        :> IslandFeatureRunContext
+        :> ServiceContext
     let actual =
         IslandFeature.Run 
             context
@@ -121,7 +121,7 @@ let ``Run.It should return InPlay state when the given island exists but does no
             islandSingleNameSource,
             islandSingleStatisticSourceStub,
             shipmateSingleStatisticSourceStub) 
-        :> IslandFeatureRunContext
+        :> ServiceContext
     let actual =
         IslandFeature.Run 
             context
@@ -163,7 +163,7 @@ let ``Run.It should return InPlay state when dark alley exists and the player is
             islandSingleNameSource,
             islandSingleStatisticSource,
             shipmateSingleStatisticSource) 
-        :> IslandFeatureRunContext
+        :> ServiceContext
     let actual =
         IslandFeature.Run 
             context
@@ -206,7 +206,7 @@ let ``Run.It should quit the gambling game when dark alley exists and the player
             islandSingleNameSource,
             islandSingleStatisticSource,
             shipmateSingleStatisticSource) 
-        :> IslandFeatureRunContext
+        :> ServiceContext
     let actual =
         IslandFeature.Run 
             context
@@ -255,7 +255,7 @@ let ``Run.It should return InPlay state when dark alley exists but the player do
             islandSingleNameSource,
             islandSingleStatisticSource,
             shipmateSingleStatisticSource) 
-        :> IslandFeatureRunContext
+        :> ServiceContext
     let actual =
         IslandFeature.Run 
             context
@@ -305,7 +305,7 @@ let ``Run.When in the dark alley, the leave command will take the player back to
             islandSingleNameSource,
             islandSingleStatisticSource,
             shipmateSingleStatisticSource) 
-        :> IslandFeatureRunContext
+        :> ServiceContext
     let actual =
         IslandFeature.Run 
             context
@@ -349,7 +349,7 @@ let ``Run.When in the dark alley, the gamble command will deal to the player som
             islandSingleNameSource,
             islandSingleStatisticSource,
             shipmateSingleStatisticSource) 
-        :> IslandFeatureRunContext
+        :> ServiceContext
     let actual =
         IslandFeature.Run 
             context
@@ -391,7 +391,7 @@ let ``Run.When in the dark alley, the help command will take the player to the h
             islandSingleNameSource,
             islandSingleStatisticSource,
             shipmateSingleStatisticSource) 
-        :> IslandFeatureRunContext
+        :> ServiceContext
     let actual =
         IslandFeature.Run 
             context
@@ -433,7 +433,7 @@ let ``Run.When in the dark alley but not gambling, the an invalid command gives 
             islandSingleNameSource,
             islandSingleStatisticSource,
             shipmateSingleStatisticSource) 
-        :> IslandFeatureRunContext
+        :> ServiceContext
     let actual =
         IslandFeature.Run 
             context

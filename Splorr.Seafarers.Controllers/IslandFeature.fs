@@ -5,37 +5,21 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open Tarot
 
-type IslandFeatureRunDarkAlleyGamblingHand =
-    inherit Avatar.FoldGamblingHandContext
-
-
 type IslandFeatureRunDarkAlleyContext =
-    inherit IslandFeatureRunDarkAlleyGamblingHand
-    inherit World.AddMessagesContext
-    inherit Avatar.GetGamblingHandContext
-    inherit Avatar.DealGamblingHandContext
-    inherit Avatar.EnterIslandFeatureContext
-    inherit World.HasDarkAlleyMinimumStakesContext
+    inherit ServiceContext
     abstract member avatarMessageSource           : AvatarMessageSource
     abstract member avatarMessageSink             : AvatarMessageSink
     abstract member islandSingleStatisticSource   : IslandSingleStatisticSource
     abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
 
-type IslandFeatureRunFeatureContext =
-    inherit IslandFeatureRunDarkAlleyContext
-    
 
 type IslandFeatureRunIslandContext = 
-    inherit IslandFeatureRunFeatureContext
+    inherit ServiceContext
     abstract member islandSingleFeatureSource : IslandSingleFeatureSource
-
-type IslandFeatureRunContext =
-    inherit IslandFeatureRunIslandContext
-    abstract member islandSingleNameSource    : IslandSingleNameSource
 
 module IslandFeature =
     let private RunDarkAlleyGamblingHand
-            (context       : IslandFeatureRunDarkAlleyGamblingHand)
+            (context       : ServiceContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (location      : Location)
@@ -71,12 +55,13 @@ module IslandFeature =
                     |> Gamestate.ErrorMessage
                     |> Some
     let private RunDarkAlley
-            (context       : IslandFeatureRunDarkAlleyContext)
+            (context       : ServiceContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (location      : Location)
             (avatarId      : string)
             : Gamestate option =
+        let context = context :?> IslandFeatureRunDarkAlleyContext
         match Avatar.GetGamblingHand context avatarId with
         | Some hand ->
             RunDarkAlleyGamblingHand
@@ -141,7 +126,7 @@ module IslandFeature =
 
 
     let private RunFeature
-            (context       : IslandFeatureRunFeatureContext)
+            (context       : ServiceContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (location      : Location)
@@ -163,13 +148,14 @@ module IslandFeature =
             
 
     let private RunIsland
-            (context       : IslandFeatureRunIslandContext)
+            (context       : ServiceContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (location      : Location)
             (feature       : IslandFeatureIdentifier)
             (avatarId      : string)
             : Gamestate option =
+        let context = context :?> IslandFeatureRunIslandContext
         if context.islandSingleFeatureSource location feature then
             RunFeature
                 context
@@ -191,8 +177,7 @@ module IslandFeature =
             (feature       : IslandFeatureIdentifier)
             (avatarId      : string)
             : Gamestate option =
-        let context = context :?> IslandFeatureRunContext
-        match context.islandSingleNameSource location with
+        match Island.GetName context location with
         | Some _ ->
             RunIsland
                 context

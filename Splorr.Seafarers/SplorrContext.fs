@@ -400,9 +400,6 @@ type SplorrContext
     interface IslandFeatureRunIslandContext with
         member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
     
-    interface IslandFeatureRunContext with
-        member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
-        
     interface Avatar.GetGamblingHandContext with
         member _.avatarGamblingHandSource : AvatarGamblingHandSource = avatarGamblingHandSource
     interface Avatar.DealGamblingHandContext with

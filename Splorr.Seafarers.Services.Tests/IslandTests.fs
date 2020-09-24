@@ -523,8 +523,22 @@ let ``GetItems.It calls the IslandItemSource in the ServiceContext.`` () =
         called <- true
         Set.empty
     let context = TestIslandGetItemsContext(islandItemSource) :> ServiceContext
-    let expected = []
+    let expected = Set.empty
     let actual = Island.GetItems context Fixtures.Common.Dummy.IslandLocation
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
     
+type TestIslandGetNameContext(islandSingleNameSource) =
+    interface Island.GetNameContext with
+        member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
+[<Test>]
+let ``GetName.It calls the IslandSingleNameSource in the ServiceContext.`` () =
+    let mutable called = false
+    let islandSingleNameSource (_) =
+        called <- true
+        None
+    let context = TestIslandGetNameContext(islandSingleNameSource) :> ServiceContext
+    let expected = None
+    let actual = Island.GetName context Fixtures.Common.Dummy.IslandLocation
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)
