@@ -120,8 +120,6 @@ type SplorrContext
     interface Island.GetListContext with
         member this.islandSource: IslandSource = islandSource
     
-    interface Jobs.RunIslandContext with
-        member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
     interface Island.GetJobsContext with
         member this.islandJobSource: IslandJobSource = islandJobSource
 

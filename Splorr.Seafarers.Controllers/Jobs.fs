@@ -4,16 +4,11 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
 module Jobs = 
-    type RunIslandContext =
-        inherit ServiceContext
-        abstract member islandSingleNameSource : IslandSingleNameSource
-
     let private RunIsland 
             (context:ServiceContext)
             (messageSink            : MessageSink) 
             (location               : Location) 
             : unit =
-        let context = context :?> RunIslandContext
         [
             "" |> Line
             (Hue.Heading, "Jobs Available:" |> Line) |> Hued
@@ -34,7 +29,7 @@ module Jobs =
                     Location.DistanceTo location job.Destination
                 [
                     (Hue.Label, index |> sprintf "%d. " |> Text) |> Hued
-                    (Hue.Value, job.Destination |> context.islandSingleNameSource |> Option.get |> sprintf "%s " |> Text) |> Hued
+                    (Hue.Value, job.Destination |> Island.GetName context |> Option.get |> sprintf "%s " |> Text) |> Hued
                     (Hue.Sublabel, "Bearing: " |> Text) |> Hued
                     (Hue.Value, bearing |> sprintf "%s " |> Text) |> Hued
                     (Hue.Sublabel, "Distance: " |> Text) |> Hued
