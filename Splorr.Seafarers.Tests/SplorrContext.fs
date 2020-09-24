@@ -147,7 +147,6 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> AtSeaGetVisibleIslandsContext
     let context = splorrContext :?> AtSeaCanCareenContext
     let context = splorrContext :?> DockedRunBoilerplateContext
-    let context = splorrContext :?> ItemListRunWithIslandContext
     let context = splorrContext :?> InventoryRunContext
     let context = splorrContext :?> InventoryRunWorldContext
     let context = splorrContext :?> IslandListRunWorldContext
@@ -165,7 +164,7 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Avatar.GetMetricsContext
     let context = splorrContext :?> Island.GetJobsContext
     let context = splorrContext :?> Item.GetListContext
-    //let context = splorrContext :?> 
+    let context = splorrContext :?> Island.GetItemsContext
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 

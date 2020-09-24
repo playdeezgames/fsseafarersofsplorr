@@ -3,10 +3,6 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
-type ItemListRunWithIslandContext =
-    inherit ServiceContext
-    abstract member islandItemSource   : IslandItemSource
-
 module ItemList = 
     let private RunWithIsland 
             (context            : ServiceContext)
@@ -14,7 +10,6 @@ module ItemList =
             (location           : Location) 
             (avatarId           : string) 
             : Gamestate option =
-        let context = context :?> ItemListRunWithIslandContext
         [
             "" |> Line
             (Hue.Heading, "Item" |> sprintf "%-20s" |> Text) |> Hued
@@ -27,7 +22,7 @@ module ItemList =
         |> List.iter messageSink
         let items = Item.GetList context
         location
-        |> context.islandItemSource
+        |> Island.GetItems context
         |> Set.iter (fun item -> 
             let descriptor = items.[item]
             let sellPrice: float = (item, location) ||> IslandMarket.DetermineSalePrice context

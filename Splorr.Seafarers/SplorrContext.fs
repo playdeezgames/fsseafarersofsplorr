@@ -75,7 +75,7 @@ type SplorrContext
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Island.GetNameContext with
         member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
-    interface ItemListRunWithIslandContext with
+    interface Island.GetItemsContext with
         member this.islandItemSource: IslandItemSource = islandItemSource
     interface Item.GetListContext with
         member this.itemSource: ItemSource = itemSource
