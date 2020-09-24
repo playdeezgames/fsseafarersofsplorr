@@ -661,5 +661,4 @@ module Avatar =
             (identifier: AvatarIslandMetricIdentifier)
             (avatarId : string)
             : uint64 option =
-        raise (NotImplementedException "No Unit Tests")
         (context :?> GetIslandMetricContext).avatarIslandSingleMetricSource avatarId location identifier

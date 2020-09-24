@@ -178,13 +178,13 @@ type TestAvatarGetIslandMetricContext
 [<Test>]
 let ``GetIslandMetric.It calls the AvatarIslandSingleMetricSource in the context.`` () =
    let mutable called = false
-   let avatarInventorySource (_) =
+   let avatarIslandSingleMetricSource (_) (_) (_)=
        called<-true
-       Map.empty
+       None
    let context = 
        TestAvatarGetIslandMetricContext
-           (avatarInventorySource) :> ServiceContext
-   let expected = Map.empty
+           (avatarIslandSingleMetricSource) :> ServiceContext
+   let expected = None
    let actual =
        Avatar.GetIslandMetric
            context
