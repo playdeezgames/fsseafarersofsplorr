@@ -13,10 +13,6 @@ type IslandFeatureRunDarkAlleyContext =
     abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
 
 
-type IslandFeatureRunIslandContext = 
-    inherit ServiceContext
-    abstract member islandSingleFeatureSource : IslandSingleFeatureSource
-
 module IslandFeature =
     let private RunDarkAlleyGamblingHand
             (context       : ServiceContext)
@@ -155,8 +151,7 @@ module IslandFeature =
             (feature       : IslandFeatureIdentifier)
             (avatarId      : string)
             : Gamestate option =
-        let context = context :?> IslandFeatureRunIslandContext
-        if context.islandSingleFeatureSource location feature then
+        if Island.HasFeature context feature location then
             RunFeature
                 context
                 commandSource

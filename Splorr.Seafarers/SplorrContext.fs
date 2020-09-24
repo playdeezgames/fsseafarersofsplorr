@@ -397,7 +397,7 @@ type SplorrContext
     interface ConfirmQuit.RunContext with
         member this.switchSource: SwitchSource = switchSource
 
-    interface IslandFeatureRunIslandContext with
+    interface Island.HasFeatureContext with
         member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
     
     interface Avatar.GetGamblingHandContext with

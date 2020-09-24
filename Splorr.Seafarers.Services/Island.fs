@@ -271,3 +271,13 @@ module Island =
             (location : Location)
             : Set<uint64> =
         (context :?> GetItemsContext).islandItemSource location
+
+    type HasFeatureContext =
+        inherit ServiceContext
+        abstract member islandSingleFeatureSource : IslandSingleFeatureSource
+    let HasFeature
+            (context    : ServiceContext)
+            (identifier : IslandFeatureIdentifier)
+            (location   : Location)
+            : bool =
+        (context :?> HasFeatureContext).islandSingleFeatureSource location identifier

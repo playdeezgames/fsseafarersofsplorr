@@ -500,7 +500,6 @@ let ``GetList.It calls the IslandSource in the ServiceContext.`` () =
 type TestIslandGetJobsContext(islandJobSource) =
     interface Island.GetJobsContext with
         member this.islandJobSource: IslandJobSource = islandJobSource
-        
 [<Test>]
 let ``GetJobs.It calls the IslandJobSource in the ServiceContext.`` () =
     let mutable called = false
@@ -540,5 +539,20 @@ let ``GetName.It calls the IslandSingleNameSource in the ServiceContext.`` () =
     let context = TestIslandGetNameContext(islandSingleNameSource) :> ServiceContext
     let expected = None
     let actual = Island.GetName context Fixtures.Common.Dummy.IslandLocation
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)
+
+type TestIslandHasFeatureContext(islandSingleFeatureSource) =
+    interface Island.HasFeatureContext with
+        member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
+[<Test>]
+let ``HasFeature.It calls the IslandSingleFeatureSource in the ServiceContext.`` () =
+    let mutable called = false
+    let islandSingleFeatureSource (_) (_) =
+        called <- true
+        false
+    let context = TestIslandHasFeatureContext(islandSingleFeatureSource) :> ServiceContext
+    let expected = false
+    let actual = Island.HasFeature context IslandFeatureIdentifier.Dock Fixtures.Common.Dummy.IslandLocation
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)

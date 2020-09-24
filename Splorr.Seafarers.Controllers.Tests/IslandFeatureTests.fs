@@ -31,7 +31,7 @@ type TestIslandFeatureRunContext
         shipmateSingleStatisticSource) =
     interface Island.GetNameContext with
         member _.islandSingleNameSource : IslandSingleNameSource = islandSingleNameSource
-    interface IslandFeatureRunIslandContext with
+    interface Island.HasFeatureContext with
         member _.islandSingleFeatureSource : IslandSingleFeatureSource = islandSingleFeatureSource
     interface Avatar.AddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
