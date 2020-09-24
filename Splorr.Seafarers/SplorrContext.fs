@@ -81,14 +81,8 @@ type SplorrContext
         member this.islandItemSource: IslandItemSource = islandItemSource
     interface Item.GetListContext with
         member this.itemSource: ItemSource = itemSource
-    interface InventoryRunContext with
+    interface Avatar.GetInventoryContext with
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
-        member this.itemSource: ItemSource = itemSource
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface InventoryRunWorldContext with
-        member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
-        member this.itemSource: ItemSource = itemSource
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface DockedRunBoilerplateContext with
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
         member this.islandSource: IslandSource = islandSource

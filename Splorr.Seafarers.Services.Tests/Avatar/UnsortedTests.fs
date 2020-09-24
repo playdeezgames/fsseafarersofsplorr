@@ -126,7 +126,6 @@ let ``GetMetrics.It calls the AvatarMetricSource in the context.`` () =
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
 
-
 type TestAvatarGetMessagesContext
        (avatarMessageSource) =
    interface ServiceContext
@@ -144,6 +143,28 @@ let ``GetMessages.It calls the AvatarMetricSource in the context.`` () =
    let expected = []
    let actual =
        Avatar.GetMessages
+           context
+           Fixtures.Common.Dummy.AvatarId
+   Assert.AreEqual(expected, actual)
+   Assert.IsTrue(called)
+
+type TestAvatarGetInventoryContext
+       (avatarInventorySource) =
+   interface ServiceContext
+   interface Avatar.GetInventoryContext with
+       member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
+[<Test>]
+let ``GetInventory.It calls the AvatarInventorySource in the context.`` () =
+   let mutable called = false
+   let avatarInventorySource (_) =
+       called<-true
+       Map.empty
+   let context = 
+       TestAvatarGetInventoryContext
+           (avatarInventorySource) :> ServiceContext
+   let expected = Map.empty
+   let actual =
+       Avatar.GetInventory
            context
            Fixtures.Common.Dummy.AvatarId
    Assert.AreEqual(expected, actual)

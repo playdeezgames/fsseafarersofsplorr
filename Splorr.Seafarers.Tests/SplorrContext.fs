@@ -145,8 +145,6 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> AtSeaGetVisibleIslandsContext
     let context = splorrContext :?> AtSeaCanCareenContext
     let context = splorrContext :?> DockedRunBoilerplateContext
-    let context = splorrContext :?> InventoryRunContext
-    let context = splorrContext :?> InventoryRunWorldContext
     let context = splorrContext :?> IslandListRunWorldContext
     let context = splorrContext :?> CareenedRunContext
     let context = splorrContext :?> CareenedRunAliveContext
@@ -164,7 +162,7 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Item.GetListContext
     let context = splorrContext :?> Island.GetItemsContext
     let context = splorrContext :?> Avatar.GetMessagesContext
-    //let context = splorrContext :?> 
+    let context = splorrContext :?> Avatar.GetInventoryContext
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     Assert.Pass("If it makes it this far, it works!")

@@ -3,27 +3,12 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
-type InventoryRunWorldContext =
-    inherit ServiceContext
-    abstract member itemSource                  : ItemSource
-    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-    abstract member avatarInventorySource       : AvatarInventorySource
-
-    
-type InventoryRunContext =
-    inherit ServiceContext
-    abstract member avatarInventorySource       : AvatarInventorySource
-    abstract member itemSource                  : ItemSource
-    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-
-
 module Inventory =
     let private RunWorld
             (context : ServiceContext)
             (messageSink                 : MessageSink) 
             (avatarId                    : string) 
             : unit =
-        let context = context :?> InventoryRunWorldContext
         [
             "" |> Line
             (Hue.Heading, "Item" |> sprintf "%-20s" |> Text) |> Hued
@@ -34,10 +19,10 @@ module Inventory =
             (Hue.Label, "---------------------+--------+---------" |> Line ) |> Hued
         ]
         |> List.iter messageSink
-        let items = context.itemSource()
+        let items = Item.GetList context
         let inventoryEmpty =
             avatarId
-            |> context.avatarInventorySource
+            |> Avatar.GetInventory context
             |> Map.fold
                 (fun _ item quantity -> 
                     let descriptor = items.[item]
@@ -55,7 +40,7 @@ module Inventory =
             (Hue.Usage, "(none)"  |> Line) |> Hued
             |> messageSink
         let availableTonnage = 
-            context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Tonnage
+            Vessel.GetStatistic context avatarId VesselStatisticIdentifier.Tonnage
             |> Option.map Statistic.GetCurrentValue
             |> Option.get
         let usedTonnage = 
@@ -76,7 +61,6 @@ module Inventory =
             (messageSink                 : MessageSink) 
             (gamestate                   : Gamestate) 
             : Gamestate option =
-        let context = context :?> InventoryRunContext
         gamestate 
         |> Gamestate.GetWorld
         |> Option.iter 

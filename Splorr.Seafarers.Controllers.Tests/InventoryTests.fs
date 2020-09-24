@@ -13,10 +13,8 @@ let private previousGameState =
 type TestInventoryRunContext(avatarInventorySource, itemSource, vesselSingleStatisticSource) =
     interface Avatar.GetUsedTonnageContext with
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
-    interface InventoryRunContext with
+    interface Avatar.GetInventoryContext with
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
-        member this.itemSource: ItemSource = itemSource
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 [<Test>]
 let ``Run.It returns the given gamestate.`` () =

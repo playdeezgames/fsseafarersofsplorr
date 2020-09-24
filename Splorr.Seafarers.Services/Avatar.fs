@@ -642,3 +642,12 @@ module Avatar =
             (avatarId: string)
             : string list =
         (context :?> GetMessagesContext).avatarMessageSource avatarId
+
+    type GetInventoryContext =
+        inherit ServiceContext
+        abstract member avatarInventorySource : AvatarInventorySource
+    let GetInventory
+            (context : ServiceContext)
+            (avatarId : string)
+            : AvatarInventory =
+        (context :?> GetInventoryContext).avatarInventorySource avatarId
