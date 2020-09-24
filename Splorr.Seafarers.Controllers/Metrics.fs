@@ -18,15 +18,11 @@ module Metrics =
         | Metric.Starved       -> "shipmates starved"
         | _ -> raise (System.NotImplementedException (metric.ToString() |> sprintf "'%s' is a metric with no name!"))
 
-    type RunWorldContext =
-        inherit ServiceContext
-        abstract avatarMetricSource : AvatarMetricSource
     let private RunWorld
             (context : ServiceContext)
             (messageSink        : MessageSink) 
             (avatarId           : string) 
             : unit = 
-        let context = context :?> RunWorldContext
         [
             "" |> Line
             (Hue.Heading, "Metric Name" |> sprintf "%-24s" |> Text) |> Hued
@@ -35,7 +31,7 @@ module Metrics =
             "-------------------------+-------" |> Line
         ]
         |> List.iter messageSink
-        let metrics = context.avatarMetricSource avatarId
+        let metrics = Avatar.GetMetrics context avatarId
         if metrics.IsEmpty then
             (Hue.Usage, "(none)" |> Line) |> Hued |> messageSink
         else

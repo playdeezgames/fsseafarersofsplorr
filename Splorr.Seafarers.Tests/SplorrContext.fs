@@ -158,13 +158,12 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> CareenedHandleCommandContext
     let context = splorrContext :?> ChartRunContext
     let context = splorrContext :?> ChartOutputChartContext
-    let context = splorrContext :?> Metrics.RunWorldContext
     let context = splorrContext :?> ConfirmQuit.RunContext
     let context = splorrContext :?> Avatar.GetJobContext
     let context = splorrContext :?> Island.GetNameContext
     let context = splorrContext :?> Vessel.GetStatisticContext
     let context = splorrContext :?> Shipmate.GetStatisticContext
-    //let context = splorrContext :?> 
+    let context = splorrContext :?> Avatar.GetMetricsContext
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 

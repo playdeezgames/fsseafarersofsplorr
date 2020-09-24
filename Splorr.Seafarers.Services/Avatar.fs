@@ -16,7 +16,8 @@ type AvatarIslandFeatureSink = AvatarIslandFeature option * string -> unit
 type AvatarIslandFeatureSource = string -> AvatarIslandFeature option
 type AvatarGamblingHandSource = string -> AvatarGamblingHand option
 type AvatarGamblingHandSink = string -> AvatarGamblingHand option -> unit
-type AvatarMetricSource = string -> Map<Metric, uint64>
+type AvatarMetrics = Map<Metric, uint64>
+type AvatarMetricSource = string -> AvatarMetrics
 
 module Avatar =
     type CreateContext =
@@ -621,3 +622,12 @@ module Avatar =
             : AvatarIslandFeature option =
         let context = context :?> GetIslandFeatureContext
         context.avatarIslandFeatureSource avatarId
+
+    type GetMetricsContext = 
+        inherit ServiceContext
+        abstract member avatarMetricSource : AvatarMetricSource
+    let GetMetrics
+            (context : ServiceContext)
+            (avatarId: string)
+            : AvatarMetrics =
+        (context :?> GetMetricsContext).avatarMetricSource avatarId

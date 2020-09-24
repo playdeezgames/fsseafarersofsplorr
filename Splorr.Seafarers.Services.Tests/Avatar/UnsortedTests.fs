@@ -103,7 +103,27 @@ let ``GetIslandFeature.It retrieves none when the avatar is at sea.`` () =
     let actual = Avatar.GetIslandFeature context givenAvatarId
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
-    
-
+ 
+type TestAvatarGetMetricsContext
+        (avatarMetricSource) =
+    interface ServiceContext
+    interface Avatar.GetMetricsContext with
+        member this.avatarMetricSource: AvatarMetricSource = avatarMetricSource
+[<Test>]
+let ``GetMetrics.It calls the AvatarMetricSource in the context.`` () =
+    let mutable called = false
+    let avatarMetricSource (_) =
+        called<-true
+        Map.empty
+    let context = 
+        TestAvatarGetMetricsContext
+            (avatarMetricSource) :> ServiceContext
+    let expected = Map.empty
+    let actual =
+        Avatar.GetMetrics
+            context
+            Fixtures.Common.Dummy.AvatarId
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)
 
     

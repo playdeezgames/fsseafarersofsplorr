@@ -71,8 +71,6 @@ type SplorrContext
         member this.avatarJobSource: AvatarJobSource = avatarJobSource
     interface GamestateCheckForAvatarDeathContext with
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
-    interface Metrics.RunWorldContext with
-        member this.avatarMetricSource: AvatarMetricSource = avatarMetricSource
     interface AtSeaGetVisibleIslandsContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Island.GetNameContext with
@@ -433,4 +431,6 @@ type SplorrContext
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
         member this.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+    interface Avatar.GetMetricsContext with
+        member this.avatarMetricSource: AvatarMetricSource = avatarMetricSource
 
