@@ -139,7 +139,6 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Avatar.DealGamblingHandContext
     let context = splorrContext :?> Avatar.FoldGamblingHandContext
     let context = splorrContext :?> World.HasDarkAlleyMinimumStakesContext
-    let context = splorrContext :?> IslandFeatureRunDarkAlleyContext
     let context = splorrContext :?> Commodity.GetCommoditiesContext
     let context = splorrContext :?> GamestateCheckForAvatarDeathContext
     let context = splorrContext :?> AtSeaUpdateDisplayContext
@@ -164,7 +163,7 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Island.GetJobsContext
     let context = splorrContext :?> Item.GetListContext
     let context = splorrContext :?> Island.GetItemsContext
-    //let context = splorrContext :?> 
+    let context = splorrContext :?> Avatar.GetMessagesContext
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 

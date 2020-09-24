@@ -5,14 +5,6 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open Tarot
 
-type IslandFeatureRunDarkAlleyContext =
-    inherit ServiceContext
-    abstract member avatarMessageSource           : AvatarMessageSource
-    abstract member avatarMessageSink             : AvatarMessageSink
-    abstract member islandSingleStatisticSource   : IslandSingleStatisticSource
-    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
-
-
 module IslandFeature =
     let private RunDarkAlleyGamblingHand
             (context       : ServiceContext)
@@ -57,7 +49,6 @@ module IslandFeature =
             (location      : Location)
             (avatarId      : string)
             : Gamestate option =
-        let context = context :?> IslandFeatureRunDarkAlleyContext
         match Avatar.GetGamblingHand context avatarId with
         | Some hand ->
             RunDarkAlleyGamblingHand
@@ -85,7 +76,7 @@ module IslandFeature =
             else
                 "" |> Line |> messageSink
                 avatarId
-                |> context.avatarMessageSource
+                |> Avatar.GetMessages context
                 |> Utility.DumpMessages messageSink
                 [
                     (Hue.Heading, "You are in the dark alley." |> Line) |> Hued

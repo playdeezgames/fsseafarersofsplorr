@@ -3,8 +3,6 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
-type AvatarMessageSource = string -> string list
-
 type GamestateCheckForAvatarDeathContext =
     inherit ServiceContext
     abstract member avatarMessageSource           : AvatarMessageSource

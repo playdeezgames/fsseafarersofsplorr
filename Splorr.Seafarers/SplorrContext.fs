@@ -63,6 +63,8 @@ type SplorrContext
         vesselStatisticSink: VesselStatisticSink ,
         vesselStatisticTemplateSource: VesselStatisticTemplateSource ,
         worldSingleStatisticSource : WorldSingleStatisticSource) =
+    interface Avatar.GetMessagesContext with
+        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
     interface Vessel.GetStatisticContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Shipmate.GetStatisticContext with
@@ -423,11 +425,6 @@ type SplorrContext
     interface CareenedRunContext with
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
 
-    interface IslandFeatureRunDarkAlleyContext with
-        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
-        member this.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
-        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface Avatar.GetMetricsContext with
         member this.avatarMetricSource: AvatarMetricSource = avatarMetricSource
 

@@ -126,4 +126,27 @@ let ``GetMetrics.It calls the AvatarMetricSource in the context.`` () =
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
 
+
+type TestAvatarGetMessagesContext
+       (avatarMessageSource) =
+   interface ServiceContext
+   interface Avatar.GetMessagesContext with
+       member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
+[<Test>]
+let ``GetMessages.It calls the AvatarMetricSource in the context.`` () =
+   let mutable called = false
+   let avatarMessageSource (_) =
+       called<-true
+       []
+   let context = 
+       TestAvatarGetMessagesContext
+           (avatarMessageSource) :> ServiceContext
+   let expected = []
+   let actual =
+       Avatar.GetMessages
+           context
+           Fixtures.Common.Dummy.AvatarId
+   Assert.AreEqual(expected, actual)
+   Assert.IsTrue(called)
+
     
