@@ -15,7 +15,7 @@ let private world =
 
 type TestHelpRunContext(avatarIslandFeatureSource) =
     interface ServiceContext
-    interface HelpRunContext with
+    interface Avatar.GetIslandFeatureContext with
         member _.avatarIslandFeatureSource : AvatarIslandFeatureSource = avatarIslandFeatureSource
 
 [<Test>]

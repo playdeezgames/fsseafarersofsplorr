@@ -3,9 +3,6 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
-type HelpRunContext =
-    abstract member avatarIslandFeatureSource : AvatarIslandFeatureSource
-
 module Help =
     let private abandonJobMessage = 
         [
@@ -297,10 +294,9 @@ module Help =
             (messageSink : MessageSink) 
             (gamestate   : Gamestate) 
             : Gamestate option =
-        let context = context :?> HelpRunContext
         match gamestate with
         | Gamestate.InPlay avatarId ->
-            match context.avatarIslandFeatureSource avatarId with
+            match Avatar.GetIslandFeature context avatarId with
             | None ->
                 messageSink |> AtSea    
             | Some feature when (feature.featureId) = IslandFeatureIdentifier.Dock ->

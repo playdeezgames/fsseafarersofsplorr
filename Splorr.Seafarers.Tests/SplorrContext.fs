@@ -131,7 +131,6 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Avatar.GetPrimaryStatisticContext
     let context = splorrContext :?> Avatar.CompleteJobContext
     let context = splorrContext :?> World.DockContext
-    let context = splorrContext :?> HelpRunContext
     let context = splorrContext :?> Avatar.GetMaximumFoulingContext
     let context = splorrContext :?> Avatar.CleanHullContext
     let context = splorrContext :?> Island.HasFeatureContext

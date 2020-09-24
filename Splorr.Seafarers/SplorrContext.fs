@@ -381,9 +381,6 @@ type SplorrContext
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-    interface HelpRunContext with
-        member _.avatarIslandFeatureSource : AvatarIslandFeatureSource = avatarIslandFeatureSource
-
     interface Avatar.GetMaximumFoulingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
