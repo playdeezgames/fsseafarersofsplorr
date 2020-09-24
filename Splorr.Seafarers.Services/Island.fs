@@ -254,3 +254,12 @@ module Island =
             (context : ServiceContext)
             : Location list =
         (context :?> GetListContext).islandSource()
+
+    type GetJobsContext =
+        inherit ServiceContext
+        abstract member islandJobSource : IslandJobSource
+    let GetJobs
+            (context : ServiceContext)
+            (location: Location)
+            : Job list =
+        (context :?> GetJobsContext).islandJobSource location

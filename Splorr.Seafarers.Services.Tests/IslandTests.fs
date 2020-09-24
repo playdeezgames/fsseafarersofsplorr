@@ -495,4 +495,21 @@ let ``GetList.It calls the IslandSource in the ServiceContext.`` () =
     let actual = Island.GetList context
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
+
+
+type TestIslandGetJobsContext(islandJobSource) =
+    interface Island.GetJobsContext with
+        member this.islandJobSource: IslandJobSource = islandJobSource
+        
+[<Test>]
+let ``GetJobs.It calls the IslandJobSource in the ServiceContext.`` () =
+    let mutable called = false
+    let islandJobSource (_) =
+        called <- true
+        []
+    let context = TestIslandGetJobsContext(islandJobSource) :> ServiceContext
+    let expected = []
+    let actual = Island.GetJobs context Fixtures.Common.Dummy.IslandLocation
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)
     

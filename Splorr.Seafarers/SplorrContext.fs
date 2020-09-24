@@ -121,8 +121,9 @@ type SplorrContext
         member this.islandSource: IslandSource = islandSource
     
     interface Jobs.RunIslandContext with
-        member this.islandJobSource: IslandJobSource = islandJobSource
         member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
+    interface Island.GetJobsContext with
+        member this.islandJobSource: IslandJobSource = islandJobSource
 
     interface Island.GetDisplayNameContext with
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource

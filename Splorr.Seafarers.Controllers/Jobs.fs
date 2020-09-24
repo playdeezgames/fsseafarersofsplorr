@@ -7,7 +7,6 @@ module Jobs =
     type RunIslandContext =
         inherit ServiceContext
         abstract member islandSingleNameSource : IslandSingleNameSource
-        abstract member islandJobSource        : IslandJobSource
 
     let private RunIsland 
             (context:ServiceContext)
@@ -22,7 +21,7 @@ module Jobs =
         |> List.iter messageSink
         let jobs = 
             location
-            |> context.islandJobSource
+            |> Island.GetJobs context
         jobs
         |> List.zip [1..jobs.Length]
         |> List.iter 
