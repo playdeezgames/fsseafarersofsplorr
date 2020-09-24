@@ -72,3 +72,20 @@ let ``DeterminePurchasePrice.It calculates the purchase price of an item in a gi
         ||> IslandMarket.DeterminePurchasePrice 
             context
     Assert.AreEqual(expected, actual)
+
+type TestItemGetListContext(itemSource) =
+    interface Item.GetListContext with
+        member this.itemSource: ItemSource = itemSource
+[<Test>]
+let ``GetList.It calls ItemSource on the ServiceContext.`` () =
+    let expected = Map.empty
+    let mutable called = false
+    let itemSource () =
+        called <- true
+        Map.empty
+    let context =
+        TestItemGetListContext(itemSource) :> ServiceContext
+    let actual = Item.GetList context
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)
+    

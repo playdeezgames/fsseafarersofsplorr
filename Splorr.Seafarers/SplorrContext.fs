@@ -77,6 +77,7 @@ type SplorrContext
         member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
     interface ItemListRunWithIslandContext with
         member this.islandItemSource: IslandItemSource = islandItemSource
+    interface Item.GetListContext with
         member this.itemSource: ItemSource = itemSource
     interface InventoryRunContext with
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource

@@ -10,6 +10,7 @@
     <Compile Include="Angle.fs" />
     <Compile Include="Job.fs" />
     <Compile Include="Commodity.fs" />
+    <Compile Include="Item.fs" />
     <Compile Include="IslandMarket.fs" />
     <Compile Include="IslandFeature.fs" />
     <Compile Include="Statistic.fs" />

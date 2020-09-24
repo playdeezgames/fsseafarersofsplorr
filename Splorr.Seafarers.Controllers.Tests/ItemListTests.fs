@@ -17,6 +17,7 @@ type TestItemListRunContext
         shipmateSingleStatisticSource) =
     interface ItemListRunWithIslandContext with
         member this.islandItemSource: IslandItemSource = islandItemSource
+    interface Item.GetListContext with
         member this.itemSource: ItemSource = itemSource
     interface DockedRunBoilerplateContext with
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource

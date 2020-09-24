@@ -5,7 +5,6 @@ open Splorr.Seafarers.Services
 
 type ItemListRunWithIslandContext =
     inherit ServiceContext
-    abstract member itemSource         : ItemSource
     abstract member islandItemSource   : IslandItemSource
 
 module ItemList = 
@@ -26,7 +25,7 @@ module ItemList =
             (Hue.Sublabel, "---------------------+----------+----------" |> Line) |> Hued
         ]
         |> List.iter messageSink
-        let items = context.itemSource()
+        let items = Item.GetList context
         location
         |> context.islandItemSource
         |> Set.iter (fun item -> 

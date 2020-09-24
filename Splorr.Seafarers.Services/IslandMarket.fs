@@ -2,7 +2,6 @@
 open Splorr.Seafarers.Models
 
 type ItemSingleSource    = uint64 -> ItemDescriptor option
-type ItemSource = unit -> Map<uint64, ItemDescriptor>
 type RationItemSource = unit -> uint64 list
 
 type IslandMarketSource  = Location -> Map<uint64, Market>

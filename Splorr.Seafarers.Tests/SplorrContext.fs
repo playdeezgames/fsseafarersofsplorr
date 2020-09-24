@@ -164,7 +164,7 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Shipmate.GetStatisticContext
     let context = splorrContext :?> Avatar.GetMetricsContext
     let context = splorrContext :?> Island.GetJobsContext
-    //let context = splorrContext :?> 
+    let context = splorrContext :?> Item.GetListContext
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 

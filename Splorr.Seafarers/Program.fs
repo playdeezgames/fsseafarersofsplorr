@@ -67,7 +67,7 @@ let main argv =
         |> Persister.unpackOrThrow
 
     let itemSource () = 
-        Item.GetList connection
+        Persistence.Item.GetList connection
         |> Persister.unpackOrThrow
 
     let vesselStatisticTemplateSource () = 
