@@ -556,3 +556,19 @@ let ``HasFeature.It calls the IslandSingleFeatureSource in the ServiceContext.``
     let actual = Island.HasFeature context IslandFeatureIdentifier.Dock Fixtures.Common.Dummy.IslandLocation
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
+
+
+type TestIslandGetFeaturesContext(islandFeatureSource) =
+    interface Island.GetFeaturesContext with
+        member this.islandFeatureSource: IslandFeatureSource = islandFeatureSource
+[<Test>]
+let ``GetFeatures.It calls the IslandSingleFeatureSource in the ServiceContext.`` () =
+    let mutable called = false
+    let islandFeatureSource (_) =
+        called <- true
+        []
+    let context = TestIslandGetFeaturesContext(islandFeatureSource) :> ServiceContext
+    let expected = []
+    let actual = Island.GetFeatures context Fixtures.Common.Dummy.IslandLocation
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)

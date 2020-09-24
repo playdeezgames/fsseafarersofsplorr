@@ -170,4 +170,28 @@ let ``GetInventory.It calls the AvatarInventorySource in the context.`` () =
    Assert.AreEqual(expected, actual)
    Assert.IsTrue(called)
 
+type TestAvatarGetIslandMetricContext
+       (avatarIslandSingleMetricSource) =
+   interface ServiceContext
+   interface Avatar.GetIslandMetricContext with
+       member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+[<Test>]
+let ``GetIslandMetric.It calls the AvatarIslandSingleMetricSource in the context.`` () =
+   let mutable called = false
+   let avatarInventorySource (_) =
+       called<-true
+       Map.empty
+   let context = 
+       TestAvatarGetIslandMetricContext
+           (avatarInventorySource) :> ServiceContext
+   let expected = Map.empty
+   let actual =
+       Avatar.GetIslandMetric
+           context
+           Fixtures.Common.Dummy.IslandLocation
+           AvatarIslandMetricIdentifier.LastVisit
+           Fixtures.Common.Dummy.AvatarId
+   Assert.AreEqual(expected, actual)
+   Assert.IsTrue(called)
+
     

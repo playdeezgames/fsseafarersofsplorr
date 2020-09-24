@@ -21,6 +21,7 @@ type IslandSingleStatisticSource = Location->IslandStatisticIdentifier->Statisti
 type IslandStatisticTemplateSource = unit -> Map<IslandStatisticIdentifier, StatisticTemplate>
 type IslandSingleFeatureSource = Location -> IslandFeatureIdentifier -> bool
 type IslandSource = unit -> Location list
+type IslandFeatureSource = Location -> IslandFeatureIdentifier list
 
 module Island =
     type CreateContext = 
@@ -281,3 +282,13 @@ module Island =
             (location   : Location)
             : bool =
         (context :?> HasFeatureContext).islandSingleFeatureSource location identifier
+
+    type GetFeaturesContext = 
+        inherit ServiceContext
+        abstract member islandFeatureSource            : IslandFeatureSource
+    let GetFeatures
+            (context : ServiceContext)
+            (location : Location)
+            : IslandFeatureIdentifier list =
+        (context :?> GetFeaturesContext).islandFeatureSource location
+

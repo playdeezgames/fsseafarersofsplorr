@@ -3,54 +3,6 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
-type IslandFeatureSource = Location -> IslandFeatureIdentifier list
-
-type DockedUpdateDisplayContext =
-    abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
-    abstract member avatarMessageSource            : AvatarMessageSource
-    abstract member islandSingleNameSource         : IslandSingleNameSource
-    abstract member islandFeatureSource            : IslandFeatureSource
-
-type DockedHandleCommandContext = 
-    inherit World.AcceptJobContext
-    inherit World.UndockContext
-    inherit World.BuyItemsContext
-    inherit World.SellItemsContext
-    inherit World.AbandonJobContext
-    inherit World.ClearMessagesContext
-    inherit Avatar.EnterIslandFeatureContext
-    abstract member avatarInventorySink : AvatarInventorySink
-    abstract member avatarInventorySource : AvatarInventorySource
-    abstract member avatarIslandSingleMetricSink : AvatarIslandSingleMetricSink
-    abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
-    abstract member avatarJobSink : AvatarJobSink
-    abstract member avatarJobSource : AvatarJobSource
-    abstract member avatarMessagePurger : AvatarMessagePurger
-    abstract member avatarMessageSink : AvatarMessageSink
-    abstract member avatarSingleMetricSink : AvatarSingleMetricSink
-    abstract member avatarSingleMetricSource : AvatarSingleMetricSource
-    abstract member islandJobPurger : IslandJobPurger
-    abstract member islandMarketSource : IslandMarketSource 
-    abstract member islandSingleJobSource : IslandSingleJobSource
-    abstract member islandSingleMarketSink : IslandSingleMarketSink 
-    abstract member islandSingleMarketSource : IslandSingleMarketSource 
-    abstract member islandSource : IslandSource
-    abstract member itemSource : ItemSource 
-    abstract member shipmateSingleStatisticSink : ShipmateSingleStatisticSink
-    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
-    abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-
-type DockedRunBoilerplateContext =
-    inherit ServiceContext
-    abstract member avatarMessageSource           : AvatarMessageSource
-    abstract member islandSource                  : IslandSource
-
-
-type DockedRunContext =
-    inherit DockedUpdateDisplayContext
-    inherit DockedHandleCommandContext
-    inherit DockedRunBoilerplateContext
-
 module Docked = 
     let private getFeatureDisplayName (feature:IslandFeatureIdentifier) : Message =
         match feature with
@@ -67,18 +19,18 @@ module Docked =
             (location    : Location) 
             (avatarId    : string) 
             : unit =
-        let context = context :?> DockedUpdateDisplayContext
         "" |> Line |> messageSink
         avatarId
-        |> context.avatarMessageSource
+        |> Avatar.GetMessages context
         |> Utility.DumpMessages messageSink
-        context.islandFeatureSource location
+        location
+        |> Island.GetFeatures context 
         |> List.map
             getFeatureDisplayName
         |> List.append
             [
-                (Hue.Heading, sprintf "You are docked at '%s':" (context.islandSingleNameSource location |> Option.get) |> Line) |> Hued
-                (Hue.Flavor, sprintf "You have visited %u times." (context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount |> Option.defaultValue 0UL) |> Line) |> Hued
+                (Hue.Heading, sprintf "You are docked at '%s':" (Island.GetName context location |> Option.get) |> Line) |> Hued
+                (Hue.Flavor, sprintf "You have visited %u times." (Avatar.GetIslandMetric context location AvatarIslandMetricIdentifier.VisitCount avatarId |> Option.defaultValue 0UL) |> Line) |> Hued
             ]
         |> List.iter messageSink
 
@@ -93,13 +45,11 @@ module Docked =
 
         match command with
         | Some (Command.GoTo feature) ->
-            //enter the feature if the island has it
             Avatar.EnterIslandFeature 
                 context 
                 avatarId 
                 location 
                 feature
-            //context.avatarIslandFeatureSink ({featureId = feature; location = location} |> Some, avatarId)//TODO: this should become an avatar module function
             avatarId
             |> Gamestate.InPlay
             |> Some
@@ -224,9 +174,8 @@ module Docked =
             (location                      : Location) 
             (avatarId                      : string) 
             : Gamestate option =
-        let context = context :?> DockedRunBoilerplateContext
         if avatarId |> World.IsAvatarAlive context then
-            if context.islandSource() |> List.exists (fun x->x= location) then
+            if context |> Island.GetList |> List.exists (fun x->x= location) then
                 func location avatarId
             else
                 avatarId
@@ -234,7 +183,7 @@ module Docked =
                 |> Some
         else
             avatarId
-            |> context.avatarMessageSource
+            |> Avatar.GetMessages context
             |> Gamestate.GameOver
             |> Some
 

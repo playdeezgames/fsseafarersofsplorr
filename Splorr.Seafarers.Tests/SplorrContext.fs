@@ -106,7 +106,6 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Avatar.GetPositionContext
     let context = splorrContext :?> World.CreateContext
     let context = splorrContext :?> World.UpdateChartsContext
-    let context = splorrContext :?> DockedUpdateDisplayContext
     let context = splorrContext :?> IslandMarket.DeterminePriceContext
     let context = splorrContext :?> Island.MakeKnownContext
     let context = splorrContext :?> Island.UpdateMarketForItemContext
@@ -119,7 +118,6 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> World.AbandonJobContext
     let context = splorrContext :?> World.BuyItemsContext
     let context = splorrContext :?> Avatar.EnterIslandFeatureContext
-    let context = splorrContext :?> DockedHandleCommandContext
     let context = splorrContext :?> World.SellItemsContext
     let context = splorrContext :?> Job.CreateContext
     let context = splorrContext :?> Island.AddVisitContext
@@ -143,7 +141,6 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> AtSeaUpdateDisplayContext
     let context = splorrContext :?> AtSeaGetVisibleIslandsContext
     let context = splorrContext :?> AtSeaCanCareenContext
-    let context = splorrContext :?> DockedRunBoilerplateContext
     let context = splorrContext :?> IslandListRunWorldContext
     let context = splorrContext :?> CareenedRunContext
     let context = splorrContext :?> CareenedRunAliveContext
@@ -162,6 +159,15 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Island.GetItemsContext
     let context = splorrContext :?> Avatar.GetMessagesContext
     let context = splorrContext :?> Avatar.GetInventoryContext
+    let context = splorrContext :?> Avatar.GetIslandMetricContext
+    //let context = splorrContext :?> 
+    //let context = splorrContext :?> 
+    //let context = splorrContext :?> 
+    //let context = splorrContext :?> 
+    //let context = splorrContext :?> 
+    //let context = splorrContext :?> 
+    //let context = splorrContext :?> 
+    //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     Assert.Pass("If it makes it this far, it works!")

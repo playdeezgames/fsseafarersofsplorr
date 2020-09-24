@@ -651,3 +651,15 @@ module Avatar =
             (avatarId : string)
             : AvatarInventory =
         (context :?> GetInventoryContext).avatarInventorySource avatarId
+
+    type GetIslandMetricContext =
+        inherit ServiceContext
+        abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
+    let GetIslandMetric 
+            (context : ServiceContext)
+            (location : Location)
+            (identifier: AvatarIslandMetricIdentifier)
+            (avatarId : string)
+            : uint64 option =
+        raise (NotImplementedException "No Unit Tests")
+        (context :?> GetIslandMetricContext).avatarIslandSingleMetricSource avatarId location identifier

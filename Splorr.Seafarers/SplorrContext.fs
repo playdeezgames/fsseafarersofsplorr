@@ -83,9 +83,6 @@ type SplorrContext
         member this.itemSource: ItemSource = itemSource
     interface Avatar.GetInventoryContext with
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
-    interface DockedRunBoilerplateContext with
-        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
-        member this.islandSource: IslandSource = islandSource
     interface IslandListRunWorldContext with
         member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
@@ -254,10 +251,9 @@ type SplorrContext
         member this.islandSource: IslandSource = islandSource
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface DockedUpdateDisplayContext with
+    interface Avatar.GetIslandMetricContext with
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource 
-        member _.avatarMessageSource            : AvatarMessageSource            = avatarMessageSource            
-        member _.islandSingleNameSource         : IslandSingleNameSource         = islandSingleNameSource  
+    interface Island.GetFeaturesContext with
         member _.islandFeatureSource            : IslandFeatureSource            = islandFeatureSource
 
     interface IslandMarket.DeterminePriceContext with
@@ -301,27 +297,6 @@ type SplorrContext
     interface Avatar.EnterIslandFeatureContext with
         member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
         member this.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
-    interface DockedHandleCommandContext with
-        member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
-        member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
-        member this.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
-        member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
-        member this.avatarJobSink: AvatarJobSink = avatarJobSink
-        member this.avatarJobSource: AvatarJobSource = avatarJobSource
-        member this.avatarMessagePurger: AvatarMessagePurger = avatarMessagePurger
-        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-        member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
-        member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
-        member this.islandJobPurger: IslandJobPurger = islandJobPurger
-        member this.islandMarketSource: IslandMarketSource = islandMarketSource
-        member this.islandSingleJobSource: IslandSingleJobSource = islandSingleJobSource
-        member this.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
-        member this.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
-        member this.islandSource: IslandSource = islandSource
-        member this.itemSource: ItemSource = itemSource
-        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
-        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface World.SellItemsContext with
       member _.islandSource                  : IslandSource = islandSource
        member _.itemSource                    : ItemSource = itemSource
