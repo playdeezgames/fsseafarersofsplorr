@@ -481,3 +481,18 @@ let ``Get Statistic.It returns None when the statistic does not exist or the isl
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
 
+type TestIslandGetListContext(islandSource) =
+    interface Island.GetListContext with
+        member this.islandSource: IslandSource = islandSource
+[<Test>]
+let ``GetList.It calls the IslandSource in the ServiceContext.`` () =
+    let mutable called = false
+    let islandSource() =
+        called <- true
+        []
+    let context = TestIslandGetListContext(islandSource) :> ServiceContext
+    let expected = []
+    let actual = Island.GetList context
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)
+    

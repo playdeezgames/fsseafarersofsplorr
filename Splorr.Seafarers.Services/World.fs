@@ -8,7 +8,6 @@ type TradeQuantity =
 
 type AvatarMessagePurger = string -> unit
 type IslandLocationByNameSource = string -> Location option
-type IslandSource = unit -> Location list
 type IslandFeatureGeneratorSource = unit -> Map<IslandFeatureIdentifier, IslandFeatureGenerator>
 type IslandSingleFeatureSink = Location -> IslandFeatureIdentifier -> unit
 type WorldSingleStatisticSource = WorldStatisticIdentifier -> Statistic

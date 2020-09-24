@@ -272,7 +272,7 @@ let main argv =
         >> Persister.unpackOrThrow
 
     let islandSource () : Location list = 
-        Island.GetList connection
+        Persistence.Island.GetList connection
         |> Persister.unpackOrThrow
 
     let islandJobSink (location:Location) = 

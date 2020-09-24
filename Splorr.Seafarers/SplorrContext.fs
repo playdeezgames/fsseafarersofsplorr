@@ -117,7 +117,7 @@ type SplorrContext
         member this.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
         member this.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
     
-    interface Jobs.RunContext with
+    interface Island.GetListContext with
         member this.islandSource: IslandSource = islandSource
     
     interface Jobs.RunIslandContext with

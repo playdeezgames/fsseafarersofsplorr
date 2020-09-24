@@ -47,19 +47,15 @@ module Jobs =
                 |> List.iter messageSink)
         if jobs.IsEmpty then
             "(none available)" |> Line |> messageSink
-
     
-    type RunContext =
-        inherit ServiceContext
-        abstract member islandSource           : IslandSource
     let Run  
             (context : ServiceContext)
             (messageSink            : MessageSink) 
             (location               : Location)
             (avatarId               : string) 
             : Gamestate option =
-        let context = context :?> RunContext
-        context.islandSource()
+        context
+        |> Island.GetList
         |> List.tryFind(fun x->x= location)
         |> Option.iter 
             (RunIsland 
