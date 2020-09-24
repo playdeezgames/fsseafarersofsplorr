@@ -15,7 +15,6 @@ type TestItemListRunContext
         islandSource,
         itemSingleSource,
         shipmateSingleStatisticSource) =
-    interface ItemListRunContext
     interface ItemListRunWithIslandContext with
         member this.islandItemSource: IslandItemSource = islandItemSource
         member this.itemSource: ItemSource = itemSource
@@ -47,7 +46,7 @@ let ``Run.It returns Docked (at Shop) gamestate.`` () =
             islandSourceStub,
             (fun x -> atSeaItemSource() |> Map.tryFind x ),
             shipmateSingleStatisticSourceStub) 
-        :> ItemListRunContext
+        :> ServiceContext
     let actual = 
         (inputLocation, inputWorld)
         ||> ItemList.Run 

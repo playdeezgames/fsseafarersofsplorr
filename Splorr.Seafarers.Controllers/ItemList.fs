@@ -8,9 +8,6 @@ type ItemListRunWithIslandContext =
     abstract member itemSource         : ItemSource
     abstract member islandItemSource   : IslandItemSource
 
-type ItemListRunContext =
-    inherit ServiceContext
-
 module ItemList = 
     let private RunWithIsland 
             (context            : ServiceContext)
