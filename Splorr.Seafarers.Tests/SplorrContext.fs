@@ -83,6 +83,7 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Avatar.GetCurrentFoulingContext
     let context = splorrContext :?> Avatar.GetGamblingHandContext
     let context = splorrContext :?> Avatar.GetHeadingContext
+    let context = splorrContext :?> Avatar.GetIslandFeatureContext
     let context = splorrContext :?> Avatar.GetIslandMetricContext
     let context = splorrContext :?> Avatar.GetInventoryContext
     let context = splorrContext :?> Avatar.GetItemCountContext
@@ -160,7 +161,8 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> World.SellItemsContext
     let context = splorrContext :?> World.UndockContext
     let context = splorrContext :?> World.UpdateChartsContext
-    //let context = splorrContext :?> 
+
+    let context = splorrContext :?> Island.GetStatisticContext
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 

@@ -63,6 +63,8 @@ type SplorrContext
         vesselStatisticSink: VesselStatisticSink ,
         vesselStatisticTemplateSource: VesselStatisticTemplateSource ,
         worldSingleStatisticSource : WorldSingleStatisticSource) =
+    interface Avatar.GetIslandFeatureContext with
+        member this.avatarIslandFeatureSource: AvatarIslandFeatureSource = avatarIslandFeatureSource
     interface Avatar.GetMessagesContext with
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
 
@@ -330,6 +332,9 @@ type SplorrContext
     interface Avatar.CompleteJobContext with
         member _.avatarJobSink : AvatarJobSink = avatarJobSink
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
+
+    interface Island.GetStatisticContext with
+        member this.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
 
     interface World.DockContext with
         member this.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
