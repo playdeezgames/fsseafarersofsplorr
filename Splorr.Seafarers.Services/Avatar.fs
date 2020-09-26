@@ -1,7 +1,6 @@
 ﻿namespace Splorr.Seafarers.Services
 open System
 open Splorr.Seafarers.Models
-open Tarot
 
 type AvatarShipmateSource = string -> ShipmateIdentifier list
 type AvatarInventorySource = string -> AvatarInventory
@@ -11,8 +10,6 @@ type AvatarSingleMetricSink = string -> Metric * uint64 -> unit
 type AvatarJobSink = string -> Job option -> unit
 type AvatarIslandFeatureSink = AvatarIslandFeature option * string -> unit
 type AvatarIslandFeatureSource = string -> AvatarIslandFeature option
-type AvatarGamblingHandSource = string -> AvatarGamblingHand option
-type AvatarGamblingHandSink = string -> AvatarGamblingHand option -> unit
 type AvatarMetrics = Map<Metric, uint64>
 type AvatarMetricSource = string -> AvatarMetrics
 
@@ -471,44 +468,6 @@ module Avatar =
             context
             Metric.CleanedHull
 
-    type GetGamblingHandContext =
-        inherit ServiceContext
-        abstract member avatarGamblingHandSource : AvatarGamblingHandSource
-    let GetGamblingHand
-            (context  : ServiceContext)
-            (avatarId : string)
-            : AvatarGamblingHand option =
-        let context = context :?> GetGamblingHandContext
-        context.avatarGamblingHandSource avatarId
-      
-      
-    type DealGamblingHandContext =
-        inherit ServiceContext
-        abstract member avatarGamblingHandSink : AvatarGamblingHandSink
-        abstract member random : Random
-    let DealGamblingHand
-            (context  : ServiceContext)
-            (avatarId : string)
-            : unit =
-        let context = context :?> DealGamblingHandContext
-        match Deck.Create()
-            |> List.sortBy (fun _ -> context.random.Next()) with
-        | first :: second :: third :: _ ->
-            (first, second, third)
-            |> Some
-            |> context.avatarGamblingHandSink avatarId
-        | _ ->
-            raise (NotImplementedException "DealGamblingHand did not have at least three cards")
-
-    type FoldGamblingHandContext =
-        inherit ServiceContext
-        abstract member avatarGamblingHandSink : AvatarGamblingHandSink
-    let FoldGamblingHand
-            (context  : ServiceContext)
-            (avatarId : string)
-            : unit =
-        let context = context :?> FoldGamblingHandContext
-        context.avatarGamblingHandSink avatarId None
 
 
     type EnterIslandFeatureContext =
@@ -565,3 +524,4 @@ module Avatar =
             (avatarId : string)
             : uint64 option =
         (context :?> GetIslandMetricContext).avatarIslandSingleMetricSource avatarId location identifier
+

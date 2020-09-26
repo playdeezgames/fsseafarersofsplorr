@@ -763,7 +763,7 @@ module World =
         let context = context :?> ResolveHandContext
         match Avatar.GetIslandFeature context avatarId with
         | Some feature when feature.featureId = IslandFeatureIdentifier.DarkAlley ->
-            match Avatar.GetGamblingHand context avatarId with
+            match AvatarGamblingHand.Get context avatarId with
             | Some (first, second, third) ->
                 if CanPlaceBet context amount avatarId then
                     let minimumStakes =

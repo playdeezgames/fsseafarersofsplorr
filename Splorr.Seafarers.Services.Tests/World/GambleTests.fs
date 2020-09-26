@@ -50,7 +50,7 @@ type TestWorldResolveHandContext
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface Avatar.GetIslandFeatureContext with
         member this.avatarIslandFeatureSource: AvatarIslandFeatureSource = avatarIslandFeatureSource
-    interface Avatar.GetGamblingHandContext with
+    interface AvatarGamblingHand.GetContext with
         member this.avatarGamblingHandSource: AvatarGamblingHandSource = avatarGamblingHandSource
     interface World.CanPlaceBetContext
     interface AvatarMessages.AddContext with

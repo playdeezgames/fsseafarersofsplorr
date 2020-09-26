@@ -24,7 +24,7 @@ module IslandFeature =
         match commandSource() with
         | Some (Command.Bet None) ->
             avatarId
-            |> Avatar.FoldGamblingHand
+            |> AvatarGamblingHand.Fold
                 context 
             avatarId
             |> Gamestate.InPlay
@@ -49,7 +49,7 @@ module IslandFeature =
             (location      : Location)
             (avatarId      : string)
             : Gamestate option =
-        match Avatar.GetGamblingHand context avatarId with
+        match AvatarGamblingHand.Get context avatarId with
         | Some hand ->
             RunDarkAlleyGamblingHand
                 context
@@ -99,7 +99,7 @@ module IslandFeature =
                     |> Some
                 | Some Command.Gamble ->
                     avatarId
-                    |> Avatar.DealGamblingHand
+                    |> AvatarGamblingHand.Deal
                         context 
                     avatarId
                     |> Gamestate.InPlay

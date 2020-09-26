@@ -20,6 +20,7 @@
     <Compile Include="Shipmate.fs" />
     <Compile Include="AvatarMessages.fs" />
     <Compile Include="Avatar.fs" />
+    <Compile Include="AvatarGamblingHand.fs" />
     <Compile Include="AvatarJob.fs" />
     <Compile Include="World.fs" />
   </ItemGroup>

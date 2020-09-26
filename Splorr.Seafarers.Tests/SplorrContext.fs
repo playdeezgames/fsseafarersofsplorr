@@ -69,26 +69,28 @@ let splorrContext : ServiceContext =
 [<Test>]
 let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrContext.`` () =
     //avatar gambling contexts
-    let context = splorrContext :?> Avatar.DealGamblingHandContext
-    let context = splorrContext :?> Avatar.FoldGamblingHandContext
-    let context = splorrContext :?> Avatar.GetGamblingHandContext
+    let context = splorrContext :?> AvatarGamblingHand.DealContext
+    let context = splorrContext :?> AvatarGamblingHand.FoldContext
+    let context = splorrContext :?> AvatarGamblingHand.GetContext
     //avatar vessel contexts
     let context = splorrContext :?> Avatar.CleanHullContext
+    let context = splorrContext :?> Avatar.GetCurrentFoulingContext
+    let context = splorrContext :?> Avatar.GetMaximumFoulingContext
+
     let context = splorrContext :?> Avatar.EnterIslandFeatureContext
     let context = splorrContext :?> Avatar.GetIslandFeatureContext
-    let context = splorrContext :?> Avatar.GetCurrentFoulingContext
+
     let context = splorrContext :?> Avatar.GetHeadingContext
-    let context = splorrContext :?> Avatar.GetMaximumFoulingContext
     let context = splorrContext :?> Avatar.GetPositionContext
     let context = splorrContext :?> Avatar.GetSpeedContext
     let context = splorrContext :?> Avatar.MoveContext
     let context = splorrContext :?> Avatar.SetHeadingContext
     let context = splorrContext :?> Avatar.SetPositionContext
     let context = splorrContext :?> Avatar.SetSpeedContext
-    let context = splorrContext :?> Avatar.GetUsedTonnageContext
     //avatar inventory contexts
     let context = splorrContext :?> Avatar.AddInventoryContext
     let context = splorrContext :?> Avatar.GetInventoryContext
+    let context = splorrContext :?> Avatar.GetUsedTonnageContext
     let context = splorrContext :?> Avatar.GetItemCountContext
     let context = splorrContext :?> Avatar.RemoveInventoryContext
     //avatar shipmate contexts

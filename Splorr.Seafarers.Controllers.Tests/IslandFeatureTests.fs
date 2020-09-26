@@ -39,15 +39,15 @@ type TestIslandFeatureRunContext
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface World.AddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface Avatar.GetGamblingHandContext with
+    interface AvatarGamblingHand.GetContext with
         member _.avatarGamblingHandSource : AvatarGamblingHandSource = avatarGamblingHandSource
-    interface Avatar.DealGamblingHandContext with
+    interface AvatarGamblingHand.DealContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
         member _.random : Random = Fixtures.Common.Dummy.Random
     interface Avatar.EnterIslandFeatureContext with
         member this.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
         member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
-    interface Avatar.FoldGamblingHandContext with
+    interface AvatarGamblingHand.FoldContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
     interface World.HasDarkAlleyMinimumStakesContext with
         member _.shipmateSingleStatisticSource : ShipmateSingleStatisticSource = shipmateSingleStatisticSource

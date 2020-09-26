@@ -7,11 +7,11 @@ open Tarot
 open Splorr.Seafarers.Models
 
 type TestAvatarGetGamblingHandContext (avatarGamblingHandSource) =
-    interface Avatar.GetGamblingHandContext with
+    interface AvatarGamblingHand.GetContext with
         member _.avatarGamblingHandSource : AvatarGamblingHandSource = avatarGamblingHandSource
 
 type TestAvatarDealGamblingHandContext(avatarGamblingHandSink, random) =
-    interface Avatar.DealGamblingHandContext with
+    interface AvatarGamblingHand.DealContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
         member _.random : Random = random
 
@@ -31,9 +31,9 @@ let ``GetGamblingHand.It retrieves a gambling hand for a given avatar.`` () =
     let avatarGamblingHandSource (_) =
         called <- true
         expected
-    let context = TestAvatarGetGamblingHandContext (avatarGamblingHandSource) :> Avatar.GetGamblingHandContext
+    let context = TestAvatarGetGamblingHandContext (avatarGamblingHandSource) :> AvatarGamblingHand.GetContext
     let actual =
-        Avatar.GetGamblingHand
+        AvatarGamblingHand.Get
             context
             Fixtures.Common.Dummy.AvatarId
     Assert.AreEqual(expected, actual)
@@ -48,8 +48,8 @@ let ``DealGamblingHand.It deals a new hand to the given avatar.`` () =
         called <- true
         Assert.AreEqual(expectedHand, hand)
     let random : Random = Random(1000)
-    let context = TestAvatarDealGamblingHandContext(avatarGamblingHandSink, random) :> Avatar.DealGamblingHandContext 
-    Avatar.DealGamblingHand
+    let context = TestAvatarDealGamblingHandContext(avatarGamblingHandSink, random) :> AvatarGamblingHand.DealContext 
+    AvatarGamblingHand.Deal
         context
         Fixtures.Common.Dummy.AvatarId
     Assert.True(called)

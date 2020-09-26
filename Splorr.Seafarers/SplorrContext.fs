@@ -366,14 +366,14 @@ type SplorrContext
     interface Island.HasFeatureContext with
         member _.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
     
-    interface Avatar.GetGamblingHandContext with
+    interface AvatarGamblingHand.GetContext with
         member _.avatarGamblingHandSource : AvatarGamblingHandSource = avatarGamblingHandSource
 
-    interface Avatar.DealGamblingHandContext with
+    interface AvatarGamblingHand.DealContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
         member _.random : Random = random
 
-    interface Avatar.FoldGamblingHandContext with
+    interface AvatarGamblingHand.FoldContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
 
     interface World.GetStatisticContext with
