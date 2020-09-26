@@ -74,7 +74,7 @@ type SplorrContext
     interface Shipmate.GetStatisticContext with
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-    interface Avatar.GetJobContext with
+    interface AvatarJob.GetContext with
         member _.avatarJobSource: AvatarJobSource = avatarJobSource
 
     interface Island.GetNameContext with
@@ -260,7 +260,7 @@ type SplorrContext
     interface Avatar.GetUsedTonnageContext with
         member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource
 
-    interface Avatar.AbandonJobContext with
+    interface AvatarJob.AbandonContext with
         member _.avatarJobSink: AvatarJobSink = avatarJobSink
         member _.avatarJobSource: AvatarJobSource = avatarJobSource
         
@@ -329,7 +329,7 @@ type SplorrContext
     interface Avatar.GetPrimaryStatisticContext with
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-    interface Avatar.CompleteJobContext with
+    interface AvatarJob.CompleteContext with
         member _.avatarJobSink : AvatarJobSink = avatarJobSink
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
 

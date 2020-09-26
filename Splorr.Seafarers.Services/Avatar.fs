@@ -10,7 +10,6 @@ type AvatarInventorySource = string -> AvatarInventory
 type AvatarInventorySink = string -> AvatarInventory -> unit
 type AvatarSingleMetricSource = string -> Metric -> uint64
 type AvatarSingleMetricSink = string -> Metric * uint64 -> unit
-type AvatarJobSource = string -> Job option
 type AvatarJobSink = string -> Job option -> unit
 type AvatarIslandFeatureSink = AvatarIslandFeature option * string -> unit
 type AvatarIslandFeatureSource = string -> AvatarIslandFeature option
@@ -19,7 +18,6 @@ type AvatarGamblingHandSink = string -> AvatarGamblingHand option -> unit
 type AvatarMetrics = Map<Metric, uint64>
 type AvatarMetricSource = string -> AvatarMetrics
 type AvatarMessageSource = string -> string list
-
 
 module Avatar =
     type CreateContext =
@@ -191,7 +189,7 @@ module Avatar =
         let context = context :?> AddMetricContext
         context.avatarSingleMetricSink avatarId (metric, (context.avatarSingleMetricSource avatarId metric) + amount)
 
-    let private IncrementMetric 
+    let internal IncrementMetric 
             (context  : ServiceContext)
             (metric   : Metric) 
             (avatarId : string) 
@@ -379,77 +377,6 @@ module Avatar =
     let GetMoney (context:ServiceContext) = GetPrimaryStatistic context ShipmateStatisticIdentifier.Money
 
     let GetReputation (context:ServiceContext) = GetPrimaryStatistic context ShipmateStatisticIdentifier.Reputation
-    
-
-    type AbandonJobContext =
-        inherit ServiceContext
-        abstract member avatarJobSink : AvatarJobSink
-        abstract member avatarJobSource : AvatarJobSource
-    let AbandonJob 
-            (context : ServiceContext)
-            (avatarId: string)
-            : unit =
-        let context = context :?> AbandonJobContext
-        let reputationCostForAbandoningAJob = -1.0
-        avatarId
-        |> context.avatarJobSource
-        |> Option.iter
-            (fun _ -> 
-                avatarId
-                |> SetReputation 
-                    context
-                    ((GetReputation 
-                        context
-                        avatarId) + 
-                            reputationCostForAbandoningAJob) 
-                    
-                avatarId
-                |> IncrementMetric 
-                    context
-                    Metric.AbandonedJob
-                context.avatarJobSink avatarId None)
-
-    type GetJobContext =
-        inherit ServiceContext
-        abstract member avatarJobSource : AvatarJobSource
-    let GetJob
-            (context : ServiceContext)
-            (avatarId : string)
-            : Job option =
-        (context :?> GetJobContext).avatarJobSource avatarId
-
-    type CompleteJobContext =
-        inherit ServiceContext
-        abstract member avatarJobSink : AvatarJobSink
-        abstract member avatarJobSource : AvatarJobSource
-    let CompleteJob
-            (context : ServiceContext)
-            (avatarId:string)
-            : unit =
-        let context = context :?> CompleteJobContext
-        match avatarId |> context.avatarJobSource with
-        | Some job ->
-            SetReputation 
-                context
-                ((GetReputation 
-                    context
-                    avatarId) + 
-                        1.0)
-                avatarId
-            Shipmate.TransformStatistic 
-                context
-                ShipmateStatisticIdentifier.Money 
-                (Statistic.ChangeCurrentBy job.Reward >> Some)
-                avatarId
-                Primary
-            avatarId
-            |> AddMetric 
-                context
-                Metric.CompletedJob 
-                1UL
-            None
-            |> context.avatarJobSink avatarId
-        | _ -> ()
 
     let EarnMoney 
             (context : ServiceContext)

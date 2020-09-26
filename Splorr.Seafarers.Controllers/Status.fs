@@ -31,7 +31,7 @@ module Status =
         ]
         |> List.iter messageSink
         avatarId
-        |> Avatar.GetJob context
+        |> AvatarJob.Get context
         |> Option.iter
             (fun job ->
                 [

@@ -6,7 +6,7 @@ open NUnit.Framework
 type TestAvatarGetJobContext
         (avatarJobSource) =
     interface ServiceContext
-    interface Avatar.GetJobContext with
+    interface AvatarJob.GetContext with
         member this.avatarJobSource: AvatarJobSource = avatarJobSource
 
 [<Test>]
@@ -18,7 +18,7 @@ let ``GetJob.It calls the AvatarJobSource in the operating context.`` () =
     let context = TestAvatarGetJobContext(avatarJobSource) :> ServiceContext
     let expected = None
     let actual =
-        Avatar.GetJob context Fixtures.Common.Dummy.AvatarId
+        AvatarJob.Get context Fixtures.Common.Dummy.AvatarId
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
     

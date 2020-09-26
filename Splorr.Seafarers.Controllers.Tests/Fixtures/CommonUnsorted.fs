@@ -316,7 +316,7 @@ type TestAtSeaRunContext
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Avatar.GetPrimaryStatisticContext with
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface Avatar.AbandonJobContext with
+    interface AvatarJob.AbandonContext with
         member this.avatarJobSink: AvatarJobSink = avatarJobSink
         member this.avatarJobSource: AvatarJobSource = avatarJobSource
     interface World.ClearMessagesContext with
@@ -341,7 +341,7 @@ type TestAtSeaRunContext
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface Avatar.CompleteJobContext with
+    interface AvatarJob.CompleteContext with
         member _.avatarJobSink : AvatarJobSink = avatarJobSink
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
     interface Job.CreateContext with

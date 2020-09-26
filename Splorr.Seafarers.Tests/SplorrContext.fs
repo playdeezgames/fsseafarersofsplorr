@@ -68,10 +68,6 @@ let splorrContext : ServiceContext =
 
 [<Test>]
 let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrContext.`` () =
-    //avatar job contexts
-    let context = splorrContext :?> Avatar.AbandonJobContext
-    let context = splorrContext :?> Avatar.CompleteJobContext
-    let context = splorrContext :?> Avatar.GetJobContext
     //avatar gambling contexts
     let context = splorrContext :?> Avatar.DealGamblingHandContext
     let context = splorrContext :?> Avatar.FoldGamblingHandContext
@@ -108,6 +104,10 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Avatar.GetMessagesContext
 
     let context = splorrContext :?> Avatar.CreateContext
+
+    let context = splorrContext :?> AvatarJob.AbandonContext
+    let context = splorrContext :?> AvatarJob.CompleteContext
+    let context = splorrContext :?> AvatarJob.GetContext
 
     let context = splorrContext :?> Commodity.GetCommoditiesContext
 

@@ -14,7 +14,7 @@ type TestWorldAbandonJobContext
         shipmateSingleStatisticSource) =
     interface World.AbandonJobContext with
         member this.avatarJobSource: AvatarJobSource = avatarJobSource
-    interface Avatar.AbandonJobContext with
+    interface AvatarJob.AbandonContext with
         member _.avatarJobSink : AvatarJobSink = avatarJobSink
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
     interface Avatar.GetPrimaryStatisticContext with

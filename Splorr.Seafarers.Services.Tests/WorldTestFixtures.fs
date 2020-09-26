@@ -63,7 +63,7 @@ type TestWorldDockContext
         member _.islandSource                   : IslandSource=islandSource
         member _.itemSource                     : ItemSource =itemSource
         member _.shipmateSingleStatisticSink    : ShipmateSingleStatisticSink=shipmateSingleStatisticSink
-    interface Avatar.CompleteJobContext with
+    interface AvatarJob.CompleteContext with
         member _.avatarJobSink : AvatarJobSink = avatarJobSink
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
     interface World.AddMessagesContext with

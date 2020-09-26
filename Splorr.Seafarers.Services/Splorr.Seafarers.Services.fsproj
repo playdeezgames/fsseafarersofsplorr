@@ -19,6 +19,7 @@
     <Compile Include="Vessel.fs" />
     <Compile Include="Shipmate.fs" />
     <Compile Include="Avatar.fs" />
+    <Compile Include="AvatarJob.fs" />
     <Compile Include="World.fs" />
   </ItemGroup>
 

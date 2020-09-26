@@ -99,7 +99,7 @@ type TestDockedRunContext
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
     interface Avatar.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface Avatar.AbandonJobContext with
+    interface AvatarJob.AbandonContext with
         member _.avatarJobSink                  : AvatarJobSink                 =avatarJobSink                 
         member _.avatarJobSource                : AvatarJobSource               =avatarJobSource
     interface World.ClearMessagesContext with

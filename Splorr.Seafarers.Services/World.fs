@@ -324,7 +324,7 @@ module World =
             (avatarId : string) 
             : unit = 
         if location = job.Destination then
-            Avatar.CompleteJob 
+            AvatarJob.Complete
                 context
                 avatarId
             avatarId
@@ -536,7 +536,7 @@ module World =
             avatarId
             |> AddMessages context [ "You abandon your job." ]
             avatarId
-            |> Avatar.AbandonJob 
+            |> AvatarJob.Abandon
                 context
         | _ ->
             avatarId

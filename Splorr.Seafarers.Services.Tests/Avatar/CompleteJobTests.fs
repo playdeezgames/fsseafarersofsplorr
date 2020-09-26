@@ -11,7 +11,7 @@ type TestAvatarCompleteJobContext
         avatarSingleMetricSource,
         shipmateSingleStatisticSink, 
         shipmateSingleStatisticSource) =
-    interface Avatar.CompleteJobContext with
+    interface AvatarJob.CompleteContext with
         member _.avatarJobSink : AvatarJobSink = avatarJobSink
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
     interface Avatar.GetPrimaryStatisticContext with
@@ -41,8 +41,8 @@ let ``CompleteJob.It does nothing when the given avatar has no job.`` () =
             Fixtures.Common.Fake.AvatarSingleMetricSink,
             Fixtures.Common.Fake.AvatarSingleMetricSource,
             shipmateSingleStatisticSink, 
-            shipmateSingleStatisticSource) :> Avatar.CompleteJobContext
-    Avatar.CompleteJob
+            shipmateSingleStatisticSource) :> AvatarJob.CompleteContext
+    AvatarJob.Complete
         context
         Fixtures.Common.Dummy.AvatarId
 
@@ -91,8 +91,8 @@ let ``CompleteJob.It sets job to None, adds reward money, adds reputation and me
             (Fixtures.Common.Mock.AvatarSingleMetricSink [(Metric.CompletedJob, 1UL)]),
             avatarSingleMetricSource,
             shipmateSingleStatisticSink, 
-            shipmateSingleStatisticSource) :> Avatar.CompleteJobContext
-    Avatar.CompleteJob
+            shipmateSingleStatisticSource) :> AvatarJob.CompleteContext
+    AvatarJob.Complete
         context
         Fixtures.Common.Dummy.AvatarId
 
