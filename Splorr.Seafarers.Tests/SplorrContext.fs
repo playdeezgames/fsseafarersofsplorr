@@ -68,39 +68,46 @@ let splorrContext : ServiceContext =
 
 [<Test>]
 let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrContext.`` () =
-
+    //avatar job contexts
     let context = splorrContext :?> Avatar.AbandonJobContext
-    let context = splorrContext :?> Avatar.AddInventoryContext
-    let context = splorrContext :?> Avatar.AddMessagesContext
-    let context = splorrContext :?> Avatar.AddMetricContext
-    let context = splorrContext :?> Avatar.CleanHullContext
     let context = splorrContext :?> Avatar.CompleteJobContext
-    let context = splorrContext :?> Avatar.CreateContext
-    let context = splorrContext :?> Avatar.DealGamblingHandContext
-    let context = splorrContext :?> Avatar.EatContext
-    let context = splorrContext :?> Avatar.FoldGamblingHandContext
-    let context = splorrContext :?> Avatar.EnterIslandFeatureContext
-    let context = splorrContext :?> Avatar.GetCurrentFoulingContext
-    let context = splorrContext :?> Avatar.GetGamblingHandContext
-    let context = splorrContext :?> Avatar.GetHeadingContext
-    let context = splorrContext :?> Avatar.GetIslandFeatureContext
-    let context = splorrContext :?> Avatar.GetIslandMetricContext
-    let context = splorrContext :?> Avatar.GetInventoryContext
-    let context = splorrContext :?> Avatar.GetItemCountContext
     let context = splorrContext :?> Avatar.GetJobContext
+    //avatar gambling contexts
+    let context = splorrContext :?> Avatar.DealGamblingHandContext
+    let context = splorrContext :?> Avatar.FoldGamblingHandContext
+    let context = splorrContext :?> Avatar.GetGamblingHandContext
+    //avatar vessel contexts
+    let context = splorrContext :?> Avatar.CleanHullContext
+    let context = splorrContext :?> Avatar.EnterIslandFeatureContext
+    let context = splorrContext :?> Avatar.GetIslandFeatureContext
+    let context = splorrContext :?> Avatar.GetCurrentFoulingContext
+    let context = splorrContext :?> Avatar.GetHeadingContext
     let context = splorrContext :?> Avatar.GetMaximumFoulingContext
-    let context = splorrContext :?> Avatar.GetMessagesContext
-    let context = splorrContext :?> Avatar.GetMetricsContext
     let context = splorrContext :?> Avatar.GetPositionContext
-    let context = splorrContext :?> Avatar.GetPrimaryStatisticContext
     let context = splorrContext :?> Avatar.GetSpeedContext
-    let context = splorrContext :?> Avatar.GetUsedTonnageContext
     let context = splorrContext :?> Avatar.MoveContext
-    let context = splorrContext :?> Avatar.RemoveInventoryContext
     let context = splorrContext :?> Avatar.SetHeadingContext
     let context = splorrContext :?> Avatar.SetPositionContext
     let context = splorrContext :?> Avatar.SetSpeedContext
+    let context = splorrContext :?> Avatar.GetUsedTonnageContext
+    //avatar inventory contexts
+    let context = splorrContext :?> Avatar.AddInventoryContext
+    let context = splorrContext :?> Avatar.GetInventoryContext
+    let context = splorrContext :?> Avatar.GetItemCountContext
+    let context = splorrContext :?> Avatar.RemoveInventoryContext
+    //avatar shipmate contexts
+    let context = splorrContext :?> Avatar.EatContext
+    let context = splorrContext :?> Avatar.GetPrimaryStatisticContext
     let context = splorrContext :?> Avatar.TransformShipmatesContext
+    //avatar metrics contexts
+    let context = splorrContext :?> Avatar.AddMetricContext
+    let context = splorrContext :?> Avatar.GetIslandMetricContext
+    let context = splorrContext :?> Avatar.GetMetricsContext
+    //avatar messages
+    let context = splorrContext :?> Avatar.AddMessagesContext
+    let context = splorrContext :?> Avatar.GetMessagesContext
+
+    let context = splorrContext :?> Avatar.CreateContext
 
     let context = splorrContext :?> Commodity.GetCommoditiesContext
 
