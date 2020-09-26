@@ -10,7 +10,7 @@ type TestGamestateCheckForAvatarDeathContext (avatarMessageSource, shipmateSingl
     interface Shipmate.GetStatusContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-    interface GamestateCheckForAvatarDeathContext with
+    interface Avatar.GetMessagesContext with
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
 
 let private avatarId = ""
@@ -161,7 +161,7 @@ let ``CheckForAvatarDeath.It returns the original gamestate when the avatar embe
         |> Some
     let expected =
         input
-    let context = TestGamestateCheckForAvatarDeathContext (avatarMessageSourceDummy, shipmateSingleStatisticSourceStub) :> GamestateCheckForAvatarDeathContext
+    let context = TestGamestateCheckForAvatarDeathContext (avatarMessageSourceDummy, shipmateSingleStatisticSourceStub) :> ServiceContext
     let actual =
         input
         |> Gamestate.CheckForAvatarDeath
@@ -176,7 +176,7 @@ let ``CheckForAvatarDeath.It returns the original gamestate when there is not a 
         |> Some
     let expected =
         input
-    let context = TestGamestateCheckForAvatarDeathContext (avatarMessageSourceDummy, shipmateSingleStatisticSourceStub) :> GamestateCheckForAvatarDeathContext
+    let context = TestGamestateCheckForAvatarDeathContext (avatarMessageSourceDummy, shipmateSingleStatisticSourceStub) :> ServiceContext
     let actual =
         input
         |> Gamestate.CheckForAvatarDeath
@@ -200,7 +200,7 @@ let ``CheckForAvatarDeath.It returns gameover when the avatar embedded therein i
             Statistic.Create (0.0, 100.0) 0.0 |> Some
         | _ ->
             raise (System.NotImplementedException (identifier.ToString() |> sprintf "shipmateSingleStatisticSource - %s"))
-    let context = TestGamestateCheckForAvatarDeathContext (avatarMessageSourceDummy, shipmateSingleStatisticSource) :> GamestateCheckForAvatarDeathContext
+    let context = TestGamestateCheckForAvatarDeathContext (avatarMessageSourceDummy, shipmateSingleStatisticSource) :> ServiceContext
     let actual =
         input
         |> Gamestate.CheckForAvatarDeath 

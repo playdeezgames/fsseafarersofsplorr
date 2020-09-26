@@ -246,15 +246,8 @@ type TestAtSeaRunContext
             vesselSingleStatisticSource: VesselSingleStatisticSource,
             worldSingleStatisticSource: WorldSingleStatisticSource
         ) =
-    interface AtSeaCanCareenContext with
-        member this.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface AtSeaGetVisibleIslandsContext with
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface AtSeaUpdateDisplayContext with
+    interface Avatar.GetMessagesContext with
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
-        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Utility.RandomContext with
         member _.random : Random = Fixtures.Common.Dummy.Random
     interface Commodity.GetCommoditiesContext with
@@ -269,6 +262,10 @@ type TestAtSeaRunContext
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
+    interface Shipmate.GetStatisticContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+    interface Vessel.GetStatisticContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Island.GenerateCommoditiesContext with
         member _.islandMarketSink: IslandMarketSink = islandMarketSink
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
@@ -278,6 +275,8 @@ type TestAtSeaRunContext
         member _.islandItemSource: IslandItemSource = islandItemSource
         member _.itemSource: ItemSource = itemSource
         member _.random: Random = Fixtures.Common.Dummy.Random
+    interface Island.GetStatisticContext with
+        member this.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
     interface Vessel.TransformFoulingContext with
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
@@ -334,10 +333,6 @@ type TestAtSeaRunContext
         member _.islandLocationByNameSource     : IslandLocationByNameSource = islandLocationByNameSource
     interface World.GetNearbyLocationsContext with
         member _.islandSource : IslandSource = islandSource
-    interface AtSeaHandleCommandContext with
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface AtSeaRunContext with
-        member _.avatarMessageSource: AvatarMessageSource = avatarMessageSource
     interface World.UpdateChartsContext with
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.islandSource: IslandSource = islandSource

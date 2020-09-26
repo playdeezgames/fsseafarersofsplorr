@@ -3,12 +3,6 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
-type IslandListRunWorldContext =
-    inherit ServiceContext
-    abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
-    abstract member islandSingleNameSource         : IslandSingleNameSource
-    abstract member islandSource                   : IslandSource
-
 module IslandList =
     let private RunWorld 
             (context: ServiceContext)
@@ -17,20 +11,21 @@ module IslandList =
             (page                           : uint32) 
             (avatarId                       : string) 
             : unit = 
-        let context = context :?> IslandListRunWorldContext
         [
             "" |> Line
             (Hue.Heading, "Known Islands:" |> Line) |> Hued
         ]
         |> List.iter messageSink
         let knownIslands =
-            context.islandSource()
+            context
+            |> Island.GetList
             |> List.filter
                 (fun location -> 
-                    context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount 
+                    avatarId
+                    |> Avatar.GetIslandMetric context location AvatarIslandMetricIdentifier.VisitCount 
                     |> Option.map (fun _ -> true)
                     |> Option.defaultValue false)
-            |> List.sortBy(fun l->context.islandSingleNameSource l |> Option.get)
+            |> List.sortBy(Island.GetName context >> Option.get)
         let totalItems = knownIslands |> List.length |> uint32
         let totalPages = (totalItems + (pageSize-1u)) / pageSize
         let skippedItems = page * pageSize
@@ -57,7 +52,7 @@ module IslandList =
                     |> Angle.ToDegrees
                     |> Angle.ToString
                 [
-                    (Hue.Value, context.islandSingleNameSource location |> Option.get |> sprintf "%s" |> Text) |> Hued
+                    (Hue.Value, location |> Island.GetName context |> Option.get |> sprintf "%s" |> Text) |> Hued
                     (Hue.Sublabel, " Bearing:" |> Text) |> Hued
                     (Hue.Value, bearing |> sprintf "%s" |> Text) |> Hued
                     (Hue.Sublabel, " Distance:" |> Text) |> Hued

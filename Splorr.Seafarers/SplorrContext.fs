@@ -75,12 +75,6 @@ type SplorrContext
     interface Avatar.GetJobContext with
         member this.avatarJobSource: AvatarJobSource = avatarJobSource
 
-    interface GamestateCheckForAvatarDeathContext with
-        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
-
-    interface AtSeaGetVisibleIslandsContext with
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-
     interface Island.GetNameContext with
         member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
 
@@ -92,20 +86,6 @@ type SplorrContext
 
     interface Avatar.GetInventoryContext with
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
-
-    interface IslandListRunWorldContext with
-        member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
-        member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
-        member this.islandSource: IslandSource = islandSource
-
-    interface AtSeaCanCareenContext with
-        member this.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-
-    interface AtSeaUpdateDisplayContext with
-        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
-        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface World.UndockContext with
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
@@ -191,14 +171,8 @@ type SplorrContext
     interface World.GetNearbyLocationsContext with
         member _.islandSource : IslandSource = islandSource
 
-    interface AtSeaHandleCommandContext with
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-
     interface Avatar.GetCurrentFoulingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-
-    interface AtSeaRunContext with
-        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
 
     interface Island.CreateContext with
         member _.islandSingleStatisticSink     : IslandSingleStatisticSink    =islandSingleStatisticSink    
