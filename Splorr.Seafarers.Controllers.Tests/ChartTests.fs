@@ -6,8 +6,14 @@ open CommonTestFixtures
 open AtSeaTestFixtures
 open Splorr.Seafarers.Services
 
-type TestChartRunContext(vesselSingleStatisticSource) =
-    interface ChartRunContext
+type TestChartRunContext
+            (avatarIslandSingleMetricSource,
+            islandSingleNameSource,
+            islandSource,
+            vesselSingleStatisticSource, 
+            worldSingleStatisticSource) =
+    interface World.GetStatisticContext with
+        member this.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
     interface Avatar.GetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
@@ -19,14 +25,16 @@ let ``Run.It returns the At Sea state with the given world.`` () =
         world
         |> Gamestate.InPlay
         |> Some
-    let context = TestChartRunContext(vesselSingleStatisticSourceStub) :> ChartRunContext
+    let context = 
+        TestChartRunContext
+            (avatarIslandSingleMetricSourceStub,
+            islandSingleNameSourceStub,
+            islandSourceStub,
+            vesselSingleStatisticSourceStub, 
+            worldSingleStatisticSourceStub) :> ServiceContext
     let actual =
         Chart.Run
             context
-            avatarIslandSingleMetricSourceStub
-            islandSingleNameSourceStub
-            islandSourceStub
-            worldSingleStatisticSourceStub 
             sinkDummy 
             inputName 
             inputWorld

@@ -17,12 +17,12 @@ type TestJobCreationContext
             termSources                : TermSources, 
             worldSingleStatisticSource : WorldSingleStatisticSource
         ) =
-    interface Utility.SortListRandomlyContext with
+    interface Utility.RandomContext with
         member _.random : Random = Fixtures.Common.Dummy.Random
 
-    interface JobCreateContext with
+    interface Job.CreateContext with
         member _.termSources : TermSources = termSources
-        member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
+        member this.jobRewardStatisticSource: JobRewardStatisticSource = fun () -> worldSingleStatisticSource WorldStatisticIdentifier.JobReward
         member _.random : Random = Fixtures.Common.Dummy.Random
 
 let internal jobCreationContextStub =

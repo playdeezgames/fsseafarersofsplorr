@@ -3,24 +3,9 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
-type CareenedHandleCommandContext =
-    inherit World.ClearMessagesContext
-
-type CareenedUpdateDisplayContext = 
-    inherit Avatar.GetCurrentFoulingContext
-    inherit Avatar.GetMaximumFoulingContext
-
-type CareenedRunAliveContext =
-    inherit CareenedHandleCommandContext
-    inherit CareenedUpdateDisplayContext
-
-type CareenedRunContext =
-    inherit CareenedRunAliveContext
-
 module Careened = 
     let private UpdateDisplay 
-            (context : CareenedUpdateDisplayContext)
-            (avatarMessageSource         : AvatarMessageSource)
+            (context : ServiceContext)
             (messageSink                 : MessageSink) 
             (side                        : Side)
             (avatarId                    : string) 
@@ -28,7 +13,7 @@ module Careened =
         let avatarId = avatarId
         "" |> Line |> messageSink
         avatarId
-        |> avatarMessageSource
+        |> AvatarMessages.Get context
         |> Utility.DumpMessages messageSink
         let sideName =
             match side with
@@ -47,7 +32,7 @@ module Careened =
         |> List.iter messageSink
 
     let private HandleCommand
-            (context : CareenedHandleCommandContext)
+            (context : ServiceContext)
             (command                       : Command option) 
             (side                          : Side) 
             (avatarId                      : string) 
@@ -99,8 +84,7 @@ module Careened =
             |> Some
 
     let private RunAlive
-            (context : CareenedRunAliveContext)
-            (avatarMessageSource           : AvatarMessageSource)
+            (context : ServiceContext)
             (source                        : CommandSource) 
             (sink                          : MessageSink) 
             (side                          : Side) 
@@ -108,7 +92,6 @@ module Careened =
             : Gamestate option =
         UpdateDisplay 
             context
-            avatarMessageSource
             sink 
             side 
             avatarId
@@ -119,8 +102,7 @@ module Careened =
             avatarId
 
     let Run 
-            (context : CareenedRunContext)
-            (avatarMessageSource           : AvatarMessageSource)
+            (context : ServiceContext)
             (commandSource                 : CommandSource) 
             (messageSink                   : MessageSink) 
             (side                          : Side) 
@@ -129,13 +111,12 @@ module Careened =
         if avatarId |> World.IsAvatarAlive context then
             RunAlive 
                 context
-                avatarMessageSource
                 commandSource 
                 messageSink 
                 side 
                 avatarId
         else
             avatarId
-            |> avatarMessageSource
+            |> AvatarMessages.Get context
             |> Gamestate.GameOver
             |> Some

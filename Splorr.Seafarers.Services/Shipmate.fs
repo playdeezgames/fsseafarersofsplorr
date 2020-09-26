@@ -1,5 +1,6 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
+open System
 
 type DemiseType =
     | ZeroHealth
@@ -11,7 +12,6 @@ type ShipmateStatus =
 
 type ShipmateRationItemSource = string -> ShipmateIdentifier -> uint64 list
 type ShipmateRationItemSink = string -> ShipmateIdentifier -> uint64 list -> unit
-type RationItemSource = unit -> uint64 list
 type ShipmateStatisticTemplateSource = unit -> Map<ShipmateStatisticIdentifier, StatisticTemplate>
 type ShipmateSingleStatisticSink = string -> ShipmateIdentifier -> (ShipmateStatisticIdentifier * Statistic option) -> unit
 type ShipmateSingleStatisticSource = string -> ShipmateIdentifier -> ShipmateStatisticIdentifier -> Statistic option
@@ -19,13 +19,13 @@ type AvatarInventory = Map<uint64,uint64>
 
 module Shipmate =
     type CreateContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member shipmateStatisticTemplateSource   : ShipmateStatisticTemplateSource
         abstract member shipmateSingleStatisticSink       : ShipmateSingleStatisticSink
         abstract member rationItemSource                  : RationItemSource
         abstract member shipmateRationItemSink            : ShipmateRationItemSink
     let Create
-            (context    : OperatingContext)
+            (context    : ServiceContext)
             (avatarId   : string)
             (shipmateId : ShipmateIdentifier)
             : unit =
@@ -38,10 +38,10 @@ module Shipmate =
                 context.shipmateSingleStatisticSink avatarId shipmateId (identifier, statisticTemplate |> Statistic.CreateFromTemplate |> Some))
 
     type GetStatusContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
     let GetStatus
-            (context    : OperatingContext)
+            (context    : ServiceContext)
             (avatarId   : string)
             (shipmateId : ShipmateIdentifier)
             : ShipmateStatus=
@@ -55,13 +55,24 @@ module Shipmate =
                 OldAge |> Dead
             else
                 Alive
+
+    type GetStatisticContext =
+        inherit ServiceContext
+        abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
+    let GetStatistic
+            (context: ServiceContext)
+            (avatarId : string)
+            (shipmateId : ShipmateIdentifier)
+            (identifier : ShipmateStatisticIdentifier)
+            : Statistic option =
+        (context :?> GetStatisticContext).shipmateSingleStatisticSource avatarId shipmateId identifier
     
     type TransformStatisticContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member shipmateSingleStatisticSink   : ShipmateSingleStatisticSink
         abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
     let TransformStatistic 
-            (context    : OperatingContext)
+            (context    : ServiceContext)
             (identifier : ShipmateStatisticIdentifier) 
             (transform  : Statistic -> Statistic option) 
             (avatarId   : string)
@@ -75,11 +86,11 @@ module Shipmate =
                 context.shipmateSingleStatisticSink avatarId shipmateId (identifier, (s |> transform) ) )
 
     type EatContext =
-        inherit OperatingContext
+        inherit ServiceContext
         abstract member shipmateRationItemSource      : ShipmateRationItemSource
         abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
     let Eat 
-            (context    : OperatingContext)
+            (context    : ServiceContext)
             (inventory  : AvatarInventory) 
             (avatarId   : string)
             (shipmateId : ShipmateIdentifier)

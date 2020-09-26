@@ -4,20 +4,19 @@ open System
 
 type TermSource = unit -> string list
 type TermSources = TermSource * TermSource * TermSource * TermSource * TermSource * TermSource
-type WorldSingleStatisticSource = WorldStatisticIdentifier -> Statistic
-
-type JobCreateContext =
-    inherit OperatingContext
-    abstract member termSources                : TermSources
-    abstract member worldSingleStatisticSource : WorldSingleStatisticSource
-    abstract member random                     : Random
+type JobRewardStatisticSource = unit -> Statistic
 
 module Job =
+    type CreateContext =
+        inherit ServiceContext
+        abstract member termSources                : TermSources
+        abstract member jobRewardStatisticSource : JobRewardStatisticSource
+        abstract member random                     : Random
     let Create 
-            (context      : OperatingContext)
+            (context      : ServiceContext)
             (destinations : Set<Location>) 
             : Job =
-        let context = context :?> JobCreateContext
+        let context = context :?> CreateContext
         let pickRandomly : string list -> string = 
             Utility.PickRandomly context
 
@@ -60,8 +59,7 @@ module Job =
                 context
 
         let jobReward = 
-            context.worldSingleStatisticSource 
-                WorldStatisticIdentifier.JobReward
+            context.jobRewardStatisticSource() 
 
         let rewardMinimum, 
             rewardMaximum = 

@@ -10,7 +10,7 @@ open Tarot
 let private inputAvatarId = "avatar"
 
 type TestAvatarAddMessagesContext(avatarMessageSink) =
-    interface Avatar.AddMessagesContext with
+    interface AvatarMessages.AddContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
 
 type TestAvatarAddMetricContext
@@ -34,9 +34,9 @@ let ``AddMessages.It adds messages to a given avatar.`` () =
             ()
         | _ ->
             Assert.Fail("Got an unexpected message.")
-    let context = TestAvatarAddMessagesContext(avatarMessageSink) :> Avatar.AddMessagesContext
+    let context = TestAvatarAddMessagesContext(avatarMessageSink) :> AvatarMessages.AddContext
     input
-    |> Avatar.AddMessages context inputMessages
+    |> AvatarMessages.Add context inputMessages
 
 
 [<Test>]
@@ -103,7 +103,95 @@ let ``GetIslandFeature.It retrieves none when the avatar is at sea.`` () =
     let actual = Avatar.GetIslandFeature context givenAvatarId
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
-    
+ 
+type TestAvatarGetMetricsContext
+        (avatarMetricSource) =
+    interface ServiceContext
+    interface Avatar.GetMetricsContext with
+        member this.avatarMetricSource: AvatarMetricSource = avatarMetricSource
+[<Test>]
+let ``GetMetrics.It calls the AvatarMetricSource in the context.`` () =
+    let mutable called = false
+    let avatarMetricSource (_) =
+        called<-true
+        Map.empty
+    let context = 
+        TestAvatarGetMetricsContext
+            (avatarMetricSource) :> ServiceContext
+    let expected = Map.empty
+    let actual =
+        Avatar.GetMetrics
+            context
+            Fixtures.Common.Dummy.AvatarId
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)
 
+type TestAvatarGetMessagesContext
+       (avatarMessageSource) =
+   interface ServiceContext
+   interface AvatarMessages.GetContext with
+       member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
+[<Test>]
+let ``GetMessages.It calls the AvatarMetricSource in the context.`` () =
+   let mutable called = false
+   let avatarMessageSource (_) =
+       called<-true
+       []
+   let context = 
+       TestAvatarGetMessagesContext
+           (avatarMessageSource) :> ServiceContext
+   let expected = []
+   let actual =
+       AvatarMessages.Get
+           context
+           Fixtures.Common.Dummy.AvatarId
+   Assert.AreEqual(expected, actual)
+   Assert.IsTrue(called)
+
+type TestAvatarGetInventoryContext
+       (avatarInventorySource) =
+   interface ServiceContext
+   interface Avatar.GetInventoryContext with
+       member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
+[<Test>]
+let ``GetInventory.It calls the AvatarInventorySource in the context.`` () =
+   let mutable called = false
+   let avatarInventorySource (_) =
+       called<-true
+       Map.empty
+   let context = 
+       TestAvatarGetInventoryContext
+           (avatarInventorySource) :> ServiceContext
+   let expected = Map.empty
+   let actual =
+       Avatar.GetInventory
+           context
+           Fixtures.Common.Dummy.AvatarId
+   Assert.AreEqual(expected, actual)
+   Assert.IsTrue(called)
+
+type TestAvatarGetIslandMetricContext
+       (avatarIslandSingleMetricSource) =
+   interface ServiceContext
+   interface Avatar.GetIslandMetricContext with
+       member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+[<Test>]
+let ``GetIslandMetric.It calls the AvatarIslandSingleMetricSource in the context.`` () =
+   let mutable called = false
+   let avatarIslandSingleMetricSource (_) (_) (_)=
+       called<-true
+       None
+   let context = 
+       TestAvatarGetIslandMetricContext
+           (avatarIslandSingleMetricSource) :> ServiceContext
+   let expected = None
+   let actual =
+       Avatar.GetIslandMetric
+           context
+           Fixtures.Common.Dummy.IslandLocation
+           AvatarIslandMetricIdentifier.LastVisit
+           Fixtures.Common.Dummy.AvatarId
+   Assert.AreEqual(expected, actual)
+   Assert.IsTrue(called)
 
     

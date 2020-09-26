@@ -160,7 +160,7 @@ let ``GetSpeed.It gets the speed of an avatar.`` () =
 [<Test>]
 let ``GetEffectiveSpeed.It returns full speed when there is no fouling.`` () =
     let expected = 1.0
-    let context = TestAvatarGetEffectiveSpeedContext(Fixtures.Common.Stub.VesselSingleStatisticSource) :> OperatingContext
+    let context = TestAvatarGetEffectiveSpeedContext(Fixtures.Common.Stub.VesselSingleStatisticSource) :> ServiceContext
     let actual =
         Avatar.GetEffectiveSpeed context inputAvatarId
     Assert.AreEqual(expected, actual)
@@ -169,7 +169,7 @@ let ``GetEffectiveSpeed.It returns full speed when there is no fouling.`` () =
 let ``GetEffectiveSpeed.It returns proportionally reduced speed when there is fouling.`` () =
     let expected = 0.125
     let vesselSingleStatisticSource (_) (_) = {MinimumValue=0.0;MaximumValue=0.25;CurrentValue=0.25} |> Some
-    let context = TestAvatarGetEffectiveSpeedContext(vesselSingleStatisticSource) :> OperatingContext
+    let context = TestAvatarGetEffectiveSpeedContext(vesselSingleStatisticSource) :> ServiceContext
     let actual =
         Avatar.GetEffectiveSpeed context inputAvatarId
     Assert.AreEqual(expected, actual)

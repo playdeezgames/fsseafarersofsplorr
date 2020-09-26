@@ -48,4 +48,26 @@ let ``TransformStatistic.It does nothing when the given statistic is absent from
         Fixtures.Common.Dummy.AvatarId
         Primary
 
+type TestShipmateGetStatisticContext
+        (shipmateSingleStatisticSource) =
+    interface ServiceContext
+    interface Shipmate.GetStatisticContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+[<Test>]
+let ``GetStatistic.It calls ShipmateSingleStatisticSource in the context.`` () =
+    let mutable called = false
+    let shipmateSingleStatisticSource (_) (_) (_) =
+        called <- true
+        None
+    let context = TestShipmateGetStatisticContext(shipmateSingleStatisticSource) :> ServiceContext
+    let expected = None
+    let actual = 
+        Shipmate.GetStatistic
+            context
+            Fixtures.Common.Dummy.AvatarId
+            ShipmateIdentifier.Primary
+            ShipmateStatisticIdentifier.Health
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)
+
 

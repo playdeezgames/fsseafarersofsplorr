@@ -78,7 +78,7 @@ let ``SetMoney.It assigns the amount of money of the primary shipmate.`` () =
             Assert.AreEqual(inputMoney, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "Kaboom set")
-    let context = TestAvatarSetMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> OperatingContext
+    let context = TestAvatarSetMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> ServiceContext
     input
     |> Avatar.SetMoney 
         context
@@ -102,7 +102,7 @@ let ``SetReputation.It assigns the amount of reputation of the primary shipmate.
             Assert.AreEqual(inputReputation, statistic.Value.CurrentValue)
         | _ ->
             raise (System.NotImplementedException "Kaboom set")
-    let context = TestAvatarSetReputationContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> OperatingContext
+    let context = TestAvatarSetReputationContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> ServiceContext
     input
     |> Avatar.SetReputation 
         context

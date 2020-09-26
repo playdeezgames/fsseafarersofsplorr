@@ -53,7 +53,7 @@ type TestWorldResolveHandContext
     interface Avatar.GetGamblingHandContext with
         member this.avatarGamblingHandSource: AvatarGamblingHandSource = avatarGamblingHandSource
     interface World.CanPlaceBetContext
-    interface Avatar.AddMessagesContext with
+    interface AvatarMessages.AddContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink

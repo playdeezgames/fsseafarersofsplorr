@@ -4,12 +4,6 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open System
 
-type ChartOutputChartContext =
-    inherit Avatar.GetPositionContext
-
-type ChartRunContext = 
-    inherit ChartOutputChartContext
-
 module Chart = 
     let private plotLocation 
             (scale    : int) 
@@ -18,10 +12,7 @@ module Chart =
         ((location |> snd |> int) * scale - scale/2, (-(location |> fst |> int)) * scale + scale/2)
 
     let private outputChart 
-            (context : ChartOutputChartContext)
-            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
-            (islandSingleNameSource         : IslandSingleNameSource)
-            (islandSource                   : IslandSource)
+            (context : ServiceContext)
             (worldSize                      : Location) 
             (messageSink                    : MessageSink) 
             (chartName                      : string) 
@@ -40,16 +31,17 @@ module Chart =
             writer.WriteLine(sprintf "<svg width=\"%d\" height=\"%d\">" width height)
             writer.WriteLine(sprintf "<rect width=\"%d\" height=\"%d\" style=\"fill:#00008B;\"/>" width height)
             let legend: Map<uint,string> = 
-                islandSource()
+                context
+                |> Island.GetList
                 |> List.fold
                     (fun leg location -> 
                         let x, y = plotLocation scale location
                         let seen = 
-                            avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.Seen 
+                            Avatar.GetIslandMetric context location AvatarIslandMetricIdentifier.Seen  avatarId
                             |> Option.map (fun x -> x > 0UL) 
                             |> Option.defaultValue false
                         let addToLegend =
-                            match avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount with
+                            match Avatar.GetIslandMetric context location AvatarIslandMetricIdentifier.VisitCount avatarId with
                             | None -> false
                             | _ -> true
                         match seen, addToLegend with
@@ -64,7 +56,7 @@ module Chart =
                             let yOffset = if (-y)>height/2 then 20 else (-10)
                             writer.WriteLine(sprintf "<text x=\"%d\" y=\"%d\" fill=\"#ffffff\">%u</text>" x (y+height+yOffset) index)
                             leg
-                            |> Map.add index (islandSingleNameSource location |> Option.get)
+                            |> Map.add index (Island.GetName context location |> Option.get)
                         else
                             leg) Map.empty
             let avatarPosition = 
@@ -119,11 +111,7 @@ module Chart =
             chartName
 
     let Run 
-            (context : ChartRunContext)
-            (avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource)
-            (islandSingleNameSource         : IslandSingleNameSource)
-            (islandSource                   : IslandSource)
-            (worldSingleStatisticSource     : WorldSingleStatisticSource) 
+            (context : ServiceContext)
             (messageSink                    : MessageSink) 
             (chartName                      : string) 
             (avatarId                       : string) 
@@ -136,11 +124,8 @@ module Chart =
             chartName
         outputChart 
             context
-            avatarIslandSingleMetricSource
-            islandSingleNameSource
-            islandSource
-            (worldSingleStatisticSource WorldStatisticIdentifier.PositionX |> Statistic.GetMaximumValue, 
-                worldSingleStatisticSource WorldStatisticIdentifier.PositionY |> Statistic.GetMaximumValue) 
+            (World.GetStatistic context WorldStatisticIdentifier.PositionX |> Statistic.GetMaximumValue, 
+                World.GetStatistic context WorldStatisticIdentifier.PositionY |> Statistic.GetMaximumValue) 
             messageSink 
             chartName 
             avatarId

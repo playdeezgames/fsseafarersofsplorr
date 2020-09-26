@@ -9,6 +9,7 @@ open AtSeaTestFixtures
 
 type TestCareenedRunContext 
         (avatarMessagePurger,
+        avatarMessageSource,
         avatarShipmateSource,
         avatarSingleMetricSink,
         avatarSingleMetricSource,
@@ -16,6 +17,8 @@ type TestCareenedRunContext
         shipmateSingleStatisticSource,
         vesselSingleStatisticSink, 
         vesselSingleStatisticSource) =
+    interface AvatarMessages.GetContext with
+        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
     interface Shipmate.GetStatusContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface Avatar.AddMetricContext with
@@ -31,7 +34,6 @@ type TestCareenedRunContext
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
     interface World.ClearMessagesContext with
         member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
-    interface CareenedRunContext
     interface Vessel.TransformFoulingContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
@@ -44,16 +46,16 @@ let private functionUnderTest
     let context = 
         TestCareenedRunContext 
             (avatarMessagePurgerStub,
+            avatarMessageSourceDummy,
             avatarShipmateSourceStub,
             avatarSingleMetricSink,
             avatarSingleMetricSourceStub,
             shipmateSingleStatisticSinkStub, 
             shipmateSingleStatisticSourceStub, 
             vesselSingleStatisticSinkStub, 
-            vesselSingleStatisticSourceStub) :> CareenedRunContext
+            vesselSingleStatisticSourceStub) :> ServiceContext
     Careened.Run 
         context
-        avatarMessageSourceDummy
 
 [<Test>]
 let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
@@ -76,18 +78,18 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
     let context = 
         TestCareenedRunContext 
             (avatarMessagePurgerStub,
+            avatarMessageSourceDummy,
             avatarShipmateSourceStub,
             avatarSingleMetricSinkExplode,
             avatarSingleMetricSourceStub,
             shipmateSingleStatisticSinkStub,
             shipmateSingleStatisticSource, 
             vesselSingleStatisticSinkStub, 
-            vesselSingleStatisticSourceStub) :> CareenedRunContext
+            vesselSingleStatisticSourceStub) :> ServiceContext
     let actual =
         inputWorld
         |> Careened.Run 
             context
-            avatarMessageSourceDummy
             inputSource 
             sinkDummy 
             inputSide

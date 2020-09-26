@@ -26,10 +26,11 @@ type TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingle
 
 type TestIslandGenerateCommoditiesContext(commoditySource, islandMarketSink, islandMarketSource) =
     interface Island.GenerateCommoditiesContext with
-        member _.commoditySource: CommoditySource = commoditySource
         member _.islandMarketSink: IslandMarketSink = islandMarketSink
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
         member _.random : Random = random
+    interface Commodity.GetCommoditiesContext with
+        member this.commoditySource: CommoditySource = commoditySource
 
 type TestIslandGenerateItemsContext(islandItemSink, islandItemSource, itemSource, random) =
     interface Island.GenerateItemsContext with
@@ -39,8 +40,9 @@ type TestIslandGenerateItemsContext(islandItemSink, islandItemSource, itemSource
         member _.random: Random = random
 
 type TestIslandUpdateMarketForItemSaleContext(commoditySource, islandSingleMarketSink, islandSingleMarketSource) =
-    interface Island.UpdateMarketForItemContext with
-        member _.commoditySource: CommoditySource = commoditySource
+    interface Island.UpdateMarketForItemContext
+    interface Commodity.GetCommoditiesContext with
+        member this.commoditySource: CommoditySource = commoditySource
     interface Island.ChangeMarketContext with
         member this.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
         member this.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
@@ -209,12 +211,12 @@ type TestIslandJobsGenerationContext
         member _.islandJobSink   : IslandJobSink = islandJobSink
         member _.islandJobSource : IslandJobSource = islandJobSource
 
-    interface Utility.SortListRandomlyContext with
+    interface Utility.RandomContext with
         member _.random : Random = random
 
-    interface JobCreateContext with
+    interface Job.CreateContext with
         member _.termSources : TermSources = termSources
-        member _.worldSingleStatisticSource : WorldSingleStatisticSource = worldSingleStatisticSource
+        member this.jobRewardStatisticSource: JobRewardStatisticSource = fun () -> worldSingleStatisticSource WorldStatisticIdentifier.JobReward
         member _.random : Random = Fixtures.Common.Dummy.Random
 
 [<Test>]
@@ -479,3 +481,94 @@ let ``Get Statistic.It returns None when the statistic does not exist or the isl
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
 
+type TestIslandGetListContext(islandSource) =
+    interface Island.GetListContext with
+        member this.islandSource: IslandSource = islandSource
+[<Test>]
+let ``GetList.It calls the IslandSource in the ServiceContext.`` () =
+    let mutable called = false
+    let islandSource() =
+        called <- true
+        []
+    let context = TestIslandGetListContext(islandSource) :> ServiceContext
+    let expected = []
+    let actual = Island.GetList context
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)
+
+
+type TestIslandGetJobsContext(islandJobSource) =
+    interface Island.GetJobsContext with
+        member this.islandJobSource: IslandJobSource = islandJobSource
+[<Test>]
+let ``GetJobs.It calls the IslandJobSource in the ServiceContext.`` () =
+    let mutable called = false
+    let islandJobSource (_) =
+        called <- true
+        []
+    let context = TestIslandGetJobsContext(islandJobSource) :> ServiceContext
+    let expected = []
+    let actual = Island.GetJobs context Fixtures.Common.Dummy.IslandLocation
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)
+
+type TestIslandGetItemsContext(islandItemSource) =
+    interface Island.GetItemsContext with
+        member this.islandItemSource: IslandItemSource = islandItemSource
+[<Test>]
+let ``GetItems.It calls the IslandItemSource in the ServiceContext.`` () =
+    let mutable called = false
+    let islandItemSource (_) =
+        called <- true
+        Set.empty
+    let context = TestIslandGetItemsContext(islandItemSource) :> ServiceContext
+    let expected = Set.empty
+    let actual = Island.GetItems context Fixtures.Common.Dummy.IslandLocation
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)
+    
+type TestIslandGetNameContext(islandSingleNameSource) =
+    interface Island.GetNameContext with
+        member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
+[<Test>]
+let ``GetName.It calls the IslandSingleNameSource in the ServiceContext.`` () =
+    let mutable called = false
+    let islandSingleNameSource (_) =
+        called <- true
+        None
+    let context = TestIslandGetNameContext(islandSingleNameSource) :> ServiceContext
+    let expected = None
+    let actual = Island.GetName context Fixtures.Common.Dummy.IslandLocation
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)
+
+type TestIslandHasFeatureContext(islandSingleFeatureSource) =
+    interface Island.HasFeatureContext with
+        member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
+[<Test>]
+let ``HasFeature.It calls the IslandSingleFeatureSource in the ServiceContext.`` () =
+    let mutable called = false
+    let islandSingleFeatureSource (_) (_) =
+        called <- true
+        false
+    let context = TestIslandHasFeatureContext(islandSingleFeatureSource) :> ServiceContext
+    let expected = false
+    let actual = Island.HasFeature context IslandFeatureIdentifier.Dock Fixtures.Common.Dummy.IslandLocation
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)
+
+
+type TestIslandGetFeaturesContext(islandFeatureSource) =
+    interface Island.GetFeaturesContext with
+        member this.islandFeatureSource: IslandFeatureSource = islandFeatureSource
+[<Test>]
+let ``GetFeatures.It calls the IslandSingleFeatureSource in the ServiceContext.`` () =
+    let mutable called = false
+    let islandFeatureSource (_) =
+        called <- true
+        []
+    let context = TestIslandGetFeaturesContext(islandFeatureSource) :> ServiceContext
+    let expected = []
+    let actual = Island.GetFeatures context Fixtures.Common.Dummy.IslandLocation
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)

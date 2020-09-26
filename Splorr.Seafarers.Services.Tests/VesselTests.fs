@@ -43,6 +43,28 @@ let ``Create.It creates a vessel.`` () =
         context
         inputAvatarId
 
+type TestVesselGetStatisticContext
+        (vesselSingleStatisticSource) =
+    interface ServiceContext
+    interface Vessel.GetStatisticContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
+[<Test>]
+let ``GetStatistic.It calls XXXX in the context.`` () =
+    let mutable called = false
+    let vesselSingleStatisticSource (_) (_) =
+        called <- true
+        None
+    let context = TestVesselGetStatisticContext(vesselSingleStatisticSource) :> ServiceContext
+    let expected = None
+    let actual = 
+        Vessel.GetStatistic
+            context
+            Fixtures.Common.Dummy.AvatarId
+            VesselStatisticIdentifier.Heading
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)
+    
+
 [<Test>]
 let ``TransformFouling.It transforms fouling on the port side when the port side is specified.`` () =
     let inputSide = Port

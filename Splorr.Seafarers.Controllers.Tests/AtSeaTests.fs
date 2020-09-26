@@ -20,7 +20,7 @@ let private functionUnderTest
         (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
         (vesselSingleStatisticSource    : VesselSingleStatisticSource) 
         = 
-    let context : AtSeaRunContext =
+    let context : ServiceContext =
         TestAtSeaRunContext
             (avatarInventorySinkStub,
             avatarInventorySourceStub,
@@ -54,7 +54,7 @@ let private functionUnderTest
             termSources,
             vesselSingleStatisticSinkStub,
             vesselSingleStatisticSource,
-            worldSingleStatisticSourceStub) :> AtSeaRunContext
+            worldSingleStatisticSourceStub) :> ServiceContext
     AtSea.Run 
         context
 

@@ -14,10 +14,11 @@ type TestJobRunContext
             (islandJobSource,
             islandSingleNameSource,
             islandSource) =
-        interface Jobs.RunIslandContext with
-            member this.islandJobSource: IslandJobSource = islandJobSource
+        interface Island.GetNameContext with
             member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
-        interface Jobs.RunContext with
+        interface Island.GetJobsContext with
+            member this.islandJobSource: IslandJobSource = islandJobSource
+        interface Island.GetListContext with
             member this.islandSource: IslandSource = islandSource
 
 [<Test>]
@@ -32,7 +33,7 @@ let ``Run.It returns Docked with the given location and world.`` () =
         TestJobRunContext
             (islandJobSourceStub,
             islandSingleNameSourceStub,
-            islandSourceStub) :> OperatingContext
+            islandSourceStub) :> ServiceContext
     let actual =
         (inputLocation, inputWorld)
         ||> Jobs.Run 

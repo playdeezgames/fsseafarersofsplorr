@@ -3,18 +3,9 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
-type InventoryRunWorldContext =
-    inherit Avatar.GetUsedTonnageContext
-    
-type InventoryRunContext =
-    inherit InventoryRunWorldContext
-
 module Inventory =
     let private RunWorld
-            (context : InventoryRunWorldContext)
-            (itemSource                  : ItemSource)
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
-            (avatarInventorySource       : AvatarInventorySource)
+            (context : ServiceContext)
             (messageSink                 : MessageSink) 
             (avatarId                    : string) 
             : unit =
@@ -28,10 +19,10 @@ module Inventory =
             (Hue.Label, "---------------------+--------+---------" |> Line ) |> Hued
         ]
         |> List.iter messageSink
-        let items = itemSource()
+        let items = Item.GetList context
         let inventoryEmpty =
             avatarId
-            |> avatarInventorySource
+            |> Avatar.GetInventory context
             |> Map.fold
                 (fun _ item quantity -> 
                     let descriptor = items.[item]
@@ -49,7 +40,7 @@ module Inventory =
             (Hue.Usage, "(none)"  |> Line) |> Hued
             |> messageSink
         let availableTonnage = 
-            vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Tonnage
+            Vessel.GetStatistic context avatarId VesselStatisticIdentifier.Tonnage
             |> Option.map Statistic.GetCurrentValue
             |> Option.get
         let usedTonnage = 
@@ -66,10 +57,7 @@ module Inventory =
         |> List.iter messageSink
 
     let Run
-            (context : InventoryRunContext)
-            (avatarInventorySource       : AvatarInventorySource)
-            (itemSource                  : ItemSource) 
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (context : ServiceContext)
             (messageSink                 : MessageSink) 
             (gamestate                   : Gamestate) 
             : Gamestate option =
@@ -78,9 +66,6 @@ module Inventory =
         |> Option.iter 
             (RunWorld
                 context
-                itemSource 
-                vesselSingleStatisticSource 
-                avatarInventorySource
                 messageSink)
         gamestate
         |> Some

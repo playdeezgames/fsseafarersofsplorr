@@ -2,21 +2,21 @@
 
 open System
 
-type OperatingContext =
+type ServiceContext =
     interface
     end
 
 module Utility =
-    type SortListRandomlyContext =
-        inherit OperatingContext
+    type RandomContext =
+        inherit ServiceContext
         abstract member random : Random
     let SortListRandomly 
-            (context : OperatingContext) =
-        let context = context :?> SortListRandomlyContext
+            (context : ServiceContext) =
+        let context = context :?> RandomContext
         List.sortBy (fun _ -> context.random.Next())
 
     let PickRandomly
-            (context : OperatingContext) =
+            (context : ServiceContext) =
         SortListRandomly context >> List.head
 
     let SupplyDemandGenerator 

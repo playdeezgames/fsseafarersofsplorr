@@ -25,7 +25,7 @@ module IslandStatistic =
             command.Parameters.AddWithValue("$statisticId", identifier) |> ignore
         connection
         |> Utility.GetList 
-            "SELECT [StatisticId], [MinimumValue], [MaximumValue], [CurrentValue] FROM [IslandStatistics] WHERE [IslandX]=$islandX AND [IslandY]=$IslandY;" commandFilter statisticConvertor
+            "SELECT [StatisticId], [MinimumValue], [MaximumValue], [CurrentValue] FROM [IslandStatistics] WHERE [IslandX]=$islandX AND [IslandY]=$islandY AND [StatisticId]=$statisticId;" commandFilter statisticConvertor
         |> Result.map
             (fun items ->
                 items

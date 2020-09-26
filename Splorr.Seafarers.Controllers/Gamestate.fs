@@ -3,11 +3,6 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
-type AvatarMessageSource = string -> string list
-
-type GamestateCheckForAvatarDeathContext =
-    inherit OperatingContext
-
 [<RequireQualifiedAccess>]
 type Gamestate = 
     | InPlay       of string
@@ -46,8 +41,7 @@ module Gamestate =
         | _ -> None
 
     let CheckForAvatarDeath 
-            (context : GamestateCheckForAvatarDeathContext)
-            (avatarMessageSource           : AvatarMessageSource)
+            (context : ServiceContext)
             (gamestate                     : Gamestate option) 
             : Gamestate option =
         gamestate
@@ -59,6 +53,6 @@ module Gamestate =
                     g
                 else
                     w
-                    |> avatarMessageSource
+                    |> AvatarMessages.Get context
                     |> Gamestate.GameOver
                     |> Some) gamestate

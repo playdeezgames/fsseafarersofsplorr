@@ -48,7 +48,7 @@ type TestWorldMoveContext
         member _.avatarShipmateSource          : AvatarShipmateSource=avatarShipmateSource
     interface Avatar.GetCurrentFoulingContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Avatar.AddMessagesContext with
+    interface AvatarMessages.AddContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface Avatar.TransformShipmatesContext with
         member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
@@ -60,7 +60,7 @@ type TestWorldMoveContext
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface Avatar.MoveContext with
         member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface OperatingContext
+    interface ServiceContext
 
 [<Test>]
 let ``Move.It moves the avatar one unit when give 1u for distance when given a valid avatar id.`` () =
@@ -144,7 +144,7 @@ let ``Move.It moves the avatar one unit when give 1u for distance when given a v
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
             vesselSingleStatisticSink, 
-            vesselSingleStatisticSource) :> OperatingContext
+            vesselSingleStatisticSource) :> ServiceContext
     Fixtures.Common.Dummy.AvatarId
     |> World.Move 
         context
@@ -235,7 +235,7 @@ let ``Move.It moves the avatar almost two units when give 2u for distance.`` () 
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
             vesselSingleStatisticSink, 
-            vesselSingleStatisticSource) :> OperatingContext
+            vesselSingleStatisticSource) :> ServiceContext
     Fixtures.Common.Dummy.AvatarId
     |> World.Move 
         context

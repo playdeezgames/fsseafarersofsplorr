@@ -11,7 +11,7 @@ type TestAvatarAbandonJobContext
         avatarSingleMetricSource,
         shipmateSingleStatisticSink, 
         shipmateSingleStatisticSource) =
-    interface Avatar.AbandonJobContext with
+    interface AvatarJob.AbandonContext with
         member this.avatarJobSink: AvatarJobSink = avatarJobSink
         member this.avatarJobSource: AvatarJobSource = avatarJobSource
     interface Avatar.GetPrimaryStatisticContext with
@@ -37,9 +37,9 @@ let ``AbandonJob.It does nothing when the given avatar has no job.`` () =
             Fixtures.Common.Fake.AvatarSingleMetricSink,
             Fixtures.Common.Fake.AvatarSingleMetricSource,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink, 
-            Fixtures.Common.Fake.ShipmateSingleStatisticSource) :> Avatar.AbandonJobContext
+            Fixtures.Common.Fake.ShipmateSingleStatisticSource) :> AvatarJob.AbandonContext
     input
-    |> Avatar.AbandonJob
+    |> AvatarJob.Abandon
         context
 
 [<Test>]
@@ -81,8 +81,8 @@ let ``AbandonJob.It set job to None when the given avatar has a job.`` () =
             (Fixtures.Common.Mock.AvatarSingleMetricSink [(Metric.AbandonedJob, 1UL)]),
             avatarSingleMetricSource,
             shipmateSingleStatisticSink, 
-            shipmateSingleStatisticSource) :> Avatar.AbandonJobContext
-    Avatar.AbandonJob
+            shipmateSingleStatisticSource) :> AvatarJob.AbandonContext
+    AvatarJob.Abandon
         context
         Fixtures.Common.Dummy.AvatarId
 

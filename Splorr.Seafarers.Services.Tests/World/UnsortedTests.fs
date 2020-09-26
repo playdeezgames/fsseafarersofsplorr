@@ -2,11 +2,12 @@
 
 open NUnit.Framework
 open Splorr.Seafarers.Services
+open Splorr.Seafarers.Models
 
 type TestWorldAddMessagesContext(avatarMessageSink) =
     interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface Avatar.AddMessagesContext with
+    interface AvatarMessages.AddContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
 
 type TestWorldClearMessagesContext(avatarMessagePurger) =
@@ -73,3 +74,24 @@ let ``AddMessages.It appends new messages to previously existing messages in the
         context
         newMessages
 
+type TestWorldGetStatisticContext(worldSingleStatisticSource) =
+    interface World.GetStatisticContext with
+        member this.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
+[<Test>]
+let ``GetStatistic.It returns a statistic for the world.`` () =
+    let givenLocation = Fixtures.Common.Dummy.IslandLocation
+    let mutable called = false
+    let expected : Statistic = Statistic.Create (0.0, 100.0) 50.0
+    let worldSingleStatisticSource (_) =
+        called <- true
+        expected
+    let context = 
+        TestWorldGetStatisticContext
+            (worldSingleStatisticSource) :> ServiceContext
+    let expected : Statistic = Statistic.Create (0.0, 100.0) 50.0
+    let actual =
+        World.GetStatistic
+            context
+            WorldStatisticIdentifier.PositionX
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)

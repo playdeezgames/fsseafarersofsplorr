@@ -67,7 +67,7 @@ let main argv =
         |> Persister.unpackOrThrow
 
     let itemSource () = 
-        Item.GetList connection
+        Persistence.Item.GetList connection
         |> Persister.unpackOrThrow
 
     let vesselStatisticTemplateSource () = 
@@ -250,7 +250,7 @@ let main argv =
         >> Persister.unpackOrThrow
 
     let islandSingleNameSource =
-        Island.GetName connection
+        Persistence.Island.GetName connection
         >> Persister.unpackOrThrow
 
     let islandSingleStatisticSink 
@@ -272,7 +272,7 @@ let main argv =
         >> Persister.unpackOrThrow
 
     let islandSource () : Location list = 
-        Island.GetList connection
+        Persistence.Island.GetList connection
         |> Persister.unpackOrThrow
 
     let islandJobSink (location:Location) = 
@@ -323,7 +323,7 @@ let main argv =
         AvatarGamblingHand.SetForAvatar connection avatarId
         >> Persister.unpackOrThrow
 
-    let context : RunnerRunContext =
+    let context : ServiceContext =
         SplorrContext
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
@@ -382,7 +382,7 @@ let main argv =
             vesselStatisticSink,
             vesselStatisticTemplateSource,
             worldSingleStatisticSource) 
-        :> RunnerRunContext
+        :> ServiceContext
 
     try
         Runner.Run 

@@ -5,37 +5,9 @@ open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open Tarot
 
-type IslandFeatureRunDarkAlleyGamblingHand =
-    inherit Avatar.FoldGamblingHandContext
-
-
-type IslandFeatureRunDarkAlleyContext =
-    inherit IslandFeatureRunDarkAlleyGamblingHand
-    inherit World.AddMessagesContext
-    inherit Avatar.GetGamblingHandContext
-    inherit Avatar.DealGamblingHandContext
-    inherit Avatar.EnterIslandFeatureContext
-    inherit World.HasDarkAlleyMinimumStakesContext
-    abstract member avatarMessageSource           : AvatarMessageSource
-    abstract member avatarMessageSink             : AvatarMessageSink
-    abstract member islandSingleStatisticSource   : IslandSingleStatisticSource
-    abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
-
-type IslandFeatureRunFeatureContext =
-    inherit IslandFeatureRunDarkAlleyContext
-    
-
-type IslandFeatureRunIslandContext = 
-    inherit IslandFeatureRunFeatureContext
-    abstract member islandSingleFeatureSource : IslandSingleFeatureSource
-
-type IslandFeatureRunContext =
-    inherit IslandFeatureRunIslandContext
-    abstract member islandSingleNameSource    : IslandSingleNameSource
-
 module IslandFeature =
     let private RunDarkAlleyGamblingHand
-            (context       : IslandFeatureRunDarkAlleyGamblingHand)
+            (context       : ServiceContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (location      : Location)
@@ -71,7 +43,7 @@ module IslandFeature =
                     |> Gamestate.ErrorMessage
                     |> Some
     let private RunDarkAlley
-            (context       : IslandFeatureRunDarkAlleyContext)
+            (context       : ServiceContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (location      : Location)
@@ -104,7 +76,7 @@ module IslandFeature =
             else
                 "" |> Line |> messageSink
                 avatarId
-                |> context.avatarMessageSource
+                |> AvatarMessages.Get context
                 |> Utility.DumpMessages messageSink
                 [
                     (Hue.Heading, "You are in the dark alley." |> Line) |> Hued
@@ -141,7 +113,7 @@ module IslandFeature =
 
 
     let private RunFeature
-            (context       : IslandFeatureRunFeatureContext)
+            (context       : ServiceContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (location      : Location)
@@ -163,14 +135,14 @@ module IslandFeature =
             
 
     let private RunIsland
-            (context       : IslandFeatureRunIslandContext)
+            (context       : ServiceContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (location      : Location)
             (feature       : IslandFeatureIdentifier)
             (avatarId      : string)
             : Gamestate option =
-        if context.islandSingleFeatureSource location feature then
+        if Island.HasFeature context feature location then
             RunFeature
                 context
                 commandSource
@@ -184,14 +156,14 @@ module IslandFeature =
             |> Some
 
     let Run 
-            (context       : IslandFeatureRunContext)
+            (context       : ServiceContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (location      : Location)
             (feature       : IslandFeatureIdentifier)
             (avatarId      : string)
             : Gamestate option =
-        match context.islandSingleNameSource location with
+        match Island.GetName context location with
         | Some _ ->
             RunIsland
                 context

@@ -3,19 +3,9 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
-type ItemListRunWithIslandContext =
-    inherit OperatingContext
-    inherit Avatar.GetPrimaryStatisticContext
-
-type ItemListRunContext =
-    inherit ItemListRunWithIslandContext
-    inherit DockedRunBoilerplateContext
-
 module ItemList = 
     let private RunWithIsland 
-            (context            : ItemListRunWithIslandContext)
-            (itemSource         : unit -> Map<uint64, ItemDescriptor>) 
-            (islandItemSource   : Location -> Set<uint64>) 
+            (context            : ServiceContext)
             (messageSink        : MessageSink) 
             (location           : Location) 
             (avatarId           : string) 
@@ -30,13 +20,13 @@ module ItemList =
             (Hue.Sublabel, "---------------------+----------+----------" |> Line) |> Hued
         ]
         |> List.iter messageSink
-        let items = itemSource()
+        let items = Item.GetList context
         location
-        |> islandItemSource
+        |> Island.GetItems context
         |> Set.iter (fun item -> 
             let descriptor = items.[item]
-            let sellPrice: float = (item, location) ||> Item.DetermineSalePrice context
-            let buyPrice: float = (item, location) ||> Item.DeterminePurchasePrice context
+            let sellPrice: float = (item, location) ||> IslandMarket.DetermineSalePrice context
+            let buyPrice: float = (item, location) ||> IslandMarket.DeterminePurchasePrice context
             [
                 (Hue.Value, descriptor.ItemName |> sprintf "%-20s" |> Text) |> Hued
                 (Hue.Sublabel, " | " |> Text) |> Hued
@@ -56,20 +46,12 @@ module ItemList =
         |> Some
 
     let Run 
-            (context : ItemListRunContext)
-            (avatarMessageSource           : AvatarMessageSource)
-            (islandItemSource              : IslandItemSource)
-            (islandSource                  : IslandSource)
-            (itemSource                    : ItemSource) 
+            (context : ServiceContext)
             (messageSink                   : MessageSink) =
         RunWithIsland 
             context
-            itemSource 
-            islandItemSource 
             messageSink
         |> Docked.RunBoilerplate 
             context
-            avatarMessageSource
-            islandSource
     
 

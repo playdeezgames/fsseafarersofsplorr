@@ -3,26 +3,16 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 
-type StatusRunWorldContext =
-    inherit Avatar.GetPrimaryStatisticContext
-
-type StatusRunContext =
-    inherit StatusRunWorldContext
-
 module Status =
     let private RunWorld 
-            (context : StatusRunWorldContext)
-            (avatarJobSource               : AvatarJobSource)
-            (islandSingleNameSource        : IslandSingleNameSource)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
+            (context : ServiceContext)
             (messageSink                   : MessageSink) 
             (avatarId                      : string) 
             : unit =
-        let portFouling = vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PortFouling |> Option.get
-        let satiety = shipmateSingleStatisticSource avatarId Primary ShipmateStatisticIdentifier.Satiety |> Option.get
-        let health = shipmateSingleStatisticSource avatarId Primary ShipmateStatisticIdentifier.Health |> Option.get
-        let starboardFouling = vesselSingleStatisticSource avatarId VesselStatisticIdentifier.StarboardFouling |> Option.get
+        let portFouling = Vessel.GetStatistic context avatarId VesselStatisticIdentifier.PortFouling |> Option.get
+        let satiety = Shipmate.GetStatistic context avatarId Primary ShipmateStatisticIdentifier.Satiety |> Option.get
+        let health = Shipmate.GetStatistic context avatarId Primary ShipmateStatisticIdentifier.Health |> Option.get
+        let starboardFouling = Vessel.GetStatistic context avatarId VesselStatisticIdentifier.StarboardFouling |> Option.get
         [
             "" |> Line
             (Hue.Heading, "Status:" |> Line) |> Hued
@@ -41,7 +31,7 @@ module Status =
         ]
         |> List.iter messageSink
         avatarId
-        |> avatarJobSource
+        |> AvatarJob.Get context
         |> Option.iter
             (fun job ->
                 [
@@ -49,18 +39,14 @@ module Status =
                     (Hue.Sublabel, "Description: " |> Text) |> Hued
                     (Hue.Flavor, job.FlavorText |> sprintf "%s" |> Line) |> Hued
                     (Hue.Sublabel, "Destination: " |> Text) |> Hued
-                    (Hue.Value, job.Destination |> islandSingleNameSource |> Option.get |> sprintf "%s" |> Line) |> Hued
+                    (Hue.Value, job.Destination |> Island.GetName context |> Option.get |> sprintf "%s" |> Line) |> Hued
                     (Hue.Sublabel, "Reward: " |> Text) |> Hued
                     (Hue.Value, job.Reward |> sprintf "%f" |> Line) |> Hued
                 ]
                 |> List.iter messageSink)
 
     let Run 
-            (context : StatusRunContext)
-            (avatarJobSource               : AvatarJobSource)
-            (islandSingleNameSource        : IslandSingleNameSource)
-            (shipmateSingleStatisticSource : ShipmateSingleStatisticSource)
-            (vesselSingleStatisticSource   : string -> VesselStatisticIdentifier -> Statistic option)
+            (context : ServiceContext)
             (messageSink                   : MessageSink) 
             (gamestate                     : Gamestate) 
             : Gamestate option =
@@ -69,10 +55,6 @@ module Status =
         |> Option.iter 
             (RunWorld 
                 context
-                avatarJobSource
-                islandSingleNameSource
-                shipmateSingleStatisticSource 
-                vesselSingleStatisticSource 
                 messageSink)
         gamestate
         |> Some
