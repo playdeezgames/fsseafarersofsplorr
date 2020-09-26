@@ -17,6 +17,8 @@ type TestCareenedRunContext
         shipmateSingleStatisticSource,
         vesselSingleStatisticSink, 
         vesselSingleStatisticSource) =
+    interface Avatar.GetMessagesContext with
+        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
     interface Shipmate.GetStatusContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface Avatar.AddMetricContext with
@@ -32,8 +34,6 @@ type TestCareenedRunContext
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
     interface World.ClearMessagesContext with
         member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
-    interface CareenedRunContext with
-        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
     interface Vessel.TransformFoulingContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
@@ -53,7 +53,7 @@ let private functionUnderTest
             shipmateSingleStatisticSinkStub, 
             shipmateSingleStatisticSourceStub, 
             vesselSingleStatisticSinkStub, 
-            vesselSingleStatisticSourceStub) :> CareenedRunContext
+            vesselSingleStatisticSourceStub) :> ServiceContext
     Careened.Run 
         context
 
@@ -85,7 +85,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
             shipmateSingleStatisticSinkStub,
             shipmateSingleStatisticSource, 
             vesselSingleStatisticSinkStub, 
-            vesselSingleStatisticSourceStub) :> CareenedRunContext
+            vesselSingleStatisticSourceStub) :> ServiceContext
     let actual =
         inputWorld
         |> Careened.Run 

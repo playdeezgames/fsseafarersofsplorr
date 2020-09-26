@@ -142,10 +142,6 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> AtSeaGetVisibleIslandsContext
     let context = splorrContext :?> AtSeaCanCareenContext
     let context = splorrContext :?> IslandListRunWorldContext
-    let context = splorrContext :?> CareenedRunContext
-    let context = splorrContext :?> CareenedRunAliveContext
-    let context = splorrContext :?> CareenedUpdateDisplayContext
-    let context = splorrContext :?> CareenedHandleCommandContext
     let context = splorrContext :?> ConfirmQuit.RunContext
     let context = splorrContext :?> Avatar.GetJobContext
     let context = splorrContext :?> Island.GetNameContext

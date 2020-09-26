@@ -405,9 +405,6 @@ type SplorrContext
         member _.islandSingleStatisticSource : IslandSingleStatisticSource = islandSingleStatisticSource
         member _.avatarIslandFeatureSource : AvatarIslandFeatureSource = avatarIslandFeatureSource
 
-    interface CareenedRunContext with
-        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
-
     interface Avatar.GetMetricsContext with
         member this.avatarMetricSource: AvatarMetricSource = avatarMetricSource
 
