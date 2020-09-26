@@ -146,8 +146,6 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> CareenedRunAliveContext
     let context = splorrContext :?> CareenedUpdateDisplayContext
     let context = splorrContext :?> CareenedHandleCommandContext
-    let context = splorrContext :?> ChartRunContext
-    let context = splorrContext :?> ChartOutputChartContext
     let context = splorrContext :?> ConfirmQuit.RunContext
     let context = splorrContext :?> Avatar.GetJobContext
     let context = splorrContext :?> Island.GetNameContext
@@ -160,7 +158,7 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Avatar.GetMessagesContext
     let context = splorrContext :?> Avatar.GetInventoryContext
     let context = splorrContext :?> Avatar.GetIslandMetricContext
-    //let context = splorrContext :?> 
+    let context = splorrContext :?> World.GetStatisticContext
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 

@@ -12,14 +12,10 @@ type TestChartRunContext
             islandSource,
             vesselSingleStatisticSource, 
             worldSingleStatisticSource) =
-    interface ChartRunContext with
+    interface World.GetStatisticContext with
         member this.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
     interface Avatar.GetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface ChartOutputChartContext with
-        member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
-        member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
-        member this.islandSource: IslandSource = islandSource
 
 [<Test>]
 let ``Run.It returns the At Sea state with the given world.`` () =
@@ -35,7 +31,7 @@ let ``Run.It returns the At Sea state with the given world.`` () =
             islandSingleNameSourceStub,
             islandSourceStub,
             vesselSingleStatisticSourceStub, 
-            worldSingleStatisticSourceStub) :> ChartRunContext
+            worldSingleStatisticSourceStub) :> ServiceContext
     let actual =
         Chart.Run
             context

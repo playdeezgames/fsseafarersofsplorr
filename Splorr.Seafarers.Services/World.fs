@@ -13,6 +13,15 @@ type IslandSingleFeatureSink = Location -> IslandFeatureIdentifier -> unit
 type WorldSingleStatisticSource = WorldStatisticIdentifier -> Statistic
 
 module World =
+    type GetStatisticContext =
+        inherit ServiceContext
+        abstract member worldSingleStatisticSource : WorldSingleStatisticSource
+    let GetStatistic
+            (context : ServiceContext)
+            (identifier : WorldStatisticIdentifier)
+            : Statistic =
+        (context :?> GetStatisticContext).worldSingleStatisticSource identifier
+
     type GenerateIslandNameContext =
         inherit ServiceContext
         abstract member random : Random
