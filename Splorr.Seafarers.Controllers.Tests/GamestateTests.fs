@@ -10,7 +10,7 @@ type TestGamestateCheckForAvatarDeathContext (avatarMessageSource, shipmateSingl
     interface Shipmate.GetStatusContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-    interface Avatar.GetMessagesContext with
+    interface AvatarMessages.GetContext with
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
 
 let private avatarId = ""

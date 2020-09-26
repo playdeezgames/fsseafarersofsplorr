@@ -38,7 +38,7 @@ type TestDockedRunContext
             shipmateSingleStatisticSource,
             vesselSingleStatisticSource   
         ) =
-    interface Avatar.GetMessagesContext with
+    interface AvatarMessages.GetContext with
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
 
     interface Island.GetListContext with
@@ -60,7 +60,7 @@ type TestDockedRunContext
     interface Island.GetFeaturesContext with
         member _.islandFeatureSource            : IslandFeatureSource            = islandFeatureSource
        
-    interface Avatar.AddMessagesContext with
+    interface AvatarMessages.AddContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         
     interface World.AddMessagesContext with

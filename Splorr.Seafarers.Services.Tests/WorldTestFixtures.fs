@@ -71,7 +71,7 @@ type TestWorldDockContext
     interface Avatar.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-    interface Avatar.AddMessagesContext with
+    interface AvatarMessages.AddContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
 
     interface Avatar.AddMetricContext with

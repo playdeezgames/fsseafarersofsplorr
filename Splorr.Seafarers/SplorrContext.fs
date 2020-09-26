@@ -65,7 +65,7 @@ type SplorrContext
     interface Avatar.GetIslandFeatureContext with
         member _.avatarIslandFeatureSource: AvatarIslandFeatureSource = avatarIslandFeatureSource
 
-    interface Avatar.GetMessagesContext with
+    interface AvatarMessages.GetContext with
         member _.avatarMessageSource: AvatarMessageSource = avatarMessageSource
 
     interface Vessel.GetStatisticContext with
@@ -323,7 +323,7 @@ type SplorrContext
         member _.avatarSingleMetricSink   : AvatarSingleMetricSink = avatarSingleMetricSink
         member _.avatarSingleMetricSource : AvatarSingleMetricSource = avatarSingleMetricSource
 
-    interface Avatar.AddMessagesContext with
+    interface AvatarMessages.AddContext with
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
 
     interface Avatar.GetPrimaryStatisticContext with

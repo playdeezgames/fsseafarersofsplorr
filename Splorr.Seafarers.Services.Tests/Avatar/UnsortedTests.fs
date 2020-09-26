@@ -10,7 +10,7 @@ open Tarot
 let private inputAvatarId = "avatar"
 
 type TestAvatarAddMessagesContext(avatarMessageSink) =
-    interface Avatar.AddMessagesContext with
+    interface AvatarMessages.AddContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
 
 type TestAvatarAddMetricContext
@@ -34,9 +34,9 @@ let ``AddMessages.It adds messages to a given avatar.`` () =
             ()
         | _ ->
             Assert.Fail("Got an unexpected message.")
-    let context = TestAvatarAddMessagesContext(avatarMessageSink) :> Avatar.AddMessagesContext
+    let context = TestAvatarAddMessagesContext(avatarMessageSink) :> AvatarMessages.AddContext
     input
-    |> Avatar.AddMessages context inputMessages
+    |> AvatarMessages.Add context inputMessages
 
 
 [<Test>]
@@ -129,7 +129,7 @@ let ``GetMetrics.It calls the AvatarMetricSource in the context.`` () =
 type TestAvatarGetMessagesContext
        (avatarMessageSource) =
    interface ServiceContext
-   interface Avatar.GetMessagesContext with
+   interface AvatarMessages.GetContext with
        member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
 [<Test>]
 let ``GetMessages.It calls the AvatarMetricSource in the context.`` () =
@@ -142,7 +142,7 @@ let ``GetMessages.It calls the AvatarMetricSource in the context.`` () =
            (avatarMessageSource) :> ServiceContext
    let expected = []
    let actual =
-       Avatar.GetMessages
+       AvatarMessages.Get
            context
            Fixtures.Common.Dummy.AvatarId
    Assert.AreEqual(expected, actual)

@@ -24,7 +24,7 @@ type TestWorldBuyItemsContext
     interface IslandMarket.DeterminePriceContext with
         member this.islandMarketSource: IslandMarketSource = islandMarketSource
         member this.itemSingleSource: ItemSingleSource = itemSingleSource
-    interface Avatar.AddMessagesContext with
+    interface AvatarMessages.AddContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         
     interface World.AddMessagesContext with

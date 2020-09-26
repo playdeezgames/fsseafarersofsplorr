@@ -228,7 +228,7 @@ module World =
             (avatarId          : string) 
             : unit =
         let context = context :?> AddMessagesContext
-        Avatar.AddMessages
+        AvatarMessages.Add
             context
             messages 
             avatarId

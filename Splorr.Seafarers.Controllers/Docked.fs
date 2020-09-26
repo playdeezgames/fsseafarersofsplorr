@@ -21,7 +21,7 @@ module Docked =
             : unit =
         "" |> Line |> messageSink
         avatarId
-        |> Avatar.GetMessages context
+        |> AvatarMessages.Get context
         |> Utility.DumpMessages messageSink
         location
         |> Island.GetFeatures context 
@@ -183,7 +183,7 @@ module Docked =
                 |> Some
         else
             avatarId
-            |> Avatar.GetMessages context
+            |> AvatarMessages.Get context
             |> Gamestate.GameOver
             |> Some
 

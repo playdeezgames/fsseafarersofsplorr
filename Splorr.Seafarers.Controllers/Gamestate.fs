@@ -53,6 +53,6 @@ module Gamestate =
                     g
                 else
                     w
-                    |> Avatar.GetMessages context
+                    |> AvatarMessages.Get context
                     |> Gamestate.GameOver
                     |> Some) gamestate

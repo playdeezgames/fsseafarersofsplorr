@@ -80,7 +80,7 @@ module AtSea =
             : unit =
         "" |> Line |> messageSink
         avatarId
-        |> Avatar.GetMessages context
+        |> AvatarMessages.Get context
         |> Utility.DumpMessages messageSink
 
         let speed = 
@@ -329,6 +329,6 @@ module AtSea =
                 avatarId
         else
             avatarId
-            |> Avatar.GetMessages context
+            |> AvatarMessages.Get context
             |> Gamestate.GameOver
             |> Some

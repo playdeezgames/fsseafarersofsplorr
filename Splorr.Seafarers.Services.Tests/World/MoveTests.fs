@@ -48,7 +48,7 @@ type TestWorldMoveContext
         member _.avatarShipmateSource          : AvatarShipmateSource=avatarShipmateSource
     interface Avatar.GetCurrentFoulingContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Avatar.AddMessagesContext with
+    interface AvatarMessages.AddContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface Avatar.TransformShipmatesContext with
         member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource

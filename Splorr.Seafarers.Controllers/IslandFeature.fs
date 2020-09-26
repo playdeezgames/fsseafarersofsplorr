@@ -76,7 +76,7 @@ module IslandFeature =
             else
                 "" |> Line |> messageSink
                 avatarId
-                |> Avatar.GetMessages context
+                |> AvatarMessages.Get context
                 |> Utility.DumpMessages messageSink
                 [
                     (Hue.Heading, "You are in the dark alley." |> Line) |> Hued

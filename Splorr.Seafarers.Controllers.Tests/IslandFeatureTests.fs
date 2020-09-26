@@ -29,13 +29,13 @@ type TestIslandFeatureRunContext
         islandSingleNameSource,
         islandSingleStatisticSource,
         shipmateSingleStatisticSource) =
-    interface Avatar.GetMessagesContext with
+    interface AvatarMessages.GetContext with
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
     interface Island.GetNameContext with
         member _.islandSingleNameSource : IslandSingleNameSource = islandSingleNameSource
     interface Island.HasFeatureContext with
         member _.islandSingleFeatureSource : IslandSingleFeatureSource = islandSingleFeatureSource
-    interface Avatar.AddMessagesContext with
+    interface AvatarMessages.AddContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface World.AddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink

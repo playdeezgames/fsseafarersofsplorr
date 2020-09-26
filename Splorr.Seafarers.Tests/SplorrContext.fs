@@ -99,15 +99,15 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Avatar.AddMetricContext
     let context = splorrContext :?> Avatar.GetIslandMetricContext
     let context = splorrContext :?> Avatar.GetMetricsContext
-    //avatar messages
-    let context = splorrContext :?> Avatar.AddMessagesContext
-    let context = splorrContext :?> Avatar.GetMessagesContext
 
     let context = splorrContext :?> Avatar.CreateContext
 
     let context = splorrContext :?> AvatarJob.AbandonContext
     let context = splorrContext :?> AvatarJob.CompleteContext
     let context = splorrContext :?> AvatarJob.GetContext
+
+    let context = splorrContext :?> AvatarMessages.AddContext
+    let context = splorrContext :?> AvatarMessages.GetContext
 
     let context = splorrContext :?> Commodity.GetCommoditiesContext
 

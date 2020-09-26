@@ -3,8 +3,6 @@ open System
 open Splorr.Seafarers.Models
 open Tarot
 
-type MessagePurger = string -> unit
-type AvatarMessageSink = string -> string -> unit
 type AvatarShipmateSource = string -> ShipmateIdentifier list
 type AvatarInventorySource = string -> AvatarInventory
 type AvatarInventorySink = string -> AvatarInventory -> unit
@@ -17,7 +15,6 @@ type AvatarGamblingHandSource = string -> AvatarGamblingHand option
 type AvatarGamblingHandSink = string -> AvatarGamblingHand option -> unit
 type AvatarMetrics = Map<Metric, uint64>
 type AvatarMetricSource = string -> AvatarMetrics
-type AvatarMessageSource = string -> string list
 
 module Avatar =
     type CreateContext =
@@ -430,18 +427,6 @@ module Avatar =
         |> Map.add item newQuantity
         |> context.avatarInventorySink avatarId
 
-    type AddMessagesContext =
-        inherit ServiceContext
-        abstract member avatarMessageSink : AvatarMessageSink
-    let AddMessages 
-            (context : ServiceContext)
-            (messages : string list) 
-            (avatarId : string) 
-            : unit =
-        let context = context :?> AddMessagesContext
-        messages
-        |> List.iter (context.avatarMessageSink avatarId)
-
     type GetUsedTonnageContext =
         inherit ServiceContext
         abstract member avatarInventorySource : AvatarInventorySource
@@ -560,15 +545,6 @@ module Avatar =
             (avatarId: string)
             : AvatarMetrics =
         (context :?> GetMetricsContext).avatarMetricSource avatarId
-
-    type GetMessagesContext = 
-        inherit ServiceContext
-        abstract member avatarMessageSource : AvatarMessageSource
-    let GetMessages
-            (context : ServiceContext)
-            (avatarId: string)
-            : string list =
-        (context :?> GetMessagesContext).avatarMessageSource avatarId
 
     type GetInventoryContext =
         inherit ServiceContext

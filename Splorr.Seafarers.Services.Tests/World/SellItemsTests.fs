@@ -35,7 +35,7 @@ type TestWorldSellItemsContext
     interface World.SellItemsContext with
         member _.islandSource                  : IslandSource = islandSource
         member _.itemSource                    : ItemSource = itemSource
-    interface Avatar.AddMessagesContext with
+    interface AvatarMessages.AddContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface Island.ChangeMarketContext with
         member this.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink

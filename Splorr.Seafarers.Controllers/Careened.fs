@@ -13,7 +13,7 @@ module Careened =
         let avatarId = avatarId
         "" |> Line |> messageSink
         avatarId
-        |> Avatar.GetMessages context
+        |> AvatarMessages.Get context
         |> Utility.DumpMessages messageSink
         let sideName =
             match side with
@@ -117,6 +117,6 @@ module Careened =
                 avatarId
         else
             avatarId
-            |> Avatar.GetMessages context
+            |> AvatarMessages.Get context
             |> Gamestate.GameOver
             |> Some
