@@ -153,7 +153,7 @@ module World =
             |> Statistic.GetCurrentValue
         let avatarPosition = 
             avatarId 
-            |> Avatar.GetPosition 
+            |> Vessel.GetPosition 
                 context
             |> Option.get
         context.islandSource()
@@ -239,11 +239,11 @@ module World =
             (avatarId : string) 
             : unit = 
         avatarId
-        |> Avatar.SetSpeed 
+        |> Vessel.SetSpeed 
             context
             speed 
         avatarId
-        |> Avatar.GetSpeed 
+        |> Vessel.GetSpeed 
             context
         |> Option.iter
             (fun newSpeed ->
@@ -256,11 +256,11 @@ module World =
             (avatarId : string) 
             : unit =
         avatarId
-        |> Avatar.SetHeading 
+        |> Vessel.SetHeading 
             context
             heading 
         avatarId
-        |> Avatar.GetHeading 
+        |> Vessel.GetHeading 
             context
         |> Option.iter
             (fun newHeading ->
@@ -388,7 +388,7 @@ module World =
                     "You dock." 
                 ]
             avatarId
-            |> Avatar.AddMetric 
+            |> AvatarMetric.Add 
                 context
                 Metric.VisitedIsland 
                 (if newVisitCount > oldVisitCount then 1UL else 0UL)
@@ -434,7 +434,7 @@ module World =
                         Some l
                     else
                         None)
-        match location, Avatar.GetPosition context avatarId with
+        match location, Vessel.GetPosition context avatarId with
         | Some l, Some avatarPosition ->
             avatarId
             |> AddMessages context [ (islandName, Location.DistanceTo l avatarPosition ) ||> sprintf "Distance to `%s` is %f." ]
@@ -462,7 +462,7 @@ module World =
                         Some l
                     else
                         None)
-        match location, Avatar.GetPosition context avatarId with
+        match location, Vessel.GetPosition context avatarId with
         | Some l, Some avatarPosition ->
             [
                 AddMessages
@@ -504,7 +504,7 @@ module World =
                 avatarId
                 |> AddMessages context [ "You accepted the job!" ]
                 avatarId
-                |> Avatar.AddMetric 
+                |> AvatarMetric.Add 
                     context
                     Metric.AcceptedJob 
                     1UL
@@ -585,16 +585,16 @@ module World =
                 |> Option.get
             let usedTonnage =
                 avatarId
-                |> Avatar.GetUsedTonnage
+                |> AvatarInventory.GetUsedTonnage
                     context
                     items
             let quantity =
                 match tradeQuantity with
                 | Specific amount -> amount
-                | Maximum -> min (floor(availableTonnage / descriptor.Tonnage)) (floor((avatarId |> Avatar.GetMoney context) / unitPrice)) |> uint64
+                | Maximum -> min (floor(availableTonnage / descriptor.Tonnage)) (floor((avatarId |> AvatarShipmates.GetMoney context) / unitPrice)) |> uint64
             let price = (quantity |> float) * unitPrice
             let tonnageNeeded = (quantity |> float) * descriptor.Tonnage
-            if price > (avatarId |> Avatar.GetMoney context) then
+            if price > (avatarId |> AvatarShipmates.GetMoney context) then
                 avatarId
                 |> AddMessages context ["You don't have enough money."]
             elif usedTonnage + tonnageNeeded > availableTonnage then
@@ -612,11 +612,11 @@ module World =
                 avatarId
                 |> AddMessages context [(quantity, descriptor.ItemName) ||> sprintf "You complete the purchase of %u %s."]
                 avatarId
-                |> Avatar.SpendMoney 
+                |> AvatarShipmates.SpendMoney 
                     context
                     price 
                 avatarId
-                |> Avatar.AddInventory 
+                |> AvatarInventory.AddInventory 
                     context
                     item 
                     quantity
@@ -647,8 +647,8 @@ module World =
                 | Specific q -> q
                 | Maximum -> 
                     avatarId 
-                    |> Avatar.GetItemCount context item
-            if quantity > (avatarId |> Avatar.GetItemCount context item) then
+                    |> AvatarInventory.GetItemCount context item
+            if quantity > (avatarId |> AvatarInventory.GetItemCount context item) then
                 avatarId
                 |> AddMessages context ["You don't have enough of those to sell."]
             elif quantity = 0UL then
@@ -668,12 +668,12 @@ module World =
                     location
                 avatarId
                 |> AddMessages context [(quantity, descriptor.ItemName) ||> sprintf "You complete the sale of %u %s."]
-                Avatar.EarnMoney 
+                AvatarShipmates.EarnMoney 
                     context
                     price 
                     avatarId
                 avatarId
-                |> Avatar.RemoveInventory 
+                |> AvatarInventory.RemoveInventory 
                     context
                     item 
                     quantity 
@@ -742,7 +742,7 @@ module World =
 
     type CanPlaceBetContext =
         inherit ServiceContext
-        inherit Avatar.GetPrimaryStatisticContext
+        inherit AvatarShipmates.GetPrimaryStatisticContext
 
     let CanPlaceBet
             (context : ServiceContext)
@@ -750,7 +750,7 @@ module World =
             (avatarId : string)
             : bool =
         let context = context :?> CanPlaceBetContext
-        (Avatar.GetMoney context avatarId) >= amount
+        (AvatarShipmates.GetMoney context avatarId) >= amount
      
     type ResolveHandContext =
         inherit ServiceContext
@@ -761,9 +761,9 @@ module World =
             (avatarId: string)
             : unit =
         let context = context :?> ResolveHandContext
-        match Avatar.GetIslandFeature context avatarId with
+        match AvatarIslandFeature.Get context avatarId with
         | Some feature when feature.featureId = IslandFeatureIdentifier.DarkAlley ->
-            match Avatar.GetGamblingHand context avatarId with
+            match AvatarGamblingHand.Get context avatarId with
             | Some (first, second, third) ->
                 if CanPlaceBet context amount avatarId then
                     let minimumStakes =

@@ -30,16 +30,16 @@ type TestWorldBuyItemsContext
     interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         
-    interface Avatar.GetUsedTonnageContext with
+    interface AvatarInventory.GetUsedTonnageContext with
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
         
-    interface Avatar.GetPrimaryStatisticContext with
+    interface AvatarShipmates.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
         
-    interface Avatar.GetItemCountContext with
+    interface AvatarInventory.GetItemCountContext with
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
         
-    interface Avatar.AddInventoryContext with
+    interface AvatarInventory.AddInventoryContext with
         member _.avatarInventorySink   : AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
         

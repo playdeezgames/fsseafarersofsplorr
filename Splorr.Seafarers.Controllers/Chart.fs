@@ -37,11 +37,11 @@ module Chart =
                     (fun leg location -> 
                         let x, y = plotLocation scale location
                         let seen = 
-                            Avatar.GetIslandMetric context location AvatarIslandMetricIdentifier.Seen  avatarId
+                            AvatarMetric.GetForIsland context location AvatarIslandMetricIdentifier.Seen  avatarId
                             |> Option.map (fun x -> x > 0UL) 
                             |> Option.defaultValue false
                         let addToLegend =
-                            match Avatar.GetIslandMetric context location AvatarIslandMetricIdentifier.VisitCount avatarId with
+                            match AvatarMetric.GetForIsland context location AvatarIslandMetricIdentifier.VisitCount avatarId with
                             | None -> false
                             | _ -> true
                         match seen, addToLegend with
@@ -61,7 +61,7 @@ module Chart =
                             leg) Map.empty
             let avatarPosition = 
                 avatarId
-                |> Avatar.GetPosition 
+                |> Vessel.GetPosition 
                     context
                 |> Option.get
                 |> plotLocation scale

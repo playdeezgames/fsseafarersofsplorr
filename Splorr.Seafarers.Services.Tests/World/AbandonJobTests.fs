@@ -17,13 +17,13 @@ type TestWorldAbandonJobContext
     interface AvatarJob.AbandonContext with
         member _.avatarJobSink : AvatarJobSink = avatarJobSink
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
-    interface Avatar.GetPrimaryStatisticContext with
+    interface AvatarShipmates.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarMessages.AddContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface Avatar.AddMetricContext with
+    interface AvatarMetric.AddContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
     interface Shipmate.TransformStatisticContext with

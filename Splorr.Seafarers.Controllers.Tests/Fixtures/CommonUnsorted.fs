@@ -279,9 +279,6 @@ type TestAtSeaRunContext
         member this.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
     interface Vessel.TransformFoulingContext with
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
-        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Vessel.BefoulContext with
-        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Shipmate.GetStatusContext with
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface Shipmate.TransformStatisticContext with
@@ -290,31 +287,31 @@ type TestAtSeaRunContext
     interface Shipmate.EatContext with
         member _.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface Avatar.GetPositionContext with
+    interface Vessel.GetPositionContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Avatar.GetSpeedContext with
+    interface Vessel.GetSpeedContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Avatar.GetHeadingContext with
+    interface Vessel.GetHeadingContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Avatar.SetPositionContext with
+    interface Vessel.SetPositionContext with
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Avatar.SetSpeedContext with
+    interface Vessel.SetSpeedContext with
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Avatar.SetHeadingContext with
+    interface Vessel.SetHeadingContext with
         member _.vesselSingleStatisticSink : VesselSingleStatisticSink = vesselSingleStatisticSink
         member _.vesselSingleStatisticSource : VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Avatar.AddMetricContext with
+    interface AvatarMetric.AddContext with
         member _.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member _.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
     interface Avatar.EatContext with
         member _.avatarInventorySink : AvatarInventorySink=avatarInventorySink
         member _.avatarInventorySource : AvatarInventorySource=avatarInventorySource
         member _.avatarShipmateSource : AvatarShipmateSource=avatarShipmateSource
-    interface Avatar.GetCurrentFoulingContext with
+    interface Vessel.GetCurrentFoulingContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Avatar.GetPrimaryStatisticContext with
+    interface AvatarShipmates.GetPrimaryStatisticContext with
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarJob.AbandonContext with
         member this.avatarJobSink: AvatarJobSink = avatarJobSink
@@ -365,7 +362,7 @@ type TestAtSeaRunContext
         member _.itemSource: ItemSource = itemSource
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface Avatar.TransformShipmatesContext with
+    interface AvatarShipmates.TransformContext with
         member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
 
 let commandSourceFake (expectedCommand:Command option) : unit -> Command option =

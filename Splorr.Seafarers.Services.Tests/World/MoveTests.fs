@@ -18,11 +18,10 @@ type TestWorldMoveContext
         shipmateSingleStatisticSource,
         vesselSingleStatisticSink, 
         vesselSingleStatisticSource) =
+    interface Vessel.GetStatisticContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Vessel.TransformFoulingContext with
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
-        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Vessel.BefoulContext with
-        member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Shipmate.GetStatusContext with
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
@@ -32,25 +31,25 @@ type TestWorldMoveContext
     interface Shipmate.EatContext with
         member this.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface Avatar.GetPositionContext with
+    interface Vessel.GetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Avatar.GetSpeedContext with
+    interface Vessel.GetSpeedContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Avatar.SetPositionContext with
+    interface Vessel.SetPositionContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Avatar.AddMetricContext with
+    interface AvatarMetric.AddContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
     interface Avatar.EatContext with
         member _.avatarInventorySink           : AvatarInventorySink=avatarInventorySink
         member _.avatarInventorySource         : AvatarInventorySource=avatarInventorySource
         member _.avatarShipmateSource          : AvatarShipmateSource=avatarShipmateSource
-    interface Avatar.GetCurrentFoulingContext with
+    interface Vessel.GetCurrentFoulingContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarMessages.AddContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface Avatar.TransformShipmatesContext with
+    interface AvatarShipmates.TransformContext with
         member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
     interface World.UpdateChartsContext with
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink

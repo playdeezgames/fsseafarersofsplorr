@@ -14,7 +14,7 @@ type TestChartRunContext
             worldSingleStatisticSource) =
     interface World.GetStatisticContext with
         member this.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
-    interface Avatar.GetPositionContext with
+    interface Vessel.GetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 [<Test>]

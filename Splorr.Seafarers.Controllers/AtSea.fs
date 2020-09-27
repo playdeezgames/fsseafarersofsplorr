@@ -24,7 +24,7 @@ module AtSea =
             |> Option.get 
             |> Statistic.GetCurrentValue
         let avatarPosition =
-            Avatar.GetPosition 
+            Vessel.GetPosition 
                 context 
                 avatarId
             |> Option.get
@@ -50,7 +50,7 @@ module AtSea =
             |> Statistic.GetCurrentValue
         let avatarPosition =
             avatarId
-            |> Avatar.GetPosition context
+            |> Vessel.GetPosition context
             |> Option.get
         World.GetNearbyLocations
             context
@@ -85,12 +85,12 @@ module AtSea =
 
         let speed = 
             avatarId
-            |> Avatar.GetSpeed 
+            |> Vessel.GetSpeed 
                 context 
             |> Option.get
         let heading = 
             avatarId 
-            |> Avatar.GetHeading 
+            |> Vessel.GetHeading 
                 context 
             |> Option.get
         let speedHue =DetermineSpeedHue speed
@@ -105,7 +105,7 @@ module AtSea =
             (Hue.Label, "Speed: " |> Text) |> Hued
             (speedHue, (speed * 100.0) |> sprintf "%.0f%%" |> Text) |> Hued
             avatarId 
-            |> Avatar.GetEffectiveSpeed context 
+            |> Vessel.GetEffectiveSpeed context 
             |> sprintf "(Effective rate: %.2f)" |> Line
             (Hue.Subheading, "Nearby:" |> Line) |> Hued
         ]

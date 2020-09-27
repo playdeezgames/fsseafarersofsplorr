@@ -54,7 +54,7 @@ type TestDockedRunContext
         member this.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
         member this.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
     
-    interface Avatar.GetIslandMetricContext with
+    interface AvatarMetric.GetForIslandContext with
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
 
     interface Island.GetFeaturesContext with
@@ -87,17 +87,17 @@ type TestDockedRunContext
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-    interface Avatar.RemoveInventoryContext with
+    interface AvatarInventory.RemoveInventoryContext with
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
 
-    interface Avatar.AddMetricContext with
+    interface AvatarMetric.AddContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
 
-    interface Avatar.GetUsedTonnageContext with
+    interface AvatarInventory.GetUsedTonnageContext with
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
-    interface Avatar.GetPrimaryStatisticContext with
+    interface AvatarShipmates.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarJob.AbandonContext with
         member _.avatarJobSink                  : AvatarJobSink                 =avatarJobSink                 
@@ -105,9 +105,9 @@ type TestDockedRunContext
     interface World.ClearMessagesContext with
         member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
         
-    interface Avatar.GetItemCountContext with
+    interface AvatarInventory.GetItemCountContext with
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
-    interface Avatar.AddInventoryContext with
+    interface AvatarInventory.AddInventoryContext with
         member _.avatarInventorySink   : AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
     interface World.AcceptJobContext with
@@ -125,9 +125,9 @@ type TestDockedRunContext
     interface World.SellItemsContext with
         member _.islandSource                  : IslandSource = islandSource
         member _.itemSource                    : ItemSource = itemSource
-    interface Avatar.GetPositionContext with
+    interface Vessel.GetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Avatar.EnterIslandFeatureContext with
+    interface AvatarIslandFeature.EnterContext with
         member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
         member this.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
 

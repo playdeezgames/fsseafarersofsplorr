@@ -5,9 +5,9 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
 type TestWorldSetSpeedContext(avatarMessageSink, vesselSingleStatisticSink, vesselSingleStatisticSource) =
-    interface Avatar.GetSpeedContext with
+    interface Vessel.GetSpeedContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Avatar.SetSpeedContext with
+    interface Vessel.SetSpeedContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarMessages.AddContext with

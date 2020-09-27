@@ -31,7 +31,7 @@ module Metrics =
             "-------------------------+-------" |> Line
         ]
         |> List.iter messageSink
-        let metrics = Avatar.GetMetrics context avatarId
+        let metrics = AvatarMetric.Get context avatarId
         if metrics.IsEmpty then
             (Hue.Usage, "(none)" |> Line) |> Hued |> messageSink
         else

@@ -14,11 +14,13 @@ type TestAvatarCleanHullContext
         shipmateSingleStatisticSource, 
         vesselSingleStatisticSink, 
         vesselSingleStatisticSource) =
+    interface Vessel.GetStatisticContext with
+        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Avatar.CleanHullContext with
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
-    interface Avatar.TransformShipmatesContext with
+    interface AvatarShipmates.TransformContext with
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
-    interface Avatar.AddMetricContext with
+    interface AvatarMetric.AddContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
     interface Shipmate.TransformStatisticContext with
@@ -26,7 +28,6 @@ type TestAvatarCleanHullContext
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface Vessel.TransformFoulingContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
-        member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 [<Test>]
 let ``CleanHull.It cleans the hull of the given avatar.`` () =

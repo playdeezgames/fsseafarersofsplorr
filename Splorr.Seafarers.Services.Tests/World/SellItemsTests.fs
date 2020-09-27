@@ -23,14 +23,14 @@ type TestWorldSellItemsContext
     interface IslandMarket.DeterminePriceContext with
         member this.islandMarketSource: IslandMarketSource = islandMarketSource
         member this.itemSingleSource: ItemSingleSource = itemSingleSource
-    interface Avatar.RemoveInventoryContext with
+    interface AvatarInventory.RemoveInventoryContext with
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
-    interface Avatar.GetPrimaryStatisticContext with
+    interface AvatarShipmates.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface Avatar.GetItemCountContext with
+    interface AvatarInventory.GetItemCountContext with
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
     interface World.SellItemsContext with
         member _.islandSource                  : IslandSource = islandSource

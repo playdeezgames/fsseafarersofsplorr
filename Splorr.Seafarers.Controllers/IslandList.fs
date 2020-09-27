@@ -22,7 +22,7 @@ module IslandList =
             |> List.filter
                 (fun location -> 
                     avatarId
-                    |> Avatar.GetIslandMetric context location AvatarIslandMetricIdentifier.VisitCount 
+                    |> AvatarMetric.GetForIsland context location AvatarIslandMetricIdentifier.VisitCount 
                     |> Option.map (fun _ -> true)
                     |> Option.defaultValue false)
             |> List.sortBy(Island.GetName context >> Option.get)
@@ -39,7 +39,7 @@ module IslandList =
         if page < totalPages then
             let avatarPosition = 
                 avatarId
-                |> Avatar.GetPosition context
+                |> Vessel.GetPosition context
                 |> Option.get
             knownIslands
             |> List.skip (skippedItems |> int)

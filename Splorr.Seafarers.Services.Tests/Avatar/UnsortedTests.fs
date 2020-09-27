@@ -16,7 +16,7 @@ type TestAvatarAddMessagesContext(avatarMessageSink) =
 type TestAvatarAddMetricContext
         (avatarSingleMetricSink,
         avatarSingleMetricSource) =
-    interface Avatar.AddMetricContext with
+    interface AvatarMetric.AddContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
 
@@ -56,9 +56,9 @@ let ``AddMetric.It creates a metric value when there is no previously existing m
     let context = 
         TestAvatarAddMetricContext
             ((Fixtures.Common.Mock.AvatarSingleMetricSink [(Metric.Moved, 1UL)]),
-            avatarSingleMetricSource) :> Avatar.AddMetricContext
+            avatarSingleMetricSource) :> AvatarMetric.AddContext
     input
-    |> Avatar.AddMetric
+    |> AvatarMetric.Add
         context
         inputMetric 
         inputValue
@@ -80,15 +80,15 @@ let ``AddMetric.It adds to a metric value when there is a previously existing me
     let context = 
         TestAvatarAddMetricContext
             ((Fixtures.Common.Mock.AvatarSingleMetricSink [(Metric.Moved, 1UL)]),
-            avatarSingleMetricSource) :> Avatar.AddMetricContext
+            avatarSingleMetricSource) :> AvatarMetric.AddContext
     input
-    |> Avatar.AddMetric 
+    |> AvatarMetric.Add 
         context
         inputMetric 
         inputValue
 
 type TestAvatarGetIslandFeatureContext(avatarIslandFeatureSource) =
-    interface Avatar.GetIslandFeatureContext with
+    interface AvatarIslandFeature.GetContext with
         member this.avatarIslandFeatureSource: AvatarIslandFeatureSource = avatarIslandFeatureSource
 
 [<Test>]
@@ -98,16 +98,16 @@ let ``GetIslandFeature.It retrieves none when the avatar is at sea.`` () =
     let avatarIslandFeatureSource (_) =
         called <- true
         None
-    let context = TestAvatarGetIslandFeatureContext(avatarIslandFeatureSource) :> Avatar.GetIslandFeatureContext
+    let context = TestAvatarGetIslandFeatureContext(avatarIslandFeatureSource) :> AvatarIslandFeature.GetContext
     let expected : AvatarIslandFeature option = None
-    let actual = Avatar.GetIslandFeature context givenAvatarId
+    let actual = AvatarIslandFeature.Get context givenAvatarId
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
  
 type TestAvatarGetMetricsContext
         (avatarMetricSource) =
     interface ServiceContext
-    interface Avatar.GetMetricsContext with
+    interface AvatarMetric.GetContext with
         member this.avatarMetricSource: AvatarMetricSource = avatarMetricSource
 [<Test>]
 let ``GetMetrics.It calls the AvatarMetricSource in the context.`` () =
@@ -120,7 +120,7 @@ let ``GetMetrics.It calls the AvatarMetricSource in the context.`` () =
             (avatarMetricSource) :> ServiceContext
     let expected = Map.empty
     let actual =
-        Avatar.GetMetrics
+        AvatarMetric.Get
             context
             Fixtures.Common.Dummy.AvatarId
     Assert.AreEqual(expected, actual)
@@ -151,7 +151,7 @@ let ``GetMessages.It calls the AvatarMetricSource in the context.`` () =
 type TestAvatarGetInventoryContext
        (avatarInventorySource) =
    interface ServiceContext
-   interface Avatar.GetInventoryContext with
+   interface AvatarInventory.GetInventoryContext with
        member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
 [<Test>]
 let ``GetInventory.It calls the AvatarInventorySource in the context.`` () =
@@ -164,7 +164,7 @@ let ``GetInventory.It calls the AvatarInventorySource in the context.`` () =
            (avatarInventorySource) :> ServiceContext
    let expected = Map.empty
    let actual =
-       Avatar.GetInventory
+       AvatarInventory.GetInventory
            context
            Fixtures.Common.Dummy.AvatarId
    Assert.AreEqual(expected, actual)
@@ -173,7 +173,7 @@ let ``GetInventory.It calls the AvatarInventorySource in the context.`` () =
 type TestAvatarGetIslandMetricContext
        (avatarIslandSingleMetricSource) =
    interface ServiceContext
-   interface Avatar.GetIslandMetricContext with
+   interface AvatarMetric.GetForIslandContext with
        member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
 [<Test>]
 let ``GetIslandMetric.It calls the AvatarIslandSingleMetricSource in the context.`` () =
@@ -186,7 +186,7 @@ let ``GetIslandMetric.It calls the AvatarIslandSingleMetricSource in the context
            (avatarIslandSingleMetricSource) :> ServiceContext
    let expected = None
    let actual =
-       Avatar.GetIslandMetric
+       AvatarMetric.GetForIsland
            context
            Fixtures.Common.Dummy.IslandLocation
            AvatarIslandMetricIdentifier.LastVisit
