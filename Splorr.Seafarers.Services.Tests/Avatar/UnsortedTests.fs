@@ -151,7 +151,7 @@ let ``GetMessages.It calls the AvatarMetricSource in the context.`` () =
 type TestAvatarGetInventoryContext
        (avatarInventorySource) =
    interface ServiceContext
-   interface Avatar.GetInventoryContext with
+   interface AvatarInventory.GetInventoryContext with
        member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
 [<Test>]
 let ``GetInventory.It calls the AvatarInventorySource in the context.`` () =
@@ -164,7 +164,7 @@ let ``GetInventory.It calls the AvatarInventorySource in the context.`` () =
            (avatarInventorySource) :> ServiceContext
    let expected = Map.empty
    let actual =
-       Avatar.GetInventory
+       AvatarInventory.GetInventory
            context
            Fixtures.Common.Dummy.AvatarId
    Assert.AreEqual(expected, actual)

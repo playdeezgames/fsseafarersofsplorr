@@ -22,7 +22,7 @@ module Inventory =
         let items = Item.GetList context
         let inventoryEmpty =
             avatarId
-            |> Avatar.GetInventory context
+            |> AvatarInventory.GetInventory context
             |> Map.fold
                 (fun _ item quantity -> 
                     let descriptor = items.[item]
@@ -45,7 +45,7 @@ module Inventory =
             |> Option.get
         let usedTonnage = 
             avatarId 
-            |> Avatar.GetUsedTonnage 
+            |> AvatarInventory.GetUsedTonnage 
                 context
                 items
         [

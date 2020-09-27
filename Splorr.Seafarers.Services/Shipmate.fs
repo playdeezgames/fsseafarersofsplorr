@@ -15,7 +15,7 @@ type ShipmateRationItemSink = string -> ShipmateIdentifier -> uint64 list -> uni
 type ShipmateStatisticTemplateSource = unit -> Map<ShipmateStatisticIdentifier, StatisticTemplate>
 type ShipmateSingleStatisticSink = string -> ShipmateIdentifier -> (ShipmateStatisticIdentifier * Statistic option) -> unit
 type ShipmateSingleStatisticSource = string -> ShipmateIdentifier -> ShipmateStatisticIdentifier -> Statistic option
-type AvatarInventory = Map<uint64,uint64>
+type Inventory = Map<uint64,uint64>
 
 module Shipmate =
     type CreateContext =
@@ -91,10 +91,10 @@ module Shipmate =
         abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
     let Eat 
             (context    : ServiceContext)
-            (inventory  : AvatarInventory) 
+            (inventory  : Inventory) 
             (avatarId   : string)
             (shipmateId : ShipmateIdentifier)
-            : AvatarInventory * bool * bool =
+            : Inventory * bool * bool =
         let context = context :?> EatContext
         let satietyDecrease = -1.0
         let satietyIncrease = 1.0

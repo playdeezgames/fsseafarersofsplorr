@@ -84,11 +84,11 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Avatar.SetPositionContext
     let context = splorrContext :?> Avatar.SetSpeedContext
     //avatar inventory contexts
-    let context = splorrContext :?> Avatar.AddInventoryContext
-    let context = splorrContext :?> Avatar.GetInventoryContext
-    let context = splorrContext :?> Avatar.GetUsedTonnageContext
-    let context = splorrContext :?> Avatar.GetItemCountContext
-    let context = splorrContext :?> Avatar.RemoveInventoryContext
+    let context = splorrContext :?> AvatarInventory.AddInventoryContext
+    let context = splorrContext :?> AvatarInventory.GetInventoryContext
+    let context = splorrContext :?> AvatarInventory.GetUsedTonnageContext
+    let context = splorrContext :?> AvatarInventory.GetItemCountContext
+    let context = splorrContext :?> AvatarInventory.RemoveInventoryContext
     //avatar shipmate contexts
     let context = splorrContext :?> Avatar.EatContext
     let context = splorrContext :?> Avatar.GetPrimaryStatisticContext

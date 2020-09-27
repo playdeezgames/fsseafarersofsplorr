@@ -585,7 +585,7 @@ module World =
                 |> Option.get
             let usedTonnage =
                 avatarId
-                |> Avatar.GetUsedTonnage
+                |> AvatarInventory.GetUsedTonnage
                     context
                     items
             let quantity =
@@ -616,7 +616,7 @@ module World =
                     context
                     price 
                 avatarId
-                |> Avatar.AddInventory 
+                |> AvatarInventory.AddInventory 
                     context
                     item 
                     quantity
@@ -647,8 +647,8 @@ module World =
                 | Specific q -> q
                 | Maximum -> 
                     avatarId 
-                    |> Avatar.GetItemCount context item
-            if quantity > (avatarId |> Avatar.GetItemCount context item) then
+                    |> AvatarInventory.GetItemCount context item
+            if quantity > (avatarId |> AvatarInventory.GetItemCount context item) then
                 avatarId
                 |> AddMessages context ["You don't have enough of those to sell."]
             elif quantity = 0UL then
@@ -673,7 +673,7 @@ module World =
                     price 
                     avatarId
                 avatarId
-                |> Avatar.RemoveInventory 
+                |> AvatarInventory.RemoveInventory 
                     context
                     item 
                     quantity 

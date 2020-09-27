@@ -86,7 +86,7 @@ type SplorrContext
     interface Item.GetListContext with
         member _.itemSource: ItemSource = itemSource
 
-    interface Avatar.GetInventoryContext with
+    interface AvatarInventory.GetInventoryContext with
         member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource
 
     interface World.UndockContext with
@@ -253,21 +253,21 @@ type SplorrContext
     
     interface Island.UpdateMarketForItemContext
 
-    interface Avatar.RemoveInventoryContext with
+    interface AvatarInventory.RemoveInventoryContext with
         member _.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource
 
-    interface Avatar.GetUsedTonnageContext with
+    interface AvatarInventory.GetUsedTonnageContext with
         member _.avatarInventorySource: AvatarInventorySource = avatarInventorySource
 
     interface AvatarJob.AbandonContext with
         member _.avatarJobSink: AvatarJobSink = avatarJobSink
         member _.avatarJobSource: AvatarJobSource = avatarJobSource
         
-    interface Avatar.GetItemCountContext with
+    interface AvatarInventory.GetItemCountContext with
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
 
-    interface Avatar.AddInventoryContext with
+    interface AvatarInventory.AddInventoryContext with
         member _.avatarInventorySink   : AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
 

@@ -3,8 +3,6 @@ open System
 open Splorr.Seafarers.Models
 
 type AvatarShipmateSource = string -> ShipmateIdentifier list
-type AvatarInventorySource = string -> AvatarInventory
-type AvatarInventorySink = string -> AvatarInventory -> unit
 type AvatarJobSink = string -> Job option -> unit
 
 module Avatar =
@@ -138,31 +136,6 @@ module Avatar =
                     |> Statistic.SetCurrentValue (heading |> Angle.ToRadians))
                 |> context.vesselSingleStatisticSink avatarId)
 
-    type RemoveInventoryContext =
-        inherit ServiceContext
-        abstract member avatarInventorySource : AvatarInventorySource
-        abstract member avatarInventorySink   : AvatarInventorySink
-    let RemoveInventory 
-            (context  : ServiceContext)
-            (item     : uint64) 
-            (quantity : uint64) 
-            (avatarId : string) 
-            : unit =
-        let context = context :?> RemoveInventoryContext
-        let inventory = 
-            avatarId 
-            |>  context.avatarInventorySource
-        match inventory.TryFind item with
-        | Some count ->
-            if count > quantity then
-                inventory
-                |> Map.add item (count-quantity)
-            else
-                inventory 
-                |> Map.remove item
-        | _ ->
-            inventory
-        |> context.avatarInventorySink avatarId
     
     let internal IncrementMetric 
             (context  : ServiceContext)
@@ -375,51 +348,6 @@ module Avatar =
                 ((GetMoney context avatarId) - amount)
                 avatarId
 
-    type GetItemCountContext =
-        inherit ServiceContext
-        abstract member avatarInventorySource : AvatarInventorySource
-    let GetItemCount 
-            (context : ServiceContext)
-            (item                  : uint64) 
-            (avatarId              : string) 
-            : uint64 =
-        let context = context :?> GetItemCountContext
-        match avatarId |> context.avatarInventorySource |> Map.tryFind item with
-        | Some x -> x
-        | None -> 0UL
-
-    type AddInventoryContext =
-        inherit ServiceContext
-        abstract member avatarInventorySink   : AvatarInventorySink
-        abstract member avatarInventorySource : AvatarInventorySource
-    let AddInventory 
-            (context : ServiceContext)
-            (item : uint64) 
-            (quantity : uint64) 
-            (avatarId : string) 
-            : unit =
-        let context = context :?> AddInventoryContext
-        let newQuantity = (avatarId |> GetItemCount context item) + quantity
-        avatarId
-        |> context.avatarInventorySource
-        |> Map.add item newQuantity
-        |> context.avatarInventorySink avatarId
-
-    type GetUsedTonnageContext =
-        inherit ServiceContext
-        abstract member avatarInventorySource : AvatarInventorySource
-    let GetUsedTonnage
-            (context : ServiceContext)
-            (items : Map<uint64, ItemDescriptor>) //TODO: to source
-            (avatarId : string) 
-            : float =
-        let context = context :?> GetUsedTonnageContext
-        (0.0, avatarId |> context.avatarInventorySource)
-        ||> Map.fold
-            (fun result item quantity -> 
-                let d = items.[item]
-                result + (quantity |> float) * d.Tonnage)
-
     type CleanHullContext =
         inherit ServiceContext
         abstract member avatarShipmateSource          : AvatarShipmateSource
@@ -448,14 +376,4 @@ module Avatar =
         |> IncrementMetric
             context
             Metric.CleanedHull
-
-    type GetInventoryContext =
-        inherit ServiceContext
-        abstract member avatarInventorySource : AvatarInventorySource
-    let GetInventory
-            (context : ServiceContext)
-            (avatarId : string)
-            : AvatarInventory =
-        (context :?> GetInventoryContext).avatarInventorySource avatarId
-
 
