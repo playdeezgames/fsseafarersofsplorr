@@ -70,8 +70,6 @@ let splorrContext : ServiceContext =
 let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrContext.`` () =
     //avatar vessel contexts
     let context = splorrContext :?> Avatar.CleanHullContext
-    let context = splorrContext :?> Vessel.GetCurrentFoulingContext
-    let context = splorrContext :?> Vessel.GetMaximumFoulingContext
     let context = splorrContext :?> Avatar.MoveContext
     
     //avatar inventory contexts
@@ -139,7 +137,6 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Shipmate.GetStatusContext
     let context = splorrContext :?> Shipmate.TransformStatisticContext
 
-    let context = splorrContext :?> Vessel.BefoulContext
     let context = splorrContext :?> Vessel.TransformFoulingContext
 
     let context = splorrContext :?> Vessel.CreateContext
@@ -150,6 +147,8 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Vessel.SetHeadingContext
     let context = splorrContext :?> Vessel.SetPositionContext
     let context = splorrContext :?> Vessel.SetSpeedContext
+    let context = splorrContext :?> Vessel.GetCurrentFoulingContext
+    let context = splorrContext :?> Vessel.GetMaximumFoulingContext
 
     let context = splorrContext :?> Utility.RandomContext
 

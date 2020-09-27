@@ -36,7 +36,6 @@ module Vessel =
     type TransformFoulingContext =
         inherit ServiceContext
         abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
-        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
     let TransformFouling 
             (context : ServiceContext)
             (avatarId                    : string)
@@ -48,19 +47,15 @@ module Vessel =
             match side with
             | Port -> VesselStatisticIdentifier.PortFouling
             | Starboard -> VesselStatisticIdentifier.StarboardFouling
-        context.vesselSingleStatisticSource avatarId statisticIdentifier
+        GetStatistic context avatarId statisticIdentifier
         |> Option.iter (fun s -> (statisticIdentifier, s |> transform) |> context.vesselSingleStatisticSink avatarId)
     
-    type BefoulContext =
-        inherit ServiceContext
-        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
     let Befoul 
             (context  : ServiceContext)
             (avatarId : string)
             : unit =
-        let context = context :?> BefoulContext
         let foulRate = 
-            context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.FoulRate
+            GetStatistic context avatarId VesselStatisticIdentifier.FoulRate
             |> Option.map (fun x->x.CurrentValue)
             |> Option.get
         [
