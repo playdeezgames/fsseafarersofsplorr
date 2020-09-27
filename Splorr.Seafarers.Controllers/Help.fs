@@ -296,7 +296,7 @@ module Help =
             : Gamestate option =
         match gamestate with
         | Gamestate.InPlay avatarId ->
-            match Avatar.GetIslandFeature context avatarId with
+            match AvatarIslandFeature.Get context avatarId with
             | None ->
                 messageSink |> AtSea    
             | Some feature when (feature.featureId) = IslandFeatureIdentifier.Dock ->

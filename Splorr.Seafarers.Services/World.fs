@@ -761,7 +761,7 @@ module World =
             (avatarId: string)
             : unit =
         let context = context :?> ResolveHandContext
-        match Avatar.GetIslandFeature context avatarId with
+        match AvatarIslandFeature.Get context avatarId with
         | Some feature when feature.featureId = IslandFeatureIdentifier.DarkAlley ->
             match AvatarGamblingHand.Get context avatarId with
             | Some (first, second, third) ->

@@ -15,7 +15,7 @@ module Runner =
         let nextGamestate : Gamestate option = 
             match gamestate with
             | Gamestate.InPlay avatarId -> 
-                match Avatar.GetIslandFeature context avatarId with
+                match AvatarIslandFeature.Get context avatarId with
                 | None ->
                     AtSea.Run 
                         context
@@ -67,7 +67,7 @@ module Runner =
                     state
 
             | Gamestate.ItemList (Gamestate.InPlay avatarId) -> 
-                match Avatar.GetIslandFeature context avatarId with
+                match AvatarIslandFeature.Get context avatarId with
                 | Some feature ->
                     ItemList.Run 
                         context
@@ -81,7 +81,7 @@ module Runner =
                 raise (NotImplementedException "Gamestate.ItemList with unexpected inner gamestate")
 
             | Gamestate.Jobs (Gamestate.InPlay avatarId) -> 
-                match Avatar.GetIslandFeature context avatarId with
+                match AvatarIslandFeature.Get context avatarId with
                 | Some feature ->
                     Jobs.Run 
                         context

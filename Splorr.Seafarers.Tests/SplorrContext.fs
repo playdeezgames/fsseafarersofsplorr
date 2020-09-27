@@ -73,8 +73,8 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Avatar.GetCurrentFoulingContext
     let context = splorrContext :?> Avatar.GetMaximumFoulingContext
 
-    let context = splorrContext :?> Avatar.EnterIslandFeatureContext
-    let context = splorrContext :?> Avatar.GetIslandFeatureContext
+    let context = splorrContext :?> AvatarIslandFeature.EnterContext
+    let context = splorrContext :?> AvatarIslandFeature.GetContext
 
     let context = splorrContext :?> Avatar.GetHeadingContext
     let context = splorrContext :?> Avatar.GetPositionContext
@@ -93,10 +93,6 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Avatar.EatContext
     let context = splorrContext :?> Avatar.GetPrimaryStatisticContext
     let context = splorrContext :?> Avatar.TransformShipmatesContext
-    //avatar metrics contexts
-    let context = splorrContext :?> AvatarMetric.AddContext
-    let context = splorrContext :?> AvatarMetric.GetForIslandContext
-    let context = splorrContext :?> AvatarMetric.GetContext
 
     let context = splorrContext :?> Avatar.CreateContext
 
@@ -110,6 +106,10 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
 
     let context = splorrContext :?> AvatarMessages.AddContext
     let context = splorrContext :?> AvatarMessages.GetContext
+
+    let context = splorrContext :?> AvatarMetric.AddContext
+    let context = splorrContext :?> AvatarMetric.GetContext
+    let context = splorrContext :?> AvatarMetric.GetForIslandContext
 
     let context = splorrContext :?> Commodity.GetCommoditiesContext
 

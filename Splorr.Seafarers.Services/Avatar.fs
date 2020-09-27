@@ -6,8 +6,6 @@ type AvatarShipmateSource = string -> ShipmateIdentifier list
 type AvatarInventorySource = string -> AvatarInventory
 type AvatarInventorySink = string -> AvatarInventory -> unit
 type AvatarJobSink = string -> Job option -> unit
-type AvatarIslandFeatureSink = AvatarIslandFeature option * string -> unit
-type AvatarIslandFeatureSource = string -> AvatarIslandFeature option
 
 module Avatar =
     type CreateContext =
@@ -450,34 +448,6 @@ module Avatar =
         |> IncrementMetric
             context
             Metric.CleanedHull
-
-
-
-    type EnterIslandFeatureContext =
-        inherit ServiceContext
-        abstract member avatarIslandFeatureSink : AvatarIslandFeatureSink
-        abstract member islandSingleFeatureSource : IslandSingleFeatureSource
-    let EnterIslandFeature
-            (context  : ServiceContext)
-            (avatarId : string)
-            (location : Location)
-            (feature  : IslandFeatureIdentifier)
-            : unit =
-        let context = context :?> EnterIslandFeatureContext
-        if context.islandSingleFeatureSource location feature then
-            context.avatarIslandFeatureSink 
-                ({featureId = feature; location = location} |> Some, 
-                    avatarId)
-
-    type GetIslandFeatureContext =
-        inherit ServiceContext
-        abstract member avatarIslandFeatureSource : AvatarIslandFeatureSource
-    let GetIslandFeature
-            (context : ServiceContext)
-            (avatarId: string)
-            : AvatarIslandFeature option =
-        let context = context :?> GetIslandFeatureContext
-        context.avatarIslandFeatureSource avatarId
 
     type GetInventoryContext =
         inherit ServiceContext

@@ -18,7 +18,7 @@ type TestAvatarDealGamblingHandContext(avatarGamblingHandSink, random) =
 type TestAvatarEnterIslandFeatureContext
         (avatarIslandFeatureSink, 
         islandSingleFeatureSource) =
-    interface Avatar.EnterIslandFeatureContext with
+    interface AvatarIslandFeature.EnterContext with
         member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
         member this.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
 
@@ -74,8 +74,8 @@ let ``EnterIslandFeature.It does not enter the dark alley when one is not presen
         TestAvatarEnterIslandFeatureContext
             (avatarIslandFeatureSink,
             islandSingleFeatureSource) 
-        :> Avatar.EnterIslandFeatureContext
-    Avatar.EnterIslandFeature
+        :> AvatarIslandFeature.EnterContext
+    AvatarIslandFeature.Enter
         context
         Fixtures.Common.Dummy.AvatarId
         inputLocation
@@ -100,8 +100,8 @@ let ``EnterIslandFeature.It enters the dark alley when one is present.💩`` () 
         TestAvatarEnterIslandFeatureContext
             (avatarIslandFeatureSink,
             islandSingleFeatureSource) 
-        :> Avatar.EnterIslandFeatureContext
-    Avatar.EnterIslandFeature
+        :> AvatarIslandFeature.EnterContext
+    AvatarIslandFeature.Enter
         context
         Fixtures.Common.Dummy.AvatarId
         inputLocation

@@ -44,7 +44,7 @@ type TestIslandFeatureRunContext
     interface AvatarGamblingHand.DealContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
         member _.random : Random = Fixtures.Common.Dummy.Random
-    interface Avatar.EnterIslandFeatureContext with
+    interface AvatarIslandFeature.EnterContext with
         member this.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
         member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
     interface AvatarGamblingHand.FoldContext with

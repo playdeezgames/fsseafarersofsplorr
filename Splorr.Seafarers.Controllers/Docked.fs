@@ -45,7 +45,7 @@ module Docked =
 
         match command with
         | Some (Command.GoTo feature) ->
-            Avatar.EnterIslandFeature 
+            AvatarIslandFeature.Enter 
                 context 
                 avatarId 
                 location 

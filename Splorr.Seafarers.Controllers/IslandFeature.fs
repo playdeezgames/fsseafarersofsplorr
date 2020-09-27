@@ -65,7 +65,7 @@ module IslandFeature =
                 |> World.AddMessages
                     context
                     [ "Come back when you've got more money!" ]
-                Avatar.EnterIslandFeature 
+                AvatarIslandFeature.Enter 
                     context 
                     avatarId 
                     location 
@@ -89,7 +89,7 @@ module IslandFeature =
                     |> Gamestate.Help
                     |> Some
                 | Some Command.Leave ->
-                    Avatar.EnterIslandFeature 
+                    AvatarIslandFeature.Enter 
                         context 
                         avatarId 
                         location

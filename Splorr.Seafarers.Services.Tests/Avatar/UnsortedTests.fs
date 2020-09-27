@@ -88,7 +88,7 @@ let ``AddMetric.It adds to a metric value when there is a previously existing me
         inputValue
 
 type TestAvatarGetIslandFeatureContext(avatarIslandFeatureSource) =
-    interface Avatar.GetIslandFeatureContext with
+    interface AvatarIslandFeature.GetContext with
         member this.avatarIslandFeatureSource: AvatarIslandFeatureSource = avatarIslandFeatureSource
 
 [<Test>]
@@ -98,9 +98,9 @@ let ``GetIslandFeature.It retrieves none when the avatar is at sea.`` () =
     let avatarIslandFeatureSource (_) =
         called <- true
         None
-    let context = TestAvatarGetIslandFeatureContext(avatarIslandFeatureSource) :> Avatar.GetIslandFeatureContext
+    let context = TestAvatarGetIslandFeatureContext(avatarIslandFeatureSource) :> AvatarIslandFeature.GetContext
     let expected : AvatarIslandFeature option = None
-    let actual = Avatar.GetIslandFeature context givenAvatarId
+    let actual = AvatarIslandFeature.Get context givenAvatarId
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
  
