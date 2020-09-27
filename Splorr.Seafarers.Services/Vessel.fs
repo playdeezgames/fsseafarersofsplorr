@@ -75,3 +75,60 @@ module Vessel =
                     side 
                     (Statistic.ChangeCurrentBy (foulRate/2.0)))
 
+    type GetPositionContext = 
+        inherit ServiceContext
+        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
+    let GetPosition
+            (context  : ServiceContext)
+            (avatarId : string)
+            : Location option =
+        let context = context :?> GetPositionContext
+        let positionX =
+            VesselStatisticIdentifier.PositionX
+            |> context.vesselSingleStatisticSource avatarId
+            |> Option.map Statistic.GetCurrentValue
+        let positionY = 
+            VesselStatisticIdentifier.PositionY
+            |> context.vesselSingleStatisticSource avatarId
+            |> Option.map Statistic.GetCurrentValue
+        match positionX, positionY with
+        | Some x, Some y ->
+            (x,y) |> Some
+        | _ ->
+            None
+
+    type SetPositionContext =
+        inherit ServiceContext
+        abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
+        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
+    let SetPosition 
+            (context  : ServiceContext)
+            (position : Location) 
+            (avatarId : string) 
+            : unit =
+        let context = context :?> SetPositionContext
+        match 
+            context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PositionX, 
+            context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PositionY 
+            with
+        | Some x, Some _ ->
+            context.vesselSingleStatisticSink 
+                avatarId 
+                (VesselStatisticIdentifier.PositionX, 
+                    x 
+                    |> Statistic.SetCurrentValue 
+                        (position 
+                        |> fst))
+            context.vesselSingleStatisticSink 
+                avatarId 
+                (VesselStatisticIdentifier.PositionY, 
+                    x 
+                    |> Statistic.SetCurrentValue 
+                        (position 
+                        |> snd))
+        | _ -> ()
+
+
+
+
+

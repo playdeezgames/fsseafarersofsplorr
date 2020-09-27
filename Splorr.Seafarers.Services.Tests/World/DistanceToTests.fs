@@ -9,7 +9,7 @@ type TestWorldDistanceToContext
         avatarMessageSink,
         islandLocationByNameSource,
         vesselSingleStatisticSource) =
-    interface Avatar.GetPositionContext with
+    interface Vessel.GetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarMessages.AddContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink

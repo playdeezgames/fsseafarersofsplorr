@@ -38,14 +38,14 @@ type TestAvatarMoveContext
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
 
-    interface Avatar.SetPositionContext with
+    interface Vessel.SetPositionContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface Avatar.GetSpeedContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface Avatar.GetPositionContext with
+    interface Vessel.GetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface Shipmate.EatContext with

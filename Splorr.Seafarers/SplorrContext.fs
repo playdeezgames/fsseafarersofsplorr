@@ -134,7 +134,7 @@ type SplorrContext
     interface Avatar.GetHeadingContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface Avatar.SetPositionContext with
+    interface Vessel.SetPositionContext with
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
@@ -218,7 +218,7 @@ type SplorrContext
     interface Avatar.CreateContext with
         member _.avatarJobSink: AvatarJobSink = avatarJobSink
 
-    interface Avatar.GetPositionContext with
+    interface Vessel.GetPositionContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface World.CreateContext with

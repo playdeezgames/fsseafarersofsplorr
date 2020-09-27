@@ -153,7 +153,7 @@ module World =
             |> Statistic.GetCurrentValue
         let avatarPosition = 
             avatarId 
-            |> Avatar.GetPosition 
+            |> Vessel.GetPosition 
                 context
             |> Option.get
         context.islandSource()
@@ -434,7 +434,7 @@ module World =
                         Some l
                     else
                         None)
-        match location, Avatar.GetPosition context avatarId with
+        match location, Vessel.GetPosition context avatarId with
         | Some l, Some avatarPosition ->
             avatarId
             |> AddMessages context [ (islandName, Location.DistanceTo l avatarPosition ) ||> sprintf "Distance to `%s` is %f." ]
@@ -462,7 +462,7 @@ module World =
                         Some l
                     else
                         None)
-        match location, Avatar.GetPosition context avatarId with
+        match location, Vessel.GetPosition context avatarId with
         | Some l, Some avatarPosition ->
             [
                 AddMessages

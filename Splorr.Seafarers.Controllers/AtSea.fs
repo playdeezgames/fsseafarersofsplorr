@@ -24,7 +24,7 @@ module AtSea =
             |> Option.get 
             |> Statistic.GetCurrentValue
         let avatarPosition =
-            Avatar.GetPosition 
+            Vessel.GetPosition 
                 context 
                 avatarId
             |> Option.get
@@ -50,7 +50,7 @@ module AtSea =
             |> Statistic.GetCurrentValue
         let avatarPosition =
             avatarId
-            |> Avatar.GetPosition context
+            |> Vessel.GetPosition context
             |> Option.get
         World.GetNearbyLocations
             context

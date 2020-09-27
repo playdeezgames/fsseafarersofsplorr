@@ -23,28 +23,6 @@ module Avatar =
             Primary
         context.avatarJobSink avatarId None
 
-    type GetPositionContext = 
-        inherit ServiceContext
-        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-    let GetPosition
-            (context  : ServiceContext)
-            (avatarId : string)
-            : Location option =
-        let context = context :?> GetPositionContext
-        let positionX =
-            VesselStatisticIdentifier.PositionX
-            |> context.vesselSingleStatisticSource avatarId
-            |> Option.map Statistic.GetCurrentValue
-        let positionY = 
-            VesselStatisticIdentifier.PositionY
-            |> context.vesselSingleStatisticSource avatarId
-            |> Option.map Statistic.GetCurrentValue
-        match positionX, positionY with
-        | Some x, Some y ->
-            (x,y) |> Some
-        | _ ->
-            None
-
     type GetSpeedContext =
         inherit ServiceContext
         abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
@@ -69,37 +47,6 @@ module Avatar =
         |> context.vesselSingleStatisticSource avatarId 
         |> Option.map Statistic.GetCurrentValue
     
-    type SetPositionContext =
-        inherit ServiceContext
-        abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
-        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-    let SetPosition 
-            (context  : ServiceContext)
-            (position : Location) 
-            (avatarId : string) 
-            : unit =
-        let context = context :?> SetPositionContext
-        match 
-            context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PositionX, 
-            context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PositionY 
-            with
-        | Some x, Some _ ->
-            context.vesselSingleStatisticSink 
-                avatarId 
-                (VesselStatisticIdentifier.PositionX, 
-                    x 
-                    |> Statistic.SetCurrentValue 
-                        (position 
-                        |> fst))
-            context.vesselSingleStatisticSink 
-                avatarId 
-                (VesselStatisticIdentifier.PositionY, 
-                    x 
-                    |> Statistic.SetCurrentValue 
-                        (position 
-                        |> snd))
-        | _ -> ()
-
     type SetSpeedContext =
         inherit ServiceContext
         abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
@@ -264,12 +211,12 @@ module Avatar =
             context
             avatarId
         let avatarPosition = 
-            GetPosition 
+            Vessel.GetPosition 
                 context 
                 avatarId 
             |> Option.get
         let newPosition = ((avatarPosition |> fst) + System.Math.Cos(actualHeading) * actualSpeed, (avatarPosition |> snd) + System.Math.Sin(actualHeading) * actualSpeed)
-        SetPosition context newPosition avatarId
+        Vessel.SetPosition context newPosition avatarId
         TransformShipmates
             context
             (fun identifier -> 

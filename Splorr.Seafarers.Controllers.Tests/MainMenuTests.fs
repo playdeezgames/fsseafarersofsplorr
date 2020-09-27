@@ -68,7 +68,7 @@ type TestWorldCreateContext
     interface Avatar.CreateContext with
         member _.avatarJobSink: AvatarJobSink = avatarJobSink
 
-    interface Avatar.GetPositionContext with
+    interface Vessel.GetPositionContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface World.UpdateChartsContext with

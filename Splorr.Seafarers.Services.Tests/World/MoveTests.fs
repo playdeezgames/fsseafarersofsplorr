@@ -32,11 +32,11 @@ type TestWorldMoveContext
     interface Shipmate.EatContext with
         member this.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface Avatar.GetPositionContext with
+    interface Vessel.GetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Avatar.GetSpeedContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Avatar.SetPositionContext with
+    interface Vessel.SetPositionContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarMetric.AddContext with

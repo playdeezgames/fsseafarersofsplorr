@@ -10,7 +10,7 @@ type TestWorldHeadForContext
         islandLocationByNameSource,
         vesselSingleStatisticSink,
         vesselSingleStatisticSource) =
-    interface Avatar.GetPositionContext with
+    interface Vessel.GetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Avatar.GetHeadingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource

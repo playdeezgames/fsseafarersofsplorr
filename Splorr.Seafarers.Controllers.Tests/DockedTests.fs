@@ -125,7 +125,7 @@ type TestDockedRunContext
     interface World.SellItemsContext with
         member _.islandSource                  : IslandSource = islandSource
         member _.itemSource                    : ItemSource = itemSource
-    interface Avatar.GetPositionContext with
+    interface Vessel.GetPositionContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarIslandFeature.EnterContext with
         member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource

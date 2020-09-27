@@ -61,7 +61,7 @@ module Chart =
                             leg) Map.empty
             let avatarPosition = 
                 avatarId
-                |> Avatar.GetPosition 
+                |> Vessel.GetPosition 
                     context
                 |> Option.get
                 |> plotLocation scale

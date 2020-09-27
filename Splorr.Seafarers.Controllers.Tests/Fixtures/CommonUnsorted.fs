@@ -290,13 +290,13 @@ type TestAtSeaRunContext
     interface Shipmate.EatContext with
         member _.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface Avatar.GetPositionContext with
+    interface Vessel.GetPositionContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Avatar.GetSpeedContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Avatar.GetHeadingContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Avatar.SetPositionContext with
+    interface Vessel.SetPositionContext with
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Avatar.SetSpeedContext with
