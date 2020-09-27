@@ -97,7 +97,7 @@ type TestDockedRunContext
 
     interface AvatarInventory.GetUsedTonnageContext with
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
-    interface AvatarShipmate.GetPrimaryStatisticContext with
+    interface AvatarShipmates.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarJob.AbandonContext with
         member _.avatarJobSink                  : AvatarJobSink                 =avatarJobSink                 

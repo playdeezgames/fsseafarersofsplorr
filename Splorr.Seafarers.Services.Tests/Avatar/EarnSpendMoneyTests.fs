@@ -5,14 +5,14 @@ open NUnit.Framework
 open Splorr.Seafarers.Models
 
 type TestAvatarEarnMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
-    interface AvatarShipmate.GetPrimaryStatisticContext with
+    interface AvatarShipmates.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 type TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
-    interface AvatarShipmate.GetPrimaryStatisticContext with
+    interface AvatarShipmates.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface Shipmate.TransformStatisticContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
@@ -30,7 +30,7 @@ let ``EarnMoney.It has no effect when given a negative amount to earn.`` () =
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
     let context = TestAvatarEarnMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> ServiceContext
     input
-    |> AvatarShipmate.EarnMoney 
+    |> AvatarShipmates.EarnMoney 
         context
         inputAmount
 
@@ -53,7 +53,7 @@ let ``EarnMoney.It updates the avatars money by adding the given amount.`` () =
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
     let context = TestAvatarEarnMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> ServiceContext
     input
-    |> AvatarShipmate.EarnMoney 
+    |> AvatarShipmates.EarnMoney 
         context
         inputAmount
 
@@ -68,7 +68,7 @@ let ``SpendMoney.It has no effect when given a negative amount to spend.`` () =
         raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
     let context = TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> ServiceContext
     input
-    |> AvatarShipmate.SpendMoney 
+    |> AvatarShipmates.SpendMoney 
         context
         inputAmount
 
@@ -91,7 +91,7 @@ let ``SpendMoney.It has no effect when the given avatar has no money.`` () =
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
     let context = TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> ServiceContext
     input
-    |> AvatarShipmate.SpendMoney 
+    |> AvatarShipmates.SpendMoney 
         context
         inputAmount
 
@@ -114,7 +114,7 @@ let ``SpendMoney.It reduces the avatar's money to zero when the given amount exc
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
     let context = TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> ServiceContext
     input
-    |> AvatarShipmate.SpendMoney 
+    |> AvatarShipmates.SpendMoney 
         context
         inputAmount
 
@@ -137,7 +137,7 @@ let ``SpendMoney.It updates the avatars money when the given amount is less than
             raise (System.NotImplementedException "kaboom shipmateSingleStatisticSink")
     let context = TestAvatarSpendMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> ServiceContext
     input
-    |> AvatarShipmate.SpendMoney 
+    |> AvatarShipmates.SpendMoney 
         context
         inputAmount
 

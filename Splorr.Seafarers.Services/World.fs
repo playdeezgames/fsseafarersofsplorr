@@ -591,10 +591,10 @@ module World =
             let quantity =
                 match tradeQuantity with
                 | Specific amount -> amount
-                | Maximum -> min (floor(availableTonnage / descriptor.Tonnage)) (floor((avatarId |> AvatarShipmate.GetMoney context) / unitPrice)) |> uint64
+                | Maximum -> min (floor(availableTonnage / descriptor.Tonnage)) (floor((avatarId |> AvatarShipmates.GetMoney context) / unitPrice)) |> uint64
             let price = (quantity |> float) * unitPrice
             let tonnageNeeded = (quantity |> float) * descriptor.Tonnage
-            if price > (avatarId |> AvatarShipmate.GetMoney context) then
+            if price > (avatarId |> AvatarShipmates.GetMoney context) then
                 avatarId
                 |> AddMessages context ["You don't have enough money."]
             elif usedTonnage + tonnageNeeded > availableTonnage then
@@ -612,7 +612,7 @@ module World =
                 avatarId
                 |> AddMessages context [(quantity, descriptor.ItemName) ||> sprintf "You complete the purchase of %u %s."]
                 avatarId
-                |> AvatarShipmate.SpendMoney 
+                |> AvatarShipmates.SpendMoney 
                     context
                     price 
                 avatarId
@@ -668,7 +668,7 @@ module World =
                     location
                 avatarId
                 |> AddMessages context [(quantity, descriptor.ItemName) ||> sprintf "You complete the sale of %u %s."]
-                AvatarShipmate.EarnMoney 
+                AvatarShipmates.EarnMoney 
                     context
                     price 
                     avatarId
@@ -742,7 +742,7 @@ module World =
 
     type CanPlaceBetContext =
         inherit ServiceContext
-        inherit AvatarShipmate.GetPrimaryStatisticContext
+        inherit AvatarShipmates.GetPrimaryStatisticContext
 
     let CanPlaceBet
             (context : ServiceContext)
@@ -750,7 +750,7 @@ module World =
             (avatarId : string)
             : bool =
         let context = context :?> CanPlaceBetContext
-        (AvatarShipmate.GetMoney context avatarId) >= amount
+        (AvatarShipmates.GetMoney context avatarId) >= amount
      
     type ResolveHandContext =
         inherit ServiceContext

@@ -2,82 +2,7 @@
 open System
 open Splorr.Seafarers.Models
 
-type AvatarShipmateSource = string -> ShipmateIdentifier list
 type AvatarJobSink = string -> Job option -> unit
-
-module AvatarShipmate =
-    type TransformShipmatesContext =
-        inherit ServiceContext
-        abstract avatarShipmateSource : AvatarShipmateSource
-    let TransformShipmates 
-            (context   : ServiceContext)
-            (transform : ShipmateIdentifier -> unit) 
-            (avatarId  : string) 
-            : unit =
-        let context = context :?> TransformShipmatesContext
-        avatarId
-        |> context.avatarShipmateSource
-        |> List.iter transform
-
-    let private SetPrimaryStatistic
-            (context    : ServiceContext)
-            (identifier : ShipmateStatisticIdentifier)
-            (amount     : float) 
-            (avatarId   : string)
-            : unit =
-        Shipmate.TransformStatistic 
-            context
-            identifier 
-            (Statistic.SetCurrentValue amount >> Some) 
-            avatarId
-            Primary
-
-    let SetMoney (context : ServiceContext) = SetPrimaryStatistic context ShipmateStatisticIdentifier.Money 
-
-    let SetReputation (context : ServiceContext) = SetPrimaryStatistic context ShipmateStatisticIdentifier.Reputation 
-
-    type GetPrimaryStatisticContext =
-        inherit ServiceContext
-        abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
-    let private GetPrimaryStatistic 
-            (context : ServiceContext)
-            (identifier : ShipmateStatisticIdentifier) 
-            (avatarId     : string) 
-            : float =
-        let context = context :?> GetPrimaryStatisticContext
-        context.shipmateSingleStatisticSource 
-            avatarId 
-            Primary 
-            identifier
-        |> Option.map (fun statistic -> statistic.CurrentValue)
-        |> Option.defaultValue 0.0
-
-    let GetMoney (context:ServiceContext) = GetPrimaryStatistic context ShipmateStatisticIdentifier.Money
-
-    let GetReputation (context:ServiceContext) = GetPrimaryStatistic context ShipmateStatisticIdentifier.Reputation
-
-    let EarnMoney 
-            (context : ServiceContext)
-            (amount                        : float) 
-            (avatarId                      : string)
-            : unit =
-        if amount > 0.0 then
-            SetMoney 
-                context
-                ((GetMoney context avatarId) + amount)
-                avatarId
-
-    let SpendMoney 
-            (context : ServiceContext)
-            (amount                        : float) 
-            (avatarId                      : string)
-            : unit =
-        if amount > 0.0 then
-            SetMoney 
-                context
-                ((GetMoney context avatarId) - amount)
-                avatarId
-
 
 module Avatar =
     type CreateContext =
@@ -216,7 +141,7 @@ module Avatar =
             |> Option.get
         let newPosition = ((avatarPosition |> fst) + System.Math.Cos(actualHeading) * actualSpeed, (avatarPosition |> snd) + System.Math.Sin(actualHeading) * actualSpeed)
         Vessel.SetPosition context newPosition avatarId
-        AvatarShipmate.TransformShipmates
+        AvatarShipmates.Transform
             context
             (fun identifier -> 
                 Shipmate.TransformStatistic 
@@ -252,7 +177,7 @@ module Avatar =
             (fun x-> 
                 {x with 
                     CurrentValue = x.MinimumValue})
-        AvatarShipmate.TransformShipmates 
+        AvatarShipmates.Transform 
             context
             (Shipmate.TransformStatistic
                 context

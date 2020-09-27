@@ -17,7 +17,7 @@ type TestWorldCleanHullContext
     interface Vessel.TransformFoulingContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface AvatarShipmate.TransformShipmatesContext with
+    interface AvatarShipmates.TransformContext with
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
     interface AvatarMetric.AddContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink

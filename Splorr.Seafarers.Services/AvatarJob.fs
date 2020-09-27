@@ -20,9 +20,9 @@ module AvatarJob =
         |> Option.iter
             (fun _ -> 
                 avatarId
-                |> AvatarShipmate.SetReputation 
+                |> AvatarShipmates.SetReputation 
                     context
-                    ((AvatarShipmate.GetReputation 
+                    ((AvatarShipmates.GetReputation 
                         context
                         avatarId) + 
                             reputationCostForAbandoningAJob) 
@@ -52,9 +52,9 @@ module AvatarJob =
         let context = context :?> CompleteContext
         match avatarId |> context.avatarJobSource with
         | Some job ->
-            AvatarShipmate.SetReputation 
+            AvatarShipmates.SetReputation 
                 context
-                ((AvatarShipmate.GetReputation 
+                ((AvatarShipmates.GetReputation 
                     context
                     avatarId) + 
                         1.0)

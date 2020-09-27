@@ -25,7 +25,7 @@ type TestAvatarMoveContext
     interface Avatar.GetCurrentFoulingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface AvatarShipmate.TransformShipmatesContext with
+    interface AvatarShipmates.TransformContext with
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
 
     interface Vessel.BefoulContext with

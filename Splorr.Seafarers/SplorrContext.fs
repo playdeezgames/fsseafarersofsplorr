@@ -151,7 +151,7 @@ type SplorrContext
         member _.avatarInventorySource         : AvatarInventorySource=avatarInventorySource
         member _.avatarShipmateSource          : AvatarShipmateSource=avatarShipmateSource
 
-    interface AvatarShipmate.TransformShipmatesContext with
+    interface AvatarShipmates.TransformContext with
         member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
 
     interface World.AddMessagesContext with
@@ -326,7 +326,7 @@ type SplorrContext
     interface AvatarMessages.AddContext with
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
 
-    interface AvatarShipmate.GetPrimaryStatisticContext with
+    interface AvatarShipmates.GetPrimaryStatisticContext with
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
     interface AvatarJob.CompleteContext with

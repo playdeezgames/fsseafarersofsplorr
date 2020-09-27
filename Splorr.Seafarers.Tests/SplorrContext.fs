@@ -77,8 +77,8 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     //avatar inventory contexts
     //avatar shipmate contexts
     let context = splorrContext :?> Avatar.EatContext
-    let context = splorrContext :?> AvatarShipmate.GetPrimaryStatisticContext
-    let context = splorrContext :?> AvatarShipmate.TransformShipmatesContext
+    let context = splorrContext :?> AvatarShipmates.GetPrimaryStatisticContext
+    let context = splorrContext :?> AvatarShipmates.TransformContext
 
     let context = splorrContext :?> Avatar.CreateContext
 

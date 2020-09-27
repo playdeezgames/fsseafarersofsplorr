@@ -50,7 +50,7 @@ type TestWorldMoveContext
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarMessages.AddContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface AvatarShipmate.TransformShipmatesContext with
+    interface AvatarShipmates.TransformContext with
         member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
     interface World.UpdateChartsContext with
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink

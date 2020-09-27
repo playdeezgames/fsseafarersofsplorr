@@ -314,7 +314,7 @@ type TestAtSeaRunContext
         member _.avatarShipmateSource : AvatarShipmateSource=avatarShipmateSource
     interface Avatar.GetCurrentFoulingContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface AvatarShipmate.GetPrimaryStatisticContext with
+    interface AvatarShipmates.GetPrimaryStatisticContext with
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarJob.AbandonContext with
         member this.avatarJobSink: AvatarJobSink = avatarJobSink
@@ -365,7 +365,7 @@ type TestAtSeaRunContext
         member _.itemSource: ItemSource = itemSource
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface AvatarShipmate.TransformShipmatesContext with
+    interface AvatarShipmates.TransformContext with
         member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
 
 let commandSourceFake (expectedCommand:Command option) : unit -> Command option =

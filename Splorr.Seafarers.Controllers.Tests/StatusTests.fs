@@ -10,7 +10,7 @@ let private previousGameState =
     |> Gamestate.MainMenu
 
 type TestStatusRunContext(avatarJobSource, islandSingleNameSource, shipmateSingleStatisticSource, vesselSingleStatisticSource) =
-    interface AvatarShipmate.GetPrimaryStatisticContext with
+    interface AvatarShipmates.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 [<Test>]
