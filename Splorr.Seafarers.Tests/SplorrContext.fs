@@ -145,9 +145,10 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Shipmate.TransformStatisticContext
 
     let context = splorrContext :?> Vessel.BefoulContext
+    let context = splorrContext :?> Vessel.TransformFoulingContext
+
     let context = splorrContext :?> Vessel.CreateContext
     let context = splorrContext :?> Vessel.GetStatisticContext
-    let context = splorrContext :?> Vessel.TransformFoulingContext
 
     let context = splorrContext :?> Utility.RandomContext
 
