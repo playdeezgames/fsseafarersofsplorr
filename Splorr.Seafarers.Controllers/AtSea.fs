@@ -105,7 +105,7 @@ module AtSea =
             (Hue.Label, "Speed: " |> Text) |> Hued
             (speedHue, (speed * 100.0) |> sprintf "%.0f%%" |> Text) |> Hued
             avatarId 
-            |> Avatar.GetEffectiveSpeed context 
+            |> Vessel.GetEffectiveSpeed context 
             |> sprintf "(Effective rate: %.2f)" |> Line
             (Hue.Subheading, "Nearby:" |> Line) |> Hued
         ]

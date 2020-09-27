@@ -20,9 +20,9 @@ module Careened =
             | Port -> "port"
             | Starboard -> "starboard"
         let currentValue =
-            Avatar.GetCurrentFouling context avatarId
+            Vessel.GetCurrentFouling context avatarId
         let maximumValue = 
-            Avatar.GetMaximumFouling context avatarId
+            Vessel.GetMaximumFouling context avatarId
         let foulage =
             100.0 * currentValue / maximumValue
         [

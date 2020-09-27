@@ -19,15 +19,15 @@ type TestAvatarGetSpeedContext(vesselSingleStatisticSource) =
 type TestAvatarGetEffectiveSpeedContext(vesselSingleStatisticSource) =
     interface Vessel.GetSpeedContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Avatar.GetCurrentFoulingContext with
+    interface Vessel.GetCurrentFoulingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 type TestAvatarGetCurrentFoulingContext(vesselSingleStatisticSource) = 
-    interface Avatar.GetCurrentFoulingContext with
+    interface Vessel.GetCurrentFoulingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 type TestAvatarGetMaximumFoulingContext(vesselSingleStatisticSource) =
-    interface Avatar.GetMaximumFoulingContext with
+    interface Vessel.GetMaximumFoulingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 
@@ -162,7 +162,7 @@ let ``GetEffectiveSpeed.It returns full speed when there is no fouling.`` () =
     let expected = 1.0
     let context = TestAvatarGetEffectiveSpeedContext(Fixtures.Common.Stub.VesselSingleStatisticSource) :> ServiceContext
     let actual =
-        Avatar.GetEffectiveSpeed context inputAvatarId
+        Vessel.GetEffectiveSpeed context inputAvatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -171,7 +171,7 @@ let ``GetEffectiveSpeed.It returns proportionally reduced speed when there is fo
     let vesselSingleStatisticSource (_) (_) = {MinimumValue=0.0;MaximumValue=0.25;CurrentValue=0.25} |> Some
     let context = TestAvatarGetEffectiveSpeedContext(vesselSingleStatisticSource) :> ServiceContext
     let actual =
-        Avatar.GetEffectiveSpeed context inputAvatarId
+        Vessel.GetEffectiveSpeed context inputAvatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -180,9 +180,9 @@ let ``GetCurrentFouling.It returns the current fouling for the Avatar.`` () =
         {MaximumValue=0.5; MinimumValue=0.0; CurrentValue=0.25} |> Some
     let inputAvatarId = "avatar"
     let expected = 0.5
-    let context = TestAvatarGetCurrentFoulingContext(vesselSingleStatisticSource) :> Avatar.GetCurrentFoulingContext
+    let context = TestAvatarGetCurrentFoulingContext(vesselSingleStatisticSource) :> Vessel.GetCurrentFoulingContext
     let actual = 
-        Avatar.GetCurrentFouling context inputAvatarId
+        Vessel.GetCurrentFouling context inputAvatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -191,9 +191,9 @@ let ``GetMaximumFouling.It returns the maximum fouling for the Avatar.`` () =
         {MaximumValue=0.5; MinimumValue=0.0; CurrentValue=0.25} |> Some
     let inputAvatarId = "avatar"
     let expected = 1.0
-    let context = TestAvatarGetMaximumFoulingContext(vesselSingleStatisticSource) :> Avatar.GetMaximumFoulingContext
+    let context = TestAvatarGetMaximumFoulingContext(vesselSingleStatisticSource) :> Vessel.GetMaximumFoulingContext
     let actual = 
-        Avatar.GetMaximumFouling context inputAvatarId
+        Vessel.GetMaximumFouling context inputAvatarId
     Assert.AreEqual(expected, actual)
 
     

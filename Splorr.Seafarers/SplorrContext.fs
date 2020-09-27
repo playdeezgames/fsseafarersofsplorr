@@ -173,7 +173,7 @@ type SplorrContext
     interface World.GetNearbyLocationsContext with
         member _.islandSource : IslandSource = islandSource
 
-    interface Avatar.GetCurrentFoulingContext with
+    interface Vessel.GetCurrentFoulingContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface Island.CreateContext with
@@ -354,7 +354,7 @@ type SplorrContext
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-    interface Avatar.GetMaximumFoulingContext with
+    interface Vessel.GetMaximumFoulingContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface Avatar.CleanHullContext with

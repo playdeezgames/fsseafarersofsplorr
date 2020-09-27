@@ -70,8 +70,8 @@ let splorrContext : ServiceContext =
 let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrContext.`` () =
     //avatar vessel contexts
     let context = splorrContext :?> Avatar.CleanHullContext
-    let context = splorrContext :?> Avatar.GetCurrentFoulingContext
-    let context = splorrContext :?> Avatar.GetMaximumFoulingContext
+    let context = splorrContext :?> Vessel.GetCurrentFoulingContext
+    let context = splorrContext :?> Vessel.GetMaximumFoulingContext
     let context = splorrContext :?> Avatar.MoveContext
     
     //avatar inventory contexts

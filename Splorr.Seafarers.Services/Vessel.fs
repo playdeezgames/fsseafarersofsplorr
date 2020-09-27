@@ -188,5 +188,49 @@ module Vessel =
                     |> Statistic.SetCurrentValue (heading |> Angle.ToRadians))
                 |> context.vesselSingleStatisticSink avatarId)
 
+    let private GetFouling
+            //TODO: context me
+            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (getter : Statistic -> float)
+            (avatarId                    : string)
+            :float =
+        [
+            VesselStatisticIdentifier.PortFouling
+            VesselStatisticIdentifier.StarboardFouling
+        ]
+        |> List.map
+            (vesselSingleStatisticSource avatarId
+                >> Option.map getter
+                >> Option.defaultValue 0.0)
+        |> List.reduce (+)
+
+    type GetCurrentFoulingContext =
+        inherit ServiceContext
+        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
+    let GetCurrentFouling
+            (context : ServiceContext) =
+        let context = context :?> GetCurrentFoulingContext
+        GetFouling 
+            context.vesselSingleStatisticSource 
+            Statistic.GetCurrentValue
+    
+    type GetMaximumFoulingContext =
+        inherit ServiceContext
+        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
+    let GetMaximumFouling
+            (context : ServiceContext) =
+        let context = context :?> GetMaximumFoulingContext
+        GetFouling 
+            context.vesselSingleStatisticSource 
+            Statistic.GetMaximumValue 
+
+    let GetEffectiveSpeed 
+            (context  : ServiceContext)
+            (avatarId : string)
+            : float =
+        let currentValue = GetCurrentFouling context avatarId
+        let currentSpeed = GetSpeed context avatarId |> Option.get
+        (currentSpeed * (1.0 - currentValue))
+
 
 

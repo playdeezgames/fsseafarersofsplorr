@@ -22,7 +22,7 @@ type TestAvatarMoveContext
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
-    interface Avatar.GetCurrentFoulingContext with
+    interface Vessel.GetCurrentFoulingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface AvatarShipmates.TransformContext with
