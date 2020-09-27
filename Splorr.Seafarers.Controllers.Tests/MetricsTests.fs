@@ -12,7 +12,7 @@ let private previousGameState =
 
 type TestMetricsRunContext(avatarMetricSource) =
     interface ServiceContext
-    interface Avatar.GetMetricsContext with
+    interface AvatarMetric.GetContext with
         member this.avatarMetricSource: AvatarMetricSource = avatarMetricSource
 
 [<Test>]

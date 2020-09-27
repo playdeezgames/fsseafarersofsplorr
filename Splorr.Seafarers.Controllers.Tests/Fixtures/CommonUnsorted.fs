@@ -305,7 +305,7 @@ type TestAtSeaRunContext
     interface Avatar.SetHeadingContext with
         member _.vesselSingleStatisticSink : VesselSingleStatisticSink = vesselSingleStatisticSink
         member _.vesselSingleStatisticSource : VesselSingleStatisticSource = vesselSingleStatisticSource
-    interface Avatar.AddMetricContext with
+    interface AvatarMetric.AddContext with
         member _.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member _.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
     interface Avatar.EatContext with

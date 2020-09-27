@@ -94,9 +94,9 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Avatar.GetPrimaryStatisticContext
     let context = splorrContext :?> Avatar.TransformShipmatesContext
     //avatar metrics contexts
-    let context = splorrContext :?> Avatar.AddMetricContext
-    let context = splorrContext :?> Avatar.GetIslandMetricContext
-    let context = splorrContext :?> Avatar.GetMetricsContext
+    let context = splorrContext :?> AvatarMetric.AddContext
+    let context = splorrContext :?> AvatarMetric.GetForIslandContext
+    let context = splorrContext :?> AvatarMetric.GetContext
 
     let context = splorrContext :?> Avatar.CreateContext
 

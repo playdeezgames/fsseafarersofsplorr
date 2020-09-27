@@ -66,7 +66,7 @@ module AvatarJob =
                 avatarId
                 Primary
             avatarId
-            |> Avatar.AddMetric 
+            |> AvatarMetric.Add 
                 context
                 Metric.CompletedJob 
                 1UL

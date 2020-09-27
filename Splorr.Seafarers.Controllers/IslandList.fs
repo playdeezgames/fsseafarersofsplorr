@@ -22,7 +22,7 @@ module IslandList =
             |> List.filter
                 (fun location -> 
                     avatarId
-                    |> Avatar.GetIslandMetric context location AvatarIslandMetricIdentifier.VisitCount 
+                    |> AvatarMetric.GetForIsland context location AvatarIslandMetricIdentifier.VisitCount 
                     |> Option.map (fun _ -> true)
                     |> Option.defaultValue false)
             |> List.sortBy(Island.GetName context >> Option.get)

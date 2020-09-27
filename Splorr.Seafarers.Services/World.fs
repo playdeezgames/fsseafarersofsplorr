@@ -388,7 +388,7 @@ module World =
                     "You dock." 
                 ]
             avatarId
-            |> Avatar.AddMetric 
+            |> AvatarMetric.Add 
                 context
                 Metric.VisitedIsland 
                 (if newVisitCount > oldVisitCount then 1UL else 0UL)
@@ -504,7 +504,7 @@ module World =
                 avatarId
                 |> AddMessages context [ "You accepted the job!" ]
                 avatarId
-                |> Avatar.AddMetric 
+                |> AvatarMetric.Add 
                     context
                     Metric.AcceptedJob 
                     1UL

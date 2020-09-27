@@ -74,7 +74,7 @@ type TestWorldDockContext
     interface AvatarMessages.AddContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
 
-    interface Avatar.AddMetricContext with
+    interface AvatarMetric.AddContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
 

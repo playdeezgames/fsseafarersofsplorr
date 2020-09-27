@@ -5,13 +5,9 @@ open Splorr.Seafarers.Models
 type AvatarShipmateSource = string -> ShipmateIdentifier list
 type AvatarInventorySource = string -> AvatarInventory
 type AvatarInventorySink = string -> AvatarInventory -> unit
-type AvatarSingleMetricSource = string -> Metric -> uint64
-type AvatarSingleMetricSink = string -> Metric * uint64 -> unit
 type AvatarJobSink = string -> Job option -> unit
 type AvatarIslandFeatureSink = AvatarIslandFeature option * string -> unit
 type AvatarIslandFeatureSource = string -> AvatarIslandFeature option
-type AvatarMetrics = Map<Metric, uint64>
-type AvatarMetricSource = string -> AvatarMetrics
 
 module Avatar =
     type CreateContext =
@@ -170,19 +166,6 @@ module Avatar =
             inventory
         |> context.avatarInventorySink avatarId
     
-    type AddMetricContext =
-        inherit ServiceContext
-        abstract member avatarSingleMetricSink   : AvatarSingleMetricSink
-        abstract member avatarSingleMetricSource : AvatarSingleMetricSource
-    let AddMetric 
-            (context  : ServiceContext)
-            (metric   : Metric) 
-            (amount   : uint64) 
-            (avatarId : string)
-            : unit =
-        let context = context :?> AddMetricContext
-        context.avatarSingleMetricSink avatarId (metric, (context.avatarSingleMetricSource avatarId metric) + amount)
-
     let internal IncrementMetric 
             (context  : ServiceContext)
             (metric   : Metric) 
@@ -190,7 +173,7 @@ module Avatar =
             : unit =
         let rateOfIncrement = 1UL
         avatarId
-        |> AddMetric 
+        |> AvatarMetric.Add 
             context
             metric 
             rateOfIncrement
@@ -222,13 +205,13 @@ module Avatar =
         |> context.avatarInventorySink avatarId
         if eaten > 0UL then
             avatarId
-            |> AddMetric 
+            |> AvatarMetric.Add 
                 context
                 Metric.Ate 
                 eaten
         if starved > 0UL then
             avatarId
-            |> AddMetric 
+            |> AvatarMetric.Add 
                 context
                 Metric.Starved 
                 starved
@@ -327,7 +310,7 @@ module Avatar =
                     identifier)
             avatarId
         avatarId
-        |> AddMetric 
+        |> AvatarMetric.Add 
             context
             Metric.Moved 
             1UL
@@ -496,15 +479,6 @@ module Avatar =
         let context = context :?> GetIslandFeatureContext
         context.avatarIslandFeatureSource avatarId
 
-    type GetMetricsContext = 
-        inherit ServiceContext
-        abstract member avatarMetricSource : AvatarMetricSource
-    let GetMetrics
-            (context : ServiceContext)
-            (avatarId: string)
-            : AvatarMetrics =
-        (context :?> GetMetricsContext).avatarMetricSource avatarId
-
     type GetInventoryContext =
         inherit ServiceContext
         abstract member avatarInventorySource : AvatarInventorySource
@@ -514,14 +488,4 @@ module Avatar =
             : AvatarInventory =
         (context :?> GetInventoryContext).avatarInventorySource avatarId
 
-    type GetIslandMetricContext =
-        inherit ServiceContext
-        abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
-    let GetIslandMetric 
-            (context : ServiceContext)
-            (location : Location)
-            (identifier: AvatarIslandMetricIdentifier)
-            (avatarId : string)
-            : uint64 option =
-        (context :?> GetIslandMetricContext).avatarIslandSingleMetricSource avatarId location identifier
 

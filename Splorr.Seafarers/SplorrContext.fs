@@ -238,7 +238,7 @@ type SplorrContext
         member _.islandSource: IslandSource = islandSource
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface Avatar.GetIslandMetricContext with
+    interface AvatarMetric.GetForIslandContext with
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource 
     interface Island.GetFeaturesContext with
         member _.islandFeatureSource            : IslandFeatureSource            = islandFeatureSource
@@ -319,7 +319,7 @@ type SplorrContext
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-    interface Avatar.AddMetricContext with
+    interface AvatarMetric.AddContext with
         member _.avatarSingleMetricSink   : AvatarSingleMetricSink = avatarSingleMetricSink
         member _.avatarSingleMetricSource : AvatarSingleMetricSource = avatarSingleMetricSource
 
@@ -384,5 +384,5 @@ type SplorrContext
         member _.islandSingleStatisticSource : IslandSingleStatisticSource = islandSingleStatisticSource
         member _.avatarIslandFeatureSource : AvatarIslandFeatureSource = avatarIslandFeatureSource
 
-    interface Avatar.GetMetricsContext with
+    interface AvatarMetric.GetContext with
         member _.avatarMetricSource: AvatarMetricSource = avatarMetricSource
