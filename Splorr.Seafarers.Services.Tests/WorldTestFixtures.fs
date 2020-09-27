@@ -68,7 +68,7 @@ type TestWorldDockContext
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
     interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface Avatar.GetPrimaryStatisticContext with
+    interface AvatarShipmate.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
     interface AvatarMessages.AddContext with

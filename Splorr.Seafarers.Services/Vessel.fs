@@ -128,7 +128,65 @@ module Vessel =
                         |> snd))
         | _ -> ()
 
+    type GetSpeedContext =
+        inherit ServiceContext
+        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
+    let GetSpeed
+            (context  : ServiceContext)
+            (avatarId : string)
+            : float option =
+        let context = context :?> GetSpeedContext
+        VesselStatisticIdentifier.Speed
+        |> context.vesselSingleStatisticSource avatarId 
+        |> Option.map Statistic.GetCurrentValue
 
+    type GetHeadingContext =
+        inherit ServiceContext
+        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
+    let GetHeading
+            (context  : ServiceContext)
+            (avatarId : string)
+            : float option =
+        let context = context :?> GetHeadingContext
+        VesselStatisticIdentifier.Heading
+        |> context.vesselSingleStatisticSource avatarId 
+        |> Option.map Statistic.GetCurrentValue
+    
+    type SetSpeedContext =
+        inherit ServiceContext
+        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
+        abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
+    let SetSpeed 
+            (context  : ServiceContext)
+            (speed    : float) 
+            (avatarId : string) 
+            : unit =
+        let context = context :?> SetSpeedContext
+        context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Speed
+        |> Option.iter
+            (fun statistic ->
+                (VesselStatisticIdentifier.Speed, 
+                    statistic
+                    |> Statistic.SetCurrentValue speed)
+                |> context.vesselSingleStatisticSink avatarId)
+
+    type SetHeadingContext =
+        inherit ServiceContext
+        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
+        abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
+    let SetHeading 
+            (context  : ServiceContext)
+            (heading  : float) 
+            (avatarId : string) 
+            : unit =
+        let context = context :?> SetHeadingContext
+        context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Heading
+        |> Option.iter
+            (fun statistic ->
+                (VesselStatisticIdentifier.Heading, 
+                    statistic
+                    |> Statistic.SetCurrentValue (heading |> Angle.ToRadians))
+                |> context.vesselSingleStatisticSink avatarId)
 
 
 

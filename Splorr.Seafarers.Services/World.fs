@@ -239,11 +239,11 @@ module World =
             (avatarId : string) 
             : unit = 
         avatarId
-        |> Avatar.SetSpeed 
+        |> Vessel.SetSpeed 
             context
             speed 
         avatarId
-        |> Avatar.GetSpeed 
+        |> Vessel.GetSpeed 
             context
         |> Option.iter
             (fun newSpeed ->
@@ -256,11 +256,11 @@ module World =
             (avatarId : string) 
             : unit =
         avatarId
-        |> Avatar.SetHeading 
+        |> Vessel.SetHeading 
             context
             heading 
         avatarId
-        |> Avatar.GetHeading 
+        |> Vessel.GetHeading 
             context
         |> Option.iter
             (fun newHeading ->
@@ -591,10 +591,10 @@ module World =
             let quantity =
                 match tradeQuantity with
                 | Specific amount -> amount
-                | Maximum -> min (floor(availableTonnage / descriptor.Tonnage)) (floor((avatarId |> Avatar.GetMoney context) / unitPrice)) |> uint64
+                | Maximum -> min (floor(availableTonnage / descriptor.Tonnage)) (floor((avatarId |> AvatarShipmate.GetMoney context) / unitPrice)) |> uint64
             let price = (quantity |> float) * unitPrice
             let tonnageNeeded = (quantity |> float) * descriptor.Tonnage
-            if price > (avatarId |> Avatar.GetMoney context) then
+            if price > (avatarId |> AvatarShipmate.GetMoney context) then
                 avatarId
                 |> AddMessages context ["You don't have enough money."]
             elif usedTonnage + tonnageNeeded > availableTonnage then
@@ -612,7 +612,7 @@ module World =
                 avatarId
                 |> AddMessages context [(quantity, descriptor.ItemName) ||> sprintf "You complete the purchase of %u %s."]
                 avatarId
-                |> Avatar.SpendMoney 
+                |> AvatarShipmate.SpendMoney 
                     context
                     price 
                 avatarId
@@ -668,7 +668,7 @@ module World =
                     location
                 avatarId
                 |> AddMessages context [(quantity, descriptor.ItemName) ||> sprintf "You complete the sale of %u %s."]
-                Avatar.EarnMoney 
+                AvatarShipmate.EarnMoney 
                     context
                     price 
                     avatarId
@@ -742,7 +742,7 @@ module World =
 
     type CanPlaceBetContext =
         inherit ServiceContext
-        inherit Avatar.GetPrimaryStatisticContext
+        inherit AvatarShipmate.GetPrimaryStatisticContext
 
     let CanPlaceBet
             (context : ServiceContext)
@@ -750,7 +750,7 @@ module World =
             (avatarId : string)
             : bool =
         let context = context :?> CanPlaceBetContext
-        (Avatar.GetMoney context avatarId) >= amount
+        (AvatarShipmate.GetMoney context avatarId) >= amount
      
     type ResolveHandContext =
         inherit ServiceContext

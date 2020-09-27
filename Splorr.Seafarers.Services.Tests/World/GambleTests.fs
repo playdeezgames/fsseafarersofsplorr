@@ -6,7 +6,7 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
 type private WorldCanPlaceBetContext(shipmateSingleStatisticSource) =
-    interface Avatar.GetPrimaryStatisticContext with
+    interface AvatarShipmate.GetPrimaryStatisticContext with
         member _.shipmateSingleStatisticSource : ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface World.CanPlaceBetContext
 
@@ -46,7 +46,7 @@ type TestWorldResolveHandContext
         avatarMessageSink,
         islandSingleStatisticSource,
         shipmateSingleStatisticSource) =
-    interface Avatar.GetPrimaryStatisticContext with
+    interface AvatarShipmate.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarIslandFeature.GetContext with
         member this.avatarIslandFeatureSource: AvatarIslandFeatureSource = avatarIslandFeatureSource

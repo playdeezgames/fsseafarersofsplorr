@@ -128,21 +128,21 @@ type SplorrContext
         member _.shipmateRationItemSource: ShipmateRationItemSource = shipmateRationItemSource
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-    interface Avatar.GetSpeedContext with
+    interface Vessel.GetSpeedContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface Avatar.GetHeadingContext with
+    interface Vessel.GetHeadingContext with
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
     interface Vessel.SetPositionContext with
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface Avatar.SetSpeedContext with
+    interface Vessel.SetSpeedContext with
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
-    interface Avatar.SetHeadingContext with
+    interface Vessel.SetHeadingContext with
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member _.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
@@ -151,7 +151,7 @@ type SplorrContext
         member _.avatarInventorySource         : AvatarInventorySource=avatarInventorySource
         member _.avatarShipmateSource          : AvatarShipmateSource=avatarShipmateSource
 
-    interface Avatar.TransformShipmatesContext with
+    interface AvatarShipmate.TransformShipmatesContext with
         member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
 
     interface World.AddMessagesContext with
@@ -326,7 +326,7 @@ type SplorrContext
     interface AvatarMessages.AddContext with
         member _.avatarMessageSink : AvatarMessageSink = avatarMessageSink
 
-    interface Avatar.GetPrimaryStatisticContext with
+    interface AvatarShipmate.GetPrimaryStatisticContext with
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
     interface AvatarJob.CompleteContext with

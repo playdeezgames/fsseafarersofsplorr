@@ -5,11 +5,11 @@ open NUnit.Framework
 open Splorr.Seafarers.Models
 
 type TestAvatarSetHeadingContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
-    interface Avatar.SetHeadingContext with
+    interface Vessel.SetHeadingContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 type TestAvatarGetHeadingContext(vesselSingleStatisticSource) = 
-    interface Avatar.GetHeadingContext with
+    interface Vessel.GetHeadingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 
@@ -29,9 +29,9 @@ let ``SetHeading.It sets a given heading.`` () =
     let vesselSingleStatisticSink (_) (identifier: VesselStatisticIdentifier, statistic:Statistic) = 
         Assert.AreEqual(VesselStatisticIdentifier.Heading,identifier)
         Assert.AreEqual(expectedHeading, statistic.CurrentValue)
-    let context = TestAvatarSetHeadingContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> Avatar.SetHeadingContext
+    let context = TestAvatarSetHeadingContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> Vessel.SetHeadingContext
     input
-    |> Avatar.SetHeading 
+    |> Vessel.SetHeading 
         context 
         inputHeading
 
@@ -51,10 +51,10 @@ let ``GetHeading.It gets the heading of an avatar.`` () =
             None
     let inputAvatarId="avatar"
     let expected = 0.0 |> Some
-    let context = TestAvatarGetHeadingContext(vesselSingleStatisticSource) :> Avatar.GetHeadingContext
+    let context = TestAvatarGetHeadingContext(vesselSingleStatisticSource) :> Vessel.GetHeadingContext
     let actual =
         inputAvatarId
-        |> Avatar.GetHeading 
+        |> Vessel.GetHeading 
             context
     Assert.AreEqual(expected, actual)
 

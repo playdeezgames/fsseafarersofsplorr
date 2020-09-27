@@ -21,7 +21,7 @@ type TestItemListRunContext
         member this.islandSource: IslandSource = islandSource
     interface Item.GetListContext with
         member this.itemSource: ItemSource = itemSource
-    interface Avatar.GetPrimaryStatisticContext with
+    interface AvatarShipmate.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface Shipmate.GetStatusContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource

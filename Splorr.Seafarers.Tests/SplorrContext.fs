@@ -72,33 +72,28 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Avatar.CleanHullContext
     let context = splorrContext :?> Avatar.GetCurrentFoulingContext
     let context = splorrContext :?> Avatar.GetMaximumFoulingContext
-
-    let context = splorrContext :?> AvatarIslandFeature.EnterContext
-    let context = splorrContext :?> AvatarIslandFeature.GetContext
-
-    let context = splorrContext :?> Avatar.GetHeadingContext
-    let context = splorrContext :?> Vessel.GetPositionContext
-    let context = splorrContext :?> Avatar.GetSpeedContext
     let context = splorrContext :?> Avatar.MoveContext
-    let context = splorrContext :?> Avatar.SetHeadingContext
-    let context = splorrContext :?> Vessel.SetPositionContext
-    let context = splorrContext :?> Avatar.SetSpeedContext
+    
     //avatar inventory contexts
-    let context = splorrContext :?> AvatarInventory.AddInventoryContext
-    let context = splorrContext :?> AvatarInventory.GetInventoryContext
-    let context = splorrContext :?> AvatarInventory.GetUsedTonnageContext
-    let context = splorrContext :?> AvatarInventory.GetItemCountContext
-    let context = splorrContext :?> AvatarInventory.RemoveInventoryContext
     //avatar shipmate contexts
     let context = splorrContext :?> Avatar.EatContext
-    let context = splorrContext :?> Avatar.GetPrimaryStatisticContext
-    let context = splorrContext :?> Avatar.TransformShipmatesContext
+    let context = splorrContext :?> AvatarShipmate.GetPrimaryStatisticContext
+    let context = splorrContext :?> AvatarShipmate.TransformShipmatesContext
 
     let context = splorrContext :?> Avatar.CreateContext
 
     let context = splorrContext :?> AvatarGamblingHand.DealContext
     let context = splorrContext :?> AvatarGamblingHand.FoldContext
     let context = splorrContext :?> AvatarGamblingHand.GetContext
+
+    let context = splorrContext :?> AvatarInventory.AddInventoryContext
+    let context = splorrContext :?> AvatarInventory.GetInventoryContext
+    let context = splorrContext :?> AvatarInventory.GetUsedTonnageContext
+    let context = splorrContext :?> AvatarInventory.GetItemCountContext
+    let context = splorrContext :?> AvatarInventory.RemoveInventoryContext
+
+    let context = splorrContext :?> AvatarIslandFeature.EnterContext
+    let context = splorrContext :?> AvatarIslandFeature.GetContext
 
     let context = splorrContext :?> AvatarJob.AbandonContext
     let context = splorrContext :?> AvatarJob.CompleteContext
@@ -149,6 +144,12 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
 
     let context = splorrContext :?> Vessel.CreateContext
     let context = splorrContext :?> Vessel.GetStatisticContext
+    let context = splorrContext :?> Vessel.GetHeadingContext
+    let context = splorrContext :?> Vessel.GetPositionContext
+    let context = splorrContext :?> Vessel.GetSpeedContext
+    let context = splorrContext :?> Vessel.SetHeadingContext
+    let context = splorrContext :?> Vessel.SetPositionContext
+    let context = splorrContext :?> Vessel.SetSpeedContext
 
     let context = splorrContext :?> Utility.RandomContext
 

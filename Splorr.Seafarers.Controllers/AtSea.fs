@@ -85,12 +85,12 @@ module AtSea =
 
         let speed = 
             avatarId
-            |> Avatar.GetSpeed 
+            |> Vessel.GetSpeed 
                 context 
             |> Option.get
         let heading = 
             avatarId 
-            |> Avatar.GetHeading 
+            |> Vessel.GetHeading 
                 context 
             |> Option.get
         let speedHue =DetermineSpeedHue speed

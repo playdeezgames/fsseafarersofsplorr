@@ -7,7 +7,7 @@ open Splorr.Seafarers.Services
 let avatarId = ""
 
 type TestAvatarGetPrimaryStatisticContext(shipmateSingleStatisticSource) = 
-    interface Avatar.GetPrimaryStatisticContext with
+    interface AvatarShipmate.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 type TestAvatarSetMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
@@ -34,10 +34,10 @@ let ``GetReputation.It retrieves the reputation of the primary shipmate.`` () =
         | _ ->
             raise (System.NotImplementedException "Kaboom Get")
             None
-    let context = TestAvatarGetPrimaryStatisticContext(shipmateSingleStatisticSource) :> Avatar.GetPrimaryStatisticContext
+    let context = TestAvatarGetPrimaryStatisticContext(shipmateSingleStatisticSource) :> AvatarShipmate.GetPrimaryStatisticContext
     let actual =
         input
-        |> Avatar.GetReputation context
+        |> AvatarShipmate.GetReputation context
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -54,10 +54,10 @@ let ``GetMoney.It retrieves the money of the primary shipmate.`` () =
         | _ ->
             raise (System.NotImplementedException "Kaboom Get")
             None
-    let context = TestAvatarGetPrimaryStatisticContext(shipmateSingleStatisticSource) :> Avatar.GetPrimaryStatisticContext
+    let context = TestAvatarGetPrimaryStatisticContext(shipmateSingleStatisticSource) :> AvatarShipmate.GetPrimaryStatisticContext
     let actual =
         input
-        |> Avatar.GetMoney context
+        |> AvatarShipmate.GetMoney context
     Assert.AreEqual(expected, actual)
 
 [<Test>]
@@ -80,7 +80,7 @@ let ``SetMoney.It assigns the amount of money of the primary shipmate.`` () =
             raise (System.NotImplementedException "Kaboom set")
     let context = TestAvatarSetMoneyContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> ServiceContext
     input
-    |> Avatar.SetMoney 
+    |> AvatarShipmate.SetMoney 
         context
         inputMoney
 
@@ -104,7 +104,7 @@ let ``SetReputation.It assigns the amount of reputation of the primary shipmate.
             raise (System.NotImplementedException "Kaboom set")
     let context = TestAvatarSetReputationContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> ServiceContext
     input
-    |> Avatar.SetReputation 
+    |> AvatarShipmate.SetReputation 
         context
         inputReputation
 

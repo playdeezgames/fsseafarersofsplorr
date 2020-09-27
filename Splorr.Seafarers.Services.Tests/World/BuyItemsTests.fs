@@ -33,7 +33,7 @@ type TestWorldBuyItemsContext
     interface AvatarInventory.GetUsedTonnageContext with
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource
         
-    interface Avatar.GetPrimaryStatisticContext with
+    interface AvatarShipmate.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
         
     interface AvatarInventory.GetItemCountContext with

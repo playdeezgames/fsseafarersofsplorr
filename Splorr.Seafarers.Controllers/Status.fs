@@ -17,9 +17,9 @@ module Status =
             "" |> Line
             (Hue.Heading, "Status:" |> Line) |> Hued
             (Hue.Label, "Money: " |> Text) |> Hued
-            (Hue.Value, avatarId |> Avatar.GetMoney context |> sprintf "%f" |> Line) |> Hued
+            (Hue.Value, avatarId |> AvatarShipmate.GetMoney context |> sprintf "%f" |> Line) |> Hued
             (Hue.Label, "Reputation: " |> Text) |> Hued
-            (Hue.Value, avatarId |> Avatar.GetReputation context |> sprintf "%f" |> Line) |> Hued
+            (Hue.Value, avatarId |> AvatarShipmate.GetReputation context |> sprintf "%f" |> Line) |> Hued
             (Hue.Label, "Satiety: " |> Text) |> Hued
             (Hue.Value, (satiety.CurrentValue, satiety.MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
             (Hue.Label, "Health: " |> Text) |> Hued

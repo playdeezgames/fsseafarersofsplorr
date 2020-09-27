@@ -16,7 +16,7 @@ type TestAvatarCleanHullContext
         vesselSingleStatisticSource) =
     interface Avatar.CleanHullContext with
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
-    interface Avatar.TransformShipmatesContext with
+    interface AvatarShipmate.TransformShipmatesContext with
         member this.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
     interface AvatarMetric.AddContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink

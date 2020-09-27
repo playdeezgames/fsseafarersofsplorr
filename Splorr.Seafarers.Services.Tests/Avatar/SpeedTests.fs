@@ -8,16 +8,16 @@ open AvatarTestFixtures
 let inputAvatarId = "avatar"
 
 type TestAvatarSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) =
-    interface Avatar.SetSpeedContext with
+    interface Vessel.SetSpeedContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 type TestAvatarGetSpeedContext(vesselSingleStatisticSource) =
-    interface Avatar.GetSpeedContext with
+    interface Vessel.GetSpeedContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
 
 type TestAvatarGetEffectiveSpeedContext(vesselSingleStatisticSource) =
-    interface Avatar.GetSpeedContext with
+    interface Vessel.GetSpeedContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface Avatar.GetCurrentFoulingContext with
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
@@ -48,9 +48,9 @@ let ``SetSpeed.It sets all stop when given less than zero.`` () =
     let vesselSingleStatisticSink (_) (identifier: VesselStatisticIdentifier, statistic:Statistic) = 
         Assert.AreEqual(VesselStatisticIdentifier.Speed,identifier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
-    let context = TestAvatarSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> Avatar.SetSpeedContext
+    let context = TestAvatarSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> Vessel.SetSpeedContext
     input
-    |> Avatar.SetSpeed context inputSpeed
+    |> Vessel.SetSpeed context inputSpeed
 
 [<Test>]
 let ``SetSpeed.It sets full speed when gives more than one.`` () =
@@ -68,9 +68,9 @@ let ``SetSpeed.It sets full speed when gives more than one.`` () =
     let vesselSingleStatisticSink (_) (identifier: VesselStatisticIdentifier, statistic:Statistic) = 
         Assert.AreEqual(VesselStatisticIdentifier.Speed,identifier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
-    let context = TestAvatarSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> Avatar.SetSpeedContext
+    let context = TestAvatarSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> Vessel.SetSpeedContext
     input
-    |> Avatar.SetSpeed context inputSpeed
+    |> Vessel.SetSpeed context inputSpeed
 
 [<Test>]
 let ``SetSpeed.It sets half speed when given half speed.`` () =
@@ -88,9 +88,9 @@ let ``SetSpeed.It sets half speed when given half speed.`` () =
     let vesselSingleStatisticSink (_) (identifier: VesselStatisticIdentifier, statistic:Statistic) = 
         Assert.AreEqual(VesselStatisticIdentifier.Speed,identifier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
-    let context = TestAvatarSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> Avatar.SetSpeedContext
+    let context = TestAvatarSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> Vessel.SetSpeedContext
     input
-    |> Avatar.SetSpeed context inputSpeed
+    |> Vessel.SetSpeed context inputSpeed
 
 
 [<Test>]
@@ -109,9 +109,9 @@ let ``SetSpeed.It sets full speed when given one.`` () =
     let vesselSingleStatisticSink (_) (identifier: VesselStatisticIdentifier, statistic:Statistic) = 
         Assert.AreEqual(VesselStatisticIdentifier.Speed,identifier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
-    let context = TestAvatarSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> Avatar.SetSpeedContext
+    let context = TestAvatarSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> Vessel.SetSpeedContext
     input
-    |> Avatar.SetSpeed context inputSpeed
+    |> Vessel.SetSpeed context inputSpeed
 
 
 [<Test>]
@@ -130,9 +130,9 @@ let ``SetSpeed.It sets all stop when given zero.`` () =
     let vesselSingleStatisticSink (_) (identifier: VesselStatisticIdentifier, statistic:Statistic) = 
         Assert.AreEqual(VesselStatisticIdentifier.Speed,identifier)
         Assert.AreEqual(expectedSpeed, statistic.CurrentValue)
-    let context = TestAvatarSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> Avatar.SetSpeedContext
+    let context = TestAvatarSetSpeedContext(vesselSingleStatisticSink, vesselSingleStatisticSource) :> Vessel.SetSpeedContext
     input
-    |> Avatar.SetSpeed context inputSpeed
+    |> Vessel.SetSpeed context inputSpeed
 
 
 [<Test>]
@@ -151,10 +151,10 @@ let ``GetSpeed.It gets the speed of an avatar.`` () =
             None
     let inputAvatarId="avatar"
     let expected = 0.5 |> Some
-    let context = TestAvatarGetSpeedContext(vesselSingleStatisticSource) :> Avatar.GetSpeedContext
+    let context = TestAvatarGetSpeedContext(vesselSingleStatisticSource) :> Vessel.GetSpeedContext
     let actual =
         inputAvatarId
-        |> Avatar.GetSpeed context
+        |> Vessel.GetSpeed context
     Assert.AreEqual(expected, actual)
 
 [<Test>]
