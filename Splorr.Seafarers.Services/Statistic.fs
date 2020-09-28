@@ -33,7 +33,9 @@ module Statistic =
         }
         |> SetCurrentValue current
 
-    let CreateFromTemplate (template:StatisticTemplate) : Statistic =
+    let CreateFromTemplate 
+            (template:StatisticTemplate) 
+            : Statistic =
         Create 
             (template.MinimumValue, template.MaximumValue) 
             template.CurrentValue
@@ -44,7 +46,6 @@ module Statistic =
             : Statistic =
         statistic
         |> SetCurrentValue (amount + statistic.CurrentValue)
-
 
     let ChangeMaximumBy 
             (amount    : float) 

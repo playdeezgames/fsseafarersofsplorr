@@ -19,9 +19,10 @@ type TestItemDetermineSalePriceContext
         (commoditySource,
         islandMarketSource,
         itemSingleSource) =
+    interface Item.GetContext with
+        member this.itemSingleSource: ItemSingleSource = itemSingleSource
     interface IslandMarket.DeterminePriceContext with
         member _.islandMarketSource             : IslandMarketSource            = islandMarketSource            
-        member _.itemSingleSource               : ItemSingleSource              = itemSingleSource
     interface Commodity.GetCommoditiesContext with
         member this.commoditySource: CommoditySource = commoditySource
 
@@ -29,9 +30,10 @@ type TestItemDeterminePurchasePriceContext
         (commoditySource,
         islandMarketSource,
         itemSingleSource) = 
+    interface Item.GetContext with
+        member this.itemSingleSource: ItemSingleSource = itemSingleSource
     interface IslandMarket.DeterminePriceContext with
         member _.islandMarketSource             : IslandMarketSource            =islandMarketSource  
-        member _.itemSingleSource               : ItemSingleSource               = itemSingleSource
     interface Commodity.GetCommoditiesContext with
         member this.commoditySource: CommoditySource = commoditySource
 
@@ -86,6 +88,23 @@ let ``GetList.It calls ItemSource on the ServiceContext.`` () =
     let context =
         TestItemGetListContext(itemSource) :> ServiceContext
     let actual = Item.GetList context
+    Assert.AreEqual(expected, actual)
+    Assert.IsTrue(called)
+
+type TestItemGetContext(itemSingleSource) =
+    interface Item.GetContext with
+        member this.itemSingleSource: ItemSingleSource = itemSingleSource
+[<Test>]
+let ``Get.It calls ItemSingleSource on the service context.`` () =
+    let expected = None
+    let mutable called = false
+    let itemSingleSource (_) =
+        called <- true
+        None
+    let context = 
+        TestItemGetContext(itemSingleSource) :> ServiceContext
+    let index = 0UL
+    let actual = Item.Get context index
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
     

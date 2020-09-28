@@ -179,9 +179,6 @@ type SplorrContext
     interface Utility.RandomContext with
         member _.random : Random = random
 
-    interface IslandFeature.CreateContext with
-        member _.random : Random = random
-
     interface World.PopulateIslandsContext with
         member _.islandFeatureGeneratorSource : IslandFeatureGeneratorSource=islandFeatureGeneratorSource
         member _.islandSingleFeatureSink      : IslandSingleFeatureSink     =islandSingleFeatureSink     
@@ -241,7 +238,6 @@ type SplorrContext
 
     interface IslandMarket.DeterminePriceContext with
         member _.islandMarketSource             : IslandMarketSource             =islandMarketSource     
-        member _.itemSingleSource               : ItemSingleSource               = itemSingleSource
 
     interface Island.MakeKnownContext with
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink

@@ -38,6 +38,9 @@ type TestDockedRunContext
             shipmateSingleStatisticSource,
             vesselSingleStatisticSource   
         ) =
+    interface Item.GetContext with
+        member this.itemSingleSource: ItemSingleSource = itemSingleSource
+
     interface AvatarMessages.GetContext with
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
 
@@ -72,7 +75,6 @@ type TestDockedRunContext
 
     interface IslandMarket.DeterminePriceContext with
         member _.islandMarketSource             : IslandMarketSource            =islandMarketSource   
-        member _.itemSingleSource               : ItemSingleSource              = itemSingleSource
 
     interface Island.MakeKnownContext with
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink

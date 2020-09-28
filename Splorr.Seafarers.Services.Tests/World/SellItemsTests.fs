@@ -17,12 +17,13 @@ type TestWorldSellItemsContext
         itemSource,
         shipmateSingleStatisticSink,
         shipmateSingleStatisticSource) =
+    interface Item.GetContext with
+        member this.itemSingleSource: ItemSingleSource = itemSingleSource
     interface Island.UpdateMarketForItemContext
     interface Commodity.GetCommoditiesContext with
         member this.commoditySource: CommoditySource = commoditySource
     interface IslandMarket.DeterminePriceContext with
         member this.islandMarketSource: IslandMarketSource = islandMarketSource
-        member this.itemSingleSource: ItemSingleSource = itemSingleSource
     interface AvatarInventory.RemoveInventoryContext with
         member this.avatarInventorySink: AvatarInventorySink = avatarInventorySink
         member this.avatarInventorySource: AvatarInventorySource = avatarInventorySource

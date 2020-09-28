@@ -27,7 +27,6 @@ type TestItemListRunContext
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface IslandMarket.DeterminePriceContext with
         member this.islandMarketSource: IslandMarketSource = islandMarketSource
-        member this.itemSingleSource: ItemSingleSource = itemSingleSource
 
 [<Test>]
 let ``Run.It returns Docked (at Shop) gamestate.`` () =
