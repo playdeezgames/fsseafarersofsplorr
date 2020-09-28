@@ -62,6 +62,9 @@ type SplorrContext
         vesselStatisticSink: VesselStatisticSink ,
         vesselStatisticTemplateSource: VesselStatisticTemplateSource ,
         worldSingleStatisticSource : WorldSingleStatisticSource) =
+
+    interface Item.GetContext with
+        member _.itemSingleSource: ItemSingleSource = itemSingleSource
     interface AvatarIslandFeature.GetContext with
         member _.avatarIslandFeatureSource: AvatarIslandFeatureSource = avatarIslandFeatureSource
 

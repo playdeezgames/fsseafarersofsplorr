@@ -171,7 +171,7 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> World.UpdateChartsContext
 
     let context = splorrContext :?> Island.GetStatisticContext
-    //let context = splorrContext :?> 
+    let context = splorrContext :?> Item.GetContext
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
