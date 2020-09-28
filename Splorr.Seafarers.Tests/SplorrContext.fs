@@ -123,8 +123,6 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Island.GenerateJobsContext
     let context = splorrContext :?> Island.GetJobsContext
 
-    let context = splorrContext :?> IslandFeature.CreateContext
-
     let context = splorrContext :?> IslandMarket.DeterminePriceContext
 
     let context = splorrContext :?> Item.GetListContext
