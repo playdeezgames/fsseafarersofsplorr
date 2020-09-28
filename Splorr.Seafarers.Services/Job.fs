@@ -9,9 +9,9 @@ type JobRewardStatisticSource = unit -> Statistic
 module Job =
     type CreateContext =
         inherit ServiceContext
-        abstract member termSources                : TermSources
+        abstract member termSources              : TermSources
         abstract member jobRewardStatisticSource : JobRewardStatisticSource
-        abstract member random                     : Random
+        abstract member random                   : Random
     let Create 
             (context      : ServiceContext)
             (destinations : Set<Location>) 

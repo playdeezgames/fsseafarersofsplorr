@@ -1,7 +1,6 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
-type ItemSingleSource    = uint64 -> ItemDescriptor option
 type RationItemSource = unit -> uint64 list
 
 type IslandMarketSource  = Location -> Map<uint64, Market>
@@ -12,7 +11,6 @@ module IslandMarket =
     type DeterminePriceContext =
         inherit ServiceContext
         abstract member islandMarketSource : IslandMarketSource
-        abstract member itemSingleSource   : ItemSingleSource
     let private DeterminePrice 
             (context             : ServiceContext)
             (unitPriceDeterminer : UnitPriceDeterminer)
@@ -20,7 +18,7 @@ module IslandMarket =
             (location            : Location)
             : float =
         let context = context :?> DeterminePriceContext
-        context.itemSingleSource itemIndex
+        Item.Get context itemIndex
         |> Option.fold
             (fun _ itemDescriptor->
                 let commodities = Commodity.GetCommodities context

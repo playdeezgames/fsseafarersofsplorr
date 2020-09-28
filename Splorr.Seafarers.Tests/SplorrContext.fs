@@ -68,17 +68,10 @@ let splorrContext : ServiceContext =
 
 [<Test>]
 let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrContext.`` () =
-    //avatar vessel contexts
     let context = splorrContext :?> Avatar.CleanHullContext
-    let context = splorrContext :?> Avatar.MoveContext
-    
-    //avatar inventory contexts
-    //avatar shipmate contexts
-    let context = splorrContext :?> Avatar.EatContext
-    let context = splorrContext :?> AvatarShipmates.GetPrimaryStatisticContext
-    let context = splorrContext :?> AvatarShipmates.TransformContext
-
     let context = splorrContext :?> Avatar.CreateContext
+    let context = splorrContext :?> Avatar.EatContext
+    let context = splorrContext :?> Avatar.MoveContext
 
     let context = splorrContext :?> AvatarGamblingHand.DealContext
     let context = splorrContext :?> AvatarGamblingHand.FoldContext
@@ -104,24 +97,31 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> AvatarMetric.GetContext
     let context = splorrContext :?> AvatarMetric.GetForIslandContext
 
+    let context = splorrContext :?> AvatarShipmates.GetPrimaryStatisticContext
+    let context = splorrContext :?> AvatarShipmates.TransformContext
+
     let context = splorrContext :?> Commodity.GetCommoditiesContext
 
     let context = splorrContext :?> ConfirmQuit.RunContext
 
     let context = splorrContext :?> Island.AddVisitContext
-    let context = splorrContext :?> Island.ChangeMarketContext
-    let context = splorrContext :?> Island.CreateContext
-    let context = splorrContext :?> Island.GenerateCommoditiesContext
-    let context = splorrContext :?> Island.GenerateItemsContext
-    let context = splorrContext :?> Island.GenerateJobsContext
+    let context = splorrContext :?> Island.MakeKnownContext
+
     let context = splorrContext :?> Island.GetDisplayNameContext
-    let context = splorrContext :?> Island.GetItemsContext
-    let context = splorrContext :?> Island.GetJobsContext
-    let context = splorrContext :?> Island.GetListContext
     let context = splorrContext :?> Island.GetNameContext
     let context = splorrContext :?> Island.HasFeatureContext
-    let context = splorrContext :?> Island.MakeKnownContext
+
+    let context = splorrContext :?> Island.ChangeMarketContext
+    let context = splorrContext :?> Island.GenerateCommoditiesContext
+    let context = splorrContext :?> Island.GenerateItemsContext
+    let context = splorrContext :?> Island.GetItemsContext
     let context = splorrContext :?> Island.UpdateMarketForItemContext
+
+    let context = splorrContext :?> Island.CreateContext
+    let context = splorrContext :?> Island.GetListContext
+    
+    let context = splorrContext :?> Island.GenerateJobsContext
+    let context = splorrContext :?> Island.GetJobsContext
 
     let context = splorrContext :?> IslandFeature.CreateContext
 
