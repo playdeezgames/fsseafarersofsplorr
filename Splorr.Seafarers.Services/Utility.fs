@@ -24,4 +24,26 @@ module Utility =
             : float =
         (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + 3.0
 
+    let WeightedGenerator
+            (context : ServiceContext) 
+            (candidates : Map<'T, float>)
+            : 'T option=
+        let totalWeight =
+            candidates
+            |> Map.fold 
+                (fun accumulator _ weight -> accumulator + weight) 0.0
+        let generated = (context :?> RandomContext).random.NextDouble() * totalWeight
+        candidates
+        |> Map.fold
+            (fun (result, weightLeft) item weight -> 
+                match result with
+                | Some _ ->
+                    (result, weightLeft)
+                | _ ->
+                    let weightLeft = weightLeft - weight
+                    if weightLeft <=0.0 then
+                        (item |> Some, weightLeft)
+                    else
+                        (result, weightLeft)) (None, generated)
+        |> fst
 

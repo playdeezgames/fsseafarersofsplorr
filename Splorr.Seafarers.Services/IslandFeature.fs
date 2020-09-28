@@ -7,11 +7,8 @@ module IslandFeature =
             (context   : ServiceContext) 
             (generator : IslandFeatureGenerator)
             : bool = 
-        let context = context :?> Utility.RandomContext
-        let total = 
-            generator.FeaturelessWeight + generator.FeatureWeight
-
-        let generated = 
-            context.random.NextDouble() * total 
-
-        generated < generator.FeatureWeight
+        Map.empty
+        |> Map.add true generator.FeatureWeight
+        |> Map.add false generator.FeaturelessWeight
+        |> Utility.WeightedGenerator context
+        |> Option.get
