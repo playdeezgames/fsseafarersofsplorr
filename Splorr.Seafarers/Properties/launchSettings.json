@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Splorr.Seafarers": {
+      "commandName": "Project",
+      "commandLineArgs": "-dev"
+    }
+  }
+}

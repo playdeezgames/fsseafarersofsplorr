@@ -24,8 +24,7 @@ module IslandFeature =
         match commandSource() with
         | Some (Command.Bet None) ->
             avatarId
-            |> AvatarGamblingHand.Fold
-                context 
+            |> World.FoldGamblingHand context
             avatarId
             |> Gamestate.InPlay
             |> Some   

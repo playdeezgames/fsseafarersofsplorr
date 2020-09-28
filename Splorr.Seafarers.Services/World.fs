@@ -784,3 +784,14 @@ module World =
         | _ ->
             ()
             
+    let FoldGamblingHand
+            (context  : ServiceContext)
+            (avatarId : string)
+            : unit =
+        avatarId
+        |> AvatarMessages.Add 
+            context 
+            ["Doesn't seem like a good wager to you!"] 
+        avatarId
+        |> AvatarGamblingHand.Fold
+            context 

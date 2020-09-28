@@ -6,9 +6,13 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 open System
 
-let bootstrapConnection () 
+let bootstrapConnection (switches:Set<string>) 
         : SQLiteConnection =
-    let sourceConnectionString = "Data Source=seafarers.db;Version=3;"
+    let sourceConnectionString = 
+        if switches.Contains("-dev") then
+            "Data Source=seafarers-dev.db;Version=3;"
+        else
+            "Data Source=seafarers.db;Version=3;"
     let connectionString = "Data Source=:memory:;Version=3;"
     use source = new SQLiteConnection(sourceConnectionString)
     let destination = new SQLiteConnection(connectionString)
@@ -19,7 +23,7 @@ let bootstrapConnection ()
     destination
 
 module private Persister =
-    let unpackOrThrow (result:Result<'T,string>) : 'T =
+    let unpackOrThrow (result:Result<'T, string>) : 'T =
         match result with
         | Ok x -> x
         | Error x -> raise (InvalidOperationException x)
@@ -31,7 +35,7 @@ let main argv =
         |> Array.map (fun x -> x.ToLower())
         |> Set.ofArray
 
-    use connection = bootstrapConnection()
+    use connection = bootstrapConnection(switches)
 
     let islandItemSource = 
         IslandItem.GetForIsland connection

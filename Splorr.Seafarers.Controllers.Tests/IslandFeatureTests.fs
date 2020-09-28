@@ -191,13 +191,16 @@ let ``Run.It should quit the gambling game when dark alley exists and the player
     let avatarGamblingHandSink (_) (hand:AvatarGamblingHand option) =
         called <- true
         Assert.AreEqual(None, hand)
+    let mutable addedMessages = false
+    let avatarMessageSink (_) (_) =
+        addedMessages <- true
     let context = 
         TestIslandFeatureRunContext
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
             Fixtures.Common.Fake.AvatarIslandFeatureSink,
             Fixtures.Common.Fake.AvatarIslandFeatureSource,
-            avatarMessageSinkExplode,
+            avatarMessageSink,
             avatarMessageSourceDummy,
             islandSingleFeatureSource,
             islandSingleNameSource,
@@ -213,7 +216,8 @@ let ``Run.It should quit the gambling game when dark alley exists and the player
             givenFeature
             givenAvatarId
     Assert.AreEqual(expected, actual)
-    Assert.True(called)
+    Assert.IsTrue(called)
+    Assert.IsTrue(addedMessages)
 
 
 [<Test>]
