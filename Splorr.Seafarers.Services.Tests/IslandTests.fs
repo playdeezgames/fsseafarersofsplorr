@@ -14,13 +14,14 @@ type TestIslandGetDisplayNameContext
         member _.islandSingleNameSource         : IslandSingleNameSource = islandSingleNameSource
 
 type TestIslandAddVisitContext (avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) =
-    interface Island.AddVisitContext with
+    interface ServiceContext
+    interface IslandVisit.AddContext with
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
 
 type TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) =
-    interface Island.MakeKnownContext with
+    interface IslandVisit.MakeKnownContext with
         member this.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
         member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
 
@@ -113,8 +114,13 @@ let ``AddVisit.It increases visit count to one and sets last visit to given turn
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
     let epochSecondsSource = (fun () -> turn)
-    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> Island.AddVisitContext
-    Island.AddVisit 
+    let context = 
+        TestIslandAddVisitContext
+            (avatarIslandSingleMetricSink, 
+            avatarIslandSingleMetricSource, 
+            epochSecondsSource) 
+            :> ServiceContext
+    IslandVisit.Add 
         context
         Fixtures.Common.Dummy.AvatarId
         location
@@ -142,8 +148,13 @@ let ``AddVisit.It increases visit count by one and sets last visit to given turn
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
     let epochSecondsSource = (fun () -> turn)
-    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> Island.AddVisitContext
-    Island.AddVisit 
+    let context = 
+        TestIslandAddVisitContext
+            (avatarIslandSingleMetricSink, 
+            avatarIslandSingleMetricSource, 
+            epochSecondsSource) 
+            :> ServiceContext
+    IslandVisit.Add 
         context
         Fixtures.Common.Dummy.AvatarId
         location
@@ -172,8 +183,8 @@ let ``AddVisit.It increases visit count by one and sets last visit to given turn
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
     let epochSecondsSource = (fun () -> turn)
-    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> Island.AddVisitContext
-    Island.AddVisit 
+    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> ServiceContext
+    IslandVisit.Add 
         context
         Fixtures.Common.Dummy.AvatarId
         location
@@ -196,8 +207,8 @@ let ``AddVisit.It does not update visit count when given turn was prior or equal
     let avatarIslandSingleMetricSink(_) (_) (_) (_)= 
         Assert.Fail("avatarIslandSingleMetricSink")
     let epochSecondsSource = (fun () -> turn)
-    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> Island.AddVisitContext
-    Island.AddVisit 
+    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> ServiceContext
+    IslandVisit.Add 
         context
         Fixtures.Common.Dummy.AvatarId
         location
@@ -277,8 +288,8 @@ let ``MakeKnown.It does nothing when the given island is already known.`` () =
             None
     let avatarIslandSingleMetricSink(_) (_) (_) (_)= 
         Assert.Fail("avatarIslandSingleMetricSink")
-    let context = TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> Island.MakeKnownContext
-    Island.MakeKnown 
+    let context = TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> ServiceContext
+    IslandVisit.MakeKnown 
         context
         Fixtures.Common.Dummy.AvatarId
         location
@@ -299,8 +310,8 @@ let ``MakeKnown.It mutates the island's visit count to Some 0 when the given isl
             Assert.AreEqual(0UL, value)
         | _ ->
             Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
-    let context = TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> Island.MakeKnownContext
-    Island.MakeKnown 
+    let context = TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> ServiceContext
+    IslandVisit.MakeKnown 
         context
         Fixtures.Common.Dummy.AvatarId
         location

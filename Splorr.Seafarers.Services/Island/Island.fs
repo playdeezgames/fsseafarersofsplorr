@@ -2,9 +2,6 @@
 open Splorr.Seafarers.Models
 open System
 
-type AvatarIslandSingleMetricSource = string -> Location -> AvatarIslandMetricIdentifier -> uint64 option
-type AvatarIslandSingleMetricSink = string -> Location -> AvatarIslandMetricIdentifier -> uint64 -> unit
-type EpochSecondsSource = unit -> uint64
 type IslandItemSink   = Location -> Set<uint64>->unit
 type IslandItemSource = Location -> Set<uint64>
 type IslandJobPurger = Location -> uint32 -> unit
@@ -22,6 +19,8 @@ type IslandStatisticTemplateSource = unit -> Map<IslandStatisticIdentifier, Stat
 type IslandSingleFeatureSource = Location -> IslandFeatureIdentifier -> bool
 type IslandSource = unit -> Location list
 type IslandFeatureSource = Location -> IslandFeatureIdentifier list
+
+
 
 module Island =
     type CreateContext = 
@@ -71,34 +70,6 @@ module Island =
         | _ ->
             raise (NotImplementedException "This island does not exist!")
     
-    type AddVisitContext =
-        inherit ServiceContext
-        abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
-        abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
-        abstract member epochSecondsSource : EpochSecondsSource
-    let AddVisit 
-            (context      : ServiceContext)
-            (avatarId     : string) 
-            (location     : Location)
-            : unit =
-        let context = context :?> AddVisitContext
-        let metricSource = context.avatarIslandSingleMetricSource avatarId location
-        let metricSink = context.avatarIslandSingleMetricSink avatarId location
-        let sinkMetrics(visitCount,lastVisit) =
-            metricSink AvatarIslandMetricIdentifier.VisitCount visitCount
-            metricSink AvatarIslandMetricIdentifier.LastVisit lastVisit
-        let visitCount = metricSource AvatarIslandMetricIdentifier.VisitCount
-        let lastVisit = metricSource AvatarIslandMetricIdentifier.LastVisit
-        let currentEpochSeconds = context.epochSecondsSource()
-        match visitCount, lastVisit with
-        | None, _ ->
-            sinkMetrics (1UL, currentEpochSeconds)
-        | Some x, None ->
-            sinkMetrics (x + 1UL, currentEpochSeconds)
-        | Some x, Some y when y < currentEpochSeconds ->
-            sinkMetrics (x + 1UL, currentEpochSeconds)
-        | _ -> 
-            ()
 
     type GenerateJobsContext =
         inherit ServiceContext
@@ -116,27 +87,6 @@ module Island =
                 destinations
             |> context.islandJobSink location
     
-    type MakeKnownContext = 
-        inherit ServiceContext
-        abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
-        abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
-    let MakeKnown
-            (context  : ServiceContext)
-            (avatarId : string) 
-            (location : Location)
-            : unit =
-        let context = context :?> MakeKnownContext
-        let visitCount = 
-            context.avatarIslandSingleMetricSource 
-                avatarId 
-                location 
-                AvatarIslandMetricIdentifier.VisitCount
-        if visitCount.IsNone then
-            context.avatarIslandSingleMetricSink 
-                avatarId 
-                location 
-                AvatarIslandMetricIdentifier.VisitCount 
-                0UL
         
     type GenerateCommoditiesContext =
         inherit ServiceContext

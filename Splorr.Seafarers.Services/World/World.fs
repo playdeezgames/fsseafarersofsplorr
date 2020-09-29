@@ -364,7 +364,7 @@ module World =
             let oldVisitCount =
                 context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
                 |> Option.defaultValue 0UL
-            Island.AddVisit
+            IslandVisit.Add
                 context
                 avatarId
                 location
@@ -509,7 +509,7 @@ module World =
                     Metric.AcceptedJob 
                     1UL
                 context.avatarJobSink avatarId (job|>Some)
-                Island.MakeKnown
+                IslandVisit.MakeKnown
                     context
                     avatarId
                     job.Destination
