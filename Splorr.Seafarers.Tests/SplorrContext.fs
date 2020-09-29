@@ -95,7 +95,6 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
 
     let context = splorrContext :?> AvatarMetric.AddContext
     let context = splorrContext :?> AvatarMetric.GetContext
-    let context = splorrContext :?> AvatarMetric.GetForIslandContext
 
     let context = splorrContext :?> AvatarShipmates.GetPrimaryStatisticContext
     let context = splorrContext :?> AvatarShipmates.TransformContext
@@ -172,8 +171,8 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> World.UndockContext
     let context = splorrContext :?> World.UpdateChartsContext
 
-    //let context = splorrContext :?> 
-    //let context = splorrContext :?> 
+    let context = splorrContext :?> AvatarIslandMetric.GetContext
+    let context = splorrContext :?> AvatarIslandMetric.PutContext
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 

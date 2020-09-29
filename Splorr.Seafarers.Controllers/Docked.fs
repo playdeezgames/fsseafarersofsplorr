@@ -30,7 +30,7 @@ module Docked =
         |> List.append
             [
                 (Hue.Heading, sprintf "You are docked at '%s':" (Island.GetName context location |> Option.get) |> Line) |> Hued
-                (Hue.Flavor, sprintf "You have visited %u times." (AvatarMetric.GetForIsland context location AvatarIslandMetricIdentifier.VisitCount avatarId |> Option.defaultValue 0UL) |> Line) |> Hued
+                (Hue.Flavor, sprintf "You have visited %u times." (AvatarIslandMetric.Get context avatarId location AvatarIslandMetricIdentifier.VisitCount |> Option.defaultValue 0UL) |> Line) |> Hued
             ]
         |> List.iter messageSink
 
