@@ -18,6 +18,8 @@
     <Compile Include="GameOver.fs" />
     <Compile Include="Help.fs" />
     <Compile Include="Inventory.fs" />
+    <Compile Include="DarkAlleyGamblingHand.fs" />
+    <Compile Include="DarkAlley.fs" />
     <Compile Include="IslandFeature.fs" />
     <Compile Include="IslandList.fs" />
     <Compile Include="ItemList.fs" />
