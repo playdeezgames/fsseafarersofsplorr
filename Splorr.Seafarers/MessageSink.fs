@@ -17,6 +17,7 @@ module MessageSink =
             Hue.Flavor ,    ConsoleColor.DarkBlue
             Hue.Usage,      ConsoleColor.DarkGray
             Hue.Error,      ConsoleColor.DarkRed
+            Hue.Cards,      ConsoleColor.Blue
         ]
         |> Map.ofList
 

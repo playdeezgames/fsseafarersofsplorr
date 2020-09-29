@@ -24,23 +24,31 @@ module IslandFeature =
 
         let (first, second, final) = hand
         [
-            Line "The cards that you've been dealt:"
-            Cards [ first; second ]
+            (Hue.Heading, Line "The cards that you've been dealt:") |> Hued
+            (Hue.Cards, Cards [ first; second ]) |> Hued
+            Line "What is your bet?"
         ]
         |> Group
         |> messageSink
         match commandSource() with
+        | Some (Command.Status) ->
+            avatarId
+            |> Gamestate.InPlay
+            |> Gamestate.Status
+            |> Some
+
         | Some (Command.Bet None) ->
             avatarId
             |> World.FoldGamblingHand context
             avatarId
             |> Gamestate.InPlay
             |> Some   
+
         | Some (Command.Bet (Some amount)) ->
             if World.BetOnGamblingHand context amount avatarId then
                 [
-                    Line "The final card:"
-                    Cards [ final ]
+                    (Hue.Heading, Line "The final card:") |> Hued
+                    (Hue.Cards, Cards [ final ]) |> Hued
                 ]
                 |> Group
                 |> messageSink
@@ -95,11 +103,18 @@ module IslandFeature =
                 ]
                 |> List.iter messageSink
                 match commandSource() with
+                | Some (Command.Status) ->
+                    avatarId
+                    |> Gamestate.InPlay
+                    |> Gamestate.Status
+                    |> Some
+
                 | Some Command.Help ->
                     avatarId
                     |> Gamestate.InPlay
                     |> Gamestate.Help
                     |> Some
+
                 | Some Command.Leave ->
                     AvatarIslandFeature.Enter 
                         context 
