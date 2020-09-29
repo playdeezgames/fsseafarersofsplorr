@@ -55,7 +55,7 @@ module IslandFeature =
             (feature       : IslandFeatureIdentifier)
             (avatarId      : string)
             : Gamestate option =
-        match Island.GetName context location with
+        match IslandName.GetName context location with
         | Some _ ->
             RunIsland
                 context

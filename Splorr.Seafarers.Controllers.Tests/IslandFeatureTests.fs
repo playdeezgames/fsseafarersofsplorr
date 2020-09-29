@@ -34,7 +34,7 @@ type TestIslandFeatureRunContext
         member this.avatarMessagePurger: AvatarMessagePurger = avatarMessagePurger
     interface AvatarMessages.GetContext with
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
-    interface Island.GetNameContext with
+    interface IslandName.GetNameContext with
         member _.islandSingleNameSource : IslandSingleNameSource = islandSingleNameSource
     interface Island.HasFeatureContext with
         member _.islandSingleFeatureSource : IslandSingleFeatureSource = islandSingleFeatureSource

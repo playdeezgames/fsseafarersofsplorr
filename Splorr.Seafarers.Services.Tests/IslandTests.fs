@@ -9,8 +9,9 @@ open System
 type TestIslandGetDisplayNameContext
         (avatarIslandSingleMetricSource, 
         islandSingleNameSource)=
-    interface Island.GetDisplayNameContext with
+    interface AvatarIslandMetric.GetContext with
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+    interface IslandName.GetNameContext with
         member _.islandSingleNameSource         : IslandSingleNameSource = islandSingleNameSource
 
 type TestIslandGenerateCommoditiesContext(commoditySource, islandMarketSink, islandMarketSource) =
@@ -48,10 +49,13 @@ let ``GetDisplayName.It returns (unknown) when there is no visit count.`` () =
             None
     let islandSingleNameSource (_) =
         "island name" |> Some
-    let context = TestIslandGetDisplayNameContext(avatarIslandSingleMetricSource, islandSingleNameSource) :> Island.GetDisplayNameContext
+    let context = 
+        TestIslandGetDisplayNameContext
+            (avatarIslandSingleMetricSource, 
+            islandSingleNameSource) :> ServiceContext
     let actual = 
         inputLocation
-        |> Island.GetDisplayName 
+        |> IslandName.GetDisplayName 
             context
             Fixtures.Common.Dummy.AvatarId
     Assert.AreEqual("(unknown)", actual)
@@ -73,9 +77,13 @@ let ``GetDisplayName.It returns the island's name when there is a visit count.``
             |> Some
         else
             None
-    let context = TestIslandGetDisplayNameContext(avatarIslandSingleMetricSource, islandSingleNameSource) :> Island.GetDisplayNameContext
+    let context = 
+        TestIslandGetDisplayNameContext
+            (avatarIslandSingleMetricSource, 
+            islandSingleNameSource) 
+            :> ServiceContext
     let actual = 
-        Island.GetDisplayName 
+        IslandName.GetDisplayName 
             context
             Fixtures.Common.Dummy.AvatarId
             inputLocation
@@ -86,8 +94,10 @@ type TestIslandJobsGenerationContext
         islandJobSource            : IslandJobSource,
         termSources                : TermSources,
         worldSingleStatisticSource : WorldSingleStatisticSource) =
-    interface Island.GenerateJobsContext with
+    interface IslandJob.AddContext with
         member _.islandJobSink   : IslandJobSink = islandJobSink
+
+    interface IslandJob.GetContext with
         member _.islandJobSource : IslandJobSource = islandJobSource
 
     interface Utility.RandomContext with
@@ -106,15 +116,15 @@ let ``GenerateJob.It generates a job when no job is present on the island.`` () 
         sinkCalled<-true
     let islandJobSource (_) =
         []
-    let context : Island.GenerateJobsContext =
+    let context : IslandJob.AddContext =
         TestIslandJobsGenerationContext
             (islandJobSink,
             islandJobSource,
             Fixtures.Common.Stub.TermSources,
             Fixtures.Common.Stub.WorldSingleStatisticSource) 
-        :> Island.GenerateJobsContext
+        :> IslandJob.AddContext
     inputLocation
-    |> Island.GenerateJobs 
+    |> IslandJob.Generate 
         context
         singleDestination
     Assert.IsTrue(sinkCalled)
@@ -132,15 +142,15 @@ let ``GenerateJob.It does nothing when no job is present on the island and no po
                 Destination=(0.0, 0.0)
             }
         ]
-    let context : Island.GenerateJobsContext =
+    let context : IslandJob.AddContext =
         TestIslandJobsGenerationContext
             (islandJobSink,
             islandJobSource,
             Fixtures.Common.Stub.TermSources,
             Fixtures.Common.Stub.WorldSingleStatisticSource) 
-        :> Island.GenerateJobsContext
+        :> IslandJob.AddContext
     inputLocation
-    |> Island.GenerateJobs 
+    |> IslandJob.Generate 
         context 
         Set.empty
 
@@ -338,7 +348,7 @@ let ``GetList.It calls the IslandSource in the ServiceContext.`` () =
 
 
 type TestIslandGetJobsContext(islandJobSource) =
-    interface Island.GetJobsContext with
+    interface IslandJob.GetContext with
         member this.islandJobSource: IslandJobSource = islandJobSource
 [<Test>]
 let ``GetJobs.It calls the IslandJobSource in the ServiceContext.`` () =
@@ -348,7 +358,7 @@ let ``GetJobs.It calls the IslandJobSource in the ServiceContext.`` () =
         []
     let context = TestIslandGetJobsContext(islandJobSource) :> ServiceContext
     let expected = []
-    let actual = Island.GetJobs context Fixtures.Common.Dummy.IslandLocation
+    let actual = IslandJob.Get context Fixtures.Common.Dummy.IslandLocation
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
 
@@ -368,7 +378,7 @@ let ``GetItems.It calls the IslandItemSource in the ServiceContext.`` () =
     Assert.IsTrue(called)
     
 type TestIslandGetNameContext(islandSingleNameSource) =
-    interface Island.GetNameContext with
+    interface IslandName.GetNameContext with
         member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
 [<Test>]
 let ``GetName.It calls the IslandSingleNameSource in the ServiceContext.`` () =
@@ -378,7 +388,7 @@ let ``GetName.It calls the IslandSingleNameSource in the ServiceContext.`` () =
         None
     let context = TestIslandGetNameContext(islandSingleNameSource) :> ServiceContext
     let expected = None
-    let actual = Island.GetName context Fixtures.Common.Dummy.IslandLocation
+    let actual = IslandName.GetName context Fixtures.Common.Dummy.IslandLocation
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
 
@@ -396,7 +406,6 @@ let ``HasFeature.It calls the IslandSingleFeatureSource in the ServiceContext.``
     let actual = Island.HasFeature context IslandFeatureIdentifier.Dock Fixtures.Common.Dummy.IslandLocation
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
-
 
 type TestIslandGetFeaturesContext(islandFeatureSource) =
     interface Island.GetFeaturesContext with

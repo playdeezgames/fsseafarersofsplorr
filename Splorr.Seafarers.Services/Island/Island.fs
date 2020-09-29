@@ -4,23 +4,17 @@ open System
 
 type IslandItemSink   = Location -> Set<uint64>->unit
 type IslandItemSource = Location -> Set<uint64>
-type IslandJobPurger = Location -> uint32 -> unit
-type IslandJobSink = Location -> Job -> unit
-type IslandJobSource = Location -> Job list
 type IslandMarketSink = Location -> Map<uint64, Market> -> unit
 type IslandSingleJobSource = Location -> uint32 -> Job option
 type IslandSingleMarketSink = Location -> (uint64 * Market) -> unit
 type IslandSingleMarketSource = Location -> uint64 -> Market option
 type IslandSingleNameSink = Location -> string option -> unit
-type IslandSingleNameSource = Location -> string option
 type IslandSingleStatisticSink = Location->IslandStatisticIdentifier*Statistic option->unit
 type IslandSingleStatisticSource = Location->IslandStatisticIdentifier->Statistic option
 type IslandStatisticTemplateSource = unit -> Map<IslandStatisticIdentifier, StatisticTemplate>
 type IslandSingleFeatureSource = Location -> IslandFeatureIdentifier -> bool
 type IslandSource = unit -> Location list
 type IslandFeatureSource = Location -> IslandFeatureIdentifier list
-
-
 
 module Island =
     type CreateContext = 
@@ -40,53 +34,6 @@ module Island =
             (fun identifier statistic ->
                 (identifier, statistic |> Some)
                 |> context.islandSingleStatisticSink location)
-    
-    type GetNameContext =
-        inherit ServiceContext
-        abstract member islandSingleNameSource : IslandSingleNameSource
-    let GetName
-            (context : ServiceContext)
-            (location : Location) 
-            : string option =
-        (context :?> GetNameContext).islandSingleNameSource location
-
-    type GetDisplayNameContext =
-        inherit ServiceContext
-        abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
-        abstract member islandSingleNameSource         : IslandSingleNameSource
-    let GetDisplayName 
-            (context  : ServiceContext)
-            (avatarId : string) 
-            (location : Location)
-            : string =
-        let context = context :?> GetDisplayNameContext
-        let visitCount = context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
-        let islandName = context.islandSingleNameSource location
-        match visitCount, islandName with
-        | Some _, Some name ->
-            name
-        | None, Some _ ->
-            "(unknown)"
-        | _ ->
-            raise (NotImplementedException "This island does not exist!")
-    
-
-    type GenerateJobsContext =
-        inherit ServiceContext
-        abstract member islandJobSink              : IslandJobSink
-        abstract member islandJobSource            : IslandJobSource
-    let GenerateJobs 
-            (context      : ServiceContext)
-            (destinations : Set<Location>) 
-            (location     : Location)
-            : unit =
-        let context = context :?> GenerateJobsContext
-        if (context.islandJobSource location).IsEmpty && not destinations.IsEmpty then
-            Job.Create 
-                context 
-                destinations
-            |> context.islandJobSink location
-    
         
     type GenerateCommoditiesContext =
         inherit ServiceContext
@@ -204,15 +151,6 @@ module Island =
             (context : ServiceContext)
             : Location list =
         (context :?> GetListContext).islandSource()
-
-    type GetJobsContext =
-        inherit ServiceContext
-        abstract member islandJobSource : IslandJobSource
-    let GetJobs
-            (context : ServiceContext)
-            (location: Location)
-            : Job list =
-        (context :?> GetJobsContext).islandJobSource location
 
     type GetItemsContext =
         inherit ServiceContext

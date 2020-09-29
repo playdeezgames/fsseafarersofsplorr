@@ -53,7 +53,7 @@ type TestDockedRunContext
     interface Shipmate.GetStatusContext with
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
-    interface Island.GetNameContext with
+    interface IslandName.GetNameContext with
         member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
 
     interface Island.ChangeMarketContext with
@@ -108,10 +108,11 @@ type TestDockedRunContext
     interface AvatarInventory.AddInventoryContext with
         member _.avatarInventorySink   : AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
+    interface IslandJob.PurgeContext with
+        member _.islandJobPurger       : IslandJobPurger = islandJobPurger
     interface World.AcceptJobContext with
         member _.avatarJobSink         : AvatarJobSink = avatarJobSink
         member _.avatarJobSource       : AvatarJobSource = avatarJobSource
-        member _.islandJobPurger       : IslandJobPurger = islandJobPurger
         member _.islandSingleJobSource : IslandSingleJobSource = islandSingleJobSource
         member _.islandSource          : IslandSource = islandSource
     interface World.AbandonJobContext with

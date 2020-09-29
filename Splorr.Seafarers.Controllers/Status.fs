@@ -39,7 +39,7 @@ module Status =
                     (Hue.Sublabel, "Description: " |> Text) |> Hued
                     (Hue.Flavor, job.FlavorText |> sprintf "%s" |> Line) |> Hued
                     (Hue.Sublabel, "Destination: " |> Text) |> Hued
-                    (Hue.Value, job.Destination |> Island.GetName context |> Option.get |> sprintf "%s" |> Line) |> Hued
+                    (Hue.Value, job.Destination |> IslandName.GetName context |> Option.get |> sprintf "%s" |> Line) |> Hued
                     (Hue.Sublabel, "Reward: " |> Text) |> Hued
                     (Hue.Value, job.Reward |> sprintf "%f" |> Line) |> Hued
                 ]

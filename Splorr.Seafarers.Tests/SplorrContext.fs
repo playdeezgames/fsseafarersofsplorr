@@ -106,8 +106,7 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> IslandVisit.AddContext
 
     let context = splorrContext :?> Island.GetStatisticContext
-    let context = splorrContext :?> Island.GetDisplayNameContext
-    let context = splorrContext :?> Island.GetNameContext
+    let context = splorrContext :?> IslandName.GetNameContext
     let context = splorrContext :?> Island.HasFeatureContext
 
 
@@ -120,8 +119,8 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Island.CreateContext
     let context = splorrContext :?> Island.GetListContext
     
-    let context = splorrContext :?> Island.GenerateJobsContext
-    let context = splorrContext :?> Island.GetJobsContext
+    let context = splorrContext :?> IslandJob.AddContext
+    let context = splorrContext :?> IslandJob.GetContext
 
     let context = splorrContext :?> IslandMarket.DeterminePriceContext
 

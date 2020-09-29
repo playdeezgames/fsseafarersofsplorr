@@ -56,7 +56,7 @@ module Chart =
                             let yOffset = if (-y)>height/2 then 20 else (-10)
                             writer.WriteLine(sprintf "<text x=\"%d\" y=\"%d\" fill=\"#ffffff\">%u</text>" x (y+height+yOffset) index)
                             leg
-                            |> Map.add index (Island.GetName context location |> Option.get)
+                            |> Map.add index (IslandName.GetName context location |> Option.get)
                         else
                             leg) Map.empty
             let avatarPosition = 

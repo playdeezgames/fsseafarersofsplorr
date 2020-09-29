@@ -55,7 +55,6 @@ type TestWorldDockContext
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         member _.avatarIslandFeatureSink        : AvatarIslandFeatureSink = avatarIslandFeatureSink
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
-        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource= avatarIslandSingleMetricSource
         member _.avatarJobSink                  : AvatarJobSink= avatarJobSink
         member _.avatarJobSource                : AvatarJobSource=avatarJobSource
         member _.avatarSingleMetricSink         : AvatarSingleMetricSink=avatarSingleMetricSink
@@ -100,8 +99,9 @@ type TestWorldDockContext
     interface IslandVisit.AddContext with
         member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
 
-    interface Island.GenerateJobsContext with
+    interface IslandJob.AddContext with
         member _.islandJobSink              : IslandJobSink=islandJobSink
+    interface IslandJob.GetContext with
         member _.islandJobSource            : IslandJobSource=islandJobSource
 
     interface Utility.RandomContext with

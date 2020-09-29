@@ -14,9 +14,9 @@ type TestJobRunContext
             (islandJobSource,
             islandSingleNameSource,
             islandSource) =
-        interface Island.GetNameContext with
+        interface IslandName.GetNameContext with
             member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
-        interface Island.GetJobsContext with
+        interface IslandJob.GetContext with
             member this.islandJobSource: IslandJobSource = islandJobSource
         interface Island.GetListContext with
             member this.islandSource: IslandSource = islandSource

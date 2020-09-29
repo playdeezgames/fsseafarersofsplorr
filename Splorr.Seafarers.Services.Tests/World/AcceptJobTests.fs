@@ -23,10 +23,11 @@ type TestWorldAcceptJobContext
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface World.AddMessagesContext with
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface IslandJob.PurgeContext with
+        member _.islandJobPurger       : IslandJobPurger = islandJobPurger
     interface World.AcceptJobContext with
         member _.avatarJobSink         : AvatarJobSink = avatarJobSink
         member _.avatarJobSource       : AvatarJobSource = avatarJobSource
-        member _.islandJobPurger       : IslandJobPurger = islandJobPurger
         member _.islandSingleJobSource : IslandSingleJobSource = islandSingleJobSource
         member _.islandSource          : IslandSource = islandSource
     interface AvatarMetric.AddContext with

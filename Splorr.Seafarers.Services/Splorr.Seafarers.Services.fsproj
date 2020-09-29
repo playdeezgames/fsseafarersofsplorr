@@ -17,6 +17,8 @@
     <Compile Include="Island/Feature.fs" />
     <Compile Include="Island\AvatarIslandMetric.fs" />
     <Compile Include="Island\Visit.fs" />
+    <Compile Include="Island\Name.fs" />
+    <Compile Include="Island\Job.fs" />
     <Compile Include="Island/Island.fs" />
     <Compile Include="Vessel/Vessel.fs" />
     <Compile Include="Shipmate/Shipmate.fs" />

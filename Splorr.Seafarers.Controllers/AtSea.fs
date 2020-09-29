@@ -67,7 +67,7 @@ module AtSea =
                         Location.DistanceTo 
                             avatarPosition 
                             location, 
-                                (Island.GetDisplayName 
+                                (IslandName.GetDisplayName 
                                     context
                                     avatarId
                                     location)))

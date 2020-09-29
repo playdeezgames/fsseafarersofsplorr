@@ -334,7 +334,6 @@ module World =
         inherit ServiceContext
         abstract member avatarIslandFeatureSink        : AvatarIslandFeatureSink
         abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
-        abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
         abstract member avatarJobSink                  : AvatarJobSink
         abstract member avatarJobSource                : AvatarJobSource
         abstract member avatarMessageSink              : AvatarMessageSink
@@ -362,17 +361,17 @@ module World =
                 |> Set.ofList
                 |> Set.remove location
             let oldVisitCount =
-                context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
+                AvatarIslandMetric.Get  context avatarId location AvatarIslandMetricIdentifier.VisitCount
                 |> Option.defaultValue 0UL
             IslandVisit.Add
                 context
                 avatarId
                 location
             let newVisitCount =
-                context.avatarIslandSingleMetricSource avatarId location AvatarIslandMetricIdentifier.VisitCount
+                AvatarIslandMetric.Get context avatarId location AvatarIslandMetricIdentifier.VisitCount
                 |> Option.defaultValue 0UL
             l
-            |> Island.GenerateJobs 
+            |> IslandJob.Generate 
                 context 
                 destinations 
             Island.GenerateCommodities 
@@ -418,7 +417,6 @@ module World =
                 ]
     type DistanceToContext =
         inherit ServiceContext
-        abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
         abstract member islandLocationByNameSource     : IslandLocationByNameSource
     let DistanceTo 
             (context    : ServiceContext)
@@ -430,7 +428,7 @@ module World =
             context.islandLocationByNameSource islandName
             |> Option.bind
                 (fun l ->
-                    if (context.avatarIslandSingleMetricSource avatarId l AvatarIslandMetricIdentifier.VisitCount).IsSome then
+                    if (AvatarIslandMetric.Get context avatarId l AvatarIslandMetricIdentifier.VisitCount).IsSome then
                         Some l
                     else
                         None)
@@ -446,7 +444,6 @@ module World =
 
     type HeadForContext =
         inherit ServiceContext
-        abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
         abstract member islandLocationByNameSource     : IslandLocationByNameSource
     let HeadFor
             (context : ServiceContext)
@@ -458,7 +455,7 @@ module World =
             context.islandLocationByNameSource islandName
             |> Option.bind
                 (fun l ->
-                    if (context.avatarIslandSingleMetricSource avatarId l AvatarIslandMetricIdentifier.VisitCount).IsSome then
+                    if (AvatarIslandMetric.Get context avatarId l AvatarIslandMetricIdentifier.VisitCount).IsSome then
                         Some l
                     else
                         None)
@@ -483,7 +480,6 @@ module World =
         inherit ServiceContext
         abstract member avatarJobSink         : AvatarJobSink
         abstract member avatarJobSource       : AvatarJobSource
-        abstract member islandJobPurger       : IslandJobPurger
         abstract member islandSingleJobSource : IslandSingleJobSource
         abstract member islandSource          : IslandSource
     let AcceptJob 
@@ -513,7 +509,7 @@ module World =
                     context
                     avatarId
                     job.Destination
-                context.islandJobPurger location jobIndex
+                IslandJob.Purge context location jobIndex
             | _ ->
                 avatarId
                 |> AddMessages context [ "That job is currently unavailable." ]

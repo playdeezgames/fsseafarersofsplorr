@@ -256,11 +256,11 @@ type TestAtSeaRunContext
         member _.random : Random = Fixtures.Common.Dummy.Random
     interface Commodity.GetCommoditiesContext with
         member this.commoditySource: CommoditySource = commoditySource
-    interface Island.GenerateJobsContext with
+    interface IslandJob.AddContext with
         member _.islandJobSink: IslandJobSink = islandJobSink
+    interface IslandJob.GetContext with
         member _.islandJobSource: IslandJobSource = islandJobSource
-    interface Island.GetDisplayNameContext with
-        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+    interface IslandName.GetNameContext with
         member _.islandSingleNameSource         : IslandSingleNameSource = islandSingleNameSource
     interface IslandVisit.AddContext with
         member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
@@ -325,10 +325,8 @@ type TestAtSeaRunContext
     interface World.AbandonJobContext with
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
     interface World.DistanceToContext with
-        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.islandLocationByNameSource     : IslandLocationByNameSource = islandLocationByNameSource
     interface World.HeadForContext with
-        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.islandLocationByNameSource     : IslandLocationByNameSource = islandLocationByNameSource
     interface World.GetNearbyLocationsContext with
         member _.islandSource : IslandSource = islandSource
@@ -350,7 +348,6 @@ type TestAtSeaRunContext
     interface World.DockContext with
         member _.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
-        member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.avatarJobSink: AvatarJobSink = avatarJobSink
         member _.avatarJobSource: AvatarJobSource = avatarJobSource
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink

@@ -83,7 +83,7 @@ type SplorrContext
     interface AvatarJob.GetContext with
         member _.avatarJobSource: AvatarJobSource = avatarJobSource
 
-    interface Island.GetNameContext with
+    interface IslandName.GetNameContext with
         member _.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
 
     interface Island.GetItemsContext with
@@ -102,9 +102,8 @@ type SplorrContext
     interface Commodity.GetCommoditiesContext with
         member _.commoditySource: CommoditySource = commoditySource
 
-    interface Island.GenerateJobsContext with
+    interface IslandJob.AddContext with
         member _.islandJobSink: IslandJobSink = islandJobSink
-        member _.islandJobSource: IslandJobSource = islandJobSource
 
     interface Island.ChangeMarketContext with
         member _.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
@@ -113,12 +112,8 @@ type SplorrContext
     interface Island.GetListContext with
         member _.islandSource: IslandSource = islandSource
     
-    interface Island.GetJobsContext with
+    interface IslandJob.GetContext with
         member _.islandJobSource: IslandJobSource = islandJobSource
-
-    interface Island.GetDisplayNameContext with
-        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
-        member _.islandSingleNameSource         : IslandSingleNameSource = islandSingleNameSource
 
     interface Vessel.TransformFoulingContext with
         member _.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
@@ -164,12 +159,9 @@ type SplorrContext
         
     interface Avatar.MoveContext with
         member _.vesselSingleStatisticSource   : VesselSingleStatisticSource = vesselSingleStatisticSource
-        
     interface World.DistanceToContext with
-        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.islandLocationByNameSource     : IslandLocationByNameSource = islandLocationByNameSource
     interface World.HeadForContext with
-        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.islandLocationByNameSource     : IslandLocationByNameSource = islandLocationByNameSource
 
     interface World.GetNearbyLocationsContext with
@@ -263,10 +255,12 @@ type SplorrContext
         member _.avatarInventorySink   : AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
 
+    interface IslandJob.PurgeContext with
+        member _.islandJobPurger       : IslandJobPurger = islandJobPurger
+
     interface World.AcceptJobContext with
         member _.avatarJobSink         : AvatarJobSink = avatarJobSink
         member _.avatarJobSource       : AvatarJobSource = avatarJobSource
-        member _.islandJobPurger       : IslandJobPurger = islandJobPurger
         member _.islandSingleJobSource : IslandSingleJobSource = islandSingleJobSource
         member _.islandSource          : IslandSource = islandSource
 
@@ -329,7 +323,6 @@ type SplorrContext
     interface World.DockContext with
         member _.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
         member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
-        member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.avatarJobSink: AvatarJobSink = avatarJobSink
         member _.avatarJobSource: AvatarJobSource = avatarJobSource
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
