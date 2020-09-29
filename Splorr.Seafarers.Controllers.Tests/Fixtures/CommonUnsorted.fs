@@ -246,6 +246,10 @@ type TestAtSeaRunContext
             vesselSingleStatisticSource: VesselSingleStatisticSource,
             worldSingleStatisticSource: WorldSingleStatisticSource
         ) =
+    interface AvatarIslandMetric.PutContext with
+        member this.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+    interface AvatarIslandMetric.GetContext with
+        member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
     interface AvatarMessages.GetContext with
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
     interface Utility.RandomContext with
@@ -259,8 +263,6 @@ type TestAtSeaRunContext
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.islandSingleNameSource         : IslandSingleNameSource = islandSingleNameSource
     interface IslandVisit.AddContext with
-        member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
-        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
     interface Shipmate.GetStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource

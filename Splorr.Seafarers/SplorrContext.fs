@@ -242,10 +242,6 @@ type SplorrContext
     interface IslandMarket.DeterminePriceContext with
         member _.islandMarketSource             : IslandMarketSource             =islandMarketSource     
 
-    interface IslandVisit.MakeKnownContext with
-        member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
-        member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
-    
     interface Island.UpdateMarketForItemContext
 
     interface AvatarInventory.RemoveInventoryContext with
@@ -295,8 +291,6 @@ type SplorrContext
         member _.random = random
 
     interface IslandVisit.AddContext with
-        member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink   
-        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
 
     interface Island.GenerateCommoditiesContext with

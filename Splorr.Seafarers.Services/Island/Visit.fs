@@ -2,15 +2,11 @@
 open Splorr.Seafarers.Models
 open System
 
-type AvatarIslandSingleMetricSource = string -> Location -> AvatarIslandMetricIdentifier -> uint64 option
-type AvatarIslandSingleMetricSink = string -> Location -> AvatarIslandMetricIdentifier -> uint64 -> unit
 type EpochSecondsSource = unit -> uint64
 
 module IslandVisit =
     type AddContext =
         inherit ServiceContext
-        abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
-        abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
         abstract member epochSecondsSource : EpochSecondsSource
     let Add 
             (context      : ServiceContext)
@@ -18,8 +14,8 @@ module IslandVisit =
             (location     : Location)
             : unit =
         let context = context :?> AddContext
-        let metricSource = context.avatarIslandSingleMetricSource avatarId location
-        let metricSink = context.avatarIslandSingleMetricSink avatarId location
+        let metricSource = AvatarIslandMetric.Get context avatarId location
+        let metricSink = AvatarIslandMetric.Put context avatarId location
         let sinkMetrics(visitCount,lastVisit) =
             metricSink AvatarIslandMetricIdentifier.VisitCount visitCount
             metricSink AvatarIslandMetricIdentifier.LastVisit lastVisit
@@ -36,23 +32,18 @@ module IslandVisit =
         | _ -> 
             ()
 
-    type MakeKnownContext = 
-        inherit ServiceContext
-        abstract member avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink
-        abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
     let MakeKnown
             (context  : ServiceContext)
             (avatarId : string) 
             (location : Location)
             : unit =
-        let context = context :?> MakeKnownContext
         let visitCount = 
-            context.avatarIslandSingleMetricSource 
+            AvatarIslandMetric.Get context
                 avatarId 
                 location 
                 AvatarIslandMetricIdentifier.VisitCount
         if visitCount.IsNone then
-            context.avatarIslandSingleMetricSink 
+            AvatarIslandMetric.Put context
                 avatarId 
                 location 
                 AvatarIslandMetricIdentifier.VisitCount 

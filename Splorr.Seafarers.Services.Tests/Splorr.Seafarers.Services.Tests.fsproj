@@ -37,6 +37,8 @@
     <Compile Include="Avatar\GamblingTests.fs" />
     <Compile Include="Avatar\UnsortedTests.fs" />
     <Compile Include="CommodityTests.fs" />
+    <Compile Include="AvatarIslandMetricTests.fs" />
+    <Compile Include="IslandVisitTests.fs" />
     <Compile Include="IslandTests.fs" />
     <Compile Include="IslandFeatureGeneratorTests.fs" />
     <Compile Include="ItemTests.fs" />

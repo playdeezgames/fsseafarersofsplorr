@@ -105,7 +105,6 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> ConfirmQuit.RunContext
 
     let context = splorrContext :?> IslandVisit.AddContext
-    let context = splorrContext :?> IslandVisit.MakeKnownContext
 
     let context = splorrContext :?> Island.GetStatisticContext
     let context = splorrContext :?> Island.GetDisplayNameContext

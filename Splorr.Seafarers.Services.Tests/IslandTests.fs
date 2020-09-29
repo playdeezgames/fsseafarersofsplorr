@@ -13,18 +13,6 @@ type TestIslandGetDisplayNameContext
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
         member _.islandSingleNameSource         : IslandSingleNameSource = islandSingleNameSource
 
-type TestIslandAddVisitContext (avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) =
-    interface ServiceContext
-    interface IslandVisit.AddContext with
-        member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
-        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
-        member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
-
-type TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) =
-    interface IslandVisit.MakeKnownContext with
-        member this.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
-        member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
-
 type TestIslandGenerateCommoditiesContext(commoditySource, islandMarketSink, islandMarketSource) =
     interface Island.GenerateCommoditiesContext with
         member _.islandMarketSink: IslandMarketSink = islandMarketSink
@@ -93,126 +81,6 @@ let ``GetDisplayName.It returns the island's name when there is a visit count.``
             inputLocation
     Assert.AreEqual(name, actual)
 
-[<Test>]
-let ``AddVisit.It increases visit count to one and sets last visit to given turn when there is no last visit and no visit count.`` () =
-    let turn = 100UL
-    let location = (0.0, 0.0)
-    let avatarIslandSingleMetricSource(_) (_) (identifier: AvatarIslandMetricIdentifier) = 
-        match identifier with
-        | AvatarIslandMetricIdentifier.VisitCount
-        | AvatarIslandMetricIdentifier.LastVisit ->
-            None
-        | _ ->
-            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
-            None
-    let avatarIslandSingleMetricSink(_) (_) (identifier:AvatarIslandMetricIdentifier) (value: uint64)= 
-        match identifier with
-        | AvatarIslandMetricIdentifier.VisitCount ->
-            Assert.AreEqual(1UL, value)
-        | AvatarIslandMetricIdentifier.LastVisit ->
-            Assert.AreEqual(turn, value)
-        | _ ->
-            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
-    let epochSecondsSource = (fun () -> turn)
-    let context = 
-        TestIslandAddVisitContext
-            (avatarIslandSingleMetricSink, 
-            avatarIslandSingleMetricSource, 
-            epochSecondsSource) 
-            :> ServiceContext
-    IslandVisit.Add 
-        context
-        Fixtures.Common.Dummy.AvatarId
-        location
-
-[<Test>]
-let ``AddVisit.It increases visit count by one and sets last visit to given turn when there is no last visit.`` () =
-    let turn = 100UL
-    let location = (0.0, 0.0)
-    let avatarIslandSingleMetricSource(_) (_) (identifier: AvatarIslandMetricIdentifier) = 
-        match identifier with
-        | AvatarIslandMetricIdentifier.LastVisit ->
-            (turn + 1UL)
-            |> Some
-        | AvatarIslandMetricIdentifier.VisitCount ->
-            None
-        | _ ->
-            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
-            None
-    let avatarIslandSingleMetricSink(_) (_) (identifier:AvatarIslandMetricIdentifier) (value:uint64)= 
-        match identifier with
-        | AvatarIslandMetricIdentifier.VisitCount ->
-            Assert.AreEqual(1UL, value)
-        | AvatarIslandMetricIdentifier.LastVisit ->
-            Assert.AreEqual(turn, value)
-        | _ ->
-            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
-    let epochSecondsSource = (fun () -> turn)
-    let context = 
-        TestIslandAddVisitContext
-            (avatarIslandSingleMetricSink, 
-            avatarIslandSingleMetricSource, 
-            epochSecondsSource) 
-            :> ServiceContext
-    IslandVisit.Add 
-        context
-        Fixtures.Common.Dummy.AvatarId
-        location
-
-[<Test>]
-let ``AddVisit.It increases visit count by one and sets last visit to given turn when the given turn is after the last visit.`` () =
-    let turn = 100UL
-    let location = (0.0, 0.0)
-    let avatarIslandSingleMetricSource(_) (_) (identifier: AvatarIslandMetricIdentifier) = 
-        match identifier with
-        | AvatarIslandMetricIdentifier.VisitCount -> 
-            1UL 
-            |> Some
-        | AvatarIslandMetricIdentifier.LastVisit -> 
-            0UL 
-            |> Some
-        | _ ->
-            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
-            None
-    let avatarIslandSingleMetricSink(_) (_) (identifier: AvatarIslandMetricIdentifier) (value:uint64)= 
-        match identifier with
-        | AvatarIslandMetricIdentifier.VisitCount ->
-            Assert.AreEqual(2UL, value)
-        | AvatarIslandMetricIdentifier.LastVisit ->
-            Assert.AreEqual(turn, value)
-        | _ ->
-            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
-    let epochSecondsSource = (fun () -> turn)
-    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> ServiceContext
-    IslandVisit.Add 
-        context
-        Fixtures.Common.Dummy.AvatarId
-        location
-
-[<Test>]
-let ``AddVisit.It does not update visit count when given turn was prior or equal to last visit.`` () =
-    let turn = 0UL
-    let location = (0.0, 0.0)
-    let avatarIslandSingleMetricSource(_) (_) (identifier: AvatarIslandMetricIdentifier) = 
-        match identifier with
-        | AvatarIslandMetricIdentifier.VisitCount -> 
-            1UL 
-            |> Some
-        | AvatarIslandMetricIdentifier.LastVisit -> 
-            turn 
-            |> Some
-        | _ ->
-            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
-            None
-    let avatarIslandSingleMetricSink(_) (_) (_) (_)= 
-        Assert.Fail("avatarIslandSingleMetricSink")
-    let epochSecondsSource = (fun () -> turn)
-    let context = TestIslandAddVisitContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource, epochSecondsSource) :> ServiceContext
-    IslandVisit.Add 
-        context
-        Fixtures.Common.Dummy.AvatarId
-        location
-
 type TestIslandJobsGenerationContext
         (islandJobSink             : IslandJobSink, 
         islandJobSource            : IslandJobSource,
@@ -276,45 +144,6 @@ let ``GenerateJob.It does nothing when no job is present on the island and no po
         context 
         Set.empty
 
-[<Test>]
-let ``MakeKnown.It does nothing when the given island is already known.`` () =
-    let location = (0.0, 0.0)
-    let avatarIslandSingleMetricSource(_) (_) (identifier:AvatarIslandMetricIdentifier) = 
-        match identifier with
-        | AvatarIslandMetricIdentifier.VisitCount ->
-            0UL |> Some
-        | _ ->
-            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
-            None
-    let avatarIslandSingleMetricSink(_) (_) (_) (_)= 
-        Assert.Fail("avatarIslandSingleMetricSink")
-    let context = TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> ServiceContext
-    IslandVisit.MakeKnown 
-        context
-        Fixtures.Common.Dummy.AvatarId
-        location
-
-[<Test>]
-let ``MakeKnown.It mutates the island's visit count to Some 0 when the given island is not known.`` () =
-    let location = (0.0, 0.0)
-    let avatarIslandSingleMetricSource(_) (_) (identifier:AvatarIslandMetricIdentifier) = 
-        match identifier with
-        | AvatarIslandMetricIdentifier.VisitCount ->
-            None
-        | _ ->
-            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSource - %s")
-            None
-    let avatarIslandSingleMetricSink(_) (_) (identifier: AvatarIslandMetricIdentifier) (value:uint64)= 
-        match identifier with
-        | AvatarIslandMetricIdentifier.VisitCount ->
-            Assert.AreEqual(0UL, value)
-        | _ ->
-            Assert.Fail(identifier.ToString() |> sprintf "avatarIslandSingleMetricSink - %s")
-    let context = TestIslandMakeKnownContext(avatarIslandSingleMetricSink, avatarIslandSingleMetricSource) :> ServiceContext
-    IslandVisit.MakeKnown 
-        context
-        Fixtures.Common.Dummy.AvatarId
-        location
 
 [<Test>]
 let ``GenerateCommodities.It does nothing when commodities already exists for the given island.`` () =

@@ -76,10 +76,6 @@ type TestDockedRunContext
     interface IslandMarket.DeterminePriceContext with
         member _.islandMarketSource             : IslandMarketSource            =islandMarketSource   
 
-    interface IslandVisit.MakeKnownContext with
-        member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
-        member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
-    
     interface Commodity.GetCommoditiesContext with
         member _.commoditySource: CommoditySource = commoditySource
 
