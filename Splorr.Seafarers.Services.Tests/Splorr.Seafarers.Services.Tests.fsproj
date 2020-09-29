@@ -61,6 +61,7 @@
     <Compile Include="World\SetHeadingTests.fs" />
     <Compile Include="World\SetSpeedTests.fs" />
     <Compile Include="World\UndockTests.fs" />
+    <Compile Include="World\BetOnGamblingHand.fs" />
     <Compile Include="World\UnsortedTests.fs" />
     <Compile Include="World\UpdateChartTests.fs" />
     <Compile Include="Program.fs" />

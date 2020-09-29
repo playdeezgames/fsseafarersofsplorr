@@ -23,12 +23,15 @@ type TestIslandFeatureRunContext
         avatarGamblingHandSource,
         avatarIslandFeatureSink,
         avatarIslandFeatureSource,
+        avatarMessagePurger,
         avatarMessageSink,
         avatarMessageSource,
         islandSingleFeatureSource,
         islandSingleNameSource,
         islandSingleStatisticSource,
         shipmateSingleStatisticSource) =
+    interface World.ClearMessagesContext with
+        member this.avatarMessagePurger: AvatarMessagePurger = avatarMessagePurger
     interface AvatarMessages.GetContext with
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
     interface Island.GetNameContext with
@@ -74,6 +77,7 @@ let ``Run.It should return InPlay when the given island does not exist.`` () =
             avatarGamblingHandSource,
             Fixtures.Common.Fake.AvatarIslandFeatureSink,
             Fixtures.Common.Fake.AvatarIslandFeatureSource,
+            Fixtures.Common.Fake.AvatarMessagePurger,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSourceStub,
@@ -112,6 +116,7 @@ let ``Run.It should return InPlay state when the given island exists but does no
             avatarGamblingHandSource,
             Fixtures.Common.Fake.AvatarIslandFeatureSink,
             Fixtures.Common.Fake.AvatarIslandFeatureSource,
+            Fixtures.Common.Fake.AvatarMessagePurger,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSourceStub,
@@ -148,12 +153,16 @@ let ``Run.It should return InPlay state when dark alley exists and the player is
         givenHand
     let avatarGamblingHandSink (_) (_) =
         Assert.Fail("avatarGamblingHandSink")
+    let mutable purgedMessages = false
+    let avatarMessagePurger (_) =
+        purgedMessages <- true
     let context = 
         TestIslandFeatureRunContext
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
             Fixtures.Common.Fake.AvatarIslandFeatureSink,
             Fixtures.Common.Fake.AvatarIslandFeatureSource,
+            avatarMessagePurger,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSource,
@@ -170,6 +179,7 @@ let ``Run.It should return InPlay state when dark alley exists and the player is
             givenFeature
             givenAvatarId
     Assert.AreEqual(expected, actual)
+    Assert.IsTrue(purgedMessages)
 
 [<Test>]
 let ``Run.It should quit the gambling game when dark alley exists and the player is gambling and gives no bet command.`` () =
@@ -194,12 +204,16 @@ let ``Run.It should quit the gambling game when dark alley exists and the player
     let mutable addedMessages = false
     let avatarMessageSink (_) (_) =
         addedMessages <- true
+    let mutable purgedMessages = false
+    let avatarMessagePurger (_) =
+        purgedMessages <- true
     let context = 
         TestIslandFeatureRunContext
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
             Fixtures.Common.Fake.AvatarIslandFeatureSink,
             Fixtures.Common.Fake.AvatarIslandFeatureSource,
+            avatarMessagePurger,
             avatarMessageSink,
             avatarMessageSourceDummy,
             islandSingleFeatureSource,
@@ -218,6 +232,7 @@ let ``Run.It should quit the gambling game when dark alley exists and the player
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
     Assert.IsTrue(addedMessages)
+    Assert.IsTrue(purgedMessages)
 
 
 [<Test>]
@@ -250,6 +265,7 @@ let ``Run.It should return InPlay state when dark alley exists but the player do
             avatarGamblingHandSource,
             avatarIslandFeatureSink,
             Mock.AvatarIslandFeatureSource (givenLocation, IslandFeatureIdentifier.DarkAlley),
+            Fixtures.Common.Fake.AvatarMessagePurger,
             avatarMessageSinkExpected ["Come back when you've got more money!"],
             avatarMessageSourceDummy,
             islandSingleFeatureSource,
@@ -300,6 +316,7 @@ let ``Run.When in the dark alley, the leave command will take the player back to
             avatarGamblingHandSource,
             avatarIslandFeatureSink,
             Mock.AvatarIslandFeatureSource (givenLocation, IslandFeatureIdentifier.DarkAlley),
+            Fixtures.Common.Fake.AvatarMessagePurger,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSource,
@@ -344,6 +361,7 @@ let ``Run.When in the dark alley, the gamble command will deal to the player som
             avatarGamblingHandSource,
             Fixtures.Common.Fake.AvatarIslandFeatureSink,
             Mock.AvatarIslandFeatureSource (givenLocation, IslandFeatureIdentifier.DarkAlley),
+            Fixtures.Common.Fake.AvatarMessagePurger,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSource,
@@ -386,6 +404,7 @@ let ``Run.When in the dark alley, the help command will take the player to the h
             avatarGamblingHandSource,
             Fixtures.Common.Fake.AvatarIslandFeatureSink,
             Mock.AvatarIslandFeatureSource (givenLocation, IslandFeatureIdentifier.DarkAlley),
+            Fixtures.Common.Fake.AvatarMessagePurger,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSource,
@@ -428,6 +447,7 @@ let ``Run.When in the dark alley but not gambling, the an invalid command gives 
             avatarGamblingHandSource,
             Fixtures.Common.Fake.AvatarIslandFeatureSink,
             Mock.AvatarIslandFeatureSource (givenLocation, IslandFeatureIdentifier.DarkAlley),
+            Fixtures.Common.Fake.AvatarMessagePurger,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
             islandSingleFeatureSource,

@@ -14,7 +14,15 @@ module IslandFeature =
             (avatarId      : string)
             (hand          : AvatarGamblingHand)
             : Gamestate option =
-        let (first, second, _) = hand
+        "" |> Line |> messageSink
+        avatarId
+        |> AvatarMessages.Get context
+        |> Utility.DumpMessages messageSink
+
+        avatarId
+        |> World.ClearMessages context
+
+        let (first, second, final) = hand
         [
             Line "The cards that you've been dealt:"
             Cards [ first; second ]
@@ -28,10 +36,14 @@ module IslandFeature =
             avatarId
             |> Gamestate.InPlay
             |> Some   
-        | Some (Command.Bet amount) ->
-            //does avatar have enough money? - error if no
-            //did avatar make minimum stakes bet? - error if no
-            //deduct money
+        | Some (Command.Bet (Some amount)) ->
+            if World.BetOnGamblingHand context amount avatarId then
+                [
+                    Line "The final card:"
+                    Cards [ final ]
+                ]
+                |> Group
+                |> messageSink
             avatarId
             |> Gamestate.InPlay
             |> Some   
@@ -41,6 +53,7 @@ module IslandFeature =
                         |> Gamestate.InPlay)
                     |> Gamestate.ErrorMessage
                     |> Some
+
     let private RunDarkAlley
             (context       : ServiceContext)
             (commandSource : CommandSource) 

@@ -3,6 +3,7 @@
 open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
+open Tarot
 
 type TestWorldAddMessagesContext(avatarMessageSink) =
     interface World.AddMessagesContext with
@@ -119,3 +120,5 @@ let ``FoldGamblingHand.It adds a messages and folds the avatar's gambling hand.`
     World.FoldGamblingHand context Fixtures.Common.Dummy.AvatarId
     Assert.IsTrue(addedMessages)
     Assert.IsTrue(foldedHand)
+
+

@@ -11,13 +11,15 @@ module Dummy =
 
 module Fake =
     let AvatarIslandFeatureSink (_,_) = 
-        Assert.Fail("Stub.AvatarIslandFeatureSink")   
+        Assert.Fail("Fake.AvatarIslandFeatureSink")   
     let AvatarIslandFeatureSource (_) =
-        Assert.Fail("Stub.AvatarIslandFeatureSource")
+        Assert.Fail("Fake.AvatarIslandFeatureSource")
         None
     let CommandSource () : Command option =
-        Assert.Fail("Stub.CommandSource")
+        Assert.Fail("Fake.CommandSource")
         None
+    let AvatarMessagePurger (_) =
+        Assert.Fail("Fake.AvatarMessagePurger")
     
     
 

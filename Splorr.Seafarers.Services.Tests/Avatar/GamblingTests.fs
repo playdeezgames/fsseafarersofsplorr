@@ -108,4 +108,23 @@ let ``EnterIslandFeature.It enters the dark alley when one is present.💩`` () 
         IslandFeatureIdentifier.DarkAlley
     Assert.True(called)
 
+[<Test>]
+let ``IsWinner.It returns false when the final card is not between the other two cards.`` () =
+    [
+        (Minor (Wands, Rank.Ace),Minor (Wands, Rank.Ace),Minor (Wands, Rank.Ace)), false
+        (Minor (Wands, Rank.Ace),Minor (Wands, Rank.Three),Minor (Wands, Rank.Deuce)), true
+        (Minor (Wands, Rank.Three),Minor (Wands, Rank.Ace),Minor (Wands, Rank.Deuce)), true
+        (Minor (Wands, Rank.Ace),Minor (Wands, Rank.Three),Minor (Wands, Rank.Ace)), false
+        (Minor (Wands, Rank.Three),Minor (Wands, Rank.Ace),Minor (Wands, Rank.Ace)), false
+        (Minor (Wands, Rank.Ace),Minor (Wands, Rank.Three),Minor (Wands, Rank.Three)), false
+        (Minor (Wands, Rank.Three),Minor (Wands, Rank.Ace),Minor (Wands, Rank.Three)), false
+    ]
+    |> List.iter
+        (fun (hand, expected) ->
+            let actual = 
+                hand
+                |> AvatarGamblingHand.IsWinner
+            Assert.AreEqual(expected, actual)        
+        )
+
 

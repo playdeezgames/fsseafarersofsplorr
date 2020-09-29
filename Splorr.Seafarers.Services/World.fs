@@ -795,3 +795,69 @@ module World =
         avatarId
         |> AvatarGamblingHand.Fold
             context 
+
+    let BetOnGamblingHand
+            (context : ServiceContext)
+            (amount : float)
+            (avatarId : string) 
+            : bool =
+        match AvatarGamblingHand.Get context avatarId with
+        | None ->
+            AvatarMessages.Add context ["You aren't currently gambling!"] avatarId
+            false
+        | Some hand ->
+            match AvatarIslandFeature.Get context avatarId with
+            | Some feature when feature.featureId = IslandFeatureIdentifier.DarkAlley ->
+                let minimumWager = 
+                    Island.GetStatistic 
+                        context 
+                        IslandStatisticIdentifier.MinimumGamblingStakes 
+                        feature.location 
+                    |> Option.get
+                    |> Statistic.GetCurrentValue
+                if amount<minimumWager then
+                    AvatarMessages.Add 
+                        context 
+                        [sprintf "Minimum stakes are %0.2f!" minimumWager] 
+                        avatarId
+                    false
+                else
+                    let money =
+                        AvatarShipmates.GetMoney 
+                            context 
+                            avatarId
+                    if money < amount then
+                        AvatarMessages.Add 
+                            context 
+                            [ sprintf "You cannot bet more than you have!" ] 
+                            avatarId
+                        false
+                    elif AvatarGamblingHand.IsWinner hand then
+                        AvatarMessages.Add 
+                            context 
+                            [ sprintf "You win!" ] 
+                            avatarId
+                        AvatarShipmates.EarnMoney 
+                            context 
+                            amount 
+                            avatarId
+                        AvatarGamblingHand.Fold
+                            context
+                            avatarId
+                        true
+                    else
+                        AvatarMessages.Add 
+                            context 
+                            [ sprintf "You lose!" ] 
+                            avatarId
+                        AvatarShipmates.SpendMoney 
+                            context 
+                            amount 
+                            avatarId
+                        AvatarGamblingHand.Fold
+                            context
+                            avatarId
+                        true
+            | _ -> 
+                AvatarMessages.Add context ["You aren't currently gambling!"] avatarId
+                false
