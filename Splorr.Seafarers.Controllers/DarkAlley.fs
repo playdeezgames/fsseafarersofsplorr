@@ -43,9 +43,15 @@ module DarkAlley =
                 |> Utility.DumpMessages messageSink
                 [
                     (Hue.Heading, "You are in the dark alley." |> Line) |> Hued
+                    (Hue.Subheading ,"Off in a corner, some shady characters are playing a card game and gambling." |> Line) |> Hued
                 ]
                 |> List.iter messageSink
                 match commandSource() with
+                | Some Command.Quit -> 
+                    avatarId
+                    |> Gamestate.InPlay
+                    |> Gamestate.ConfirmQuit
+                    |> Some
                 | Some (Command.Status) ->
                     avatarId
                     |> Gamestate.InPlay

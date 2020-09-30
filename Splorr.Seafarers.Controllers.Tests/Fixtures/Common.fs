@@ -20,6 +20,8 @@ module Fake =
         None
     let AvatarMessagePurger (_) =
         Assert.Fail("Fake.AvatarMessagePurger")
+    let ShipmateSingleStatisticSink (_) (_) (_) =
+        Assert.Fail("Fake.ShipmateSingleStatisticSink")
     
     
 

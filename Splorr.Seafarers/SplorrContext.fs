@@ -64,10 +64,13 @@ type SplorrContext
         worldSingleStatisticSource : WorldSingleStatisticSource) =
     interface AvatarIslandMetric.GetContext with
         member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+
     interface AvatarIslandMetric.PutContext with
         member this.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
+
     interface Item.GetContext with
         member _.itemSingleSource: ItemSingleSource = itemSingleSource
+
     interface AvatarIslandFeature.GetContext with
         member _.avatarIslandFeatureSource: AvatarIslandFeatureSource = avatarIslandFeatureSource
 

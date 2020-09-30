@@ -25,11 +25,17 @@ module DarkAlleyGamblingHand =
         [
             (Hue.Heading, Line "The cards that you've been dealt:") |> Hued
             (Hue.Cards, Cards [ first; second ]) |> Hued
-            Line "What is your bet?"
+            (Hue.Subheading , Line "What is your bet?") |> Hued
         ]
         |> Group
         |> messageSink
         match commandSource() with
+        | Some Command.Quit -> 
+            avatarId
+            |> Gamestate.InPlay
+            |> Gamestate.ConfirmQuit
+            |> Some
+
         | Some (Command.Status) ->
             avatarId
             |> Gamestate.InPlay
