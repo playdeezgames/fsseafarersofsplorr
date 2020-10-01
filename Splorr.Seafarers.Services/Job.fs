@@ -11,7 +11,6 @@ module Job =
         inherit ServiceContext
         abstract member termSources              : TermSources
         abstract member jobRewardStatisticSource : JobRewardStatisticSource
-        abstract member random                   : Random
     let Create 
             (context      : ServiceContext)
             (destinations : Set<Location>) 
@@ -68,5 +67,5 @@ module Job =
         {
             FlavorText  = sprintf "please deliver this %s %s %s to %s the %s %s" adverb adjective objectName name personalAdjective profession
             Destination = destination
-            Reward      = context.random.NextDouble() * (rewardMaximum - rewardMinimum) + rewardMinimum
+            Reward      = Utility.RangeGenerator context (rewardMinimum, rewardMaximum)
         }

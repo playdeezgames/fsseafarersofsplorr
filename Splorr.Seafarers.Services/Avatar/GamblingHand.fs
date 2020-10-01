@@ -31,14 +31,13 @@ module AvatarGamblingHand =
     type DealContext =
         inherit ServiceContext
         abstract member avatarGamblingHandSink : AvatarGamblingHandSink
-        abstract member random : Random
     let Deal
             (context  : ServiceContext)
             (avatarId : string)
             : unit =
         let context = context :?> DealContext
         match Deck.Create()
-            |> List.sortBy (fun _ -> context.random.Next()) with
+            |> Utility.SortListRandomly context with
         | first :: second :: third :: _ ->
             (first, second, third)
             |> Some

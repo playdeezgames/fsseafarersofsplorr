@@ -275,7 +275,6 @@ type TestAtSeaRunContext
         member _.islandItemSink: IslandItemSink = islandItemSink
         member _.islandItemSource: IslandItemSource = islandItemSource
         member _.itemSource: ItemSource = itemSource
-        member _.random: Random = Fixtures.Common.Dummy.Random
     interface Island.GetStatisticContext with
         member this.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
     interface Vessel.TransformFoulingContext with
@@ -337,7 +336,6 @@ type TestAtSeaRunContext
         member _.avatarJobSink : AvatarJobSink = avatarJobSink
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
     interface Job.CreateContext with
-        member this.random: Random = Fixtures.Common.Dummy.Random
         member this.termSources: TermSources = termSources
         member this.jobRewardStatisticSource: JobRewardStatisticSource = fun () -> worldSingleStatisticSource WorldStatisticIdentifier.JobReward
     interface World.DockContext with

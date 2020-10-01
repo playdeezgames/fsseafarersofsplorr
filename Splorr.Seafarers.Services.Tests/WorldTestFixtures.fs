@@ -90,7 +90,6 @@ type TestWorldDockContext
         member _.islandItemSink: IslandItemSink = islandItemSink
         member _.islandItemSource: IslandItemSource = islandItemSource
         member _.itemSource: ItemSource = itemSource
-        member _.random: Random = Fixtures.Common.Dummy.Random
 
     interface Island.GenerateCommoditiesContext with
         member _.islandMarketSink: IslandMarketSink = islandMarketSink
@@ -110,6 +109,5 @@ type TestWorldDockContext
     interface Job.CreateContext with 
         member _.termSources                : TermSources = termSources
         member this.jobRewardStatisticSource: JobRewardStatisticSource = fun () -> worldSingleStatisticSource WorldStatisticIdentifier.JobReward
-        member _.random : Random = Fixtures.Common.Dummy.Random
         
 

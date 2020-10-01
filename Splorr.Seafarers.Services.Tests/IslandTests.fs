@@ -24,11 +24,12 @@ type TestIslandGenerateCommoditiesContext(commoditySource, islandMarketSink, isl
         member this.commoditySource: CommoditySource = commoditySource
 
 type TestIslandGenerateItemsContext(islandItemSink, islandItemSource, itemSource, random) =
+    interface Utility.RandomContext with
+        member this.random: Random = random
     interface Island.GenerateItemsContext with
         member _.islandItemSink: IslandItemSink = islandItemSink
         member _.islandItemSource: IslandItemSource = islandItemSource
         member _.itemSource: ItemSource = itemSource
-        member _.random: Random = random
 
 type TestIslandUpdateMarketForItemSaleContext(commoditySource, islandSingleMarketSink, islandSingleMarketSource) =
     interface Island.UpdateMarketForItemContext
@@ -107,7 +108,6 @@ type TestIslandJobsGenerationContext
     interface Job.CreateContext with
         member _.termSources : TermSources = termSources
         member this.jobRewardStatisticSource: JobRewardStatisticSource = fun () -> worldSingleStatisticSource WorldStatisticIdentifier.JobReward
-        member _.random : Random = Fixtures.Common.Dummy.Random
 
 [<Test>]
 let ``GenerateJob.It generates a job when no job is present on the island.`` () =

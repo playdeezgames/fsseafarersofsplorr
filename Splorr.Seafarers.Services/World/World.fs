@@ -22,26 +22,32 @@ module World =
             : Statistic =
         (context :?> GetStatisticContext).worldSingleStatisticSource identifier
 
-    type GenerateIslandNameContext =
-        inherit ServiceContext
-        abstract member random : Random
     let private GenerateIslandName
             (context: ServiceContext)
             : string =
-        let context = context :?> GenerateIslandNameContext
-        let consonants = [| "h"; "k"; "l"; "m"; "p" |]
-        let vowels = [| "a"; "e"; "i"; "o"; "u" |]
-        let vowel = context.random.Next(2)>0
-        let nameLength = context.random.Next(3) + context.random.Next(3) + context.random.Next(3) + 3
+        let consonants = [ "h"; "k"; "l"; "m"; "p" ]
+        let vowels = [ "a"; "e"; "i"; "o"; "u" ]
+        let vowel = Utility.PickRandomly context [true; false]
+        let nameLength =
+            Map.empty
+            |> Map.add 3 1.0
+            |> Map.add 4 3.0
+            |> Map.add 5 6.0
+            |> Map.add 6 7.0
+            |> Map.add 7 6.0
+            |> Map.add 8 3.0
+            |> Map.add 9 1.0
+            |> Utility.WeightedGenerator context
+            |> Option.get
         [1..(nameLength)]
         |> List.map 
             (fun i -> i % 2 = (if vowel then 1 else 0))
         |> List.map
             (fun v -> 
                 if v then
-                    vowels.[context.random.Next(vowels.Length)]
+                    Utility.PickRandomly context vowels
                 else
-                    consonants.[context.random.Next(consonants.Length)])
+                    Utility.PickRandomly context consonants)
         |> List.reduce (+)
 
     let rec private GenerateIslandNames  //TODO: move to world generator?
@@ -104,7 +110,6 @@ module World =
         abstract member islandSingleNameSink          : IslandSingleNameSink
         abstract member termNameSource                : TermSource
         abstract member islandSource : IslandSource
-        abstract member random : Random
     let rec private GenerateIslands  //TODO: move to world generator?
             (context                : ServiceContext)
             (worldSize              : Location) 
@@ -120,7 +125,13 @@ module World =
                 context
         else
             let locations = context.islandSource()
-            let candidateLocation = (context.random.NextDouble() * (worldSize |> fst), context.random.NextDouble() * (worldSize |> snd))
+            let candidateLocation = 
+                (Utility.RangeGenerator 
+                    context 
+                    (0.0, (worldSize |> fst)), 
+                        Utility.RangeGenerator 
+                            context 
+                            (0.0,(worldSize |> snd)))
             if locations |> List.exists(fun k ->(Location.DistanceTo candidateLocation k) < minimumIslandDistance) then
                 GenerateIslands
                     context 

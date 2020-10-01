@@ -67,3 +67,19 @@ let ``SortListRandomly.It random sorts a list.`` () =
     List.zip expected actual
     |> List.iter
         (fun (e, a) -> Assert.AreEqual(e, a))
+
+[<Test>]
+let ``RangeGenerator.It generates a value within a given float range.`` () =
+    let seed = 0
+    let context = 
+        TestUtilityRandomContext
+            (Random(seed))
+    let expected = 4.6312163498397991
+    let minimum = 1.0
+    let maximum = 6.0
+    let actual =
+        Utility.RangeGenerator
+            context
+            (minimum, maximum)
+    Assert.AreEqual(expected, actual)
+

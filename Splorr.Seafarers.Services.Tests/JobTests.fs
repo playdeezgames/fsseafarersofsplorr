@@ -23,7 +23,6 @@ type TestJobCreationContext
     interface Job.CreateContext with
         member _.termSources : TermSources = termSources
         member this.jobRewardStatisticSource: JobRewardStatisticSource = fun () -> worldSingleStatisticSource WorldStatisticIdentifier.JobReward
-        member _.random : Random = Fixtures.Common.Dummy.Random
 
 let internal jobCreationContextStub =
     TestJobCreationContext

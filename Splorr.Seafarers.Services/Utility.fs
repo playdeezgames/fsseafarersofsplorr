@@ -10,6 +10,13 @@ module Utility =
     type RandomContext =
         inherit ServiceContext
         abstract member random : Random
+
+    let RangeGenerator
+            (context : ServiceContext)
+            (minimum : float, maximum: float)
+            : float =
+        (context :?> RandomContext).random.NextDouble() * (maximum-minimum) + minimum
+
     let SortListRandomly 
             (context : ServiceContext) =
         let context = context :?> RandomContext

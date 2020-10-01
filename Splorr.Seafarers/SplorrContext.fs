@@ -181,9 +181,6 @@ type SplorrContext
         member _.islandSingleFeatureSink      : IslandSingleFeatureSink     =islandSingleFeatureSink     
         member _.islandSource                 : IslandSource                =islandSource     
 
-    interface World.GenerateIslandNameContext with
-        member _.random: Random = random
-
     interface World.NameIslandsContext with
         member _.islandSingleNameSink: IslandSingleNameSink = islandSingleNameSink
         member _.islandSource: IslandSource = islandSource
@@ -193,7 +190,6 @@ type SplorrContext
         member _.islandSingleNameSink          : IslandSingleNameSink=islandSingleNameSink
         member _.termNameSource                : TermSource          =termNameSource     
         member _.islandSource : IslandSource = islandSource
-        member _.random : Random = random
 
     interface Vessel.CreateContext with
         member _.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
@@ -282,7 +278,6 @@ type SplorrContext
     interface Job.CreateContext with
         member _.termSources: TermSources = termSources
         member _.jobRewardStatisticSource : JobRewardStatisticSource = fun () -> worldSingleStatisticSource WorldStatisticIdentifier.JobReward
-        member _.random = random
 
     interface IslandVisit.AddContext with
         member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
@@ -295,7 +290,6 @@ type SplorrContext
         member _.islandItemSink: IslandItemSink = islandItemSink
         member _.islandItemSource: IslandItemSource = islandItemSource
         member _.itemSource: ItemSource = itemSource
-        member _.random: Random = random
 
     interface ShipmateStatistic.PutContext with
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
@@ -351,7 +345,6 @@ type SplorrContext
 
     interface AvatarGamblingHand.DealContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
-        member _.random : Random = random
 
     interface AvatarGamblingHand.FoldContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
