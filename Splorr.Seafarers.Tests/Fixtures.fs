@@ -7,7 +7,7 @@ module Dummy =
 
 
 module Stub =
-
+    let internal TermListSource(_) = raise (NotImplementedException "TermListSource")
     let internal AvatarGamblingHandSink(_) = raise (NotImplementedException "avatarGamblingHandSink")
     let internal AvatarGamblingHandSource(_) = raise (NotImplementedException "avatarGamblingHandSource")
     let internal AvatarInventorySink(_)=raise (NotImplementedException "avatarInventorySink") 

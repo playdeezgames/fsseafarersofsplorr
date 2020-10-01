@@ -58,6 +58,7 @@ let splorrContext : ServiceContext =
         Fixtures.Stub.ShipmateSingleStatisticSource,
         Fixtures.Stub.ShipmateStatisticTemplateSource,
         Fixtures.Stub.SwitchSource ,
+        Fixtures.Stub.TermListSource,
         Fixtures.Stub.TermNameSource,
         Fixtures.Stub.TermSources,
         Fixtures.Stub.VesselSingleStatisticSink,
@@ -171,7 +172,7 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> AvatarIslandMetric.GetContext
     let context = splorrContext :?> AvatarIslandMetric.PutContext
     let context = splorrContext :?> Shipmate.GetStatisticTemplatesContext
-    //let context = splorrContext :?> 
+    let context = splorrContext :?> Utility.TermGeneratorContext
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 

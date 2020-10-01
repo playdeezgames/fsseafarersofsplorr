@@ -55,6 +55,7 @@ type SplorrContext
         shipmateSingleStatisticSource: ShipmateSingleStatisticSource ,
         shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource ,
         switchSource: SwitchSource,
+        termListSource : TermListSource,
         termNameSource: TermSource ,
         termSources: TermSources ,
         vesselSingleStatisticSink: VesselSingleStatisticSink ,
@@ -62,6 +63,8 @@ type SplorrContext
         vesselStatisticSink: VesselStatisticSink ,
         vesselStatisticTemplateSource: VesselStatisticTemplateSource ,
         worldSingleStatisticSource : WorldSingleStatisticSource) =
+    interface Utility.TermGeneratorContext with
+        member this.termListSource: TermListSource = termListSource
     interface AvatarIslandMetric.GetContext with
         member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
 

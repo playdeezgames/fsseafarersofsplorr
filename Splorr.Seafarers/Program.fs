@@ -121,7 +121,7 @@ let main argv =
         Term.GetForTermType connection "island name"
         |> Persister.unpackOrThrow
 
-    let termSource
+    let termListSource
             (termType:string) 
             : string list =
         Term.GetForTermType connection termType
@@ -385,6 +385,7 @@ let main argv =
             shipmateSingleStatisticSource,
             shipmateStatisticTemplateSource,
             switchSource ,
+            termListSource,
             termNameSource,
             termSources,
             vesselSingleStatisticSink,

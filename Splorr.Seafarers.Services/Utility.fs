@@ -6,6 +6,8 @@ type ServiceContext =
     interface
     end
 
+type TermListSource = string -> string list
+
 module Utility =
     type RandomContext =
         inherit ServiceContext
@@ -55,3 +57,12 @@ module Utility =
                         (result, weightLeft)) (None, generated)
         |> fst
 
+    type TermGeneratorContext =
+        inherit ServiceContext
+        abstract member termListSource : TermListSource
+    let TermGenerator
+            (context : ServiceContext)
+            (termType: string)
+            : string =
+        (context :?> TermGeneratorContext).termListSource termType
+        |> PickRandomly context

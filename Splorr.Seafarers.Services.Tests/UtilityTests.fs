@@ -83,3 +83,26 @@ let ``RangeGenerator.It generates a value within a given float range.`` () =
             (minimum, maximum)
     Assert.AreEqual(expected, actual)
 
+type TestUtilityTermGeneratorContext
+        (random,
+        termListSource) =
+    interface ServiceContext
+    interface Utility.TermGeneratorContext with
+        member this.termListSource: TermListSource = termListSource
+    interface Utility.RandomContext with
+        member this.random: Random = random
+[<Test>]
+let ``TermGenerator.It generates a random term.`` () =
+    let seed = 10
+    let termListSource (_) = ["test-1";"test-2";"test-3"]
+    let context = 
+        TestUtilityTermGeneratorContext
+            (Random(seed),
+            termListSource)
+    let expected = "test-2"
+    let termType = "test-type"
+    let actual =
+        Utility.TermGenerator
+            context
+            termType
+    Assert.AreEqual(expected, actual)
