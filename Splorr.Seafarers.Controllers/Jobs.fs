@@ -16,7 +16,7 @@ module Jobs =
         |> List.iter messageSink
         let jobs = 
             location
-            |> Island.GetJobs context
+            |> IslandJob.Get context
         jobs
         |> List.zip [1..jobs.Length]
         |> List.iter 
@@ -29,7 +29,7 @@ module Jobs =
                     Location.DistanceTo location job.Destination
                 [
                     (Hue.Label, index |> sprintf "%d. " |> Text) |> Hued
-                    (Hue.Value, job.Destination |> Island.GetName context |> Option.get |> sprintf "%s " |> Text) |> Hued
+                    (Hue.Value, job.Destination |> IslandName.GetName context |> Option.get |> sprintf "%s " |> Text) |> Hued
                     (Hue.Sublabel, "Bearing: " |> Text) |> Hued
                     (Hue.Value, bearing |> sprintf "%s " |> Text) |> Hued
                     (Hue.Sublabel, "Distance: " |> Text) |> Hued

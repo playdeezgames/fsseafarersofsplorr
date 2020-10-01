@@ -95,7 +95,6 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
 
     let context = splorrContext :?> AvatarMetric.AddContext
     let context = splorrContext :?> AvatarMetric.GetContext
-    let context = splorrContext :?> AvatarMetric.GetForIslandContext
 
     let context = splorrContext :?> AvatarShipmates.GetPrimaryStatisticContext
     let context = splorrContext :?> AvatarShipmates.TransformContext
@@ -104,12 +103,12 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
 
     let context = splorrContext :?> ConfirmQuit.RunContext
 
-    let context = splorrContext :?> Island.AddVisitContext
-    let context = splorrContext :?> Island.MakeKnownContext
+    let context = splorrContext :?> IslandVisit.AddContext
 
-    let context = splorrContext :?> Island.GetDisplayNameContext
-    let context = splorrContext :?> Island.GetNameContext
+    let context = splorrContext :?> Island.GetStatisticContext
+    let context = splorrContext :?> IslandName.GetNameContext
     let context = splorrContext :?> Island.HasFeatureContext
+
 
     let context = splorrContext :?> Island.ChangeMarketContext
     let context = splorrContext :?> Island.GenerateCommoditiesContext
@@ -120,20 +119,20 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Island.CreateContext
     let context = splorrContext :?> Island.GetListContext
     
-    let context = splorrContext :?> Island.GenerateJobsContext
-    let context = splorrContext :?> Island.GetJobsContext
+    let context = splorrContext :?> IslandJob.AddContext
+    let context = splorrContext :?> IslandJob.GetContext
 
     let context = splorrContext :?> IslandMarket.DeterminePriceContext
 
     let context = splorrContext :?> Item.GetListContext
+    let context = splorrContext :?> Item.GetContext
 
     let context = splorrContext :?> Job.CreateContext
 
     let context = splorrContext :?> Shipmate.CreateContext
     let context = splorrContext :?> Shipmate.EatContext
-    let context = splorrContext :?> Shipmate.GetStatisticContext
-    let context = splorrContext :?> Shipmate.GetStatusContext
-    let context = splorrContext :?> Shipmate.TransformStatisticContext
+    let context = splorrContext :?> ShipmateStatistic.GetContext
+    let context = splorrContext :?> ShipmateStatistic.PutContext
 
     let context = splorrContext :?> Vessel.TransformFoulingContext
 
@@ -170,11 +169,9 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> World.UndockContext
     let context = splorrContext :?> World.UpdateChartsContext
 
-    let context = splorrContext :?> Island.GetStatisticContext
-    //let context = splorrContext :?> 
-    //let context = splorrContext :?> 
-    //let context = splorrContext :?> 
-    //let context = splorrContext :?> 
+    let context = splorrContext :?> AvatarIslandMetric.GetContext
+    let context = splorrContext :?> AvatarIslandMetric.PutContext
+    let context = splorrContext :?> Shipmate.GetStatisticTemplatesContext
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 

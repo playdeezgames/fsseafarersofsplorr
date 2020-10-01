@@ -37,11 +37,11 @@ module Chart =
                     (fun leg location -> 
                         let x, y = plotLocation scale location
                         let seen = 
-                            AvatarMetric.GetForIsland context location AvatarIslandMetricIdentifier.Seen  avatarId
+                            AvatarIslandMetric.Get context avatarId location AvatarIslandMetricIdentifier.Seen  
                             |> Option.map (fun x -> x > 0UL) 
                             |> Option.defaultValue false
                         let addToLegend =
-                            match AvatarMetric.GetForIsland context location AvatarIslandMetricIdentifier.VisitCount avatarId with
+                            match AvatarIslandMetric.Get context avatarId location AvatarIslandMetricIdentifier.VisitCount with
                             | None -> false
                             | _ -> true
                         match seen, addToLegend with
@@ -56,7 +56,7 @@ module Chart =
                             let yOffset = if (-y)>height/2 then 20 else (-10)
                             writer.WriteLine(sprintf "<text x=\"%d\" y=\"%d\" fill=\"#ffffff\">%u</text>" x (y+height+yOffset) index)
                             leg
-                            |> Map.add index (Island.GetName context location |> Option.get)
+                            |> Map.add index (IslandName.GetName context location |> Option.get)
                         else
                             leg) Map.empty
             let avatarPosition = 

@@ -38,6 +38,9 @@ type TestDockedRunContext
             shipmateSingleStatisticSource,
             vesselSingleStatisticSource   
         ) =
+    interface AvatarIslandMetric.GetContext with
+        member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+
     interface Item.GetContext with
         member this.itemSingleSource: ItemSingleSource = itemSingleSource
 
@@ -47,19 +50,13 @@ type TestDockedRunContext
     interface Island.GetListContext with
         member this.islandSource: IslandSource = islandSource
 
-    interface Shipmate.GetStatusContext with
-        member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-
-    interface Island.GetNameContext with
+    interface IslandName.GetNameContext with
         member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
 
     interface Island.ChangeMarketContext with
         member this.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
         member this.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
     
-    interface AvatarMetric.GetForIslandContext with
-        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
-
     interface Island.GetFeaturesContext with
         member _.islandFeatureSource            : IslandFeatureSource            = islandFeatureSource
        
@@ -76,17 +73,14 @@ type TestDockedRunContext
     interface IslandMarket.DeterminePriceContext with
         member _.islandMarketSource             : IslandMarketSource            =islandMarketSource   
 
-    interface Island.MakeKnownContext with
-        member _.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
-        member _.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
-    
     interface Commodity.GetCommoditiesContext with
         member _.commoditySource: CommoditySource = commoditySource
 
     interface Island.UpdateMarketForItemContext
 
-    interface Shipmate.TransformStatisticContext with
+    interface ShipmateStatistic.PutContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+    interface ShipmateStatistic.GetContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
     interface AvatarInventory.RemoveInventoryContext with
@@ -112,10 +106,11 @@ type TestDockedRunContext
     interface AvatarInventory.AddInventoryContext with
         member _.avatarInventorySink   : AvatarInventorySink = avatarInventorySink
         member _.avatarInventorySource : AvatarInventorySource = avatarInventorySource
+    interface IslandJob.PurgeContext with
+        member _.islandJobPurger       : IslandJobPurger = islandJobPurger
     interface World.AcceptJobContext with
         member _.avatarJobSink         : AvatarJobSink = avatarJobSink
         member _.avatarJobSource       : AvatarJobSource = avatarJobSource
-        member _.islandJobPurger       : IslandJobPurger = islandJobPurger
         member _.islandSingleJobSource : IslandSingleJobSource = islandSingleJobSource
         member _.islandSource          : IslandSource = islandSource
     interface World.AbandonJobContext with

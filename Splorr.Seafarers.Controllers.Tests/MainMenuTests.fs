@@ -26,10 +26,13 @@ type TestWorldCreateContext
         vesselStatisticSink,
         vesselStatisticTemplateSource,
         worldSingleStatisticSource) =
+    interface ShipmateStatistic.PutContext with
+        member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
 
     interface Island.CreateContext with 
         member _.islandStatisticTemplateSource: IslandStatisticTemplateSource = islandStatisticTemplateSource
         member _.islandSingleStatisticSink: IslandSingleStatisticSink = islandSingleStatisticSink
+
     interface World.PopulateIslandsContext with
         member _.islandFeatureGeneratorSource: IslandFeatureGeneratorSource = islandFeatureGeneratorSource
         member _.islandSingleFeatureSink: IslandSingleFeatureSink = islandSingleFeatureSink
@@ -59,7 +62,7 @@ type TestWorldCreateContext
     interface Shipmate.CreateContext with
         member _.rationItemSource: RationItemSource = rationItemSource
         member _.shipmateRationItemSink: ShipmateRationItemSink = shipmateRationItemSink
-        member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+    interface Shipmate.GetStatisticTemplatesContext with
         member _.shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
 
     interface Avatar.CreateContext with

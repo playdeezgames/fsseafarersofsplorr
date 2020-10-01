@@ -7,7 +7,7 @@ open Splorr.Seafarers.Models
 open CommonTestFixtures
 
 type TestGamestateCheckForAvatarDeathContext (avatarMessageSource, shipmateSingleStatisticSource) =
-    interface Shipmate.GetStatusContext with
+    interface ShipmateStatistic.GetContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
     interface AvatarMessages.GetContext with

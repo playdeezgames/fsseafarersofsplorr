@@ -44,6 +44,10 @@ type TestWorldDockContext
             termSources                    : TermSources,
             worldSingleStatisticSource     : WorldSingleStatisticSource
         ) =
+    interface AvatarIslandMetric.GetContext with
+        member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+    interface AvatarIslandMetric.PutContext with
+        member this.avatarIslandSingleMetricSink: AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
     interface Commodity.GetCommoditiesContext with
         member this.commoditySource: CommoditySource = commoditySource
     interface World.DockContext with
@@ -51,7 +55,6 @@ type TestWorldDockContext
         member _.avatarMessageSink: AvatarMessageSink = avatarMessageSink
         member _.avatarIslandFeatureSink        : AvatarIslandFeatureSink = avatarIslandFeatureSink
         member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
-        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource= avatarIslandSingleMetricSource
         member _.avatarJobSink                  : AvatarJobSink= avatarJobSink
         member _.avatarJobSource                : AvatarJobSource=avatarJobSource
         member _.avatarSingleMetricSink         : AvatarSingleMetricSink=avatarSingleMetricSink
@@ -78,8 +81,9 @@ type TestWorldDockContext
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
 
-    interface Shipmate.TransformStatisticContext with
+    interface ShipmateStatistic.PutContext with
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+    interface ShipmateStatistic.GetContext with
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
     interface Island.GenerateItemsContext with
@@ -93,13 +97,12 @@ type TestWorldDockContext
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
         member _.random : Random = Fixtures.Common.Dummy.Random
 
-    interface Island.AddVisitContext with
-        member _.avatarIslandSingleMetricSink   : AvatarIslandSingleMetricSink = avatarIslandSingleMetricSink
-        member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+    interface IslandVisit.AddContext with
         member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
 
-    interface Island.GenerateJobsContext with
+    interface IslandJob.AddContext with
         member _.islandJobSink              : IslandJobSink=islandJobSink
+    interface IslandJob.GetContext with
         member _.islandJobSource            : IslandJobSource=islandJobSource
 
     interface Utility.RandomContext with

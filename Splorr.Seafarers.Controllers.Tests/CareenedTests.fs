@@ -21,8 +21,6 @@ type TestCareenedRunContext
         member this.vesselSingleStatisticSource: VesselSingleStatisticSource = vesselSingleStatisticSource
     interface AvatarMessages.GetContext with
         member this.avatarMessageSource: AvatarMessageSource = avatarMessageSource
-    interface Shipmate.GetStatusContext with
-        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarMetric.AddContext with
         member this.avatarSingleMetricSink: AvatarSingleMetricSink = avatarSingleMetricSink
         member this.avatarSingleMetricSource: AvatarSingleMetricSource = avatarSingleMetricSource
@@ -38,8 +36,9 @@ type TestCareenedRunContext
         member _.avatarMessagePurger : AvatarMessagePurger = avatarMessagePurger
     interface Vessel.TransformFoulingContext with
         member this.vesselSingleStatisticSink: VesselSingleStatisticSink = vesselSingleStatisticSink
-    interface Shipmate.TransformStatisticContext with
+    interface ShipmateStatistic.PutContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+    interface ShipmateStatistic.GetContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 let private functionUnderTest 

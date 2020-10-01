@@ -13,15 +13,19 @@ type ShipmateStatus =
 type ShipmateRationItemSource = string -> ShipmateIdentifier -> uint64 list
 type ShipmateRationItemSink = string -> ShipmateIdentifier -> uint64 list -> unit
 type ShipmateStatisticTemplateSource = unit -> Map<ShipmateStatisticIdentifier, StatisticTemplate>
-type ShipmateSingleStatisticSink = string -> ShipmateIdentifier -> (ShipmateStatisticIdentifier * Statistic option) -> unit
-type ShipmateSingleStatisticSource = string -> ShipmateIdentifier -> ShipmateStatisticIdentifier -> Statistic option
 type Inventory = Map<uint64,uint64>
 
 module Shipmate =
-    type CreateContext =
+    type GetStatisticTemplatesContext =
         inherit ServiceContext
         abstract member shipmateStatisticTemplateSource   : ShipmateStatisticTemplateSource
-        abstract member shipmateSingleStatisticSink       : ShipmateSingleStatisticSink
+    let private GetStatisticTemplates
+            (context : ServiceContext)
+            : Map<ShipmateStatisticIdentifier, StatisticTemplate> =
+        (context :?> GetStatisticTemplatesContext).shipmateStatisticTemplateSource()
+
+    type CreateContext =
+        inherit ServiceContext
         abstract member rationItemSource                  : RationItemSource
         abstract member shipmateRationItemSink            : ShipmateRationItemSink
     let Create
@@ -32,63 +36,29 @@ module Shipmate =
         let context = context :?> CreateContext
         context.rationItemSource()
         |> context.shipmateRationItemSink avatarId shipmateId 
-        context.shipmateStatisticTemplateSource()
+        GetStatisticTemplates context
         |> Map.iter
             (fun identifier statisticTemplate ->
-                context.shipmateSingleStatisticSink avatarId shipmateId (identifier, statisticTemplate |> Statistic.CreateFromTemplate |> Some))
+                ShipmateStatistic.Put context avatarId shipmateId identifier (statisticTemplate |> Statistic.CreateFromTemplate |> Some))
 
-    type GetStatusContext =
-        inherit ServiceContext
-        abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
     let GetStatus
             (context    : ServiceContext)
             (avatarId   : string)
             (shipmateId : ShipmateIdentifier)
             : ShipmateStatus=
-        let context = context :?> GetStatusContext
-        let health = context.shipmateSingleStatisticSource avatarId shipmateId ShipmateStatisticIdentifier.Health |> Option.get
+        let health = ShipmateStatistic.Get context avatarId shipmateId ShipmateStatisticIdentifier.Health |> Option.get
         if health.CurrentValue <= health.MinimumValue then
             ZeroHealth |> Dead
         else
-            let turn = context.shipmateSingleStatisticSource avatarId shipmateId ShipmateStatisticIdentifier.Turn |> Option.get
+            let turn = ShipmateStatistic.Get context avatarId shipmateId ShipmateStatisticIdentifier.Turn |> Option.get
             if turn.CurrentValue >= turn.MaximumValue then
                 OldAge |> Dead
             else
                 Alive
 
-    type GetStatisticContext =
-        inherit ServiceContext
-        abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
-    let GetStatistic
-            (context: ServiceContext)
-            (avatarId : string)
-            (shipmateId : ShipmateIdentifier)
-            (identifier : ShipmateStatisticIdentifier)
-            : Statistic option =
-        (context :?> GetStatisticContext).shipmateSingleStatisticSource avatarId shipmateId identifier
-    
-    type TransformStatisticContext =
-        inherit ServiceContext
-        abstract member shipmateSingleStatisticSink   : ShipmateSingleStatisticSink
-        abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
-    let TransformStatistic 
-            (context    : ServiceContext)
-            (identifier : ShipmateStatisticIdentifier) 
-            (transform  : Statistic -> Statistic option) 
-            (avatarId   : string)
-            (shipmateId : ShipmateIdentifier) 
-            : unit =
-        let context = context :?> TransformStatisticContext
-        identifier
-        |> context.shipmateSingleStatisticSource avatarId shipmateId
-        |> Option.iter
-            (fun s -> 
-                context.shipmateSingleStatisticSink avatarId shipmateId (identifier, (s |> transform) ) )
-
     type EatContext =
         inherit ServiceContext
         abstract member shipmateRationItemSource      : ShipmateRationItemSource
-        abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
     let Eat 
             (context    : ServiceContext)
             (inventory  : Inventory) 
@@ -109,7 +79,7 @@ module Shipmate =
                     | _ -> None)
         match rationItem with
         | Some item ->
-            TransformStatistic 
+            ShipmateStatistic.Transform 
                 context
                 ShipmateStatisticIdentifier.Satiety 
                 (Statistic.ChangeCurrentBy satietyIncrease >> Some)
@@ -122,13 +92,13 @@ module Shipmate =
             (updatedInventory, true, false)
         | _ ->
             let satiety = 
-                context.shipmateSingleStatisticSource 
+                ShipmateStatistic.Get context
                     avatarId
                     shipmateId
                     ShipmateStatisticIdentifier.Satiety
                 |> Option.get
             if satiety.CurrentValue > satiety.MinimumValue then
-                TransformStatistic 
+                ShipmateStatistic.Transform 
                     context
                     ShipmateStatisticIdentifier.Satiety 
                     (Statistic.ChangeCurrentBy (satietyDecrease) >> Some) 
@@ -136,7 +106,7 @@ module Shipmate =
                     shipmateId
                 (inventory, false, false)
             else
-                TransformStatistic 
+                ShipmateStatistic.Transform 
                     context
                     ShipmateStatisticIdentifier.Turn 
                     (Statistic.ChangeMaximumBy (satietyDecrease) >> Some)

@@ -7,6 +7,17 @@ type AvatarGamblingHandSource = string -> AvatarGamblingHand option
 type AvatarGamblingHandSink = string -> AvatarGamblingHand option -> unit
 
 module AvatarGamblingHand =
+    let IsWinner
+            (hand: Card * Card * Card)
+            : bool =
+        let first, second, final = hand
+        if Card.IsFirstGreater (first, second) then
+            (Card.IsFirstGreater (first, final)) && (Card.IsFirstGreater(final, second))
+        elif Card.IsFirstGreater (second, first) then
+            (Card.IsFirstGreater (second, final)) && (Card.IsFirstGreater(final, first))
+        else
+            false
+
     type GetContext =
         inherit ServiceContext
         abstract member avatarGamblingHandSource : AvatarGamblingHandSource

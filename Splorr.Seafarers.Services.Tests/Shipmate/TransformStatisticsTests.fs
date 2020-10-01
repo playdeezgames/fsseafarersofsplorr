@@ -5,8 +5,9 @@ open NUnit.Framework
 open Splorr.Seafarers.Models
 
 type TestShipmateTransformStatisticContext(shipmateSingleStatisticSink, shipmateSingleStatisticSource) =
-    interface Shipmate.TransformStatisticContext with
+    interface ShipmateStatistic.PutContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+    interface ShipmateStatistic.GetContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 [<Test>]
@@ -25,8 +26,8 @@ let ``TransformStatistic.It replaces the statistic when that statistic is origin
             Assert.AreEqual(inputHealth, statistic.Value)
         | _ ->
             raise (System.NotImplementedException "Kaboom shipmateSingleStatisticSink")
-    let context = TestShipmateTransformStatisticContext (shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> Shipmate.TransformStatisticContext
-    Shipmate.TransformStatistic 
+    let context = TestShipmateTransformStatisticContext (shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> ServiceContext
+    ShipmateStatistic.Transform 
         context
         ShipmateStatisticIdentifier.Health 
         (fun _ -> (inputHealth |> Some))
@@ -40,8 +41,8 @@ let ``TransformStatistic.It does nothing when the given statistic is absent from
         None
     let shipmateSingleStatisticSink (_) (_) (_) =
         Assert.Fail("Dont call me.")
-    let context = TestShipmateTransformStatisticContext (shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> Shipmate.TransformStatisticContext
-    Shipmate.TransformStatistic 
+    let context = TestShipmateTransformStatisticContext (shipmateSingleStatisticSink, shipmateSingleStatisticSource) :> ServiceContext
+    ShipmateStatistic.Transform 
         context
         ShipmateStatisticIdentifier.Health 
         (fun _ -> (inputHealth |> Some))
@@ -51,7 +52,7 @@ let ``TransformStatistic.It does nothing when the given statistic is absent from
 type TestShipmateGetStatisticContext
         (shipmateSingleStatisticSource) =
     interface ServiceContext
-    interface Shipmate.GetStatisticContext with
+    interface ShipmateStatistic.GetContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 [<Test>]
 let ``GetStatistic.It calls ShipmateSingleStatisticSource in the context.`` () =
@@ -62,7 +63,7 @@ let ``GetStatistic.It calls ShipmateSingleStatisticSource in the context.`` () =
     let context = TestShipmateGetStatisticContext(shipmateSingleStatisticSource) :> ServiceContext
     let expected = None
     let actual = 
-        Shipmate.GetStatistic
+        ShipmateStatistic.Get
             context
             Fixtures.Common.Dummy.AvatarId
             ShipmateIdentifier.Primary
@@ -70,4 +71,4 @@ let ``GetStatistic.It calls ShipmateSingleStatisticSource in the context.`` () =
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
 
-
+        

@@ -3,6 +3,7 @@
 open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
+open Tarot
 
 type TestWorldAddMessagesContext(avatarMessageSink) =
     interface World.AddMessagesContext with
@@ -95,3 +96,29 @@ let ``GetStatistic.It returns a statistic for the world.`` () =
             WorldStatisticIdentifier.PositionX
     Assert.AreEqual(expected, actual)
     Assert.IsTrue(called)
+
+type TestWorldFoldGamblingHandContext
+        (avatarGamblingHandSink,
+        avatarMessageSink) =
+    interface ServiceContext
+    interface AvatarMessages.AddContext with
+        member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
+    interface AvatarGamblingHand.FoldContext with
+        member this.avatarGamblingHandSink: AvatarGamblingHandSink = avatarGamblingHandSink
+[<Test>]
+let ``FoldGamblingHand.It adds a messages and folds the avatar's gambling hand.`` () =
+    let mutable addedMessages = false
+    let avatarMessageSink (_) (_) =
+        addedMessages <-true
+    let mutable foldedHand = false
+    let avatarGamblingHandSink (_) (_) =
+        foldedHand<-true
+    let context = 
+        TestWorldFoldGamblingHandContext
+            (avatarGamblingHandSink, 
+            avatarMessageSink)
+    World.FoldGamblingHand context Fixtures.Common.Dummy.AvatarId
+    Assert.IsTrue(addedMessages)
+    Assert.IsTrue(foldedHand)
+
+

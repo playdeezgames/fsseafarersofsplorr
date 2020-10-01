@@ -70,6 +70,14 @@ module internal Stub =
     
 
 module internal Fake =
+    let internal AvatarGamblingHandSink (_) (_) =
+        raise (NotImplementedException "Fake.AvatarGamblingHandSink")
+    let internal IslandSingleStatisticSource (_) (_) =
+        raise (NotImplementedException "Fake.IslandSingleStatisticSource")
+        None
+    let internal AvatarIslandFeatureSource (_) =
+        raise (NotImplementedException "Fake.AvatarIslandFeatureSource")
+        None
     let internal AvatarMessageSink (_) (_) = 
         raise (NotImplementedException "Fake.AvatarMessageSink")
     let internal ShipmateSingleStatisticSource (_) (_) (_) = 

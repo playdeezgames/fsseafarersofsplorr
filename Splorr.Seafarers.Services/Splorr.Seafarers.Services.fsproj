@@ -11,22 +11,27 @@
     <Compile Include="Job.fs" />
     <Compile Include="Commodity.fs" />
     <Compile Include="Item.fs" />
-    <Compile Include="IslandMarket.fs" />
-    <Compile Include="IslandFeature.fs" />
-    <Compile Include="Statistic.fs" />
-    <Compile Include="Island.fs" />
     <Compile Include="Location.fs" />
-    <Compile Include="Vessel.fs" />
-    <Compile Include="Shipmate.fs" />
-    <Compile Include="AvatarMessages.fs" />
-    <Compile Include="AvatarMetric.fs" />
-    <Compile Include="AvatarIslandFeature.fs" />
-    <Compile Include="AvatarInventory.fs" />
-    <Compile Include="AvatarShipmate.fs" />
-    <Compile Include="Avatar.fs" />
-    <Compile Include="AvatarGamblingHand.fs" />
-    <Compile Include="AvatarJob.fs" />
-    <Compile Include="World.fs" />
+    <Compile Include="Statistic.fs" />
+    <Compile Include="Island/Market.fs" />
+    <Compile Include="Island/Feature.fs" />
+    <Compile Include="Island\AvatarIslandMetric.fs" />
+    <Compile Include="Island\Visit.fs" />
+    <Compile Include="Island\Name.fs" />
+    <Compile Include="Island\Job.fs" />
+    <Compile Include="Island/Island.fs" />
+    <Compile Include="Vessel/Vessel.fs" />
+    <Compile Include="Shipmate\ShipmateStatistic.fs" />
+    <Compile Include="Shipmate/Shipmate.fs" />
+    <Compile Include="Avatar/Messages.fs" />
+    <Compile Include="Avatar/Metric.fs" />
+    <Compile Include="Avatar/IslandFeature.fs" />
+    <Compile Include="Avatar/Inventory.fs" />
+    <Compile Include="Avatar/Shipmate.fs" />
+    <Compile Include="Avatar/Avatar.fs" />
+    <Compile Include="Avatar/GamblingHand.fs" />
+    <Compile Include="Avatar/Job.fs" />
+    <Compile Include="World/World.fs" />
   </ItemGroup>
 
   <ItemGroup>

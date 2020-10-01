@@ -101,7 +101,7 @@ module Avatar =
         AvatarShipmates.Transform
             context
             (fun identifier -> 
-                Shipmate.TransformStatistic 
+                ShipmateStatistic.Transform 
                     context
                     ShipmateStatisticIdentifier.Turn 
                     (Statistic.ChangeCurrentBy 1.0 >> Some)
@@ -135,7 +135,7 @@ module Avatar =
                     CurrentValue = x.MinimumValue})
         AvatarShipmates.Transform 
             context
-            (Shipmate.TransformStatistic
+            (ShipmateStatistic.Transform
                 context
                 ShipmateStatisticIdentifier.Turn 
                 (Statistic.ChangeCurrentBy 1.0 >> Some)

@@ -21,11 +21,10 @@ module IslandList =
             |> Island.GetList
             |> List.filter
                 (fun location -> 
-                    avatarId
-                    |> AvatarMetric.GetForIsland context location AvatarIslandMetricIdentifier.VisitCount 
+                    AvatarIslandMetric.Get context avatarId location AvatarIslandMetricIdentifier.VisitCount 
                     |> Option.map (fun _ -> true)
                     |> Option.defaultValue false)
-            |> List.sortBy(Island.GetName context >> Option.get)
+            |> List.sortBy(IslandName.GetName context >> Option.get)
         let totalItems = knownIslands |> List.length |> uint32
         let totalPages = (totalItems + (pageSize-1u)) / pageSize
         let skippedItems = page * pageSize
@@ -52,7 +51,7 @@ module IslandList =
                     |> Angle.ToDegrees
                     |> Angle.ToString
                 [
-                    (Hue.Value, location |> Island.GetName context |> Option.get |> sprintf "%s" |> Text) |> Hued
+                    (Hue.Value, location |> IslandName.GetName context |> Option.get |> sprintf "%s" |> Text) |> Hued
                     (Hue.Sublabel, " Bearing:" |> Text) |> Hued
                     (Hue.Value, bearing |> sprintf "%s" |> Text) |> Hued
                     (Hue.Sublabel, " Distance:" |> Text) |> Hued

@@ -21,7 +21,9 @@ module Commodity =
             : Result<Map<uint64, CommodityDescriptor>, string> =
         connection
         |> Utility.GetList 
-            "SELECT [CommodityId], [CommodityName], [BasePrice], [SaleFactor], [PurchaseFactor], [Discount] FROM [Commodities];" (fun _->()) convertor
+            "SELECT [CommodityId], [CommodityName], [BasePrice], [SaleFactor], [PurchaseFactor], [Discount] FROM [Commodities];" 
+            (fun _->()) 
+            convertor
         |> Result.map
             (fun items ->
                 items

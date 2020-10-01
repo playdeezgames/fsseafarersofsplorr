@@ -17,12 +17,11 @@ module IslandMarket =
             (itemIndex           : uint64) 
             (location            : Location)
             : float =
-        let context = context :?> DeterminePriceContext
         Item.Get context itemIndex
         |> Option.fold
             (fun _ itemDescriptor->
                 let commodities = Commodity.GetCommodities context
-                let markets = context.islandMarketSource location
+                let markets = (context :?> DeterminePriceContext).islandMarketSource location
                 itemDescriptor.Commodities
                 |> Map.map
                     (fun commodity amount -> 

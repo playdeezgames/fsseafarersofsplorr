@@ -15,8 +15,9 @@ type TestWorldDistanceToContext
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
     interface World.AddMessagesContext with
         member this.avatarMessageSink: AvatarMessageSink = avatarMessageSink
-    interface World.DistanceToContext with
+    interface AvatarIslandMetric.GetContext with
         member _.avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
+    interface World.DistanceToContext with
         member _.islandLocationByNameSource     : IslandLocationByNameSource = islandLocationByNameSource
 
 [<Test>]

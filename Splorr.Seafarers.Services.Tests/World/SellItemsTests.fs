@@ -41,8 +41,9 @@ type TestWorldSellItemsContext
     interface Island.ChangeMarketContext with
         member this.islandSingleMarketSink: IslandSingleMarketSink = islandSingleMarketSink
         member this.islandSingleMarketSource: IslandSingleMarketSource = islandSingleMarketSource
-    interface Shipmate.TransformStatisticContext with
+    interface ShipmateStatistic.PutContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+    interface ShipmateStatistic.GetContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
 [<Test>]

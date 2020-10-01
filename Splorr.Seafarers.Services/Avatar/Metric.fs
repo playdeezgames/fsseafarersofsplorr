@@ -29,16 +29,3 @@ module AvatarMetric =
             (avatarId: string)
             : AvatarMetrics =
         (context :?> GetContext).avatarMetricSource avatarId
-
-    type GetForIslandContext =
-        inherit ServiceContext
-        abstract member avatarIslandSingleMetricSource : AvatarIslandSingleMetricSource
-    let GetForIsland 
-            (context : ServiceContext)
-            (location : Location)
-            (identifier: AvatarIslandMetricIdentifier)
-            (avatarId : string)
-            : uint64 option =
-        (context :?> GetForIslandContext).avatarIslandSingleMetricSource avatarId location identifier
-
-

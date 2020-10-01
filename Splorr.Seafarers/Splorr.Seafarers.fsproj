@@ -9,6 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="seafarers-dev.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="seafarers.db">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
