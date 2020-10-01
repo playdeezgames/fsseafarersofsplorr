@@ -94,7 +94,7 @@ let ``GetDisplayName.It returns the island's name when there is a visit count.``
 type TestIslandJobsGenerationContext
         (islandJobSink             : IslandJobSink, 
         islandJobSource            : IslandJobSource,
-        termSources                : TermSources,
+        termListSource : TermListSource,
         worldSingleStatisticSource : WorldSingleStatisticSource) =
     interface IslandJob.AddContext with
         member _.islandJobSink   : IslandJobSink = islandJobSink
@@ -106,7 +106,7 @@ type TestIslandJobsGenerationContext
         member _.random : Random = random
 
     interface Job.CreateContext with
-        member _.termSources : TermSources = termSources
+        member _.termListSource : TermListSource = termListSource
         member this.jobRewardStatisticSource: JobRewardStatisticSource = fun () -> worldSingleStatisticSource WorldStatisticIdentifier.JobReward
 
 [<Test>]
@@ -121,7 +121,7 @@ let ``GenerateJob.It generates a job when no job is present on the island.`` () 
         TestIslandJobsGenerationContext
             (islandJobSink,
             islandJobSource,
-            Fixtures.Common.Stub.TermSources,
+            Fixtures.Common.Stub.TermListSource,
             Fixtures.Common.Stub.WorldSingleStatisticSource) 
         :> IslandJob.AddContext
     inputLocation
@@ -147,7 +147,7 @@ let ``GenerateJob.It does nothing when no job is present on the island and no po
         TestIslandJobsGenerationContext
             (islandJobSink,
             islandJobSource,
-            Fixtures.Common.Stub.TermSources,
+            Fixtures.Common.Stub.TermListSource,
             Fixtures.Common.Stub.WorldSingleStatisticSource) 
         :> IslandJob.AddContext
     inputLocation

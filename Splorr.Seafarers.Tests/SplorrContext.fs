@@ -60,7 +60,6 @@ let splorrContext : ServiceContext =
         Fixtures.Stub.SwitchSource ,
         Fixtures.Stub.TermListSource,
         Fixtures.Stub.TermNameSource,
-        Fixtures.Stub.TermSources,
         Fixtures.Stub.VesselSingleStatisticSink,
         Fixtures.Stub.VesselSingleStatisticSource,
         Fixtures.Stub.VesselStatisticSink,

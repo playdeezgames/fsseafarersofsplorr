@@ -57,7 +57,6 @@ type SplorrContext
         switchSource: SwitchSource,
         termListSource : TermListSource,
         termNameSource: TermSource ,
-        termSources: TermSources ,
         vesselSingleStatisticSink: VesselSingleStatisticSink ,
         vesselSingleStatisticSource: VesselSingleStatisticSource ,
         vesselStatisticSink: VesselStatisticSink ,
@@ -279,7 +278,7 @@ type SplorrContext
        member _.itemSource                    : ItemSource = itemSource
 
     interface Job.CreateContext with
-        member _.termSources: TermSources = termSources
+        member this.termListSource: TermListSource = termListSource
         member _.jobRewardStatisticSource : JobRewardStatisticSource = fun () -> worldSingleStatisticSource WorldStatisticIdentifier.JobReward
 
     interface IslandVisit.AddContext with

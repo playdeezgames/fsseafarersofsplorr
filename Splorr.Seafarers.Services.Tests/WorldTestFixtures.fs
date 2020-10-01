@@ -41,7 +41,7 @@ type TestWorldDockContext
             itemSource                     : ItemSource ,
             shipmateSingleStatisticSink    : ShipmateSingleStatisticSink,
             shipmateSingleStatisticSource  : ShipmateSingleStatisticSource,
-            termSources                    : TermSources,
+            termListSource:TermListSource,
             worldSingleStatisticSource     : WorldSingleStatisticSource
         ) =
     interface AvatarIslandMetric.GetContext with
@@ -106,8 +106,8 @@ type TestWorldDockContext
     interface Utility.RandomContext with
         member _.random : Random = Fixtures.Common.Dummy.Random
 
-    interface Job.CreateContext with 
-        member _.termSources                : TermSources = termSources
+    interface Job.CreateContext with
+        member this.termListSource: TermListSource = termListSource
         member this.jobRewardStatisticSource: JobRewardStatisticSource = fun () -> worldSingleStatisticSource WorldStatisticIdentifier.JobReward
         
 

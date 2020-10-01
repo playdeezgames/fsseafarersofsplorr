@@ -3,13 +3,12 @@ open Splorr.Seafarers.Models
 open System
 
 type TermSource = unit -> string list
-type TermSources = TermSource * TermSource * TermSource * TermSource * TermSource * TermSource
 type JobRewardStatisticSource = unit -> Statistic
 
 module Job =
     type CreateContext =
         inherit ServiceContext
-        abstract member termSources              : TermSources
+        abstract member termListSource : TermListSource
         abstract member jobRewardStatisticSource : JobRewardStatisticSource
     let Create 
             (context      : ServiceContext)
@@ -19,36 +18,41 @@ module Job =
         let pickRandomly : string list -> string = 
             Utility.PickRandomly context
 
-        let adverbSource, 
-            adjectiveSource, 
-            objectNameSource, 
-            personNameSource, 
-            personAdjectiveSource, 
-            professionSource = 
-                context.termSources
+        let adverbSource =
+            context.termListSource "adverb"
+        let adjectiveSource =
+            context.termListSource "adjective"
+        let objectNameSource =
+            context.termListSource "object name"
+        let personNameSource =
+            context.termListSource "person name"
+        let personAdjectiveSource =
+            context.termListSource "person adjective"
+        let professionSource =
+            context.termListSource "profession"
 
         let adverb = 
-            adverbSource() 
+            adverbSource
             |> pickRandomly
 
         let adjective = 
-            adjectiveSource() 
+            adjectiveSource
             |> pickRandomly
 
         let objectName = 
-            objectNameSource() 
+            objectNameSource
             |> pickRandomly
 
         let name = 
-            personNameSource() 
+            personNameSource
             |> pickRandomly
 
         let personalAdjective = 
-            personAdjectiveSource() 
+            personAdjectiveSource
             |> pickRandomly
 
         let profession = 
-            professionSource() 
+            professionSource
             |> pickRandomly
 
         let destination = 

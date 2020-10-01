@@ -51,7 +51,7 @@ let private functionUnderTest
             shipmateRationItemSourceStub,
             shipmateSingleStatisticSinkStub,
             shipmateSingleStatisticSource,
-            termSources,
+            Fixtures.Common.Fake.TermListSource,
             vesselSingleStatisticSinkStub,
             vesselSingleStatisticSource,
             worldSingleStatisticSourceStub) :> ServiceContext

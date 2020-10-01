@@ -10,6 +10,9 @@ module Dummy =
     let Random = Random()
 
 module Fake =
+    let TermListSource (_) : string list =
+        Assert.Fail("Fake.TermListSource")   
+        []
     let AvatarIslandFeatureSink (_,_) = 
         Assert.Fail("Fake.AvatarIslandFeatureSink")   
     let AvatarIslandFeatureSource (_) =

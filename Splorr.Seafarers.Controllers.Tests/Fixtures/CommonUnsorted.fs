@@ -241,7 +241,7 @@ type TestAtSeaRunContext
             shipmateRationItemSource: ShipmateRationItemSource,
             shipmateSingleStatisticSink: ShipmateSingleStatisticSink,
             shipmateSingleStatisticSource: ShipmateSingleStatisticSource,
-            termSources: TermSources,
+            termListSource : TermListSource,
             vesselSingleStatisticSink: VesselSingleStatisticSink,
             vesselSingleStatisticSource: VesselSingleStatisticSource,
             worldSingleStatisticSource: WorldSingleStatisticSource
@@ -336,7 +336,7 @@ type TestAtSeaRunContext
         member _.avatarJobSink : AvatarJobSink = avatarJobSink
         member _.avatarJobSource : AvatarJobSource = avatarJobSource
     interface Job.CreateContext with
-        member this.termSources: TermSources = termSources
+        member this.termListSource: TermListSource = termListSource
         member this.jobRewardStatisticSource: JobRewardStatisticSource = fun () -> worldSingleStatisticSource WorldStatisticIdentifier.JobReward
     interface World.DockContext with
         member _.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink

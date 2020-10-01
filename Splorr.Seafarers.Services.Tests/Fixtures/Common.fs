@@ -14,6 +14,17 @@ module internal Dummy =
     let internal GamblingHand = (Minor (Wands, Rank.Ace), Minor (Wands, Rank.Deuce), Minor (Wands, Rank.Three))
 
 module internal Stub =
+    let internal TermListSource(termType:string) : string list = 
+        match termType with
+        | "adverb" ->  [ "woefully" ]
+        | "adjective" -> [ "tatty" ]
+        | "object name" -> [ "thing" ]
+        | "person name" ->  [ "george" ]
+        | "person adjective" -> [ "ugly" ]
+        | "profession" -> [ "poopsmith" ]
+        | _ ->
+            Assert.Fail("Stub.TermListSource")
+            []
     let internal AdverbSource()          : string list = [ "woefully" ]
     let internal AdjectiveSource()       : string list = [ "tatty" ]
     let internal ObjectNameSource()      : string list = [ "thing" ]

@@ -14,19 +14,19 @@ let singleDestination =
 
 type TestJobCreationContext
         (
-            termSources                : TermSources, 
+            termListSource : TermListSource,
             worldSingleStatisticSource : WorldSingleStatisticSource
         ) =
     interface Utility.RandomContext with
         member _.random : Random = Fixtures.Common.Dummy.Random
 
     interface Job.CreateContext with
-        member _.termSources : TermSources = termSources
+        member this.termListSource: TermListSource = termListSource
         member this.jobRewardStatisticSource: JobRewardStatisticSource = fun () -> worldSingleStatisticSource WorldStatisticIdentifier.JobReward
 
 let internal jobCreationContextStub =
     TestJobCreationContext
-        (Fixtures.Common.Stub.TermSources, 
+        (Fixtures.Common.Stub.TermListSource,
         Fixtures.Common.Stub.WorldSingleStatisticSource)
 
 [<Test>]
