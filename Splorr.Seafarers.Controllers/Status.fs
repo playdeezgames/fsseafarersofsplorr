@@ -10,8 +10,8 @@ module Status =
             (avatarId                      : string) 
             : unit =
         let portFouling = Vessel.GetStatistic context avatarId VesselStatisticIdentifier.PortFouling |> Option.get
-        let satiety = Shipmate.GetStatistic context avatarId Primary ShipmateStatisticIdentifier.Satiety |> Option.get
-        let health = Shipmate.GetStatistic context avatarId Primary ShipmateStatisticIdentifier.Health |> Option.get
+        let satiety = ShipmateStatistic.Get context avatarId Primary ShipmateStatisticIdentifier.Satiety |> Option.get
+        let health = ShipmateStatistic.Get context avatarId Primary ShipmateStatisticIdentifier.Health |> Option.get
         let starboardFouling = Vessel.GetStatistic context avatarId VesselStatisticIdentifier.StarboardFouling |> Option.get
         [
             "" |> Line

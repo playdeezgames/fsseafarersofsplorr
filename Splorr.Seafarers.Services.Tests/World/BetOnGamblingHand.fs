@@ -25,8 +25,9 @@ type TestWorldBetOnGamblingHandContext
         member this.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
     interface AvatarShipmates.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-    interface Shipmate.TransformStatisticContext with
+    interface ShipmateStatistic.PutContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+    interface ShipmateStatistic.GetContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarGamblingHand.FoldContext with
         member this.avatarGamblingHandSink: AvatarGamblingHandSink = avatarGamblingHandSink

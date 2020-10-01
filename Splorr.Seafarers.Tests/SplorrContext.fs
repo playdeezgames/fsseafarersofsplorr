@@ -131,9 +131,8 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
 
     let context = splorrContext :?> Shipmate.CreateContext
     let context = splorrContext :?> Shipmate.EatContext
-    let context = splorrContext :?> Shipmate.GetStatisticContext
-    let context = splorrContext :?> Shipmate.GetStatusContext
-    let context = splorrContext :?> Shipmate.TransformStatisticContext
+    let context = splorrContext :?> ShipmateStatistic.GetContext
+    let context = splorrContext :?> ShipmateStatistic.PutContext
 
     let context = splorrContext :?> Vessel.TransformFoulingContext
 
@@ -172,7 +171,7 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
 
     let context = splorrContext :?> AvatarIslandMetric.GetContext
     let context = splorrContext :?> AvatarIslandMetric.PutContext
-    //let context = splorrContext :?> 
+    let context = splorrContext :?> Shipmate.GetStatisticTemplatesContext
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 

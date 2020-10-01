@@ -94,7 +94,7 @@ module AtSea =
                 context 
             |> Option.get
         let speedHue =DetermineSpeedHue speed
-        let turn = Shipmate.GetStatistic context avatarId Primary ShipmateStatisticIdentifier.Turn |> Option.get
+        let turn = ShipmateStatistic.Get context avatarId Primary ShipmateStatisticIdentifier.Turn |> Option.get
         [
             (Hue.Heading, "At Sea:" |> Line) |> Hued
             (Hue.Label, "Turn: " |> Text) |> Hued

@@ -9,6 +9,9 @@ open Splorr.Seafarers.Models
 open System
 open Tarot
 
+module private Dummies =
+    let GivenValidLocation = Fixtures.Common.Dummy.IslandLocation
+
 module private Mock =
     let AvatarIslandFeatureSource (location:Location, feature:IslandFeatureIdentifier) (_) =
         {
@@ -30,8 +33,10 @@ type TestIslandFeatureRunContext
         islandSingleStatisticSource,
         shipmateSingleStatisticSink,
         shipmateSingleStatisticSource) =
-    interface Shipmate.TransformStatisticContext with
+    interface ServiceContext
+    interface ShipmateStatistic.PutContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+    interface ShipmateStatistic.GetContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarShipmates.GetPrimaryStatisticContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
@@ -147,7 +152,6 @@ let ``Run.It should return InPlay state when the given island exists but does no
 
 [<Test>]
 let ``Run.It should return InPlay state when dark alley exists and the player is gambling and gives an invalid command.`` () =
-    let givenLocation = Fixtures.Common.Dummy.IslandLocation
     let givenAvatarId = Fixtures.Common.Dummy.AvatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let givenHand = (Minor (Wands, Rank.Ace),Minor (Wands, Rank.Deuce),Minor (Wands, Rank.Three)) |> Some
@@ -187,7 +191,7 @@ let ``Run.It should return InPlay state when dark alley exists and the player is
             context
             (commandSourceFake (Some Command.Gamble))
             sinkDummy
-            givenLocation
+            Dummies.GivenValidLocation
             givenFeature
             givenAvatarId
     Assert.AreEqual(expected, actual)
@@ -195,7 +199,6 @@ let ``Run.It should return InPlay state when dark alley exists and the player is
 
 [<Test>]
 let ``Run.It should quit the gambling game when dark alley exists and the player is gambling and gives no bet command.`` () =
-    let givenLocation = Fixtures.Common.Dummy.IslandLocation
     let givenAvatarId = Fixtures.Common.Dummy.AvatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let givenHand = (Minor (Wands, Rank.Ace),Minor (Wands, Rank.Deuce),Minor (Wands, Rank.Three)) |> Some
@@ -239,7 +242,7 @@ let ``Run.It should quit the gambling game when dark alley exists and the player
             context
             (commandSourceFake (None |> Command.Bet |> Some))
             sinkDummy
-            givenLocation
+            Dummies.GivenValidLocation
             givenFeature
             givenAvatarId
     Assert.AreEqual(expected, actual)
@@ -250,7 +253,6 @@ let ``Run.It should quit the gambling game when dark alley exists and the player
 
 [<Test>]
 let ``Run.It should resolve the gambling game when dark alley exists and the player is gambling and gives a bet command.`` () =
-    let givenLocation = Fixtures.Common.Dummy.IslandLocation
     let givenAvatarId = Fixtures.Common.Dummy.AvatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let givenHand = (Minor (Wands, Rank.Ace),Minor (Wands, Rank.Deuce),Minor (Wands, Rank.Three)) |> Some
@@ -277,10 +279,12 @@ let ``Run.It should resolve the gambling game when dark alley exists and the pla
     let avatarIslandFeatureSource (_) =
         {
             featureId = IslandFeatureIdentifier.DarkAlley
-            location = givenLocation
+            location = Dummies.GivenValidLocation
         }
         |> Some
-    let shipmateSingleStatisticSink (_) (shipmateId:ShipmateIdentifier) (statisticId:ShipmateStatisticIdentifier,statistic:Statistic option) =
+    let shipmateSingleStatisticSink (_) 
+            (shipmateId:ShipmateIdentifier) 
+            (statisticId:ShipmateStatisticIdentifier,statistic:Statistic option) =
         Assert.AreEqual(Primary, shipmateId)
         Assert.AreEqual(ShipmateStatisticIdentifier.Money, statisticId)
         Assert.AreEqual(0.0, statistic.Value.CurrentValue)
@@ -304,7 +308,7 @@ let ``Run.It should resolve the gambling game when dark alley exists and the pla
             context
             (commandSourceFake (5.0 |> Some |> Command.Bet |> Some))
             sinkDummy
-            givenLocation
+            Dummies.GivenValidLocation
             givenFeature
             givenAvatarId
     Assert.AreEqual(expected, actual)
@@ -314,7 +318,6 @@ let ``Run.It should resolve the gambling game when dark alley exists and the pla
 
 [<Test>]
 let ``Run.It should enter the confirm quit state when dark alley exists and the player is gambling and gives quit command.`` () =
-    let givenLocation = Fixtures.Common.Dummy.IslandLocation
     let givenAvatarId = Fixtures.Common.Dummy.AvatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let givenHand = (Minor (Wands, Rank.Ace),Minor (Wands, Rank.Deuce),Minor (Wands, Rank.Three)) |> Some
@@ -359,7 +362,7 @@ let ``Run.It should enter the confirm quit state when dark alley exists and the 
             context
             (commandSourceFake (Command.Quit |> Some))
             sinkDummy
-            givenLocation
+            Dummies.GivenValidLocation
             givenFeature
             givenAvatarId
     Assert.AreEqual(expected, actual)
@@ -370,7 +373,6 @@ let ``Run.It should enter the confirm quit state when dark alley exists and the 
 
 [<Test>]
 let ``Run.It should return InPlay state when dark alley exists but the player does not have minimum gambling stakes.`` () =
-    let givenLocation = Fixtures.Common.Dummy.IslandLocation
     let givenAvatarId = Fixtures.Common.Dummy.AvatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let expected=
@@ -389,7 +391,7 @@ let ``Run.It should return InPlay state when dark alley exists but the player do
         match f with
         | Some feature ->
             Assert.AreEqual(IslandFeatureIdentifier.Dock, feature.featureId)
-            Assert.AreEqual(givenLocation, feature.location)
+            Assert.AreEqual(Dummies.GivenValidLocation, feature.location)
         | _ ->
             Assert.Fail("avatarIslandFeatureSink")
     let context = 
@@ -397,7 +399,7 @@ let ``Run.It should return InPlay state when dark alley exists but the player do
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
             avatarIslandFeatureSink,
-            Mock.AvatarIslandFeatureSource (givenLocation, IslandFeatureIdentifier.DarkAlley),
+            Mock.AvatarIslandFeatureSource (Dummies.GivenValidLocation, IslandFeatureIdentifier.DarkAlley),
             Fixtures.Common.Fake.AvatarMessagePurger,
             avatarMessageSinkExpected ["Come back when you've got more money!"],
             avatarMessageSourceDummy,
@@ -412,14 +414,13 @@ let ``Run.It should return InPlay state when dark alley exists but the player do
             context
             Fixtures.Common.Fake.CommandSource
             sinkDummy
-            givenLocation
+            Dummies.GivenValidLocation
             givenFeature
             givenAvatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.When in the dark alley, the leave command will take the player back to the dock.`` () =
-    let givenLocation = Fixtures.Common.Dummy.IslandLocation
     let givenAvatarId = Fixtures.Common.Dummy.AvatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let islandSingleNameSource (_) = Some ""
@@ -440,7 +441,7 @@ let ``Run.When in the dark alley, the leave command will take the player back to
         match f with
         | Some feature ->
             Assert.AreEqual(IslandFeatureIdentifier.Dock, feature.featureId)
-            Assert.AreEqual(givenLocation, feature.location)
+            Assert.AreEqual(Dummies.GivenValidLocation, feature.location)
         | _ ->
             Assert.Fail("avatarIslandFeatureSink")
     let context = 
@@ -448,7 +449,7 @@ let ``Run.When in the dark alley, the leave command will take the player back to
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
             avatarIslandFeatureSink,
-            Mock.AvatarIslandFeatureSource (givenLocation, IslandFeatureIdentifier.DarkAlley),
+            Mock.AvatarIslandFeatureSource (Dummies.GivenValidLocation, IslandFeatureIdentifier.DarkAlley),
             Fixtures.Common.Fake.AvatarMessagePurger,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
@@ -463,14 +464,13 @@ let ``Run.When in the dark alley, the leave command will take the player back to
             context
             (commandSourceFake (Some Command.Leave))
             sinkDummy
-            givenLocation
+            Dummies.GivenValidLocation
             givenFeature
             givenAvatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.When in the dark alley, the gamble command will deal to the player some cards and enter the gambling minigame.`` () =
-    let givenLocation = Fixtures.Common.Dummy.IslandLocation
     let givenAvatarId = Fixtures.Common.Dummy.AvatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let islandSingleNameSource (_) = Some ""
@@ -494,7 +494,7 @@ let ``Run.When in the dark alley, the gamble command will deal to the player som
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
             Fixtures.Common.Fake.AvatarIslandFeatureSink,
-            Mock.AvatarIslandFeatureSource (givenLocation, IslandFeatureIdentifier.DarkAlley),
+            Mock.AvatarIslandFeatureSource (Dummies.GivenValidLocation, IslandFeatureIdentifier.DarkAlley),
             Fixtures.Common.Fake.AvatarMessagePurger,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
@@ -509,7 +509,7 @@ let ``Run.When in the dark alley, the gamble command will deal to the player som
             context
             (commandSourceFake (Some Command.Gamble))
             sinkDummy
-            givenLocation
+            Dummies.GivenValidLocation
             givenFeature
             givenAvatarId
     Assert.AreEqual(expected, actual)
@@ -517,7 +517,6 @@ let ``Run.When in the dark alley, the gamble command will deal to the player som
 
 [<Test>]
 let ``Run.When in the dark alley, the help command will take the player to the help state for the dark alley.`` () =
-    let givenLocation = Fixtures.Common.Dummy.IslandLocation
     let givenAvatarId = Fixtures.Common.Dummy.AvatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let islandSingleNameSource (_) = Some ""
@@ -538,7 +537,7 @@ let ``Run.When in the dark alley, the help command will take the player to the h
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
             Fixtures.Common.Fake.AvatarIslandFeatureSink,
-            Mock.AvatarIslandFeatureSource (givenLocation, IslandFeatureIdentifier.DarkAlley),
+            Mock.AvatarIslandFeatureSource (Dummies.GivenValidLocation, IslandFeatureIdentifier.DarkAlley),
             Fixtures.Common.Fake.AvatarMessagePurger,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
@@ -553,14 +552,13 @@ let ``Run.When in the dark alley, the help command will take the player to the h
             context
             (commandSourceFake (Some Command.Help))
             sinkDummy
-            givenLocation
+            Dummies.GivenValidLocation
             givenFeature
             givenAvatarId
     Assert.AreEqual(expected, actual)
 
 [<Test>]
 let ``Run.When in the dark alley, the status command will take the player to the status state for the dark alley.`` () =
-    let givenLocation = Fixtures.Common.Dummy.IslandLocation
     let givenAvatarId = Fixtures.Common.Dummy.AvatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let islandSingleNameSource (_) = Some ""
@@ -581,7 +579,7 @@ let ``Run.When in the dark alley, the status command will take the player to the
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
             Fixtures.Common.Fake.AvatarIslandFeatureSink,
-            Mock.AvatarIslandFeatureSource (givenLocation, IslandFeatureIdentifier.DarkAlley),
+            Mock.AvatarIslandFeatureSource (Dummies.GivenValidLocation, IslandFeatureIdentifier.DarkAlley),
             Fixtures.Common.Fake.AvatarMessagePurger,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
@@ -596,7 +594,7 @@ let ``Run.When in the dark alley, the status command will take the player to the
             context
             (commandSourceFake (Some Command.Status)) //this line
             sinkDummy
-            givenLocation
+            Dummies.GivenValidLocation
             givenFeature
             givenAvatarId
     Assert.AreEqual(expected, actual)
@@ -604,7 +602,6 @@ let ``Run.When in the dark alley, the status command will take the player to the
 
 [<Test>]
 let ``Run.When in the dark alley, the quit command will take the player to the confirm quit state for the dark alley.`` () =
-    let givenLocation = Fixtures.Common.Dummy.IslandLocation
     let givenAvatarId = Fixtures.Common.Dummy.AvatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let islandSingleNameSource (_) = Some ""
@@ -625,7 +622,7 @@ let ``Run.When in the dark alley, the quit command will take the player to the c
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
             Fixtures.Common.Fake.AvatarIslandFeatureSink,
-            Mock.AvatarIslandFeatureSource (givenLocation, IslandFeatureIdentifier.DarkAlley),
+            Mock.AvatarIslandFeatureSource (Dummies.GivenValidLocation, IslandFeatureIdentifier.DarkAlley),
             Fixtures.Common.Fake.AvatarMessagePurger,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
@@ -640,7 +637,7 @@ let ``Run.When in the dark alley, the quit command will take the player to the c
             context
             (commandSourceFake (Some Command.Quit)) //this line
             sinkDummy
-            givenLocation
+            Dummies.GivenValidLocation
             givenFeature
             givenAvatarId
     Assert.AreEqual(expected, actual)
@@ -648,7 +645,6 @@ let ``Run.When in the dark alley, the quit command will take the player to the c
 
 [<Test>]
 let ``Run.When in the dark alley but not gambling, the an invalid command gives you an error message.`` () =
-    let givenLocation = Fixtures.Common.Dummy.IslandLocation
     let givenAvatarId = Fixtures.Common.Dummy.AvatarId
     let givenFeature = IslandFeatureIdentifier.DarkAlley
     let islandSingleNameSource (_) = Some ""
@@ -670,7 +666,7 @@ let ``Run.When in the dark alley but not gambling, the an invalid command gives 
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
             Fixtures.Common.Fake.AvatarIslandFeatureSink,
-            Mock.AvatarIslandFeatureSource (givenLocation, IslandFeatureIdentifier.DarkAlley),
+            Mock.AvatarIslandFeatureSource (Dummies.GivenValidLocation, IslandFeatureIdentifier.DarkAlley),
             Fixtures.Common.Fake.AvatarMessagePurger,
             avatarMessageSinkExplode,
             avatarMessageSourceDummy,
@@ -685,7 +681,7 @@ let ``Run.When in the dark alley but not gambling, the an invalid command gives 
             context
             (commandSourceFake None)
             sinkDummy
-            givenLocation
+            Dummies.GivenValidLocation
             givenFeature
             givenAvatarId
     Assert.AreEqual(expected, actual)

@@ -59,7 +59,7 @@ module AvatarJob =
                     avatarId) + 
                         1.0)
                 avatarId
-            Shipmate.TransformStatistic 
+            ShipmateStatistic.Transform 
                 context
                 ShipmateStatisticIdentifier.Money 
                 (Statistic.ChangeCurrentBy job.Reward >> Some)

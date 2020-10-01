@@ -21,6 +21,7 @@
     <Compile Include="Island\Job.fs" />
     <Compile Include="Island/Island.fs" />
     <Compile Include="Vessel/Vessel.fs" />
+    <Compile Include="Shipmate\ShipmateStatistic.fs" />
     <Compile Include="Shipmate/Shipmate.fs" />
     <Compile Include="Avatar/Messages.fs" />
     <Compile Include="Avatar/Metric.fs" />

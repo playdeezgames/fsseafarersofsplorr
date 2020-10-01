@@ -19,7 +19,7 @@ type TestAvatarCreateContext
     interface Shipmate.CreateContext with
         member _.rationItemSource: RationItemSource = rationItemSource
         member _.shipmateRationItemSink: ShipmateRationItemSink = shipmateRationItemSink
-        member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+    interface Shipmate.GetStatisticTemplatesContext with
         member _.shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource = shipmateStatisticTemplateSource
 
 [<Test>]

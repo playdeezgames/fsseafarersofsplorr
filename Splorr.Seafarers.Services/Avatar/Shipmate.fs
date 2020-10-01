@@ -24,7 +24,7 @@ module AvatarShipmates =
             (amount     : float) 
             (avatarId   : string)
             : unit =
-        Shipmate.TransformStatistic 
+        ShipmateStatistic.Transform 
             context
             identifier 
             (Statistic.SetCurrentValue amount >> Some) 

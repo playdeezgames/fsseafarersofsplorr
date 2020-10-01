@@ -50,9 +50,6 @@ type TestDockedRunContext
     interface Island.GetListContext with
         member this.islandSource: IslandSource = islandSource
 
-    interface Shipmate.GetStatusContext with
-        member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-
     interface IslandName.GetNameContext with
         member this.islandSingleNameSource: IslandSingleNameSource = islandSingleNameSource
 
@@ -81,8 +78,9 @@ type TestDockedRunContext
 
     interface Island.UpdateMarketForItemContext
 
-    interface Shipmate.TransformStatisticContext with
+    interface ShipmateStatistic.PutContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
+    interface ShipmateStatistic.GetContext with
         member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
 
     interface AvatarInventory.RemoveInventoryContext with
