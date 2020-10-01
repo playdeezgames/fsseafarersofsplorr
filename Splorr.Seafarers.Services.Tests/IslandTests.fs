@@ -15,10 +15,11 @@ type TestIslandGetDisplayNameContext
         member _.islandSingleNameSource         : IslandSingleNameSource = islandSingleNameSource
 
 type TestIslandGenerateCommoditiesContext(commoditySource, islandMarketSink, islandMarketSource) =
+    interface Utility.RandomContext with
+        member _.random : Random = random
     interface Island.GenerateCommoditiesContext with
         member _.islandMarketSink: IslandMarketSink = islandMarketSink
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
-        member _.random : Random = random
     interface Commodity.GetCommoditiesContext with
         member this.commoditySource: CommoditySource = commoditySource
 

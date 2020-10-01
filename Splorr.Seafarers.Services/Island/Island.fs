@@ -39,7 +39,6 @@ module Island =
         inherit ServiceContext
         abstract member islandMarketSource : IslandMarketSource
         abstract member islandMarketSink   : IslandMarketSink
-        abstract member random             : Random
     let GenerateCommodities 
             (context  : ServiceContext)
             (location : Location) 
@@ -53,8 +52,8 @@ module Island =
                     |> Map.add 
                         commodity 
                         {
-                            Supply = context.random |> Utility.SupplyDemandGenerator
-                            Demand = context.random |> Utility.SupplyDemandGenerator
+                            Supply = context |> Utility.SupplyDemandGenerator
+                            Demand = context |> Utility.SupplyDemandGenerator
                         })
             |> context.islandMarketSink location
 

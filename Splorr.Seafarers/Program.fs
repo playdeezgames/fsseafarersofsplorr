@@ -121,6 +121,12 @@ let main argv =
         Term.GetForTermType connection "island name"
         |> Persister.unpackOrThrow
 
+    let termSource
+            (termType:string) 
+            : string list =
+        Term.GetForTermType connection termType
+        |> Persister.unpackOrThrow
+
     let termSources = 
         (adverbSource, 
             adjectiveSource, 

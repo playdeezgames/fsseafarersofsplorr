@@ -20,8 +20,9 @@ module Utility =
         SortListRandomly context >> List.head
 
     let SupplyDemandGenerator 
-            (random:Random) //TODO: contextify
+            (context : ServiceContext)
             : float =
+        let random = (context :?> RandomContext).random
         (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + 3.0
 
     let WeightedGenerator
