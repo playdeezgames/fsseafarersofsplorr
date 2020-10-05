@@ -354,10 +354,5 @@ type SplorrContext
     interface World.GetStatisticContext with
         member _.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
 
-    interface World.HasDarkAlleyMinimumStakesContext with
-        member _.shipmateSingleStatisticSource : ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-        member _.islandSingleStatisticSource : IslandSingleStatisticSource = islandSingleStatisticSource
-        member _.avatarIslandFeatureSource : AvatarIslandFeatureSource = avatarIslandFeatureSource
-
     interface AvatarMetric.GetContext with
         member _.avatarMetricSource: AvatarMetricSource = avatarMetricSource

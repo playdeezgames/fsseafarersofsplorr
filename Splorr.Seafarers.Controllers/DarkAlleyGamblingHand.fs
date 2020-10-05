@@ -29,27 +29,20 @@ module DarkAlleyGamblingHand =
         ]
         |> Group
         |> messageSink
-        match commandSource() with
-        | Some Command.Quit -> 
-            avatarId
-            |> Gamestate.InPlay
-            |> Gamestate.ConfirmQuit
+        let command = commandSource()
+        match (BaseGameState.HandleCommand context command avatarId), command with
+        | Some newState, _ ->
+            newState
             |> Some
 
-        | Some (Command.Status) ->
-            avatarId
-            |> Gamestate.InPlay
-            |> Gamestate.Status
-            |> Some
-
-        | Some (Command.Bet None) ->
+        | _, Some (Command.Bet None) ->
             avatarId
             |> World.FoldGamblingHand context
             avatarId
             |> Gamestate.InPlay
             |> Some   
 
-        | Some (Command.Bet (Some amount)) ->
+        | _, Some (Command.Bet (Some amount)) ->
             if World.BetOnGamblingHand context amount avatarId then
                 [
                     (Hue.Heading, Line "The final card:") |> Hued
@@ -61,8 +54,4 @@ module DarkAlleyGamblingHand =
             |> Gamestate.InPlay
             |> Some   
         | _ ->
-            ("Maybe try 'help'?",
-                        avatarId
-                        |> Gamestate.InPlay)
-                    |> Gamestate.ErrorMessage
-                    |> Some
+            BaseGameState.HandleCommand context None avatarId

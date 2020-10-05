@@ -714,38 +714,26 @@ module World =
         |> AddMessages context [ "You undock." ]
         context.avatarIslandFeatureSink (None, avatarId)
     
-    type HasDarkAlleyMinimumStakesContext =
-        inherit ServiceContext
-        abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
-        abstract member islandSingleStatisticSource : IslandSingleStatisticSource 
-        abstract member avatarIslandFeatureSource : AvatarIslandFeatureSource
     let HasDarkAlleyMinimumStakes
             (context : ServiceContext)
-            (location : Location)
             (avatarId : string)
-            : bool option =
-        let context = context :?> HasDarkAlleyMinimumStakesContext
-        match context.avatarIslandFeatureSource avatarId with
-        | Some feature when feature.featureId = IslandFeatureIdentifier.DarkAlley ->
+            : bool =
+        match AvatarIslandFeature.Get context avatarId with
+        | Some feature when feature.featureId = (IslandFeatureIdentifier.DarkAlley) ->
             let minimumBet = 
-                context.islandSingleStatisticSource 
-                    location 
+                Island.GetStatistic
+                    context
                     IslandStatisticIdentifier.MinimumGamblingStakes
+                    feature.location
                 |> Option.get
                 |> Statistic.GetCurrentValue
             let money =
-                context.shipmateSingleStatisticSource 
-                    avatarId 
-                    ShipmateIdentifier.Primary 
-                    ShipmateStatisticIdentifier.Money
-                |> Option.get
-                |> Statistic.GetCurrentValue
-            if money >= minimumBet then
-                Some true
-            else
-                Some false
+                AvatarShipmates.GetMoney
+                    context
+                    avatarId
+            money >= minimumBet
         | _ -> 
-            None
+            false
 
     type CanPlaceBetContext =
         inherit ServiceContext

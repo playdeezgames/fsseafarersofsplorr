@@ -161,14 +161,12 @@ module AtSea =
                     else 
                         target)) None
 
-        match command with
-        | Some Command.Status ->
-            (avatarId)
-            |> Gamestate.InPlay
-            |> Gamestate.Status
+        match (BaseGameState.HandleCommand context command avatarId),command with
+        | Some newState, _ ->
+            newState
             |> Some
 
-        | Some (Command.HeadFor name) ->
+        | _, Some (Command.HeadFor name) ->
             avatarId
             |> World.HeadFor
                 context
@@ -177,7 +175,7 @@ module AtSea =
             |> Gamestate.InPlay
             |> Some
 
-        | Some (Command.DistanceTo name) ->
+        | _, Some (Command.DistanceTo name) ->
             avatarId
             |> World.DistanceTo 
                 context
@@ -186,7 +184,7 @@ module AtSea =
             |> Gamestate.InPlay
             |> Some
 
-        | Some (Command.Careen side) ->
+        | _, Some (Command.Careen side) ->
             if canCareen then
                 (side, avatarId)
                 |> Gamestate.Careened
@@ -200,7 +198,7 @@ module AtSea =
                 |> Gamestate.InPlay
                 |> Some
 
-        | Some Command.Dock ->
+        | _, Some Command.Dock ->
             match dockTarget with
             | Some location ->
                 avatarId 
@@ -219,43 +217,12 @@ module AtSea =
                 |> Gamestate.InPlay
                 |> Some
 
-        | Some (Command.Islands page) ->
-            (page, avatarId |> Gamestate.InPlay)
-            |> Gamestate.IslandList
-            |> Some
-
-        | Some (Command.Abandon Job) ->
-            avatarId
-            |> World.AbandonJob 
-                context
-            avatarId
-            |> Gamestate.InPlay
-            |> Some
-
-        | Some Command.Metrics ->
-            avatarId
-            |> Gamestate.InPlay
-            |> Gamestate.Metrics
-            |> Some
-
-        | Some (Command.Chart x) ->
+        | _, Some (Command.Chart x) ->
             (x, avatarId)
             |> Gamestate.Chart
             |> Some
 
-        | Some Command.Menu ->
-            avatarId
-            |> Some
-            |> Gamestate.MainMenu
-            |> Some
-
-        | Some Command.Help ->
-            avatarId
-            |> Gamestate.InPlay
-            |> Gamestate.Help
-            |> Some
-
-        | Some (Command.Move distance)->
+        | _, Some (Command.Move distance)->
             avatarId
             |> World.Move 
                 context
@@ -264,7 +231,7 @@ module AtSea =
             |> Gamestate.InPlay
             |> Some
 
-        | Some (Command.Set (SetCommand.Heading heading)) ->
+        | _, Some (Command.Set (SetCommand.Heading heading)) ->
             avatarId
             |> World.SetHeading 
                 context
@@ -273,7 +240,7 @@ module AtSea =
             |> Gamestate.InPlay
             |> Some
 
-        | Some (Command.Set (Speed speed)) ->
+        | _, Some (Command.Set (Speed speed)) ->
             avatarId
             |> World.SetSpeed 
                 context
@@ -282,23 +249,8 @@ module AtSea =
             |> Gamestate.InPlay
             |> Some
 
-        | Some Command.Quit -> 
-            avatarId
-            |> Gamestate.InPlay
-            |> Gamestate.ConfirmQuit
-            |> Some
-
-        | Some Command.Inventory -> 
-            avatarId
-            |> Gamestate.InPlay
-            |> Gamestate.Inventory
-            |> Some
-
         | _ ->
-            ("Maybe try 'help'?",avatarId
-            |> Gamestate.InPlay)
-            |> Gamestate.ErrorMessage
-            |> Some
+            BaseGameState.HandleCommand context None avatarId
 
     let private RunAlive
             (context       : ServiceContext)

@@ -9,6 +9,7 @@
     <Compile Include="MessageSink.fs" />
     <Compile Include="Gamestate.fs" />
     <Compile Include="Utility.fs" />
+    <Compile Include="BaseGameState.fs" />
     <Compile Include="AtSea.fs" />
     <Compile Include="Careened.fs" />
     <Compile Include="Chart.fs" />

@@ -67,10 +67,6 @@ type TestIslandFeatureRunContext
         member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
     interface AvatarGamblingHand.FoldContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
-    interface World.HasDarkAlleyMinimumStakesContext with
-        member _.shipmateSingleStatisticSource : ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-        member _.islandSingleStatisticSource : IslandSingleStatisticSource = islandSingleStatisticSource
-        member _.avatarIslandFeatureSource : AvatarIslandFeatureSource = avatarIslandFeatureSource
 
 [<Test>]
 let ``Run.It should return InPlay when the given island does not exist.`` () =

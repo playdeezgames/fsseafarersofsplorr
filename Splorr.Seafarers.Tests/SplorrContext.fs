@@ -160,7 +160,6 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> World.GenerateIslandsContext
     let context = splorrContext :?> World.GetNearbyLocationsContext
     let context = splorrContext :?> World.GetStatisticContext
-    let context = splorrContext :?> World.HasDarkAlleyMinimumStakesContext
     let context = splorrContext :?> World.HeadForContext
     let context = splorrContext :?> World.NameIslandsContext
     let context = splorrContext :?> World.PopulateIslandsContext
