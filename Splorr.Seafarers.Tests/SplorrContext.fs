@@ -58,8 +58,8 @@ let splorrContext : ServiceContext =
         Fixtures.Stub.ShipmateSingleStatisticSource,
         Fixtures.Stub.ShipmateStatisticTemplateSource,
         Fixtures.Stub.SwitchSource ,
+        Fixtures.Stub.TermListSource,
         Fixtures.Stub.TermNameSource,
-        Fixtures.Stub.TermSources,
         Fixtures.Stub.VesselSingleStatisticSink,
         Fixtures.Stub.VesselSingleStatisticSource,
         Fixtures.Stub.VesselStatisticSink,
@@ -157,11 +157,9 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> World.CreateContext
     let context = splorrContext :?> World.DistanceToContext
     let context = splorrContext :?> World.DockContext
-    let context = splorrContext :?> World.GenerateIslandNameContext
     let context = splorrContext :?> World.GenerateIslandsContext
     let context = splorrContext :?> World.GetNearbyLocationsContext
     let context = splorrContext :?> World.GetStatisticContext
-    let context = splorrContext :?> World.HasDarkAlleyMinimumStakesContext
     let context = splorrContext :?> World.HeadForContext
     let context = splorrContext :?> World.NameIslandsContext
     let context = splorrContext :?> World.PopulateIslandsContext
@@ -172,7 +170,7 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> AvatarIslandMetric.GetContext
     let context = splorrContext :?> AvatarIslandMetric.PutContext
     let context = splorrContext :?> Shipmate.GetStatisticTemplatesContext
-    //let context = splorrContext :?> 
+    let context = splorrContext :?> Utility.TermGeneratorContext
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 

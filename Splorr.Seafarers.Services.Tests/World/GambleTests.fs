@@ -152,3 +152,73 @@ let ``ResolveHand.It will give an error message if the avatar does not have enou
         givenAmount
         givenAvatarId
 
+type TestHasDarkAlleyMinimumStakesContext
+        (avatarIslandFeatureSource,
+        islandSingleStatisticSource,
+        shipmateSingleStatisticSource) =
+    interface ServiceContext
+    interface AvatarIslandFeature.GetContext with
+        member this.avatarIslandFeatureSource: AvatarIslandFeatureSource = avatarIslandFeatureSource
+    interface Island.GetStatisticContext with
+        member this.islandSingleStatisticSource: IslandSingleStatisticSource = islandSingleStatisticSource
+    interface AvatarShipmates.GetPrimaryStatisticContext with
+        member this.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
+[<Test>]
+let ``HasDarkAlleyMinimumStakes.It returns false when the avatar is not at an island.`` () =
+    let avatarIslandFeatureSource (_) =
+        None
+    let context = 
+        TestHasDarkAlleyMinimumStakesContext
+            (avatarIslandFeatureSource,
+            Fixtures.Common.Fake.IslandSingleStatisticSource,
+            Fixtures.Common.Fake.ShipmateSingleStatisticSource)
+    let actual =
+        World.HasDarkAlleyMinimumStakes
+            context
+            Fixtures.Common.Dummy.AvatarId
+    Assert.AreEqual(false, actual)
+
+[<Test>]
+let ``HasDarkAlleyMinimumStakes.It returns false when the avatar is at an island but not in the dark alley.`` () =
+    let avatarIslandFeatureSource (_) =
+        {
+            featureId = IslandFeatureIdentifier.Dock
+            location = Fixtures.Common.Dummy.IslandLocation
+        }
+        |> Some
+    let context = 
+        TestHasDarkAlleyMinimumStakesContext
+            (avatarIslandFeatureSource,
+            Fixtures.Common.Fake.IslandSingleStatisticSource,
+            Fixtures.Common.Fake.ShipmateSingleStatisticSource)
+    let actual =
+        World.HasDarkAlleyMinimumStakes
+            context
+            Fixtures.Common.Dummy.AvatarId
+    Assert.AreEqual(false, actual)
+
+[<Test>]
+let ``HasDarkAlleyMinimumStakes.It returns false when the avatar is at an island and in the dark alley but does not have enough money.`` () =
+    let avatarIslandFeatureSource (_) =
+        {
+            featureId = IslandFeatureIdentifier.DarkAlley
+            location = Fixtures.Common.Dummy.IslandLocation
+        }
+        |> Some
+    let islandSingleStatisticSource (_) (_) =
+        Statistic.Create (5.0, 5.0) 5.0
+        |> Some
+    let shipmateSingleStatisticSource (_) (_) (_) =
+        Statistic.Create (0.0, 100.0) 0.0
+        |> Some
+    let context = 
+        TestHasDarkAlleyMinimumStakesContext
+            (avatarIslandFeatureSource,
+            islandSingleStatisticSource,
+            shipmateSingleStatisticSource)
+    let actual =
+        World.HasDarkAlleyMinimumStakes
+            context
+            Fixtures.Common.Dummy.AvatarId
+    Assert.AreEqual(false, actual)
+    

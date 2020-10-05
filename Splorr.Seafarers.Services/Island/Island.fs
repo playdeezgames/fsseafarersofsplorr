@@ -39,7 +39,6 @@ module Island =
         inherit ServiceContext
         abstract member islandMarketSource : IslandMarketSource
         abstract member islandMarketSink   : IslandMarketSink
-        abstract member random             : Random
     let GenerateCommodities 
             (context  : ServiceContext)
             (location : Location) 
@@ -53,8 +52,8 @@ module Island =
                     |> Map.add 
                         commodity 
                         {
-                            Supply = context.random |> Utility.SupplyDemandGenerator
-                            Demand = context.random |> Utility.SupplyDemandGenerator
+                            Supply = context |> Utility.SupplyDemandGenerator
+                            Demand = context |> Utility.SupplyDemandGenerator
                         })
             |> context.islandMarketSink location
 
@@ -63,7 +62,6 @@ module Island =
         abstract member islandItemSink   : IslandItemSink
         abstract member islandItemSource : IslandItemSource
         abstract member itemSource       : ItemSource
-        abstract member random           : Random
     let GenerateItems 
             (context  : ServiceContext)
             (location : Location) 
@@ -73,7 +71,11 @@ module Island =
             (Set.empty, context.itemSource())
             ||> Map.fold 
                 (fun items item descriptor -> 
-                    if context.random.NextDouble() < descriptor.Occurrence then
+                    let table =
+                        Map.empty
+                        |> Map.add true descriptor.Occurrence
+                        |> Map.add false (1.0 - descriptor.Occurrence)
+                    if Utility.WeightedGenerator context table |> Option.defaultValue false then
                         items |> Set.add item
                     else
                         items)

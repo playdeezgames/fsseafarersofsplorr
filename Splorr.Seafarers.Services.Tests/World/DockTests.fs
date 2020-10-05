@@ -82,7 +82,7 @@ let ``Dock.It does not modify avatar when given avatar has a job for a different
             Fixtures.Common.Stub.ItemSource ,
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
-            Fixtures.Common.Stub.TermSources ,
+            Fixtures.Common.Stub.TermListSource,
             Fixtures.Common.Stub.WorldSingleStatisticSource) :> World.DockContext
     Fixtures.Common.Dummy.AvatarId
     |> World.Dock
@@ -186,7 +186,7 @@ let ``Dock.It adds a message and completes the job when given avatar has a job f
             Fixtures.Common.Stub.ItemSource ,
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
-            Fixtures.Common.Stub.TermSources ,
+            Fixtures.Common.Stub.TermListSource,
             Fixtures.Common.Stub.WorldSingleStatisticSource)
         :> World.DockContext
     Fixtures.Common.Dummy.AvatarId
@@ -237,7 +237,7 @@ let ``Dock.It does nothing when given an invalid avatar id.`` () =
             Fixtures.Common.Stub.ItemSource,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
             Fixtures.Common.Fake.ShipmateSingleStatisticSource,
-            Fixtures.Common.Stub.TermSources,
+            Fixtures.Common.Stub.TermListSource,
             Fixtures.Common.Stub.WorldSingleStatisticSource) :> World.DockContext
     Fixtures.Common.Dummy.BogusAvatarId
     |> World.Dock 
@@ -289,7 +289,7 @@ let ``Dock.It adds a message when the given location has no island.`` () =
             Fixtures.Common.Stub.ItemSource ,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
             Fixtures.Common.Fake.ShipmateSingleStatisticSource,
-            Fixtures.Common.Stub.TermSources ,
+            Fixtures.Common.Stub.TermListSource,
             Fixtures.Common.Stub.WorldSingleStatisticSource) :> World.DockContext
     inputWorld
     |> World.Dock
@@ -392,7 +392,7 @@ let ``Dock.It updates the island's visit count and last visit when the given loc
             (fun()->Map.empty),
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource,
-            Fixtures.Common.Stub.TermSources,
+            Fixtures.Common.Stub.TermListSource,
             Fixtures.Common.Stub.WorldSingleStatisticSource) 
         :> World.DockContext
     inputWorld

@@ -43,8 +43,12 @@ module Docked =
         avatarId
         |> World.ClearMessages context
 
-        match command with
-        | Some (Command.GoTo feature) ->
+        match (BaseGameState.HandleCommand context command avatarId), command with
+        | Some newState, _ ->
+            newState
+            |> Some
+
+        | _, Some (Command.GoTo feature) ->
             AvatarIslandFeature.Enter 
                 context 
                 avatarId 
@@ -54,7 +58,7 @@ module Docked =
             |> Gamestate.InPlay
             |> Some
 
-        | Some (Command.AcceptJob index) ->
+        | _, Some (Command.AcceptJob index) ->
             avatarId 
             |> World.AcceptJob
                 context
@@ -64,7 +68,7 @@ module Docked =
             |> Gamestate.InPlay
             |> Some
 
-        | Some (Command.Buy (quantity, itemName))->
+        | _, Some (Command.Buy (quantity, itemName))->
             avatarId 
             |> World.BuyItems 
                 context
@@ -75,7 +79,7 @@ module Docked =
             |> Gamestate.InPlay
             |> Some            
 
-        | Some (Command.Sell (quantity, itemName))->
+        | _, Some (Command.Sell (quantity, itemName))->
             avatarId 
             |> World.SellItems 
                 context
@@ -86,68 +90,27 @@ module Docked =
             |> Gamestate.InPlay
             |> Some            
 
-        | Some Command.Items ->
+        | _, Some Command.Items ->
             avatarId 
             |> Gamestate.InPlay
             |> Gamestate.ItemList
             |> Some
 
-        | Some Command.Jobs ->
+        | _, Some Command.Jobs ->
             avatarId
             |> Gamestate.InPlay
             |> Gamestate.Jobs
             |> Some
 
-        | Some Command.Status ->
-            avatarId
-            |> Gamestate.InPlay
-            |> Gamestate.Status
-            |> Some
-
-        | Some (Command.Abandon Job) ->
-            avatarId 
-            |> World.AbandonJob 
-                context
-            avatarId
-            |> Gamestate.InPlay
-            |> Some
-
-        | Some Command.Undock ->
+        | _, Some Command.Undock ->
             avatarId 
             |> World.Undock context
             avatarId
             |> Gamestate.InPlay 
             |> Some
 
-        | Some Command.Quit ->
-            avatarId 
-            |> Gamestate.InPlay 
-            |> Gamestate.ConfirmQuit 
-            |> Some
-
-        | Some Command.Inventory ->
-            avatarId 
-            |> Gamestate.InPlay 
-            |> Gamestate.Inventory 
-            |> Some
-
-        | Some Command.Help ->
-            avatarId 
-            |> Gamestate.InPlay 
-            |> Gamestate.Help 
-            |> Some
-
-        | Some Command.Metrics ->
-            avatarId 
-            |> Gamestate.InPlay 
-            |> Gamestate.Metrics 
-            |> Some
-
         | _ -> 
-            ("Maybe try 'help'?",avatarId 
-            |> Gamestate.InPlay)
-            |> Gamestate.ErrorMessage
-            |> Some
+            BaseGameState.HandleCommand context None avatarId
 
     let private RunWithIsland 
             (context                        : ServiceContext)

@@ -11,9 +11,10 @@ type TestAvatarGetGamblingHandContext (avatarGamblingHandSource) =
         member _.avatarGamblingHandSource : AvatarGamblingHandSource = avatarGamblingHandSource
 
 type TestAvatarDealGamblingHandContext(avatarGamblingHandSink, random) =
+    interface Utility.RandomContext with
+        member this.random: Random = random
     interface AvatarGamblingHand.DealContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
-        member _.random : Random = random
 
 type TestAvatarEnterIslandFeatureContext
         (avatarIslandFeatureSink, 

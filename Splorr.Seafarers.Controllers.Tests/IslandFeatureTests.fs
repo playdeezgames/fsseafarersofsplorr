@@ -34,6 +34,8 @@ type TestIslandFeatureRunContext
         shipmateSingleStatisticSink,
         shipmateSingleStatisticSource) =
     interface ServiceContext
+    interface Utility.RandomContext with
+        member this.random: Random = Random()
     interface ShipmateStatistic.PutContext with
         member this.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
     interface ShipmateStatistic.GetContext with
@@ -60,16 +62,11 @@ type TestIslandFeatureRunContext
         member _.avatarGamblingHandSource : AvatarGamblingHandSource = avatarGamblingHandSource
     interface AvatarGamblingHand.DealContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
-        member _.random : Random = Fixtures.Common.Dummy.Random
     interface AvatarIslandFeature.EnterContext with
         member this.avatarIslandFeatureSink: AvatarIslandFeatureSink = avatarIslandFeatureSink
         member this.islandSingleFeatureSource: IslandSingleFeatureSource = islandSingleFeatureSource
     interface AvatarGamblingHand.FoldContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
-    interface World.HasDarkAlleyMinimumStakesContext with
-        member _.shipmateSingleStatisticSource : ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-        member _.islandSingleStatisticSource : IslandSingleStatisticSource = islandSingleStatisticSource
-        member _.avatarIslandFeatureSource : AvatarIslandFeatureSource = avatarIslandFeatureSource
 
 [<Test>]
 let ``Run.It should return InPlay when the given island does not exist.`` () =

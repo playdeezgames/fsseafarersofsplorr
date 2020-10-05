@@ -93,41 +93,15 @@ let main argv =
         VesselStatistic.SetStatisticForAvatar connection avatarId
         >> Persister.unpackOrThrow
 
-    let adverbSource () =
-        Term.GetForTermType connection "adverb"
-        |> Persister.unpackOrThrow
-
-    let adjectiveSource() =
-        Term.GetForTermType connection "adjective"
-        |> Persister.unpackOrThrow
-
-    let objectNameSource() : string list =
-        Term.GetForTermType connection "object name"
-        |> Persister.unpackOrThrow
-
-    let personNameSource() : string list =
-        Term.GetForTermType connection "person name"
-        |> Persister.unpackOrThrow
-
-    let personAdjectiveSource() : string list =
-        Term.GetForTermType connection "person adjective"
-        |> Persister.unpackOrThrow
-
-    let professionSource() : string list =
-        Term.GetForTermType connection "profession"
-        |> Persister.unpackOrThrow
-
     let termNameSource() : string list =
         Term.GetForTermType connection "island name"
         |> Persister.unpackOrThrow
 
-    let termSources = 
-        (adverbSource, 
-            adjectiveSource, 
-            objectNameSource, 
-            personNameSource, 
-            personAdjectiveSource, 
-            professionSource)
+    let termListSource
+            (termType:string) 
+            : string list =
+        Term.GetForTermType connection termType
+        |> Persister.unpackOrThrow
 
     let avatarMessageSource =
         Message.GetForAvatar connection
@@ -379,8 +353,8 @@ let main argv =
             shipmateSingleStatisticSource,
             shipmateStatisticTemplateSource,
             switchSource ,
+            termListSource,
             termNameSource,
-            termSources,
             vesselSingleStatisticSink,
             vesselSingleStatisticSource,
             vesselStatisticSink,

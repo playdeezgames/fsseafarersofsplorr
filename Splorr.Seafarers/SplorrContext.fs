@@ -55,13 +55,15 @@ type SplorrContext
         shipmateSingleStatisticSource: ShipmateSingleStatisticSource ,
         shipmateStatisticTemplateSource: ShipmateStatisticTemplateSource ,
         switchSource: SwitchSource,
+        termListSource : TermListSource,
         termNameSource: TermSource ,
-        termSources: TermSources ,
         vesselSingleStatisticSink: VesselSingleStatisticSink ,
         vesselSingleStatisticSource: VesselSingleStatisticSource ,
         vesselStatisticSink: VesselStatisticSink ,
         vesselStatisticTemplateSource: VesselStatisticTemplateSource ,
         worldSingleStatisticSource : WorldSingleStatisticSource) =
+    interface Utility.TermGeneratorContext with
+        member this.termListSource: TermListSource = termListSource
     interface AvatarIslandMetric.GetContext with
         member this.avatarIslandSingleMetricSource: AvatarIslandSingleMetricSource = avatarIslandSingleMetricSource
 
@@ -181,9 +183,6 @@ type SplorrContext
         member _.islandSingleFeatureSink      : IslandSingleFeatureSink     =islandSingleFeatureSink     
         member _.islandSource                 : IslandSource                =islandSource     
 
-    interface World.GenerateIslandNameContext with
-        member _.random: Random = random
-
     interface World.NameIslandsContext with
         member _.islandSingleNameSink: IslandSingleNameSink = islandSingleNameSink
         member _.islandSource: IslandSource = islandSource
@@ -193,7 +192,6 @@ type SplorrContext
         member _.islandSingleNameSink          : IslandSingleNameSink=islandSingleNameSink
         member _.termNameSource                : TermSource          =termNameSource     
         member _.islandSource : IslandSource = islandSource
-        member _.random : Random = random
 
     interface Vessel.CreateContext with
         member _.vesselStatisticSink: VesselStatisticSink = vesselStatisticSink
@@ -280,9 +278,8 @@ type SplorrContext
        member _.itemSource                    : ItemSource = itemSource
 
     interface Job.CreateContext with
-        member _.termSources: TermSources = termSources
+        member this.termListSource: TermListSource = termListSource
         member _.jobRewardStatisticSource : JobRewardStatisticSource = fun () -> worldSingleStatisticSource WorldStatisticIdentifier.JobReward
-        member _.random = random
 
     interface IslandVisit.AddContext with
         member _.epochSecondsSource : EpochSecondsSource = epochSecondsSource
@@ -290,13 +287,11 @@ type SplorrContext
     interface Island.GenerateCommoditiesContext with
         member _.islandMarketSink: IslandMarketSink = islandMarketSink
         member _.islandMarketSource: IslandMarketSource = islandMarketSource
-        member _.random : Random = random
 
     interface Island.GenerateItemsContext with
         member _.islandItemSink: IslandItemSink = islandItemSink
         member _.islandItemSource: IslandItemSource = islandItemSource
         member _.itemSource: ItemSource = itemSource
-        member _.random: Random = random
 
     interface ShipmateStatistic.PutContext with
         member _.shipmateSingleStatisticSink: ShipmateSingleStatisticSink = shipmateSingleStatisticSink
@@ -352,18 +347,12 @@ type SplorrContext
 
     interface AvatarGamblingHand.DealContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
-        member _.random : Random = random
 
     interface AvatarGamblingHand.FoldContext with
         member _.avatarGamblingHandSink : AvatarGamblingHandSink = avatarGamblingHandSink
 
     interface World.GetStatisticContext with
         member _.worldSingleStatisticSource: WorldSingleStatisticSource = worldSingleStatisticSource
-
-    interface World.HasDarkAlleyMinimumStakesContext with
-        member _.shipmateSingleStatisticSource : ShipmateSingleStatisticSource = shipmateSingleStatisticSource
-        member _.islandSingleStatisticSource : IslandSingleStatisticSource = islandSingleStatisticSource
-        member _.avatarIslandFeatureSource : AvatarIslandFeatureSource = avatarIslandFeatureSource
 
     interface AvatarMetric.GetContext with
         member _.avatarMetricSource: AvatarMetricSource = avatarMetricSource

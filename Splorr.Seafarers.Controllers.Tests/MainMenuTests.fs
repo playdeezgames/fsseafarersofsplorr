@@ -41,9 +41,6 @@ type TestWorldCreateContext
     interface Utility.RandomContext with 
         member _.random : Random = Fixtures.Common.Dummy.Random
 
-    interface World.GenerateIslandNameContext with
-        member this.random: Random = Fixtures.Common.Dummy.Random
-
     interface World.NameIslandsContext with
         member _.islandSingleNameSink: IslandSingleNameSink = islandSingleNameSink
         member _.nameSource: TermSource = termNameSource
@@ -51,7 +48,6 @@ type TestWorldCreateContext
 
     interface World.GenerateIslandsContext with
         member this.islandSource: IslandSource = islandSource
-        member this.random: Random = Fixtures.Common.Dummy.Random
         member _.termNameSource: TermSource = termNameSource
         member _.islandSingleNameSink : IslandSingleNameSink = islandSingleNameSink
 

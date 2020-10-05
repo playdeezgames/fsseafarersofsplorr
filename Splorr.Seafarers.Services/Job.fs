@@ -3,15 +3,13 @@ open Splorr.Seafarers.Models
 open System
 
 type TermSource = unit -> string list
-type TermSources = TermSource * TermSource * TermSource * TermSource * TermSource * TermSource
 type JobRewardStatisticSource = unit -> Statistic
 
 module Job =
     type CreateContext =
         inherit ServiceContext
-        abstract member termSources              : TermSources
+        abstract member termListSource : TermListSource
         abstract member jobRewardStatisticSource : JobRewardStatisticSource
-        abstract member random                   : Random
     let Create 
             (context      : ServiceContext)
             (destinations : Set<Location>) 
@@ -20,36 +18,41 @@ module Job =
         let pickRandomly : string list -> string = 
             Utility.PickRandomly context
 
-        let adverbSource, 
-            adjectiveSource, 
-            objectNameSource, 
-            personNameSource, 
-            personAdjectiveSource, 
-            professionSource = 
-                context.termSources
+        let adverbSource =
+            context.termListSource "adverb"
+        let adjectiveSource =
+            context.termListSource "adjective"
+        let objectNameSource =
+            context.termListSource "object name"
+        let personNameSource =
+            context.termListSource "person name"
+        let personAdjectiveSource =
+            context.termListSource "person adjective"
+        let professionSource =
+            context.termListSource "profession"
 
         let adverb = 
-            adverbSource() 
+            adverbSource
             |> pickRandomly
 
         let adjective = 
-            adjectiveSource() 
+            adjectiveSource
             |> pickRandomly
 
         let objectName = 
-            objectNameSource() 
+            objectNameSource
             |> pickRandomly
 
         let name = 
-            personNameSource() 
+            personNameSource
             |> pickRandomly
 
         let personalAdjective = 
-            personAdjectiveSource() 
+            personAdjectiveSource
             |> pickRandomly
 
         let profession = 
-            professionSource() 
+            professionSource
             |> pickRandomly
 
         let destination = 
@@ -68,5 +71,5 @@ module Job =
         {
             FlavorText  = sprintf "please deliver this %s %s %s to %s the %s %s" adverb adjective objectName name personalAdjective profession
             Destination = destination
-            Reward      = context.random.NextDouble() * (rewardMaximum - rewardMinimum) + rewardMinimum
+            Reward      = Utility.RangeGenerator context (rewardMinimum, rewardMaximum)
         }

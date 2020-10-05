@@ -21,6 +21,7 @@
     <Compile Include="AvatarTestFixtures.fs" />
     <Compile Include="IslandTestFixtures.fs" />
     <Compile Include="WorldTestFixtures.fs" />
+    <Compile Include="UtilityTests.fs" />
     <Compile Include="AngleTests.fs" />
     <Compile Include="Avatar\AbandonJobTests.fs" />
     <Compile Include="Avatar\CompleteJobTests.fs" />
