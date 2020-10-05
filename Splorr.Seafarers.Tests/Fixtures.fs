@@ -27,6 +27,7 @@ module Stub =
     let internal AvatarSingleMetricSource(_)=raise (NotImplementedException "avatarSingleMetricSource") 
     let internal CommoditySource(_)=raise (NotImplementedException "commoditySource") 
     let internal EpochSecondsSource(_)=raise (NotImplementedException "epochSecondsSource")
+    let internal GameDataSink(_) = raise (NotImplementedException "gameDataSink")
     let internal IslandFeatureGeneratorSource(_)=raise (NotImplementedException "islandFeatureGeneratorSource") 
     let internal IslandFeatureSource(_)=raise (NotImplementedException "islandFeatureSource")
     let internal IslandItemSink(_)=raise (NotImplementedException "islandItemSink") 

@@ -184,6 +184,10 @@ let internal islandSingleNameSinkStub (_) (_) = ()
 let internal islandSingleNameSourceStub (_) = None
 let internal islandSingleFeatureSourceStub (_) (_) = false
 let internal islandLocationByNameSourceStub (_) = None
+let internal gameDataSinkFake : GameDataSink = 
+                fun (_) -> 
+                    Assert.Fail("gameDataSinkFake")
+                    None
 
 let internal islandSingleStatisticSinkStub (_) (_) = ()
 let internal islandStatisticTemplateSourceStub () = Map.empty
@@ -227,6 +231,7 @@ type TestAtSeaRunContext
             avatarSingleMetricSource: AvatarSingleMetricSource,
             commoditySource: CommoditySource,
             epochSecondsSource: EpochSecondsSource,
+            gameDataSink : GameDataSink,
             islandItemSink: IslandItemSink,
             islandItemSource: IslandItemSource,
             islandJobSink: IslandJobSink,
@@ -356,6 +361,8 @@ type TestAtSeaRunContext
         member _.shipmateSingleStatisticSource: ShipmateSingleStatisticSource = shipmateSingleStatisticSource
     interface AvatarShipmates.TransformContext with
         member _.avatarShipmateSource: AvatarShipmateSource = avatarShipmateSource
+    interface World.SaveContext with
+        member this.gameDataSink: GameDataSink = gameDataSink
 
 let commandSourceFake (expectedCommand:Command option) : unit -> Command option =
     fun () -> expectedCommand

@@ -26,6 +26,7 @@
     <Compile Include="AvatarJobTests.fs" />
     <Compile Include="AvatarMetricTests.fs" />
     <Compile Include="CommodityTests.fs" />
+    <Compile Include="GameTests.fs" />
     <Compile Include="IslandTests.fs" />
     <Compile Include="IslandFeatureTests.fs" />
     <Compile Include="IslandItemTests.fs" />

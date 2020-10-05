@@ -219,6 +219,18 @@ module CommandSource=
             |> Command.Chart 
             |> Some
 
+        | ["save"] ->
+            None
+            |> Command.Save
+            |> Some
+
+        | "save" :: tail ->
+            String.Join(" ", tail) 
+            |> Some
+            |> Command.Save
+            |> Some
+
+
         | "careen" :: tail ->
             tail
             |> ParseCareen 

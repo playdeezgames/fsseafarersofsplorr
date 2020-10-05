@@ -375,3 +375,24 @@ let ``Parse.It returns GoTo DarkAlley command when given ["enter";"the";"dark";"
         [ "enter";"the";"dark";"alley" ]
         |> CommandSource.Parse
     Assert.AreEqual(IslandFeatureIdentifier.DarkAlley |> Command.GoTo |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Save None command when given ["save"]`` () =
+    let actual =
+        [ "save" ]
+        |> CommandSource.Parse
+    Assert.AreEqual(None |> Command.Save |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Save "foo" command when given ["save"; "foo"]`` () =
+    let actual =
+        [ "save"; "foo"]
+        |> CommandSource.Parse
+    Assert.AreEqual("foo" |> Some |> Command.Save |> Some, actual)
+
+[<Test>]
+let ``Parse.It returns Save "foo bar" command when given ["save"; "foo"; "bar"]`` () =
+    let actual =
+        [ "save"; "foo"; "bar"]
+        |> CommandSource.Parse
+    Assert.AreEqual("foo bar" |> Some |> Command.Save |> Some, actual)

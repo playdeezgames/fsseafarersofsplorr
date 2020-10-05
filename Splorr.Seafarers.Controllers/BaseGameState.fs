@@ -2,6 +2,7 @@
 
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Persistence
+open System
 
 module BaseGameState =
     let internal HandleCommand
@@ -10,6 +11,15 @@ module BaseGameState =
             (avatarId : string) 
             : Gamestate option =
         match command with
+        | Some (Command.Save filename) ->
+            World.Save 
+                context 
+                (filename |> Option.defaultValue (Guid.NewGuid().ToString())) 
+                avatarId
+            avatarId
+            |> Gamestate.InPlay
+            |> Some
+
         | Some (Command.Islands page) ->
             (page, avatarId |> Gamestate.InPlay)
             |> Gamestate.IslandList

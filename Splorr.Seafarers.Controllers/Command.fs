@@ -38,6 +38,7 @@ type Command =
     | Quit
     | Resume
     | Rules
+    | Save of string option
     | Sell of TradeQuantity * string
     | Set of SetCommand
     | Start of string

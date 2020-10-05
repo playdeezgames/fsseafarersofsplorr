@@ -301,6 +301,11 @@ let main argv =
         AvatarGamblingHand.SetForAvatar connection avatarId
         >> Persister.unpackOrThrow
 
+    let gameDataSink (filename:string) : string option =
+        match Game.Export connection filename with
+        | Ok x -> Some x
+        | _ -> None
+
     let context : ServiceContext =
         SplorrContext
             (avatarGamblingHandSink,
@@ -322,6 +327,7 @@ let main argv =
             avatarSingleMetricSource,
             commoditySource,
             (fun () -> DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64),
+            gameDataSink,
             islandFeatureGeneratorSource,
             islandFeatureSource,
             islandItemSink ,

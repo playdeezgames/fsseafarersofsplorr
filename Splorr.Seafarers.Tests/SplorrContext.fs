@@ -27,6 +27,7 @@ let splorrContext : ServiceContext =
         Fixtures.Stub.AvatarSingleMetricSource,
         Fixtures.Stub.CommoditySource,
         (fun () -> DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64),
+        Fixtures.Stub.GameDataSink,
         Fixtures.Stub.IslandFeatureGeneratorSource,
         Fixtures.Stub.IslandFeatureSource,
         Fixtures.Stub.IslandItemSink ,
@@ -171,7 +172,7 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> AvatarIslandMetric.PutContext
     let context = splorrContext :?> Shipmate.GetStatisticTemplatesContext
     let context = splorrContext :?> Utility.TermGeneratorContext
-    //let context = splorrContext :?> 
+    let context = splorrContext :?> World.SaveContext
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     Assert.Pass("If it makes it this far, it works!")

@@ -24,6 +24,7 @@ type SplorrContext
         avatarSingleMetricSource: AvatarSingleMetricSource ,
         commoditySource: CommoditySource ,
         epochSecondsSource: EpochSecondsSource,
+        gameDataSink : GameDataSink,
         islandFeatureGeneratorSource: IslandFeatureGeneratorSource ,
         islandFeatureSource: IslandFeatureSource,
         islandItemSink: IslandItemSink ,
@@ -62,6 +63,8 @@ type SplorrContext
         vesselStatisticSink: VesselStatisticSink ,
         vesselStatisticTemplateSource: VesselStatisticTemplateSource ,
         worldSingleStatisticSource : WorldSingleStatisticSource) =
+    interface World.SaveContext with
+        member this.gameDataSink: GameDataSink = gameDataSink
     interface Utility.TermGeneratorContext with
         member this.termListSource: TermListSource = termListSource
     interface AvatarIslandMetric.GetContext with

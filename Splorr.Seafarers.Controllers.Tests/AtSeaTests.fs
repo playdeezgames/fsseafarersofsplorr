@@ -14,6 +14,7 @@ let private functionUnderTest
         (avatarJobSource                : AvatarJobSource)
         (avatarMessageSink              : AvatarMessageSink)
         (avatarSingleMetricSink         : AvatarSingleMetricSink)
+        (gameDataSink                   : GameDataSink)
         (islandLocationByNameSource     : IslandLocationByNameSource)
         (islandSingleNameSource         : IslandSingleNameSource)
         (islandSingleStatisticSource    : IslandSingleStatisticSource)
@@ -37,6 +38,7 @@ let private functionUnderTest
             avatarSingleMetricSourceStub,
             atSeaCommoditySource ,
             (fun () -> System.DateTimeOffset.Now.ToUnixTimeSeconds() |> uint64),
+            gameDataSink,
             atSeaIslandItemSink ,
             atSeaIslandItemSource, 
             islandJobSinkStub,
@@ -59,6 +61,7 @@ let private functionUnderTest
         context
 
 let private functionUsuallyUnderTest
+        (gameDataSink:GameDataSink)
         (islandSingleNameSource: IslandSingleNameSource)= 
     functionUnderTest 
         avatarIslandFeatureSinkDummy
@@ -67,6 +70,7 @@ let private functionUsuallyUnderTest
         avatarJobSourceStub
         avatarJobSinkStub
         avatarSingleMetricSinkExplode
+        gameDataSink
         islandLocationByNameSourceStub
         islandSingleNameSource
         islandSingleStatisticSourceStub
@@ -99,6 +103,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
             avatarJobSourceStub
             avatarMessageSinkStub 
             avatarSingleMetricSinkExplode
+            gameDataSinkFake
             islandLocationByNameSourceStub
             islandSingleNameSourceStub
             islandSingleStatisticSourceStub
@@ -124,6 +129,7 @@ let ``Run.It returns ConfirmQuit when given Quit command.`` () =
     let actual = 
         input
         |> functionUsuallyUnderTest
+            gameDataSinkFake
             islandSingleNameSource
             inputSource 
             sinkDummy
@@ -144,6 +150,7 @@ let ``Run.It returns InvalidInput when given invalid command.`` () =
     let actual =
         input
         |> functionUsuallyUnderTest
+            gameDataSinkFake
             islandSingleNameSource
             inputSource 
             sinkDummy
@@ -174,6 +181,7 @@ let ``Run.It returns AtSea with new speed when given Set Speed command.`` () =
             avatarJobSourceStub
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
+            gameDataSinkFake
             islandLocationByNameSourceStub
             islandSingleNameSource
             islandSingleStatisticSourceStub
@@ -211,6 +219,7 @@ let ``Run.It returns AtSea with new heading when given Set Heading command.`` ()
             avatarJobSourceStub
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
+            gameDataSinkFake
             islandLocationByNameSourceStub
             islandSingleNameSource
             islandSingleStatisticSourceStub
@@ -249,6 +258,7 @@ let ``Run.It moves the avatar when given Move command.`` () =
             avatarJobSourceStub
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSink
+            gameDataSinkFake
             islandLocationByNameSourceStub
             islandSingleNameSource
             islandSingleStatisticSourceStub
@@ -274,6 +284,7 @@ let ``Run.It returns At Sea Help when given the Help command.`` () =
     let actual =
         input
         |> functionUsuallyUnderTest 
+            gameDataSinkFake
             islandSingleNameSource
             inputSource 
             sinkDummy
@@ -295,6 +306,7 @@ let ``Run.It returns At Sea Metrics when given the Metrics command.`` () =
     let actual =
         input
         |> functionUsuallyUnderTest 
+            gameDataSinkFake
             islandSingleNameSource
             inputSource 
             sinkDummy
@@ -316,6 +328,7 @@ let ``Run.It returns At Sea Inventory when given the Inventory command.`` () =
     let actual =
         input
         |> functionUsuallyUnderTest 
+            gameDataSinkFake
             islandSingleNameSource
             inputSource 
             sinkDummy
@@ -337,6 +350,7 @@ let ``Run.It returns Main Menu when given the Menu command.`` () =
     let actual =
         input
         |> functionUsuallyUnderTest 
+            gameDataSinkFake
             islandSingleNameSource
             inputSource 
             sinkDummy
@@ -358,6 +372,7 @@ let ``Run.It returns Island List when given the Islands command.`` () =
     let actual =
         input
         |> functionUsuallyUnderTest 
+            gameDataSinkFake
             islandSingleNameSource
             inputSource 
             sinkDummy
@@ -392,6 +407,7 @@ let ``Run.It returns AtSea when given the Dock command and there is no sufficien
             avatarJobSourceStub
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
+            gameDataSinkFake
             islandLocationByNameSourceStub
             islandSingleNameSourceStub
             islandSingleStatisticSourceStub
@@ -430,6 +446,7 @@ let ``Run.It returns Docked (at Dock) when given the Dock command and there is a
             avatarJobSourceStub
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSink
+            gameDataSinkFake
             islandLocationByNameSourceStub
             islandSingleNameSource
             islandSingleStatisticSourceStub
@@ -462,6 +479,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
             avatarJobSourceStub
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
+            gameDataSinkFake
             islandLocationByNameSourceStub
             islandSingleNameSource
             islandSingleStatisticSourceStub
@@ -494,6 +512,7 @@ let ``Run.It gives a message when given a Head For command and the given island 
             avatarJobSourceStub
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
+            gameDataSinkFake
             islandLocationByNameSourceStub
             islandSingleNameSource
             islandSingleStatisticSourceStub
@@ -537,6 +556,7 @@ let ``Run.It gives a message and changes heading when given a Head For command a
             avatarJobSourceStub
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
+            gameDataSinkFake
             islandLocationByNameSource
             islandSingleNameSource
             islandSingleStatisticSourceStub
@@ -563,6 +583,7 @@ let ``Run.It returns Chart when given the command Chart.`` () =
     let actual =
         input
         |> functionUsuallyUnderTest 
+            gameDataSinkFake
             islandSingleNameSource
             inputSource 
             sinkDummy
@@ -584,6 +605,7 @@ let ``Run.It returns Status when given the command Status.`` () =
     let actual =
         input
         |> functionUsuallyUnderTest 
+            gameDataSinkFake
             islandSingleNameSource
             inputSource 
             sinkDummy
@@ -612,6 +634,7 @@ let ``Run.It gives a message when given the command Abandon Job and the avatar h
             avatarJobSourceStub
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
+            gameDataSinkFake
             islandLocationByNameSourceStub
             islandSingleNameSource
             islandSingleStatisticSourceStub
@@ -657,6 +680,7 @@ let ``Run.It gives a message and abandons the job when given the command Abandon
             avatarJobSource
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSink
+            gameDataSinkFake
             islandLocationByNameSourceStub
             islandSingleNameSource
             islandSingleStatisticSourceStub
@@ -711,6 +735,7 @@ let ``Run.It gives a message and returns AtSea when the avatar is too far away f
             avatarJobSourceStub
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
+            gameDataSinkFake
             islandLocationByNameSourceStub
             islandSingleNameSource
             islandSingleStatisticSourceStub
@@ -736,6 +761,7 @@ let ``Run.It returns Careen Port when given the careen port command and the avat
     let actual =
         input
         |> functionUsuallyUnderTest 
+            gameDataSinkFake
             islandSingleNameSource
             inputSource 
             sinkDummy
@@ -767,6 +793,7 @@ let ``Run.It adds a message when given a Distance To command with an island name
             avatarJobSourceStub
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
+            gameDataSinkFake
             islandLocationByNameSourceStub
             islandSingleNameSource
             islandSingleStatisticSourceStub
@@ -810,6 +837,7 @@ let ``Run.It adds a message when given a Distance To command with an island name
             avatarJobSourceStub
             (avatarMessagesSinkFake expectedMessages)
             avatarSingleMetricSinkExplode
+            gameDataSinkFake
             islandLocationByNameSourceStub
             islandSingleNameSource
             islandSingleStatisticSourceStub
@@ -818,3 +846,31 @@ let ``Run.It adds a message when given a Distance To command with an island name
             inputSource
             sinkDummy
     Assert.AreEqual(expected, actual)
+
+
+[<Test>]
+let ``Run.It returns InPlay when given Save command.`` () =
+    let input = world
+    let inputSource =
+        None
+        |> Command.Save  
+        |> Some 
+        |> Fixtures.Common.Mock.CommandSource
+    let expected = 
+        input
+        |> Gamestate.InPlay 
+        |> Some
+    let islandSingleNameSource (_) = "island name" |> Some
+    let mutable called = false
+    let gameDataSink (_) =
+        called <- true
+        None
+    let actual = 
+        input
+        |> functionUsuallyUnderTest
+            gameDataSink
+            islandSingleNameSource
+            inputSource 
+            sinkDummy
+    Assert.AreEqual(expected, actual)
+    Assert.True(called)

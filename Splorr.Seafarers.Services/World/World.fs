@@ -11,6 +11,7 @@ type IslandLocationByNameSource = string -> Location option
 type IslandFeatureGeneratorSource = unit -> Map<IslandFeatureIdentifier, IslandFeatureGenerator>
 type IslandSingleFeatureSink = Location -> IslandFeatureIdentifier -> unit
 type WorldSingleStatisticSource = WorldStatisticIdentifier -> Statistic
+type GameDataSink = string -> string option
 
 module World =
     type GetStatisticContext =
@@ -778,6 +779,21 @@ module World =
                 ()
         | _ ->
             ()
+
+    type SaveContext =
+        abstract member gameDataSink : GameDataSink
+    let Save
+            (context : ServiceContext)
+            (filename : string)
+            (avatarId: string)
+            : unit =
+        match (context :?> SaveContext).gameDataSink filename with
+        | Some s ->
+            AddMessages context [ s |> sprintf "Saved game to '%s'." ] avatarId
+        | _ ->
+            AddMessages context [ "Could not save game!" ] avatarId
+        
+
             
     let FoldGamblingHand
             (context  : ServiceContext)
