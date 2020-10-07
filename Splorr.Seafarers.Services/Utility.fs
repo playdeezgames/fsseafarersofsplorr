@@ -1,10 +1,15 @@
 ﻿namespace Splorr.Seafarers.Services
 
 open System
+open Splorr.Seafarers.DataStore
 
 type ServiceContext =
     interface
     end
+
+type RepositoryContext<'TInterface> =
+    inherit ServiceContext
+    abstract member Repository : 'TInterface
 
 type TermListSource = string -> string list
 

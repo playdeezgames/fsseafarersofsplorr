@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <Compile Include="Utility.fs" />
+    <Compile Include="Repository.fs" />
     <Compile Include="AvatarGamblingHand.fs" />
     <Compile Include="AvatarInventory.fs" />
     <Compile Include="AvatarIslandFeature.fs" />

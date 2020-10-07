@@ -5,6 +5,7 @@ open Splorr.Seafarers
 open System
 open Splorr.Seafarers.Controllers
 open NUnit.Framework
+open Splorr.Seafarers.Persistence
 
 let splorrContext : ServiceContext =
     SplorrContext
@@ -173,6 +174,8 @@ let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrConte
     let context = splorrContext :?> Shipmate.GetStatisticTemplatesContext
     let context = splorrContext :?> Utility.TermGeneratorContext
     let context = splorrContext :?> World.SaveContext
+    let context = splorrContext :?> RepositoryContext<Splorr.Seafarers.DataStore.Message.IRepository>
+
     //let context = splorrContext :?> 
     //let context = splorrContext :?> 
     Assert.Pass("If it makes it this far, it works!")

@@ -5,9 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="StoreRequest.fs" />
-    <Compile Include="StoreResponse.fs" />
     <Compile Include="Repository.fs" />
+    <Compile Include="Message.fs" />
   </ItemGroup>
 
 </Project>

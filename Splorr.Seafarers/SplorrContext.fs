@@ -3,6 +3,7 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Controllers
 open System
 open Splorr.Seafarers.Models
+open Splorr.Seafarers.Persistence
 
 type SplorrContext 
         (avatarGamblingHandSink: AvatarGamblingHandSink,
@@ -63,6 +64,8 @@ type SplorrContext
         vesselStatisticSink: VesselStatisticSink ,
         vesselStatisticTemplateSource: VesselStatisticTemplateSource ,
         worldSingleStatisticSource : WorldSingleStatisticSource) =
+    interface RepositoryContext<DataStore.Message.IRepository> with
+        member this.Repository: DataStore.Message.IRepository = Persistence.Message.CreateRepository()
     interface World.SaveContext with
         member this.gameDataSink: GameDataSink = gameDataSink
     interface Utility.TermGeneratorContext with
