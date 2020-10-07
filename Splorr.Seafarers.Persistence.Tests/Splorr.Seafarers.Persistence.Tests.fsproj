@@ -36,6 +36,7 @@
     <Compile Include="IslandStatisticTests.fs" />
     <Compile Include="ItemTests.fs" />
     <Compile Include="MessageTests.fs" />
+    <Compile Include="MessageLegacyTests.fs" />
     <Compile Include="RationItemTests.fs" />
     <Compile Include="ShipmateRationItemTests.fs" />
     <Compile Include="ShipmateStatisticTemplateTests.fs" />

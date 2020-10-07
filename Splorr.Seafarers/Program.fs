@@ -104,17 +104,17 @@ let main argv =
         |> Persister.unpackOrThrow
 
     let avatarMessageSource =
-        Message.GetForAvatar connection
+        MessageLegacy.GetForAvatar connection
         >> Persister.unpackOrThrow
 
     let avatarMessageSink
             (avatarId:string) 
             (message:string )=
-        Message.AddForAvatar connection (avatarId, message)
+        MessageLegacy.AddForAvatar connection (avatarId, message)
         |> Persister.unpackOrThrow
 
     let avatarMessagePurger=
-        Message.ClearForAvatar connection
+        MessageLegacy.ClearForAvatar connection
         >> Persister.unpackOrThrow
 
     let shipmateIdentifierToString =

@@ -23,6 +23,7 @@
     <Compile Include="IslandStatisticTemplate.fs" />
     <Compile Include="Item.fs" />
     <Compile Include="Message.fs" />
+    <Compile Include="MessageLegacy.fs" />
     <Compile Include="ShipmateRationItem.fs" />
     <Compile Include="ShipmateStatistic.fs" />
     <Compile Include="ShipmateStatisticTemplate.fs" />
@@ -34,6 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Splorr.DataStore\Splorr.DataStore.fsproj" />
     <ProjectReference Include="..\Splorr.Seafarers.Models\Splorr.Seafarers.Models.fsproj" />
     <ProjectReference Include="..\Tarot\Tarot.fsproj" />
   </ItemGroup>
