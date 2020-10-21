@@ -32,7 +32,7 @@ module AvatarGamblingHand =
         | Minor (Wands, rank) ->
             (rank |> int)
         
-    let GetForAvatar
+    let internal GetForAvatar
             (connection : SQLiteConnection) 
             (avatarId   : string) 
             : Result<(Card * Card * Card) option, string> =
@@ -54,7 +54,7 @@ module AvatarGamblingHand =
         | ex ->
             ex.ToString() |> Error
             
-    let SetForAvatar
+    let internal SetForAvatar
             (connection : SQLiteConnection)
             (avatarId : string)
             (hand: (Card*Card*Card) option)

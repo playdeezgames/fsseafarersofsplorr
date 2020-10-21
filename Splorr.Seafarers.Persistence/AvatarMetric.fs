@@ -9,7 +9,7 @@ module AvatarMetric =
             : Metric * uint64 =
         (reader.GetInt32(0) |> enum<Metric>, reader.GetInt64(1) |> uint64)
 
-    let GetForAvatar 
+    let internal GetForAvatar 
             (connection : SQLiteConnection) 
             (avatarId   : string)
             : Result<Map<Metric, uint64>, string> =
@@ -22,7 +22,7 @@ module AvatarMetric =
         |> Result.map
             Map.ofList
 
-    let SetMetricForAvatar
+    let internal SetMetricForAvatar
             (connection : SQLiteConnection)
             (avatarId   : string)
             (metric     : Metric,
@@ -46,7 +46,7 @@ module AvatarMetric =
         | ex ->
             ex.ToString() |> Error
 
-    let GetMetricForAvatar
+    let internal GetMetricForAvatar
             (connection : SQLiteConnection)
             (avatarId: string)
             (metric: Metric)

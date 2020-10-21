@@ -3,10 +3,11 @@
 open System
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
+open Splorr.Common
 
 module DarkAlley = 
     let private RunNoGamblingHand 
-            (context: ServiceContext)
+            (context: CommonContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (location: Location)
@@ -17,7 +18,7 @@ module DarkAlley =
             |> World.AddMessages
                 context
                 [ "Come back when you've got more money!" ]
-            AvatarIslandFeature.Enter 
+            World.EnterAvatarIslandFeature
                 context 
                 avatarId 
                 location 
@@ -28,7 +29,7 @@ module DarkAlley =
         else
             "" |> Line |> messageSink
             avatarId
-            |> AvatarMessages.Get context
+            |> World.GetAvatarMessages context
             |> Utility.DumpMessages messageSink
             [
                 (Hue.Heading, "You are in the dark alley." |> Line) |> Hued
@@ -43,7 +44,7 @@ module DarkAlley =
                 |> Some
 
             | _, Some Command.Leave ->
-                AvatarIslandFeature.Enter 
+                World.EnterAvatarIslandFeature
                     context 
                     avatarId 
                     location
@@ -53,7 +54,7 @@ module DarkAlley =
                 |> Some
             | _, Some Command.Gamble ->
                 avatarId
-                |> AvatarGamblingHand.Deal
+                |> World.DealAvatarGamblingHand
                     context 
                 avatarId
                 |> Gamestate.InPlay
@@ -62,13 +63,13 @@ module DarkAlley =
                 BaseGameState.HandleCommand context None avatarId
 
     let internal Run
-            (context       : ServiceContext)
+            (context       : CommonContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (location      : Location)
             (avatarId      : string)
             : Gamestate option =
-        match AvatarGamblingHand.Get context avatarId with
+        match World.GetAvatarGamblingHand context avatarId with
         | Some hand ->
             DarkAlleyGamblingHand.Run
                 context

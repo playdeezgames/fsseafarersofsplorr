@@ -2,10 +2,11 @@
 
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
+open Splorr.Common
 
 module Jobs = 
     let private RunIsland 
-            (context:ServiceContext)
+            (context:CommonContext)
             (messageSink            : MessageSink) 
             (location               : Location) 
             : unit =
@@ -16,7 +17,7 @@ module Jobs =
         |> List.iter messageSink
         let jobs = 
             location
-            |> IslandJob.Get context
+            |> World.GetIslandJobs context
         jobs
         |> List.zip [1..jobs.Length]
         |> List.iter 
@@ -29,7 +30,7 @@ module Jobs =
                     Location.DistanceTo location job.Destination
                 [
                     (Hue.Label, index |> sprintf "%d. " |> Text) |> Hued
-                    (Hue.Value, job.Destination |> IslandName.GetName context |> Option.get |> sprintf "%s " |> Text) |> Hued
+                    (Hue.Value, job.Destination |> World.GetIslandName context |> Option.get |> sprintf "%s " |> Text) |> Hued
                     (Hue.Sublabel, "Bearing: " |> Text) |> Hued
                     (Hue.Value, bearing |> sprintf "%s " |> Text) |> Hued
                     (Hue.Sublabel, "Distance: " |> Text) |> Hued
@@ -43,13 +44,13 @@ module Jobs =
             "(none available)" |> Line |> messageSink
     
     let Run  
-            (context : ServiceContext)
+            (context : CommonContext)
             (messageSink            : MessageSink) 
             (location               : Location)
             (avatarId               : string) 
             : Gamestate option =
         context
-        |> Island.GetList
+        |> World.GetIslandList
         |> List.tryFind(fun x->x= location)
         |> Option.iter 
             (RunIsland 

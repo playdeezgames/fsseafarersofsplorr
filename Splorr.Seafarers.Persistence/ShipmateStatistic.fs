@@ -4,7 +4,6 @@ open System.Data.SQLite
 open Splorr.Seafarers.Models
 
 module ShipmateStatistic = 
-    //SELECT DISTINCT [ShipmateId] FROM [ShipmateStatistics] WHERE [AvatarId]=$avatarid;
     let private statisticConvertor 
             (reader : SQLiteDataReader) 
             : ShipmateStatisticIdentifier * Statistic =
@@ -15,7 +14,7 @@ module ShipmateStatistic =
                 CurrentValue = reader.GetDouble(3)
             })
 
-    let GetShipmatesForAvatar 
+    let internal GetShipmatesForAvatar 
             (connection : SQLiteConnection) 
             (avatarId   : string) 
             : Result<string list, string> =
@@ -25,7 +24,7 @@ module ShipmateStatistic =
             (fun command->command.Parameters.AddWithValue("$avatarId",avatarId) |> ignore) 
             (fun reader -> reader.GetString(0))
 
-    let GetStatisticForShipmate
+    let internal GetStatisticForShipmate
             (connection : SQLiteConnection) 
             (avatarId   : string) 
             (shipmateId : string)
@@ -44,7 +43,7 @@ module ShipmateStatistic =
                 |> List.map snd
                 |> List.tryHead)
 
-    let SetStatisticForShipmate
+    let internal SetStatisticForShipmate
             (connection: SQLiteConnection) 
             (avatarId: string)
             (shipmateId: string)

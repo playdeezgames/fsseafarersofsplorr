@@ -8,7 +8,7 @@ module AvatarInventory =
             : uint64 * uint64 =
         (reader.GetInt64(0) |> uint64, reader.GetInt64(1) |> uint64)        
 
-    let GetForAvatar 
+    let internal GetForAvatar 
             (connection : SQLiteConnection) 
             (avatarId   : string) 
             : Result<Map<uint64, uint64>, string> =
@@ -21,7 +21,7 @@ module AvatarInventory =
         |> Result.map
             (Map.ofList)
 
-    let SetForAvatar
+    let internal SetForAvatar
             (connection:SQLiteConnection)
             (avatarId:string)
             (inventory:Map<uint64, uint64>)

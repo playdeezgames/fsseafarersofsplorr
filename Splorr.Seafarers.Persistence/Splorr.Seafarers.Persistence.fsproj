@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <Compile Include="Utility.fs" />
-    <Compile Include="Repository.fs" />
     <Compile Include="AvatarGamblingHand.fs" />
     <Compile Include="AvatarInventory.fs" />
     <Compile Include="AvatarIslandFeature.fs" />
@@ -23,7 +22,6 @@
     <Compile Include="IslandStatistic.fs" />
     <Compile Include="IslandStatisticTemplate.fs" />
     <Compile Include="Item.fs" />
-    <Compile Include="Message.fs" />
     <Compile Include="MessageLegacy.fs" />
     <Compile Include="ShipmateRationItem.fs" />
     <Compile Include="ShipmateStatistic.fs" />

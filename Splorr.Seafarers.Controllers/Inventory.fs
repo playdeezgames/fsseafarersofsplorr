@@ -2,10 +2,11 @@
 
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
+open Splorr.Common
 
 module Inventory =
     let private RunWorld
-            (context : ServiceContext)
+            (context : CommonContext)
             (messageSink                 : MessageSink) 
             (avatarId                    : string) 
             : unit =
@@ -19,10 +20,10 @@ module Inventory =
             (Hue.Label, "---------------------+--------+---------" |> Line ) |> Hued
         ]
         |> List.iter messageSink
-        let items = Item.GetList context
+        let items = World.GetItemList context
         let inventoryEmpty =
             avatarId
-            |> AvatarInventory.GetInventory context
+            |> World.GetAvatarInventory context
             |> Map.fold
                 (fun _ item quantity -> 
                     let descriptor = items.[item]
@@ -40,12 +41,12 @@ module Inventory =
             (Hue.Usage, "(none)"  |> Line) |> Hued
             |> messageSink
         let availableTonnage = 
-            Vessel.GetStatistic context avatarId VesselStatisticIdentifier.Tonnage
+            World.GetVesselStatistic context avatarId VesselStatisticIdentifier.Tonnage
             |> Option.map Statistic.GetCurrentValue
             |> Option.get
         let usedTonnage = 
             avatarId 
-            |> AvatarInventory.GetUsedTonnage 
+            |> World.GetVesselUsedTonnage 
                 context
                 items
         [
@@ -57,7 +58,7 @@ module Inventory =
         |> List.iter messageSink
 
     let Run
-            (context : ServiceContext)
+            (context : CommonContext)
             (messageSink                 : MessageSink) 
             (gamestate                   : Gamestate) 
             : Gamestate option =

@@ -2,52 +2,45 @@
 
 open System
 open Splorr.Seafarers.DataStore
+open Splorr.Common
 
-type ServiceContext =
-    interface
-    end
-
-type RepositoryContext<'TInterface> =
-    inherit ServiceContext
-    abstract member Repository : 'TInterface
-
-type TermListSource = string -> string list
 
 module Utility =
+    type TermListSource = string -> string list
+    type TermSource = unit -> string list
+    
     type RandomContext =
-        inherit ServiceContext
-        abstract member random : Random
-
-    let RangeGenerator
-            (context : ServiceContext)
+        abstract member random : Random ref
+    let internal GenerateFromRange
+            (context : CommonContext)
             (minimum : float, maximum: float)
             : float =
-        (context :?> RandomContext).random.NextDouble() * (maximum-minimum) + minimum
+        (context :?> RandomContext).random.Value.NextDouble() * (maximum-minimum) + minimum
 
-    let SortListRandomly 
-            (context : ServiceContext) =
+    let internal SortListRandomly 
+            (context : CommonContext) =
         let context = context :?> RandomContext
-        List.sortBy (fun _ -> context.random.Next())
+        List.sortBy (fun _ -> context.random.Value.Next())
 
-    let PickRandomly
-            (context : ServiceContext) =
+    let internal PickFromListRandomly
+            (context : CommonContext) =
         SortListRandomly context >> List.head
 
-    let SupplyDemandGenerator 
-            (context : ServiceContext)
+    let internal GenerateSupplyOrDemand 
+            (context : CommonContext)
             : float =
-        let random = (context :?> RandomContext).random
+        let random = (context :?> RandomContext).random.Value
         (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + 3.0
 
-    let WeightedGenerator
-            (context : ServiceContext) 
+    let internal GenerateFromWeightedValues
+            (context : CommonContext) 
             (candidates : Map<'T, float>)
             : 'T option=
         let totalWeight =
             candidates
             |> Map.fold 
                 (fun accumulator _ weight -> accumulator + weight) 0.0
-        let generated = (context :?> RandomContext).random.NextDouble() * totalWeight
+        let generated = (context :?> RandomContext).random.Value.NextDouble() * totalWeight
         candidates
         |> Map.fold
             (fun (result, weightLeft) item weight -> 
@@ -62,12 +55,20 @@ module Utility =
                         (result, weightLeft)) (None, generated)
         |> fst
 
+    type GetTermsContext =
+        abstract member termListSource : TermListSource ref
+    let internal GetTermList
+            (context : CommonContext)
+            (termType : string)
+            : string list =
+        (context :?> GetTermsContext).termListSource.Value termType
+
     type TermGeneratorContext =
-        inherit ServiceContext
         abstract member termListSource : TermListSource
-    let TermGenerator
-            (context : ServiceContext)
+    let internal GenerateFromTermList
+            (context : CommonContext)
             (termType: string)
             : string =
-        (context :?> TermGeneratorContext).termListSource termType
-        |> PickRandomly context
+        termType
+        |> GetTermList context
+        |> PickFromListRandomly context

@@ -3,7 +3,7 @@
 open System.Data.SQLite
 
 module Term =
-    let GetForTermType 
+    let internal GetForTermType 
             (connection:SQLiteConnection) 
             (termType:string) 
             : Result<string list, string> =

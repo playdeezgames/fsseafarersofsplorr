@@ -1,18 +1,24 @@
 ﻿namespace Splorr.Seafarers.Services
 open System
 open Splorr.Seafarers.Models
-
-type AvatarJobSink = string -> Job option -> unit
+open Splorr.Common
 
 module Avatar =
-    type CreateContext =
-        inherit ServiceContext
-        abstract member avatarJobSink : AvatarJobSink
-    let Create 
-            (context  : ServiceContext)
+    type AvatarJobSink = string * Job option -> unit
+
+    type SetJobContext =
+        abstract member avatarJobSink : AvatarJobSink ref
+    let internal SetJob
+            (context : CommonContext)
+            (avatarId : string)
+            (job : Job option)
+            : unit =
+        (context :?> SetJobContext).avatarJobSink.Value (avatarId, job)
+
+    let internal Create 
+            (context  : CommonContext)
             (avatarId : string)
             : unit =
-        let context = context :?> CreateContext
         Vessel.Create 
             context
             avatarId
@@ -20,10 +26,10 @@ module Avatar =
             context
             avatarId 
             Primary
-        context.avatarJobSink avatarId None
+        SetJob context avatarId None
     
     let internal IncrementMetric 
-            (context  : ServiceContext)
+            (context  : CommonContext)
             (metric   : Metric) 
             (avatarId : string) 
             : unit =
@@ -34,18 +40,12 @@ module Avatar =
             metric 
             rateOfIncrement
 
-    type EatContext =
-        inherit ServiceContext
-        abstract member avatarInventorySink           : AvatarInventorySink
-        abstract member avatarInventorySource         : AvatarInventorySource
-        abstract member avatarShipmateSource          : AvatarShipmateSource
     let private Eat
-            (context : ServiceContext)
+            (context : CommonContext)
             (avatarId                      : string)
             : unit =
-        let context = context :?> EatContext
         let inventory, eaten, starved =
-            ((context.avatarInventorySource avatarId, 0UL, 0UL), context.avatarShipmateSource avatarId)
+            ((AvatarInventory.GetInventory context avatarId, 0UL, 0UL), AvatarShipmates.GetShipmates context avatarId)
             ||> List.fold 
                 (fun (inventory,eatMetric, starveMetric) identifier -> 
                     let updateInventory, ate, starved =
@@ -58,7 +58,7 @@ module Avatar =
                         (if ate then eatMetric+1UL else eatMetric), 
                             (if starved then starveMetric+1UL else starveMetric))) 
         inventory
-        |> context.avatarInventorySink avatarId
+        |> AvatarInventory.SetInventory context avatarId
         if eaten > 0UL then
             avatarId
             |> AvatarMetric.Add 
@@ -72,20 +72,15 @@ module Avatar =
                 Metric.Starved 
                 starved
 
-
-    type MoveContext =
-        inherit ServiceContext
-        abstract member vesselSingleStatisticSource   : VesselSingleStatisticSource
-    let Move
-            (context  : ServiceContext)
+    let internal Move
+            (context  : CommonContext)
             (avatarId : string)
             : unit =
-        let context = context :?> MoveContext
         let actualSpeed = 
             avatarId 
             |> Vessel.GetEffectiveSpeed context
         let actualHeading = 
-            context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Heading 
+            Vessel.GetStatistic context avatarId VesselStatisticIdentifier.Heading 
             |> Option.map Statistic.GetCurrentValue 
             |> Option.get
         Vessel.Befoul 
@@ -117,15 +112,11 @@ module Avatar =
         |> Eat 
             context
 
-    type CleanHullContext =
-        inherit ServiceContext
-        abstract member avatarShipmateSource          : AvatarShipmateSource
-    let CleanHull 
-            (context : ServiceContext)
+    let internal CleanHull 
+            (context : CommonContext)
             (side : Side) 
             (avatarId : string)
             : unit =
-        let context = context :?> CleanHullContext
         Vessel.TransformFouling 
             context
             avatarId 

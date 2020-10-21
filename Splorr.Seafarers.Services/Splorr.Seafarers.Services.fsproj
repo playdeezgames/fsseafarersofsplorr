@@ -31,10 +31,21 @@
     <Compile Include="Avatar/Avatar.fs" />
     <Compile Include="Avatar/GamblingHand.fs" />
     <Compile Include="Avatar/Job.fs" />
+    <Compile Include="World\WorldStatistic.fs" />
+    <Compile Include="World\WorldCreation.fs" />
+    <Compile Include="World\WorldMessages.fs" />
+    <Compile Include="World\WorldShipmate.fs" />
+    <Compile Include="World\WorldVessel.fs" />
+    <Compile Include="World\WorldIslands.fs" />
+    <Compile Include="World\WorldIslandTrading.fs" />
+    <Compile Include="World\WorldIslandGambling.fs" />
+    <Compile Include="World\WorldExport.fs" />
     <Compile Include="World/World.fs" />
+    <Compile Include="ServiceContext.fs" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Splorr.Common\Splorr.Common.fsproj" />
     <ProjectReference Include="..\Splorr.DataStore\Splorr.DataStore.fsproj" />
     <ProjectReference Include="..\Splorr.Seafarers.Models\Splorr.Seafarers.Models.fsproj" />
   </ItemGroup>

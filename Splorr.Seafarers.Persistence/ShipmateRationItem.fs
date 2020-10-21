@@ -3,7 +3,7 @@
 open System.Data.SQLite
 
 module ShipmateRationItem =
-    let GetForShipmate
+    let internal GetForShipmate
             (connection : SQLiteConnection) 
             (avatarId   : string)
             (shipmateId : string)
@@ -31,7 +31,7 @@ module ShipmateRationItem =
         command.ExecuteNonQuery() |> ignore
         ()
 
-    let SetForShipmate
+    let internal SetForShipmate
             (connection  : SQLiteConnection)
             (avatarId    : string)
             (shipmateId  : string)

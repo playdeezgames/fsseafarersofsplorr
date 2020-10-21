@@ -3,10 +3,11 @@
 open System
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
+open Splorr.Common
 
 module DarkAlleyGamblingHand =
     let internal Run
-            (context       : ServiceContext)
+            (context       : CommonContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (location      : Location)
@@ -15,7 +16,7 @@ module DarkAlleyGamblingHand =
             : Gamestate option =
         "" |> Line |> messageSink
         avatarId
-        |> AvatarMessages.Get context
+        |> World.GetAvatarMessages context
         |> Utility.DumpMessages messageSink
 
         avatarId

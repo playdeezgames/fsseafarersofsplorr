@@ -1,34 +1,37 @@
 ﻿namespace Splorr.Seafarers.Services
 open System
 open Splorr.Seafarers.Models
-
-type AvatarIslandFeatureSink = AvatarIslandFeature option * string -> unit
-type AvatarIslandFeatureSource = string -> AvatarIslandFeature option
+open Splorr.Common
 
 module AvatarIslandFeature =
-    type EnterContext =
-        inherit ServiceContext
-        abstract member avatarIslandFeatureSink : AvatarIslandFeatureSink
-        abstract member islandSingleFeatureSource : IslandSingleFeatureSource
-    let Enter
-            (context  : ServiceContext)
+    
+    
+    type AvatarIslandFeatureSink = AvatarIslandFeature option * string -> unit
+    type SetFeatureContext =
+        abstract member avatarIslandFeatureSink : AvatarIslandFeatureSink ref
+    let internal SetFeature
+            (context : CommonContext)
+            (feature : AvatarIslandFeature option, avatarId : string)
+            : unit =
+        (context :?> SetFeatureContext).avatarIslandFeatureSink.Value (feature, avatarId)
+
+    let internal Enter
+            (context  : CommonContext)
             (avatarId : string)
             (location : Location)
             (feature  : IslandFeatureIdentifier)
             : unit =
-        let context = context :?> EnterContext
-        if context.islandSingleFeatureSource location feature then
-            context.avatarIslandFeatureSink 
+        if Island.HasFeature context feature location then
+            SetFeature context 
                 ({featureId = feature; location = location} |> Some, 
                     avatarId)
 
-    type GetContext =
-        inherit ServiceContext
-        abstract member avatarIslandFeatureSource : AvatarIslandFeatureSource
-    let Get
-            (context : ServiceContext)
+    type AvatarIslandFeatureSource = string -> AvatarIslandFeature option
+    type GetFeatureContext =
+        abstract member avatarIslandFeatureSource : AvatarIslandFeatureSource ref
+    let internal Get
+            (context : CommonContext)
             (avatarId: string)
             : AvatarIslandFeature option =
-        let context = context :?> GetContext
-        context.avatarIslandFeatureSource avatarId
+        (context :?> GetFeatureContext).avatarIslandFeatureSource.Value avatarId
 

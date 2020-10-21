@@ -3,10 +3,11 @@
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Persistence
 open System
+open Splorr.Common
 
 module BaseGameState =
     let internal HandleCommand
-            (context  : ServiceContext)
+            (context  : CommonContext)
             (command  : Command option) 
             (avatarId : string) 
             : Gamestate option =

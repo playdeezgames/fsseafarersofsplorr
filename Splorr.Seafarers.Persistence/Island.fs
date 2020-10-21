@@ -9,14 +9,14 @@ module Island =
             : Location =
         (reader.GetDouble(0), reader.GetDouble(1))
 
-    let GetList
+    let internal GetList
             (connection : SQLiteConnection)
             : Result<Location list, string> =
         connection
         |> Utility.GetList 
             "SELECT [IslandX], [IslandY] FROM [IslandList];" (fun _->()) convertor
 
-    let GetName
+    let internal GetName
             (connection : SQLiteConnection)
             (location   : Location)
             : Result<string option, string> =
@@ -36,7 +36,7 @@ module Island =
             ex.ToString()
             |> Error
 
-    let GetByName
+    let internal GetByName
             (connection : SQLiteConnection)
             (name       : string)
             : Result<Location option, string> =
@@ -55,7 +55,7 @@ module Island =
             ex.ToString()
             |> Error
 
-    let SetName
+    let internal SetName
             (connection : SQLiteConnection)
             (location   : Location)
             (name       : string option)

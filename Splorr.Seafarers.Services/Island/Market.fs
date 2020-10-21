@@ -1,18 +1,23 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
+open Splorr.Common
 
-type RationItemSource = unit -> uint64 list
-
-type IslandMarketSource  = Location -> Map<uint64, Market>
-
-type private UnitPriceDeterminer = CommodityDescriptor * Market -> float
 
 module IslandMarket =
+    type RationItemSource = unit -> uint64 list
+    type IslandMarketSource  = Location -> Map<uint64, Market>
+    type private UnitPriceDeterminer = CommodityDescriptor * Market -> float
+    
     type DeterminePriceContext =
-        inherit ServiceContext
-        abstract member islandMarketSource : IslandMarketSource
+        abstract member islandMarketSource : IslandMarketSource ref
+    let private GetMarket
+            (context : CommonContext)
+            (location : Location)
+            : Map<uint64, Market> =
+        (context :?> DeterminePriceContext).islandMarketSource.Value location
+
     let private DeterminePrice 
-            (context             : ServiceContext)
+            (context             : CommonContext)
             (unitPriceDeterminer : UnitPriceDeterminer)
             (itemIndex           : uint64) 
             (location            : Location)
@@ -21,7 +26,7 @@ module IslandMarket =
         |> Option.fold
             (fun _ itemDescriptor->
                 let commodities = Commodity.GetCommodities context
-                let markets = (context :?> DeterminePriceContext).islandMarketSource location
+                let markets = GetMarket context location
                 itemDescriptor.Commodities
                 |> Map.map
                     (fun commodity amount -> 
@@ -30,10 +35,10 @@ module IslandMarket =
                 |> List.map snd
                 |> List.reduce (+)) System.Double.NaN
 
-    let DetermineSalePrice 
-            (context : ServiceContext) =
+    let internal DetermineSalePrice 
+            (context : CommonContext) =
         DeterminePrice context Market.DetermineSalePrice
 
-    let DeterminePurchasePrice 
-            (context : ServiceContext) =
+    let internal DeterminePurchasePrice 
+            (context : CommonContext) =
         DeterminePrice context Market.DeterminePurchasePrice

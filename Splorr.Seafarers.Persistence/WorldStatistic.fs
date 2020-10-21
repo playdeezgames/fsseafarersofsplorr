@@ -14,7 +14,7 @@ module WorldStatistic =
                 CurrentValue = reader.GetDouble(3)
             })
 
-    let Get
+    let internal Get
             (connection : SQLiteConnection) 
             (identifier : WorldStatisticIdentifier) 
             : Result<Statistic,string> =

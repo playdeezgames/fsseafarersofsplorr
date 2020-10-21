@@ -53,7 +53,7 @@ let private functionUnderTest
             shipmateSingleStatisticSinkStub, 
             shipmateSingleStatisticSourceStub, 
             vesselSingleStatisticSinkStub, 
-            vesselSingleStatisticSourceStub) :> ServiceContext
+            vesselSingleStatisticSourceStub) :> CommonContext
     Careened.Run 
         context
 
@@ -85,7 +85,7 @@ let ``Run.It returns GameOver when the given world's avatar is dead.`` () =
             shipmateSingleStatisticSinkStub,
             shipmateSingleStatisticSource, 
             vesselSingleStatisticSinkStub, 
-            vesselSingleStatisticSourceStub) :> ServiceContext
+            vesselSingleStatisticSourceStub) :> CommonContext
     let actual =
         inputWorld
         |> Careened.Run 

@@ -1,25 +1,31 @@
 ﻿namespace Splorr.Seafarers.Services
 open System
 open Splorr.Seafarers.Models
+open Splorr.Common
 
-type AvatarShipmateSource = string -> ShipmateIdentifier list
 
 module AvatarShipmates =
-    type TransformContext =
-        inherit ServiceContext
-        abstract avatarShipmateSource : AvatarShipmateSource
-    let Transform 
-            (context   : ServiceContext)
+    type AvatarShipmateSource = string -> ShipmateIdentifier list
+
+    type GetShipmatesContext =
+        abstract member avatarShipmateSource : AvatarShipmateSource ref
+    let internal GetShipmates
+            (context : CommonContext)
+            (avatarId : string)
+            : ShipmateIdentifier list =
+        (context :?> GetShipmatesContext).avatarShipmateSource.Value avatarId
+
+    let internal Transform 
+            (context   : CommonContext)
             (transform : ShipmateIdentifier -> unit) 
             (avatarId  : string) 
             : unit =
-        let context = context :?> TransformContext
         avatarId
-        |> context.avatarShipmateSource
+        |> GetShipmates context
         |> List.iter transform
 
     let private SetPrimaryStatistic
-            (context    : ServiceContext)
+            (context    : CommonContext)
             (identifier : ShipmateStatisticIdentifier)
             (amount     : float) 
             (avatarId   : string)
@@ -31,32 +37,29 @@ module AvatarShipmates =
             avatarId
             Primary
 
-    let SetMoney (context : ServiceContext) = SetPrimaryStatistic context ShipmateStatisticIdentifier.Money 
+    let internal SetMoney (context : CommonContext) = SetPrimaryStatistic context ShipmateStatisticIdentifier.Money 
 
-    let SetReputation (context : ServiceContext) = SetPrimaryStatistic context ShipmateStatisticIdentifier.Reputation 
+    let internal SetReputation (context : CommonContext) = SetPrimaryStatistic context ShipmateStatisticIdentifier.Reputation 
 
-    type GetPrimaryStatisticContext =
-        inherit ServiceContext
-        abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
     let private GetPrimaryStatistic 
-            (context : ServiceContext)
+            (context : CommonContext)
             (identifier : ShipmateStatisticIdentifier) 
             (avatarId     : string) 
             : float =
-        let context = context :?> GetPrimaryStatisticContext
-        context.shipmateSingleStatisticSource 
+        ShipmateStatistic.Get
+            context
             avatarId 
             Primary 
             identifier
         |> Option.map (fun statistic -> statistic.CurrentValue)
         |> Option.defaultValue 0.0
 
-    let GetMoney (context:ServiceContext) = GetPrimaryStatistic context ShipmateStatisticIdentifier.Money
+    let internal GetMoney (context:CommonContext) = GetPrimaryStatistic context ShipmateStatisticIdentifier.Money
 
-    let GetReputation (context:ServiceContext) = GetPrimaryStatistic context ShipmateStatisticIdentifier.Reputation
+    let internal GetReputation (context:CommonContext) = GetPrimaryStatistic context ShipmateStatisticIdentifier.Reputation
 
-    let EarnMoney 
-            (context : ServiceContext)
+    let internal EarnMoney 
+            (context : CommonContext)
             (amount                        : float) 
             (avatarId                      : string)
             : unit =
@@ -66,8 +69,8 @@ module AvatarShipmates =
                 ((GetMoney context avatarId) + amount)
                 avatarId
 
-    let SpendMoney 
-            (context : ServiceContext)
+    let internal SpendMoney 
+            (context : CommonContext)
             (amount                        : float) 
             (avatarId                      : string)
             : unit =

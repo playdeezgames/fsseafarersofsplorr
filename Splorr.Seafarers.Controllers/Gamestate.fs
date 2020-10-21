@@ -2,6 +2,7 @@
 
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
+open Splorr.Common
 
 [<RequireQualifiedAccess>]
 type Gamestate = 
@@ -41,7 +42,7 @@ module Gamestate =
         | _ -> None
 
     let CheckForAvatarDeath 
-            (context : ServiceContext)
+            (context : CommonContext)
             (gamestate                     : Gamestate option) 
             : Gamestate option =
         gamestate
@@ -53,6 +54,6 @@ module Gamestate =
                     g
                 else
                     w
-                    |> AvatarMessages.Get context
+                    |> World.GetAvatarMessages context
                     |> Gamestate.GameOver
                     |> Some) gamestate

@@ -1,14 +1,14 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open System
-
-type CommoditySource     = unit -> Map<uint64, CommodityDescriptor>
+open Splorr.Common
 
 module Commodity =
+    type CommoditySource     = unit -> Map<uint64, CommodityDescriptor>
+    
     type GetCommoditiesContext =
-        inherit ServiceContext
-        abstract member commoditySource: CommoditySource
-    let GetCommodities
-            (context:ServiceContext)
+        abstract member commoditySource: CommoditySource ref
+    let internal GetCommodities
+            (context:CommonContext)
             : Map<uint64, CommodityDescriptor> =
-        (context :?> GetCommoditiesContext).commoditySource()
+        (context :?> GetCommoditiesContext).commoditySource.Value()

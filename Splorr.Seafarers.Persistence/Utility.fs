@@ -19,7 +19,7 @@ module Utility =
             previous
             |> Ok
 
-    let GetList 
+    let internal GetList 
             (commandText       : string) 
             (commandSideEffect : SQLiteCommand -> unit) 
             (convertor         : SQLiteDataReader -> 'T) 

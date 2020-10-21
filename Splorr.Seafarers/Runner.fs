@@ -7,7 +7,7 @@ open Splorr.Seafarers.Models
 
 module Runner =
     let rec private Loop 
-            (context       : ServiceContext)
+            (context       : CommonContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (gamestate     : Gamestate) 
@@ -157,7 +157,7 @@ module Runner =
             ()
     
     let Run 
-            (context : ServiceContext)
+            (context : CommonContext)
             : unit =
         Console.Title <- "Seafarers of SPLORR!!"
         let old = Console.ForegroundColor

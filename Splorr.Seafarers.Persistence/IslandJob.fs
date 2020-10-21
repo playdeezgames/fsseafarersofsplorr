@@ -13,7 +13,7 @@ module IslandJob =
             Destination = (reader.GetDouble(2), reader.GetDouble(3))
         })
 
-    let GetForIsland 
+    let internal GetForIsland 
             (connection:SQLiteConnection) 
             (location:Location) 
             : Result<Job list, string> =
@@ -25,7 +25,7 @@ module IslandJob =
                 command.Parameters.AddWithValue("$islandY",location |> snd) |> ignore) 
             (convertor >> snd)
 
-    let AddToIsland 
+    let internal AddToIsland 
             (connection : SQLiteConnection)
             (location   : Location)
             (job        : Job)
@@ -63,7 +63,7 @@ module IslandJob =
             previous
             |> List.toArray
 
-    let RemoveFromIsland 
+    let internal RemoveFromIsland 
             (connection : SQLiteConnection)
             (location   : Location)
             (index      : uint)
@@ -90,7 +90,7 @@ module IslandJob =
             ex.ToString()
             |> Error
 
-    let GetForIslandByIndex 
+    let internal GetForIslandByIndex 
             (connection : SQLiteConnection)
             (location   : Location)
             (index      : uint)

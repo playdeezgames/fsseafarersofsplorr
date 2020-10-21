@@ -16,7 +16,7 @@ module Commodity =
                 Discount       = reader.GetDouble(5)
             })
 
-    let GetList 
+    let internal GetList 
             (connection : SQLiteConnection) 
             : Result<Map<uint64, CommodityDescriptor>, string> =
         connection

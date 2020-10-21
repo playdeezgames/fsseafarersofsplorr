@@ -14,7 +14,7 @@ module IslandStatistic =
                 CurrentValue = reader.GetDouble(3)
             })
 
-    let GetStatisticForIsland
+    let internal GetStatisticForIsland
             (connection : SQLiteConnection) 
             (location   : Location) 
             (identifier : IslandStatisticIdentifier) 
@@ -32,7 +32,7 @@ module IslandStatistic =
                 |> List.map snd
                 |> List.tryHead)
 
-    let SetStatisticForIsland
+    let internal SetStatisticForIsland
             (connection : SQLiteConnection) 
             (location   : Location)
             (identifier : IslandStatisticIdentifier, statistic:Statistic option)

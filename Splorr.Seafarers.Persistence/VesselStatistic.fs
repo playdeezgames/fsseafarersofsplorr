@@ -15,7 +15,7 @@ module VesselStatistic =
             })
 
     
-    let SetStatisticForAvatar 
+    let internal SetStatisticForAvatar 
             (connection          : SQLiteConnection) 
             (avatarId            : string) 
             (identifiedStatistic : VesselStatisticIdentifier * Statistic) 
@@ -33,7 +33,7 @@ module VesselStatistic =
         with
         | ex -> ex.ToString() |> Error
 
-    let GetStatisticForAvatar 
+    let internal GetStatisticForAvatar 
             (connection : SQLiteConnection) 
             (avatarId   : string) 
             (identifier : VesselStatisticIdentifier) 
@@ -50,7 +50,7 @@ module VesselStatistic =
                 |> List.map snd
                 |> List.tryHead)
 
-    let GetForAvatar 
+    let internal GetForAvatar 
             (connection : SQLiteConnection) 
             (avatarId   : string) 
             : Result<Map<VesselStatisticIdentifier, Statistic>, string> =
@@ -64,7 +64,7 @@ module VesselStatistic =
                 items
                 |> Map.ofList)
 
-    let SetForAvatar 
+    let internal SetForAvatar 
             (connection : SQLiteConnection) 
             (avatarId   : string) 
             (statistics : Map<VesselStatisticIdentifier, Statistic>) 

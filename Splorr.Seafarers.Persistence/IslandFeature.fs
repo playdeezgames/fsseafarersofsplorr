@@ -13,7 +13,7 @@ module IslandFeature =
                 FeaturelessWeight = reader.GetDouble(2)
             })
 
-    let GetGenerators
+    let internal GetGenerators
             (connection : SQLiteConnection)
             : Result<Map<IslandFeatureIdentifier, IslandFeatureGenerator>, string> =
         connection
@@ -24,7 +24,7 @@ module IslandFeature =
         |> Result.map
             (Map.ofList)
 
-    let AddToIsland
+    let internal AddToIsland
             (connection : SQLiteConnection)
             (location   : Location)
             (identifier : IslandFeatureIdentifier)
@@ -42,7 +42,7 @@ module IslandFeature =
             : IslandFeatureIdentifier =
         reader.GetInt32(0) |> enum<IslandFeatureIdentifier>
 
-    let GetForIsland
+    let internal GetForIsland
             (connection : SQLiteConnection)
             (location   : Location)
             : Result<IslandFeatureIdentifier list, string> =
@@ -55,7 +55,7 @@ module IslandFeature =
                 ) 
             getForIslandconvertor
 
-    let ExistsForIsland
+    let internal ExistsForIsland
             (connection : SQLiteConnection)
             (location   : Location)
             (feature    : IslandFeatureIdentifier)

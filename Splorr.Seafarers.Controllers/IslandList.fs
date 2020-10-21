@@ -2,10 +2,11 @@
 
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
+open Splorr.Common
 
 module IslandList =
     let private RunWorld 
-            (context: ServiceContext)
+            (context: CommonContext)
             (messageSink                    : MessageSink) 
             (pageSize                       : uint32) 
             (page                           : uint32) 
@@ -18,13 +19,13 @@ module IslandList =
         |> List.iter messageSink
         let knownIslands =
             context
-            |> Island.GetList
+            |> World.GetIslandList
             |> List.filter
                 (fun location -> 
-                    AvatarIslandMetric.Get context avatarId location AvatarIslandMetricIdentifier.VisitCount 
+                    World.GetAvatarIslandMetric context avatarId location AvatarIslandMetricIdentifier.VisitCount 
                     |> Option.map (fun _ -> true)
                     |> Option.defaultValue false)
-            |> List.sortBy(IslandName.GetName context >> Option.get)
+            |> List.sortBy(World.GetIslandName context >> Option.get)
         let totalItems = knownIslands |> List.length |> uint32
         let totalPages = (totalItems + (pageSize-1u)) / pageSize
         let skippedItems = page * pageSize
@@ -38,7 +39,7 @@ module IslandList =
         if page < totalPages then
             let avatarPosition = 
                 avatarId
-                |> Vessel.GetPosition context
+                |> World.GetVesselPosition context
                 |> Option.get
             knownIslands
             |> List.skip (skippedItems |> int)
@@ -51,7 +52,7 @@ module IslandList =
                     |> Angle.ToDegrees
                     |> Angle.ToString
                 [
-                    (Hue.Value, location |> IslandName.GetName context |> Option.get |> sprintf "%s" |> Text) |> Hued
+                    (Hue.Value, location |> World.GetIslandName context |> Option.get |> sprintf "%s" |> Text) |> Hued
                     (Hue.Sublabel, " Bearing:" |> Text) |> Hued
                     (Hue.Value, bearing |> sprintf "%s" |> Text) |> Hued
                     (Hue.Sublabel, " Distance:" |> Text) |> Hued
@@ -64,7 +65,7 @@ module IslandList =
     let private pageSize = 20u
 
     let Run 
-            (context : ServiceContext)
+            (context : CommonContext)
             (messageSink                    : MessageSink) 
             (page                           : uint32) 
             (gamestate                      : Gamestate) 

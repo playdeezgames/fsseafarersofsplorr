@@ -1,6 +1,7 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open System
+open Splorr.Common
 
 type DemiseType =
     | ZeroHealth
@@ -10,39 +11,51 @@ type ShipmateStatus =
     | Alive
     | Dead of DemiseType
 
-type ShipmateRationItemSource = string -> ShipmateIdentifier -> uint64 list
-type ShipmateRationItemSink = string -> ShipmateIdentifier -> uint64 list -> unit
-type ShipmateStatisticTemplateSource = unit -> Map<ShipmateStatisticIdentifier, StatisticTemplate>
 type Inventory = Map<uint64,uint64>
 
 module Shipmate =
+    type ShipmateRationItemSource = string -> ShipmateIdentifier -> uint64 list
+    type ShipmateRationItemSink = string -> ShipmateIdentifier -> uint64 list -> unit
+    type ShipmateStatisticTemplateSource = unit -> Map<ShipmateStatisticIdentifier, StatisticTemplate>
+    
     type GetStatisticTemplatesContext =
-        inherit ServiceContext
-        abstract member shipmateStatisticTemplateSource   : ShipmateStatisticTemplateSource
+        abstract member shipmateStatisticTemplateSource   : ShipmateStatisticTemplateSource ref
     let private GetStatisticTemplates
-            (context : ServiceContext)
+            (context : CommonContext)
             : Map<ShipmateStatisticIdentifier, StatisticTemplate> =
-        (context :?> GetStatisticTemplatesContext).shipmateStatisticTemplateSource()
+        (context :?> GetStatisticTemplatesContext).shipmateStatisticTemplateSource.Value()
 
-    type CreateContext =
-        inherit ServiceContext
-        abstract member rationItemSource                  : RationItemSource
-        abstract member shipmateRationItemSink            : ShipmateRationItemSink
-    let Create
-            (context    : ServiceContext)
+    type internal GetGlobalRationItemsContext =
+        abstract member rationItemSource                  : IslandMarket.RationItemSource ref
+    let private GetGlobalRationItems
+            (context : CommonContext)
+            : uint64 list =
+        (context :?> GetGlobalRationItemsContext).rationItemSource.Value()
+
+    type SetRationItemsContext =
+        abstract member shipmateRationItemSink            : ShipmateRationItemSink ref
+    let private SetRationItems
+            (context : CommonContext)
+            (avatarId : string)
+            (identifier : ShipmateIdentifier)
+            (items : uint64 list)
+            : unit =
+        (context :?> SetRationItemsContext).shipmateRationItemSink.Value avatarId identifier items
+
+    let internal Create
+            (context    : CommonContext)
             (avatarId   : string)
             (shipmateId : ShipmateIdentifier)
             : unit =
-        let context = context :?> CreateContext
-        context.rationItemSource()
-        |> context.shipmateRationItemSink avatarId shipmateId 
+        GetGlobalRationItems context
+        |> SetRationItems context avatarId shipmateId 
         GetStatisticTemplates context
         |> Map.iter
             (fun identifier statisticTemplate ->
                 ShipmateStatistic.Put context avatarId shipmateId identifier (statisticTemplate |> Statistic.CreateFromTemplate |> Some))
 
-    let GetStatus
-            (context    : ServiceContext)
+    let internal GetStatus
+            (context    : CommonContext)
             (avatarId   : string)
             (shipmateId : ShipmateIdentifier)
             : ShipmateStatus=
@@ -56,21 +69,26 @@ module Shipmate =
             else
                 Alive
 
-    type EatContext =
-        inherit ServiceContext
-        abstract member shipmateRationItemSource      : ShipmateRationItemSource
-    let Eat 
-            (context    : ServiceContext)
+    type GetRationItemsContext =
+        abstract member shipmateRationItemSource      : ShipmateRationItemSource ref
+    let internal GetRationItems
+            (context : CommonContext)
+            (avatarId : string)
+            (identifier: ShipmateIdentifier)
+            : uint64 list = 
+        (context :?> GetRationItemsContext).shipmateRationItemSource.Value avatarId identifier
+
+    let internal Eat 
+            (context    : CommonContext)
             (inventory  : Inventory) 
             (avatarId   : string)
             (shipmateId : ShipmateIdentifier)
             : Inventory * bool * bool =
-        let context = context :?> EatContext
         let satietyDecrease = -1.0
         let satietyIncrease = 1.0
         let rationConsumptionRate = 1UL
         let rationItem =
-            context.shipmateRationItemSource avatarId shipmateId
+            GetRationItems context avatarId shipmateId
             |> List.tryPick 
                 (fun item -> 
                     match inventory |> Map.tryFind item with

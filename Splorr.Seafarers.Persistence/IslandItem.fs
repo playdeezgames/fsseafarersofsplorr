@@ -16,7 +16,7 @@ module IslandItem =
             items
             |> Ok
 
-    let GetForIsland 
+    let internal GetForIsland 
             (connection : SQLiteConnection) 
             (location   : Location) 
             : Result<Set<uint64>, string> =
@@ -30,7 +30,7 @@ module IslandItem =
         |> Result.bind
             (Set.ofList >> Ok)
 
-    let ExistForIsland 
+    let internal ExistForIsland 
             (connection : SQLiteConnection) 
             (location   : Location) 
             : Result<bool, string> =
@@ -45,7 +45,7 @@ module IslandItem =
             ex.ToString() 
             |> Error
 
-    let CreateForIsland 
+    let internal CreateForIsland 
             (connection : SQLiteConnection) 
             (location   : Location) 
             (items      : Set<uint64>) 

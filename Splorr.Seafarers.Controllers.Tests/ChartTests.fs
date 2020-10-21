@@ -31,7 +31,7 @@ let ``Run.It returns the At Sea state with the given world.`` () =
             islandSingleNameSourceStub,
             islandSourceStub,
             vesselSingleStatisticSourceStub, 
-            worldSingleStatisticSourceStub) :> ServiceContext
+            worldSingleStatisticSourceStub) :> CommonContext
     let actual =
         Chart.Run
             context

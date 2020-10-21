@@ -1,6 +1,7 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
 open Splorr.Seafarers.Services
+open Splorr.Common
 
 type SwitchSource = unit -> Set<string>
 
@@ -8,10 +9,9 @@ module ConfirmQuit =
     let private onStreamSwitch = "on-stream"
 
     type RunContext =
-        inherit ServiceContext
         abstract member switchSource : SwitchSource 
     let Run 
-            (context : ServiceContext)
+            (context : CommonContext)
             (source       : CommandSource) 
             (sink         : MessageSink) 
             (state        : Gamestate) 

@@ -7,7 +7,7 @@ open Splorr.Seafarers.Controllers
 open NUnit.Framework
 open Splorr.Seafarers.Persistence
 
-let splorrContext : ServiceContext =
+let splorrContext : CommonContext =
     SplorrContext
         (Fixtures.Stub.AvatarGamblingHandSink,
         Fixtures.Stub.AvatarGamblingHandSource,
@@ -66,7 +66,7 @@ let splorrContext : ServiceContext =
         Fixtures.Stub.VesselSingleStatisticSource,
         Fixtures.Stub.VesselStatisticSink,
         Fixtures.Stub.VesselStatisticTemplateSource,
-        Fixtures.Stub.WorldSingleStatisticSource) :> ServiceContext
+        Fixtures.Stub.WorldSingleStatisticSource) :> CommonContext
 
 [<Test>]
 let ``Downcast.It downcasts to all of the interfaces that comprise a SplorrContext.`` () =

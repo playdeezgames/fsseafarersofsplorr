@@ -1,57 +1,64 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open System
-
-type VesselStatisticTemplateSource = unit -> Map<VesselStatisticIdentifier, StatisticTemplate>
-type VesselStatisticSink           = string -> Map<VesselStatisticIdentifier, Statistic> -> unit
-type VesselSingleStatisticSource   = string->VesselStatisticIdentifier->Statistic option
-type VesselSingleStatisticSink     = string->VesselStatisticIdentifier*Statistic->unit
+open Splorr.Common
 
 module Vessel =
-    type CreateContext =
-        inherit ServiceContext
-        abstract member vesselStatisticSink           : VesselStatisticSink
-        abstract member vesselStatisticTemplateSource : VesselStatisticTemplateSource
-    let Create
-            (context  : ServiceContext)
+    type VesselStatisticTemplateSource = unit -> Map<VesselStatisticIdentifier, StatisticTemplate>
+    type VesselSingleStatisticSource   = string->VesselStatisticIdentifier->Statistic option
+    type VesselSingleStatisticSink     = string->VesselStatisticIdentifier*Statistic->unit
+
+    type SetStatisticContext =
+        abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink ref
+    let private SetStatistic 
+            (context : CommonContext)
+            (avatarId : string)
+            (identifier : VesselStatisticIdentifier, statistic : Statistic)
+            : unit =
+        (context :?> SetStatisticContext).vesselSingleStatisticSink.Value avatarId (identifier, statistic)
+
+    type GetStatisticTemplateContext =
+        abstract member vesselStatisticTemplateSource : VesselStatisticTemplateSource ref
+    let private GetStatisticTemplates
+            (context : CommonContext)
+            : Map<VesselStatisticIdentifier, StatisticTemplate> =
+        (context :?> GetStatisticTemplateContext).vesselStatisticTemplateSource.Value()
+
+    let internal Create
+            (context  : CommonContext)
             (avatarId : string)
             : unit =
-        let context = context :?> CreateContext
-        context.vesselStatisticTemplateSource()
+        GetStatisticTemplates context
         |> Map.map
             (fun _ template ->
                 {MinimumValue = template.MinimumValue; MaximumValue=template.MaximumValue; CurrentValue = template.CurrentValue})
-        |> context.vesselStatisticSink avatarId
+        |> Map.toList
+        |> List.iter (SetStatistic context avatarId)
 
     type GetStatisticContext =
-        inherit ServiceContext
-        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-    let GetStatistic
-            (context : ServiceContext)
+        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource ref
+    let internal GetStatistic
+            (context : CommonContext)
             (avatarId : string)
             (identifier: VesselStatisticIdentifier)
             : Statistic option =
-        (context :?> GetStatisticContext).vesselSingleStatisticSource avatarId identifier
+        (context :?> GetStatisticContext).vesselSingleStatisticSource.Value avatarId identifier
     
-    type TransformFoulingContext =
-        inherit ServiceContext
-        abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
-    let TransformFouling 
-            (context : ServiceContext)
+    let internal TransformFouling 
+            (context : CommonContext)
             (avatarId                    : string)
             (side                        : Side) 
             (transform                   : Statistic -> Statistic)
             : unit =
-        let context = context :?> TransformFoulingContext
         let statisticIdentifier =
             match side with
             | Port -> VesselStatisticIdentifier.PortFouling
             | Starboard -> VesselStatisticIdentifier.StarboardFouling
         GetStatistic context avatarId statisticIdentifier
-        |> Option.iter (fun s -> (statisticIdentifier, s |> transform) |> context.vesselSingleStatisticSink avatarId)
+        |> Option.iter (fun s -> (statisticIdentifier, s |> transform) |> SetStatistic context avatarId)
     
-    let Befoul 
-            (context  : ServiceContext)
+    let internal Befoul 
+            (context  : CommonContext)
             (avatarId : string)
             : unit =
         let foulRate = 
@@ -70,21 +77,17 @@ module Vessel =
                     side 
                     (Statistic.ChangeCurrentBy (foulRate/2.0)))
 
-    type GetPositionContext = 
-        inherit ServiceContext
-        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-    let GetPosition
-            (context  : ServiceContext)
+    let internal GetPosition
+            (context  : CommonContext)
             (avatarId : string)
             : Location option =
-        let context = context :?> GetPositionContext
         let positionX =
             VesselStatisticIdentifier.PositionX
-            |> context.vesselSingleStatisticSource avatarId
+            |> GetStatistic context avatarId
             |> Option.map Statistic.GetCurrentValue
         let positionY = 
             VesselStatisticIdentifier.PositionY
-            |> context.vesselSingleStatisticSource avatarId
+            |> GetStatistic context avatarId
             |> Option.map Statistic.GetCurrentValue
         match positionX, positionY with
         | Some x, Some y ->
@@ -92,29 +95,24 @@ module Vessel =
         | _ ->
             None
 
-    type SetPositionContext =
-        inherit ServiceContext
-        abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
-        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-    let SetPosition 
-            (context  : ServiceContext)
+    let internal SetPosition 
+            (context  : CommonContext)
             (position : Location) 
             (avatarId : string) 
             : unit =
-        let context = context :?> SetPositionContext
         match 
-            context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PositionX, 
-            context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.PositionY 
+            GetStatistic context avatarId VesselStatisticIdentifier.PositionX, 
+            GetStatistic context avatarId VesselStatisticIdentifier.PositionY 
             with
         | Some x, Some _ ->
-            context.vesselSingleStatisticSink 
+            SetStatistic context
                 avatarId 
                 (VesselStatisticIdentifier.PositionX, 
                     x 
                     |> Statistic.SetCurrentValue 
                         (position 
                         |> fst))
-            context.vesselSingleStatisticSink 
+            SetStatistic context 
                 avatarId 
                 (VesselStatisticIdentifier.PositionY, 
                     x 
@@ -123,69 +121,51 @@ module Vessel =
                         |> snd))
         | _ -> ()
 
-    type GetSpeedContext =
-        inherit ServiceContext
-        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-    let GetSpeed
-            (context  : ServiceContext)
+    let internal GetSpeed
+            (context  : CommonContext)
             (avatarId : string)
             : float option =
-        let context = context :?> GetSpeedContext
         VesselStatisticIdentifier.Speed
-        |> context.vesselSingleStatisticSource avatarId 
+        |> GetStatistic context avatarId 
         |> Option.map Statistic.GetCurrentValue
 
-    type GetHeadingContext =
-        inherit ServiceContext
-        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-    let GetHeading
-            (context  : ServiceContext)
+    let internal GetHeading
+            (context  : CommonContext)
             (avatarId : string)
             : float option =
-        let context = context :?> GetHeadingContext
         VesselStatisticIdentifier.Heading
-        |> context.vesselSingleStatisticSource avatarId 
+        |> GetStatistic context avatarId 
         |> Option.map Statistic.GetCurrentValue
     
-    type SetSpeedContext =
-        inherit ServiceContext
-        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-        abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
-    let SetSpeed 
-            (context  : ServiceContext)
+    let internal SetSpeed 
+            (context  : CommonContext)
             (speed    : float) 
             (avatarId : string) 
             : unit =
-        let context = context :?> SetSpeedContext
-        context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Speed
+        GetStatistic context avatarId VesselStatisticIdentifier.Speed
         |> Option.iter
             (fun statistic ->
                 (VesselStatisticIdentifier.Speed, 
                     statistic
                     |> Statistic.SetCurrentValue speed)
-                |> context.vesselSingleStatisticSink avatarId)
+                |> SetStatistic context avatarId)
 
-    type SetHeadingContext =
-        inherit ServiceContext
-        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-        abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink
-    let SetHeading 
-            (context  : ServiceContext)
+    let internal SetHeading 
+            (context  : CommonContext)
             (heading  : float) 
             (avatarId : string) 
             : unit =
-        let context = context :?> SetHeadingContext
-        context.vesselSingleStatisticSource avatarId VesselStatisticIdentifier.Heading
+        GetStatistic context avatarId VesselStatisticIdentifier.Heading
         |> Option.iter
             (fun statistic ->
                 (VesselStatisticIdentifier.Heading, 
                     statistic
                     |> Statistic.SetCurrentValue (heading |> Angle.ToRadians))
-                |> context.vesselSingleStatisticSink avatarId)
+                |> SetStatistic context avatarId)
 
     let private GetFouling
             //TODO: context me
-            (vesselSingleStatisticSource : VesselSingleStatisticSource)
+            (context : CommonContext)
             (getter : Statistic -> float)
             (avatarId                    : string)
             :float =
@@ -194,33 +174,25 @@ module Vessel =
             VesselStatisticIdentifier.StarboardFouling
         ]
         |> List.map
-            (vesselSingleStatisticSource avatarId
+            (GetStatistic context avatarId
                 >> Option.map getter
                 >> Option.defaultValue 0.0)
         |> List.reduce (+)
 
-    type GetCurrentFoulingContext =
-        inherit ServiceContext
-        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-    let GetCurrentFouling
-            (context : ServiceContext) =
-        let context = context :?> GetCurrentFoulingContext
+    let internal GetCurrentFouling
+            (context : CommonContext) =
         GetFouling 
-            context.vesselSingleStatisticSource 
+            context 
             Statistic.GetCurrentValue
     
-    type GetMaximumFoulingContext =
-        inherit ServiceContext
-        abstract member vesselSingleStatisticSource : VesselSingleStatisticSource
-    let GetMaximumFouling
-            (context : ServiceContext) =
-        let context = context :?> GetMaximumFoulingContext
+    let internal GetMaximumFouling
+            (context : CommonContext) =
         GetFouling 
-            context.vesselSingleStatisticSource 
+            context
             Statistic.GetMaximumValue 
 
-    let GetEffectiveSpeed 
-            (context  : ServiceContext)
+    let internal GetEffectiveSpeed 
+            (context  : CommonContext)
             (avatarId : string)
             : float =
         let currentValue = GetCurrentFouling context avatarId

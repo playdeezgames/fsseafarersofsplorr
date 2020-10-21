@@ -2,24 +2,25 @@
 
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
+open Splorr.Common
 
 module Status =
     let private RunWorld 
-            (context : ServiceContext)
+            (context : CommonContext)
             (messageSink                   : MessageSink) 
             (avatarId                      : string) 
             : unit =
-        let portFouling = Vessel.GetStatistic context avatarId VesselStatisticIdentifier.PortFouling |> Option.get
-        let satiety = ShipmateStatistic.Get context avatarId Primary ShipmateStatisticIdentifier.Satiety |> Option.get
-        let health = ShipmateStatistic.Get context avatarId Primary ShipmateStatisticIdentifier.Health |> Option.get
-        let starboardFouling = Vessel.GetStatistic context avatarId VesselStatisticIdentifier.StarboardFouling |> Option.get
+        let portFouling = World.GetVesselStatistic context avatarId VesselStatisticIdentifier.PortFouling |> Option.get
+        let satiety = World.GetShipmateStatistic context avatarId Primary ShipmateStatisticIdentifier.Satiety |> Option.get
+        let health = World.GetShipmateStatistic context avatarId Primary ShipmateStatisticIdentifier.Health |> Option.get
+        let starboardFouling = World.GetVesselStatistic context avatarId VesselStatisticIdentifier.StarboardFouling |> Option.get
         [
             "" |> Line
             (Hue.Heading, "Status:" |> Line) |> Hued
             (Hue.Label, "Money: " |> Text) |> Hued
-            (Hue.Value, avatarId |> AvatarShipmates.GetMoney context |> sprintf "%f" |> Line) |> Hued
+            (Hue.Value, avatarId |> World.GetAvatarMoney context |> sprintf "%f" |> Line) |> Hued
             (Hue.Label, "Reputation: " |> Text) |> Hued
-            (Hue.Value, avatarId |> AvatarShipmates.GetReputation context |> sprintf "%f" |> Line) |> Hued
+            (Hue.Value, avatarId |> World.GetAvatarReputation context |> sprintf "%f" |> Line) |> Hued
             (Hue.Label, "Satiety: " |> Text) |> Hued
             (Hue.Value, (satiety.CurrentValue, satiety.MaximumValue) ||> sprintf "%.0f/%.0f" |> Line) |> Hued
             (Hue.Label, "Health: " |> Text) |> Hued
@@ -31,7 +32,7 @@ module Status =
         ]
         |> List.iter messageSink
         avatarId
-        |> AvatarJob.Get context
+        |> World.GetAvatarJob context
         |> Option.iter
             (fun job ->
                 [
@@ -39,14 +40,14 @@ module Status =
                     (Hue.Sublabel, "Description: " |> Text) |> Hued
                     (Hue.Flavor, job.FlavorText |> sprintf "%s" |> Line) |> Hued
                     (Hue.Sublabel, "Destination: " |> Text) |> Hued
-                    (Hue.Value, job.Destination |> IslandName.GetName context |> Option.get |> sprintf "%s" |> Line) |> Hued
+                    (Hue.Value, job.Destination |> World.GetIslandName context |> Option.get |> sprintf "%s" |> Line) |> Hued
                     (Hue.Sublabel, "Reward: " |> Text) |> Hued
                     (Hue.Value, job.Reward |> sprintf "%f" |> Line) |> Hued
                 ]
                 |> List.iter messageSink)
 
     let Run 
-            (context : ServiceContext)
+            (context : CommonContext)
             (messageSink                   : MessageSink) 
             (gamestate                     : Gamestate) 
             : Gamestate option =

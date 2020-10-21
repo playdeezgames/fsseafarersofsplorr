@@ -45,7 +45,7 @@ let ``Run.It returns Docked (at Shop) gamestate.`` () =
             islandSourceStub,
             (fun x -> atSeaItemSource() |> Map.tryFind x ),
             shipmateSingleStatisticSourceStub) 
-        :> ServiceContext
+        :> CommonContext
     let actual = 
         (inputLocation, inputWorld)
         ||> ItemList.Run 

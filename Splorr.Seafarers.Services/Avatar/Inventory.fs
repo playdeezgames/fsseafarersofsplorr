@@ -1,79 +1,69 @@
 ﻿namespace Splorr.Seafarers.Services
 open System
 open Splorr.Seafarers.Models
-
-type AvatarInventorySource = string -> Inventory
-type AvatarInventorySink = string -> Inventory -> unit
+open Splorr.Common
 
 module AvatarInventory =
+    type AvatarInventorySource = string -> Inventory
+    type AvatarInventorySink = string -> Inventory -> unit
+
     type GetInventoryContext =
-        inherit ServiceContext
-        abstract member avatarInventorySource : AvatarInventorySource
-    let GetInventory
-            (context : ServiceContext)
+        abstract member avatarInventorySource : AvatarInventorySource ref
+    let internal GetInventory
+            (context : CommonContext)
             (avatarId : string)
             : Inventory =
-        (context :?> GetInventoryContext).avatarInventorySource avatarId
+        (context :?> GetInventoryContext).avatarInventorySource.Value avatarId
 
-    type GetUsedTonnageContext =
-        inherit ServiceContext
-        abstract member avatarInventorySource : AvatarInventorySource
-    let GetUsedTonnage
-            (context : ServiceContext)
+    let internal GetUsedTonnage
+            (context : CommonContext)
             (items : Map<uint64, ItemDescriptor>) //TODO: to source
             (avatarId : string) 
             : float =
-        let context = context :?> GetUsedTonnageContext
-        (0.0, avatarId |> context.avatarInventorySource)
+        (0.0, GetInventory context avatarId)
         ||> Map.fold
             (fun result item quantity -> 
                 let d = items.[item]
                 result + (quantity |> float) * d.Tonnage)
 
-    type GetItemCountContext =
-        inherit ServiceContext
-        abstract member avatarInventorySource : AvatarInventorySource
-    let GetItemCount 
-            (context : ServiceContext)
+    let internal GetItemCount 
+            (context : CommonContext)
             (item                  : uint64) 
             (avatarId              : string) 
             : uint64 =
-        let context = context :?> GetItemCountContext
-        match avatarId |> context.avatarInventorySource |> Map.tryFind item with
+        match avatarId |> GetInventory context |> Map.tryFind item with
         | Some x -> x
         | None -> 0UL
 
-    type AddInventoryContext =
-        inherit ServiceContext
-        abstract member avatarInventorySink   : AvatarInventorySink
-        abstract member avatarInventorySource : AvatarInventorySource
-    let AddInventory 
-            (context : ServiceContext)
+    type SetInventoryContext =
+        abstract member avatarInventorySink   : AvatarInventorySink ref
+    let internal SetInventory
+            (context : CommonContext)
+            (avatarId : string)
+            (inventory : Inventory)
+            : unit =
+        (context :?> SetInventoryContext).avatarInventorySink.Value avatarId inventory
+    let internal AddInventory 
+            (context : CommonContext)
             (item : uint64) 
             (quantity : uint64) 
             (avatarId : string) 
             : unit =
-        let context = context :?> AddInventoryContext
         let newQuantity = (avatarId |> GetItemCount context item) + quantity
         avatarId
-        |> context.avatarInventorySource
+        |> GetInventory context
         |> Map.add item newQuantity
-        |> context.avatarInventorySink avatarId
+        |> SetInventory context avatarId
 
-    type RemoveInventoryContext =
-        inherit ServiceContext
-        abstract member avatarInventorySource : AvatarInventorySource
-        abstract member avatarInventorySink   : AvatarInventorySink
-    let RemoveInventory 
-            (context  : ServiceContext)
+    let internal RemoveInventory 
+            (context  : CommonContext)
             (item     : uint64) 
             (quantity : uint64) 
             (avatarId : string) 
             : unit =
-        let context = context :?> RemoveInventoryContext
         let inventory = 
             avatarId 
-            |>  context.avatarInventorySource
+            |>  GetInventory context
         match inventory.TryFind item with
         | Some count ->
             if count > quantity then
@@ -84,5 +74,5 @@ module AvatarInventory =
                 |> Map.remove item
         | _ ->
             inventory
-        |> context.avatarInventorySink avatarId
+        |> SetInventory context avatarId
 

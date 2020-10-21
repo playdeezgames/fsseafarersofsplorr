@@ -1,19 +1,23 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open System
+open Splorr.Common
 
 type EpochSecondsSource = unit -> uint64
 
 module IslandVisit =
-    type AddContext =
-        inherit ServiceContext
-        abstract member epochSecondsSource : EpochSecondsSource
-    let Add 
-            (context      : ServiceContext)
+    type EpochSecondsSourceContext =
+        abstract member epochSecondsSource : EpochSecondsSource ref
+    let private GetEpochSeconds
+            (context : CommonContext)
+            : uint64 =
+        (context :?> EpochSecondsSourceContext).epochSecondsSource.Value()
+
+    let internal Add 
+            (context      : CommonContext)
             (avatarId     : string) 
             (location     : Location)
             : unit =
-        let context = context :?> AddContext
         let metricSource = AvatarIslandMetric.Get context avatarId location
         let metricSink = AvatarIslandMetric.Put context avatarId location
         let sinkMetrics(visitCount,lastVisit) =
@@ -21,7 +25,7 @@ module IslandVisit =
             metricSink AvatarIslandMetricIdentifier.LastVisit lastVisit
         let visitCount = metricSource AvatarIslandMetricIdentifier.VisitCount
         let lastVisit = metricSource AvatarIslandMetricIdentifier.LastVisit
-        let currentEpochSeconds = context.epochSecondsSource()
+        let currentEpochSeconds = GetEpochSeconds context
         match visitCount, lastVisit with
         | None, _ ->
             sinkMetrics (1UL, currentEpochSeconds)
@@ -32,8 +36,8 @@ module IslandVisit =
         | _ -> 
             ()
 
-    let MakeKnown
-            (context  : ServiceContext)
+    let internal MakeKnown
+            (context  : CommonContext)
             (avatarId : string) 
             (location : Location)
             : unit =

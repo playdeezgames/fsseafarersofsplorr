@@ -2,27 +2,26 @@
 
 open Splorr.Seafarers.Models
 open System
-
-type ItemTable = Map<uint64, ItemDescriptor>
-type ItemSource = unit -> ItemTable
-type ItemSingleSource    = uint64 -> ItemDescriptor option
+open Splorr.Common
 
 module Item =
+    type ItemTable = Map<uint64, ItemDescriptor>
+    type ItemSource = unit -> ItemTable
+    type ItemSingleSource    = uint64 -> ItemDescriptor option
+
     type GetListContext =
-        inherit ServiceContext
-        abstract member itemSource : ItemSource
-    let GetList
-            (context : ServiceContext)
+        abstract member itemSource : ItemSource ref
+    let internal GetList
+            (context : CommonContext)
             : ItemTable =
-        (context :?> GetListContext).itemSource ()
+        (context :?> GetListContext).itemSource.Value ()
 
     type GetContext =
-        inherit ServiceContext
-        abstract member itemSingleSource   : ItemSingleSource
-    let Get
-            (context : ServiceContext)
+        abstract member itemSingleSource   : ItemSingleSource ref
+    let internal Get
+            (context : CommonContext)
             (index : uint64)
             : ItemDescriptor option =
-        (context :?> GetContext).itemSingleSource index
+        (context :?> GetContext).itemSingleSource.Value index
 
 

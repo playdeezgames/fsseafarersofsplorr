@@ -306,7 +306,7 @@ let main argv =
         | Ok x -> Some x
         | _ -> None
 
-    let context : ServiceContext =
+    let context : CommonContext =
         SplorrContext
             (avatarGamblingHandSink,
             avatarGamblingHandSource,
@@ -366,7 +366,7 @@ let main argv =
             vesselStatisticSink,
             vesselStatisticTemplateSource,
             worldSingleStatisticSource) 
-        :> ServiceContext
+        :> CommonContext
 
     try
         Runner.Run 

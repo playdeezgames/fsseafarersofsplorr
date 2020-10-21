@@ -5,7 +5,7 @@ open Splorr.Seafarers.Models
 open System
 
 module Game =
-    let Export 
+    let internal Export 
             (connection : SQLiteConnection)
             (filename: string)
             : Result<string, string> =

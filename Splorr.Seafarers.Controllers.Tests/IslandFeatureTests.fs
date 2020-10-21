@@ -33,7 +33,7 @@ type TestIslandFeatureRunContext
         islandSingleStatisticSource,
         shipmateSingleStatisticSink,
         shipmateSingleStatisticSource) =
-    interface ServiceContext
+    interface CommonContext
     interface Utility.RandomContext with
         member this.random: Random = Random()
     interface ShipmateStatistic.PutContext with
@@ -96,7 +96,7 @@ let ``Run.It should return InPlay when the given island does not exist.`` () =
             islandSingleStatisticSourceStub,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
             shipmateSingleStatisticSourceStub) 
-        :> ServiceContext
+        :> CommonContext
     let actual =
         IslandFeature.Run 
             context
@@ -136,7 +136,7 @@ let ``Run.It should return InPlay state when the given island exists but does no
             islandSingleStatisticSourceStub,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
             shipmateSingleStatisticSourceStub) 
-        :> ServiceContext
+        :> CommonContext
     let actual =
         IslandFeature.Run 
             context
@@ -182,7 +182,7 @@ let ``Run.It should return InPlay state when dark alley exists and the player is
             islandSingleStatisticSource,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
             shipmateSingleStatisticSource) 
-        :> ServiceContext
+        :> CommonContext
     let actual =
         IslandFeature.Run 
             context
@@ -233,7 +233,7 @@ let ``Run.It should quit the gambling game when dark alley exists and the player
             islandSingleStatisticSource,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
             shipmateSingleStatisticSource) 
-        :> ServiceContext
+        :> CommonContext
     let actual =
         IslandFeature.Run 
             context
@@ -299,7 +299,7 @@ let ``Run.It should resolve the gambling game when dark alley exists and the pla
             islandSingleStatisticSource,
             shipmateSingleStatisticSink,
             shipmateSingleStatisticSource) 
-        :> ServiceContext
+        :> CommonContext
     let actual =
         IslandFeature.Run 
             context
@@ -353,7 +353,7 @@ let ``Run.It should enter the confirm quit state when dark alley exists and the 
             islandSingleStatisticSource,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
             shipmateSingleStatisticSource) 
-        :> ServiceContext
+        :> CommonContext
     let actual =
         IslandFeature.Run 
             context
@@ -405,7 +405,7 @@ let ``Run.It should return InPlay state when dark alley exists but the player do
             islandSingleStatisticSource,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
             shipmateSingleStatisticSource) 
-        :> ServiceContext
+        :> CommonContext
     let actual =
         IslandFeature.Run 
             context
@@ -455,7 +455,7 @@ let ``Run.When in the dark alley, the leave command will take the player back to
             islandSingleStatisticSource,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
             shipmateSingleStatisticSource) 
-        :> ServiceContext
+        :> CommonContext
     let actual =
         IslandFeature.Run 
             context
@@ -500,7 +500,7 @@ let ``Run.When in the dark alley, the gamble command will deal to the player som
             islandSingleStatisticSource,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
             shipmateSingleStatisticSource) 
-        :> ServiceContext
+        :> CommonContext
     let actual =
         IslandFeature.Run 
             context
@@ -543,7 +543,7 @@ let ``Run.When in the dark alley, the help command will take the player to the h
             islandSingleStatisticSource,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
             shipmateSingleStatisticSource) 
-        :> ServiceContext
+        :> CommonContext
     let actual =
         IslandFeature.Run 
             context
@@ -585,7 +585,7 @@ let ``Run.When in the dark alley, the status command will take the player to the
             islandSingleStatisticSource,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
             shipmateSingleStatisticSource) 
-        :> ServiceContext
+        :> CommonContext
     let actual =
         IslandFeature.Run 
             context
@@ -628,7 +628,7 @@ let ``Run.When in the dark alley, the quit command will take the player to the c
             islandSingleStatisticSource,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
             shipmateSingleStatisticSource) 
-        :> ServiceContext
+        :> CommonContext
     let actual =
         IslandFeature.Run 
             context
@@ -672,7 +672,7 @@ let ``Run.When in the dark alley but not gambling, the an invalid command gives 
             islandSingleStatisticSource,
             Fixtures.Common.Fake.ShipmateSingleStatisticSink,
             shipmateSingleStatisticSource) 
-        :> ServiceContext
+        :> CommonContext
     let actual =
         IslandFeature.Run 
             context

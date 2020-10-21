@@ -10,7 +10,7 @@ module Location =
         let deltaY = (``to`` |> snd) - (from |> snd)
         sqrt((deltaX ** 2.0) + (deltaY ** 2.0))
 
-    let ScaleBy 
+    let internal ScaleBy 
             (scale    : float) 
             (location : Location) 
             : Location =

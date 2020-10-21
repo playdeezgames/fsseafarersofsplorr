@@ -13,7 +13,7 @@ module AvatarJob =
             Destination = (reader.GetDouble(2), reader.GetDouble(3))
         }
 
-    let GetForAvatar 
+    let internal GetForAvatar 
             (connection : SQLiteConnection) 
             (avatarId   : string) 
             : Result<Job option, string> =
@@ -26,7 +26,7 @@ module AvatarJob =
         |> Result.map
             (List.tryHead)
 
-    let SetForAvatar 
+    let internal SetForAvatar 
             (connection : SQLiteConnection) 
             (avatarId   : string) 
             (job        : Job option)

@@ -168,7 +168,7 @@ let private functionUnderTest
             itemSource ,
             shipmateSingleStatisticSinkStub,
             shipmateSingleStatisticSource,
-            vesselSingleStatisticSourceStub) :> ServiceContext
+            vesselSingleStatisticSourceStub) :> CommonContext
     Docked.Run 
         context
 

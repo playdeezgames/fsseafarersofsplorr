@@ -9,7 +9,7 @@ module MessageLegacy =
     let private commandSideEffect (avatarId:string) (command:SQLiteCommand) =
         command.Parameters.AddWithValue("$avatarId", avatarId) |> ignore
 
-    let GetForAvatar
+    let internal GetForAvatar
             (connection : SQLiteConnection)
             (avatarId   : string)
             : Result<string list, string> =
@@ -19,7 +19,7 @@ module MessageLegacy =
             (commandSideEffect avatarId) 
             convertor
 
-    let ClearForAvatar
+    let internal ClearForAvatar
             (connection : SQLiteConnection)
             (avatarId   : string)
             : Result<unit, string> =
@@ -34,7 +34,7 @@ module MessageLegacy =
             ex.ToString() 
             |> Error
 
-    let AddForAvatar
+    let internal AddForAvatar
             (connection : SQLiteConnection)
             (avatarId   : string, 
              message    : string)

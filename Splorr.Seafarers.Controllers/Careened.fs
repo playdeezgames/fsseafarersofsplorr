@@ -2,10 +2,11 @@
 
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
+open Splorr.Common
 
 module Careened = 
     let private UpdateDisplay 
-            (context : ServiceContext)
+            (context : CommonContext)
             (messageSink                 : MessageSink) 
             (side                        : Side)
             (avatarId                    : string) 
@@ -13,16 +14,16 @@ module Careened =
         let avatarId = avatarId
         "" |> Line |> messageSink
         avatarId
-        |> AvatarMessages.Get context
+        |> World.GetAvatarMessages context
         |> Utility.DumpMessages messageSink
         let sideName =
             match side with
             | Port -> "port"
             | Starboard -> "starboard"
         let currentValue =
-            Vessel.GetCurrentFouling context avatarId
+            World.GetVesselCurrentFouling context avatarId
         let maximumValue = 
-            Vessel.GetMaximumFouling context avatarId
+            World.GetVesselMaximumFouling context avatarId
         let foulage =
             100.0 * currentValue / maximumValue
         [
@@ -32,7 +33,7 @@ module Careened =
         |> List.iter messageSink
 
     let private HandleCommand
-            (context : ServiceContext)
+            (context : CommonContext)
             (command                       : Command option) 
             (side                          : Side) 
             (avatarId                      : string) 
@@ -84,7 +85,7 @@ module Careened =
             |> Some
 
     let private RunAlive
-            (context : ServiceContext)
+            (context : CommonContext)
             (source                        : CommandSource) 
             (sink                          : MessageSink) 
             (side                          : Side) 
@@ -102,7 +103,7 @@ module Careened =
             avatarId
 
     let Run 
-            (context : ServiceContext)
+            (context : CommonContext)
             (commandSource                 : CommandSource) 
             (messageSink                   : MessageSink) 
             (side                          : Side) 
@@ -117,6 +118,6 @@ module Careened =
                 avatarId
         else
             avatarId
-            |> AvatarMessages.Get context
+            |> World.GetAvatarMessages context
             |> Gamestate.GameOver
             |> Some

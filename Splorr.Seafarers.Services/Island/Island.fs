@@ -1,50 +1,72 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open System
+open Splorr.Common
 
-type IslandItemSink   = Location -> Set<uint64>->unit
-type IslandItemSource = Location -> Set<uint64>
-type IslandMarketSink = Location -> Map<uint64, Market> -> unit
-type IslandSingleJobSource = Location -> uint32 -> Job option
-type IslandSingleMarketSink = Location -> (uint64 * Market) -> unit
-type IslandSingleMarketSource = Location -> uint64 -> Market option
-type IslandSingleNameSink = Location -> string option -> unit
-type IslandSingleStatisticSink = Location->IslandStatisticIdentifier*Statistic option->unit
-type IslandSingleStatisticSource = Location->IslandStatisticIdentifier->Statistic option
-type IslandStatisticTemplateSource = unit -> Map<IslandStatisticIdentifier, StatisticTemplate>
-type IslandSingleFeatureSource = Location -> IslandFeatureIdentifier -> bool
-type IslandSource = unit -> Location list
-type IslandFeatureSource = Location -> IslandFeatureIdentifier list
 
 module Island =
+    type IslandItemSink   = Location -> Set<uint64>->unit
+    type IslandItemSource = Location -> Set<uint64>
+    type IslandMarketSink = Location -> Map<uint64, Market> -> unit
+    type IslandSingleMarketSink = Location -> (uint64 * Market) -> unit
+    type IslandSingleMarketSource = Location -> uint64 -> Market option
+    type IslandSingleStatisticSink = Location->IslandStatisticIdentifier*Statistic option->unit
+    type IslandSingleStatisticSource = Location * IslandStatisticIdentifier->Statistic option
+    type IslandStatisticTemplateSource = unit -> Map<IslandStatisticIdentifier, StatisticTemplate>
+    type IslandSingleFeatureSource = Location -> IslandFeatureIdentifier -> bool
+    type IslandSource = unit -> Location list
+    type IslandFeatureSource = Location -> IslandFeatureIdentifier list
+
+    type GetStatisticTemplatesContext =
+        abstract member islandStatisticTemplateSource : IslandStatisticTemplateSource ref
+    let private GetStatisticTemplates
+            (context : CommonContext)
+            : Map<IslandStatisticIdentifier, StatisticTemplate> =
+        (context :?> GetStatisticTemplatesContext).islandStatisticTemplateSource.Value ()
+
     type CreateContext = 
-        inherit ServiceContext
-        abstract member islandSingleStatisticSink     : IslandSingleStatisticSink
-        abstract member islandStatisticTemplateSource : IslandStatisticTemplateSource
-    let  Create
-            (context  : ServiceContext)
+        abstract member islandSingleStatisticSink     : IslandSingleStatisticSink ref
+
+    let private SetIslandStatistic
+            (context : CommonContext)
+            (location : Location)
+            (identifier : IslandStatisticIdentifier, statistic: Statistic option)
+            : unit =
+        (context :?> CreateContext).islandSingleStatisticSink.Value location (identifier, statistic)
+        
+    let internal Create
+            (context  : CommonContext)
             (location : Location)
             : unit =
-        let context = context :?> CreateContext
-        context.islandStatisticTemplateSource()
+        GetStatisticTemplates context
         |> Map.map
             (fun _ template ->
                     Statistic.CreateFromTemplate template)
         |> Map.iter
             (fun identifier statistic ->
                 (identifier, statistic |> Some)
-                |> context.islandSingleStatisticSink location)
-        
-    type GenerateCommoditiesContext =
-        inherit ServiceContext
-        abstract member islandMarketSource : IslandMarketSource
-        abstract member islandMarketSink   : IslandMarketSink
-    let GenerateCommodities 
-            (context  : ServiceContext)
+                |> SetIslandStatistic context location)
+
+    type GetCommoditiesContext =
+        abstract member islandMarketSource : IslandMarket.IslandMarketSource ref
+    let private GetCommodities
+            (context : CommonContext)
+            (location : Location)
+            : Map<uint64, Market> =
+        (context :?> GetCommoditiesContext).islandMarketSource.Value location
+    type PutCommoditiesContext =
+        abstract member islandMarketSink   : IslandMarketSink ref
+    let private PutCommodities
+            (context : CommonContext)
+            (location: Location)
+            (markets : Map<uint64, Market>)
+            : unit =
+        (context :?> PutCommoditiesContext).islandMarketSink.Value location markets
+    let internal GenerateCommodities 
+            (context  : CommonContext)
             (location : Location) 
             : unit =
-        let context = context :?> GenerateCommoditiesContext
-        if (context.islandMarketSource location).IsEmpty then
+        if (GetCommodities context location).IsEmpty then
             (Map.empty, Commodity.GetCommodities context)
             ||> Map.fold
                 (fun markets commodity _->
@@ -52,68 +74,88 @@ module Island =
                     |> Map.add 
                         commodity 
                         {
-                            Supply = context |> Utility.SupplyDemandGenerator
-                            Demand = context |> Utility.SupplyDemandGenerator
+                            Supply = context |> Utility.GenerateSupplyOrDemand
+                            Demand = context |> Utility.GenerateSupplyOrDemand
                         })
-            |> context.islandMarketSink location
+            |> PutCommodities context location
 
-    type GenerateItemsContext =
-        inherit ServiceContext
-        abstract member islandItemSink   : IslandItemSink
-        abstract member islandItemSource : IslandItemSource
-        abstract member itemSource       : ItemSource
-    let GenerateItems 
-            (context  : ServiceContext)
+    type PutIslandItemsContext =
+        abstract member islandItemSink   : IslandItemSink ref
+    let private PutIslandItems
+            (context : CommonContext)
+            (location : Location)
+            (items : Set<uint64>)
+            : unit =
+        (context :?> PutIslandItemsContext).islandItemSink.Value location items
+
+    type GetIslandItemsContext =
+        abstract member islandItemSource : IslandItemSource ref
+    let private GetIslandItems
+            (context : CommonContext)
+            (location : Location)
+            : Set<uint64> =
+        (context :?> GetIslandItemsContext).islandItemSource.Value location
+
+    let internal GenerateItems 
+            (context  : CommonContext)
             (location : Location) 
             : unit =
-        let context = context :?> GenerateItemsContext
-        if (context.islandItemSource location).IsEmpty then
-            (Set.empty, context.itemSource())
+        if (GetIslandItems context location).IsEmpty then
+            (Set.empty, Item.GetList context)
             ||> Map.fold 
                 (fun items item descriptor -> 
                     let table =
                         Map.empty
                         |> Map.add true descriptor.Occurrence
                         |> Map.add false (1.0 - descriptor.Occurrence)
-                    if Utility.WeightedGenerator context table |> Option.defaultValue false then
+                    if Utility.GenerateFromWeightedValues context table |> Option.defaultValue false then
                         items |> Set.add item
                     else
                         items)
-            |> context.islandItemSink location
+            |> PutIslandItems context location
 
     type ChangeMarketTransform = float * Market -> Market
-    type ChangeMarketContext =
-        inherit ServiceContext
-        abstract member islandSingleMarketSource : IslandSingleMarketSource
-        abstract member islandSingleMarketSink   : IslandSingleMarketSink
+    type GetIslandMarketContext =
+        abstract member islandSingleMarketSource : IslandSingleMarketSource ref
+    let private GetIslandMarket
+            (context : CommonContext)
+            (location : Location)
+            (itemId : uint64)
+            : Market option =
+        (context :?> GetIslandMarketContext).islandSingleMarketSource.Value location itemId
+    type PutIslandMarketContext =
+        abstract member islandSingleMarketSink   : IslandSingleMarketSink ref
+    let private PutIslandMarket
+            (context : CommonContext)
+            (location : Location)
+            (itemId:uint64, market:Market)
+            : unit =
+        (context :?> PutIslandMarketContext).islandSingleMarketSink.Value location (itemId, market)
+
     let private ChangeMarket
             (transform: ChangeMarketTransform)
-            (context : ServiceContext)
+            (context : CommonContext)
             (commodity                : uint64) 
             (change                   : float) 
             (location                 : Location) 
             : unit =
-        let context = context :?> ChangeMarketContext
         commodity
-        |> context.islandSingleMarketSource location
+        |> GetIslandMarket context location
         |> Option.map (fun m -> transform (change, m))
-        |> Option.iter (fun market -> context.islandSingleMarketSink location (commodity, market))
+        |> Option.iter (fun market -> PutIslandMarket context location (commodity, market))
 
-    let private ChangeMarketDemand (context:ServiceContext) =
+    let private ChangeMarketDemand (context:CommonContext) =
         ChangeMarket Market.ChangeDemand context
 
-    let private ChangeMarketSupply (context:ServiceContext) = 
+    let private ChangeMarketSupply (context:CommonContext) = 
         ChangeMarket Market.ChangeSupply context
 
-    type UpdateMarketForItemContext =
-        inherit ServiceContext
-    let UpdateMarketForItemSale 
-            (context      : ServiceContext)
+    let internal UpdateMarketForItemSale 
+            (context      : CommonContext)
             (descriptor   : ItemDescriptor) 
             (quantitySold : uint64) 
             (location     : Location) 
             : unit =
-        let context = context :?> UpdateMarketForItemContext
         let commodities = Commodity.GetCommodities context
         descriptor.Commodities
         |> Map.iter 
@@ -121,13 +163,12 @@ module Island =
                 let totalQuantity = quantityContained * (quantitySold |> float) * commodities.[commodity].SaleFactor
                 ChangeMarketDemand context commodity totalQuantity location)
 
-    let UpdateMarketForItemPurchase 
-            (context      : ServiceContext)
+    let internal UpdateMarketForItemPurchase 
+            (context      : CommonContext)
             (descriptor               : ItemDescriptor) 
             (quantityPurchased        : uint64) 
             (location                 : Location) 
             : unit =
-        let context = context :?> UpdateMarketForItemContext
         let commodities = Commodity.GetCommodities context
         descriptor.Commodities
         |> Map.iter 
@@ -136,49 +177,64 @@ module Island =
                 ChangeMarketSupply context commodity totalQuantity location)
 
     type GetStatisticContext =
-        inherit ServiceContext
-        abstract member islandSingleStatisticSource : IslandSingleStatisticSource 
-    let GetStatistic
-            (context    : ServiceContext)
+        abstract member islandSingleStatisticSource : IslandSingleStatisticSource ref
+    let internal GetStatistic
+            (context    : CommonContext)
             (identifier : IslandStatisticIdentifier)
             (location   : Location)
             : Statistic option =
-        let context = context :?> GetStatisticContext
-        context.islandSingleStatisticSource location identifier
+        (context :?> GetStatisticContext).islandSingleStatisticSource.Value (location, identifier)
 
     type GetListContext =
-        inherit ServiceContext
-        abstract member islandSource           : IslandSource
-    let GetList
-            (context : ServiceContext)
+        abstract member islandSource           : IslandSource ref
+    let internal GetList
+            (context : CommonContext)
             : Location list =
-        (context :?> GetListContext).islandSource()
+        (context :?> GetListContext).islandSource.Value()
+
+    let internal Exists
+            (context : CommonContext)
+            (location : Location)
+            : bool =
+        GetList context
+        |> List.tryFind (fun x -> x = location)
+        |> Option.isSome
 
     type GetItemsContext =
-        inherit ServiceContext
-        abstract member islandItemSource   : IslandItemSource
-    let GetItems
-            (context : ServiceContext)
+        abstract member islandItemSource   : IslandItemSource ref
+    let internal GetItems
+            (context : CommonContext)
             (location : Location)
             : Set<uint64> =
-        (context :?> GetItemsContext).islandItemSource location
+        (context :?> GetItemsContext).islandItemSource.Value location
 
     type HasFeatureContext =
-        inherit ServiceContext
-        abstract member islandSingleFeatureSource : IslandSingleFeatureSource
-    let HasFeature
-            (context    : ServiceContext)
+        abstract member islandSingleFeatureSource : IslandSingleFeatureSource ref
+    let internal HasFeature
+            (context    : CommonContext)
             (identifier : IslandFeatureIdentifier)
             (location   : Location)
             : bool =
-        (context :?> HasFeatureContext).islandSingleFeatureSource location identifier
+        (context :?> HasFeatureContext).islandSingleFeatureSource.Value location identifier
 
     type GetFeaturesContext = 
-        inherit ServiceContext
-        abstract member islandFeatureSource            : IslandFeatureSource
-    let GetFeatures
-            (context : ServiceContext)
+        abstract member islandFeatureSource            : IslandFeatureSource ref
+    let internal GetFeatures
+            (context : CommonContext)
             (location : Location)
             : IslandFeatureIdentifier list =
-        (context :?> GetFeaturesContext).islandFeatureSource location
+        (context :?> GetFeaturesContext).islandFeatureSource.Value location
+
+    let internal GetMinimumGamblingStakes
+            (context : CommonContext)
+            (location : Location)
+            : float =
+        GetStatistic 
+            context 
+            IslandStatisticIdentifier.MinimumGamblingStakes 
+            location 
+        |> Option.get
+        |> Statistic.GetCurrentValue
+
+
 

@@ -14,7 +14,7 @@ module RationItem =
         else
             previous
 
-    let GetRationItems
+    let internal GetRationItems
             (connection : SQLiteConnection) 
             : Result<uint64 list, string> =
         try

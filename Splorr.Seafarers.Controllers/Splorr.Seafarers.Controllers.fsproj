@@ -31,6 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Splorr.Common\Splorr.Common.fsproj" />
     <ProjectReference Include="..\Splorr.Seafarers.Persistence\Splorr.Seafarers.Persistence.fsproj" />
     <ProjectReference Include="..\Splorr.Seafarers.Services\Splorr.Seafarers.Services.fsproj" />
   </ItemGroup>

@@ -33,7 +33,7 @@ let ``Run.It returns Docked with the given location and world.`` () =
         TestJobRunContext
             (islandJobSourceStub,
             islandSingleNameSourceStub,
-            islandSourceStub) :> ServiceContext
+            islandSourceStub) :> CommonContext
     let actual =
         (inputLocation, inputWorld)
         ||> Jobs.Run 

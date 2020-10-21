@@ -2,6 +2,7 @@
 
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
+open Splorr.Common
 
 module Metrics = 
     let private GetMetricDisplayName 
@@ -19,7 +20,7 @@ module Metrics =
         | _ -> raise (System.NotImplementedException (metric.ToString() |> sprintf "'%s' is a metric with no name!"))
 
     let private RunWorld
-            (context : ServiceContext)
+            (context : CommonContext)
             (messageSink        : MessageSink) 
             (avatarId           : string) 
             : unit = 
@@ -31,7 +32,7 @@ module Metrics =
             "-------------------------+-------" |> Line
         ]
         |> List.iter messageSink
-        let metrics = AvatarMetric.Get context avatarId
+        let metrics = World.GetAvatarMetrics context avatarId
         if metrics.IsEmpty then
             (Hue.Usage, "(none)" |> Line) |> Hued |> messageSink
         else
@@ -46,7 +47,7 @@ module Metrics =
                     |> List.iter messageSink)
 
     let Run 
-            (context : ServiceContext)
+            (context : CommonContext)
             (messageSink        : MessageSink) 
             (gamestate          : Gamestate) 
             : Gamestate option =

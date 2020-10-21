@@ -1,27 +1,32 @@
 ﻿namespace Splorr.Seafarers.Services
 open System
-
-type AvatarMessageSink = string -> string -> unit
-type AvatarMessageSource = string -> string list
+open Splorr.Common
 
 module AvatarMessages =
+    type AvatarMessageSink = (string * string) -> unit
+    type AvatarMessageSource = string -> string list
+    
     type AddContext =
-        inherit ServiceContext
-        abstract member avatarMessageSink : AvatarMessageSink
-    let Add
-            (context : ServiceContext)
+        abstract member avatarMessageSink : AvatarMessageSink ref
+    let internal AddMessage
+            (context : CommonContext)
+            (avatarId : string)
+            (message: string)
+            : unit =
+        (context :?> AddContext).avatarMessageSink.Value (avatarId, message)
+
+    let internal Add
+            (context : CommonContext)
             (messages : string list) 
             (avatarId : string) 
             : unit =
-        let context = context :?> AddContext
         messages
-        |> List.iter (context.avatarMessageSink avatarId)
+        |> List.iter (AddMessage context avatarId)
 
     type GetContext = 
-        inherit ServiceContext
-        abstract member avatarMessageSource : AvatarMessageSource
-    let Get
-            (context : ServiceContext)
+        abstract member avatarMessageSource : AvatarMessageSource ref
+    let internal Get
+            (context : CommonContext)
             (avatarId: string)
             : string list =
-        (context :?> GetContext).avatarMessageSource avatarId
+        (context :?> GetContext).avatarMessageSource.Value avatarId

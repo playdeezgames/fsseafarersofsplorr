@@ -2,10 +2,11 @@
 
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
+open Splorr.Common
 
 module ItemList = 
     let private RunWithIsland 
-            (context            : ServiceContext)
+            (context            : CommonContext)
             (messageSink        : MessageSink) 
             (location           : Location) 
             (avatarId           : string) 
@@ -20,13 +21,13 @@ module ItemList =
             (Hue.Sublabel, "---------------------+----------+----------" |> Line) |> Hued
         ]
         |> List.iter messageSink
-        let items = Item.GetList context
+        let items = World.GetItemList context
         location
-        |> Island.GetItems context
+        |> World.GetIslandItems context
         |> Set.iter (fun item -> 
             let descriptor = items.[item]
-            let sellPrice: float = (item, location) ||> IslandMarket.DetermineSalePrice context
-            let buyPrice: float = (item, location) ||> IslandMarket.DeterminePurchasePrice context
+            let sellPrice: float = (item, location) ||> World.DetermineIslandMarketSalePrice context
+            let buyPrice: float = (item, location) ||> World.DetermineIslandMarketPurchasePrice context
             [
                 (Hue.Value, descriptor.ItemName |> sprintf "%-20s" |> Text) |> Hued
                 (Hue.Sublabel, " | " |> Text) |> Hued
@@ -38,7 +39,7 @@ module ItemList =
             ())
         [
             (Hue.Label, "Money: " |> Text) |> Hued
-            (Hue.Value, avatarId |> AvatarShipmates.GetMoney context |> sprintf "%f" |> Line) |> Hued
+            (Hue.Value, avatarId |> World.GetAvatarMoney context |> sprintf "%f" |> Line) |> Hued
         ]
         |> List.iter messageSink
         avatarId
@@ -46,7 +47,7 @@ module ItemList =
         |> Some
 
     let Run 
-            (context : ServiceContext)
+            (context : CommonContext)
             (messageSink                   : MessageSink) =
         RunWithIsland 
             context

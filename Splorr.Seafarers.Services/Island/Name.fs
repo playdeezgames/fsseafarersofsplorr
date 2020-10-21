@@ -1,21 +1,22 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open System
+open Splorr.Common
 
-type IslandSingleNameSource = Location -> string option
 
 module IslandName = 
+    type IslandSingleNameSource = Location -> string option
+
     type GetNameContext =
-        inherit ServiceContext
         abstract member islandSingleNameSource : IslandSingleNameSource
-    let GetName
-            (context : ServiceContext)
+    let internal GetName
+            (context : CommonContext)
             (location : Location) 
             : string option =
         (context :?> GetNameContext).islandSingleNameSource location
 
-    let GetDisplayName 
-            (context  : ServiceContext)
+    let internal GetDisplayName 
+            (context  : CommonContext)
             (avatarId : string) 
             (location : Location)
             : string =

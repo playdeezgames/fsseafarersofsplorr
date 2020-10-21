@@ -1,36 +1,35 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open System
-
-type ShipmateSingleStatisticSink = string -> ShipmateIdentifier -> (ShipmateStatisticIdentifier * Statistic option) -> unit
-type ShipmateSingleStatisticSource = string -> ShipmateIdentifier -> ShipmateStatisticIdentifier -> Statistic option
+open Splorr.Common
 
 module ShipmateStatistic =
+
+    type ShipmateSingleStatisticSource = string * ShipmateIdentifier * ShipmateStatisticIdentifier -> Statistic option
     type GetContext =
-        inherit ServiceContext
-        abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource
-    let Get
-            (context: ServiceContext)
+        abstract member shipmateSingleStatisticSource : ShipmateSingleStatisticSource ref
+    let internal Get
+            (context: CommonContext)
             (avatarId : string)
             (shipmateId : ShipmateIdentifier)
             (identifier : ShipmateStatisticIdentifier)
             : Statistic option =
-        (context :?> GetContext).shipmateSingleStatisticSource avatarId shipmateId identifier
+        (context :?> GetContext).shipmateSingleStatisticSource.Value (avatarId, shipmateId, identifier)
 
+    type ShipmateSingleStatisticSink = string * ShipmateIdentifier * ShipmateStatisticIdentifier * Statistic option -> unit
     type PutContext =
-        inherit ServiceContext
-        abstract member shipmateSingleStatisticSink : ShipmateSingleStatisticSink
+        abstract member shipmateSingleStatisticSink : ShipmateSingleStatisticSink ref
     let internal Put
-            (context : ServiceContext)
+            (context : CommonContext)
             (avatarId:string)
             (shipmateId: ShipmateIdentifier)
             (identifier:ShipmateStatisticIdentifier)
             (statistic: Statistic option)
             : unit =
-        (context :?> PutContext).shipmateSingleStatisticSink avatarId shipmateId (identifier, statistic)
+        (context :?> PutContext).shipmateSingleStatisticSink.Value (avatarId, shipmateId, identifier, statistic)
 
-    let Transform 
-            (context    : ServiceContext)
+    let internal Transform 
+            (context    : CommonContext)
             (identifier : ShipmateStatisticIdentifier) 
             (transform  : Statistic -> Statistic option) 
             (avatarId   : string)

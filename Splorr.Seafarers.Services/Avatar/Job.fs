@@ -1,22 +1,28 @@
 ﻿namespace Splorr.Seafarers.Services
 open System
 open Splorr.Seafarers.Models
+open Splorr.Common
 
-type AvatarJobSource = string -> Job option
+
 
 module AvatarJob =
-    type AbandonContext =
-        inherit ServiceContext
-        abstract member avatarJobSink : AvatarJobSink
-        abstract member avatarJobSource : AvatarJobSource
-    let Abandon 
-            (context : ServiceContext)
+    type AvatarJobSource = string -> Job option
+
+    type GetContext =
+        abstract member avatarJobSource : AvatarJobSource ref
+    let internal Get
+            (context : CommonContext)
+            (avatarId : string)
+            : Job option =
+        (context :?> GetContext).avatarJobSource.Value avatarId
+
+    let internal Abandon 
+            (context : CommonContext)
             (avatarId: string)
             : unit =
-        let context = context :?> AbandonContext
         let reputationCostForAbandoningAJob = -1.0
         avatarId
-        |> context.avatarJobSource
+        |> Get context
         |> Option.iter
             (fun _ -> 
                 avatarId
@@ -30,27 +36,13 @@ module AvatarJob =
                 |> Avatar.IncrementMetric 
                     context
                     Metric.AbandonedJob
-                context.avatarJobSink avatarId None)
+                Avatar.SetJob context avatarId None)
 
-    type GetContext =
-        inherit ServiceContext
-        abstract member avatarJobSource : AvatarJobSource
-    let Get
-            (context : ServiceContext)
-            (avatarId : string)
-            : Job option =
-        (context :?> GetContext).avatarJobSource avatarId
-
-    type CompleteContext =
-        inherit ServiceContext
-        abstract member avatarJobSink : AvatarJobSink
-        abstract member avatarJobSource : AvatarJobSource
-    let Complete
-            (context : ServiceContext)
+    let internal Complete
+            (context : CommonContext)
             (avatarId:string)
             : unit =
-        let context = context :?> CompleteContext
-        match avatarId |> context.avatarJobSource with
+        match avatarId |> Get context with
         | Some job ->
             AvatarShipmates.SetReputation 
                 context
@@ -71,5 +63,5 @@ module AvatarJob =
                 Metric.CompletedJob 
                 1UL
             None
-            |> context.avatarJobSink avatarId
+            |> Avatar.SetJob context avatarId
         | _ -> ()

@@ -23,7 +23,7 @@ let ``Run.It returns the given gamestate.`` () =
             islandSingleNameSourceStub, 
             shipmateSingleStatisticSourceStub, 
             vesselSingleStatisticSourceStub) 
-            :> ServiceContext
+            :> CommonContext
     let actual =
         input
         |> Status.Run 

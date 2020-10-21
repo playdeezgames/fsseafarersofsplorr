@@ -17,61 +17,24 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="Fixtures\Common.fs" />
-    <Compile Include="AvatarTestFixtures.fs" />
-    <Compile Include="IslandTestFixtures.fs" />
-    <Compile Include="WorldTestFixtures.fs" />
-    <Compile Include="UtilityTests.fs" />
-    <Compile Include="AngleTests.fs" />
-    <Compile Include="Avatar\AbandonJobTests.fs" />
-    <Compile Include="Avatar\CompleteJobTests.fs" />
-    <Compile Include="Avatar\GetJobTests.fs" />
-    <Compile Include="Avatar\CleanHullTests.fs" />
-    <Compile Include="Avatar\CreateTests.fs" />
-    <Compile Include="Avatar\MoneyReputationTests.fs" />
-    <Compile Include="Avatar\SpeedTests.fs" />
-    <Compile Include="Avatar\MoveTests.fs" />
-    <Compile Include="Avatar\InventoryTests.fs" />
-    <Compile Include="Avatar\HeadingTests.fs" />
-    <Compile Include="Avatar\PositionTests.fs" />
-    <Compile Include="Avatar\EarnSpendMoneyTests.fs" />
-    <Compile Include="Avatar\GamblingTests.fs" />
-    <Compile Include="Avatar\UnsortedTests.fs" />
-    <Compile Include="CommodityTests.fs" />
-    <Compile Include="AvatarIslandMetricTests.fs" />
-    <Compile Include="IslandVisitTests.fs" />
-    <Compile Include="IslandTests.fs" />
-    <Compile Include="IslandFeatureGeneratorTests.fs" />
-    <Compile Include="ItemTests.fs" />
-    <Compile Include="JobTests.fs" />
-    <Compile Include="LocationTests.fs" />
-    <Compile Include="MarketTests.fs" />
-    <Compile Include="Shipmate\StatusTests.fs" />
-    <Compile Include="Shipmate\TransformStatisticsTests.fs" />
+    <Compile Include="Contexts.fs" />
     <Compile Include="StatisticTest.fs" />
-    <Compile Include="VesselTests.fs" />
-    <Compile Include="World\AbandonJobTests.fs" />
-    <Compile Include="World\AcceptJobTests.fs" />
-    <Compile Include="World\BuyItemsTests.fs" />
-    <Compile Include="World\CleanHullTests.fs" />
-    <Compile Include="World\DistanceToTests.fs" />
-    <Compile Include="World\DockTests.fs" />
-    <Compile Include="World\GambleTests.fs" />
-    <Compile Include="World\HeadForTests.fs" />
-    <Compile Include="World\IsAvatarAliveTests.fs" />
-    <Compile Include="World\MoveTests.fs" />
-    <Compile Include="World\SellItemsTests.fs" />
-    <Compile Include="World\SetHeadingTests.fs" />
-    <Compile Include="World\SetSpeedTests.fs" />
-    <Compile Include="World\UndockTests.fs" />
-    <Compile Include="World\BetOnGamblingHand.fs" />
-    <Compile Include="World\UnsortedTests.fs" />
-    <Compile Include="World\UpdateChartTests.fs" />
+    <Compile Include="LocationTests.fs" />
+    <Compile Include="AngleTests.fs" />
+    <Compile Include="Dummies.fs" />
+    <Compile Include="WorldGetStatisticTests.fs" />
+    <Compile Include="WorldClearMessagesTests.fs" />
+    <Compile Include="WorldAbandonJobTests.fs" />
+    <Compile Include="WorldAddMessagesTests.fs" />
+    <Compile Include="WorldAcceptJobTests.fs" />
+    <Compile Include="WorldBetOnGamblingHandTests.fs" />
+    <Compile Include="WorldTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Splorr.Seafarers.Services\Splorr.Seafarers.Services.fsproj" />
+    <ProjectReference Include="..\Splorr.Tests.Common\Splorr.Tests.Common.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

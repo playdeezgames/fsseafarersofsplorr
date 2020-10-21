@@ -4,7 +4,7 @@ open System.Data.SQLite
 open Splorr.Seafarers.Models
 
 module IslandMarket = 
-    let GetForIsland 
+    let internal GetForIsland 
             (connection : SQLiteConnection) 
             (location   : Location) 
             : Result<Map<uint64, Market>, string> =
@@ -18,7 +18,7 @@ module IslandMarket =
         |> Result.bind
             (Map.ofList >> Ok)
 
-    let GetMarketForIsland 
+    let internal GetMarketForIsland 
             (connection  : SQLiteConnection) 
             (location    : Location) 
             (commodityId : uint64) 
@@ -34,7 +34,7 @@ module IslandMarket =
         |> Result.bind
             (List.tryHead >> Ok)
    
-    let SetForIsland 
+    let internal SetForIsland 
             (connection      : SQLiteConnection) 
             (location        : Location) 
             (commodityMarket : uint64 * Market) 
@@ -52,7 +52,7 @@ module IslandMarket =
         with
         | ex -> ex.ToString() |> Error
 
-    let CreateForIsland 
+    let internal CreateForIsland 
             (connection : SQLiteConnection) 
             (location   : Location) 
             (markets    : Map<uint64, Market>) 

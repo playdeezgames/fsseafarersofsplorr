@@ -3,6 +3,7 @@
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Persistence
+open Splorr.Common
 
 module AtSea =
     let private DetermineSpeedHue 
@@ -16,15 +17,15 @@ module AtSea =
             Hue.Error
 
     let private CanCareen 
-            (context : ServiceContext)
+            (context : CommonContext)
             (avatarId                    : string) 
             : bool =
         let viewDistance =
-            Vessel.GetStatistic context avatarId VesselStatisticIdentifier.ViewDistance 
+            World.GetVesselStatistic context avatarId VesselStatisticIdentifier.ViewDistance 
             |> Option.get 
             |> Statistic.GetCurrentValue
         let avatarPosition =
-            Vessel.GetPosition 
+            World.GetVesselPosition 
                 context 
                 avatarId
             |> Option.get
@@ -35,22 +36,22 @@ module AtSea =
         |> List.map 
             (fun l -> 
                 (l,
-                    Island.GetStatistic context IslandStatisticIdentifier.CareenDistance l 
+                    World.GetIslandStatistic context IslandStatisticIdentifier.CareenDistance l 
                     |> Option.get
                     |> Statistic.GetCurrentValue))
         |> List.exists (fun (l,d) -> Location.DistanceTo l avatarPosition < d)
 
     let private GetVisibleIslands 
-            (context : ServiceContext)
+            (context : CommonContext)
             (avatarId                       : string) 
             : (Location * string * float * string) list =
         let viewDistance =
-            Vessel.GetStatistic context avatarId VesselStatisticIdentifier.ViewDistance 
+            World.GetVesselStatistic context avatarId VesselStatisticIdentifier.ViewDistance 
             |> Option.get 
             |> Statistic.GetCurrentValue
         let avatarPosition =
             avatarId
-            |> Vessel.GetPosition context
+            |> World.GetVesselPosition context
             |> Option.get
         World.GetNearbyLocations
             context
@@ -67,34 +68,34 @@ module AtSea =
                         Location.DistanceTo 
                             avatarPosition 
                             location, 
-                                (IslandName.GetDisplayName 
+                                (World.GetIslandDisplayName 
                                     context
                                     avatarId
                                     location)))
         |> List.sortBy (fun (_,_,d,_)->d)
 
     let private UpdateDisplay 
-            (context : ServiceContext)
+            (context : CommonContext)
             (messageSink                    : MessageSink) 
             (avatarId                       : string) 
             : unit =
         "" |> Line |> messageSink
         avatarId
-        |> AvatarMessages.Get context
+        |> World.GetAvatarMessages context
         |> Utility.DumpMessages messageSink
 
         let speed = 
             avatarId
-            |> Vessel.GetSpeed 
+            |> World.GetVesselSpeed 
                 context 
             |> Option.get
         let heading = 
             avatarId 
-            |> Vessel.GetHeading 
+            |> World.GetVesselHeading 
                 context 
             |> Option.get
         let speedHue =DetermineSpeedHue speed
-        let turn = ShipmateStatistic.Get context avatarId Primary ShipmateStatisticIdentifier.Turn |> Option.get
+        let turn = World.GetShipmateStatistic context avatarId Primary ShipmateStatisticIdentifier.Turn |> Option.get
         [
             (Hue.Heading, "At Sea:" |> Line) |> Hued
             (Hue.Label, "Turn: " |> Text) |> Hued
@@ -105,14 +106,14 @@ module AtSea =
             (Hue.Label, "Speed: " |> Text) |> Hued
             (speedHue, (speed * 100.0) |> sprintf "%.0f%%" |> Text) |> Hued
             avatarId 
-            |> Vessel.GetEffectiveSpeed context 
+            |> World.GetVesselEffectiveSpeed context 
             |> sprintf "(Effective rate: %.2f)" |> Line
             (Hue.Subheading, "Nearby:" |> Line) |> Hued
         ]
         |> List.iter messageSink
 
         let dockDistance = 
-            Vessel.GetStatistic context avatarId VesselStatisticIdentifier.DockDistance 
+            World.GetVesselStatistic context avatarId VesselStatisticIdentifier.DockDistance 
             |> Option.get 
             |> Statistic.GetCurrentValue
         avatarId
@@ -132,7 +133,7 @@ module AtSea =
                 |> List.iter messageSink)
 
     let private HandleCommand
-            (context                        : ServiceContext)
+            (context                        : CommonContext)
             (command                        : Command option) 
             (avatarId                       : string) 
             : Gamestate option =
@@ -145,7 +146,7 @@ module AtSea =
                 avatarId
 
         let dockDistance = 
-            Vessel.GetStatistic context avatarId VesselStatisticIdentifier.DockDistance 
+            World.GetVesselStatistic context avatarId VesselStatisticIdentifier.DockDistance 
             |> Option.get 
             |> Statistic.GetCurrentValue
         let nearby = 
@@ -253,7 +254,7 @@ module AtSea =
             BaseGameState.HandleCommand context None avatarId
 
     let private RunAlive
-            (context       : ServiceContext)
+            (context       : CommonContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (avatarId      : string) 
@@ -268,7 +269,7 @@ module AtSea =
             avatarId
 
     let Run 
-            (context       : ServiceContext)
+            (context       : CommonContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (avatarId      : string) 
@@ -281,6 +282,6 @@ module AtSea =
                 avatarId
         else
             avatarId
-            |> AvatarMessages.Get context
+            |> World.GetAvatarMessages context
             |> Gamestate.GameOver
             |> Some

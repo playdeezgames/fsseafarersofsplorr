@@ -15,7 +15,7 @@ module VesselStatisticTemplate =
                 CurrentValue = reader.GetDouble(4)
             })
 
-    let GetList 
+    let internal GetList 
             (connection : SQLiteConnection) 
             : Result<Map<VesselStatisticIdentifier, StatisticTemplate>, string> =
         connection

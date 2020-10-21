@@ -2,12 +2,12 @@
 open System
 open Tarot
 open Splorr.Seafarers.Models
-
-type AvatarGamblingHandSource = string -> AvatarGamblingHand option
-type AvatarGamblingHandSink = string -> AvatarGamblingHand option -> unit
+open Splorr.Common
 
 module AvatarGamblingHand =
-    let IsWinner
+    type AvatarGamblingHandSource = string -> AvatarGamblingHand option
+
+    let internal IsWinner
             (hand: Card * Card * Card)
             : bool =
         let first, second, final = hand
@@ -19,40 +19,40 @@ module AvatarGamblingHand =
             false
 
     type GetContext =
-        inherit ServiceContext
-        abstract member avatarGamblingHandSource : AvatarGamblingHandSource
-    let Get
-            (context  : ServiceContext)
+        abstract member avatarGamblingHandSource : AvatarGamblingHandSource ref
+    let internal Get
+            (context  : CommonContext)
             (avatarId : string)
             : AvatarGamblingHand option =
-        let context = context :?> GetContext
-        context.avatarGamblingHandSource avatarId
+        (context :?> GetContext).avatarGamblingHandSource.Value avatarId
       
-    type DealContext =
-        inherit ServiceContext
-        abstract member avatarGamblingHandSink : AvatarGamblingHandSink
-    let Deal
-            (context  : ServiceContext)
+    type AvatarGamblingHandSink = string * AvatarGamblingHand option -> unit
+    type SetContext =
+        abstract member avatarGamblingHandSink : AvatarGamblingHandSink ref
+    let private Set
+            (context : CommonContext)
+            (avatarId : string)
+            (hand : AvatarGamblingHand option)
+            : unit =
+        (context :?> SetContext).avatarGamblingHandSink.Value (avatarId, hand)
+
+    let internal Deal
+            (context  : CommonContext)
             (avatarId : string)
             : unit =
-        let context = context :?> DealContext
         match Deck.Create()
             |> Utility.SortListRandomly context with
         | first :: second :: third :: _ ->
             (first, second, third)
             |> Some
-            |> context.avatarGamblingHandSink avatarId
+            |> Set context avatarId
         | _ ->
             raise (NotImplementedException "DealGamblingHand did not have at least three cards")
 
-    type FoldContext =
-        inherit ServiceContext
-        abstract member avatarGamblingHandSink : AvatarGamblingHandSink
-    let Fold
-            (context  : ServiceContext)
+    let internal Fold
+            (context  : CommonContext)
             (avatarId : string)
             : unit =
-        let context = context :?> FoldContext
-        context.avatarGamblingHandSink avatarId None
+        Set context avatarId None
 
 

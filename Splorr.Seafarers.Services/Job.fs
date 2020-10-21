@@ -1,75 +1,50 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open System
-
-type TermSource = unit -> string list
-type JobRewardStatisticSource = unit -> Statistic
+open Splorr.Common
 
 module Job =
+    type JobRewardStatisticSource = unit -> Statistic
+
     type CreateContext =
-        inherit ServiceContext
-        abstract member termListSource : TermListSource
-        abstract member jobRewardStatisticSource : JobRewardStatisticSource
-    let Create 
-            (context      : ServiceContext)
+        abstract member jobRewardStatisticSource : JobRewardStatisticSource ref
+    let private GetJobRewardStatistic
+            (context : CommonContext)
+            : Statistic =
+        (context :?> CreateContext).jobRewardStatisticSource.Value()
+
+    let internal Create 
+            (context      : CommonContext)
             (destinations : Set<Location>) 
             : Job =
-        let context = context :?> CreateContext
-        let pickRandomly : string list -> string = 
-            Utility.PickRandomly context
-
-        let adverbSource =
-            context.termListSource "adverb"
-        let adjectiveSource =
-            context.termListSource "adjective"
-        let objectNameSource =
-            context.termListSource "object name"
-        let personNameSource =
-            context.termListSource "person name"
-        let personAdjectiveSource =
-            context.termListSource "person adjective"
-        let professionSource =
-            context.termListSource "profession"
-
-        let adverb = 
-            adverbSource
-            |> pickRandomly
-
-        let adjective = 
-            adjectiveSource
-            |> pickRandomly
-
-        let objectName = 
-            objectNameSource
-            |> pickRandomly
-
-        let name = 
-            personNameSource
-            |> pickRandomly
-
-        let personalAdjective = 
-            personAdjectiveSource
-            |> pickRandomly
-
-        let profession = 
-            professionSource
-            |> pickRandomly
+        let adverb =
+            Utility.GenerateFromTermList context "adverb"
+        let adjective =
+            Utility.GenerateFromTermList context "adjective"
+        let objectName =
+            Utility.GenerateFromTermList context "object name"
+        let personName =
+            Utility.GenerateFromTermList context "person name"
+        let personalAdjective =
+            Utility.GenerateFromTermList context "person adjective"
+        let profession =
+            Utility.GenerateFromTermList context "profession"
 
         let destination = 
             destinations 
             |> Set.toList 
-            |> Utility.PickRandomly
+            |> Utility.PickFromListRandomly
                 context
 
         let jobReward = 
-            context.jobRewardStatisticSource() 
+            GetJobRewardStatistic context
 
         let rewardMinimum, 
             rewardMaximum = 
                 jobReward.MinimumValue, 
                 jobReward.MaximumValue
         {
-            FlavorText  = sprintf "please deliver this %s %s %s to %s the %s %s" adverb adjective objectName name personalAdjective profession
+            FlavorText  = sprintf "please deliver this %s %s %s to %s the %s %s" adverb adjective objectName personName personalAdjective profession
             Destination = destination
-            Reward      = Utility.RangeGenerator context (rewardMinimum, rewardMaximum)
+            Reward      = Utility.GenerateFromRange context (rewardMinimum, rewardMaximum)
         }

@@ -4,7 +4,7 @@ open System.Data.SQLite
 open Splorr.Seafarers.Models
 
 module AvatarIslandFeature =
-    let SetFeatureForAvatar 
+    let internal SetFeatureForAvatar 
             (connection : SQLiteConnection)
             (avatarIslandFeature: AvatarIslandFeature option, avatarId: string) 
             : Result<unit, string>=
@@ -26,7 +26,7 @@ module AvatarIslandFeature =
         | ex ->
             ex.ToString() |> Error
 
-    let GetFeatureForAvatar 
+    let internal GetFeatureForAvatar 
             (connection : SQLiteConnection)
             (avatarId : string)
             : Result<AvatarIslandFeature option, string> =

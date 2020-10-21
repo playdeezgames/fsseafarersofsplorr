@@ -33,7 +33,7 @@ module Item =
             previous
             |> Ok
 
-    let GetList 
+    let internal GetList 
             (connection : SQLiteConnection) 
             : Result<Map<uint64, ItemDescriptor>, string> =
         try

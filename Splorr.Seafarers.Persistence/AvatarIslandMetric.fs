@@ -4,7 +4,7 @@ open System.Data.SQLite
 open Splorr.Seafarers.Models
 
 module AvatarIslandMetric = 
-    let GetMetricForAvatarIsland
+    let internal GetMetricForAvatarIsland
             (connection : SQLiteConnection)
             (avatarId    : string) 
             (location    : Location) 
@@ -29,7 +29,7 @@ module AvatarIslandMetric =
         | ex -> 
             ex.ToString() |> Error
 
-    let SetMetricForAvatarIsland
+    let internal SetMetricForAvatarIsland
             (connection : SQLiteConnection)
             (avatarId    : string) 
             (location    : Location) 

@@ -1,33 +1,31 @@
 ﻿namespace Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open System
-
-type IslandJobSource = Location -> Job list
-type IslandJobSink = Location -> Job -> unit
-type IslandJobPurger = Location -> uint32 -> unit
+open Splorr.Common
 
 module IslandJob =
+
+    type IslandJobSource = Location -> Job list
     type GetContext =
-        inherit ServiceContext
-        abstract member islandJobSource : IslandJobSource
-    let Get
-            (context : ServiceContext)
+        abstract member islandJobSource : IslandJobSource ref
+    let internal Get
+            (context : CommonContext)
             (location: Location)
             : Job list =
-        (context :?> GetContext).islandJobSource location
+        (context :?> GetContext).islandJobSource.Value location
 
+    type IslandJobSink = Location * Job -> unit
     type AddContext =
-        inherit ServiceContext
-        abstract member islandJobSink : IslandJobSink
+        abstract member islandJobSink : IslandJobSink ref
     let private Add
-            (context : ServiceContext)
+            (context : CommonContext)
             (location : Location)
             (job : Job)
             : unit =
-        (context :?> AddContext).islandJobSink location job
+        (context :?> AddContext).islandJobSink.Value (location, job)
 
-    let Generate 
-            (context      : ServiceContext)
+    let internal Generate 
+            (context      : CommonContext)
             (destinations : Set<Location>) 
             (location     : Location)
             : unit =
@@ -37,11 +35,12 @@ module IslandJob =
                 destinations
             |> Add context location
 
+    type IslandJobPurger = Location * uint32 -> unit
     type PurgeContext =
-        abstract member islandJobPurger : IslandJobPurger
-    let Purge
-            (context  : ServiceContext)
+        abstract member islandJobPurger : IslandJobPurger ref
+    let internal Purge
+            (context  : CommonContext)
             (location : Location)
             (index    : uint32)
             : unit =
-        (context :?> PurgeContext).islandJobPurger location index
+        (context :?> PurgeContext).islandJobPurger.Value (location, index)

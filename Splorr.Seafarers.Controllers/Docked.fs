@@ -2,6 +2,7 @@
 
 open Splorr.Seafarers.Models
 open Splorr.Seafarers.Services
+open Splorr.Common
 
 module Docked = 
     let private getFeatureDisplayName (feature:IslandFeatureIdentifier) : Message =
@@ -14,28 +15,28 @@ module Docked =
             raise (System.NotImplementedException (sprintf "%s" (feature.ToString())))
 
     let private UpdateDisplay 
-            (context     : ServiceContext)
+            (context     : CommonContext)
             (messageSink : MessageSink) 
             (location    : Location) 
             (avatarId    : string) 
             : unit =
         "" |> Line |> messageSink
         avatarId
-        |> AvatarMessages.Get context
+        |> World.GetAvatarMessages context
         |> Utility.DumpMessages messageSink
         location
-        |> Island.GetFeatures context 
+        |> World.GetIslandFeatures context 
         |> List.map
             getFeatureDisplayName
         |> List.append
             [
-                (Hue.Heading, sprintf "You are docked at '%s':" (IslandName.GetName context location |> Option.get) |> Line) |> Hued
-                (Hue.Flavor, sprintf "You have visited %u times." (AvatarIslandMetric.Get context avatarId location AvatarIslandMetricIdentifier.VisitCount |> Option.defaultValue 0UL) |> Line) |> Hued
+                (Hue.Heading, sprintf "You are docked at '%s':" (World.GetIslandName context location |> Option.get) |> Line) |> Hued
+                (Hue.Flavor, sprintf "You have visited %u times." (World.GetAvatarIslandMetric context avatarId location AvatarIslandMetricIdentifier.VisitCount |> Option.defaultValue 0UL) |> Line) |> Hued
             ]
         |> List.iter messageSink
 
     let private HandleCommand
-            (context : ServiceContext)
+            (context : CommonContext)
             (command                        : Command option) 
             (location                       : Location) 
             (avatarId                       : string) 
@@ -49,7 +50,7 @@ module Docked =
             |> Some
 
         | _, Some (Command.GoTo feature) ->
-            AvatarIslandFeature.Enter 
+            World.EnterAvatarIslandFeature
                 context 
                 avatarId 
                 location 
@@ -113,7 +114,7 @@ module Docked =
             BaseGameState.HandleCommand context None avatarId
 
     let private RunWithIsland 
-            (context                        : ServiceContext)
+            (context                        : CommonContext)
             (commandSource                  : CommandSource) 
             (messageSink                    : MessageSink) 
             (location                       : Location) 
@@ -132,13 +133,13 @@ module Docked =
             location 
 
     let internal RunBoilerplate 
-            (context : ServiceContext)
+            (context : CommonContext)
             (func                          : Location -> string -> Gamestate option) 
             (location                      : Location) 
             (avatarId                      : string) 
             : Gamestate option =
         if avatarId |> World.IsAvatarAlive context then
-            if context |> Island.GetList |> List.exists (fun x->x= location) then
+            if context |> World.GetIslandList |> List.exists (fun x->x= location) then
                 func location avatarId
             else
                 avatarId
@@ -146,12 +147,12 @@ module Docked =
                 |> Some
         else
             avatarId
-            |> AvatarMessages.Get context
+            |> World.GetAvatarMessages context
             |> Gamestate.GameOver
             |> Some
 
     let Run 
-            (context       : ServiceContext)
+            (context       : CommonContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) =
         RunBoilerplate 

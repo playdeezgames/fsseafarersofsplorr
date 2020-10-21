@@ -21,7 +21,7 @@ let private functionUnderTest
         (shipmateSingleStatisticSource  : ShipmateSingleStatisticSource)
         (vesselSingleStatisticSource    : VesselSingleStatisticSource) 
         = 
-    let context : ServiceContext =
+    let context : CommonContext =
         TestAtSeaRunContext
             (avatarInventorySinkStub,
             avatarInventorySourceStub,
@@ -56,7 +56,7 @@ let private functionUnderTest
             Fixtures.Common.Fake.TermListSource,
             vesselSingleStatisticSinkStub,
             vesselSingleStatisticSource,
-            worldSingleStatisticSourceStub) :> ServiceContext
+            worldSingleStatisticSourceStub) :> CommonContext
     AtSea.Run 
         context
 

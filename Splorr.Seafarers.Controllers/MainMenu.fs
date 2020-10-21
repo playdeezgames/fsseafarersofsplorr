@@ -1,6 +1,7 @@
 ﻿namespace Splorr.Seafarers.Controllers
 
 open Splorr.Seafarers.Services
+open Splorr.Common
 
 module MainMenu =
     let private UpdateDisplayHeader 
@@ -70,7 +71,7 @@ module MainMenu =
             |> HandleInvalidCommand
 
     let private HandleCommandNoGame
-            (context : ServiceContext)
+            (context : CommonContext)
             =
         function
         | Some (Command.Start avatarId)->
@@ -91,7 +92,7 @@ module MainMenu =
 
 
     let private HandleCommand
-            (context  : ServiceContext)
+            (context  : CommonContext)
             (avatarId : string option) 
             (command  : Command option) 
             : Gamestate option =
@@ -104,7 +105,7 @@ module MainMenu =
                 command
 
     let Run 
-            (context       : ServiceContext)
+            (context       : CommonContext)
             (commandSource : CommandSource) 
             (messageSink   : MessageSink) 
             (avatarId      : string option) 

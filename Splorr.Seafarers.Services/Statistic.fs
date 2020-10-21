@@ -2,7 +2,7 @@
 open Splorr.Seafarers.Models
 
 module Statistic =
-    let SetCurrentValue 
+    let internal SetCurrentValue 
             (current   : float) 
             (statistic : Statistic) 
             : Statistic =
@@ -22,7 +22,7 @@ module Statistic =
                 |> max statistic.MinimumValue}
         |> SetCurrentValue statistic.CurrentValue
 
-    let Create 
+    let internal Create 
             (minimum: float, maximum: float)  
             (current: float) 
             : Statistic =
@@ -33,21 +33,21 @@ module Statistic =
         }
         |> SetCurrentValue current
 
-    let CreateFromTemplate 
+    let internal CreateFromTemplate 
             (template:StatisticTemplate) 
             : Statistic =
         Create 
             (template.MinimumValue, template.MaximumValue) 
             template.CurrentValue
 
-    let ChangeCurrentBy 
+    let internal ChangeCurrentBy 
             (amount    : float) 
             (statistic : Statistic) 
             : Statistic =
         statistic
         |> SetCurrentValue (amount + statistic.CurrentValue)
 
-    let ChangeMaximumBy 
+    let internal ChangeMaximumBy 
             (amount    : float) 
             (statistic : Statistic) 
             : Statistic =
