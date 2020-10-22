@@ -42,3 +42,21 @@ type TestContext() =
         member val islandSingleStatisticSource = ref (Fakes.Source ("Island.GetStatisticContext", None))
     interface AvatarGamblingHand.SetContext with
         member val avatarGamblingHandSink = ref (Fakes.Sink "AvatarGamblingHand.SetContext")
+    interface Item.GetListContext with
+        member val itemSource = ref (Fakes.Source ("Item.GetListContext", Map.empty))
+    interface Item.GetContext with
+        member val itemSingleSource = ref (Fakes.Source ("Item.GetContext", None))
+    interface Commodity.GetCommoditiesContext with
+        member val commoditySource = ref (Fakes.Source ("Commodity.GetCommoditiesContext", Map.empty))
+    interface IslandMarket.DeterminePriceContext with
+        member val islandMarketSource = ref (Fakes.Source ("IslandMarket.DeterminePriceContext", Map.empty))
+    interface Vessel.GetStatisticContext with
+        member val vesselSingleStatisticSource = ref (Fakes.Source ("Vessel.GetStatisticContext", None))
+    interface AvatarInventory.GetInventoryContext with
+        member val avatarInventorySource = ref (Fakes.Source ("AvatarInventory.GetInventoryContext",Map.empty))
+    interface Island.GetIslandMarketContext with
+        member val islandSingleMarketSource = ref (Fakes.Source ("Island.GetIslandMarketContext", None))
+    interface Island.PutIslandMarketContext with
+        member val islandSingleMarketSink = ref (Fakes.Sink "Island.PutIslandMarketContext")
+    interface AvatarInventory.SetInventoryContext with
+        member val avatarInventorySink = ref (Fakes.Sink "AvatarInventory.SetInventoryContext")

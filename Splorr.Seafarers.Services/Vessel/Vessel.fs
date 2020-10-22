@@ -5,8 +5,8 @@ open Splorr.Common
 
 module Vessel =
     type VesselStatisticTemplateSource = unit -> Map<VesselStatisticIdentifier, StatisticTemplate>
-    type VesselSingleStatisticSource   = string->VesselStatisticIdentifier->Statistic option
-    type VesselSingleStatisticSink     = string->VesselStatisticIdentifier*Statistic->unit
+    type VesselSingleStatisticSource   = string * VesselStatisticIdentifier->Statistic option
+    type VesselSingleStatisticSink     = string * VesselStatisticIdentifier * Statistic->unit
 
     type SetStatisticContext =
         abstract member vesselSingleStatisticSink   : VesselSingleStatisticSink ref
@@ -15,7 +15,7 @@ module Vessel =
             (avatarId : string)
             (identifier : VesselStatisticIdentifier, statistic : Statistic)
             : unit =
-        (context :?> SetStatisticContext).vesselSingleStatisticSink.Value avatarId (identifier, statistic)
+        (context :?> SetStatisticContext).vesselSingleStatisticSink.Value (avatarId, identifier, statistic)
 
     type GetStatisticTemplateContext =
         abstract member vesselStatisticTemplateSource : VesselStatisticTemplateSource ref
@@ -42,7 +42,21 @@ module Vessel =
             (avatarId : string)
             (identifier: VesselStatisticIdentifier)
             : Statistic option =
-        (context :?> GetStatisticContext).vesselSingleStatisticSource.Value avatarId identifier
+        (context :?> GetStatisticContext).vesselSingleStatisticSource.Value (avatarId, identifier)
+
+    let internal GetAvailableTonnage 
+            (context : CommonContext)
+            (avatarId : string)
+            : float =
+        GetStatistic
+            context
+            avatarId 
+            VesselStatisticIdentifier.Tonnage 
+        |> Option.map
+            Statistic.GetCurrentValue 
+        |> Option.get
+
+
     
     let internal TransformFouling 
             (context : CommonContext)

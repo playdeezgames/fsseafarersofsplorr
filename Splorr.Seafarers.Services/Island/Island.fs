@@ -8,8 +8,8 @@ module Island =
     type IslandItemSink   = Location -> Set<uint64>->unit
     type IslandItemSource = Location -> Set<uint64>
     type IslandMarketSink = Location -> Map<uint64, Market> -> unit
-    type IslandSingleMarketSink = Location -> (uint64 * Market) -> unit
-    type IslandSingleMarketSource = Location -> uint64 -> Market option
+    type IslandSingleMarketSink = Location * uint64 * Market -> unit
+    type IslandSingleMarketSource = Location * uint64 -> Market option
     type IslandSingleStatisticSink = Location->IslandStatisticIdentifier*Statistic option->unit
     type IslandSingleStatisticSource = Location * IslandStatisticIdentifier->Statistic option
     type IslandStatisticTemplateSource = unit -> Map<IslandStatisticIdentifier, StatisticTemplate>
@@ -122,7 +122,7 @@ module Island =
             (location : Location)
             (itemId : uint64)
             : Market option =
-        (context :?> GetIslandMarketContext).islandSingleMarketSource.Value location itemId
+        (context :?> GetIslandMarketContext).islandSingleMarketSource.Value (location, itemId)
     type PutIslandMarketContext =
         abstract member islandSingleMarketSink   : IslandSingleMarketSink ref
     let private PutIslandMarket
@@ -130,7 +130,7 @@ module Island =
             (location : Location)
             (itemId:uint64, market:Market)
             : unit =
-        (context :?> PutIslandMarketContext).islandSingleMarketSink.Value location (itemId, market)
+        (context :?> PutIslandMarketContext).islandSingleMarketSink.Value (location, itemId, market)
 
     let private ChangeMarket
             (transform: ChangeMarketTransform)

@@ -17,11 +17,23 @@ module Item =
         (context :?> GetListContext).itemSource.Value ()
 
     type GetContext =
-        abstract member itemSingleSource   : ItemSingleSource ref
+        abstract member itemSingleSource : ItemSingleSource ref
     let internal Get
             (context : CommonContext)
             (index : uint64)
             : ItemDescriptor option =
         (context :?> GetContext).itemSingleSource.Value index
+
+    let internal FindItemByName 
+            (context : CommonContext)
+            (itemName : string) 
+            : (uint64 * ItemDescriptor) option =
+        GetList context
+        |> Map.tryPick
+            (fun itemId descriptor ->
+                if descriptor.ItemName = itemName then
+                    Some (itemId,descriptor)
+                else
+                    None)
 
 

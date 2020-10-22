@@ -5,7 +5,7 @@ open Splorr.Common
 
 module AvatarInventory =
     type AvatarInventorySource = string -> Inventory
-    type AvatarInventorySink = string -> Inventory -> unit
+    type AvatarInventorySink = string * Inventory -> unit
 
     type GetInventoryContext =
         abstract member avatarInventorySource : AvatarInventorySource ref
@@ -17,14 +17,28 @@ module AvatarInventory =
 
     let internal GetUsedTonnage
             (context : CommonContext)
-            (items : Map<uint64, ItemDescriptor>) //TODO: to source
             (avatarId : string) 
             : float =
+        let items = Item.GetList context
         (0.0, GetInventory context avatarId)
         ||> Map.fold
             (fun result item quantity -> 
                 let d = items.[item]
                 result + (quantity |> float) * d.Tonnage)
+
+    let internal GetUnusedTonnage
+            (context : CommonContext)
+            (avatarId : string)
+            : float =
+        let availableTonnage = 
+            Vessel.GetAvailableTonnage
+                context
+                avatarId 
+        let usedTonnage =
+            GetUsedTonnage
+                context
+                avatarId
+        availableTonnage - usedTonnage
 
     let internal GetItemCount 
             (context : CommonContext)
@@ -42,7 +56,7 @@ module AvatarInventory =
             (avatarId : string)
             (inventory : Inventory)
             : unit =
-        (context :?> SetInventoryContext).avatarInventorySink.Value avatarId inventory
+        (context :?> SetInventoryContext).avatarInventorySink.Value (avatarId, inventory)
     let internal AddInventory 
             (context : CommonContext)
             (item : uint64) 

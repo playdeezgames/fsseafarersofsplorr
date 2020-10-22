@@ -28,6 +28,7 @@
     <Compile Include="WorldAddMessagesTests.fs" />
     <Compile Include="WorldAcceptJobTests.fs" />
     <Compile Include="WorldBetOnGamblingHandTests.fs" />
+    <Compile Include="WorldBuyItemsTests.fs" />
     <Compile Include="WorldTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

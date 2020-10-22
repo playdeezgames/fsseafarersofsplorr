@@ -5,16 +5,6 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 
 [<Test>]
-let ``BuyItems..`` () = 
-    let context = Contexts.TestContext()
-    World.BuyItems
-        context
-        Dummies.ValidIslandLocation
-        (TradeQuantity.Specific 0UL)
-        Dummies.ValidItemName
-        Dummies.ValidAvatarId
-
-[<Test>]
 let ``CleanHull..`` () = 
     let context = Contexts.TestContext()
     World.CleanHull
@@ -258,7 +248,6 @@ let ``GetVesselUsedTonnage..`` () =
     let actual = 
         World.GetVesselUsedTonnage
             context
-            Map.empty
             Dummies.ValidAvatarId
     Assert.AreEqual(1.0, actual)
 

@@ -48,7 +48,6 @@ module Inventory =
             avatarId 
             |> World.GetVesselUsedTonnage 
                 context
-                items
         [
             (Hue.Sublabel, "Cargo Limit: " |> Text) |> Hued
             (Hue.Value, usedTonnage |> sprintf "%.1f" |> Text) |> Hued
