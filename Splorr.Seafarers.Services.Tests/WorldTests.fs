@@ -3,13 +3,13 @@
 open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
+open Splorr.Tests.Common
 
 [<Test>]
-let ``CleanHull..`` () = 
+let ``Create..`` () =
     let context = Contexts.TestContext()
-    World.CleanHull
+    World.Create
         context
-        Side.Port
         Dummies.ValidAvatarId
 
 [<Test>]
@@ -259,13 +259,6 @@ let ``GetIslandJobs..`` () =
             context
             Dummies.ValidIslandLocation
     Assert.AreEqual([], actual)
-
-[<Test>]
-let ``Create..`` () =
-    let context = Contexts.TestContext()
-    World.Create
-        context
-        Dummies.ValidAvatarId
 
 [<Test>]
 let ``GetAvatarMetrics..`` () =

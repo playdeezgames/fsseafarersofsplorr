@@ -24,6 +24,20 @@ module AvatarShipmates =
         |> GetShipmates context
         |> List.iter transform
 
+    let internal IncrementTurn
+            (context : CommonContext)
+            (avatarId : string)
+            : unit =
+        Transform 
+            context
+            (ShipmateStatistic.Transform
+                context
+                ShipmateStatisticIdentifier.Turn 
+                (Statistic.ChangeCurrentBy 1.0 >> Some)
+                avatarId)
+            avatarId
+
+
     let private SetPrimaryStatistic
             (context    : CommonContext)
             (identifier : ShipmateStatisticIdentifier)

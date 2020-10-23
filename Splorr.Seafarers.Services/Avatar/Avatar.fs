@@ -117,22 +117,15 @@ module Avatar =
             (side : Side) 
             (avatarId : string)
             : unit =
-        Vessel.TransformFouling 
+        Vessel.RemoveFouling
             context
-            avatarId 
-            side 
-            (fun x-> 
-                {x with 
-                    CurrentValue = x.MinimumValue})
-        AvatarShipmates.Transform 
-            context
-            (ShipmateStatistic.Transform
-                context
-                ShipmateStatisticIdentifier.Turn 
-                (Statistic.ChangeCurrentBy 1.0 >> Some)
-                avatarId)
             avatarId
-        avatarId
-        |> IncrementMetric
+            side
+        //TODO: shipmates age, but apparently do not need to eat?
+        AvatarShipmates.IncrementTurn
+            context
+            avatarId
+        IncrementMetric
             context
             Metric.CleanedHull
+            avatarId

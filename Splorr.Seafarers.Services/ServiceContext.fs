@@ -16,6 +16,7 @@ type ServiceContext =
     inherit AvatarMessages.AddContext
     inherit AvatarMetric.GetMetricContext
     inherit AvatarMetric.SetMetricContext
+    inherit AvatarShipmates.GetShipmatesContext
     inherit Commodity.GetCommoditiesContext
     inherit Island.GetIslandMarketContext
     inherit Island.PutIslandMarketContext
@@ -28,6 +29,7 @@ type ServiceContext =
     inherit ShipmateStatistic.GetContext
     inherit ShipmateStatistic.PutContext
     inherit Vessel.GetStatisticContext
+    inherit Vessel.SetStatisticContext
     inherit WorldIslands.GetIslandJobContext
     inherit WorldMessages.ClearMessagesContext
     inherit WorldStatistic.GetStatisticContext

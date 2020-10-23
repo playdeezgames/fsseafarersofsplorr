@@ -59,5 +59,9 @@ let ValidMarketTable : Map<uint64, Market> =
         (ValidCommodityId, ValidMarket)
     ]
     |> Map.ofList
+let ValidShipmates : ShipmateIdentifier list =
+    [
+        Primary
+    ]
 
 let InvalidIslandLocation = (-1.0, -2.0)

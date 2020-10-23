@@ -60,3 +60,7 @@ type TestContext() =
         member val islandSingleMarketSink = ref (Fakes.Sink "Island.PutIslandMarketContext")
     interface AvatarInventory.SetInventoryContext with
         member val avatarInventorySink = ref (Fakes.Sink "AvatarInventory.SetInventoryContext")
+    interface Vessel.SetStatisticContext with
+        member val vesselSingleStatisticSink = ref (Fakes.Sink "Vessel.SetStatisticContext")
+    interface AvatarShipmates.GetShipmatesContext with
+        member val avatarShipmateSource = ref (Fakes.Source ("AvatarShipmates.GetShipmatesContext", []))

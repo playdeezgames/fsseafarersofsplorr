@@ -70,6 +70,20 @@ module Vessel =
             | Starboard -> VesselStatisticIdentifier.StarboardFouling
         GetStatistic context avatarId statisticIdentifier
         |> Option.iter (fun s -> (statisticIdentifier, s |> transform) |> SetStatistic context avatarId)
+
+    let internal RemoveFouling
+            (context : CommonContext)
+            (avatarId : string)
+            (side : Side)
+            : unit =
+        TransformFouling 
+            context
+            avatarId 
+            side 
+            (fun x-> 
+                {x with 
+                    CurrentValue = x.MinimumValue})
+
     
     let internal Befoul 
             (context  : CommonContext)
