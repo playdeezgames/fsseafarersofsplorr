@@ -6,15 +6,6 @@ open Splorr.Seafarers.Models
 open Splorr.Tests.Common
 
 [<Test>]
-let ``GetAvatarGamblingHand..`` () =
-    let context = Contexts.TestContext()
-    let actual =
-        World.GetAvatarGamblingHand
-            context
-            Dummies.ValidAvatarId
-    Assert.AreEqual(None, actual)
-
-[<Test>]
 let ``GetItemList..`` () =
     let context = Contexts.TestContext()
     let actual =
