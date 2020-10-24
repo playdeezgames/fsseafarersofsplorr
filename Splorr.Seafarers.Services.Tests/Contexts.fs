@@ -64,3 +64,25 @@ type TestContext() =
         member val vesselSingleStatisticSink = ref (Fakes.Sink "Vessel.SetStatisticContext")
     interface AvatarShipmates.GetShipmatesContext with
         member val avatarShipmateSource = ref (Fakes.Source ("AvatarShipmates.GetShipmatesContext", []))
+    interface Vessel.GetStatisticTemplateContext with
+        member val vesselStatisticTemplateSource = ref (Fakes.Source ("Vessel.GetStatisticTemplateContext", Map.empty))
+    interface Shipmate.GetGlobalRationItemsContext with
+        member val rationItemSource = ref (Fakes.Source ("Shipmate.GetGlobalRationItemsContext", []))
+    interface Shipmate.SetRationItemsContext with
+        member val shipmateRationItemSink = ref (Fakes.Sink "Shipmate.SetRationItemsContext")
+    interface Shipmate.GetStatisticTemplatesContext with
+        member val shipmateStatisticTemplateSource = ref (Fakes.Source ("Shipmate.GetStatisticTemplatesContext",Map.empty))
+    interface Utility.RandomContext with
+        member val random = ref (System.Random(0))
+    interface Island.GetStatisticTemplatesContext with
+        member val islandStatisticTemplateSource = ref (Fakes.Source ("Island.GetStatisticTemplatesContext", Map.empty))
+    interface Island.SetIslandStatisticContext with
+        member val islandSingleStatisticSink = ref (Fakes.Sink "Island.SetIslandStatisticContext")
+    interface Utility.GetTermsContext with
+        member val termListSource = ref (Fakes.Source ("Utility.GetTermsContext", []))
+    interface WorldCreation.SetIslandNameContext with
+        member val islandSingleNameSink = ref (Fakes.Sink "WorldCreation.SetIslandNameContext")
+    interface WorldCreation.GenerateIslandFeatureContext with
+        member val islandFeatureGeneratorSource = ref (Fakes.Source ("WorldCreation.GenerateIslandFeatureContext", Map.empty))
+    interface WorldCreation.SetIslandFeatureContext with
+        member val islandSingleFeatureSink = ref (Fakes.Sink "WorldCreation.SetIslandFeatureContext")

@@ -30,6 +30,7 @@
     <Compile Include="WorldBetOnGamblingHandTests.fs" />
     <Compile Include="WorldBuyItemsTests.fs" />
     <Compile Include="WorldCleanHullTests.fs" />
+    <Compile Include="WorldCreateTests.fs" />
     <Compile Include="WorldTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

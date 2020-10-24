@@ -15,7 +15,7 @@ type Inventory = Map<uint64,uint64>
 
 module Shipmate =
     type ShipmateRationItemSource = string -> ShipmateIdentifier -> uint64 list
-    type ShipmateRationItemSink = string -> ShipmateIdentifier -> uint64 list -> unit
+    type ShipmateRationItemSink = string * ShipmateIdentifier * uint64 list -> unit
     type ShipmateStatisticTemplateSource = unit -> Map<ShipmateStatisticIdentifier, StatisticTemplate>
     
     type GetStatisticTemplatesContext =
@@ -25,7 +25,7 @@ module Shipmate =
             : Map<ShipmateStatisticIdentifier, StatisticTemplate> =
         (context :?> GetStatisticTemplatesContext).shipmateStatisticTemplateSource.Value()
 
-    type internal GetGlobalRationItemsContext =
+    type GetGlobalRationItemsContext =
         abstract member rationItemSource                  : IslandMarket.RationItemSource ref
     let private GetGlobalRationItems
             (context : CommonContext)
@@ -40,7 +40,7 @@ module Shipmate =
             (identifier : ShipmateIdentifier)
             (items : uint64 list)
             : unit =
-        (context :?> SetRationItemsContext).shipmateRationItemSink.Value avatarId identifier items
+        (context :?> SetRationItemsContext).shipmateRationItemSink.Value (avatarId, identifier, items)
 
     let internal Create
             (context    : CommonContext)

@@ -4,10 +4,9 @@ open System
 open Splorr.Common
 
 module WorldCreation =
-    type IslandSingleNameSink = Location -> string option -> unit
+    type IslandSingleNameSink = Location * string option -> unit
     type IslandFeatureGeneratorSource = unit -> Map<IslandFeatureIdentifier, IslandFeatureGenerator>
-    type IslandSingleFeatureSink = Location -> IslandFeatureIdentifier -> unit
-
+    type IslandSingleFeatureSink = Location * IslandFeatureIdentifier -> unit
 
     let private GenerateIslandName
             (context: CommonContext)
@@ -60,7 +59,7 @@ module WorldCreation =
             (location : Location)
             (name : string option)
             : unit =
-        (context :?> SetIslandNameContext).islandSingleNameSink.Value location name
+        (context :?> SetIslandNameContext).islandSingleNameSink.Value (location, name)
 
     type GenerateIslandFeatureContext =
         abstract member islandFeatureGeneratorSource : IslandFeatureGeneratorSource ref
@@ -76,7 +75,7 @@ module WorldCreation =
             (location : Location)
             (identifier : IslandFeatureIdentifier)
             : unit =
-        (context :?> SetIslandFeatureContext).islandSingleFeatureSink.Value location identifier
+        (context :?> SetIslandFeatureContext).islandSingleFeatureSink.Value (location, identifier)
 
     let private NameIslands
             (context: CommonContext)
@@ -169,21 +168,11 @@ module WorldCreation =
             (avatarId : string)
             : unit =
         let maximumGenerationRetries =
-            WorldStatisticIdentifier.IslandGenerationRetries
-            |> WorldStatistic.GetStatistic context
-            |> Statistic.GetCurrentValue
-            |> uint
+            WorldStatistic.GetIslandGenerationRetries context
         let minimumIslandDistance = 
-            WorldStatisticIdentifier.IslandDistance
-            |> WorldStatistic.GetStatistic context 
-            |> Statistic.GetCurrentValue
+            WorldStatistic.GetMinimumIslandDistance context
         let worldSize =
-            (WorldStatisticIdentifier.PositionX
-            |> WorldStatistic.GetStatistic context 
-            |> Statistic.GetMaximumValue,
-                WorldStatisticIdentifier.PositionY
-                |> WorldStatistic.GetStatistic context 
-                |> Statistic.GetMaximumValue)
+            WorldStatistic.GetWorldSize context
         Avatar.Create 
             context
             avatarId
@@ -192,7 +181,7 @@ module WorldCreation =
             worldSize 
             minimumIslandDistance
             (maximumGenerationRetries, 0u)
-        avatarId
-        |> UpdateCharts 
+        UpdateCharts 
             context
+            avatarId
 

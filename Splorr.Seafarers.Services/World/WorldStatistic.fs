@@ -13,4 +13,46 @@ module WorldStatistic =
             : Statistic =
         (context :?> GetStatisticContext).worldSingleStatisticSource.Value identifier
 
+    let private GetCurrentStatisticValue
+            (context: CommonContext) =
+        GetStatistic context
+        >> Statistic.GetCurrentValue
+
+    let internal GetIslandGenerationRetries
+            (context : CommonContext)
+            : uint =
+        WorldStatisticIdentifier.IslandGenerationRetries
+        |> GetCurrentStatisticValue context
+        |> uint
+
+    let internal GetMinimumIslandDistance
+            (context : CommonContext)
+            : float =
+        WorldStatisticIdentifier.IslandDistance
+        |> GetCurrentStatisticValue context 
+
+    let private GetMaximumStatisticValue
+            (context: CommonContext) =
+        GetStatistic context
+        >> Statistic.GetMaximumValue
+
+    let private GetMaximumPositionX
+            (context : CommonContext)
+            : float =
+        WorldStatisticIdentifier.PositionX
+        |> GetMaximumStatisticValue context 
+
+    let private GetMaximumPositionY
+            (context : CommonContext)
+            : float =
+        WorldStatisticIdentifier.PositionY
+        |> GetMaximumStatisticValue context 
+
+    let internal GetWorldSize
+            (context : CommonContext)
+            : float * float =
+        (GetMaximumPositionX context,
+            GetMaximumPositionY context)
+
+
 

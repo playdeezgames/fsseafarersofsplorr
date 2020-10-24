@@ -10,7 +10,7 @@ module Island =
     type IslandMarketSink = Location -> Map<uint64, Market> -> unit
     type IslandSingleMarketSink = Location * uint64 * Market -> unit
     type IslandSingleMarketSource = Location * uint64 -> Market option
-    type IslandSingleStatisticSink = Location->IslandStatisticIdentifier*Statistic option->unit
+    type IslandSingleStatisticSink = Location * IslandStatisticIdentifier * Statistic option->unit
     type IslandSingleStatisticSource = Location * IslandStatisticIdentifier->Statistic option
     type IslandStatisticTemplateSource = unit -> Map<IslandStatisticIdentifier, StatisticTemplate>
     type IslandSingleFeatureSource = Location -> IslandFeatureIdentifier -> bool
@@ -24,7 +24,7 @@ module Island =
             : Map<IslandStatisticIdentifier, StatisticTemplate> =
         (context :?> GetStatisticTemplatesContext).islandStatisticTemplateSource.Value ()
 
-    type CreateContext = 
+    type SetIslandStatisticContext = 
         abstract member islandSingleStatisticSink     : IslandSingleStatisticSink ref
 
     let private SetIslandStatistic
@@ -32,7 +32,7 @@ module Island =
             (location : Location)
             (identifier : IslandStatisticIdentifier, statistic: Statistic option)
             : unit =
-        (context :?> CreateContext).islandSingleStatisticSink.Value location (identifier, statistic)
+        (context :?> SetIslandStatisticContext).islandSingleStatisticSink.Value (location, identifier, statistic)
         
     let internal Create
             (context  : CommonContext)
