@@ -85,7 +85,6 @@ module WorldIslandTrading =
         else
             CompletePurchase context item descriptor quantity price location avatarId
 
-
     let private BuyItemWhenIslandExists
             (context : CommonContext)
             (location                      : Location) 
@@ -98,7 +97,6 @@ module WorldIslandTrading =
             BuyItemWhenIslandItemExists context location tradeQuantity item descriptor avatarId
         | None ->
             ItemNotForSale context avatarId
-
 
     let internal BuyItems 
             (context                       : CommonContext)

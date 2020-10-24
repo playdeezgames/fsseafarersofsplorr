@@ -1,4 +1,4 @@
-﻿module World.GetItemListTests
+﻿module WorldGetItemListTests
 
 open NUnit.Framework
 open Splorr.Seafarers.Services
