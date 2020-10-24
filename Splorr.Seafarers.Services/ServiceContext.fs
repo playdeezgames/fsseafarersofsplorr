@@ -14,6 +14,7 @@ type ServiceContext =
     inherit AvatarIslandMetric.PutContext
     inherit AvatarJob.GetContext
     inherit AvatarMessages.AddContext
+    inherit AvatarMessages.GetContext
     inherit AvatarMetric.GetMetricContext
     inherit AvatarMetric.SetMetricContext
     inherit AvatarShipmates.GetShipmatesContext

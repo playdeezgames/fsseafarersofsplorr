@@ -2,7 +2,6 @@
 
 open NUnit.Framework
 open Splorr.Seafarers.Services
-open Splorr.Seafarers.Models
 open Splorr.Tests.Common
 
 [<Test>]

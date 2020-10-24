@@ -88,3 +88,5 @@ type TestContext() =
         member val islandSingleFeatureSink = ref (Fakes.Sink "WorldCreation.SetIslandFeatureContext")
     interface WorldExport.SaveContext with
         member val gameDataSink = ref (Fakes.Source ("WorldExport.SaveContext", None))
+    interface AvatarMessages.GetContext with
+        member val avatarMessageSource = ref (Fakes.Source ("AvatarMessages.GetContext", []))

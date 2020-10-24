@@ -6,14 +6,6 @@ open Splorr.Seafarers.Models
 open Splorr.Tests.Common
 
 [<Test>]
-let ``GetAvatarMessages..`` () =
-    let context = Contexts.TestContext()
-    let actual =
-        World.GetAvatarMessages
-            context
-    Assert.AreEqual([], actual)
-
-[<Test>]
 let ``GetAvatarIslandMetric..`` () =
     let context = Contexts.TestContext()
     let actual =
