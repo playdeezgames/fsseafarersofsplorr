@@ -34,6 +34,7 @@
     <Compile Include="WorldHasDarkAlleyMinimumStakesTests.fs" />
     <Compile Include="WorldFoldGamblingHandTests.fs" />
     <Compile Include="WorldSaveTests.fs" />
+    <Compile Include="WorldGetIslandListTests.fs" />
     <Compile Include="WorldTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
