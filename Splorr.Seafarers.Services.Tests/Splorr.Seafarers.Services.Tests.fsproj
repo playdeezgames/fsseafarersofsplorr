@@ -40,6 +40,7 @@
     <Compile Include="WorldEnterAvatarIslandFeatureTests.fs" />
     <Compile Include="WorldDealAvatarGamblingHandTests.fs" />
     <Compile Include="WorldGetAvatarGamblingHandTests.fs" />
+    <Compile Include="WorldGetItemListTests.fs" />
     <Compile Include="WorldTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
