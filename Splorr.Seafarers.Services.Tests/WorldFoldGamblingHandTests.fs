@@ -1,4 +1,4 @@
-﻿module FoldGamblingHandTests
+﻿module WorldFoldGamblingHandTests
 
 open NUnit.Framework
 open Splorr.Seafarers.Services

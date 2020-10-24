@@ -6,14 +6,6 @@ open Splorr.Seafarers.Models
 open Splorr.Tests.Common
 
 [<Test>]
-let ``Save..`` () = 
-    let context = Contexts.TestContext()
-    World.Save
-        context
-        "filename"
-        Dummies.ValidAvatarId
-
-[<Test>]
 let ``GetIslandList..`` () =
     let context = Contexts.TestContext()
     let actual =

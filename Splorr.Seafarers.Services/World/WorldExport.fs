@@ -6,13 +6,13 @@ open Splorr.Common
 module WorldExport = 
     type GameDataSink = string -> string option
     type SaveContext =
-        abstract member gameDataSink : GameDataSink
+        abstract member gameDataSink : GameDataSink ref
     let internal Save
             (context : CommonContext)
             (filename : string)
             (avatarId: string)
             : unit =
-        match (context :?> SaveContext).gameDataSink filename with
+        match (context :?> SaveContext).gameDataSink.Value filename with
         | Some s ->
             AvatarMessages.Add context [ s |> sprintf "Saved game to '%s'." ] avatarId
         | _ ->

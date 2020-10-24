@@ -86,3 +86,5 @@ type TestContext() =
         member val islandFeatureGeneratorSource = ref (Fakes.Source ("WorldCreation.GenerateIslandFeatureContext", Map.empty))
     interface WorldCreation.SetIslandFeatureContext with
         member val islandSingleFeatureSink = ref (Fakes.Sink "WorldCreation.SetIslandFeatureContext")
+    interface WorldExport.SaveContext with
+        member val gameDataSink = ref (Fakes.Source ("WorldExport.SaveContext", None))
