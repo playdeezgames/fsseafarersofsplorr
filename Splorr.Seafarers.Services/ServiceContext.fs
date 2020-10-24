@@ -10,6 +10,7 @@ type ServiceContext =
     inherit AvatarInventory.GetInventoryContext
     inherit AvatarInventory.SetInventoryContext
     inherit AvatarIslandFeature.GetFeatureContext
+    inherit AvatarIslandFeature.SetFeatureContext
     inherit AvatarIslandMetric.GetContext
     inherit AvatarIslandMetric.PutContext
     inherit AvatarJob.GetContext
@@ -20,6 +21,7 @@ type ServiceContext =
     inherit AvatarShipmates.GetShipmatesContext
     inherit Commodity.GetCommoditiesContext
     inherit Island.GetIslandMarketContext
+    inherit Island.HasFeatureContext
     inherit Island.PutIslandMarketContext
     inherit Island.GetListContext
     inherit Island.GetStatisticContext

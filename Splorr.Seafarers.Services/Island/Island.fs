@@ -13,7 +13,7 @@ module Island =
     type IslandSingleStatisticSink = Location * IslandStatisticIdentifier * Statistic option->unit
     type IslandSingleStatisticSource = Location * IslandStatisticIdentifier->Statistic option
     type IslandStatisticTemplateSource = unit -> Map<IslandStatisticIdentifier, StatisticTemplate>
-    type IslandSingleFeatureSource = Location -> IslandFeatureIdentifier -> bool
+    type IslandSingleFeatureSource = Location * IslandFeatureIdentifier -> bool
     type IslandSource = unit -> Location list
     type IslandFeatureSource = Location -> IslandFeatureIdentifier list
 
@@ -215,7 +215,7 @@ module Island =
             (identifier : IslandFeatureIdentifier)
             (location   : Location)
             : bool =
-        (context :?> HasFeatureContext).islandSingleFeatureSource.Value location identifier
+        (context :?> HasFeatureContext).islandSingleFeatureSource.Value (location, identifier)
 
     type GetFeaturesContext = 
         abstract member islandFeatureSource            : IslandFeatureSource ref
