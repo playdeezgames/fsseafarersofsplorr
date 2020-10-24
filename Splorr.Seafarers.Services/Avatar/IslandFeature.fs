@@ -35,3 +35,14 @@ module AvatarIslandFeature =
             : AvatarIslandFeature option =
         (context :?> GetFeatureContext).avatarIslandFeatureSource.Value avatarId
 
+    let internal IsAvatarAtFeature
+            (context : CommonContext)
+            (identifier: IslandFeatureIdentifier)
+            (avatarId: string) 
+            : Location option =
+        match Get context avatarId with
+        | Some feature when feature.featureId = identifier ->
+            Some feature.location
+        | _ ->
+            None
+

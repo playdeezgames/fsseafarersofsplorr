@@ -6,13 +6,6 @@ open Splorr.Seafarers.Models
 open Splorr.Tests.Common
 
 [<Test>]
-let ``HasDarkAlleyMinimumStakes..`` () = 
-    let context = Contexts.TestContext()
-    World.HasDarkAlleyMinimumStakes
-        context
-        Dummies.ValidAvatarId
-
-[<Test>]
 let ``FoldGamblingHand..`` () = 
     let context = Contexts.TestContext()
     World.FoldGamblingHand

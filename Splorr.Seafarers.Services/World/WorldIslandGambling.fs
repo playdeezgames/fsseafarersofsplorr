@@ -8,22 +8,18 @@ module WorldIslandGambling =
             (context : CommonContext)
             (avatarId : string)
             : bool =
-        match AvatarIslandFeature.Get context avatarId with
-        | Some feature when feature.featureId = (IslandFeatureIdentifier.DarkAlley) ->
-            let minimumBet = 
-                Island.GetStatistic
-                    context
-                    IslandStatisticIdentifier.MinimumGamblingStakes
-                    feature.location
-                |> Option.get
-                |> Statistic.GetCurrentValue
-            let money =
-                AvatarShipmates.GetMoney
-                    context
-                    avatarId
-            money >= minimumBet
-        | _ -> 
-            false
+        AvatarIslandFeature.IsAvatarAtFeature context IslandFeatureIdentifier.DarkAlley avatarId
+        |> Option.fold
+            (fun _ location ->
+                let minimumBet = 
+                    Island.GetMinimumGamblingStakes
+                        context
+                        location
+                let money =
+                    AvatarShipmates.GetMoney
+                        context
+                        avatarId
+                money >= minimumBet) false
 
     let internal FoldGamblingHand
             (context  : CommonContext)
