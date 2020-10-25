@@ -154,7 +154,6 @@ module WorldCreation =
             avatarId 
             |> Vessel.GetPosition 
                 context
-            |> Option.get
         Island.GetList context
         |> List.filter
             (fun location -> 

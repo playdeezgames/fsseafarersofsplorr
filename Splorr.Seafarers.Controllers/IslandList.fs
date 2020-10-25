@@ -40,7 +40,6 @@ module IslandList =
             let avatarPosition = 
                 avatarId
                 |> World.GetVesselPosition context
-                |> Option.get
             knownIslands
             |> List.skip (skippedItems |> int)
             |> List.take ((Utility.Lesser pageSize (totalItems-skippedItems)) |> int)

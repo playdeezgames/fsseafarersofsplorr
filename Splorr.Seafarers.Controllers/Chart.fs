@@ -64,7 +64,6 @@ module Chart =
                 avatarId
                 |> World.GetVesselPosition 
                     context
-                |> Option.get
                 |> plotLocation scale
             writer.WriteLine(sprintf "<ellipse cx=\"%d\" cy=\"%d\" rx=\"%d\" ry=\"%d\" style=\"fill:#c0c000;\"/>" (avatarPosition |> fst) (height+(avatarPosition |> snd)) 3 3)
             writer.WriteLine("</svg>")

@@ -174,16 +174,6 @@ let ``HeadFor..`` () =
     Assert.AreEqual(None, actual)
 
 [<Test>]
-let ``DistanceTo..`` () =
-    let context = Contexts.TestContext()
-    let actual = 
-        World.DistanceTo
-            context
-            Dummies.ValidIslandName
-            Dummies.ValidAvatarId
-    Assert.AreEqual(None, actual)
-
-[<Test>]
 let ``Move..`` () =
     let context = Contexts.TestContext()
     World.Move

@@ -90,7 +90,6 @@ module Avatar =
             Vessel.GetPosition 
                 context 
                 avatarId 
-            |> Option.get
         let newPosition = ((avatarPosition |> fst) + System.Math.Cos(actualHeading) * actualSpeed, (avatarPosition |> snd) + System.Math.Sin(actualHeading) * actualSpeed)
         Vessel.SetPosition context newPosition avatarId
         AvatarShipmates.Transform

@@ -98,3 +98,5 @@ type TestContext() =
         member val islandFeatureSource = ref (Fakes.Source ("Island.GetFeaturesContext", []))
     interface IslandName.GetNameContext with
         member val islandSingleNameSource = ref (Fakes.Source ("IslandName.GetNameContext", None))
+    interface WorldIslands.GetIslandByNameContext with
+        member val islandLocationByNameSource = ref (Fakes.Source ("WorldIslands.GetIslandByNameContext", None))

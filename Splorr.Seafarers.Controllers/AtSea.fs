@@ -28,7 +28,6 @@ module AtSea =
             World.GetVesselPosition 
                 context 
                 avatarId
-            |> Option.get
         World.GetNearbyLocations
             context
             avatarPosition 
@@ -52,7 +51,6 @@ module AtSea =
         let avatarPosition =
             avatarId
             |> World.GetVesselPosition context
-            |> Option.get
         World.GetNearbyLocations
             context
             avatarPosition 

@@ -108,20 +108,18 @@ module Vessel =
     let internal GetPosition
             (context  : CommonContext)
             (avatarId : string)
-            : Location option =
+            : Location =
         let positionX =
             VesselStatisticIdentifier.PositionX
             |> GetStatistic context avatarId
             |> Option.map Statistic.GetCurrentValue
+            |> Option.get
         let positionY = 
             VesselStatisticIdentifier.PositionY
             |> GetStatistic context avatarId
             |> Option.map Statistic.GetCurrentValue
-        match positionX, positionY with
-        | Some x, Some y ->
-            (x,y) |> Some
-        | _ ->
-            None
+            |> Option.get
+        (positionX, positionY)
 
     let internal SetPosition 
             (context  : CommonContext)

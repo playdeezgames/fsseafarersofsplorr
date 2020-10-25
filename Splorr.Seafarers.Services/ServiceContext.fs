@@ -47,6 +47,7 @@ type ServiceContext =
     inherit WorldCreation.SetIslandFeatureContext
     inherit WorldCreation.SetIslandNameContext
     inherit WorldExport.SaveContext
+    inherit WorldIslands.GetIslandByNameContext
     inherit WorldIslands.GetIslandJobContext
     inherit WorldMessages.ClearMessagesContext
     inherit WorldStatistic.GetStatisticContext
