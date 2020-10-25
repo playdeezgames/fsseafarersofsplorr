@@ -49,6 +49,7 @@
     <Compile Include="WorldIsAvatarAliveTests.fs" />
     <Compile Include="WorldGetIslandFeaturesTests.fs" />
     <Compile Include="WorldGetIslandNameTests.fs" />
+    <Compile Include="WorldDetermineIslandMarketPurchasePriceTests.fs" />
     <Compile Include="WorldTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

@@ -6,10 +6,10 @@ open Splorr.Seafarers.Models
 open Splorr.Tests.Common
 
 [<Test>]
-let ``DetermineIslandMarketPurchasePrice..`` () =
+let ``DetermineIslandMarketSalePrice..`` () =
     let context = Contexts.TestContext()
     let actual = 
-        World.DetermineIslandMarketPurchasePrice
+        World.DetermineIslandMarketSalePrice
             context
             0UL
             Dummies.ValidIslandLocation
@@ -233,16 +233,6 @@ let ``GetAvatarReputation..`` () =
         World.GetAvatarReputation
             context
             Dummies.ValidAvatarId
-    Assert.AreEqual(1.0, actual)
-
-[<Test>]
-let ``DetermineIslandMarketSalePrice..`` () =
-    let context = Contexts.TestContext()
-    let actual = 
-        World.DetermineIslandMarketSalePrice
-            context
-            0UL
-            Dummies.ValidIslandLocation
     Assert.AreEqual(1.0, actual)
 
 
