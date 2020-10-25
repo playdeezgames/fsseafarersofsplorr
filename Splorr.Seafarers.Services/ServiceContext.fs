@@ -21,6 +21,7 @@ type ServiceContext =
     inherit AvatarShipmates.GetShipmatesContext
     inherit Commodity.GetCommoditiesContext
     inherit Island.GetIslandMarketContext
+    inherit Island.GetFeaturesContext
     inherit Island.HasFeatureContext
     inherit Island.PutIslandMarketContext
     inherit Island.GetListContext

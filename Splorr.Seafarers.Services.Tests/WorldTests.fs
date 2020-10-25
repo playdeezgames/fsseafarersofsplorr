@@ -6,15 +6,6 @@ open Splorr.Seafarers.Models
 open Splorr.Tests.Common
 
 [<Test>]
-let ``GetIslandFeatures..`` () =
-    let context = Contexts.TestContext()
-    let actual = 
-        World.GetIslandFeatures
-            context
-            Dummies.ValidIslandLocation
-    Assert.AreEqual([], actual)
-
-[<Test>]
 let ``GetIslandName..`` () =
     let context = Contexts.TestContext()
     let actual = 
