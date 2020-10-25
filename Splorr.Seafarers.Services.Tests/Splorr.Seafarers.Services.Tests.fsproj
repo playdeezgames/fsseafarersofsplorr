@@ -42,6 +42,7 @@
     <Compile Include="WorldGetAvatarGamblingHandTests.fs" />
     <Compile Include="WorldGetItemListTests.fs" />
     <Compile Include="WorldGetAvatarIslandFeatureTests.fs" />
+    <Compile Include="WorldSellItemsTests.fs" />
     <Compile Include="WorldTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

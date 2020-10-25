@@ -12,9 +12,18 @@ module WorldIslandTrading =
             (context : CommonContext) = 
         AvatarMessages.Add context ["You cannot buy items here."]
 
+    let private CannotSellItems
+            (context : CommonContext) = 
+        AvatarMessages.Add context ["You cannot sell items here."]
+
     let private ItemNotForSale
             (context : CommonContext) =
         AvatarMessages.Add context ["Round these parts, we don't sell things like that."]
+
+    let private ItemNotPurchased
+            (context : CommonContext) =
+        AvatarMessages.Add context ["Round these parts, we don't buy things like that."]
+
 
     let private InsufficientFunds
             (context : CommonContext) =
@@ -24,9 +33,18 @@ module WorldIslandTrading =
             (context : CommonContext) =
         AvatarMessages.Add context ["You don't have enough tonnage."]
 
-    let private ZeroQuantity
+    let private ZeroQuantityBuy
             (context : CommonContext) =
         AvatarMessages.Add context ["You don't have enough money to buy any of those."]
+
+    let private InsufficientQuantity
+            (context : CommonContext) =
+        AvatarMessages.Add context ["You don't have enough of those to sell."]
+
+    let private ZeroQuantitySell
+            (context : CommonContext) =
+        AvatarMessages.Add context ["You don't have any of those to sell."]
+
 
     let private CompletePurchase
             (context : CommonContext) 
@@ -81,7 +99,7 @@ module WorldIslandTrading =
         elif tonnageNeeded > unusedTonnage then
             InsufficientTonnage context avatarId
         elif quantity = 0UL then
-            ZeroQuantity context avatarId
+            ZeroQuantityBuy context avatarId
         else
             CompletePurchase context item descriptor quantity price location avatarId
 
@@ -109,7 +127,77 @@ module WorldIslandTrading =
             BuyItemWhenIslandExists context location tradeQuantity itemName avatarId
         else
             CannotBuyItems context avatarId
-            
+
+    let private CompleteSale
+            (context : CommonContext)
+            (location : Location)
+            (item : uint64)
+            (descriptor : ItemDescriptor)
+            (quantity : uint64)
+            (avatarId: string)
+            : unit =
+        let unitPrice = 
+            IslandMarket.DeterminePurchasePrice 
+                context
+                item 
+                location
+        let price = (quantity |> float) * unitPrice
+        Island.UpdateMarketForItemPurchase 
+            context
+            descriptor 
+            quantity 
+            location
+        avatarId
+        |> AvatarMessages.Add context [(quantity, descriptor.ItemName) ||> sprintf "You complete the sale of %u %s."]
+        AvatarShipmates.EarnMoney 
+            context
+            price 
+            avatarId
+        avatarId
+        |> AvatarInventory.RemoveInventory 
+            context
+            item 
+            quantity 
+
+    let private SellItemWhenIslandItemExists 
+            (context : CommonContext)
+            (location : Location)
+            (item : uint64)
+            (descriptor : ItemDescriptor)
+            (tradeQuantity: TradeQuantity)
+            (avatarId : string)
+            : unit =
+        let quantity = 
+            match tradeQuantity with
+            | Specific q -> q
+            | Maximum -> 
+                avatarId 
+                |> AvatarInventory.GetItemCount context item
+        if quantity > (avatarId |> AvatarInventory.GetItemCount context item) then
+            InsufficientQuantity context avatarId
+        elif quantity = 0UL then
+            ZeroQuantitySell context avatarId
+        else
+            CompleteSale context location item descriptor quantity avatarId
+    
+    let private SellItemWhenIslandExists
+            (context : CommonContext)
+            (location : Location) 
+            (tradeQuantity : TradeQuantity) 
+            (itemName : string) 
+            (avatarId : string) 
+            : unit =
+        match Item.FindItemByName context itemName with
+        | Some (item, descriptor) ->
+            SellItemWhenIslandItemExists 
+                context
+                location
+                item
+                descriptor
+                tradeQuantity
+                avatarId
+        | None ->
+            ItemNotPurchased context avatarId
 
     let internal SellItems 
             (context : CommonContext)
@@ -118,49 +206,10 @@ module WorldIslandTrading =
             (itemName                      : string) 
             (avatarId                      : string) 
             : unit =
-        match Item.FindItemByName context itemName, Island.GetList context |> List.tryFind ((=)location) with
-        | Some (item, descriptor), Some _ ->
-            let quantity = 
-                match tradeQuantity with
-                | Specific q -> q
-                | Maximum -> 
-                    avatarId 
-                    |> AvatarInventory.GetItemCount context item
-            if quantity > (avatarId |> AvatarInventory.GetItemCount context item) then
-                avatarId
-                |> AvatarMessages.Add context ["You don't have enough of those to sell."]
-            elif quantity = 0UL then
-                avatarId
-                |> AvatarMessages.Add context ["You don't have any of those to sell."]
-            else
-                let unitPrice = 
-                    IslandMarket.DeterminePurchasePrice 
-                        context
-                        item 
-                        location
-                let price = (quantity |> float) * unitPrice
-                Island.UpdateMarketForItemPurchase 
-                    context
-                    descriptor 
-                    quantity 
-                    location
-                avatarId
-                |> AvatarMessages.Add context [(quantity, descriptor.ItemName) ||> sprintf "You complete the sale of %u %s."]
-                AvatarShipmates.EarnMoney 
-                    context
-                    price 
-                    avatarId
-                avatarId
-                |> AvatarInventory.RemoveInventory 
-                    context
-                    item 
-                    quantity 
-        | None, Some _ ->
-            avatarId
-            |> AvatarMessages.Add context ["Round these parts, we don't buy things like that."]
-        | _ ->
-            avatarId
-            |> AvatarMessages.Add context ["You cannot sell items here."]
+        if Island.Exists context location then
+            SellItemWhenIslandExists context location tradeQuantity itemName avatarId
+        else
+            CannotSellItems context avatarId
 
 
 

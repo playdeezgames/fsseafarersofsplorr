@@ -6,24 +6,6 @@ open Splorr.Seafarers.Models
 open Splorr.Tests.Common
 
 [<Test>]
-let ``GetAvatarIslandFeature..`` () =
-    let context = Contexts.TestContext()
-    let actual =
-        World.GetAvatarIslandFeature
-            context
-    Assert.AreEqual(Map.empty, actual)
-
-[<Test>]
-let ``SellItems..`` () =
-    let context = Contexts.TestContext()
-    World.SellItems
-        context
-        Dummies.ValidIslandLocation
-        (TradeQuantity.Specific 1UL)
-        Dummies.ValidItemName
-        Dummies.ValidAvatarId
-
-[<Test>]
 let ``GetVesselStatistic..`` () =
     let context = Contexts.TestContext()
     let actual = 
