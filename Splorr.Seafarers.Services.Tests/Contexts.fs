@@ -96,3 +96,5 @@ type TestContext() =
         member val avatarIslandFeatureSink = ref (Fakes.Sink "AvatarIslandFeature.SetFeatureContext")
     interface Island.GetFeaturesContext with
         member val islandFeatureSource = ref (Fakes.Source ("Island.GetFeaturesContext", []))
+    interface IslandName.GetNameContext with
+        member val islandSingleNameSource = ref (Fakes.Source ("IslandName.GetNameContext", None))

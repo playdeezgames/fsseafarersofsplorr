@@ -30,6 +30,7 @@ type ServiceContext =
     inherit Island.SetIslandStatisticContext
     inherit IslandJob.PurgeContext
     inherit IslandMarket.DeterminePriceContext
+    inherit IslandName.GetNameContext
     inherit Item.GetContext
     inherit Item.GetListContext
     inherit Shipmate.GetGlobalRationItemsContext

@@ -48,6 +48,7 @@
     <Compile Include="WorldGetVesselMaximumFouling.fs" />
     <Compile Include="WorldIsAvatarAliveTests.fs" />
     <Compile Include="WorldGetIslandFeaturesTests.fs" />
+    <Compile Include="WorldGetIslandNameTests.fs" />
     <Compile Include="WorldTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

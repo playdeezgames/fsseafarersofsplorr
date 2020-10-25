@@ -8,12 +8,12 @@ module IslandName =
     type IslandSingleNameSource = Location -> string option
 
     type GetNameContext =
-        abstract member islandSingleNameSource : IslandSingleNameSource
+        abstract member islandSingleNameSource : IslandSingleNameSource ref
     let internal GetName
             (context : CommonContext)
             (location : Location) 
             : string option =
-        (context :?> GetNameContext).islandSingleNameSource location
+        (context :?> GetNameContext).islandSingleNameSource.Value location
 
     let internal GetDisplayName 
             (context  : CommonContext)
