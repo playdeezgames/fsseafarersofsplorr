@@ -6,16 +6,6 @@ open Splorr.Seafarers.Models
 open Splorr.Tests.Common
 
 [<Test>]
-let ``GetVesselStatistic..`` () =
-    let context = Contexts.TestContext()
-    let actual = 
-        World.GetVesselStatistic
-            context
-            Dummies.ValidAvatarId
-            VesselStatisticIdentifier.Heading
-    Assert.AreEqual(None, actual)
-
-[<Test>]
 let ``GetVesselCurrentFouling..`` () =
     let context = Contexts.TestContext()
     let actual = 
