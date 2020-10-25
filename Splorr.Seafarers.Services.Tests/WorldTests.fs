@@ -6,15 +6,6 @@ open Splorr.Seafarers.Models
 open Splorr.Tests.Common
 
 [<Test>]
-let ``GetVesselCurrentFouling..`` () =
-    let context = Contexts.TestContext()
-    let actual = 
-        World.GetVesselCurrentFouling
-            context
-            Dummies.ValidAvatarId
-    Assert.AreEqual(0.0, actual)
-
-[<Test>]
 let ``GetVesselMaximumFouling..`` () =
     let context = Contexts.TestContext()
     let actual = 
