@@ -3,14 +3,6 @@ open Splorr.Seafarers.Models
 open System
 open Splorr.Common
 
-type DemiseType =
-    | ZeroHealth
-    | OldAge
-
-type ShipmateStatus =
-    | Alive
-    | Dead of DemiseType
-
 type Inventory = Map<uint64,uint64>
 
 module Shipmate =
@@ -53,21 +45,6 @@ module Shipmate =
         |> Map.iter
             (fun identifier statisticTemplate ->
                 ShipmateStatistic.Put context avatarId shipmateId identifier (statisticTemplate |> Statistic.CreateFromTemplate |> Some))
-
-    let internal GetStatus
-            (context    : CommonContext)
-            (avatarId   : string)
-            (shipmateId : ShipmateIdentifier)
-            : ShipmateStatus=
-        let health = ShipmateStatistic.Get context avatarId shipmateId ShipmateStatisticIdentifier.Health |> Option.get
-        if health.CurrentValue <= health.MinimumValue then
-            ZeroHealth |> Dead
-        else
-            let turn = ShipmateStatistic.Get context avatarId shipmateId ShipmateStatisticIdentifier.Turn |> Option.get
-            if turn.CurrentValue >= turn.MaximumValue then
-                OldAge |> Dead
-            else
-                Alive
 
     type GetRationItemsContext =
         abstract member shipmateRationItemSource      : ShipmateRationItemSource ref

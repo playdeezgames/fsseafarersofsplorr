@@ -16,6 +16,23 @@ module ShipmateStatistic =
             : Statistic option =
         (context :?> GetContext).shipmateSingleStatisticSource.Value (avatarId, shipmateId, identifier)
 
+    let internal GetHealth
+            (context : CommonContext)
+            (avatarId : string)
+            (shipmateId : ShipmateIdentifier)
+            : Statistic =
+        Get context avatarId shipmateId ShipmateStatisticIdentifier.Health 
+        |> Option.get
+
+    let internal GetTurn
+            (context : CommonContext)
+            (avatarId : string)
+            (shipmateId : ShipmateIdentifier)
+            : Statistic =
+        Get context avatarId shipmateId ShipmateStatisticIdentifier.Turn 
+        |> Option.get
+
+
     type ShipmateSingleStatisticSink = string * ShipmateIdentifier * ShipmateStatisticIdentifier * Statistic option -> unit
     type PutContext =
         abstract member shipmateSingleStatisticSink : ShipmateSingleStatisticSink ref
