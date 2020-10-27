@@ -4,18 +4,26 @@ open NUnit.Framework
 open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open Splorr.Tests.Common
+let private CommonDockTestSetupAndValidation 
+        (setups : Contexts.TestContext -> unit)
+        (location : Location, avatarId: string)
+        : unit =
+    let context = Contexts.TestContext()
+    setups context
+    World.Dock
+        context
+        location
+        avatarId
 
 [<Test>]
 let ``Dock.It gives a message when the island does not exist.`` () =
     let calledGetIslandList = ref false
     let calledAvatarAddMessage = ref false
-    let context = Contexts.TestContext()
-    (context :> Island.GetListContext).islandSource := Spies.Source(calledGetIslandList, Dummies.ValidIslandList)
-    (context :> AvatarMessages.AddContext).avatarMessageSink := Spies.Sink(calledAvatarAddMessage)
-    World.Dock
-        context
-        Dummies.InvalidIslandLocation
-        Dummies.ValidAvatarId
+    CommonDockTestSetupAndValidation
+        (fun context -> 
+            (context :> Island.GetListContext).islandSource := Spies.Source(calledGetIslandList, Dummies.ValidIslandList)
+            (context :> AvatarMessages.AddContext).avatarMessageSink := Spies.Sink(calledAvatarAddMessage))
+        (Dummies.InvalidIslandLocation, Dummies.ValidAvatarId)
     Assert.IsTrue(calledGetIslandList.Value)
     Assert.IsTrue(calledAvatarAddMessage.Value)
 
@@ -41,60 +49,58 @@ let ``Dock.When the island exists generates a new island job when the island has
     let callsForSetAvatarIslandMetrics = ref 0UL
     let callsForPutShipmateStatistic = ref 0UL
     let callsForSetAvatarMetric = ref 0UL
-    let context = Contexts.TestContext()
-    (context :> Island.GetListContext).islandSource := Spies.Source(calledGetIslandList, Dummies.ValidIslandList)
-    (context :> AvatarMessages.AddContext).avatarMessageSink := Spies.Sink(calledAvatarAddMessage)
-    (context :> IslandVisit.EpochSecondsSourceContext).epochSecondsSource := Spies.Source(calledGetEpochSeconds, 2000UL)
-    (context :> Island.PutCommoditiesContext).islandMarketSink :=
-        Spies.Expect(calledPutIslandCommodities, 
-            (Dummies.ValidIslandLocation, 
-                Map.empty
-                |> Map.add 0UL { Supply = 15.861055442533017; Demand = 13.025670087908242 }))
-    (context :> Item.GetListContext).itemSource :=
-        Spies.Source(calledGetItemList, Dummies.ValidItemTable)
-    (context :> Commodity.GetCommoditiesContext).commoditySource := 
-        Spies.Source(calledGetGlobalCommodities, Dummies.ValidCommodityTable)
-    (context :> AvatarIslandMetric.GetContext).avatarIslandSingleMetricSource := 
-        Spies.SourceTable(callsForGetAvatarIslandMetric, 
-            Map.empty
-            |> Map.add (Dummies.ValidAvatarId, Dummies.ValidIslandLocation, AvatarIslandMetricIdentifier.VisitCount) (Some 1UL)
-            |> Map.add (Dummies.ValidAvatarId, Dummies.ValidIslandLocation, AvatarIslandMetricIdentifier.LastVisit) (Some 1000UL))
-    (context :> AvatarIslandMetric.PutContext).avatarIslandSingleMetricSink :=
-        Spies.SinkCounter(callsForSetAvatarIslandMetrics)
-    (context :> ShipmateStatistic.GetContext).shipmateSingleStatisticSource := Spies.Source(calledGetShipmateStatistic, Some {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=50.0})
-    (context :> ShipmateStatistic.PutContext).shipmateSingleStatisticSink := 
-        Spies.ExpectSet(callsForPutShipmateStatistic, 
-            Set.empty
-            |> Set.add (Dummies.ValidAvatarId, Primary, ShipmateStatisticIdentifier.Reputation, Some {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=51.0})
-            |> Set.add (Dummies.ValidAvatarId, Primary, ShipmateStatisticIdentifier.Money, Some {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=52.0}))
-    (context :> AvatarMetric.GetMetricContext).avatarSingleMetricSource := Spies.Source(calledGetAvatarMetric, 5UL)
-    (context :> AvatarMetric.SetMetricContext).avatarSingleMetricSink := 
-        Spies.ExpectSet(callsForSetAvatarMetric, 
-            Set.empty
-            |> Set.add (Dummies.ValidAvatarId, Metric.CompletedJob, 6UL))
-    (context :> Avatar.SetJobContext).avatarJobSink := Spies.Expect(calledSetAvatarJob, (Dummies.ValidAvatarId, None))
-    (context :> AvatarIslandFeature.SetFeatureContext).avatarIslandFeatureSink := 
-        Spies.Expect(calledSetAvatarIslandFeature, 
-            (Some {featureId = IslandFeatureIdentifier.Dock; location = Dummies.ValidIslandLocation}, Dummies.ValidAvatarId))
-    (context :> Island.PutIslandItemsContext).islandItemSink :=
-        Spies.Expect(calledPutIslandItems, (Dummies.ValidIslandLocation,[0UL]|>Set.ofList))
-    (context :> Island.GetCommoditiesContext).islandMarketSource := 
-        Spies.Source(calledGetIslandCommodities, Map.empty)
-    (context :> Island.GetIslandItemsContext).islandItemSource := 
-        Spies.Source(calledGetIslandItems, 
-            Set.empty)
-    (context :> IslandJob.GetContext).islandJobSource := Spies.Source(calledGetIslandJobs, [])
-    (context :> AvatarJob.GetContext).avatarJobSource := Spies.Source(calledGetAvatarJob, Some { Destination = Dummies.ValidIslandLocation; FlavorText=""; Reward = 2.0})
     let calledGetTerms = ref false
-    (context :> Utility.GetTermsContext).termListSource := Spies.Source(calledGetTerms, ["term"])
     let calledCreateJob = ref false
-    (context :> Job.CreateContext).jobRewardStatisticSource := Spies.Source(calledCreateJob, {MinimumValue=0.0; MaximumValue=10.0; CurrentValue=5.0})
     let calledAddIslandJob = ref false
-    (context :> IslandJob.AddContext).islandJobSink := Spies.Sink(calledAddIslandJob)
-    World.Dock
-        context
-        Dummies.ValidIslandLocation
-        Dummies.ValidAvatarId
+    CommonDockTestSetupAndValidation
+        (fun context -> 
+            (context :> Island.GetListContext).islandSource := Spies.Source(calledGetIslandList, Dummies.ValidIslandList)
+            (context :> AvatarMessages.AddContext).avatarMessageSink := Spies.Sink(calledAvatarAddMessage)
+            (context :> IslandVisit.EpochSecondsSourceContext).epochSecondsSource := Spies.Source(calledGetEpochSeconds, 2000UL)
+            (context :> Island.PutCommoditiesContext).islandMarketSink :=
+                Spies.Expect(calledPutIslandCommodities, 
+                    (Dummies.ValidIslandLocation, 
+                        Map.empty
+                        |> Map.add 0UL { Supply = 15.861055442533017; Demand = 13.025670087908242 }))
+            (context :> Item.GetListContext).itemSource :=
+                Spies.Source(calledGetItemList, Dummies.ValidItemTable)
+            (context :> Commodity.GetCommoditiesContext).commoditySource := 
+                Spies.Source(calledGetGlobalCommodities, Dummies.ValidCommodityTable)
+            (context :> AvatarIslandMetric.GetContext).avatarIslandSingleMetricSource := 
+                Spies.SourceTable(callsForGetAvatarIslandMetric, 
+                    Map.empty
+                    |> Map.add (Dummies.ValidAvatarId, Dummies.ValidIslandLocation, AvatarIslandMetricIdentifier.VisitCount) (Some 1UL)
+                    |> Map.add (Dummies.ValidAvatarId, Dummies.ValidIslandLocation, AvatarIslandMetricIdentifier.LastVisit) (Some 1000UL))
+            (context :> AvatarIslandMetric.PutContext).avatarIslandSingleMetricSink :=
+                Spies.SinkCounter(callsForSetAvatarIslandMetrics)
+            (context :> ShipmateStatistic.GetContext).shipmateSingleStatisticSource := Spies.Source(calledGetShipmateStatistic, Some {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=50.0})
+            (context :> ShipmateStatistic.PutContext).shipmateSingleStatisticSink := 
+                Spies.ExpectSet(callsForPutShipmateStatistic, 
+                    Set.empty
+                    |> Set.add (Dummies.ValidAvatarId, Primary, ShipmateStatisticIdentifier.Reputation, Some {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=51.0})
+                    |> Set.add (Dummies.ValidAvatarId, Primary, ShipmateStatisticIdentifier.Money, Some {MinimumValue=0.0; MaximumValue=100.0; CurrentValue=52.0}))
+            (context :> AvatarMetric.GetMetricContext).avatarSingleMetricSource := Spies.Source(calledGetAvatarMetric, 5UL)
+            (context :> AvatarMetric.SetMetricContext).avatarSingleMetricSink := 
+                Spies.ExpectSet(callsForSetAvatarMetric, 
+                    Set.empty
+                    |> Set.add (Dummies.ValidAvatarId, Metric.CompletedJob, 6UL))
+            (context :> Avatar.SetJobContext).avatarJobSink := Spies.Expect(calledSetAvatarJob, (Dummies.ValidAvatarId, None))
+            (context :> AvatarIslandFeature.SetFeatureContext).avatarIslandFeatureSink := 
+                Spies.Expect(calledSetAvatarIslandFeature, 
+                    (Some {featureId = IslandFeatureIdentifier.Dock; location = Dummies.ValidIslandLocation}, Dummies.ValidAvatarId))
+            (context :> Island.PutIslandItemsContext).islandItemSink :=
+                Spies.Expect(calledPutIslandItems, (Dummies.ValidIslandLocation,[0UL]|>Set.ofList))
+            (context :> Island.GetCommoditiesContext).islandMarketSource := 
+                Spies.Source(calledGetIslandCommodities, Map.empty)
+            (context :> Island.GetIslandItemsContext).islandItemSource := 
+                Spies.Source(calledGetIslandItems, 
+                    Set.empty)
+            (context :> IslandJob.GetContext).islandJobSource := Spies.Source(calledGetIslandJobs, [])
+            (context :> AvatarJob.GetContext).avatarJobSource := Spies.Source(calledGetAvatarJob, Some { Destination = Dummies.ValidIslandLocation; FlavorText=""; Reward = 2.0})
+            (context :> Utility.GetTermsContext).termListSource := Spies.Source(calledGetTerms, ["term"])
+            (context :> Job.CreateContext).jobRewardStatisticSource := Spies.Source(calledCreateJob, {MinimumValue=0.0; MaximumValue=10.0; CurrentValue=5.0})
+            (context :> IslandJob.AddContext).islandJobSink := Spies.Sink(calledAddIslandJob))
+        (Dummies.ValidIslandLocation, Dummies.ValidAvatarId)
     Assert.IsTrue(calledGetAvatarJob.Value)
     Assert.IsTrue(calledGetIslandJobs.Value)
     Assert.IsTrue(calledGetIslandItems.Value)
@@ -131,36 +137,34 @@ let ``Dock.When the island exists does nothing to island jobs when there is one 
     let calledPutIslandCommodities = ref false
     let callsForGetAvatarIslandMetric = ref 0UL
     let callsForSetAvatarIslandMetrics = ref 0UL
-    let context = Contexts.TestContext()
-    (context :> Island.GetListContext).islandSource := Spies.Source(calledGetIslandList, Dummies.ValidIslandList)
-    (context :> AvatarMessages.AddContext).avatarMessageSink := Spies.Sink(calledAvatarAddMessage)
-    (context :> IslandVisit.EpochSecondsSourceContext).epochSecondsSource := Spies.Source(calledGetEpochSeconds, 2000UL)
-    (context :> Island.PutCommoditiesContext).islandMarketSink :=
-        Spies.Expect(calledPutIslandCommodities, 
-            (Dummies.ValidIslandLocation, 
-                Map.empty
-                |> Map.add 0UL { Supply = 16.869547913721554; Demand = 10.93847484045591 }))
-    (context :> AvatarIslandMetric.GetContext).avatarIslandSingleMetricSource := 
-        Spies.SourceTable(callsForGetAvatarIslandMetric, 
-            Map.empty
-            |> Map.add (Dummies.ValidAvatarId, Dummies.ValidIslandLocation, AvatarIslandMetricIdentifier.VisitCount) (Some 1UL)
-            |> Map.add (Dummies.ValidAvatarId, Dummies.ValidIslandLocation, AvatarIslandMetricIdentifier.LastVisit) (Some 1000UL))
-    (context :> AvatarIslandMetric.PutContext).avatarIslandSingleMetricSink :=
-        Spies.SinkCounter(callsForSetAvatarIslandMetrics)
-    (context :> AvatarIslandFeature.SetFeatureContext).avatarIslandFeatureSink := 
-        Spies.Expect(calledSetAvatarIslandFeature, 
-            (Some {featureId = IslandFeatureIdentifier.Dock; location = Dummies.ValidIslandLocation}, Dummies.ValidAvatarId))
-    (context :> IslandJob.GetContext).islandJobSource := Spies.Source(calledGetIslandJobs, [{Destination=Dummies.ValidIslandLocation; FlavorText=""; Reward=3.0}])
-    (context :> Island.GetCommoditiesContext).islandMarketSource := 
-        Spies.Source(calledGetIslandCommodities, Dummies.ValidMarketTable)
-    (context :> Island.GetIslandItemsContext).islandItemSource := 
-        Spies.Source(calledGetIslandItems, 
-            [0UL] |> Set.ofList)
-    (context :> AvatarJob.GetContext).avatarJobSource := Spies.Source(calledGetAvatarJob, None)
-    World.Dock
-        context
-        Dummies.ValidIslandLocation
-        Dummies.ValidAvatarId
+    CommonDockTestSetupAndValidation
+        (fun context -> 
+            (context :> Island.GetListContext).islandSource := Spies.Source(calledGetIslandList, Dummies.ValidIslandList)
+            (context :> AvatarMessages.AddContext).avatarMessageSink := Spies.Sink(calledAvatarAddMessage)
+            (context :> IslandVisit.EpochSecondsSourceContext).epochSecondsSource := Spies.Source(calledGetEpochSeconds, 2000UL)
+            (context :> Island.PutCommoditiesContext).islandMarketSink :=
+                Spies.Expect(calledPutIslandCommodities, 
+                    (Dummies.ValidIslandLocation, 
+                        Map.empty
+                        |> Map.add 0UL { Supply = 16.869547913721554; Demand = 10.93847484045591 }))
+            (context :> AvatarIslandMetric.GetContext).avatarIslandSingleMetricSource := 
+                Spies.SourceTable(callsForGetAvatarIslandMetric, 
+                    Map.empty
+                    |> Map.add (Dummies.ValidAvatarId, Dummies.ValidIslandLocation, AvatarIslandMetricIdentifier.VisitCount) (Some 1UL)
+                    |> Map.add (Dummies.ValidAvatarId, Dummies.ValidIslandLocation, AvatarIslandMetricIdentifier.LastVisit) (Some 1000UL))
+            (context :> AvatarIslandMetric.PutContext).avatarIslandSingleMetricSink :=
+                Spies.SinkCounter(callsForSetAvatarIslandMetrics)
+            (context :> AvatarIslandFeature.SetFeatureContext).avatarIslandFeatureSink := 
+                Spies.Expect(calledSetAvatarIslandFeature, 
+                    (Some {featureId = IslandFeatureIdentifier.Dock; location = Dummies.ValidIslandLocation}, Dummies.ValidAvatarId))
+            (context :> IslandJob.GetContext).islandJobSource := Spies.Source(calledGetIslandJobs, [{Destination=Dummies.ValidIslandLocation; FlavorText=""; Reward=3.0}])
+            (context :> Island.GetCommoditiesContext).islandMarketSource := 
+                Spies.Source(calledGetIslandCommodities, Dummies.ValidMarketTable)
+            (context :> Island.GetIslandItemsContext).islandItemSource := 
+                Spies.Source(calledGetIslandItems, 
+                    [0UL] |> Set.ofList)
+            (context :> AvatarJob.GetContext).avatarJobSource := Spies.Source(calledGetAvatarJob, None))
+        (Dummies.ValidIslandLocation, Dummies.ValidAvatarId)
     Assert.IsTrue(calledGetAvatarJob.Value)
     Assert.IsTrue(calledGetIslandJobs.Value)
     Assert.IsTrue(calledGetIslandItems.Value)
