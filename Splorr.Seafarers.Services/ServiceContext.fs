@@ -20,19 +20,27 @@ type ServiceContext =
     inherit AvatarMetric.SetMetricContext
     inherit AvatarShipmates.GetShipmatesContext
     inherit Commodity.GetCommoditiesContext
+    inherit Island.GetCommoditiesContext
+    inherit Island.GetIslandItemsContext
     inherit Island.GetIslandMarketContext
     inherit Island.GetFeaturesContext
     inherit Island.HasFeatureContext
+    inherit Island.PutCommoditiesContext
+    inherit Island.PutIslandItemsContext
     inherit Island.PutIslandMarketContext
     inherit Island.GetListContext
     inherit Island.GetStatisticContext
     inherit Island.GetStatisticTemplatesContext
     inherit Island.SetIslandStatisticContext
+    inherit IslandJob.AddContext
+    inherit IslandJob.GetContext
     inherit IslandJob.PurgeContext
     inherit IslandMarket.DeterminePriceContext
     inherit IslandName.GetNameContext
+    inherit IslandVisit.EpochSecondsSourceContext
     inherit Item.GetContext
     inherit Item.GetListContext
+    inherit Job.CreateContext
     inherit Shipmate.GetGlobalRationItemsContext
     inherit Shipmate.GetStatisticTemplatesContext
     inherit Shipmate.SetRationItemsContext

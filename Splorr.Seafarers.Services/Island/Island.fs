@@ -5,9 +5,9 @@ open Splorr.Common
 
 
 module Island =
-    type IslandItemSink   = Location -> Set<uint64>->unit
+    type IslandItemSink   = Location * Set<uint64> -> unit
     type IslandItemSource = Location -> Set<uint64>
-    type IslandMarketSink = Location -> Map<uint64, Market> -> unit
+    type IslandMarketSink = Location * Map<uint64, Market> -> unit
     type IslandSingleMarketSink = Location * uint64 * Market -> unit
     type IslandSingleMarketSource = Location * uint64 -> Market option
     type IslandSingleStatisticSink = Location * IslandStatisticIdentifier * Statistic option->unit
@@ -54,6 +54,7 @@ module Island =
             (location : Location)
             : Map<uint64, Market> =
         (context :?> GetCommoditiesContext).islandMarketSource.Value location
+
     type PutCommoditiesContext =
         abstract member islandMarketSink   : IslandMarketSink ref
     let private PutCommodities
@@ -61,7 +62,7 @@ module Island =
             (location: Location)
             (markets : Map<uint64, Market>)
             : unit =
-        (context :?> PutCommoditiesContext).islandMarketSink.Value location markets
+        (context :?> PutCommoditiesContext).islandMarketSink.Value (location, markets)
     let internal GenerateCommodities 
             (context  : CommonContext)
             (location : Location) 
@@ -86,7 +87,7 @@ module Island =
             (location : Location)
             (items : Set<uint64>)
             : unit =
-        (context :?> PutIslandItemsContext).islandItemSink.Value location items
+        (context :?> PutIslandItemsContext).islandItemSink.Value (location, items)
 
     type GetIslandItemsContext =
         abstract member islandItemSource : IslandItemSource ref
@@ -191,6 +192,15 @@ module Island =
             (context : CommonContext)
             : Location list =
         (context :?> GetListContext).islandSource.Value()
+
+    let internal GetJobDestinations
+            (context : CommonContext)
+            (location : Location)
+            : Set<Location> = 
+        GetList context
+        |> Set.ofList
+        |> Set.remove location
+
 
     let internal Exists
             (context : CommonContext)

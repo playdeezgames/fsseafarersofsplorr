@@ -78,8 +78,8 @@ module WorldVessel =
     let private DoJobCompletion
             (context  : CommonContext)
             (location : Location) 
-            (job      : Job) 
             (avatarId : string) 
+            (job      : Job) 
             : unit = 
         if location = job.Destination then
             AvatarJob.Complete
@@ -88,74 +88,80 @@ module WorldVessel =
             avatarId
             |> AvatarMessages.Add context  [ "You complete your job." ]
 
+    let private DockWhenIslandDoesNotExist
+            (context : CommonContext) =
+        AvatarMessages.Add context [ "There is no place to dock there." ]
+
+    let private IncrementVisitCountAndVisitMetric
+            (context : CommonContext)
+            (location : Location)
+            (avatarId : string)
+            : unit = 
+        let oldVisitCount =
+            AvatarIslandMetric.GetVisitCount context avatarId location
+        IslandVisit.Add context avatarId location
+        let newVisitCount =
+            AvatarIslandMetric.GetVisitCount context avatarId location
+        if newVisitCount > oldVisitCount then
+            avatarId
+            |> AvatarMetric.IncrementVisitedIslands context 
+
+    let private CompleteJobs
+            (context : CommonContext)
+            (location : Location)
+            (avatarId : string)
+            : unit =
+        AvatarJob.Get context avatarId
+        |> Option.iter
+            (DoJobCompletion context location avatarId)
+
+
+    let private UpdateAvatarWhenDocking
+            (context : CommonContext)
+            (location : Location)
+            (avatarId: string)
+            : unit =
+        IncrementVisitCountAndVisitMetric context location avatarId
+        AvatarMessages.Add context [ "You dock." ] avatarId
+        CompleteJobs context location avatarId
+        AvatarIslandFeature.SetDockFeatureForAvatar context location avatarId 
+
+    let private GenerateJobs
+            (context : CommonContext)
+            (location : Location)
+            : unit =
+        let destinations =
+            Island.GetJobDestinations context location
+        location
+        |> IslandJob.Generate 
+            context 
+            destinations 
+
+    let private UpdateIslandWhenDocking
+            (context : CommonContext)
+            (location : Location)
+            : unit =
+        GenerateJobs context location
+        Island.GenerateCommodities context location
+        Island.GenerateItems context location
+
+    let internal DockWhenIslandExists
+            (context  : CommonContext)
+            (location : Location) 
+            (avatarId : string)
+            : unit =
+        UpdateIslandWhenDocking context location
+        UpdateAvatarWhenDocking context location avatarId
+
     let internal Dock
             (context  : CommonContext)
             (location : Location) 
-            (avatarId : string) 
+            (avatarId : string)
             : unit =
-        let locations = Island.GetList context
-        match locations |> List.tryFind (fun x -> x = location) with
-        | Some l ->
-            let destinations =
-                locations
-                |> Set.ofList
-                |> Set.remove location
-            let oldVisitCount =
-                AvatarIslandMetric.Get  context avatarId location AvatarIslandMetricIdentifier.VisitCount
-                |> Option.defaultValue 0UL
-            IslandVisit.Add
-                context
-                avatarId
-                location
-            let newVisitCount =
-                AvatarIslandMetric.Get context avatarId location AvatarIslandMetricIdentifier.VisitCount
-                |> Option.defaultValue 0UL
-            l
-            |> IslandJob.Generate 
-                context 
-                destinations 
-            Island.GenerateCommodities 
-                context
-                location
-            Island.GenerateItems 
-                context
-                location
-            avatarId
-            |> AvatarMessages.Add 
-                context
-                [ 
-                    "You dock." 
-                ]
-            avatarId
-            |> AvatarMetric.Add 
-                context
-                Metric.VisitedIsland 
-                (if newVisitCount > oldVisitCount then 1UL else 0UL)
-            avatarId
-            |> Option.foldBack 
-                (fun job w ->
-                    DoJobCompletion
-                        context
-                        location
-                        job
-                        w
-                    w) (AvatarJob.Get context avatarId)
-            |> ignore
-            AvatarIslandFeature.SetFeature 
-                context
-                ({
-                    featureId = IslandFeatureIdentifier.Dock
-                    location = location
-                } 
-                |> Some, 
-                    avatarId)
-        | _ -> 
-            avatarId
-            |> AvatarMessages.Add 
-                context
-                [ 
-                    "There is no place to dock there." 
-                ]
+        if Island.Exists context location then
+            DockWhenIslandExists context location avatarId
+        else
+            DockWhenIslandDoesNotExist context avatarId
 
     let internal AbandonJob
             (context  : CommonContext)

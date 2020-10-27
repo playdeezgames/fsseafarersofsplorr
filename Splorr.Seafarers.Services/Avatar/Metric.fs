@@ -36,6 +36,13 @@ module AvatarMetric =
         (metric, (GetMetric context avatarId metric) + amount)
         |> SetMetric context avatarId 
 
+    let internal IncrementVisitedIslands
+            (context : CommonContext) =
+        Add 
+            context
+            Metric.VisitedIsland 
+            1UL
+
     type AvatarMetricSource = string -> AvatarMetrics
     type GetContext = 
         abstract member avatarMetricSource : AvatarMetricSource ref

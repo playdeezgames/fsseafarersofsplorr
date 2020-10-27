@@ -100,3 +100,19 @@ type TestContext() =
         member val islandSingleNameSource = ref (Fakes.Source ("IslandName.GetNameContext", None))
     interface WorldIslands.GetIslandByNameContext with
         member val islandLocationByNameSource = ref (Fakes.Source ("WorldIslands.GetIslandByNameContext", None))
+    interface IslandJob.GetContext with
+        member val islandJobSource = ref (Fakes.Source ("IslandJob.GetContext", []))
+    interface Island.GetCommoditiesContext with
+        member val islandMarketSource = ref (Fakes.Source ("Island.GetCommoditiesContext", Map.empty))
+    interface Island.GetIslandItemsContext with
+        member val islandItemSource = ref (Fakes.Source ("Island.GetIslandItemsContext", Set.empty))
+    interface IslandVisit.EpochSecondsSourceContext with
+        member val epochSecondsSource = ref (Fakes.Source ("IslandVisit.EpochSecondsSourceContext", 0UL))
+    interface Island.PutCommoditiesContext with
+        member val islandMarketSink = ref (Fakes.Sink "Island.PutCommoditiesContext")
+    interface Island.PutIslandItemsContext with
+        member val islandItemSink = ref (Fakes.Sink "Island.PutIslandItemsContext")
+    interface Job.CreateContext with
+        member val jobRewardStatisticSource = ref (Fakes.Source ("Job.CreateContext", {MaximumValue=10.0; MinimumValue=0.0; CurrentValue=5.0}))
+    interface IslandJob.AddContext with
+        member val islandJobSink = ref (Fakes.Sink "IslandJob.AddContext")

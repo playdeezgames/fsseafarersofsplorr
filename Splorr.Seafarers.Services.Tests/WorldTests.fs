@@ -23,14 +23,6 @@ let ``Undock..`` () =
 
         
 [<Test>]
-let ``Dock..`` () =
-    let context = Contexts.TestContext()
-    World.Dock
-        context
-        Dummies.ValidIslandLocation
-        Dummies.ValidAvatarId
-        
-[<Test>]
 let ``HasIslandFeature..`` () =
     let context = Contexts.TestContext()
     let actual = 

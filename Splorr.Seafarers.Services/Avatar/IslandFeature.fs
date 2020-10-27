@@ -15,6 +15,21 @@ module AvatarIslandFeature =
             : unit =
         (context :?> SetFeatureContext).avatarIslandFeatureSink.Value (feature, avatarId)
 
+    let internal SetDockFeatureForAvatar
+            (context : CommonContext)
+            (location : Location)
+            (avatarId : string)
+            : unit =
+        SetFeature 
+            context
+            ({
+                featureId = IslandFeatureIdentifier.Dock
+                location = location
+            } 
+            |> Some, 
+                avatarId)
+
+
     let internal Enter
             (context  : CommonContext)
             (avatarId : string)

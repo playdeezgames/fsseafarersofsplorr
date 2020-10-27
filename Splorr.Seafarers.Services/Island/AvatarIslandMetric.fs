@@ -16,6 +16,14 @@ module AvatarIslandMetric =
             : uint64 option =
         (context :?> GetContext).avatarIslandSingleMetricSource.Value (avatarId, location, identifier)
 
+    let internal GetVisitCount 
+            (context : CommonContext)
+            (avatarId: string)
+            (location : Location)
+            : uint64 =
+        Get context avatarId location AvatarIslandMetricIdentifier.VisitCount
+        |> Option.defaultValue 0UL
+
     type AvatarIslandSingleMetricSink = (string * Location * AvatarIslandMetricIdentifier * uint64) -> unit
     type PutContext =
         abstract member avatarIslandSingleMetricSink:AvatarIslandSingleMetricSink ref
