@@ -6,9 +6,6 @@ open Splorr.Common
 
 
 module Utility =
-    type TermListSource = string -> string list
-    type TermSource = unit -> string list
-    
     type RandomContext =
         abstract member random : Random ref
     let internal GenerateFromRange
@@ -17,10 +14,18 @@ module Utility =
             : float =
         (context :?> RandomContext).random.Value.NextDouble() * (maximum-minimum) + minimum
 
+    type TermListSource = string -> string list
+    type GetTermsContext =
+        abstract member termListSource : TermListSource ref
+    let internal GetTermList
+            (context : CommonContext)
+            (termType : string)
+            : string list =
+        (context :?> GetTermsContext).termListSource.Value termType
+
     let internal SortListRandomly 
             (context : CommonContext) =
-        let context = context :?> RandomContext
-        List.sortBy (fun _ -> context.random.Value.Next())
+        List.sortBy (fun _ -> GenerateFromRange context (0.0, 1.0))
 
     let internal PickFromListRandomly
             (context : CommonContext) =
@@ -29,8 +34,12 @@ module Utility =
     let internal GenerateSupplyOrDemand 
             (context : CommonContext)
             : float =
-        let random = (context :?> RandomContext).random.Value
-        (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + (random.NextDouble()) * 6.0 + 3.0
+        [
+            GenerateFromRange context (1.0, 6.0)
+            GenerateFromRange context (1.0, 6.0)
+            GenerateFromRange context (1.0, 6.0)
+        ]
+        |> List.reduce (+)
 
     let internal GenerateFromWeightedValues
             (context : CommonContext) 
@@ -38,9 +47,11 @@ module Utility =
             : 'T option=
         let totalWeight =
             candidates
-            |> Map.fold 
-                (fun accumulator _ weight -> accumulator + weight) 0.0
-        let generated = (context :?> RandomContext).random.Value.NextDouble() * totalWeight
+            |> Map.toList
+            |> List.map snd
+            |> List.reduce (+)
+        let generated = 
+            GenerateFromRange context (0.0, totalWeight)
         candidates
         |> Map.fold
             (fun (result, weightLeft) item weight -> 
@@ -55,16 +66,6 @@ module Utility =
                         (result, weightLeft)) (None, generated)
         |> fst
 
-    type GetTermsContext =
-        abstract member termListSource : TermListSource ref
-    let internal GetTermList
-            (context : CommonContext)
-            (termType : string)
-            : string list =
-        (context :?> GetTermsContext).termListSource.Value termType
-
-    type TermGeneratorContext =
-        abstract member termListSource : TermListSource
     let internal GenerateFromTermList
             (context : CommonContext)
             (termType: string)

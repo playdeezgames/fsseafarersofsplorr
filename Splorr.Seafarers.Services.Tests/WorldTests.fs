@@ -20,7 +20,6 @@ let ``Undock..`` () =
     World.Undock
         context
         Dummies.ValidAvatarId
-
         
 [<Test>]
 let ``HasIslandFeature..`` () =
