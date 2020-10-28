@@ -116,3 +116,5 @@ type TestContext() =
         member val jobRewardStatisticSource = ref (Fakes.Source ("Job.CreateContext", {MaximumValue=10.0; MinimumValue=0.0; CurrentValue=5.0}))
     interface IslandJob.AddContext with
         member val islandJobSink = ref (Fakes.Sink "IslandJob.AddContext")
+    interface AvatarMetric.GetContext with
+        member val avatarMetricSource = ref (Fakes.Source ("AvatarMetric.GetContext", Map.empty))
