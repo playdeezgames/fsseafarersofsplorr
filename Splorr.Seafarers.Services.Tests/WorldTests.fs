@@ -5,16 +5,6 @@ open Splorr.Seafarers.Services
 open Splorr.Seafarers.Models
 open Splorr.Tests.Common
 
-
-[<Test>]
-let ``GetVesselPosition..`` () =
-    let context = Contexts.TestContext()
-    let actual = 
-        World.GetVesselPosition
-            context
-            Dummies.ValidAvatarId
-    Assert.AreEqual(None, actual)
-
 [<Test>]
 let ``GetVesselSpeed..`` () =
     let context = Contexts.TestContext()

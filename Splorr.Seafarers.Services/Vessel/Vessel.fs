@@ -105,20 +105,24 @@ module Vessel =
                     side 
                     (Statistic.ChangeCurrentBy (foulRate/2.0)))
 
+    let private GetCurrentValueAndAssumePresent
+            (context : CommonContext)
+            (identifier : VesselStatisticIdentifier)
+            (avatarId: string)
+            : float =
+        identifier
+        |> GetStatistic context avatarId
+        |> Option.map Statistic.GetCurrentValue
+        |> Option.get
+
     let internal GetPosition
             (context  : CommonContext)
             (avatarId : string)
             : Location =
         let positionX =
-            VesselStatisticIdentifier.PositionX
-            |> GetStatistic context avatarId
-            |> Option.map Statistic.GetCurrentValue
-            |> Option.get
+            GetCurrentValueAndAssumePresent context VesselStatisticIdentifier.PositionX avatarId
         let positionY = 
-            VesselStatisticIdentifier.PositionY
-            |> GetStatistic context avatarId
-            |> Option.map Statistic.GetCurrentValue
-            |> Option.get
+            GetCurrentValueAndAssumePresent context VesselStatisticIdentifier.PositionY avatarId
         (positionX, positionY)
 
     let internal SetPosition 
