@@ -81,11 +81,12 @@ let ``Dock.When the island exists generates a new island job when the island has
     let calledAddIslandJob = ref false
     CommonDockBigTestSetupAndValidation
         (fun context -> 
+            (context :> Utility.RandomContext).random := System.Random(0)
             (context :> Island.PutCommoditiesContext).islandMarketSink :=
                 Spies.Expect(calledPutIslandCommodities, 
                     (Dummies.ValidIslandLocation, 
                         Map.empty
-                        |> Map.add 0UL { Supply = 15.861055442533017; Demand = 13.025670087908242 }))
+                        |> Map.add 0UL { Supply = 13.717546202110848; Demand = 11.354725073256867 }))
             (context :> Item.GetListContext).itemSource :=
                 Spies.Source(calledGetItemList, Dummies.ValidItemTable)
             (context :> Commodity.GetCommoditiesContext).commoditySource := 
