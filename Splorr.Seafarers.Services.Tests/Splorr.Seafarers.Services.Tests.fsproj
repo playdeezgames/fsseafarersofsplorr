@@ -53,6 +53,7 @@
     <Compile Include="WorldDetermineIslandMarketSalePriceTests.fs" />
     <Compile Include="WorldDistanceToTests.fs" />
     <Compile Include="WorldDockTests.fs" />
+    <Compile Include="WorldGetAvatarInventoryTests.fs" />
     <Compile Include="WorldUndockTests.fs" />
     <Compile Include="WorldTests.fs" />
     <Compile Include="Program.fs" />
