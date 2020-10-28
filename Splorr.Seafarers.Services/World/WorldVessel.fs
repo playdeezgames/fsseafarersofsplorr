@@ -178,13 +178,32 @@ module WorldVessel =
             avatarId
             |> AvatarMessages.Add context [ "You have no job to abandon." ]
 
+    let private AvatarUndocks
+            (context : CommonContext) 
+            (avatarId : string) 
+            : unit =
+        AvatarMessages.Add context [ "You undock." ] avatarId
+        AvatarIslandFeature.SetFeature context (None, avatarId)
+
+    let private AvatarNotAtDock
+            (context : CommonContext) =
+        AvatarMessages.Add context [ "You can only undock from the dock." ]
+
+    let private AvatarNotDocked
+            (context : CommonContext) =
+        AvatarMessages.Add context [ "You are not docked." ]
+
     let internal Undock
             (context : CommonContext)
             (avatarId : string)
             : unit =
-        avatarId
-        |> AvatarMessages.Add context [ "You undock." ]
-        AvatarIslandFeature.SetFeature context (None, avatarId)
+        match AvatarIslandFeature.GetFeatureIdentifier context avatarId with
+        | Some IslandFeatureIdentifier.Dock ->
+            AvatarUndocks context avatarId
+        | Some _ ->
+            AvatarNotAtDock context avatarId
+        | None ->
+            AvatarNotDocked context avatarId
     
 
 

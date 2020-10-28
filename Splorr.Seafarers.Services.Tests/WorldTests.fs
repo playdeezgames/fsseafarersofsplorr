@@ -13,13 +13,6 @@ let ``GetAvatarInventory..`` () =
             context
             Dummies.ValidAvatarId
     Assert.AreEqual(Map.empty, actual)
-
-[<Test>]
-let ``Undock..`` () =
-    let context = Contexts.TestContext()
-    World.Undock
-        context
-        Dummies.ValidAvatarId
         
 [<Test>]
 let ``HasIslandFeature..`` () =

@@ -50,6 +50,17 @@ module AvatarIslandFeature =
             : AvatarIslandFeature option =
         (context :?> GetFeatureContext).avatarIslandFeatureSource.Value avatarId
 
+    let internal GetFeatureIdentifier
+            (context : CommonContext)
+            (avatarId : string)
+            : IslandFeatureIdentifier option =
+        Get 
+            context 
+            avatarId
+        |> Option.map 
+            (fun f -> 
+                f.featureId)
+
     let internal IsAvatarAtFeature
             (context : CommonContext)
             (identifier: IslandFeatureIdentifier)
