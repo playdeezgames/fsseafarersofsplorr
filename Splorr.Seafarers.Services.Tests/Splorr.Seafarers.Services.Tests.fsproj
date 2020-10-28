@@ -57,7 +57,24 @@
     <Compile Include="WorldUndockTests.fs" />
     <Compile Include="WorldHasIslandFeatureTests.fs" />
     <Compile Include="WorldGetVesselPositionTests.fs" />
-    <Compile Include="WorldTests.fs" />
+    <Compile Include="WorldGetVesselSpeedTests.fs" />
+    <Compile Include="WorldGetVesselHeadingTests.fs" />
+    <Compile Include="WorldGetIslandItemsTests.fs" />
+    <Compile Include="WorldGetVesselUsedTonnageTests.fs" />
+    <Compile Include="WorldGetIslandJobsTests.fs" />
+    <Compile Include="WorldGetAvatarMetricsTests.fs" />
+    <Compile Include="WorldGetShipmateStatisticTests.fs" />
+    <Compile Include="WorldGetIslandStatisticTests.fs" />
+    <Compile Include="WorldGetNearbyLocationsTests.fs" />
+    <Compile Include="WorldGetIslandDisplayNameTests.fs" />
+    <Compile Include="WorldGetVesselEffectiveSpeedTests.fs" />
+    <Compile Include="WorldGetAvatarJobTests.fs" />
+    <Compile Include="WorldHeadForTests.fs" />
+    <Compile Include="WorldMoveTests.fs" />
+    <Compile Include="WorldSetHeadingTests.fs" />
+    <Compile Include="WorldSetSpeedTests.fs" />
+    <Compile Include="WorldGetAvatarMoneyTests.fs" />
+    <Compile Include="WorldGetAvatarReputationTests.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
