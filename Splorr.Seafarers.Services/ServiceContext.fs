@@ -24,6 +24,7 @@ type ServiceContext =
     inherit Island.GetCommoditiesContext
     inherit Island.GetIslandItemsContext
     inherit Island.GetIslandMarketContext
+    inherit Island.GetItemsContext
     inherit Island.GetFeaturesContext
     inherit Island.HasFeatureContext
     inherit Island.PutCommoditiesContext

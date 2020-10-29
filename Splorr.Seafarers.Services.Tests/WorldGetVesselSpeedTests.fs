@@ -6,7 +6,7 @@ open Splorr.Seafarers.Models
 open Splorr.Tests.Common
 
 [<Test>]
-let ``GetVesselSpeed..`` () =
+let ``GetVesselSpeed.It sets the speed of the give avatar's vessel.`` () =
     let context = Contexts.TestContext()
     let actual = 
         World.GetVesselSpeed

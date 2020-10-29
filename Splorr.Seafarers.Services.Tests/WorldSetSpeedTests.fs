@@ -6,7 +6,7 @@ open Splorr.Seafarers.Models
 open Splorr.Tests.Common
 
 [<Test>]
-let ``SetSpeed..`` () =
+let ``SetSpeed.It sets a new speed for the given avatar and reports the status to a message.`` () =
     let context = Contexts.TestContext()
     World.SetSpeed
         context

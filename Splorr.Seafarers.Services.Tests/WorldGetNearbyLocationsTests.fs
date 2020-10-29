@@ -6,7 +6,7 @@ open Splorr.Seafarers.Models
 open Splorr.Tests.Common
 
 [<Test>]
-let ``GetNearbyLocations..`` () =
+let ``GetNearbyLocations.It returns a list of island locations within a given distance of a given location.`` () =
     let context = Contexts.TestContext()
     let actual = 
         World.GetNearbyLocations

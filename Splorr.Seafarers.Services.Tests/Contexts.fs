@@ -118,3 +118,5 @@ type TestContext() =
         member val islandJobSink = ref (Fakes.Sink "IslandJob.AddContext")
     interface AvatarMetric.GetContext with
         member val avatarMetricSource = ref (Fakes.Source ("AvatarMetric.GetContext", Map.empty))
+    interface Island.GetItemsContext with
+        member val islandItemSource = ref (Fakes.Source ("Island.GetItemsContext", Set.empty))

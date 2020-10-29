@@ -7,7 +7,7 @@ open Splorr.Seafarers.Models
 open Splorr.Tests.Common
 
 [<Test>]
-let ``GetVesselUsedTonnage..`` () =
+let ``GetVesselUsedTonnage.It calculates the vessel's used tonnage for the given avatar.`` () =
     let context = Contexts.TestContext()
     let actual = 
         World.GetVesselUsedTonnage
