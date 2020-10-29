@@ -46,7 +46,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Splorr.Common\Splorr.Common.fsproj" />
-    <ProjectReference Include="..\Splorr.DataStore\Splorr.DataStore.fsproj" />
     <ProjectReference Include="..\Splorr.Seafarers.Models\Splorr.Seafarers.Models.fsproj" />
   </ItemGroup>
 

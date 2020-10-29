@@ -1,7 +1,6 @@
 ﻿namespace Splorr.Seafarers.Services
 
 open System
-open Splorr.Seafarers.DataStore
 open Splorr.Common
 
 

@@ -34,7 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Splorr.DataStore\Splorr.DataStore.fsproj" />
     <ProjectReference Include="..\Splorr.Seafarers.Models\Splorr.Seafarers.Models.fsproj" />
     <ProjectReference Include="..\Tarot\Tarot.fsproj" />
   </ItemGroup>
