@@ -15,18 +15,26 @@ module IslandName =
             : string option =
         (context :?> GetNameContext).islandSingleNameSource.Value location
 
+    let internal GetDisplayNameWhenIslandExists 
+            (context  : CommonContext)
+            (avatarId : string) 
+            (location : Location)
+            (islandName : string)
+            : string =
+        match AvatarIslandMetric.Get context avatarId location AvatarIslandMetricIdentifier.VisitCount with
+        | Some _ ->
+            islandName
+        | None ->
+            "(unknown)"
+
     let internal GetDisplayName 
             (context  : CommonContext)
             (avatarId : string) 
             (location : Location)
             : string =
-        let visitCount = AvatarIslandMetric.Get context avatarId location AvatarIslandMetricIdentifier.VisitCount
-        let islandName = GetName context location
-        match visitCount, islandName with
-        | Some _, Some name ->
-            name
-        | None, Some _ ->
-            "(unknown)"
-        | _ ->
+        match GetName context location with
+        | Some islandName ->
+            GetDisplayNameWhenIslandExists context avatarId location islandName
+        | None ->
             raise (NotImplementedException "This island does not exist!")
 
